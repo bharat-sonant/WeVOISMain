@@ -1,0 +1,437 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!----Desktop Navbar Start----->
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-6 col-lg-6 col-xl-5 pl-18 ipad-pl-40">
+            <div class="main1">
+                <button class="btn btn-primary " (click)="setDate('','previous');">
+                    << </button>
+                        <input id="txtDate" class="date-input" type="date"
+                            (change)="setDate($event.target.value,'current')">
+                        <button class="btn btn-primary btn2" (click)="setDate('','next');"
+                            >
+                            >>
+                        </button>
+                        <select class="caret-select caret-select2" id="ddlOption"
+                            (change)="changeOptionSelection($event.target.value)">
+                            <option value="0">
+                                Select
+                            </option>
+                            <option *ngFor="let dt of optionList" value={{dt.id}}>
+                                {{dt.optionType}}
+                            </option>
+                        </select>
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-4 main-headers">
+            garbage capture analysis
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
+            <div class="fix-home">
+                <div id="topPenality" class="float-first ml-10 mt-0">
+                    <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
+                    <h6>Penalty</h6>
+                </div>
+                <div id="topPenality" class="float-first" style="display:none;">
+                    <span class="house"><i class="fas fa-check-double double2"></i>
+                        {{progressData.totalResolved}}</span><br>
+                    <h6>Resolved</h6>
+                </div>
+                <div class="float-second ml-10 mt-0">
+                    <span class="house"><i class="far fa-images"></i> {{progressData.totalCount}}</span><br>
+                    <h6>Images</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!----Desktop Navbar End----->
+
+<!----Mobile Navbar Start----->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">garbage capture analysis</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-angle-down"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <div class="row">
+                <div class="col-2 pr-0 ">
+                    <button class="btn btn-primary " (click)="setDate('','previous');">
+                        << </button>
+                </div>
+                <div class="col-8 pl-0">
+                    <input id="txtDateNav" class="date-input" type="date"
+                        (change)="setDate($event.target.value,'current')">
+                </div>
+                <div class="col-2 pl-0">
+                    <button class="btn btn-primary btn3" (click)="setDate('','next');">
+                        >> </button>
+                </div>
+                <div class="col-12 pr-25 pl-5">
+                    <select class="caret-select caret-select3" id="ddlOptionNav"
+                        (change)="changeOptionSelection($event.target.value)">
+                        <option value="0">
+                            Select
+                        </option>
+                        <option *ngFor="let dt of optionList" value={{dt.id}}>
+                            {{dt.optionType}}
+                        </option>
+                    </select>
+                </div>
+                <div id="topPenalityNav" class="col-6 pr-0 ">
+                    <div class="mb-home text-left">
+                        <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
+                        <h6>Penalty</h6>
+                    </div>
+                </div>
+                <div class="col-6 pl-0">
+                    <div class="mb-home text-right">
+                        <span class="house"><i class="far fa-images"></i> {{progressData.totalCount}}</span><br>
+                        <h6>Images</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</nav>
+<!----Mobile Navbar End----->
+
+
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-12 col-lg-12 col-xl-6 pl-0 pr-6 pad-mob-b-10 pad-pr-0 main2">
+            <div class="card card-main">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-9 text-left main3">
+                            <div class="row">
+                                <div class="col-md-5 pr-0">
+                                    <div class="main-heading mt-10">
+                                        <h3>
+                                            {{progressData.category}}
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 mob-40 text-right ml-23">
+                                    <div class="main-heading main-heading2">
+                                        <input class="time-input mr-5" type="time" id="txtTime1"> <span
+                                            class="para-txt"> to</span>
+                                        <input class="time-input ml-5 mr-5" type="time" id="txtTime2">
+                                        <i class="fas fa-search" (click)="filterData();"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 text-right p-r ml-20">
+                                    <select class="filter-select filter-input" id="ddlUser" (change)="filterData();">
+                                        <option value="0">
+                                            All Users
+                                        </option>
+                                        <option *ngFor="let user of userList" value={{user.userId}}>
+                                            {{user.name}}
+                                        </option>
+                                    </select>
+                                    <select class="filter-select filter-input" id="ddlCategory"
+                                        (change)="filterData();">
+                                        <option value="0">
+                                            All Category
+                                        </option>
+                                        <option value="1">
+                                            कचरा नहीं उठाया
+                                        </option>
+                                        <option value="2">
+                                            कचरा उठा लिया है
+                                        </option>
+                                    </select>
+                                    <select class="filter-select filter-input" id="ddlZone" (change)="getWard();">
+                                        <option value="0">
+                                            All Zone
+                                        </option>
+                                        <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+                                            {{zone.zoneName}}
+                                        </option>
+                                    </select>
+                                    <select class="filter-select mr-32 filter-input" id="ddlWard"
+                                        (change)="filterData();">
+                                        <option value="0">
+                                            All Ward
+                                        </option>
+                                        <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
+                                            {{ward.wardName}}
+                                        </option>
+                                    </select>
+                                    <i class="fas fa-filter" data-toggle="collapse" data-parent="#accordion"
+                                        href="#collapsethree" aria-expanded="true" aria-controls="collapsethree"></i>
+                                    <div class="panel-group panel-group2" id="accordion" role="tablist" aria-multiselectable="true"
+                                        >
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="headingthree">
+                                                <h4 class="panel-title">
+                                                </h4>
+                                            </div>
+                                            <div id="collapsethree" (mouseleave)="hideOrdeBy()"
+                                                class="panel-collapse collapse in" role="tabpanel"
+                                                aria-labelledby="headingthree">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12 text-left">
+                                                            <div class="setting-box setting-box2" (click)="getOrderBy('timeStemp')">
+                                                                <p> Order by Time</p>
+                                                            </div>
+                                                            <div class="setting-box setting-box2" (click)="getOrderBy('address')">
+                                                                <p> Order by Address</p>
+                                                            </div>
+                                                            <div class="setting-box setting-box2" (click)="getOrderBy('resolved')">
+                                                                <p> Order by Resolved</p>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 main4">
+                            <div class="row bg-img">
+                                <div class="col-md-12 img-text img-text2">
+                                    <h3>IMAGES :</h3><span> {{progressData.count}}</span>
+                                </div>
+                                <div class="col-md-12 mt-15">
+                                    <div class="f-all">
+                                        <div id="leftPenality" class="table-heading heading1 text-center">
+                                            <h3>
+                                                <span class="tbl-points "> {{progressData.panalty}}</span> <br>
+                                                Penalty 
+                                            </h3>
+                                        </div>
+                                        <div class="table-heading heading2 text-center heading3">
+                                            <h3>
+                                                <span class="tbl-points"> {{progressData.resolved}}</span> <br>
+                                                Resolved
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="card-body card-body2">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one" (scroll)="onContainerScroll();">
+
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="br-1 locality2">Locality</th>
+                                            <th class="text-right br-1 Time3">
+                                                Time</th>
+                                            <th class="text-left br-1 text-left2">
+                                                #</th>
+                                            <th id="tblPenalty" class="text-right br-1 Penalty2">
+                                                Penalty</th>
+                                            <th class="text-left br-1 User2">
+                                                User</th>
+                                            <th class="text-center br-1 Status2">
+                                                Status</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="ngfor2" id="tr{{i}}" *ngFor="let data of progressList; let i=index"
+                                                 (click)="getCaptureData(i);">
+                                                <td class="address2">
+                                                    <i class="fas fa-circle circle2"
+                                                        [hidden]="data.isResolved==0"></i> {{data.address}} <span
+                                                        [hidden]="data.zone=='---'"> - {{data.zone}}
+                                                        ward {{data.ward}} </span>
+                                                </td>
+                                                <td class="text-right br-1">
+                                                    {{data.time}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.isClean}}</td>
+                                                <td class="text-right br-1">
+                                                    {{data.penalty}} </td>
+                                                <td class="text-left br-1">
+                                                    {{data.user}}</td>
+                                                <td class="text-center br-1">
+                                                    <i class="fas fa-times" [hidden]="data.isAnalysis==true"></i>
+                                                    <i class="fas fa-check" [hidden]="data.isAnalysis==false"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center available2"
+                                        >
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-----NeW Work Start------->
+        <div class="col-md-12 col-lg-12 col-xl-6 pr-13 mob-pr-10 mob-res pad-pl-0">
+            <div class="fix-h">
+                <div class="row right-scroll">
+                    <div class="col-md-6 main-top mob-10 pl-3 pr-0 main-image-box"
+                        >
+                        <div class="image-box">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                            <img id="mainImage" src="../../../assets/images/gallery2.jpg" class="img-fluid" title="" alt="">
+                        </div>
+                        <div class="col-md-4 img-1 text-left pr-0 Time4">
+                            <div class="inner-data pad-pl-20">
+                                <h3>  {{progressData.time}} </h3>
+                                <p><i class="far fa-clock pr-5"></i> <b>Time</b></p>
+                            </div>
+                        </div>
+                        <div class="col-md-8 img-2 text-left pr-0 Lat-Lng2">
+                            <div class="inner-data mob-pl-25 padding-bottom">
+                                <h3>  {{progressData.latLng}} </h3>
+                                <p><i class="fas fa-chalkboard pr-5"></i> <b>Lat-Lng</b></p>
+                            </div>
+                        </div>
+                            </div>
+                            <div class="image-heading main-Resolved">
+                                <h3>Before Resolved</h3>
+                                <i class="fas fa-times-circle"
+                                    
+                                    (click)="openModel(contentConfirmation);"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 main-top mob-10 pl-3 pr-0 main5"
+                        >
+                        <div class="image-box">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <img id="mainImageResolved" src="../../../assets/images/gallery2.jpg" class="img-fluid"
+                                    title="" alt="">
+                                </div>
+                                <div class="col text-left pr-0 img-3 outer-data">
+                                    <div class="inner-data mob-pl-25">
+                                        <h3>  {{progressData.timeResolved}} </h3>
+                                        <p><i class="far fa-clock pr-5"></i> <b>Date Time</b></p>
+                                    </div>
+                                </div>
+                                <div class="col text-left img-4 img-5">
+                                    <div class="inner-data mob-pl-25 padding-bottom">
+                                        <h3> {{progressData.latLngResolved}} </h3>
+                                        <p><i class="fas fa-chalkboard pr-5"></i> <b>Lat-Lng</b></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="image-heading">
+                                <h3>After Resolved</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 pl-5 pr-0 main-mid main-mid2">
+                        <input id="dataId" type="hidden" value="0">
+                        <div class="info-box">
+                            <div class="row">
+
+
+                                <div class="col-md-12 text-left">
+                                    <div class="inner-data pad-pl-20 inner-data2">
+                                            <h3 class="address"> {{progressData.zone}}</h3> <br>
+                                        <p class="para-text"><b><i class="far fa-clock"></i> Zone :</b></p>
+                                    </div>
+                                    <div class="inner-data inner-data3">
+                                            <h3 class="address"> {{progressData.ward}}</h3> <br>
+                                        <p class="para-text"><b><i class="fas fa-chalkboard"></i> Ward :</b></p>
+                                    </div>
+                                    <div class="inner-data inner-data4">
+                                            <h3 class="address"> {{progressData.resolvedBy}}</h3> <br>
+                                        <p class="para-text"><b><i class="fas fa-user-tie"></i> Name :</b></p>
+                                    </div>
+                                    <div class="inner-data inner-data5">
+                                        <p class="para-text"><b>
+                                                <h3 class="address"><span id="resolvedDistance"> {{progressData.distance}}</span></h3> <br>
+                                                <i class="far fa-map"></i> Dist. :</b></p>
+                                    </div>
+                                    <div class="inner-data address-info border-none pad-pl-20 inner-data6">
+                                        <p class="para-text"><b><i class="fas fa-map-marker-alt"></i> </b></p>
+                                        <h3 class="address"> {{progressData.address}}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divAnalysis" class="col-md-12 pr-0 pl-5 margin-top">
+                        <div class="inner-box main-final-blk">
+                            <div class="row">
+                                <div class="col-md-4 d-blk br-1">
+                                           
+                                            <div class="radio-grp radio-grp2">
+                                                <input id="rdoReject" class="rd0" type="radio" name="group1"
+                                                
+                                                (change)="enableSaveData('rdoReject');"><span>Reject</span>
+                                                <input id="rdoAccept" class="rd0" type="radio" name="group1"
+                                               
+                                                (change)="enableSaveData('rdoAccept');"><span>Accept</span>                                               
+                                            </div>
+                                </div>
+                                <div class="col-md-5 m-blk  text-center">
+                                    <div class="inner-data final-blk">
+                                       
+                                        <span><img src="../../../assets/img/penalty-bag.svg"
+                                                class="img-fluid penalty-icon" title="Penalty" alt="Penalty"></span>
+                                        <input id="txtPanalty" class="text-box" type="number" placeholder="Penalty"
+                                            value="0" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3 l-blk btn-data ">
+                                    <div class="inner-data final-blk">
+                                        <button id="btnAnalysis" type="button" class="btn btn-success"
+                                            (click)="analysis();">SAVE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Delete Confirmation Start-->
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title modal-title2" id="exampleModalLongTitle">Are you
+                    sure you want to remove?</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 Confirm2">
+                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="deleteData()">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Delete Confirmation End-->

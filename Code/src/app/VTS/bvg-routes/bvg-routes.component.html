@@ -1,0 +1,64 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!------------Desktop Navbar Start------------->
+<section class="header">
+    <div class="row no-gutters">
+        <div class="main-headers hide-on-ipad no-gutters-iner"
+            >
+            BVG Routes
+        </div>
+        <div class="col-md-12 col-xl-12 ml-7 ipad-pl-25">
+            <button class="btn-hvr" (click)="setDate('','previous');"><span class="btn-hvr-span">
+                << </span></button>
+            <input id="txtDate"  class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value,'current')" />
+            <button class="btn-hvr input-button" (click)="setDate('','next');"><span class="btn-hvr-span">>></span></button>
+            &nbsp;&nbsp;
+            <input type="checkbox" id="chkShowLines" checked="checked" (change)="showHideLines()"> Show Lines &nbsp;
+            <input type="checkbox" id="chkShowMarker" checked="checked" (change)="showHideMarkers()"> Show Markers
+        </div>
+        <div class="arrow" onclick="show()">
+                <i class="bi bi-chevron-down"></i>
+            </div>
+    </div>
+</section>
+<!------------Desktop Navbar End------------->
+
+<div #gmap class="div-map" id="divMap"></div>
+<div class="display" id="popup">
+<div id="divDriverDetail" class="driver-helper-box">
+    <div id="myBox">
+        <div class="accordion">
+            <div class="card">
+                <div aria-labelledby="headingOne">
+                    <div class="dth">
+                        <div class="table-bg">
+                            <div class="tableFixHead">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"><b>Sno</b></th>
+                                            <th class="text-left Vehicles-heading" scope="col">
+                                                <b>Vehicles</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let dt of vehicleList, let i=index">
+                                            <td class="Vehicles-data">{{i+1}}</td>
+                                            <td class="text-left">{{dt.vehicle}}
+                                                <input class="redio-input" type="radio" id="chk{{i}}" [checked]="dt.isShow==1" (change)="changeRef(i);">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+</div>
+</div>

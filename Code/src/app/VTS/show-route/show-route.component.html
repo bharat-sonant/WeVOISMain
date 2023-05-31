@@ -1,0 +1,145 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!------------Desktop Navbar Start------------->
+
+
+<section class="header">
+    <div class="row no-gutters">
+        <div class="main-headers hide-on-ipad no-gutters-iner"
+            >
+            Show Route
+        </div>
+        <div class="col-md-7 col-xl-8 ipad-pl-25">
+            <select class="caret-select ipad-ipt-1 select-class" id="ddlZone"
+                (change)="changeZoneSelection($event.target.value)">
+                <option value="0">
+                    --Select Zone--
+                </option>
+                <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+                    {{zone.zoneName}}
+                </option>
+            </select>
+            <select class="caret-select ipad-ipt-2" id="ddlWard" (change)="changeWardSelection($event.target.value)">
+                <option value="0">
+                    --Select--
+                </option>
+                <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
+                    {{ward.wardName}}
+                </option>
+            </select>
+        </div>
+
+        <div id="houseCount" class="col-md-5 col-xl-4 text-right total-house">
+            <div class="fix-home">
+                <div class="float-second fix-home-iner"
+                    >
+                    <span class="house"> 
+                    <input type="checkbox" id="chkNGGJ" (change)="setNGGJ();">    
+                    </span><br>
+                    <h6 class="routes-heading">NNGJ Routes</h6>
+                </div>
+                <div class="float-third main-setting">
+                    <button class="btn-accordion" data-toggle="collapse" data-parent="#accordion" href="#collapsetwo"
+                        aria-expanded="true" aria-controls="collapsetwo"> <i class="fas fa-cog"></i>
+                        <h6 class="routes-heading">Settings</h6>
+                    </button>
+
+                </div>
+            </div>
+            <div class="panel-group panel-outer" id="accordion" role="tablist" aria-multiselectable="true"
+                >
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingtwo">
+                        <h4 class="panel-title">
+                        </h4>
+                    </div>
+                    <div class="addclass" id="popup2">
+                    <div id="collapsetwo" class="panel-collapse collapse in" role="tabpanel"
+                        aria-labelledby="headingtwo">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 text-left">
+                                    <div class="setting-box text-left-iner">
+                                        <button class="setting-box-btn" (click)="getNextPrevious('pre');" class="btn-primary"
+                                            >
+                                            << </button>
+                                                <input id="txtStrokeWeight" type="text"
+                                                    (keyup)="getCurrentStrokeWeight($event);" autocomplete="off"
+                                                    class="date-input data-input2"
+                                                    
+                                                    value="4" />
+                                                <button class="setting-box-btn" (click)="getNextPrevious('next');" class="btn-primary"
+                                                   >
+                                                    >>
+                                                </button>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="display1" onclick="show()">
+                                                            <i class="bi bi-chevron-down"></i>
+                                                        </div>
+                                                    </div>
+                                                  </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="col-md-12 main-headers ipad-desk-hide">
+        ROUTE ANALYSIS
+      </div> -->
+    </div>
+</section>
+<!------------Desktop Navbar End------------->
+
+<div #gmap class="map-div" id="divMap"></div>
+<div class="display" id="popup">
+<div id="divDriverDetail" class="driver-helper-box hide-on-mob">
+    <div class="col-md-12 driver-helper-box-iner">
+        <label id="lblSelectedRoute" style="display:none;"></label>
+        <div class="dth">
+            <div class="table-bg">
+                <div class="tableFixHead">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-left text-left-heading" scope="col">
+                                    <b>Routes</b>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let dt of routeList, let i=index">
+                                <td class="text-left">
+                                    <input type="radio" id="chkRoute{{i}}" (change)="getRouteSelect(dt.routeKey,0);"
+                                        [checked]="dt.isShow==1">
+                                    {{dt.routeName}} <br />
+                                    <table class="table">
+                                        <tbody>
+                                            <tr class="table-row" *ngFor="let data of dt.route, let j=index" class="{{data.cssClass}}"
+                                                
+                                                (click)="getRouteSelect(dt.routeKey,data.key);">
+                                                <td class="text-left">
+                                                    {{data.startDate}} to {{data.endDate}} 
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="show-all">
+            <input id="chkAll" type="checkbox" (change)="showAllRoute();"> Show All Route
+          </div>
+    </div>
+</div>
+</div>
