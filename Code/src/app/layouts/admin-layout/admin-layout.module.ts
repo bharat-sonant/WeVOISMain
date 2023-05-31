@@ -124,6 +124,25 @@ import { PaymentCollectorComponent } from '../../payment-collector/payment-colle
 import { DueAmountReportComponent } from '../../reports/due-amount-report/due-amount-report.component';
 import { CollectedAmountReportComponent } from '../../reports/collected-amount-report/collected-amount-report.component';
 import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verified-report/survey-verified-report.component';
+import { PaymentViaChequeComponent } from '../../reports/payment-via-cheque/payment-via-cheque.component';
+
+// Jaipur-Greater
+
+import { GarbageCaptureAnalysisComponent } from '../../VTS/garbage-capture-analysis/garbage-capture-analysis.component';
+import { VtsReportComponent } from '../../VTS/vts-report/vts-report.component';
+import { VtsMonthlyReportComponent } from '../../VTS/vts-monthly-report/vts-monthly-report.component';
+import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
+import { CreateRoutesComponent } from '../../VTS/create-routes/create-routes.component';
+import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-route-excel.component';
+import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
+import { VtsAnalysisComponent } from '../../VTS/vts-analysis/vts-analysis.component';
+import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summary.component';
+import { FieldExecutiveTrackingComponent } from '../../VTS/field-executive-tracking/field-executive-tracking.component';
+import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
+import { FieldExecutiveAttendanceComponent } from '../../VTS/field-executive-attendance/field-executive-attendance.component';
+import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-daily-work-report.component';
+
+
 
 
 @NgModule({
@@ -136,6 +155,24 @@ import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verifie
     ToastrModule.forRoot()
   ],
   declarations: [
+    // VTS
+
+    GarbageCaptureAnalysisComponent,
+    VtsReportComponent,
+    VtsMonthlyReportComponent,
+    VtsRouteComponent,
+    CreateRoutesComponent,
+    UploadRouteExcelComponent,
+    BvgRoutesComponent,
+    VtsAnalysisComponent,
+    PenaltySummaryComponent,
+    FieldExecutiveTrackingComponent,
+    ShowRouteComponent,
+    FieldExecutiveAttendanceComponent,
+    FeDailyWorkReportComponent,
+
+
+
     IndexComponent,
     PortalAccessComponent,
     DashboardComponent,
@@ -253,7 +290,8 @@ import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verifie
     PaymentCollectorComponent,
     DueAmountReportComponent,
     CollectedAmountReportComponent,
-    SurveyVerifiedReportComponent
+    SurveyVerifiedReportComponent,
+    PaymentViaChequeComponent
   ]
 })
 

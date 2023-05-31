@@ -117,6 +117,25 @@ import { PaymentCollectorComponent } from '../../payment-collector/payment-colle
 import { DueAmountReportComponent } from '../../reports/due-amount-report/due-amount-report.component';
 import { CollectedAmountReportComponent } from '../../reports/collected-amount-report/collected-amount-report.component';
 import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verified-report/survey-verified-report.component';
+import { PaymentViaChequeComponent } from '../../reports/payment-via-cheque/payment-via-cheque.component';
+
+
+
+// Jaipur-Greater
+
+import { GarbageCaptureAnalysisComponent } from '../../VTS/garbage-capture-analysis/garbage-capture-analysis.component';
+import { VtsReportComponent } from '../../VTS/vts-report/vts-report.component';
+import { VtsMonthlyReportComponent } from '../../VTS/vts-monthly-report/vts-monthly-report.component';
+import { VtsRouteComponent } from '../../VTS/vts-route/vts-route.component';
+import { CreateRoutesComponent } from '../../VTS/create-routes/create-routes.component';
+import { UploadRouteExcelComponent } from '../../VTS/upload-route-excel/upload-route-excel.component';
+import { BvgRoutesComponent } from '../../VTS/bvg-routes/bvg-routes.component';
+import { VtsAnalysisComponent } from '../../VTS/vts-analysis/vts-analysis.component';
+import { PenaltySummaryComponent } from '../../VTS/penalty-summary/penalty-summary.component';
+import { FieldExecutiveTrackingComponent } from '../../VTS/field-executive-tracking/field-executive-tracking.component';
+import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
+import { FieldExecutiveAttendanceComponent } from '../../VTS/field-executive-attendance/field-executive-attendance.component';
+import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-daily-work-report.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
@@ -354,6 +373,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'sikar/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'sikar/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'sikar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -577,6 +597,22 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-greater/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-greater/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-greater/:id/payment-via-cheque', component: PaymentViaChequeComponent },
+
+    
+    { path: 'jaipur-greater/vts-report', component: VtsReportComponent },
+    { path: 'jaipur-greater/vts-monthly-report', component: VtsMonthlyReportComponent },    
+    { path: 'jaipur-greater/vts-route', component: VtsRouteComponent },
+    { path: 'jaipur-greater/create-routes', component: CreateRoutesComponent },
+    { path: 'jaipur-greater/upload-route-excel', component: UploadRouteExcelComponent },
+    { path: 'jaipur-greater/bvg-routes', component: BvgRoutesComponent },
+    { path: 'jaipur-greater/vts-analysis', component: VtsAnalysisComponent },
+    { path: 'jaipur-greater/penalty-summary', component: PenaltySummaryComponent },
+    { path: 'jaipur-greater/field-executive-tracking', component: FieldExecutiveTrackingComponent },
+    { path: 'jaipur-greater/show-route', component: ShowRouteComponent },
+    { path: 'jaipur-greater/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
+    { path: 'jaipur-greater/fe-daily-work-report', component: FeDailyWorkReportComponent },
+    { path: 'jaipur-greater/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
 
 
     //reengus
@@ -803,6 +839,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'reengus/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'reengus/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'reengus/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -1026,6 +1063,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'shahpura/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'shahpura/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'shahpura/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1249,6 +1287,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'test/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'test/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'test/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
 
@@ -1475,6 +1514,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-office/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-office/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-office/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //kishangarh
@@ -1699,6 +1739,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'kishangarh/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'kishangarh/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'kishangarh/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //Nawai
@@ -1923,6 +1964,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'niwai/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'niwai/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'niwai/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
@@ -2146,6 +2188,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaisalmer/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaisalmer/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaisalmer/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //Salasar
@@ -2370,6 +2413,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'salasar/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'salasar/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'salasar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //Behror
@@ -2594,6 +2638,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'behror/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'behror/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'behror/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -2816,6 +2861,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -3038,6 +3084,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-jhotwara/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-jhotwara/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-jhotwara/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //jaipur-jagatpura
@@ -3261,6 +3308,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-jagatpura/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-jagatpura/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-jagatpura/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3483,6 +3531,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-malviyanagar/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-malviyanagar/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-malviyanagar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
@@ -3705,6 +3754,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-mansarovar/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-mansarovar/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-mansarovar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //jaipur-murlipura
@@ -3928,6 +3978,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-murlipura/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-murlipura/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-murlipura/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //jaipur-sanganer
@@ -4151,6 +4202,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-sanganer/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-sanganer/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-sanganer/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4373,6 +4425,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-vidhyadhar/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-vidhyadhar/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-vidhyadhar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //Bhiwadi
@@ -4596,6 +4649,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'bhiwadi/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'bhiwadi/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'bhiwadi/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //Chhapar
@@ -4819,6 +4873,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'chhapar/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'chhapar/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'chhapar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //Churu
@@ -5042,6 +5097,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'churu/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'churu/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'churu/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5265,6 +5321,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'wevois-other/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'wevois-other/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'wevois-other/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
     //gwalior
@@ -5489,6 +5546,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'gwalior/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'gwalior/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'gwalior/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
 
@@ -5713,6 +5771,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'tonk/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'tonk/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'tonk/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -5935,6 +5994,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'ratangarh/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'ratangarh/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'ratangarh/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -6157,6 +6217,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'nokha/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'nokha/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'nokha/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6379,6 +6440,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'losal/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'losal/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'losal/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 
 
@@ -6603,6 +6665,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jaipur-test/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jaipur-test/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jaipur-test/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     
 
@@ -6827,6 +6890,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'mnz-test/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'mnz-test/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'mnz-test/:id/payment-via-cheque', component: PaymentViaChequeComponent },
+
 
 
     
@@ -7051,6 +7116,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'mpz-test/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'mpz-test/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'mpz-test/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
     
 
@@ -7276,5 +7342,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/due-amount-report', component: DueAmountReportComponent },
     { path: 'jammu-survey/:id/collected-amount-report', component: CollectedAmountReportComponent },
     { path: 'jammu-survey/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
+    { path: 'jammu-survey/:id/payment-via-cheque', component: PaymentViaChequeComponent },
 
 ]; 
