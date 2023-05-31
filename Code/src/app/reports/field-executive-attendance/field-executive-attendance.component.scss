@@ -1,0 +1,181 @@
+.header{
+    height:64px ; width: 100%; 
+    background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+    color:#fff;  
+    font-size: 16px;  
+    font-weight: bold;
+    text-transform: uppercase;
+    padding-top: 15px;
+  }
+  
+  
+  .custom-date-input{   
+  height: 42px;
+  }
+  .caret-select{margin-top: 0px!important; margin-left:10px!important;
+    border-radius: 5px;
+    padding:10px; border:none!important;  width: 97%;}
+  
+    .btn-hvr{
+      
+      cursor: pointer;
+      width: 50px;
+      height: 43px;
+      background: #888!important;
+  }
+  .btn-hvr:hover{
+      background: #979797!important;
+  }
+  
+  .inactive{
+    background-color: #fcb2c2;
+  }
+  
+  .active{
+    background-color: rgb(255, 255, 255);
+  }
+  
+  .completed{
+    background-color:#9ff39f;
+  }
+  
+  .stopedWork{
+    
+    background-color: red;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    float: left;
+  }
+  
+    
+  
+    
+  /**************************Table Start***************************/
+  
+  .rowWidth{
+    width: 155px!important;
+    text-align: left;
+  }
+  .rowWidthTime{
+    width: 100px!important;
+    text-align: left;
+  }
+  .table-bg{
+    background-color: #fff;
+    border-radius: 0.25rem;
+     box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+     border-radius: 5px;
+  }
+  .tableFixHead {
+    overflow-y: scroll;
+    height:88vh;
+    position: relative;
+    border-radius: 5px;
+  }
+  .tableFixHead thead {
+    background-color: #f1f1f1;
+  }
+  .tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f1f1f1;
+    width: 200px;
+    z-index: 11;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  thead th{
+    padding: 5px 7px!important;
+    font-size:14px;
+    color: rgb(56, 56, 56);
+    font-weight: bold;  
+  }
+  .thFixed{
+  position: sticky;
+  left: 0px;
+  width: 100px;
+  z-index: 1;
+  background-color:#fff;
+  color: rgb(0, 0, 0);
+  }
+  .thFixed1{
+  position: sticky;
+  left:77px;
+  width: 200px;
+  z-index: 1;
+  background-color: #fff;
+  color: rgb(0, 0, 0);
+  }
+  .thFixed2{
+  position: sticky;
+  left: 173px;
+  width: 100px;
+  z-index: 1;
+  background-color: #fff;
+  color: rgb(0, 0, 0);
+  }
+  .thFixed3{
+  position: sticky;
+  left: 244px;
+  width: 100px;
+  z-index: 1;
+  background-color:#fff;
+  color: rgb(0, 0, 0);
+  } 
+  table td{
+    padding: 5px 12px !important;
+    font-size:12px;
+    width: 200px!important;   
+  }
+  .tdBorder{
+    border-right: 1px solid #dee2e6!important;
+  }
+  
+  // .tableFixHead::-webkit-scrollbar{
+  //   display: none; 
+  //  }
+   
+  // .tableFixHeadDetail::-webkit-scrollbar{
+  //   display: none; 
+  //  }
+  
+  /**************************Table End***************************/
+  
+  /************** Total box start **************/
+  .tracking-bg{
+  background: #0ba118;
+  width: 300px;
+  box-shadow: 0 0.175rem 0.75rem rgba(0, 0, 0, 0.158);
+  border-radius: 8px;
+  position: fixed;
+  right: 15px;
+  top: 7px;
+  }
+  .tracking-bg .main-info{
+  text-align: center;
+  width: 100%;
+  padding: 8px;
+  }
+  .tracking-bg .main-info:hover{
+  background: #f96332;
+  transition: 0.5s;
+  }
+  
+  .tracking-bg  .main-info h1{
+  text-align: center;
+  font-size: 18px;
+  line-height: 30px;
+  font-weight: 500;
+  color: #fff;
+  margin: 0px!important;
+  }
+  
+  .tracking-bg .main-info p{
+  font-size: 11px;
+  color: #fff;
+  margin: 0px!important;
+  }
+  /************** Total box end **************/
