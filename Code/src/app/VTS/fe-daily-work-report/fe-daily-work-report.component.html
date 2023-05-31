@@ -1,0 +1,95 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<!----Desktop Navbar Start----->
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-4 col-lg-4 col-xl-3 pl-18 ipad-pl-40">
+            <div style="margin-top: -15px;">
+                <button class="btn btn-primary ipad-btn" style="margin-left: 20px!important;"
+                    (click)="setDate('','previous');">
+                    << </button>
+                        <input id="txtDate" class="date-input" type="date"
+                            (change)="setDate($event.target.value,'current')">
+                        <button class="btn btn-primary ipad-btn" style="margin-left: 0px!important;"
+                            (click)="setDate('','next');">
+                            >>
+                        </button>
+            </div>
+        </div>
+        <div class="col-md-5 col-lg-5 col-xl-6 main-headers">
+            Daily Work Report
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
+
+        </div>
+    </div>
+</section>
+<!----Desktop Navbar End----->
+
+
+<div class="main-content">
+    <div class="row main-row">
+        <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
+            <div class="card" style="margin-top:-6px;  height: 90vh!important">
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table id="tblPenalty" class="table table-line">
+                                        <thead>
+                                            <th class="br-1 td-1" style="border:none!important;">Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Duty On</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Duty Off</th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Images</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                First Images</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Last Images</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Halt</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                KM Running</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of dailyWorkListShow; let i=index">
+                                                <td class="td-1" style="border-right:1px solid #dee2e6">
+                                                    {{data.name}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.dutyOn}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.dutyOff}} </td>
+                                                <td class="text-right br-1">
+                                                    {{data.images}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.firstImage}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.lastImage}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.halt}}</td>
+                                                <td class="text-left br-1">
+                                                    {{data.km}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
