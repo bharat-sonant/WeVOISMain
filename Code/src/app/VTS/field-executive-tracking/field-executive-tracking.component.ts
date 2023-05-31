@@ -2,9 +2,9 @@
 
 import { Component, ViewChild } from "@angular/core";
 //services
-import { CommonService } from "../services/common/common.service";
-import { MapService } from "../services/map/map.service";
-import { FirebaseService } from "../firebase.service";
+import { CommonService } from "../../services/common/common.service";
+import { MapService } from "../../services/map/map.service";
+import { FirebaseService } from "../../firebase.service";
 
 @Component({
   selector: 'app-field-executive-tracking',
