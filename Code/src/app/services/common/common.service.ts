@@ -245,6 +245,12 @@ export class CommonService {
     else if (cityName == "jammu-survey") {
       latLng.push({ lat: 32.7346044, lng: 74.8570259 });
     }
+    else if (cityName == "khandela") {
+      latLng.push({ lat: 27.6041575, lng: 75.4998704 });
+    }
+    else if (cityName == "watteye-office") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
     return latLng;
   }
 
