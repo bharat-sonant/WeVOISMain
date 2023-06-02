@@ -418,6 +418,30 @@ export class FirebaseService {
       databaseName = "dtdjammu-survey";
       databaseURL = "https://dtdjammu-survey.firebaseio.com";
     }
+    else if (city == 'khandela') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdkhandela.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdkhandela";
+      databaseURL = "https://dtdkhandela.firebaseio.com";
+    }
+    else if (city == 'watteye-office') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdwatteye-office.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdwatteye-office";
+      databaseURL = "https://dtdwatteye-office.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),
