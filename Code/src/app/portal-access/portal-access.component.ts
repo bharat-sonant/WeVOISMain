@@ -85,6 +85,15 @@ export class PortalAccessComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "jammu-survey") {
         $("#jammuSurveyBox").show();
         isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "jammu-survey") {
+        $("#jammuSurveyBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "khandela") {
+        $("#khandelaBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "watteye-office") {
+        $("#watteyeofficeBox").show();
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         $("#jaipurBox").show();
       }
