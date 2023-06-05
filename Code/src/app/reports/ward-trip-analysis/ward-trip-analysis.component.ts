@@ -237,7 +237,11 @@ export class WardTripAnalysisComponent implements OnInit {
 
   getTripData(index: any) {
     this.selectedTrip = index;
-    for (let i = 1; i <= Number(this.tripData.tripCount); i++) {
+    let tripCountForWard = this.tripData.tripCount;
+    if (this.tripData.tripCount > 4) {
+      tripCountForWard = 4;
+    }
+    for (let i = 1; i <= tripCountForWard; i++) {
       let element = <HTMLDivElement>document.getElementById("tripDiv" + i);
       let className = element.className;
       $('#tripDiv' + i).removeClass(className);
