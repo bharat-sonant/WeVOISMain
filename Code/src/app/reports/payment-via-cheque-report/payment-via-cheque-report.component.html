@@ -1,0 +1,147 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
+            Payment Via Cheque Report            
+            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: right;width: 180px;"><i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="updateReportJSON();"></i><br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span> </div>
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-12" style="padding-left: 0px;padding-right:7px;">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-5 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlZone" (change)="getFilter()">
+                                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                                            {{zone.zoneName}}
+                                        </option>
+                                    </select>
+                                    <select class="filter-select filter-input" id="ddlCollector" (change)="getFilter()">
+                                        <option value="0">
+                                            --Select Collector--
+                                        </option>
+                                        <option *ngFor="let data of collectorList" value={{data.collectorId}}>
+                                            {{data.name}}
+                                        </option>
+                                    </select>
+                                    <input id="txtChequeNo" type="text" class="filter-input" placeholder="Cheque Number" (keyup)="getFilter()" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 text-center" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-right p-r ml-20" style="padding-right: 20px!important;">
+                                    <i class="fa-solid fa-file-export"
+                                        style="cursor:pointer; color:green;  font-size: 24px; "
+                                        (click)="exportToExcel();"></i><br />
+                                    <span style="font-size: 10px;"> Export to Excel </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Sr. No.</th>
+                                                <th class="text-left br-1" style="border:none!important;">
+                                                    Collected Date
+                                                </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Card Number</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Ward No
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Cheque Number
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Cheque Date
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Transaction ID
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Transaction Date
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Bank Name
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Name
+                                            </th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Amount
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Collected By
+                                            </th>
+                                            <th class="text-center br-1" style="border:none!important;">
+                                                Cheque Image
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of chequeFilterList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{i+1}}
+                                                </td>                                                
+                                                <td class="text-left br-1">
+                                                    {{data.collectionDate}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.cardNo}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.zone}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.chequeNo}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.chequeDate}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.transactionId}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.transactionDateFormat}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.bankName}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.name}}
+                                                </td>
+                                                <td class="text-right br-1">
+                                                    {{data.amount}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.collectedByName}}
+                                                </td>
+                                                <td class="text-center br-1">
+                                                    <i class="fa-regular fa-image" style="font-size: 18px;"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
