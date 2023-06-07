@@ -126,6 +126,7 @@ import { CollectedAmountReportComponent } from '../../reports/collected-amount-r
 import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verified-report/survey-verified-report.component';
 import { PaymentViaChequeComponent } from '../../reports/payment-via-cheque/payment-via-cheque.component';
 import { PaymentViaChequeReportComponent } from '../../reports/payment-via-cheque-report/payment-via-cheque-report.component';
+import { CardTransectionDetailComponent } from '../../reports/card-transection-detail/card-transection-detail.component';
 
 // Jaipur-Greater
 
@@ -293,7 +294,8 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     CollectedAmountReportComponent,
     SurveyVerifiedReportComponent,
     PaymentViaChequeComponent,
-    PaymentViaChequeReportComponent
+    PaymentViaChequeReportComponent,
+    CardTransectionDetailComponent
   ]
 })
 
