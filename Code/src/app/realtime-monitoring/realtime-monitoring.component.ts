@@ -2101,21 +2101,22 @@ export class RealtimeMonitoringComponent implements OnInit {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let empId = keyArray[i];
-          let isOn=true;
+
           for (let j = 1; j < 10; j++) {
             let taskData = data[empId]["task" + j];
             if (taskData == undefined) { break; };
+            let isOn = true;
             let task = taskData["in-out"];
-            let inOutList = Object.values(task);            
-            for(let k=inOutList.length-1;k>=0;k--){
-              if(inOutList[k]=="Out"){
-                isOn=false;
-                k==-1;
+            let inOutList = Object.values(task);
+            for (let k = inOutList.length - 1; k >= 0; k--) {
+              if (inOutList[k] == "Out") {
+                isOn = false;
+                k == -1;
               }
             }
-          }
-          if(isOn==true){
-            counts++;
+            if (isOn == true) {
+              counts++;
+            }
           }
         }
         this.workerDetails.peopleAtWork = counts.toString();
