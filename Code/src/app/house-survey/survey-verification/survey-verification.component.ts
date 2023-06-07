@@ -488,7 +488,6 @@ export class SurveyVerificationComponent {
         }
         catch { }
       }
-
     });
   }
 
@@ -803,7 +802,6 @@ export class SurveyVerificationComponent {
         this.houseVerifiedCardList.push({ cardNo: cardNo,isVirtual:"",entityType:"", isExistInVerified: isExistInVerified, isExistInHouses: isExistInHouses, verifiedLineNo: verifiedLineNo, houseLineNo: houseLineNo, latLng: latLng, color: 'red', mapLineNo: mapLineNo });
       }
     }
-
     this.updateNotInZone(0);
   }
 
