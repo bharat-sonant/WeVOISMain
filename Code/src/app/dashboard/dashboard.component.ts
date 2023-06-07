@@ -52,7 +52,7 @@ export class DashboardComponent implements OnInit {
     this.setDefault();
   }
 
-  setDefault() {    
+  setDefault() {
     this.drawWorkProgress();
     this.getWardForLineWeitage();
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -124,11 +124,34 @@ export class DashboardComponent implements OnInit {
   }
 
   getpeopleAtWork() {
-    let peopleAtWork = this.db.object('RealTimeDetails/peopleOnWork').valueChanges().subscribe(
-      data => {
-        this.instancesList.push({ instances: peopleAtWork });
-        this.dashboardData.peopleAtWork = data.toString();
-      });
+    let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate;
+    let dutyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      dutyInstance.unsubscribe();
+      if (data != null) {
+        let counts=0;
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let empId = keyArray[i];
+          let isOn=true;
+          for (let j = 1; j < 10; j++) {
+            let taskData = data[empId]["task" + j];
+            if (taskData == undefined) { break; };
+            let task = taskData["in-out"];
+            let inOutList = Object.values(task);            
+            for(let k=inOutList.length-1;k>=0;k--){
+              if(inOutList[k]=="Out"){
+                isOn=false;
+                k==-1;
+              }
+            }
+          }
+          if(isOn==true){
+            counts++;
+          }
+        }
+        this.dashboardData.peopleAtWork = counts;
+      }
+    });
   }
 
   getAssignedWardList() {
@@ -150,7 +173,7 @@ export class DashboardComponent implements OnInit {
           }
         }
         if (this.cityName != "wevois-others") {
-        this.setWorkNotStartedforWards();
+          this.setWorkNotStartedforWards();
         }
         workDetails.unsubscribe();
       });
@@ -185,7 +208,7 @@ export class DashboardComponent implements OnInit {
             this.commonService.getWardLine(zoneNo, this.todayDate).then((lineData: any) => {
               let wardLines = JSON.parse(lineData);
               zoneDetail.totalLines = Number(wardLines["totalLines"]);
-              zoneDetail.lineWeightageList=[];
+              zoneDetail.lineWeightageList = [];
               this.getWardWorkProgressData(zoneDetail);
             });
           }
@@ -206,7 +229,7 @@ export class DashboardComponent implements OnInit {
       lineStatusData => {
         let completedCount = 0;
         this.instancesList.push({ instances: lineStatusInstance });
-      
+
         if (lineStatusData != null) {
           let keyArray = Object.keys(lineStatusData);
           if (keyArray.length > 0) {
