@@ -2089,16 +2089,37 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (isAnimation == true) {
       marker.setAnimation(google.maps.Animation.BOUNCE);
     }
-
     this.allMarkers.push({ marker });
   }
 
   getpeopleAtWork() {
-    let peopleAtWork = this.db.object("RealTimeDetails/peopleOnWork").valueChanges().subscribe((data) => {
+    let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
+    let dutyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      this.instancesList.push({ instances: dutyInstance });
       if (data != null) {
-        this.workerDetails.peopleAtWork = data.toString();
+        let counts=0;
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let empId = keyArray[i];
+          let isOn=true;
+          for (let j = 1; j < 10; j++) {
+            let taskData = data[empId]["task" + j];
+            if (taskData == undefined) { break; };
+            let task = taskData["in-out"];
+            let inOutList = Object.values(task);            
+            for(let k=inOutList.length-1;k>=0;k--){
+              if(inOutList[k]=="Out"){
+                isOn=false;
+                k==-1;
+              }
+            }
+          }
+          if(isOn==true){
+            counts++;
+          }
+        }
+        this.workerDetails.peopleAtWork = counts.toString();
       }
-      this.instancesList.push({ instances: peopleAtWork });
     });
   }
 
