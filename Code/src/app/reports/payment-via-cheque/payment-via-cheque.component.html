@@ -103,7 +103,7 @@
                                                     {{data.chequeNo}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.chequeDate}}
+                                                    {{data.checkDateFormat}}
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.bankName}}
@@ -118,10 +118,11 @@
                                                     {{data.collectedByName}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.collectedDate}}
+                                                    {{data.collectedDateFormat}}
                                                 </td>
                                                 <td class="text-center br-1">
-                                                    <i class="fa-regular fa-image" style="font-size: 18px;"></i>
+                                                    <a href="{{data.imageUrl}}" target="_blank">
+                                                    <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i></a>
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <i class="fa-solid fa-file-circle-exclamation"

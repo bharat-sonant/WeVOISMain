@@ -93,11 +93,25 @@ export class PaymentViaChequeComponent implements OnInit {
             for (let k = 0; k < keyArray.length; k++) {
               let key = keyArray[k];
               if (dateData[key]["status"] == "Pending") {
-                this.chequeList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: dateData[key]["chequeDate"], name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"] });
+                let timeStemp = new Date(collectedDate).getTime();
+                let month = collectedDate.split("-")[1];
+                let year = collectedDate.split("-")[0];
+                let day = collectedDate.split("-")[2];
+                let monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                let collectedDateFormat = day + " " + monthName + " " + year;
+                let checkDate = dateData[key]["chequeDate"];
+                month = checkDate.split("-")[1];
+                year = checkDate.split("-")[0];
+                day = checkDate.split("-")[2];
+                monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                let checkDateFormat = day + " " + monthName + " " + year;
+                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + dateData[key]["chequeDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                this.chequeList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: dateData[key]["chequeDate"],checkDateFormat:checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp,imageUrl:imageUrl });
               }
             }
           }
         }
+        this.chequeList = this.chequeList.sort((a, b) => Number(b.timeStemp) < Number(a.timeStemp) ? 1 : -1);
         this.chequeFilterList = this.chequeList;
         $(this.divLoader).hide();
       } else {
@@ -176,6 +190,7 @@ export class PaymentViaChequeComponent implements OnInit {
       }
 
       const transData = {
+        merchantTransactionId: detail.merchantTransactionId,
         monthYear: detail.monthYear,
         payMethod: "By Cheque",
         paymentCollectionById: detail.collectedBy,
@@ -197,13 +212,31 @@ export class PaymentViaChequeComponent implements OnInit {
           transkey = keyArray.length + 1;
         }
         this.db.object(dbPath + "/" + transkey).update(transData);
-        let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
-        this.chequeList = this.chequeList.filter((e, i) => i !== index);
-        this.getFilter();
-        this.clearAll();
-        this.closeModel();
-        this.commonService.setAlertMessage("success", "Transaction detail added successfully !!!");
-        $(this.divLoader).hide();
+
+        dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/" + detail.collectedDate;
+        let collectorInstance = this.db.object(dbPath).valueChanges().subscribe(colectorData => {
+          collectorInstance.unsubscribe();
+          let collectorKey = 1;
+          if (colectorData != null) {
+            let keyArray = Object.keys(colectorData);
+            collectorKey = keyArray.length + 1;
+          }
+          const collectorData = {
+            cardNo: cardNo,
+            merchantTransactionId: detail.merchantTransactionId,
+            payMethod: "By Cheque",
+            transactionAmount: detail.amount,
+            retrievalReferenceNo: transactionId
+          }
+          this.db.object(dbPath + "/" + collectorKey).update(collectorData);
+          let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+          this.chequeList = this.chequeList.filter((e, i) => i !== index);
+          this.getFilter();
+          this.clearAll();
+          this.closeModel();
+          this.commonService.setAlertMessage("success", "Transaction detail added successfully !!!");
+          $(this.divLoader).hide();
+        });
       });
     }
   }
@@ -262,7 +295,7 @@ export class PaymentViaChequeComponent implements OnInit {
         htmlString += list[i]["chequeNo"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += list[i]["chequeDate"];
+        htmlString += list[i]["checkDateFormat"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += list[i]["bankName"];
@@ -277,7 +310,7 @@ export class PaymentViaChequeComponent implements OnInit {
         htmlString += list[i]["collectedByName"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += list[i]["collectedDate"];
+        htmlString += list[i]["collectedDateFormat"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
