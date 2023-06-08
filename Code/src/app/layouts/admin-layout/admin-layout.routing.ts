@@ -120,6 +120,7 @@ import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verifie
 import { PaymentViaChequeComponent } from '../../reports/payment-via-cheque/payment-via-cheque.component';
 import { PaymentViaChequeReportComponent } from '../../reports/payment-via-cheque-report/payment-via-cheque-report.component';
 import { CardTransectionDetailComponent } from '../../reports/card-transection-detail/card-transection-detail.component';
+import { CardUpdatedHistoryComponent } from '../../reports/card-updated-history/card-updated-history.component';
 
 
 
@@ -378,6 +379,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'sikar/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'sikar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'sikar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -603,6 +605,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
     { path: 'jaipur-greater/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-greater/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
+    { path: 'jaipur-greater/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -848,6 +851,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'reengus/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'reengus/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'reengus/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -1074,6 +1078,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'shahpura/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'shahpura/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'shahpura/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1300,6 +1305,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'test/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'test/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'test/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
 
@@ -1529,6 +1535,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-office/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-office/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-office/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //kishangarh
@@ -1756,6 +1763,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'kishangarh/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'kishangarh/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'kishangarh/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //Nawai
@@ -1983,6 +1991,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'niwai/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'niwai/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'niwai/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
@@ -2209,6 +2218,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaisalmer/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaisalmer/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaisalmer/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //Salasar
@@ -2436,6 +2446,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'salasar/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'salasar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'salasar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //Behror
@@ -2663,6 +2674,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'behror/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'behror/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'behror/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -2888,6 +2900,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -3113,6 +3126,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-jhotwara/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-jhotwara/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-jhotwara/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //jaipur-jagatpura
@@ -3339,6 +3353,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-jagatpura/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-jagatpura/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-jagatpura/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3564,6 +3579,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-malviyanagar/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-malviyanagar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-malviyanagar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
@@ -3789,6 +3805,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-mansarovar/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-mansarovar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-mansarovar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //jaipur-murlipura
@@ -4015,6 +4032,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-murlipura/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-murlipura/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-murlipura/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //jaipur-sanganer
@@ -4241,6 +4259,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-sanganer/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-sanganer/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-sanganer/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4466,6 +4485,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-vidhyadhar/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-vidhyadhar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-vidhyadhar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //Bhiwadi
@@ -4692,6 +4712,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'bhiwadi/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'bhiwadi/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'bhiwadi/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //Chhapar
@@ -4918,6 +4939,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'chhapar/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'chhapar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'chhapar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //Churu
@@ -5144,6 +5166,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'churu/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'churu/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'churu/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5370,6 +5393,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'wevois-other/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'wevois-other/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'wevois-other/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
     //gwalior
@@ -5597,6 +5621,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'gwalior/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'gwalior/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'gwalior/:id/card-updated-history', component: CardUpdatedHistoryComponent },
+
 
 
 
@@ -5824,6 +5850,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'tonk/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'tonk/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'tonk/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -6049,6 +6076,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'ratangarh/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'ratangarh/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'ratangarh/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -6274,6 +6302,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'nokha/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'nokha/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'nokha/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6499,6 +6528,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'losal/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'losal/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'losal/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
 
@@ -6726,6 +6756,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jaipur-test/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-test/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-test/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     
 
@@ -6953,6 +6984,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'mnz-test/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'mnz-test/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'mnz-test/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 
 
@@ -7181,6 +7213,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'mpz-test/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'mpz-test/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'mpz-test/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     
 
@@ -7409,6 +7442,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'jammu-survey/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jammu-survey/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jammu-survey/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     
     //Khandela
@@ -7635,6 +7669,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'khandela/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'khandela/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'khandela/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'khandela/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
     
     //watteye-office
@@ -7861,5 +7896,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'watteye-office/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: 'watteye-office/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'watteye-office/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'watteye-office/:id/card-updated-history', component: CardUpdatedHistoryComponent },
 
 ]; 
