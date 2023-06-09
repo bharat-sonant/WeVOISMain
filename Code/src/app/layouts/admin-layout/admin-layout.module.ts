@@ -128,6 +128,7 @@ import { PaymentViaChequeComponent } from '../../reports/payment-via-cheque/paym
 import { PaymentViaChequeReportComponent } from '../../reports/payment-via-cheque-report/payment-via-cheque-report.component';
 import { CardTransectionDetailComponent } from '../../reports/card-transection-detail/card-transection-detail.component';
 import { CardUpdatedHistoryComponent } from '../../reports/card-updated-history/card-updated-history.component';
+import { DailyPaymentReportComponent } from '../../reports/daily-payment-report/daily-payment-report.component';
 
 // Jaipur-Greater
 
@@ -297,7 +298,8 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     PaymentViaChequeComponent,
     PaymentViaChequeReportComponent,
     CardTransectionDetailComponent,
-    CardUpdatedHistoryComponent
+    CardUpdatedHistoryComponent,
+    DailyPaymentReportComponent
   ]
 })
 
