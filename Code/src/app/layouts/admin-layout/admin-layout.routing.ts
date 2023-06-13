@@ -122,6 +122,8 @@ import { PaymentViaChequeReportComponent } from '../../reports/payment-via-chequ
 import { CardTransectionDetailComponent } from '../../reports/card-transection-detail/card-transection-detail.component';
 import { CardUpdatedHistoryComponent } from '../../reports/card-updated-history/card-updated-history.component';
 import { DailyPaymentReportComponent } from '../../reports/daily-payment-report/daily-payment-report.component';
+import { MonthlyPaymentReportComponent } from '../../reports/monthly-payment-report/monthly-payment-report.component';
+import { EntityPaymentReportComponent } from '../../reports/entity-payment-report/entity-payment-report.component';
 
 
 
@@ -382,6 +384,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'sikar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'sikar/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'sikar/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'sikar/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -609,6 +613,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
     { path: 'jaipur-greater/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-greater/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-greater/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-greater/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -856,6 +862,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'reengus/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'reengus/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'reengus/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'reengus/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //Shahpura
@@ -1085,6 +1093,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'shahpura/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'shahpura/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'shahpura/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'shahpura/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1313,6 +1323,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'test/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'test/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'test/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'test/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
 
@@ -1544,6 +1556,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-office/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-office/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-office/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-office/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //kishangarh
@@ -1773,6 +1787,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'kishangarh/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'kishangarh/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'kishangarh/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'kishangarh/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //Nawai
@@ -2002,6 +2018,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'niwai/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'niwai/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'niwai/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'niwai/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
@@ -2230,6 +2248,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaisalmer/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaisalmer/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaisalmer/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaisalmer/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //Salasar
@@ -2459,6 +2479,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'salasar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'salasar/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'salasar/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'salasar/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //Behror
@@ -2688,6 +2710,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'behror/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'behror/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'behror/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'behror/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -2915,6 +2939,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -3142,6 +3168,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-jhotwara/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-jhotwara/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-jhotwara/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-jhotwara/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //jaipur-jagatpura
@@ -3370,6 +3398,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-jagatpura/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-jagatpura/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-jagatpura/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-jagatpura/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3597,6 +3627,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-malviyanagar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-malviyanagar/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-malviyanagar/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-malviyanagar/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
@@ -3824,6 +3856,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-mansarovar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-mansarovar/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-mansarovar/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-mansarovar/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //jaipur-murlipura
@@ -4052,6 +4086,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-murlipura/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-murlipura/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-murlipura/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-murlipura/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //jaipur-sanganer
@@ -4280,6 +4316,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-sanganer/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-sanganer/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-sanganer/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-sanganer/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4507,6 +4545,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-vidhyadhar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-vidhyadhar/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-vidhyadhar/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-vidhyadhar/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //Bhiwadi
@@ -4735,6 +4775,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'bhiwadi/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'bhiwadi/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'bhiwadi/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'bhiwadi/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //Chhapar
@@ -4963,6 +5005,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'chhapar/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'chhapar/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'chhapar/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'chhapar/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //Churu
@@ -5191,6 +5235,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'churu/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'churu/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'churu/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'churu/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5419,6 +5465,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'wevois-other/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'wevois-other/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'wevois-other/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'wevois-other/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
     //gwalior
@@ -5648,6 +5696,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'gwalior/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'gwalior/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'gwalior/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'gwalior/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
 
@@ -5878,6 +5928,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'tonk/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'tonk/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'tonk/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'tonk/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -6105,6 +6157,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'ratangarh/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'ratangarh/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'ratangarh/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'ratangarh/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -6332,6 +6386,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'nokha/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'nokha/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'nokha/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'nokha/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6559,6 +6615,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'losal/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'losal/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'losal/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'losal/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
 
@@ -6788,6 +6846,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jaipur-test/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jaipur-test/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jaipur-test/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jaipur-test/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     
 
@@ -7017,6 +7077,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'mnz-test/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'mnz-test/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'mnz-test/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'mnz-test/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 
 
@@ -7247,6 +7309,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'mpz-test/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'mpz-test/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'mpz-test/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'mpz-test/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     
 
@@ -7477,6 +7541,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'jammu-survey/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'jammu-survey/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'jammu-survey/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'jammu-survey/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     
     //Khandela
@@ -7705,6 +7771,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'khandela/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'khandela/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'khandela/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'khandela/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'khandela/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
     
     //watteye-office
@@ -7933,5 +8001,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'watteye-office/:id/card-transaction-detail', component: CardTransectionDetailComponent },
     { path: 'watteye-office/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: 'watteye-office/:id/daily-payment-report', component: DailyPaymentReportComponent },
+    { path: 'watteye-office/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },
+    { path: 'watteye-office/:id/entity-payment-report', component: EntityPaymentReportComponent },
 
 ]; 
