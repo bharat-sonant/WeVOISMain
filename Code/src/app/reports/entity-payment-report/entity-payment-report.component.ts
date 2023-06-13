@@ -274,11 +274,12 @@ export class EntityPaymentReportComponent implements OnInit {
     let entityId = $(this.ddlEntity).val();
     if (entityId == "0") {
       this.columnType = "Entity Type";
-      this.filterList = this.entityPaymentList;
+      this.filterList = this.commonService.transformNumeric(this.entityPaymentList,"name");
     }
     else {
       this.columnType = "Ward";
-      this.filterList = this.wardPaymentList.filter(item => item.entityTypeId == entityId);
+      let list=this.wardPaymentList.filter(item => item.entityTypeId == entityId);
+      this.filterList = this.commonService.transformNumeric(list,"name");
     }
     $(this.divLoader).hide();
   }

@@ -242,11 +242,11 @@ export class MonthlyPaymentReportComponent implements OnInit {
     let type = $(this.ddlType).val();
     if (type == "Ward No") {
       this.columnType = "Ward";
-      this.filterList = this.wardPaymentList;
+      this.filterList =this.commonService.transformNumeric(this.wardPaymentList,"name");
     }
     else {
-      this.columnType = "Collector Name"
-      this.filterList = this.collectorPaymentList;
+      this.columnType = "Collector Name";
+      this.filterList = this.commonService.transformNumeric(this.collectorPaymentList,"name");
     }
     $(this.divLoader).hide();
   }
