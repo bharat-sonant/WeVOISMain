@@ -798,7 +798,7 @@ textarea:focus-visible {
 }
 
 .table-one {
-    height: 85vh;
+    height: calc(87vh - 80px);
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -1887,4 +1887,35 @@ input {
 .main-span span {
     font-weight: bolder;
     font-size: 17px;
+}
+
+
+
+.spanLoader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    text-align: center;
+    font-weight: bold;
+    color: #000000;
+    font-size: 24px;
+    transform: translate(-50%, -50%);
+}
+
+.loaderClassMain {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #000000;
+    opacity: 0.8;
+    margin-bottom: 15px;
+}
+
+.imgLoader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }

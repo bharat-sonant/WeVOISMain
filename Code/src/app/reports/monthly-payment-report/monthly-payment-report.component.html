@@ -1,12 +1,32 @@
+<div id="divLoaderMain" class="loaderClassMain">
+    <span class="spanLoader" id="spLoader">
+        <img src="../../../assets/img/loading.gif" width="50"><br /><span
+            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting payment detail<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
+</div>
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-5" style="padding-left: 10px;">
-            <button class="btn-hvr" (click)="setDate('','previous');"><span class="arrow-span">
-                    << </span></button>
-            <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5 arrow-input" type="date"
-                (change)="setDate($event.target.value,'current')" style="width:134px" />
-            <button class="btn-hvr" (click)="setDate('','next');"><span class="arrow-span">>></span></button>
-
+            <select class="caret-select" id="ddlYear" (change)="getPaymentYearMonth()" style="width: 100px;"
+                [(ngModel)]="selectedYear">
+                <option value="0">Year</option>
+                <option value={{yer.year}} *ngFor="let yer of yearList"
+                    ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+            </select>
+            <select class="caret-select" id="ddlMonth" (change)="getPaymentYearMonth()" style="width: 100px;">
+                <option value="0">Month</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
             <select class="caret-select" id="ddlType" (change)="getFilter()" style="width: 180px;">
                 <option value="Ward No">
                     Ward
@@ -16,13 +36,19 @@
                 </option>
             </select>
         </div>
-        <div class="col-md-7" style="margin-top: 10px;">Daily Payment Report
+        <div class="col-md-7" style="margin-top: 10px;">Monthly Payment Report
+            
+            <div style="float: right; margin-right: 20px;margin-top: -18px; text-align: center;width: 140px;"><i
+                class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
+                (click)="updatePaymentData();"></i><br /><span style="font-size: 8px; font-weight: none;">Last
+                Update {{lastUpdateDate}}</span> </div>
             <div style="float: right; margin-right: 20px;margin-top: -18px; text-align: center;"><i
                     class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
                     (click)="exportToExcel();"></i><span style="font-size: 8px;"><br /> Export to Excel</span></div>
             <div style="float: right; margin-right: 20px;margin-top: -20px; text-align: center;"><span
                     style="font-size: 20px;">{{totalAmount}}</span><br /><span
                     style="font-size: 8px; font-weight: none;">Toatl Amount</span> </div>
+
         </div>
     </div>
 </section>

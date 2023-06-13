@@ -5,25 +5,31 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
 
 @Component({
-  selector: 'app-daily-payment-report',
-  templateUrl: './daily-payment-report.component.html',
-  styleUrls: ['./daily-payment-report.component.scss']
+  selector: 'app-monthly-payment-report',
+  templateUrl: './monthly-payment-report.component.html',
+  styleUrls: ['./monthly-payment-report.component.scss']
 })
-export class DailyPaymentReportComponent implements OnInit {
+export class MonthlyPaymentReportComponent implements OnInit {
+
+  yearList: any[];
   zoneList: any[];
   collectorList: any[];
   cityName: any;
   db: any;
   todayDate: any;
-  selectedDate: any;
+  selectedMonth: any;
+  selectedYear: any;
   list: any[] = [];
   wardPaymentList: any[];
   collectorPaymentList: any[];
   filterList: any[];
   cardWardList: any[];
+  lastUpdateDate: any;
   ddlType = "#ddlType";
-  txtDate = "#txtDate";
+  ddlYear = "#ddlYear";
+  ddlMonth = "#ddlMonth";
   divLoader = "#divLoader";
+  divLoaderMain = "#divLoaderMain";
   public columnType: any;
   public totalAmount: any;
 
@@ -40,18 +46,29 @@ export class DailyPaymentReportComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.setMapHeight();
     this.todayDate = this.commonService.setTodayDate();
-    $(this.txtDate).val(this.todayDate);
-    this.selectedDate = this.todayDate;
     this.totalAmount = "0.00";
     this.columnType = "Ward";
+    this.lastUpdateDate = "---";
+    this.getYear();
+    this.selectedMonth = this.todayDate.split('-')[1];
+    $(this.ddlMonth).val(this.todayDate.split('-')[1]);
     this.getZones();
-    this.getPaymentCollector();
-    this.getCardWardMapping();
+  }
+
+  getYear() {
+    this.yearList = [];
+    let year = parseInt(this.todayDate.split('-')[0]);
+    for (let i = year - 2; i <= year; i++) {
+      this.yearList.push({ year: i });
+    }
+    this.selectedYear = this.todayDate.split('-')[0];  
+    setTimeout(() => {
+      this.getPaymentYearMonth();      
+    }, 200);  
   }
 
   getCardWardMapping() {
     this.cardWardList = [];
-    $(this.divLoader).show();
     let dbPath = "CardWardMapping";
     let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       cardWardInstance.unsubscribe();
@@ -62,43 +79,51 @@ export class DailyPaymentReportComponent implements OnInit {
           this.cardWardList.push({ cardNo: cardNo, ward: data[cardNo]["ward"] });
         }
       }
-      this.getPayment();
-    })
+      this.setPaymentListJSON(0);
+    });
   }
 
-  getPayment() {
+  getPaymentYearMonth() {
     this.wardPaymentList = [];
     this.collectorPaymentList = [];
     this.filterList = [];
     this.totalAmount = "0.00";
-    if (this.collectorList.length > 0) {
-      this.list = [];
-      this.setcollectorWiseList(0);
+    if ($(this.ddlYear).val() == "0") {
+      this.commonService.setAlertMessage("error", "Please select year !!!");
+      return;
     }
-  }
-
-  setDate(filterVal: any, type: string) {
-    if (type == "current") {
-      this.selectedDate = filterVal;
-    } else if (type == "next") {
-      this.selectedDate = this.commonService.getNextDate($(this.txtDate).val(), 1);
-    } else if (type == "previous") {
-      this.selectedDate = this.commonService.getPreviousDate($(this.txtDate).val(), 1);
+    if ($(this.ddlMonth).val() == "0") {
+      this.commonService.setAlertMessage("error", "Please select month !!!");
+      return;
     }
-    $(this.txtDate).val(this.selectedDate);
     $(this.divLoader).show();
-    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FDailyPayment%2F" + this.selectedDate + ".json?alt=media";
+    this.selectedYear = $(this.ddlYear).val();
+    this.selectedMonth = $(this.ddlMonth).val();
+    let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FMonthlyPayment%2F" + this.selectedYear + "%2F" + monthName + ".json?alt=media";
     let cardJSONInstance = this.httpService.get(path).subscribe(cardJsonData => {
       cardJSONInstance.unsubscribe();
       if (cardJsonData != null) {
+        this.lastUpdateDate = cardJsonData["lastUpdateDate"];
         this.wardPaymentList = JSON.parse(JSON.stringify(cardJsonData["wards"]));
         this.collectorPaymentList = JSON.parse(JSON.stringify(cardJsonData["collectors"]));
         this.getTotalAmount();
         this.getFilter();
       }
     }, error => {
-      this.getPayment();
+      $(this.divLoader).hide();
+      this.commonService.setAlertMessage("error", "Sorry! No data found !!!");
     });
+  }
+
+  updatePaymentData() {
+    $(this.divLoaderMain).show();
+      this.list = [];
+      this.wardPaymentList = [];
+      this.collectorPaymentList = [];
+      this.filterList = [];
+      this.totalAmount = "0.00";
+      this.getPaymentCollector();
   }
 
   getTotalAmount() {
@@ -109,68 +134,76 @@ export class DailyPaymentReportComponent implements OnInit {
     this.totalAmount = amount.toFixed(2);
   }
 
-  setcollectorWiseList(index: any) {
+  setPaymentListJSON(index: any) {
     if (index == this.collectorList.length) {
+      this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
       this.getTotalAmount();
       this.getFilter();
       if (this.wardPaymentList.length > 0) {
-        if (this.selectedDate != this.todayDate) {
-          let filePath = "/PaymentCollectionHistory/DailyPayment/";
-          const obj = { "wards": this.wardPaymentList, "collectors": this.collectorPaymentList };
-          let fileName = this.selectedDate + ".json";
-          this.commonService.saveJsonFile(obj, fileName, filePath);
-        }
+        let filePath = "/PaymentCollectionHistory/MonthlyPayment/" + this.selectedYear + "/";
+        this.wardPaymentList=this.commonService.transformString(this.wardPaymentList,"name");
+        const obj = { "wards": this.wardPaymentList, "collectors": this.collectorPaymentList, "lastUpdateDate": this.lastUpdateDate };
+        let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+        let fileName = monthName + ".json";
+        this.commonService.saveJsonFile(obj, fileName, filePath);
       }
+      $(this.divLoaderMain).hide();
+      this.commonService.setAlertMessage("success", "Payment detail updated successfully !!!");
     }
     else {
       let collectorId = this.collectorList[index]["collectorId"];
-      let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + collectorId + "/" + this.selectedDate;
+      let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + collectorId;
       let patmentInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         patmentInstance.unsubscribe();
         if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let key = keyArray[i];
-              if (data[key]["cardNo"] != null) {
-                let cardNo = data[key]["cardNo"];
-                let amount = data[key]["transactionAmount"];
-                let wardNo = "";
-                let cardDetail = this.cardWardList.find(item => item.cardNo == cardNo);
-                if (cardDetail != undefined) {
-                  wardNo = cardDetail.ward;
+          let dateArray = Object.keys(data);
+          if (dateArray.length > 0) {
+            for (let i = 0; i < dateArray.length; i++) {
+              let date = dateArray[i];
+              if (this.selectedYear == date.split('-')[0] && this.selectedMonth == date.split('-')[1]) {
+                let dateData = data[date];
+                let keyArray = Object.keys(dateData);
+                for (let j = 0; j < keyArray.length; j++) {
+                  let key = keyArray[j];
+                  if (dateData[key]["cardNo"] != null) {
+                    let cardNo = dateData[key]["cardNo"];
+                    let amount = dateData[key]["transactionAmount"];
+                    let wardNo = "";
+                    let cardDetail = this.cardWardList.find(item => item.cardNo == cardNo);
+                    if (cardDetail != undefined) {
+                      wardNo = cardDetail.ward;
+                    }
+                    let name = "";
+                    let nameDetail = this.collectorList.find(item => item.collectorId == collectorId);
+                    if (nameDetail != undefined) {
+                      name = nameDetail.name;
+                    }
+                    this.list.push({ cardNo: cardNo, wardNo: wardNo, name: name, amount: amount });
+                    let wardDetail = this.wardPaymentList.find(item => item.name == wardNo);
+                    if (wardDetail == undefined) {
+                      this.wardPaymentList.push({ name: wardNo, amount: Number(amount) });
+                    }
+                    else {
+                      wardDetail.amount += Number(amount);
+                    }
+                    let collectorDetail = this.collectorPaymentList.find(item => item.collectorId == collectorId);
+                    if (collectorDetail == undefined) {
+                      this.collectorPaymentList.push({ collectorId: collectorId, name: name, amount: Number(amount) });
+                    }
+                    else {
+                      collectorDetail.amount += Number(amount);
+                    }
+                  }
                 }
-                let name = "";
-                let nameDetail = this.collectorList.find(item => item.collectorId == collectorId);
-                if (nameDetail != undefined) {
-                  name = nameDetail.name;
-                }
-                this.list.push({ cardNo: cardNo, wardNo: wardNo, name: name, amount: amount });
-                let wardDetail = this.wardPaymentList.find(item => item.name == wardNo);
-                if (wardDetail == undefined) {
-                  this.wardPaymentList.push({ name: wardNo, amount: Number(amount) });
-                }
-                else {
-                  wardDetail.amount += Number(amount);
-                }
-                let collectorDetail = this.collectorPaymentList.find(item => item.collectorId == collectorId);
-                if (collectorDetail == undefined) {
-                  this.collectorPaymentList.push({ collectorId: collectorId, name: name, amount: Number(amount) });
-                }
-                else {
-                  collectorDetail.amount += Number(amount);
-                }
-
               }
             }
-
           }
           index++;
-          this.setcollectorWiseList(index);
+          this.setPaymentListJSON(index);
         }
         else {
           index++;
-          this.setcollectorWiseList(index);
+          this.setPaymentListJSON(index);
         }
       });
     }
@@ -193,6 +226,7 @@ export class DailyPaymentReportComponent implements OnInit {
           }
         }
       }
+      this.getCardWardMapping();
     });
   }
 
@@ -228,7 +262,7 @@ export class DailyPaymentReportComponent implements OnInit {
       if (type == "Ward No") {
         htmlString += "Ward";
       }
-      else{
+      else {
         htmlString += "Collector Name";
       }
       htmlString += "</td>";
@@ -247,7 +281,8 @@ export class DailyPaymentReportComponent implements OnInit {
         htmlString += "</tr>";
       }
       htmlString += "</table>";
-      let fileName = "Daily-Payment-Report" + this.todayDate + ".xlsx";
+      let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+      let fileName = "Monthly-Payment-Report-" + this.selectedYear + "-" + monthName + ".xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
