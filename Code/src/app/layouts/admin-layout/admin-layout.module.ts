@@ -131,6 +131,7 @@ import { CardUpdatedHistoryComponent } from '../../reports/card-updated-history/
 import { DailyPaymentReportComponent } from '../../reports/daily-payment-report/daily-payment-report.component';
 import { MonthlyPaymentReportComponent } from '../../reports/monthly-payment-report/monthly-payment-report.component';
 import { EntityPaymentReportComponent } from '../../reports/entity-payment-report/entity-payment-report.component';
+import { WardRoadDetailComponent } from '../../house-survey/ward-road-detail/ward-road-detail.component';
 
 // Jaipur-Greater
 
@@ -303,7 +304,8 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     CardUpdatedHistoryComponent,
     DailyPaymentReportComponent,
     MonthlyPaymentReportComponent,
-    EntityPaymentReportComponent
+    EntityPaymentReportComponent,
+    WardRoadDetailComponent
   ]
 })
 
