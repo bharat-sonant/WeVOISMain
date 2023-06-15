@@ -114,6 +114,7 @@
     padding-top: 10px;
 }
 
+
 .card {
     border: 0;
     border-radius: 0.1875rem;
@@ -135,9 +136,9 @@
      font-family: Verdana, Geneva, Tahoma, sans-serif;
   }
 
-  .caret-select{margin-top: -10px!important; margin-left:10px!important; margin-right: 10px;
-    border-radius: 5px;
-    padding:10px; border:none!important;  width: 97%; height: 42px;}
+//   .caret-select{margin-top: -10px!important; margin-left:10px!important; margin-right: 10px;
+//     border-radius: 5px;
+//     padding:10px; border:none!important;  width: 97%; height: 42px;}
 .btn-hvr{
     cursor: pointer;
     width: 50px;
@@ -1918,4 +1919,22 @@ input {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+.header-page-2{
+    color: #fff;
+    height: 57px;
+    padding-top: 18px !important;
+    align-items: center;
+    text-transform: capitalize;
+    letter-spacing: 0px;
+    font-size: 20px !important;
+    font-weight: normal !important;
+    text-align: center;
+    
+}
+@media screen and (max-width:1235px) {
+    .header-page-2{
+        margin-left: -18px !important;
+    }
+    
 }

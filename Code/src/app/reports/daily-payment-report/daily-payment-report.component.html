@@ -1,11 +1,13 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-5" style="padding-left: 10px;">
+            <div class=" left-menu">
             <button class="btn-hvr" (click)="setDate('','previous');"><span class="arrow-span">
-                    << </span></button>
+                    <i class="fa-solid fa-angles-left"></i> </span></button>
             <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5 arrow-input" type="date"
-                (change)="setDate($event.target.value,'current')" style="width:134px" />
-            <button class="btn-hvr" (click)="setDate('','next');"><span class="arrow-span">>></span></button>
+                (change)="setDate($event.target.value,'current')" style="width:134px;     margin: 0px 3px 0px 3px;" />
+            <button class="btn-hvr" (click)="setDate('','next');"><span class="arrow-span"><i
+                        class="fa-solid fa-angles-right"></i></span></button>
 
             <select class="caret-select" id="ddlType" (change)="getFilter()" style="width: 180px;">
                 <option value="Ward No">
@@ -15,14 +17,21 @@
                     Payment Collector
                 </option>
             </select>
+            </div>
         </div>
-        <div class="col-md-7" style="margin-top: 10px;">Daily Payment Report
-            <div style="float: right; margin-right: 20px;margin-top: -18px; text-align: center;"><i
-                    class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                    (click)="exportToExcel();"></i><span style="font-size: 8px;"><br /> Export to Excel</span></div>
-            <div style="float: right; margin-right: 20px;margin-top: -20px; text-align: center;"><span
-                    style="font-size: 20px;">{{totalAmount}}</span><br /><span
-                    style="font-size: 8px; font-weight: none;">Toatl Amount</span> </div>
+        <div class="col-md-7">
+            <div class="pageName ">
+                <span class="header-page-2">Daily Payment Report</span>
+                <div style="float: right; margin-right: 20px; text-align: center;"><i class="fa-solid fa-file-export"
+                        style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
+                        (click)="exportToExcel();"></i>
+                    <p style="font-size: 8px;"> Export to Excel</p>
+                </div>
+                <div style="float: right; margin-right: 20px; text-align: center;">
+                    <h3 style="font-size: 20px; margin-bottom: 0px !important;">{{totalAmount}}</h3>
+                    <p style="font-size: 8px; font-weight: none;">Toatl Amount</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>

@@ -27,7 +27,7 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
-            <select class="caret-select" id="ddlType" (change)="getFilter()" style="width: 180px;">
+            <select class="caret-select form-contact" id="ddlType" (change)="getFilter()" style="width: 180px;">
                 <option value="Ward No">
                     Ward
                 </option>
@@ -36,18 +36,20 @@
                 </option>
             </select>
         </div>
-        <div class="col-md-7" style="margin-top: 10px;">Monthly Payment Report
-            
-            <div style="float: right; margin-right: 20px;margin-top: -18px; text-align: center;width: 140px;"><i
+        <div class="col-md-7" >
+            <div class="pageName ">
+                <span class="header-page-2">Monthly Payment Report</span>
+            <div style="float: right; margin-right: 20px; text-align: center;width: 140px;"><i
                 class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                (click)="updatePaymentData();"></i><br /><span style="font-size: 8px; font-weight: none;">Last
-                Update {{lastUpdateDate}}</span> </div>
-            <div style="float: right; margin-right: 20px;margin-top: -18px; text-align: center;"><i
+                (click)="updatePaymentData();"></i><p style="font-size: 8px; font-weight: none;">Last
+                Update {{lastUpdateDate}}</p> </div>
+            <div style="float: right; margin-right: 20px; text-align: center;"><i
                     class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                    (click)="exportToExcel();"></i><span style="font-size: 8px;"><br /> Export to Excel</span></div>
-            <div style="float: right; margin-right: 20px;margin-top: -20px; text-align: center;"><span
-                    style="font-size: 20px;">{{totalAmount}}</span><br /><span
-                    style="font-size: 8px; font-weight: none;">Toatl Amount</span> </div>
+                    (click)="exportToExcel();"></i><p style="font-size: 8px;"> Export to Excel</p></div>
+            <div style="float: right; margin-right: 20px; text-align: center;"><h3
+                    style="font-size: 20px; margin-bottom: 0px !important;">{{totalAmount}}</h3><p
+                    style="font-size: 8px; font-weight: none;">Toatl Amount</p> </div>
+            </div>
 
         </div>
     </div>

@@ -4,7 +4,7 @@
             style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting payment detail<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
 </div>
 <section class="header">
-    <div class="row no-gutters">
+    <div class="row no-gutters ">
         <div class="col-md-5" style="padding-left: 10px;">
             <select class="caret-select" id="ddlYear" (change)="getPaymentYearMonth()" style="width: 100px;" [(ngModel)]="selectedYear">
                 <option value="0">Year</option>
@@ -26,24 +26,28 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
-            <select class="caret-select" id="ddlEntity" (change)="getFilter()" style="width: 180px;">
+            <select class="caret-select form-contact" id="ddlEntity" (change)="getFilter()" style="width: 180px;">
                 <option value="0">
                     --All Entities--
                 </option>
                 <option value={{data.entityTypeId}} *ngFor="let data of entityTypeList">{{data.entityType}}</option>
             </select>
         </div>
-        <div class="col-md-7" style="margin-top: 10px;">Entity Wise Payment Report
-            <div style="float: right; margin-right: 20px;margin-top: -18px; text-align: center;width: 140px;"><i
+        <div class="col-md-7" >
+            <div class="pageName ">
+                <span class="header-page-2">Entity Wise Payment Report</span>
+           
+            <div style="float: right; margin-right: 20px; text-align: center;width: 140px;"><i
                 class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                (click)="updatePaymentData();"></i><br /><span style="font-size: 8px; font-weight: none;">Last
-                Update {{lastUpdateDate}}</span> </div>
-            <div style="float: right; margin-right: 20px;margin-top: -18px; text-align: center;"><i
+                (click)="updatePaymentData();"></i><p style="font-size: 8px; font-weight: none;">Last
+                Update {{lastUpdateDate}}</p> </div>
+            <div style="float: right; margin-right: 20px;text-align: center;"><i
                     class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                    (click)="exportToExcel();"></i><span style="font-size: 8px;"><br /> Export to Excel</span></div>
-            <div style="float: right; margin-right: 20px;margin-top: -20px; text-align: center;"><span
-                    style="font-size: 20px;">{{totalAmount}}</span><br /><span
-                    style="font-size: 8px; font-weight: none;">Toatl Amount</span> </div>
+                    (click)="exportToExcel();"></i><p style="font-size: 8px;"> Export to Excel</p></div>
+            <div style="float: right; margin-right: 20px; text-align: center;"><h3 class="mb-0"
+                    style="font-size: 20px;">{{totalAmount}}</h3><p
+                    style="font-size: 8px; font-weight: none;">Toatl Amount</p> </div>
+                </div>   
         </div>
     </div>
 </section>
