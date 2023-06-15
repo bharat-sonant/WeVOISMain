@@ -1,1 +1,84 @@
-<p>ward-road-detail works!</p>
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-3 main-headers" style="text-align: left;">
+            <select class="filter-select filter-input" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+                [(ngModel)]="selectedZone">
+                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                    {{zone.zoneName}}
+                </option>
+            </select>
+        </div>
+        <div class="col-md-6 main-headers" style="text-align: center;">
+            Ward Line Road Detail
+        </div>
+        <div class="col-md-3 main-headers" style="text-align: center;">
+
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">            
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Sno.</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Line No</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Road Type</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Road Width
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of roadList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{i+1}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.lineNo}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.roadType}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.roadWidth}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px; height: 88vh!important;">
+                <div #gmap class="gmap" id="divMap"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="divCardDetail" class="row"
+    style="right:30px;width:200px; display: block; height:auto;border: 1px solid gray;border-radius: 5px; padding: 10px; z-index: 999; position: absolute; top:65px; background-color: #fff;">
+    <div class="col-md-12">
+        <div>Road Image</div>
+        <div style="width:100%; min-height:180px;">
+            <a href="{{imageURL}}" target="_blank">
+                <img [src]="imageURL" style="width:100%;height:auto; display: block;" /></a>
+        </div>
+    </div>
+</div>
