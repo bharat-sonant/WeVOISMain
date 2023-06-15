@@ -12,13 +12,16 @@
         <div class="col-md-5" style="padding-left: 10px;margin-top: -8px;">
             <div class="col-md-12 col-sm-12 searh-pad">
                 <button class="btn-hvr" (click)="setDate('previous');"><span style="color: #fff;">
-          << </span></button>
-                <input id="txtDate" name="selectedDate" [(ngModel)]="selectedDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate('current')" style="height: 45px; width: 150px; margin-right: 8px;" />
+                        << </span></button>
+                <input id="txtDate" name="selectedDate" [(ngModel)]="selectedDate"
+                    class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate('current')"
+                    style="height: 45px; width: 150px; margin-right: 8px;" />
                 <button class="btn-hvr" (click)="setDate('next');"><span style="color: #fff;">>></span></button>
 
             </div>
         </div>
-        <div class="col-md-3 text-center" style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
+        <div class="col-md-3 text-center"
+            style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
             Ward Trip Images
         </div>
         <div class="col-md-3 text-right" style="margin-top: -16px;position: absolute;right: 92px;">
@@ -54,16 +57,22 @@
                                                 </td>
                                                 <td class="table-data-3">
                                                     <div style="width: 100%; display: flex;">
-                                                        <a href="{{dtImage.imageUrl}}" target="_blank" *ngFor="let dtImage of dt.tripImageList;" style="color:#000">
-                                                            <div style="width:200px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
-                                                                <img [src]="dtImage.imageUrl" style="max-width: 180px;max-height: 180px;" />
-                                                                <br/>
-                                                                <div style="text-align: left;">
-                                                                    <b>D : </b> {{dtImage.driver}}<br/>
-                                                                    <b>V : </b> {{dtImage.vehicle}}<br/>
-                                                                    <b>T : </b> {{dtImage.time}}</div>
+                                                        <div *ngFor="let dtImage of dt.tripImageList;"
+                                                            style="width:200px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                                                            <a href="{{dtImage.imageUrl}}" target="_blank">
+                                                                <img [src]="dtImage.imageUrl"
+                                                                    style="max-width: 180px;max-height: 180px;" /></a>
+                                                            <br />
+                                                            <div class="row" style="text-align: left;">
+                                                                <div class="col-md-12" style="text-align: left;"><b>Driver : </b>
+                                                                    {{dtImage.driver}}</div>
+                                                                <div class="col-md-12" ><b>Vehicle : </b>
+                                                                    {{dtImage.vehicle}}</div>
+                                                                <div class="col-md-12"><b>Trip Time : </b>
+                                                                    {{dtImage.time}}</div>
                                                             </div>
-                                                        </a>
+                                                        </div>
+
                                                     </div>
                                                 </td>
                                             </tr>
