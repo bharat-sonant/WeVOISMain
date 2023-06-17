@@ -42,7 +42,7 @@
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of roadList; let i=index">
+                                            <tr id="tr{{i}}" *ngFor="let data of roadList; let i=index" style="cursor: pointer;" (click)="getWardRoadDetail(data.lineNo,i)">
                                                 <td class="text-left br-1">
                                                     {{i+1}}
                                                 </td>
