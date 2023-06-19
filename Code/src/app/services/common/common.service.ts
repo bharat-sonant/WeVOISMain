@@ -1440,6 +1440,27 @@ export class CommonService {
     });
   }
 
+  
+  getWardLineRoadDetail(zoneNo: any, date: any) {
+    return new Promise((resolve) => {
+      let dat1 = new Date(date);
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryJson.json?alt=media";
+      let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+        jsonInstance.unsubscribe();
+        let list = JSON.parse(JSON.stringify(dataDate));
+        let jsonDate = "";
+        jsonDate = list[0].toString().trim();
+        const pathDate = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+          let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+            wardLineInstance.unsubscribe();
+            if (data != null) {
+              resolve(JSON.stringify(data));
+            }
+          });
+      });
+    });
+  }
+
 
   //#endregion
 
