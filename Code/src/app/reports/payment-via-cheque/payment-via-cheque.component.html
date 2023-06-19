@@ -75,6 +75,9 @@
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Amount
                                             </th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Payment Month
+                                            </th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Collected By
                                             </th>
@@ -114,6 +117,9 @@
                                                 <td class="text-right br-1">
                                                     {{data.amount}}
                                                 </td>
+                                                <td class="text-right br-1">
+                                                    {{data.monthYear}}
+                                                </td>
                                                 <td class="text-left br-1">
                                                     {{data.collectedByName}}
                                                 </td>
@@ -127,7 +133,10 @@
                                                 <td class="text-center br-1">
                                                     <i class="fa-solid fa-file-circle-exclamation"
                                                         style="cursor: pointer;font-size: 18px;"
-                                                        (click)="openModel(contentDetail,data.cardNo,data.collectedDate,data.key)"></i>
+                                                        (click)="openModel(contentDetail,data.cardNo,data.collectedDate,data.key,'clear')"></i>
+                                                        <i class="fa-solid fa-ban"
+                                                        style="cursor: pointer;font-size: 18px; color: red; margin-left: 10px;"
+                                                        (click)="openModel(contentDeclinedDetail,data.cardNo,data.collectedDate,data.key,'decilned')"></i> 
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -195,6 +204,41 @@
                 <div style="padding-top: 20px;">
                     <input type="button" class="btn btn-success submit-btn" value="SUBMIT"
                         (click)="updateTransaction();" />&nbsp;
+                    <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #contentDeclinedDetail>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Cheque Declined Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <input id="hddDeclinedCardNo" type="hidden" value="" />
+                <input id="hddDeclinedDate" type="hidden" value="" />
+                <input id="hddDeclinedKey" type="hidden" value="" />                
+                <div style="text-align:left;">
+                    <label>Decliened Date</label>
+                    <input id="txtDeclinedDate" type="date" class="filter-input" style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                </div>
+                <div style="text-align:left;">
+                    <label>Decliened Reason</label>
+                    <input id="txtDeclinedReason" type="text" class="filter-input" style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                </div>
+                <div style="text-align:left; color:green;padding-top: 20px;">
+                    <input id="chkDeclinedConfirm" type="checkbox"/> I have checked and above information is correct.
+                </div>
+                <div style="padding-top: 20px;">
+                    <input type="button" class="btn btn-success submit-btn" value="SUBMIT"
+                        (click)="updateDecliened();" />&nbsp;
                     <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
                 </div>
             </div>

@@ -74,6 +74,10 @@ export class DailyPaymentReportComponent implements OnInit {
     if (this.collectorList.length > 0) {
       this.list = [];
       this.setcollectorWiseList(0);
+    }    
+    else{
+      this.commonService.setAlertMessage("error","No data found  !!!");
+      $(this.divLoader).hide();
     }
   }
 
@@ -120,6 +124,10 @@ export class DailyPaymentReportComponent implements OnInit {
           let fileName = this.selectedDate + ".json";
           this.commonService.saveJsonFile(obj, fileName, filePath);
         }
+      }
+      else{
+        this.commonService.setAlertMessage("error","No data found  !!!");
+        $(this.divLoader).hide();
       }
     }
     else {
@@ -208,18 +216,27 @@ export class DailyPaymentReportComponent implements OnInit {
     let type = $(this.ddlType).val();
     if (type == "Ward No") {
       this.columnType = "Ward";
-      this.filterList =this.commonService.transformNumeric(this.wardPaymentList,"name");
+      this.filterList = this.commonService.transformNumeric(this.wardPaymentList, "name");
     }
     else {
       this.columnType = "Collector Name"
-      this.filterList =this.commonService.transformNumeric(this.collectorPaymentList,"name");
+      this.filterList = this.commonService.transformNumeric(this.collectorPaymentList, "name");
     }
     $(this.divLoader).hide();
   }
 
   exportToExcel() {
     let list = this.filterList;
+    let fileName = "Daily-Payment-Report-" + this.todayDate + ".xlsx";
+    let type = $(this.ddlType).val();
+    if (type == "Ward No") {
+      fileName = "Daily-Payment-Report-Wardwise-" + this.todayDate + ".xlsx";
+    }
+    else {
+      fileName = "Daily-Payment-Report-Collectorwise-" + this.todayDate + ".xlsx";
+    }
     if (list.length > 0) {
+      let totalAmount = 0;
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
@@ -228,7 +245,7 @@ export class DailyPaymentReportComponent implements OnInit {
       if (type == "Ward No") {
         htmlString += "Ward";
       }
-      else{
+      else {
         htmlString += "Collector Name";
       }
       htmlString += "</td>";
@@ -245,9 +262,23 @@ export class DailyPaymentReportComponent implements OnInit {
         htmlString += list[i]["amount"];
         htmlString += "</td>";
         htmlString += "</tr>";
+        totalAmount += Number(list[i]["amount"]);
       }
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      htmlString += "<tr>";
+      htmlString += "<td>Total";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += totalAmount;
+      htmlString += "</td>";
+      htmlString += "</tr>";
       htmlString += "</table>";
-      let fileName = "Daily-Payment-Report" + this.todayDate + ".xlsx";
+
       this.commonService.exportExcel(htmlString, fileName);
     }
   }

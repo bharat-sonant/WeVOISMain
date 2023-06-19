@@ -140,6 +140,7 @@ export class CardUpdatedHistoryComponent implements OnInit {
         $(this.divLoader).hide();
       }
       else {
+        this.commonService.setAlertMessage("error","No data found !!!");
         $(this.divLoader).hide();
       }
     });

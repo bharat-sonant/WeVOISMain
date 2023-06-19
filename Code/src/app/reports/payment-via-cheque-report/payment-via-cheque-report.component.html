@@ -85,6 +85,12 @@
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Amount
                                             </th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Payment Month
+                                            </th>
+                                            <th class="text-center br-1" style="border:none!important;">
+                                                Cheque Status
+                                            </th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Collected By
                                             </th>
@@ -126,6 +132,13 @@
                                                 </td>
                                                 <td class="text-right br-1">
                                                     {{data.amount}}
+                                                </td>
+                                                <td class="text-right br-1">
+                                                    {{data.monthYear}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    <span style="color:green" [hidden]="data.status=='Declined'">{{data.status}}</span>
+                                                    <span style="color:red"  [hidden]="data.status=='Paid'">{{data.status}}</span>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.collectedByName}}

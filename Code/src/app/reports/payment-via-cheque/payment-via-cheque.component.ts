@@ -28,6 +28,12 @@ export class PaymentViaChequeComponent implements OnInit {
   hddKey = "#hddKey";
   txtTransactionId = "#txtTransactionId";
   txtTransactionDate = "#txtTransactionDate";
+  hddDeclinedCardNo = "#hddDeclinedCardNo";
+  hddDeclinedDate = "#hddDeclinedDate";
+  hddDeclinedKey = "#hddDeclinedKey";
+  txtDeclinedDate = "#txtDeclinedDate";
+  txtDeclinedReason = "#txtDeclinedReason";
+
 
 
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
@@ -106,7 +112,7 @@ export class PaymentViaChequeComponent implements OnInit {
                 monthName = this.commonService.getCurrentMonthShortName(Number(month));
                 let checkDateFormat = day + " " + monthName + " " + year;
                 let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + dateData[key]["chequeDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
-                this.chequeList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: dateData[key]["chequeDate"],checkDateFormat:checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp,imageUrl:imageUrl });
+                this.chequeList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: dateData[key]["chequeDate"], checkDateFormat: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl });
               }
             }
           }
@@ -138,7 +144,7 @@ export class PaymentViaChequeComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  openModel(content: any, cardNo: any, date: any, key: any) {
+  openModel(content: any, cardNo: any, date: any, key: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 330;
@@ -147,9 +153,16 @@ export class PaymentViaChequeComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    $(this.hddCardNo).val(cardNo);
-    $(this.hddDate).val(date);
-    $(this.hddKey).val(key);
+    if (type == "clear") {
+      $(this.hddCardNo).val(cardNo);
+      $(this.hddDate).val(date);
+      $(this.hddKey).val(key);
+    }
+    else {
+      $(this.hddDeclinedCardNo).val(cardNo);
+      $(this.hddDeclinedDate).val(date);
+      $(this.hddDeclinedKey).val(key);
+    }
   }
 
 
@@ -241,12 +254,49 @@ export class PaymentViaChequeComponent implements OnInit {
     }
   }
 
+  updateDecliened() {
+    let txtDeclinedReason = $(this.txtDeclinedReason).val();
+    let txtDeclinedDate = $(this.txtDeclinedDate).val();
+    if (txtDeclinedReason == "") {
+      this.commonService.setAlertMessage("error", "Please enter reason !!!");
+      return;
+    }
+    if (txtDeclinedDate == "") {
+      this.commonService.setAlertMessage("error", "Please enter date !!!");
+      return;
+    }
+    if ((<HTMLInputElement>document.getElementById('chkDeclinedConfirm')).checked == false) {
+      this.commonService.setAlertMessage("error", "Confirmation required !!!");
+      return;
+    }
+    $(this.divLoader).show();
+    let cardNo = $(this.hddDeclinedCardNo).val();
+    let date = $(this.hddDeclinedDate).val();
+    let key = $(this.hddDeclinedKey).val();
+    let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
+    this.db.object(dbPath).update({ declinedReason: txtDeclinedReason, transactionDate: txtDeclinedDate, status: "Declined" });
+    let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    this.chequeList = this.chequeList.filter((e, i) => i !== index);
+    this.getFilter();
+    this.clearAll();
+    this.closeModel();
+    this.commonService.setAlertMessage("error", "Decliened data updated successfully !!!");
+    $(this.divLoader).hide();
+
+  }
+
   clearAll() {
     $(this.txtTransactionId).val("");
     $(this.txtTransactionDate).val("");
     $(this.hddCardNo).val("");
     $(this.hddDate).val("");
     $(this.hddKey).val("");
+    
+    $(this.txtDeclinedReason).val("");
+    $(this.txtDeclinedDate).val("");
+    $(this.hddDeclinedCardNo).val("");
+    $(this.hddDeclinedDate).val("");
+    $(this.hddDeclinedKey).val("");
   }
 
   exportToExcel() {

@@ -98,7 +98,13 @@ export class EntityPaymentReportComponent implements OnInit {
           this.cardWardList.push({ cardNo: cardNo, ward: data[cardNo]["ward"], line: data[cardNo]["line"] });
         }
       }
-      this.setPaymentListJSON(0);
+      if (this.collectorList.length > 0) {
+        this.setPaymentListJSON(0);
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Sorry! No data found  !!!");
+        $(this.divLoader).hide();
+      }
     });
   }
 
@@ -259,6 +265,9 @@ export class EntityPaymentReportComponent implements OnInit {
         }
       }
       this.getCardWardMapping();
+    }, error => {
+      this.commonService.setAlertMessage("error", "Sorry! No data found !!!");
+      $(this.divLoaderMain).hide();
     });
   }
 
@@ -274,12 +283,12 @@ export class EntityPaymentReportComponent implements OnInit {
     let entityId = $(this.ddlEntity).val();
     if (entityId == "0") {
       this.columnType = "Entity Type";
-      this.filterList = this.commonService.transformNumeric(this.entityPaymentList,"name");
+      this.filterList = this.commonService.transformNumeric(this.entityPaymentList, "name");
     }
     else {
       this.columnType = "Ward";
-      let list=this.wardPaymentList.filter(item => item.entityTypeId == entityId);
-      this.filterList = this.commonService.transformNumeric(list,"name");
+      let list = this.wardPaymentList.filter(item => item.entityTypeId == entityId);
+      this.filterList = this.commonService.transformNumeric(list, "name");
     }
     $(this.divLoader).hide();
   }
@@ -287,17 +296,34 @@ export class EntityPaymentReportComponent implements OnInit {
   exportToExcel() {
     let list = this.filterList;
     if (list.length > 0) {
+      let totalAmount = 0;
       let htmlString = "";
-      htmlString = "<table>";
-      htmlString += "<tr>";
-      htmlString += "<td>";
+      let Heading = "";
       let entityId = $(this.ddlEntity).val();
       if (entityId == "0") {
-        htmlString += "Entity Type";
+        Heading = "Entity Type";
       }
       else {
-        htmlString += "Ward";
+        Heading += "Wrd";
       }
+      htmlString = "<table>";
+      if (entityId != "0") {
+        let detail = this.entityTypeList.find(item => item.entityTypeId == entityId);
+        if (detail != undefined) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += detail.entityType;
+          htmlString += "</td>";
+          htmlString += "</tr>";
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+      }
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += Heading;
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Amount";
@@ -312,10 +338,30 @@ export class EntityPaymentReportComponent implements OnInit {
         htmlString += list[i]["amount"];
         htmlString += "</td>";
         htmlString += "</tr>";
+        totalAmount += Number(list[i]["amount"]);
       }
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      htmlString += "<tr>";
+      htmlString += "<td>Total";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += totalAmount;
+      htmlString += "</td>";
+      htmlString += "</tr>";
       htmlString += "</table>";
-      let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth)-1);
+      let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
       let fileName = "Entity-Payment-Report-" + this.selectedYear + "-" + monthName + ".xlsx";
+      if (entityId != "0") {
+        fileName = "Entity-Payment-Report-Wardwise-" + this.selectedYear + "-" + monthName + ".xlsx";
+      }
+      else {
+        fileName = "Entity-Payment-Report-Entitywise-" + this.selectedYear + "-" + monthName + ".xlsx";
+      }
       this.commonService.exportExcel(htmlString, fileName);
     }
   }

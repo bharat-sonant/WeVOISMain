@@ -61,10 +61,10 @@ export class MonthlyPaymentReportComponent implements OnInit {
     for (let i = year - 2; i <= year; i++) {
       this.yearList.push({ year: i });
     }
-    this.selectedYear = this.todayDate.split('-')[0];  
+    this.selectedYear = this.todayDate.split('-')[0];
     setTimeout(() => {
-      this.getPaymentYearMonth();      
-    }, 200);  
+      this.getPaymentYearMonth();
+    }, 200);
   }
 
   getCardWardMapping() {
@@ -79,7 +79,13 @@ export class MonthlyPaymentReportComponent implements OnInit {
           this.cardWardList.push({ cardNo: cardNo, ward: data[cardNo]["ward"] });
         }
       }
-      this.setPaymentListJSON(0);
+      if (this.collectorList.length > 0) {
+        this.setPaymentListJSON(0);
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Sorry! No data found  !!!");
+        $(this.divLoader).hide();
+      }
     });
   }
 
@@ -118,12 +124,12 @@ export class MonthlyPaymentReportComponent implements OnInit {
 
   updatePaymentData() {
     $(this.divLoaderMain).show();
-      this.list = [];
-      this.wardPaymentList = [];
-      this.collectorPaymentList = [];
-      this.filterList = [];
-      this.totalAmount = "0.00";
-      this.getPaymentCollector();
+    this.list = [];
+    this.wardPaymentList = [];
+    this.collectorPaymentList = [];
+    this.filterList = [];
+    this.totalAmount = "0.00";
+    this.getPaymentCollector();
   }
 
   getTotalAmount() {
@@ -141,7 +147,7 @@ export class MonthlyPaymentReportComponent implements OnInit {
       this.getFilter();
       if (this.wardPaymentList.length > 0) {
         let filePath = "/PaymentCollectionHistory/MonthlyPayment/" + this.selectedYear + "/";
-        this.wardPaymentList=this.commonService.transformString(this.wardPaymentList,"name");
+        this.wardPaymentList = this.commonService.transformString(this.wardPaymentList, "name");
         const obj = { "wards": this.wardPaymentList, "collectors": this.collectorPaymentList, "lastUpdateDate": this.lastUpdateDate };
         let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
         let fileName = monthName + ".json";
@@ -227,6 +233,9 @@ export class MonthlyPaymentReportComponent implements OnInit {
         }
       }
       this.getCardWardMapping();
+    },error=>{
+      this.commonService.setAlertMessage("error","Sorry! No data found !!!");
+      $(this.divLoaderMain).hide();
     });
   }
 
@@ -242,11 +251,11 @@ export class MonthlyPaymentReportComponent implements OnInit {
     let type = $(this.ddlType).val();
     if (type == "Ward No") {
       this.columnType = "Ward";
-      this.filterList =this.commonService.transformNumeric(this.wardPaymentList,"name");
+      this.filterList = this.commonService.transformNumeric(this.wardPaymentList, "name");
     }
     else {
       this.columnType = "Collector Name";
-      this.filterList = this.commonService.transformNumeric(this.collectorPaymentList,"name");
+      this.filterList = this.commonService.transformNumeric(this.collectorPaymentList, "name");
     }
     $(this.divLoader).hide();
   }
@@ -254,6 +263,7 @@ export class MonthlyPaymentReportComponent implements OnInit {
   exportToExcel() {
     let list = this.filterList;
     if (list.length > 0) {
+      let totalAmount = 0;
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
@@ -279,10 +289,31 @@ export class MonthlyPaymentReportComponent implements OnInit {
         htmlString += list[i]["amount"];
         htmlString += "</td>";
         htmlString += "</tr>";
+        totalAmount += Number(list[i]["amount"]);
       }
+
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      htmlString += "<tr>";
+      htmlString += "<td>Total";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += totalAmount;
+      htmlString += "</td>";
+      htmlString += "</tr>";
       htmlString += "</table>";
       let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
-      let fileName = "Monthly-Payment-Report-" + this.selectedYear + "-" + monthName + ".xlsx";
+      let fileName = "Monthly-Payment-Report-Wardwise-" + this.selectedYear + "-" + monthName + ".xlsx";
+      if (type == "Ward No") {
+        fileName = "Monthly-Payment-Report-Wardwise-" + this.selectedYear + "-" + monthName + ".xlsx";
+      }
+      else {
+        fileName = "Monthly-Payment-Report-Collectorwise-" + this.selectedYear + "-" + monthName + ".xlsx";
+      }
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
