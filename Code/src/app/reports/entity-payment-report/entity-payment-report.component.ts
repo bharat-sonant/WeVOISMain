@@ -283,13 +283,20 @@ export class EntityPaymentReportComponent implements OnInit {
     let entityId = $(this.ddlEntity).val();
     if (entityId == "0") {
       this.columnType = "Entity Type";
-      this.filterList = this.commonService.transformNumeric(this.entityPaymentList, "name");
+      this.filterList = this.entityPaymentList.sort((a, b) =>
+        b.amount > a.amount ? 1 : -1
+      );
     }
     else {
       this.columnType = "Ward";
       let list = this.wardPaymentList.filter(item => item.entityTypeId == entityId);
       this.filterList = this.commonService.transformNumeric(list, "name");
     }
+    let totalAmount = 0;
+    for (let i = 0; i < this.filterList.length; i++) {
+      totalAmount += Number(this.filterList[i]["amount"]);
+    }
+    this.totalAmount = totalAmount.toFixed(2);
     $(this.divLoader).hide();
   }
 
