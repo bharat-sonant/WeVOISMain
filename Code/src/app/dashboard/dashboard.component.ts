@@ -125,8 +125,8 @@ export class DashboardComponent implements OnInit {
 
   getpeopleAtWork() {
     let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate;
-    let dutyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
-      dutyInstance.unsubscribe();
+    let dutyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {      
+      this.instancesList.push({ instances: dutyInstance });
       if (data != null) {
         let counts = 0;
         let keyArray = Object.keys(data);
