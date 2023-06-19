@@ -76,7 +76,7 @@ export class WardRoadDetailComponent {
 
 
   getAllLinesFromJson() {
-    this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+    this.commonService.getWardLineRoadDetail(this.selectedZone, this.toDayDate).then((data: any) => {
       if (this.allMarkers.length > 0) {
         for (let i = 0; i < this.allMarkers.length; i++) {
           this.allMarkers[i]["marker"].setMap(null);
