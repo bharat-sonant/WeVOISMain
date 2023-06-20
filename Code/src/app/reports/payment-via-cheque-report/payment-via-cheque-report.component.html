@@ -138,7 +138,7 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <span style="color:green" [hidden]="data.status=='Declined'">{{data.status}}</span>
-                                                    <span style="color:red"  [hidden]="data.status=='Paid'">{{data.status}}</span>
+                                                    <span style="color:red; cursor: pointer;" (click)="openModel(contentReason,i)"  [hidden]="data.status=='Paid'">{{data.status}}</span>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.collectedByName}}
@@ -159,3 +159,22 @@
         </div>
     </div>
 </div>
+
+
+<ng-template #contentReason>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Cheque Declined Reason</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left;">
+                <div style="text-align:left; ">
+                   <label id="lblReason"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

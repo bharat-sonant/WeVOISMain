@@ -124,7 +124,7 @@ export class PaymentViaChequeReportComponent implements OnInit {
                 monthName = this.commonService.getCurrentMonthShortName(Number(month));
                 checkDateFormat = day + " " + monthName + " " + year;
                 let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + dateData[key]["chequeDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
-                chequeListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: dateData[key]["transactionId"], transactionDate: dateData[key]["transactionDate"],transactionDateFormat:transactionDateFormat, timeStemp: timeStemp,imageUrl:imageUrl,status: dateData[key]["status"]});
+                chequeListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: dateData[key]["transactionId"], transactionDate: dateData[key]["transactionDate"],transactionDateFormat:transactionDateFormat, timeStemp: timeStemp,imageUrl:imageUrl,status: dateData[key]["status"],declinedReason:dateData[key]["declinedReason"]});
               }
             }
           }
@@ -162,6 +162,24 @@ export class PaymentViaChequeReportComponent implements OnInit {
     }
     this.chequeFilterList = list;
     $(this.divLoader).hide();
+  }
+
+  openModel(content: any, index: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 250;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    let reason=this.chequeFilterList[index]["declinedReason"];
+    $('#lblReason').html(reason);
+  }
+
+
+  closeModel() {
+    this.modalService.dismissAll();
   }
 
 
