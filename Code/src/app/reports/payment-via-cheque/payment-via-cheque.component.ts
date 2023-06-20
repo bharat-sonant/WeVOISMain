@@ -275,6 +275,17 @@ export class PaymentViaChequeComponent implements OnInit {
     let key = $(this.hddDeclinedKey).val();
     let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
     this.db.object(dbPath).update({ declinedReason: txtDeclinedReason, transactionDate: txtDeclinedDate, status: "Declined" });
+    let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    if (detail != undefined) {
+      let monthYearList = detail.monthYear.split(",");
+      for (let i = 0; i < monthYearList.length; i++) {
+        let month = monthYearList[i].split('-')[0];
+        let year = monthYearList[i].split('-')[1];
+        let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
+        this.db.object(dbPath).update({ status: "Pending" });
+      }
+    }
+
     let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
     this.chequeList = this.chequeList.filter((e, i) => i !== index);
     this.getFilter();
@@ -291,7 +302,7 @@ export class PaymentViaChequeComponent implements OnInit {
     $(this.hddCardNo).val("");
     $(this.hddDate).val("");
     $(this.hddKey).val("");
-    
+
     $(this.txtDeclinedReason).val("");
     $(this.txtDeclinedDate).val("");
     $(this.hddDeclinedCardNo).val("");
