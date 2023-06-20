@@ -311,7 +311,7 @@ export class EntityPaymentReportComponent implements OnInit {
         Heading = "Entity Type";
       }
       else {
-        Heading += "Wrd";
+        Heading += "Ward";
       }
       htmlString = "<table>";
       if (entityId != "0") {
