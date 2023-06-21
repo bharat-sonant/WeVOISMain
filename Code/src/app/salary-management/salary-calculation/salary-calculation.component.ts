@@ -128,6 +128,7 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getEmployee() {
+    $(this.divLoader).show();
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let employeeInstance = this.httpService.get(path).subscribe(data => {
       employeeInstance.unsubscribe();
@@ -135,11 +136,33 @@ export class SalaryCalculationComponent implements OnInit {
       let list = JSON.parse(jsonData).filter(item => item.empType == 2 && item.status == 1);
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
-          this.employeeList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"] });
-          this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+          let empId = list[i]["empId"];
+          let dbPath = "Employees/" + empId + "/GeneralDetails/salaryType";
+          let salaryTypeInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+            salaryTypeInstance.unsubscribe();
+            let isSalaried = false;
+
+            if (data != null) {
+              if (data == "salaried") {
+                isSalaried = true;
+              }
+            }
+            else {
+              isSalaried = true;
+            }
+
+            if (isSalaried == true) {
+              this.employeeList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"] });
+              this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+            }
+            if (i == list.length - 1) {
+              setTimeout(() => {
+                this.salaryList = this.employeeList;
+                this.getSalary();
+              }, 6000);
+            }
+          });
         }
-        this.salaryList = this.employeeList;
-        this.getSalary();
       }
     });
   }
