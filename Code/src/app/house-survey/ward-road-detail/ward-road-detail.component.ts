@@ -173,7 +173,7 @@ export class WardRoadDetailComponent {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let lineNo = keyArray[i];
-          let imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardRaodLineImages%2F" + this.selectedZone + "%2F" + data[lineNo]["image"] + "?alt=media";
+          let imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardRoadImages%2F" + this.selectedZone + "%2F" + data[lineNo]["image"] + "?alt=media";
           this.roadList.push({ lineNo: lineNo, roadType: data[lineNo]["roadType"], roadWidth: data[lineNo]["roadWidth"], latLng: data[lineNo]["latLng"], imageURL: imageURL });
         }
         $(this.divLoader).hide();

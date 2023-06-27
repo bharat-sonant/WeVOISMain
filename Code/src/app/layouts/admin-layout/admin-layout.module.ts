@@ -133,6 +133,7 @@ import { MonthlyPaymentReportComponent } from '../../reports/monthly-payment-rep
 import { EntityPaymentReportComponent } from '../../reports/entity-payment-report/entity-payment-report.component';
 import { WardRoadDetailComponent } from '../../house-survey/ward-road-detail/ward-road-detail.component';
 import { UpdateSurveyorVirtualComponent } from '../../Developers/update-surveyor-virtual/update-surveyor-virtual.component';
+import { NonSalariedCalculationComponent } from '../../salary-management/non-salaried-calculation/non-salaried-calculation.component';
 
 // Jaipur-Greater
 
@@ -307,7 +308,8 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     MonthlyPaymentReportComponent,
     EntityPaymentReportComponent,
     WardRoadDetailComponent,
-    UpdateSurveyorVirtualComponent
+    UpdateSurveyorVirtualComponent,
+    NonSalariedCalculationComponent
   ]
 })
 

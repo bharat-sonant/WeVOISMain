@@ -93,6 +93,7 @@ export class RouteTrackingComponent {
     $('#btnReset').hide();
     this.getMinmumMaximumDistance();
     this.toDayDate = this.commonService.setTodayDate();
+    localStorage.setItem("routeMonthDetail", null);
     if (this.toDayDate.split('-')[2] == "01") {
       localStorage.setItem("routeMonthDetail", null);
       localStorage.setItem("savedRouteData", null);
@@ -959,12 +960,18 @@ export class RouteTrackingComponent {
                 if (driverData != null) {
                   monthDetails.driver = driverData;
                 }
-                let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary/workPercentage";
+                let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
                 let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
                   data => {
                     workPersentageInstance.unsubscribe();
                     if (data != null) {
-                      monthDetails.percentage = data.toString();
+                      monthDetails.percentage = data["workPercentage"].toString();
+
+                      if (localStorage.getItem("userType") == "External User") {
+                        if (data["updatedWorkPercentage"] != null) {
+                          monthDetails.percentage = data["updatedWorkPercentage"].toString();
+                        }
+                      }
                     }
                     let monthDetailData = JSON.parse(localStorage.getItem("routeMonthDetail"));
                     if (monthDetailData == null) {

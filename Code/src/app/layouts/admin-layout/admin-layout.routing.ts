@@ -126,6 +126,7 @@ import { MonthlyPaymentReportComponent } from '../../reports/monthly-payment-rep
 import { EntityPaymentReportComponent } from '../../reports/entity-payment-report/entity-payment-report.component';
 import { WardRoadDetailComponent } from '../../house-survey/ward-road-detail/ward-road-detail.component';
 import { UpdateSurveyorVirtualComponent } from '../../Developers/update-surveyor-virtual/update-surveyor-virtual.component';
+import { NonSalariedCalculationComponent } from '../../salary-management/non-salaried-calculation/non-salaried-calculation.component';
 
 
 
@@ -390,6 +391,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'sikar/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'sikar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'sikar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -621,6 +623,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-greater/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-greater/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-greater/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -872,6 +875,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'reengus/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'reengus/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'reengus/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //Shahpura
@@ -1105,6 +1109,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'shahpura/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'shahpura/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'shahpura/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1337,6 +1342,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'test/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'test/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
 
@@ -1572,6 +1578,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-office/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-office/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-office/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //kishangarh
@@ -1805,6 +1812,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'kishangarh/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'kishangarh/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'kishangarh/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //Nawai
@@ -2038,6 +2046,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'niwai/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'niwai/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'niwai/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
@@ -2270,6 +2279,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaisalmer/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaisalmer/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaisalmer/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //Salasar
@@ -2503,6 +2513,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'salasar/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'salasar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'salasar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //Behror
@@ -2736,6 +2747,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'behror/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'behror/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'behror/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -2967,6 +2979,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -3198,6 +3211,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-jhotwara/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-jhotwara/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-jhotwara/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //jaipur-jagatpura
@@ -3430,6 +3444,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-jagatpura/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-jagatpura/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-jagatpura/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3661,6 +3676,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-malviyanagar/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-malviyanagar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-malviyanagar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
@@ -3892,6 +3908,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-mansarovar/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-mansarovar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-mansarovar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //jaipur-murlipura
@@ -4124,6 +4141,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-murlipura/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-murlipura/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-murlipura/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //jaipur-sanganer
@@ -4356,6 +4374,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-sanganer/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-sanganer/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-sanganer/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4587,6 +4606,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-vidhyadhar/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-vidhyadhar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-vidhyadhar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //Bhiwadi
@@ -4819,6 +4839,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'bhiwadi/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'bhiwadi/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'bhiwadi/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //Chhapar
@@ -5051,6 +5072,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'chhapar/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'chhapar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'chhapar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //Churu
@@ -5283,6 +5305,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'churu/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'churu/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'churu/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5515,6 +5538,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'wevois-other/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'wevois-other/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'wevois-other/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
     //gwalior
@@ -5748,6 +5772,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'gwalior/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'gwalior/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'gwalior/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
 
@@ -5982,6 +6007,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'tonk/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'tonk/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'tonk/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -6213,6 +6239,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'ratangarh/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'ratangarh/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'ratangarh/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -6444,6 +6471,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'nokha/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'nokha/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'nokha/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6675,6 +6703,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'losal/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'losal/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'losal/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
 
@@ -6908,6 +6937,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jaipur-test/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jaipur-test/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jaipur-test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     
 
@@ -7141,6 +7171,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'mnz-test/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'mnz-test/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'mnz-test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 
 
@@ -7375,6 +7406,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'mpz-test/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'mpz-test/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'mpz-test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     
 
@@ -7609,6 +7641,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'jammu-survey/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'jammu-survey/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'jammu-survey/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     
     //Khandela
@@ -7841,6 +7874,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'khandela/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'khandela/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'khandela/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'khandela/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
     
     //watteye-office
@@ -8073,5 +8107,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'watteye-office/:id/entity-payment-report', component: EntityPaymentReportComponent },
     { path: 'watteye-office/:id/ward-road-detail', component: WardRoadDetailComponent },
     { path: 'watteye-office/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
+    { path: 'watteye-office/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
 
 ]; 

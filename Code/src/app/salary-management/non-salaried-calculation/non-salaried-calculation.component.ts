@@ -5,11 +5,11 @@ import { HttpClient } from "@angular/common/http";
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-salary-calculation',
-  templateUrl: './salary-calculation.component.html',
-  styleUrls: ['./salary-calculation.component.scss']
+  selector: 'app-non-salaried-calculation',
+  templateUrl: './non-salaried-calculation.component.html',
+  styleUrls: ['./non-salaried-calculation.component.scss']
 })
-export class SalaryCalculationComponent implements OnInit {
+export class NonSalariedCalculationComponent implements OnInit {
 
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
@@ -145,12 +145,9 @@ export class SalaryCalculationComponent implements OnInit {
             let isSalaried = false;
 
             if (data != null) {
-              if (data == "salaried") {
+              if (data == "non-salaried") {
                 isSalaried = true;
               }
-            }
-            else {
-              isSalaried = true;
             }
 
             if (isSalaried == true) {
@@ -167,6 +164,24 @@ export class SalaryCalculationComponent implements OnInit {
         }
       }
     });
+  }
+
+  getEmployeeWorkDetail(){
+    $(this.divLoader).show();
+    this.clearSalary();
+    setTimeout(() => {
+      this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+      if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
+        this.monthDays = this.todayDate.split("-")[2];
+      }
+      if (this.salaryList.length > 0) {
+        for (let i = 1; i <= this.monthDays; i++) {
+          let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
+          this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
+          
+        }
+      }
+    }, 2000);
   }
 
   getFilterEmployeeList(filterVal: any) {

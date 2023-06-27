@@ -449,7 +449,7 @@ export class CommonService {
     }
   }
 
-  
+
   getMonthShortNameToMonth(monthName: string) {
     var d = new Date();
     var month = new Array();
@@ -1201,6 +1201,7 @@ export class CommonService {
           zoneKML[0]["line"].setMap(null);
         }
         if (data != null) {
+          //let str = "";
           let points = data["points"];
           if (points.length > 0) {
             const bounds = new google.maps.LatLngBounds();
@@ -1208,7 +1209,9 @@ export class CommonService {
             for (let j = 0; j < points.length; j++) {
               latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
               bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
+             // str += points[j][1] + "," + points[j][0] + ",0 ";
             }
+           // console.log(str);
             let line = new google.maps.Polyline({
               path: latLng,
               strokeColor: "black",
@@ -1440,7 +1443,7 @@ export class CommonService {
     });
   }
 
-  
+
   getWardLineRoadDetail(zoneNo: any, date: any) {
     return new Promise((resolve) => {
       let dat1 = new Date(date);
@@ -1451,12 +1454,12 @@ export class CommonService {
         let jsonDate = "";
         jsonDate = list[0].toString().trim();
         const pathDate = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
-          let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
-            wardLineInstance.unsubscribe();
-            if (data != null) {
-              resolve(JSON.stringify(data));
-            }
-          });
+        let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+          wardLineInstance.unsubscribe();
+          if (data != null) {
+            resolve(JSON.stringify(data));
+          }
+        });
       });
     });
   }
