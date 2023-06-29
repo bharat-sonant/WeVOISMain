@@ -251,6 +251,9 @@ export class CommonService {
     else if (cityName == "watteye-office") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
+    else if (cityName == "dehradun") {
+      latLng.push({ lat: 30.3164945, lng: 78.0321918 });
+    }
     return latLng;
   }
 
