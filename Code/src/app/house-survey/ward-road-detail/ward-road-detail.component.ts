@@ -173,9 +173,12 @@ export class WardRoadDetailComponent {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let lineNo = keyArray[i];
-          let imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardRoadImages%2F" + this.selectedZone + "%2F" + data[lineNo]["image"] + "?alt=media";
+          let imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardRoadImages%2F" + this.selectedZone + "%2F" + lineNo + "%2F" + data[lineNo]["image"] + "?alt=media";
           this.roadList.push({ lineNo: lineNo, roadType: data[lineNo]["roadType"], roadWidth: data[lineNo]["roadWidth"], latLng: data[lineNo]["latLng"], imageURL: imageURL });
         }
+        setTimeout(() => {
+          this.getWardRoadDetail(0);
+        }, 200);
         $(this.divLoader).hide();
       }
       else {
@@ -185,7 +188,7 @@ export class WardRoadDetailComponent {
     });
   }
 
-  getWardRoadDetail(lineNo: any, index: any) {
+  getWardRoadDetail(index: any) {
     this.setActiveClass(index);
     if (this.markerList.length > 0) {
       for (let i = 0; i < this.markerList.length; i++) {
@@ -225,6 +228,48 @@ export class WardRoadDetailComponent {
       if (i == index) {
         $("#tr" + i).addClass("active");
       }
+    }
+  }
+
+  
+  exportToExcel() {
+    let list = this.roadList;
+    if (list.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Line No.";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Road Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Road Width";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "LatLng";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < list.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += list[i]["lineNo"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += list[i]["roadType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += list[i]["roadWidth"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += list[i]["latLng"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName = this.selectedZone + "-Road-Detail.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
     }
   }
 }
