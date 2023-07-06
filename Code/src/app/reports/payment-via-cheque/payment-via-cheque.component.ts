@@ -215,7 +215,7 @@ export class PaymentViaChequeComponent implements OnInit {
         updatedDate: this.commonService.getCurrentTimeWithSecond()
       }
 
-      let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1]));
+      let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1])-1);
       let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/" + transactionDate.toString().split('-')[0] + "/" + monthName + "/" + transactionDate;
       let transactionInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         transactionInstance.unsubscribe();
