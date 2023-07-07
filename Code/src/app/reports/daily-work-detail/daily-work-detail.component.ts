@@ -120,7 +120,15 @@ export class DailyWorkDetailComponent implements OnInit {
                       pickedDustbin = planData[planKey]["pickedDustbin"].split(',').length;
                     }
                   }
-                  this.dailyWorkList.push({ zoneNo: planKey, zoneName: "BinLifting(" + planData[planKey]["planName"] + ")", trips: pickedDustbin });
+                  let assignedDustbin=0;
+                  if (planData[planKey]["bins"] != null) {
+                    if (planData[planKey]["bins"] != "") {
+                      assignedDustbin = planData[planKey]["bins"].split(',').length;
+                    }
+                  }
+                  let bins=pickedDustbin+"/"+assignedDustbin;
+                  let percentage=((pickedDustbin*100)/assignedDustbin).toFixed(0)+"%";
+                  this.dailyWorkList.push({ zoneNo: planKey, zoneName: "BinLifting(" + planData[planKey]["planName"] + ")", trips: bins,workPercentage:percentage });
                   this.getPlanAssignment(planKey);
                 }
               }
