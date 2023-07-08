@@ -427,7 +427,7 @@ export class DailyWorkDetailComponent implements OnInit {
           htmlString += this.dailyWorkList[i]["secondHelper"];
         }
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         if (this.dailyWorkList[i]["trips"] != null) {
           htmlString += this.dailyWorkList[i]["trips"];
         }
