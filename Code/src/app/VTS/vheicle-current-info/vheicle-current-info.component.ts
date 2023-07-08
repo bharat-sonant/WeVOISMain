@@ -15,6 +15,7 @@ export class VheicleCurrentInfoComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
   cityName: any;
+  public bounds: any;
 
 
   ngOnInit() {
@@ -30,32 +31,52 @@ export class VheicleCurrentInfoComponent {
   }
 
   getVehicleInfo() {
-    let request = new XMLHttpRequest();
-    const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Access-Control-Allow-Origin', '*');
-    request.open("GET", "https://api.wheelseye.com/currentLoc?accessToken=68d9ecda-be3a-473e-b700-7898f1f84419");
-    
-    request.setRequestHeader('Access-Control-Allow-Headers', '*');
-    request.setRequestHeader('Content-type', 'application/json');
-    request.setRequestHeader('Access-Control-Allow-Origin', '*');
-    request.send();
-    request.onload = () => {
-      if (request.status == 200) {
-        var channelName = JSON.parse(request.response);
-        console.log(channelName);
+    this.bounds = new google.maps.LatLngBounds();
+    const dbPath = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVTS.json?alt=media";
+    let vtsInstance = this.httpService.get(dbPath).subscribe(VTSData => {
+      vtsInstance.unsubscribe();
+      console.log(VTSData["data"]);
+      if (VTSData["data"] != null) {
+        let vehicleList = JSON.parse(JSON.stringify(VTSData["data"]["list"]));
+        console.log(vehicleList);
+        for (let i = 0; i < vehicleList.length; i++) {
+          let vehicle = vehicleList[i]["vehicleNumber"];
+          let lat = vehicleList[i]["latitude"];
+          let lng = vehicleList[i]["longitude"];
+          let speed = Number(vehicleList[i]["speed"]);
+          let vehiclePath = '../../assets/img/tipper-green.png';
+          if (speed == 0) {
+            vehiclePath = '../../assets/img/tipper-red.png';
+          }
+          let marker = new google.maps.Marker({
+            position: { lat: Number(lat), lng: Number(lng) },
+            map: this.map,
+            icon: vehiclePath,
+          });
+          this.bounds.extend({ lat: Number(lat), lng: Number(lng) });
+          let statusString = '<div style="width: 100px;background-color: white;float: left;">';
+          statusString += '<div style="background:green;float: left;color:white;width: 100%;text-align:center;font-size:12px;"> ' + vehicle;
+          statusString += '</div></div>';
+          var infowindow = new google.maps.InfoWindow({
+            content: statusString,
+          });
+          infowindow.open(this.map, marker);
+          let wardString = '<div style="min-height: 35px;min-width: 35px;text-align: center;background: #fc6b03;color: white;'
+          wardString += 'font-size: 14px;font-weight: bold;padding:2px">Ward No </div>';
+          var infowindow1 = new google.maps.InfoWindow({
+            content: wardString,
+          });
 
-      } else {
-        console.log(request.status);
-        console.log(request.statusText);
+          infowindow1.open(this.map, marker);
+
+          setTimeout(function () {
+            $('.gm-ui-hover-effect').css("display", "none");
+            $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px").css("z-index", "99");
+            $('.gm-style-iw-d').css("overflow", "unset");
+          }, 300);
+        }
       }
-    }
-
-
-   // const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Access-Control-Allow-Origin', '*');
-   // let dbPath = "https://api.wheelseye.com/currentLoc?accessToken=68d9ecda-be3a-473e-b700-7898f1f84419";
-    //let data=this.httpService.get((dbPath));
-    //this.httpService.get(res, { headers }).subscribe((data) => {
-    //  console.log(data);
-   // });
+    });
   }
 
 
