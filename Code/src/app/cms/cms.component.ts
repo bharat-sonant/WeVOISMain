@@ -17,19 +17,19 @@ import {
 export class CmsComponent implements OnInit {
   accessList: any[];
   constructor(
-    public fs:FirebaseService,
+    public fs: FirebaseService,
     private commonService: CommonService,
     public actRoute: ActivatedRoute,
     public router: Router
-  ) {}
+  ) { }
 
   isShow = false;
   userid: any;
   cityName: any;
-  db:any;
+  db: any;
 
   ngOnInit() {
-    this.db=this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     this.userid = localStorage.getItem("userID");
     const id = this.actRoute.snapshot.paramMap.get("id");
@@ -65,7 +65,12 @@ export class CmsComponent implements OnInit {
             $("#icon" + k).addClass(userAccessList[i]["img"]);
             if (element != null) {
               element.addEventListener("click", (e) => {
-                this.getPage("/" + this.cityName+"/"+userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+                if (userAccessList[i]["url"].toString().includes("https")) {
+                  this.goToOuterURL(userAccessList[i]["url"]);
+                }
+                else {
+                  this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+                }
               });
             }
           }
@@ -78,13 +83,23 @@ export class CmsComponent implements OnInit {
             $("#iconMob" + k).addClass(userAccessList[i]["img"]);
             if (element != null) {
               element.addEventListener("click", (e) => {
-                this.getPage("/" + this.cityName+"/"+userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+                if (userAccessList[i]["url"].toString().includes("https")) {
+                  this.goToOuterURL(userAccessList[i]["url"]);
+                }
+                else {
+                  this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+                }
               });
             }
           }
         }
       }
     }
+  }
+
+  goToOuterURL(url: any) {
+    url = url + "/" + this.userid;
+    window.open(url, "_blank");
   }
 
   getPage(value: any) {

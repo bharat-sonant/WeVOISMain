@@ -27,7 +27,19 @@ export class VheicleCurrentInfoComponent {
   setDefault() {
     this.setHeight();
     this.setMap();
+    this.getAPI();
     this.getVehicleInfo();
+  }
+
+  getAPI(){
+    const path="https://pullapi-s2.track360.co.in/api/v1/auth/pull_api?username=8955005947&password=Abc@1234";
+    
+    this.httpService.get(path).subscribe((res) => {
+      let data = res;
+      console.log(res);
+      if (res != null) {
+      }
+    });
   }
 
   getVehicleInfo() {
