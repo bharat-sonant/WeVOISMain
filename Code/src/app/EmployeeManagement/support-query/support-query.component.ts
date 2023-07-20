@@ -210,6 +210,8 @@ export class SupportQueryComponent implements OnInit {
       let detail = this.complaintList.find((item) => item.id == id);
       if (detail != undefined) {
         if(detail.assignedTo!=localStorage.getItem("userID")){
+          this.closeModel();
+          this.commonService.setAlertMessage("error","Only assigned user can resolve this complaint !!!");
           return;
         }
       }
