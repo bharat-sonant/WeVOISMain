@@ -98,7 +98,7 @@ export class CmsComponent implements OnInit {
   }
 
   goToOuterURL(url: any) {
-    url = url + "/" + this.userid;
+    url = url.toString().replace("userId",this.userid);
     window.open(url, "_blank");
   }
 
