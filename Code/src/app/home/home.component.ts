@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit {
   cityList: any[];
   userType: any;
   cityName: any;
+  isDehradun: boolean;
   db: any;
   userDetail: userDetail = {
     name: "",
@@ -26,7 +27,7 @@ export class HomeComponent implements OnInit {
   constructor(private commonService: CommonService, public dbFireStore: AngularFirestore, public fs: FirebaseService,) { }
 
   ngOnInit() {
-
+    this.isDehradun = false;
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userid = localStorage.getItem("userID");
@@ -44,6 +45,7 @@ export class HomeComponent implements OnInit {
     }
     $('#divLoader').show();
 
+
     this.userDetail.cityName = this.commonService.getCityName(this.cityName);
     setTimeout(() => {
       $('#divLoader').hide();
@@ -54,6 +56,9 @@ export class HomeComponent implements OnInit {
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
+      if (this.cityName == "dehradun" || this.cityName == "test") {
+        this.isDehradun = true;
+      }
       for (let i = 0; i < userAccessList.length; i++) {
         if (
           userAccessList[i]["parentId"] == 0 &&
@@ -67,9 +72,17 @@ export class HomeComponent implements OnInit {
             if (localStorage.getItem("officeAppUserId") != null) {
               this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
             }
+          }
+          else if (userAccessList[i]["url"].includes("/cms/22")) {
+            if (this.isDehradun == true) {
+              this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
+
+            }
           } else {
             this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
           }
+
+
         }
       }
     }
