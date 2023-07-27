@@ -130,6 +130,7 @@ export class DashboardComponent implements OnInit {
       if (data != null) {
         let counts = 0;
         let keyArray = Object.keys(data);
+        let vehicleList=[];
         for (let i = 0; i < keyArray.length; i++) {
           let empId = keyArray[i];
 
@@ -147,10 +148,19 @@ export class DashboardComponent implements OnInit {
             }
             if (isOn == true) {
               counts++;
+              if(taskData["vehicle"]!=""){
+                if(taskData["vehicle"]!="NotApplicable"){
+                  let detail=vehicleList.find(item=>item.vehicle==taskData["vehicle"]);
+                  if(detail==undefined){
+                    vehicleList.push({vehicle:taskData["vehicle"]});
+                  }
+                }
+              }
             }
           }
         }
         this.dashboardData.peopleAtWork = counts;
+        console.log("Vehicle => "+vehicleList.length);
       }
     });
   }
