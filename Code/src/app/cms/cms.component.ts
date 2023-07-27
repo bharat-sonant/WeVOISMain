@@ -55,50 +55,80 @@ export class CmsComponent implements OnInit {
           userAccessList[i]["userId"] == this.userid &&
           userAccessList[i]["city"] == this.cityName
         ) {
-          k = k + 1;
-          let element = <HTMLElement>document.getElementById("div" + k);
-          if (element != undefined) {
-            $("#div" + k).show();
-            $("#span" + k).html(userAccessList[i]["name"]);
-            let className = $("#icon" + k).attr("class");
-            $("#icon" + k).removeClass(className);
-            $("#icon" + k).addClass(userAccessList[i]["img"]);
-            if (element != null) {
-              element.addEventListener("click", (e) => {
-                if (userAccessList[i]["url"].toString().includes("https")) {
-                  this.goToOuterURL(userAccessList[i]["url"]);
-                }
-                else {
-                  this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
-                }
-              });
+          if (userAccessList[i]["url"].toString().includes("https")) {
+            if (this.cityName == "test") {
+              k = k + 1;
+              this.setLink(k, userAccessList, i);
+            }
+            else {
+              let url = userAccessList[i]["url"];
+              let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
+              let isLink = false;
+              if (newUrl == "user-list") {
+                isLink = true;
+              }
+              if (isLink == true) {
+                k = k + 1;
+                this.setLink(k, userAccessList, i);
+              }
             }
           }
-          element = <HTMLElement>document.getElementById("divMob" + k);
-          if (element != undefined) {
-            $("#divMob" + k).show();
-            $("#spanMob" + k).html(userAccessList[i]["name"]);
-            let className = $("#iconMob" + k).attr("class");
-            $("#iconMob" + k).removeClass(className);
-            $("#iconMob" + k).addClass(userAccessList[i]["img"]);
-            if (element != null) {
-              element.addEventListener("click", (e) => {
-                if (userAccessList[i]["url"].toString().includes("https")) {
-                  this.goToOuterURL(userAccessList[i]["url"]);
-                }
-                else {
-                  this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
-                }
-              });
-            }
+          else {
+            k = k + 1;
+            this.setLink(k, userAccessList, i);
           }
         }
       }
     }
   }
 
+  setLink(k: any, userAccessList: any, i: any) {
+    let element = <HTMLElement>document.getElementById("div" + k);
+    if (element != undefined) {
+      $("#div" + k).show();
+      $("#span" + k).html(userAccessList[i]["name"]);
+      let className = $("#icon" + k).attr("class");
+      $("#icon" + k).removeClass(className);
+      $("#icon" + k).addClass(userAccessList[i]["img"]);
+      if (element != null) {
+        element.addEventListener("click", (e) => {
+          if (userAccessList[i]["url"].toString().includes("https")) {
+            this.goToOuterURL(userAccessList[i]["url"]);
+          }
+          else {
+            this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+          }
+        });
+      }
+    }
+    element = <HTMLElement>document.getElementById("divMob" + k);
+    if (element != undefined) {
+      $("#divMob" + k).show();
+      $("#spanMob" + k).html(userAccessList[i]["name"]);
+      let className = $("#iconMob" + k).attr("class");
+      $("#iconMob" + k).removeClass(className);
+      $("#iconMob" + k).addClass(userAccessList[i]["img"]);
+      if (element != null) {
+        element.addEventListener("click", (e) => {
+          if (userAccessList[i]["url"].toString().includes("https")) {
+            this.goToOuterURL(userAccessList[i]["url"]);
+          }
+          else {
+            this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+          }
+        });
+      }
+    }
+  }
+
   goToOuterURL(url: any) {
-    url = url.toString().replace("userId",this.userid);
+    let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
+    if (this.cityName == "test") {
+      url = "https://mainportal-react.web.app/" + this.userid + "/" + newUrl;
+    }
+    else {
+      url = "https://main-wevois.firebaseapp.com/" + this.userid + "/" + newUrl;
+    }
     window.open(url, "_blank");
   }
 
