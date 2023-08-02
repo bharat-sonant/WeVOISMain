@@ -20,7 +20,7 @@ export class DailyWorkDetailComponent implements OnInit {
   selectedMonthName: any;
   selectedYear: any;
   txtDate = "#txtDate";
-  isShowActual:any;
+  isShowActual: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -29,11 +29,11 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   setDefault() {
-    this.isShowActual=false;
-    if(localStorage.getItem("isActualWorkPercentage")!=null){
+    this.isShowActual = false;
+    if (localStorage.getItem("isActualWorkPercentage") != null) {
       console.log(localStorage.getItem("isActualWorkPercentage"))
-      if(localStorage.getItem("isActualWorkPercentage")=="1"){
-        this.isShowActual=true;
+      if (localStorage.getItem("isActualWorkPercentage") == "1") {
+        this.isShowActual = true;
       }
     }
     this.selectedDate = this.commonService.setTodayDate();
@@ -76,7 +76,7 @@ export class DailyWorkDetailComponent implements OnInit {
         this.dailyWorkList.push({ zoneNo: zoneNo, zoneName: this.zoneList[i]["zoneName"] });
         this.getWorkerDetail(zoneNo);
         this.getSummaryDetail(zoneNo);
-        let dbPath = "LocationHistory/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
+        let dbPath = "LocationHistory/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
         this.getTotalRunning(zoneNo, dbPath);
       }
     }
@@ -88,19 +88,29 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   getTotalRunning(zoneNo: any, dbPath: any) {
-    let totalRunningInstance = this.db.object(dbPath).valueChanges().subscribe(
-      runningData => {
-        totalRunningInstance.unsubscribe();
-        let runKm = "0.000";
-        if (runningData != null) {
-          runKm = (Number(runningData) / 1000).toFixed(3);
+    let locationInstance = this.db.object(dbPath).valueChanges().subscribe(
+      locationData => {
+        locationInstance.unsubscribe();
+        console.log(locationData);
+        let distance = "0";
+        if (locationData != null) {
+          let keyArray = Object.keys(locationData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let time = keyArray[i];
+              if (locationData[time]["distance-in-meter"] != null) {
+                let coveredDistance = locationData[time]["distance-in-meter"];
+                distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
+              }
+            }
+
+          }
           let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
           if (detail != undefined) {
-            detail.runKm = runKm;
+            detail.runKm = (Number(distance) / 1000).toFixed(3);
           }
         }
-      }
-    );
+      });
   }
 
   getBinLiftingDetail(dbPath: any) {
@@ -120,15 +130,15 @@ export class DailyWorkDetailComponent implements OnInit {
                       pickedDustbin = planData[planKey]["pickedDustbin"].split(',').length;
                     }
                   }
-                  let assignedDustbin=0;
+                  let assignedDustbin = 0;
                   if (planData[planKey]["bins"] != null) {
                     if (planData[planKey]["bins"] != "") {
                       assignedDustbin = planData[planKey]["bins"].split(',').length;
                     }
                   }
-                  let bins=pickedDustbin+"/"+assignedDustbin;
-                  let percentage=((pickedDustbin*100)/assignedDustbin).toFixed(0)+"%";
-                  this.dailyWorkList.push({ zoneNo: planKey, zoneName: "BinLifting(" + planData[planKey]["planName"] + ")", trips: bins,workPercentage:percentage });
+                  let bins = pickedDustbin + "/" + assignedDustbin;
+                  let percentage = ((pickedDustbin * 100) / assignedDustbin).toFixed(0) + "%";
+                  this.dailyWorkList.push({ zoneNo: planKey, zoneName: "BinLifting(" + planData[planKey]["planName"] + ")", trips: bins, workPercentage: percentage });
                   this.getPlanAssignment(planKey);
                 }
               }
@@ -148,7 +158,7 @@ export class DailyWorkDetailComponent implements OnInit {
           let driverId = assignedData["driver"];
           let helperId = assignedData["helper"];
           let vehicle = assignedData["vehicle"];
-          let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/TotalCoveredDistance";
+          let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
           this.getTotalRunning(planKey, dbPath);
 
           this.getBinliftingData(driverId, planKey, "driver");
@@ -228,7 +238,7 @@ export class DailyWorkDetailComponent implements OnInit {
             let endTime = "";
             let trips = "0";
             let workPercentage = "";
-            let actualWorkPercentage="0%";
+            let actualWorkPercentage = "0%";
             let wardRunKm = "0.000";
             if (summaryData["dutyOutTime"] != null) {
               endTime = summaryData["dutyOutTime"].split(',')[summaryData["dutyOutTime"].split(',').length - 1];
@@ -254,7 +264,7 @@ export class DailyWorkDetailComponent implements OnInit {
               detail.trips = trips;
               detail.wardRunKm = wardRunKm;
               detail.workPercentage = workPercentage;
-              detail.actualWorkPercentage=actualWorkPercentage;
+              detail.actualWorkPercentage = actualWorkPercentage;
               let sTime = new Date(this.selectedDate + " " + startTime);
               let eTime = new Date();
               if (endTime != "") {
