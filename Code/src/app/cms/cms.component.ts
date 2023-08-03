@@ -64,7 +64,7 @@ export class CmsComponent implements OnInit {
               let url = userAccessList[i]["url"];
               let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
               let isLink = false;
-              if (newUrl == "user-list") {
+              if (newUrl == "user-list" || newUrl == "vehicle-current-info") {
                 isLink = true;
               }
               if (isLink == true) {
