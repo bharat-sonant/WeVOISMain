@@ -39,6 +39,7 @@ export class CmsComponent implements OnInit {
   }
 
   getPages(pageId: any) {
+    console.log(pageId)
     this.clearAll();
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
@@ -60,11 +61,14 @@ export class CmsComponent implements OnInit {
               k = k + 1;
               this.setLink(k, userAccessList, i);
             }
-            else {
+            else  if (this.cityName == "dehradun") {
               let url = userAccessList[i]["url"];
               let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
               let isLink = false;
-              if (newUrl == "user-list" || newUrl == "vehicle-current-info") {
+              if (newUrl == "user-list") {
+                isLink = true;
+              }
+              if (newUrl == "vehicle-current-info") {
                 isLink = true;
               }
               if (isLink == true) {
