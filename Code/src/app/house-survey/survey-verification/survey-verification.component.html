@@ -250,9 +250,23 @@
     </div>
 
     <div class="modal-body content-scroll-outer">
+        <div id="divMarkerDelete" style="display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+            <input type="hidden" id="hddIndexDelete" value="0"/>
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?
+            </h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-success " (click)="deleteNewMarkers();">
+                        Confirm</button>
+                </div>
+                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                    <button class="btn btn-danger " (click)="cancelNewMarkerDelete();" style="text-transform: uppercase;"> Cancel</button>
+                </div>
+            </div>
+        </div>
         <div id="divStatus" class="content-scroll">
             <div class="row" style="margin-left: 0px; margin-right: 0px;">
-                <div class="col-md-2 " *ngFor="let dt of houseMarkerCardList">
+                <div class="col-md-2 " *ngFor="let dt of houseMarkerCardList; let i=index">
                     <div class="">
                         <div class="dt-img-outer">
                             <a href="{{dt.imageUrl}}" target="_blank">
@@ -262,7 +276,9 @@
                         <div class="main-tag">
                             <div class="f-left">
                                 <div style="width:100%!important ;">
-                                    <h3 class="f-left-heading">{{dt.entityType}}<br/>Line No : {{dt.lineNo}}</h3>
+                                    <h3 class="f-left-heading">{{dt.entityType}}<br/>Line No : {{dt.lineNo}}
+                                        <i class="fa-solid fa-trash-can" style="color:red; float:right; cursor: pointer;" (click)="openDeleteConfirmation(i)"></i>
+                                    </h3>
                                 </div>
                             </div>
                         </div>

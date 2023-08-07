@@ -360,7 +360,7 @@ export class SurveyVerificationComponent {
                       date = lineData[markerNo]["date"].split(' ')[0];
                       timeStemp = new Date(lineData[markerNo]["date"]).getTime();
                     }
-                    this.houseMarkerCardList.push({ lineNo: lineNo, imageUrl: imageUrl, entityType: entityType, latLng: lineData[markerNo]["latLng"], date: date, timeStemp: timeStemp });
+                    this.houseMarkerCardList.push({ markerNo: markerNo, lineNo: lineNo, imageUrl: imageUrl, entityType: entityType, latLng: lineData[markerNo]["latLng"], date: date, timeStemp: timeStemp });
                     if (lineData[markerNo]["latLng"] != "") {
                       let lat = lineData[markerNo]["latLng"].split(",")[0];
                       let lng = lineData[markerNo]["latLng"].split(",")[1];
@@ -466,6 +466,47 @@ export class SurveyVerificationComponent {
 
   closeModel() {
     this.modalService.dismissAll();
+  }
+
+  openDeleteConfirmation(index: any) {
+    $("#hddIndexDelete").val(index);
+    $("#divMarkerDelete").show();
+  }
+
+  cancelNewMarkerDelete() {
+    $("#hddIndexDelete").val("0");
+    $("#divMarkerDelete").hide();
+  }
+
+  deleteNewMarkers() {
+    if (this.houseMarkerCardList.length > 0) {
+      let index = Number($("#hddIndexDelete").val().toString());
+      let markerNo = this.houseMarkerCardList[index]["markerNo"];
+      let lineNo = this.houseMarkerCardList[index]["lineNo"];
+      let dbPath = "SurveyVerifierData/MarkedHousesByVerifier/" + this.selectedZone + "/" + lineNo + "/" + markerNo;
+      this.db.object(dbPath).remove();
+      let list = [];
+      for (let i = 0; i < this.houseMarkerCardList.length; i++) {
+        if (i != index) {
+          list.push({ markerNo: this.houseMarkerCardList[i]["markerNo"], lineNo: this.houseMarkerCardList[i]["lineNo"], imageUrl: this.houseMarkerCardList[i]["imageUrl"], entityType: this.houseMarkerCardList[i]["entityType"], latLng: this.houseMarkerCardList[i]["latLng"], date: this.houseMarkerCardList[i]["date"], timeStemp: this.houseMarkerCardList[i]["timeStemp"] });
+        }
+      }
+      this.houseMarkerCardList = list;
+      if (this.cardMarkers.length > 0) {
+        for (let i = 0; i < this.cardMarkers.length; i++) {
+          this.cardMarkers[i]["marker"].setMap(null);
+        }
+      }
+      this.cardMarkers = [];
+      for (let i = 0; i < this.houseMarkerCardList.length; i++) {
+        let lat = this.houseMarkerCardList[i]["latLng"].split(",")[0];
+        let lng = this.houseMarkerCardList[i]["latLng"].split(",")[1];
+        let markerURL = this.getMarkerIcon("red");
+        this.setMarkers(lat, lng, markerURL, "");
+      }
+      this.cancelNewMarkerDelete();
+
+    }
   }
 
   getMarkerIcon(color: any) {
