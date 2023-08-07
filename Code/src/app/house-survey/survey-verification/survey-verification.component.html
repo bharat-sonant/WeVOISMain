@@ -4,18 +4,20 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4 no-gutters-iner">
-            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
-        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-          ngSelected="zone.zoneNo == selectedZone?'selected':''">
-          {{zone.zoneName}}
-        </option>
-      </select>
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+                [(ngModel)]="selectedZone">
+                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                    {{zone.zoneName}}
+                </option>
+            </select>
         </div>
         <div id="houseCount" class="col-md-8 text-right total-house background-black">
             <div class="display" id="popup2">
                 <div class="fix-home">
                     <div class="float-first">
-                        <i class="fas fa-redo-alt" style="font-size: 28px; cursor: pointer;" (click)="updateJSONData();"></i> <br>
+                        <i class="fas fa-redo-alt" style="font-size: 28px; cursor: pointer;"
+                            (click)="updateJSONData();"></i> <br>
                         <h6>{{verifiedDetail.lastUpdate}}</h6>
                     </div>
 
@@ -45,7 +47,7 @@
                 </div>
                 <div class="all-details">
                     <h6>
-                        <p>Card in verified and houses with <br/>same ward and same line</p>
+                        <p>Card in verified and houses with <br />same ward and same line</p>
                     </h6>
                 </div>
             </div>
@@ -55,7 +57,7 @@
                 </div>
                 <div class="all-details">
                     <h6>
-                        <p>Card in verified and houses with <br/>same ward and different line</p>
+                        <p>Card in verified and houses with <br />same ward and different line</p>
                     </h6>
                 </div>
             </div>
@@ -72,7 +74,8 @@
 
             <div class="main-box">
                 <div class="designation">
-                    <h5> <img src="../assets/img/red-home.png" class="institute-svg-img" style="height:21px; width: 21px;"> </h5>
+                    <h5> <img src="../assets/img/red-home.png" class="institute-svg-img"
+                            style="height:21px; width: 21px;"> </h5>
                 </div>
                 <div class="all-details">
                     <h6>
@@ -91,21 +94,26 @@
                 <div class="col-md-12 row-box-iner">
                     <div class="border-bottom">
                         <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
-            << </button>
-                        <input class="arrow-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
-                        <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
-                >>
-              </button>
+                            << </button>
+                                <input class="arrow-input" id="txtLineNo" type="text"
+                                    (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
+                                <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
+                                    >>
+                                </button>
                     </div>
                 </div>
                 <div class="col-md-12 total-house fix-home-outer">
                     <div class="fix-home">
                         <div class="float-l fix-home-iner">
-                            <img src="../assets/img/green-home.png" style="margin-top: 10px; margin-bottom: 10px; width: 20px;"> <span class="house home-icon-span">
+                            <img src="../assets/img/green-home.png"
+                                style="margin-top: 10px; margin-bottom: 10px; width: 20px;"> <span
+                                class="house home-icon-span">
                                 {{verifiedDetail.greenCount}}</span><br>
                         </div>
                         <div id="divLineScannedCount" class="float-l house-damage-icon-div">
-                            <img src="../assets/img/yellow-home.png" style="margin-top: 10px; margin-bottom: 10px; width: 20px;"> <span class="house house-damage-icon-span">
+                            <img src="../assets/img/yellow-home.png"
+                                style="margin-top: 10px; margin-bottom: 10px; width: 20px;"> <span
+                                class="house house-damage-icon-span">
                                 {{verifiedDetail.yellowCount}}</span><br>
                         </div>
                     </div>
@@ -114,11 +122,15 @@
                 <div class="col-md-12 total-house fix-home-outer">
                     <div class="fix-home">
                         <div id="divLineRevisitCount" class="float-l house-damage-icon-div">
-                            <img src="../assets/img/purple-home.png" style="margin-top: 15px; margin-bottom: 10px; width: 20px;"> <span class="house house-damage-icon-span">
+                            <img src="../assets/img/purple-home.png"
+                                style="margin-top: 15px; margin-bottom: 10px; width: 20px;"> <span
+                                class="house house-damage-icon-span">
                                 {{verifiedDetail.purpleCount}}</span><br>
                         </div>
                         <div id="divLineOldCardCount" class="float-l house-damage-icon-div">
-                            <img src="../assets/img/red-home.png" style="margin-top: 15px; margin-bottom: 10px; width: 20px;"> <span class="house house-damage-icon-span">
+                            <img src="../assets/img/red-home.png"
+                                style="margin-top: 15px; margin-bottom: 10px; width: 20px;"> <span
+                                class="house house-damage-icon-span">
                                 {{verifiedDetail.redCount}}</span><br>
                         </div>
                         <div style="padding-top: 20px;" class="float-l">
@@ -137,16 +149,18 @@
             <div class="row row-box">
                 <div class="col-md-12 row-box-iner" style="padding-top: 20px;text-align: left!important;">
                     <div class="border-bottom">
-                       &nbsp;&nbsp; <input type="checkbox" id="chkVerifiedMarkers" (change)="showVerifiedMarkersOnMap('marker');" /> Show New Markers
-                       <i id="exportNewMarkers" class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f; float: right;margin-right: 20px;"
-                       (click)="exportVerifiedMarkers();"></i>
+                        &nbsp;&nbsp; <input type="checkbox" id="chkVerifiedMarkers"
+                            (change)="showVerifiedMarkersOnMap('marker');" /> Show New Markers
+                        <i id="exportNewMarkers" class="fa-solid fa-file-export"
+                            style="font-size: 20px; cursor: pointer; color: #1fda2f; float: right;margin-right: 20px;"
+                            (click)="exportVerifiedMarkers();"></i>
                     </div>
                 </div>
             </div>
             <div class="row row-box">
                 <div class="col-md-12 row-box-iner" style="text-align: left!important;">
-                    &nbsp;&nbsp;<span style="cursor: pointer;" (click)="showMarkerDetails(contentLineMarkers)" >
-                        <i class="far fa-eye eye-icon" ></i> View Markers Images
+                    &nbsp;&nbsp;<span style="cursor: pointer;" (click)="showMarkerDetails(contentLineMarkers)">
+                        <i class="far fa-eye eye-icon"></i> View Markers Images
                     </span>
                 </div>
             </div>
@@ -158,15 +172,16 @@
             <div class="row row-box">
                 <div class="col-md-12 row-box-iner" style="padding-top: 20px;text-align: left!important;">
                     <div class="border-bottom">
-                       &nbsp;&nbsp; <input type="checkbox" id="chkReVerified" (change)="showVerifiedMarkersOnMap('reverified');" /> Show Re-Surveyed Cards
-                        
+                        &nbsp;&nbsp; <input type="checkbox" id="chkReVerified"
+                            (change)="showVerifiedMarkersOnMap('reverified');" /> Show Re-Surveyed Cards
+
                     </div>
                 </div>
             </div>
             <div class="row row-box">
                 <div class="col-md-12 row-box-iner" style="text-align: left!important;">
-                    &nbsp;&nbsp;<span style="cursor: pointer;" (click)="showReVerifiedCardDetails(contentLineSurveyed)" >
-                        <i class="far fa-eye eye-icon" ></i> View Card Images
+                    &nbsp;&nbsp;<span style="cursor: pointer;" (click)="showReVerifiedCardDetails(contentLineSurveyed)">
+                        <i class="far fa-eye eye-icon"></i> View Card Images
                     </span>
                 </div>
             </div>
@@ -177,7 +192,7 @@
 
 <!--Survey Line Start-->
 <ng-template #contentLineSurveyed>
-    <div class="header-12" >
+    <div class="header-12">
 
         <div class="pop-up-header">
             <h5 style="font-size: 18px;">Zone {{selectedZone}}</h5>
@@ -197,7 +212,8 @@
                         <div class="{{dt.class}}">
                             <div style="width: 47%; float:left; margin-left: 5px; border:1px solid lightgray;">
                                 <div class="content-scroll-iner">
-                                    <div style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
+                                    <div
+                                        style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
                                         Card Image</div>
 
                                     <a href="{{dt.imageUrl}}" target="_blank">
@@ -208,7 +224,8 @@
                             </div>
                             <div style="width: 47%; float:left; margin-left: 5px;">
                                 <div class="content-scroll-iner">
-                                    <div style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
+                                    <div
+                                        style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
                                         House Image</div>
                                     <a href="{{dt.houseImageUrl}}" target="_blank">
                                         <img [src]="dt.houseImageUrl" class="imageurl" />
@@ -236,7 +253,7 @@
 
 <!--Line Markers Start-->
 <ng-template #contentLineMarkers>
-    <div class="header-12" >
+    <div class="header-12">
 
         <div class="pop-up-header">
             <h5 style="font-size: 18px;">Zone {{selectedZone}}</h5>
@@ -250,20 +267,6 @@
     </div>
 
     <div class="modal-body content-scroll-outer">
-        <div id="divMarkerDelete" style="display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
-            <input type="hidden" id="hddIndexDelete" value="0"/>
-            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?
-            </h5>
-            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-success " (click)="deleteNewMarkers();">
-                        Confirm</button>
-                </div>
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelNewMarkerDelete();" style="text-transform: uppercase;"> Cancel</button>
-                </div>
-            </div>
-        </div>
         <div id="divStatus" class="content-scroll">
             <div class="row" style="margin-left: 0px; margin-right: 0px;">
                 <div class="col-md-2 " *ngFor="let dt of houseMarkerCardList; let i=index">
@@ -276,8 +279,8 @@
                         <div class="main-tag">
                             <div class="f-left">
                                 <div style="width:100%!important ;">
-                                    <h3 class="f-left-heading">{{dt.entityType}}<br/>Line No : {{dt.lineNo}}
-                                        <i class="fa-solid fa-trash-can" style="color:red; float:right; cursor: pointer;" (click)="openDeleteConfirmation(i)"></i>
+                                    <h3 class="f-left-heading">{{dt.entityType}}<br />Line No : {{dt.lineNo}}
+
                                     </h3>
                                 </div>
                             </div>
