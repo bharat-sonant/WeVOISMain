@@ -61,9 +61,10 @@ export class CmsComponent implements OnInit {
               k = k + 1;
               this.setLink(k, userAccessList, i);
             }
-            else  if (this.cityName == "dehradun") {
+            else if (this.cityName == "dehradun") {
               let url = userAccessList[i]["url"];
               let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
+              /*
               let isLink = false;
               if (newUrl == "user-list") {
                 isLink = true;
@@ -75,6 +76,9 @@ export class CmsComponent implements OnInit {
                 k = k + 1;
                 this.setLink(k, userAccessList, i);
               }
+*/
+              k = k + 1;
+              this.setLink(k, userAccessList, i);
             }
           }
           else {
