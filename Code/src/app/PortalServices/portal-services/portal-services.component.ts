@@ -12,7 +12,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class PortalServicesComponent implements OnInit {
   constructor(public fs: FirebaseService, private router: Router, public toastr: ToastrService, private commonService: CommonService, private mapService: MapService) { }
-  
+
   userId: any;
   cityName: any;
   db: any;
@@ -27,7 +27,7 @@ export class PortalServicesComponent implements OnInit {
   getUserAccess() {
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
-      for (let i = 0; i < userAccessList.length; i++) {        
+      for (let i = 0; i < userAccessList.length; i++) {
         if (userAccessList[i]["pageId"] == "8D" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divTaskMasters").show();
         }
@@ -67,6 +67,14 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8Z" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divSetNearbyWard").show();
         }
+        if (userAccessList[i]["pageId"] == "8Z" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divSetNearbyWard").show();
+        }
+        if (userAccessList[i]["pageId"] == "8A1" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          if (this.cityName == "test") {
+            $("#divBGManagement").show();
+          }
+        }
       }
     }
   }
@@ -74,5 +82,16 @@ export class PortalServicesComponent implements OnInit {
   goToPage(url: any) {
     url = localStorage.getItem("cityName") + url;
     this.router.navigate([url]);
+  }
+
+  goToURL(url: any) {
+    let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
+    if (this.cityName == "test") {
+      url = "https://mainportal-react.web.app/" + localStorage.getItem("userId") + "/" + newUrl;
+    }
+    else {
+      url = "https://main-wevois.firebaseapp.com/" + localStorage.getItem("userId") + "/" + newUrl;
+    }
+    window.open(url, "_blank");
   }
 }
