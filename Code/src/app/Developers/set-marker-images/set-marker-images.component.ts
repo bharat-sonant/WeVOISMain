@@ -40,6 +40,7 @@ export class SetMarkerImagesComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select Ward");
       return;
     }
+    $(this.divLoaderLineMove).show();
     this.selectedZone = $(this.ddlZone).val();
     let lastMarkerID = 0;
     let dbPath = "EntityMarkingData/lastMarkerId";
@@ -49,15 +50,14 @@ export class SetMarkerImagesComponent implements OnInit {
         if (lastId != null) {
           lastMarkerID = Number(lastId);
         }
-        console.log(lastMarkerID);
         dbPath = "EntityMarkingData/" + this.selectedZone;
         let markerDataInstance = this.db.object(dbPath).valueChanges().subscribe(
           data => {
             markerDataInstance.unsubscribe();
             if (data != null) {
+              this.markerList = [];
               let keyArray = Object.keys(data);
               if (keyArray.length > 0) {
-
                 for (let i = 0; i < keyArray.length; i++) {
                   let lineNo = keyArray[i];
                   let markerData = data[lineNo];
@@ -65,11 +65,11 @@ export class SetMarkerImagesComponent implements OnInit {
                   for (let j = 0; j < markerKeyArray.length; j++) {
                     let markerNo = markerKeyArray[j];
                     if (parseInt(markerNo)) {
-                      console.log(lineNo + " => " + markerNo);
                       if (markerData[markerNo]["markerId"] == null) {
                         lastMarkerID++;
                         dbPath = "EntityMarkingData/" + this.selectedZone + "/" + lineNo + "/" + markerNo;
                         this.db.object(dbPath).update({ markerId: lastMarkerID });
+                        this.markerList.push({ ward: this.selectedZone, lineNo: lineNo, markerNo: markerNo, markerId: lastMarkerID, image: markerData[markerNo]["image"] });
                       }
                     }
                   }
@@ -77,13 +77,55 @@ export class SetMarkerImagesComponent implements OnInit {
               }
               dbPath = "EntityMarkingData/lastMarkerId";
               this.db.object(dbPath).set(lastMarkerID);
+              this.setImages(0);
             }
             else {
+              $(this.divLoaderLineMove).hide();
               console.log("No Markers");
             }
           }
         );
       }
     );
+  }
+
+  setImages(index: any) {
+    if (index == this.markerList.length) {
+      $(this.divLoaderLineMove).hide();
+      this.commonService.setAlertMessage("success", "Marker ID Updated Successfully !!!");
+    } else {
+      let lineNo = this.markerList[index]["lineNo"];
+      let oldImageName = this.markerList[index]["image"];
+      let markerId = this.markerList[index]["markerId"];
+      let newImageName = markerId + ".jpg";
+      const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + lineNo + "/" + oldImageName;
+      const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
+      ref.getDownloadURL()
+        .then((url) => {
+          var xhr = new XMLHttpRequest();
+          xhr.responseType = 'blob';
+          xhr.onload = (event) => {
+            var blob = xhr.response;
+            const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImagesWithMarkerID/" + newImageName;
+            const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
+            ref1.put(blob).then((promise) => {
+              // ref.delete();
+              index++;
+              this.setImages(index);
+              console.log(newImageName);
+
+            }).catch((error) => {
+              index++;
+              this.setImages(index);
+            });
+          };
+          xhr.open('GET', url);
+          xhr.send();
+        })
+        .catch((error) => {
+          index++;
+          this.setImages(index);
+        });
+    }
   }
 }
