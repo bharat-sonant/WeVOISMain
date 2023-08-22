@@ -654,6 +654,7 @@ export class SidebarComponent implements OnInit {
             else  if (this.cityName == "dehradun") {
               let url = userAccessList[i]["url"];
               let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
+              /*
              let isLink = true;
               if (newUrl == "vehicle-list") {
                 isLink = false;
@@ -662,8 +663,9 @@ export class SidebarComponent implements OnInit {
                 k = k + 1;
                 this.setLink(k, userAccessList, i);
               }
-              //k = k + 1;
-              //this.setLink(k, userAccessList, i);
+              */
+              k = k + 1;
+              this.setLink(k, userAccessList, i);
             }
           }
           else {
