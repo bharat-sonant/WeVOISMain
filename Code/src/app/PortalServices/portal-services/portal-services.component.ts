@@ -87,10 +87,10 @@ export class PortalServicesComponent implements OnInit {
   goToURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
     if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + localStorage.getItem("userId") + "/" + newUrl;
+      url = "https://mainportal-react.web.app/" + localStorage.getItem("userID") + "/" + newUrl;
     }
     else {
-      url = "https://main-wevois.firebaseapp.com/" + localStorage.getItem("userId") + "/" + newUrl;
+      url = "https://main-wevois.firebaseapp.com/" + localStorage.getItem("userID") + "/" + newUrl;
     }
     window.open(url, "_blank");
   }
