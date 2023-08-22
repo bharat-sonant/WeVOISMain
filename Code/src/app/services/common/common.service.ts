@@ -827,10 +827,15 @@ export class CommonService {
   getFireStoreCity() {
     let storageCityName = "";
     let cityName = localStorage.getItem("cityName");
-    let cityList = JSON.parse(localStorage.getItem("cityList"));
-    let detail = cityList.find(item => item.city == cityName);
-    if (detail != undefined) {
-      storageCityName = detail.storagePath;
+    if (cityName == "jaipur-test") {
+      storageCityName="Nokha";
+    }
+    else {
+      let cityList = JSON.parse(localStorage.getItem("cityList"));
+      let detail = cityList.find(item => item.city == cityName);
+      if (detail != undefined) {
+        storageCityName = detail.storagePath;
+      }
     }
     return storageCityName;
   }
@@ -1215,9 +1220,9 @@ export class CommonService {
             for (let j = 0; j < points.length; j++) {
               latLng.push({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
               bounds.extend({ lat: Number(points[j][0]), lng: Number(points[j][1]) });
-             // str += points[j][1] + "," + points[j][0] + ",0 ";
+              // str += points[j][1] + "," + points[j][0] + ",0 ";
             }
-           // console.log(str);
+            // console.log(str);
             let line = new google.maps.Polyline({
               path: latLng,
               strokeColor: "black",
