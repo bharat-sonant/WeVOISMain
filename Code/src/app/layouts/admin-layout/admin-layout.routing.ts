@@ -129,6 +129,7 @@ import { UpdateSurveyorVirtualComponent } from '../../Developers/update-surveyor
 import { NonSalariedCalculationComponent } from '../../salary-management/non-salaried-calculation/non-salaried-calculation.component';
 import { VehicleTrackingComponent } from '../../VTS/vehicle-tracking/vehicle-tracking.component';
 import { VheicleCurrentInfoComponent } from '../../VTS/vheicle-current-info/vheicle-current-info.component';
+import { SetMarkerImagesComponent } from '../../Developers/set-marker-images/set-marker-images.component';
 
 
 
@@ -6969,6 +6970,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-test/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-test/:id/set-marker-images', component: SetMarkerImagesComponent },
 
     
 

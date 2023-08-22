@@ -137,6 +137,7 @@ import { NonSalariedCalculationComponent } from '../../salary-management/non-sal
 import { VehicleTrackingComponent } from '../../VTS/vehicle-tracking/vehicle-tracking.component';
 import { VheicleCurrentInfoComponent } from '../../VTS/vheicle-current-info/vheicle-current-info.component';
 
+import { SetMarkerImagesComponent } from '../../Developers/set-marker-images/set-marker-images.component';
 // Jaipur-Greater
 
 import { GarbageCaptureAnalysisComponent } from '../../VTS/garbage-capture-analysis/garbage-capture-analysis.component';
@@ -313,7 +314,8 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     UpdateSurveyorVirtualComponent,
     NonSalariedCalculationComponent,
     VehicleTrackingComponent,
-    VheicleCurrentInfoComponent
+    VheicleCurrentInfoComponent,
+    SetMarkerImagesComponent
   ]
 })
 
