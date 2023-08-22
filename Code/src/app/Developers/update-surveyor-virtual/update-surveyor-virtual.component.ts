@@ -76,6 +76,7 @@ export class UpdateSurveyorVirtualComponent implements OnInit {
         this.updateList.push({ cardNo: cardNo, ward: ward, line: line });
         console.log(cardNo + " => " + ward + " => " + line)
       }
+      console.log(this.updateList);
       this.commonService.setAlertMessage("success", "Surveyor Id updated successfully !!!");
     }
   }
