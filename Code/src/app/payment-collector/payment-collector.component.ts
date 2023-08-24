@@ -343,9 +343,9 @@ export class PaymentCollectorComponent implements OnInit {
       if (userDetail != undefined) {
         if (userDetail.wardNo != "") {
           setTimeout(() => {
-            if (userDetail.wardNo != "") {
-              $("#ddlWard").val(userDetail.wardNo);
-            }
+            //if (userDetail.wardNo != "") {
+           //   $("#ddlWard").val(userDetail.wardNo);
+           // }
             if (userDetail.deviceNo != "") {
               $("#ddlDevice").val(userDetail.deviceNo);
             }
@@ -403,17 +403,12 @@ export class PaymentCollectorComponent implements OnInit {
 
   saveWard() {
     let empID = $("#empID").val();
-    if ($("#ddlWard").val() == "0") {
-      this.commonService.setAlertMessage("error", "Please select ward!!!");
-      return;
-    }
     if ($("#ddlDevice").val() == "0") {
       this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
       return;
     }
 
     if (empID != "0") {
-      let wardNo = $("#ddlWard").val();
       let deviceNo = $("#ddlDevice").val();
       let detail = this.userList.find(item => item.deviceNo == deviceNo);
       if (detail != undefined) {
@@ -422,7 +417,6 @@ export class PaymentCollectorComponent implements OnInit {
       }
       let element = <HTMLInputElement>document.getElementById("chkRemove");
       if (element.checked == true) {
-        wardNo = null;
         deviceNo = null;
       }
 
@@ -430,17 +424,15 @@ export class PaymentCollectorComponent implements OnInit {
       let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
         userJSONInstance.unsubscribe();
         if (userJsonData != null) {
-          userJsonData[empID.toString()]["assignedWard"] = wardNo;
           userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
           let fileName = "paymentCollector.json";
           let filePath = "/CollectionManagement/";
           this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
-            this.commonService.setAlertMessage("success", "Zone assigned successfully !!!");
+            this.commonService.setAlertMessage("success", "Device assigned successfully !!!");
             $("#empID").val("0");
             this.closeModel();
             let userDetail = this.userList.find((item) => item.empId == empID);
             if (userDetail != undefined) {
-              userDetail.wardNo = wardNo;
               userDetail.deviceNo = deviceNo;
             }
           });
@@ -455,17 +447,15 @@ export class PaymentCollectorComponent implements OnInit {
     let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
       userJSONInstance.unsubscribe();
       if (userJsonData != null) {
-        delete userJsonData[empID.toString()]["assignedWard"];
         delete userJsonData[empID.toString()]["assignedDevice"];
         let fileName = "paymentCollector.json";
         let filePath = "/CollectionManagement/";
         this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
-          this.commonService.setAlertMessage("success", "Zone removed successfully !!!");
+          this.commonService.setAlertMessage("success", "Device removed successfully !!!");
           $("#empID").val("0");
           this.closeModel();
           let userDetail = this.userList.find((item) => item.empId == empID);
           if (userDetail != undefined) {
-            userDetail.wardNo = null;
             userDetail.deviceNo = null;
           }
         });

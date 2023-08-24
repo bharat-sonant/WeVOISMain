@@ -47,7 +47,7 @@
                                                 <td class="table-data-3">
                                                     {{data.empId}}</td>
                                                     <td class="table-data-3">
-                                                        <span [hidden]="data.wardNo==''">{{data.wardNo}} ({{data.deviceNo}})</span><br/>
+                                                        <span [hidden]="data.deviceNo==''">{{data.deviceNo}}</span><br/>
                                                         <span [hidden]="data.collectedAmount==0"><b> Collection : {{data.collectedAmount}}</b></span>
                                                         </td>
 
@@ -202,6 +202,7 @@
             </div>
             <div class="modal-body">
                 <input id="empID" type="hidden" value="0" />
+                <!--
                 <label>Ward</label>
                 <div class="wrap-input-effects" required>
                     <select id="ddlWard" class="input-green">
@@ -212,7 +213,7 @@
                     <span class="symbol-input">
                         <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
                     </span>
-                </div>
+                </div>-->
                 <label>Device Serial No.</label>
                 <div class="wrap-input-effects" required>
                     <select id="ddlDevice" class="input-green">
