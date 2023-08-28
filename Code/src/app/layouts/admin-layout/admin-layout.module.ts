@@ -136,8 +136,12 @@ import { UpdateSurveyorVirtualComponent } from '../../Developers/update-surveyor
 import { NonSalariedCalculationComponent } from '../../salary-management/non-salaried-calculation/non-salaried-calculation.component';
 import { VehicleTrackingComponent } from '../../VTS/vehicle-tracking/vehicle-tracking.component';
 import { VheicleCurrentInfoComponent } from '../../VTS/vheicle-current-info/vheicle-current-info.component';
-
 import { SetMarkerImagesComponent } from '../../Developers/set-marker-images/set-marker-images.component';
+import { PaymentViaNeftComponent } from '../../reports/payment-via-neft/payment-via-neft.component';
+import { PaymentViaNeftReportComponent } from '../../reports/payment-via-neft-report/payment-via-neft-report.component';
+import { RemoveDeletedScancardsComponent } from '../../Developers/remove-deleted-scancards/remove-deleted-scancards.component';
+import { PenaltyReviewComponent } from '../../PortalServices/penalty-review/penalty-review.component';
+
 // Jaipur-Greater
 
 import { GarbageCaptureAnalysisComponent } from '../../VTS/garbage-capture-analysis/garbage-capture-analysis.component';
@@ -315,7 +319,11 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     NonSalariedCalculationComponent,
     VehicleTrackingComponent,
     VheicleCurrentInfoComponent,
-    SetMarkerImagesComponent
+    SetMarkerImagesComponent,
+    PaymentViaNeftComponent,
+    PaymentViaNeftReportComponent,
+    RemoveDeletedScancardsComponent,
+    PenaltyReviewComponent,
   ]
 })
 

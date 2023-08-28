@@ -130,6 +130,10 @@ import { NonSalariedCalculationComponent } from '../../salary-management/non-sal
 import { VehicleTrackingComponent } from '../../VTS/vehicle-tracking/vehicle-tracking.component';
 import { VheicleCurrentInfoComponent } from '../../VTS/vheicle-current-info/vheicle-current-info.component';
 import { SetMarkerImagesComponent } from '../../Developers/set-marker-images/set-marker-images.component';
+import { PaymentViaNeftComponent } from '../../reports/payment-via-neft/payment-via-neft.component';
+import { PaymentViaNeftReportComponent } from '../../reports/payment-via-neft-report/payment-via-neft-report.component';
+import { RemoveDeletedScancardsComponent } from '../../Developers/remove-deleted-scancards/remove-deleted-scancards.component';
+import { PenaltyReviewComponent } from '../../PortalServices/penalty-review/penalty-review.component';
 
 
 
@@ -396,6 +400,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'sikar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'sikar/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'sikar/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'sikar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -629,6 +635,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-greater/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-greater/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-greater/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-greater/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
 
     
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -882,6 +890,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'reengus/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'reengus/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'reengus/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'reengus/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
 
 
     //Shahpura
@@ -1117,6 +1127,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'shahpura/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'shahpura/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'shahpura/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'shahpura/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1351,6 +1363,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'test/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'test/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
 
 
 
@@ -1588,6 +1602,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-office/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-office/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-office/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-office/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
 
 
     //kishangarh
@@ -3695,6 +3711,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-malviyanagar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-malviyanagar/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-malviyanagar/:id/remove-deleted-scancards', component: RemoveDeletedScancardsComponent },
+    { path: 'jaipur-malviyanagar/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
@@ -4162,7 +4180,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-murlipura/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-murlipura/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
-
+    { path: 'jaipur-murlipura/:id/remove-deleted-scancards', component: RemoveDeletedScancardsComponent },
+    { path: 'jaipur-murlipura/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur-sanganer
     { path: 'jaipur-sanganer/home', component: HomeComponent },
