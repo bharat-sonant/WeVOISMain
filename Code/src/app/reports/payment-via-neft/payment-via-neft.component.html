@@ -1,7 +1,7 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
-            Payment Via Cheque
+            Payment Via NEFT
         </div>
     </div>
 </section>
@@ -14,7 +14,7 @@
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
-                        <div class="col-md-5 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-9 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <select class="filter-select filter-input" id="ddlZone" (change)="getFilter()">
@@ -30,11 +30,11 @@
                                             {{data.name}}
                                         </option>
                                     </select>
-                                    <input id="txtChequeNo" type="text" class="filter-input" placeholder="Cheque Number" (keyup)="getFilter()" />
+                                    <input id="txtNeftNo" type="text" class="filter-input" placeholder="NEFT Number" (keyup)="getFilter()" />
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-7 text-center" style="padding-right:0px!important;">
+                        <div class="col-md-3 text-center" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-right p-r ml-20" style="padding-right: 20px!important;">
                                     <i class="fa-solid fa-file-export"
@@ -61,10 +61,10 @@
                                                 Ward No
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                Cheque Number
+                                                NEFT Number
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                Cheque Date
+                                                NEFT Date
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Bank Name
@@ -85,14 +85,14 @@
                                                 Collected Date
                                             </th>
                                             <th class="text-center br-1" style="border:none!important;">
-                                                Cheque Image
+                                                NEFT Image
                                             </th>
                                             <th class="text-center br-1" style="border:none!important;">
                                                 Action
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of chequeFilterList; let i=index">
+                                            <tr id="tr{{i}}" *ngFor="let data of neftFilterList; let i=index">
                                                 <td class="text-left br-1">
                                                     {{i+1}}
                                                 </td>
@@ -103,10 +103,10 @@
                                                     {{data.zone}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.chequeNo}}
+                                                    {{data.neftNo}}
                                                 </td>
                                                 <td class="text-left br-1">
-                                                    {{data.checkDateFormat}}
+                                                    {{data.neftDateFormat}}
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.bankName}}
@@ -216,7 +216,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add Cheque Declined Detail</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Add NEFT Declined Detail</h5>
                 <button type="button" class="close" (click)="closeModel();">
                     <span aria-hidden="true">&times;</span>
                 </button>

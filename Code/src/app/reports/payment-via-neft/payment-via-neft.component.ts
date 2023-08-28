@@ -17,11 +17,11 @@ export class PaymentViaNeftComponent implements OnInit {
   cityName: any;
   db: any;
   todayDate: any;
-  chequeList: any[];
-  chequeFilterList: any[];
+  neftList: any[];
+  neftFilterList: any[];
   ddlZone = "#ddlZone";
   ddlCollector = "#ddlCollector";
-  txtChequeNo = "#txtChequeNo";
+  txtNeftNo = "#txtNeftNo";
   divLoader = "#divLoader";
   hddCardNo = "#hddCardNo";
   hddDate = "#hddDate";
@@ -49,7 +49,7 @@ export class PaymentViaNeftComponent implements OnInit {
     this.selectedZone = 0;
     this.getZones();
     this.getPaymentCollector();
-    this.getPaymentChequeDetail();
+    this.getPaymentNEFTDetail();
   }
 
   getPaymentCollector() {
@@ -78,10 +78,10 @@ export class PaymentViaNeftComponent implements OnInit {
     this.zoneList[0]["ZoneName"] = "--Select Zone--";
   }
 
-  getPaymentChequeDetail() {
-    this.chequeList = [];
-    $(this.divLoader).show();
-    let dbPath = "PaymentCollectionInfo/PaymentViaCheque";
+  getPaymentNEFTDetail() {
+    this.neftList = [];
+    // $(this.divLoader).show();
+    let dbPath = "PaymentCollectionInfo/PaymentViaNEFT";
     let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
       instance.unsubscribe();
       if (data != null) {
@@ -103,20 +103,20 @@ export class PaymentViaNeftComponent implements OnInit {
                 let day = collectedDate.split("-")[2];
                 let monthName = this.commonService.getCurrentMonthShortName(Number(month));
                 let collectedDateFormat = day + " " + monthName + " " + year;
-                let checkDate = dateData[key]["chequeDate"];
-                month = checkDate.split("-")[1];
-                year = checkDate.split("-")[0];
-                day = checkDate.split("-")[2];
+                let neftDate = dateData[key]["neftDate"];
+                month = neftDate.split("-")[1];
+                year = neftDate.split("-")[0];
+                day = neftDate.split("-")[2];
                 monthName = this.commonService.getCurrentMonthShortName(Number(month));
-                let checkDateFormat = day + " " + monthName + " " + year;
-                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + dateData[key]["chequeDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
-                this.chequeList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: dateData[key]["chequeDate"], checkDateFormat: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl });
+                let neftDateFormat = day + " " + monthName + " " + year;
+                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + dateData[key]["neftDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                this.neftList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], neftNo: dateData[key]["neftNo"], neftDate: dateData[key]["neftDate"], neftDateFormat: neftDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl });
               }
             }
           }
         }
-        this.chequeList = this.chequeList.sort((a, b) => Number(b.timeStemp) < Number(a.timeStemp) ? 1 : -1);
-        this.chequeFilterList = this.chequeList;
+        this.neftList = this.neftList.sort((a, b) => Number(b.timeStemp) < Number(a.timeStemp) ? 1 : -1);
+        this.neftFilterList = this.neftList;
         $(this.divLoader).hide();
       } else {
         $(this.divLoader).hide();
@@ -128,17 +128,17 @@ export class PaymentViaNeftComponent implements OnInit {
     $(this.divLoader).show();
     let zone = $(this.ddlZone).val();
     let collectorId = $(this.ddlCollector).val();
-    let list = this.chequeList;
+    let list = this.neftList;
     if (zone != "0") {
       list = list.filter(item => item.zone == zone);
     }
     if (collectorId != "0") {
       list = list.filter(item => item.collectedBy == collectorId);
     }
-    if ($(this.txtChequeNo).val() != "") {
-      list = list.filter(item => item.chequeNo.toString().includes($(this.txtChequeNo).val()));
+    if ($(this.txtNeftNo).val() != "") {
+      list = list.filter(item => item.neftNo.toString().includes($(this.txtNeftNo).val()));
     }
-    this.chequeFilterList = list;
+    this.neftFilterList = list;
     $(this.divLoader).hide();
   }
 
@@ -187,10 +187,10 @@ export class PaymentViaNeftComponent implements OnInit {
     let cardNo = $(this.hddCardNo).val();
     let date = $(this.hddDate).val();
     let key = $(this.hddKey).val();
-    let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
+    let dbPath = "PaymentCollectionInfo/PaymentViaNEFT/" + cardNo + "/" + date + "/" + key;
     this.db.object(dbPath).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid" });
 
-    let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    let detail = this.neftList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
     if (detail != undefined) {
       let monthYearList = detail.monthYear.split(",");
       for (let i = 0; i < monthYearList.length; i++) {
@@ -203,7 +203,7 @@ export class PaymentViaNeftComponent implements OnInit {
       const transData = {
         merchantTransactionId: detail.merchantTransactionId,
         monthYear: detail.monthYear,
-        payMethod: "By Cheque",
+        payMethod: "By NEFT",
         paymentCollectionById: detail.collectedBy,
         paymentCollectionByName: detail.collectedByName,
         retrievalReferenceNo: transactionId,
@@ -235,13 +235,13 @@ export class PaymentViaNeftComponent implements OnInit {
           const collectorData = {
             cardNo: cardNo,
             merchantTransactionId: detail.merchantTransactionId,
-            payMethod: "By Cheque",
+            payMethod: "By NEFT",
             transactionAmount: detail.amount,
             retrievalReferenceNo: transactionId
           }
           this.db.object(dbPath + "/" + collectorKey).update(collectorData);
-          let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
-          this.chequeList = this.chequeList.filter((e, i) => i !== index);
+          let index = this.neftList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+          this.neftList = this.neftList.filter((e, i) => i !== index);
           this.getFilter();
           this.clearAll();
           this.closeModel();
@@ -271,9 +271,9 @@ export class PaymentViaNeftComponent implements OnInit {
     let cardNo = $(this.hddDeclinedCardNo).val();
     let date = $(this.hddDeclinedDate).val();
     let key = $(this.hddDeclinedKey).val();
-    let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
+    let dbPath = "PaymentCollectionInfo/PaymentViaNEFT/" + cardNo + "/" + date + "/" + key;
     this.db.object(dbPath).update({ declinedReason: txtDeclinedReason, transactionDate: txtDeclinedDate, status: "Declined" });
-    let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    let detail = this.neftList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
     if (detail != undefined) {
       let monthYearList = detail.monthYear.split(",");
       for (let i = 0; i < monthYearList.length; i++) {
@@ -284,8 +284,8 @@ export class PaymentViaNeftComponent implements OnInit {
       }
     }
 
-    let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
-    this.chequeList = this.chequeList.filter((e, i) => i !== index);
+    let index = this.neftList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    this.neftList = this.neftList.filter((e, i) => i !== index);
     this.getFilter();
     this.clearAll();
     this.closeModel();
@@ -309,7 +309,7 @@ export class PaymentViaNeftComponent implements OnInit {
   }
 
   exportToExcel() {
-    let list = this.chequeList;
+    let list = this.neftList;
     if (list.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
@@ -321,10 +321,10 @@ export class PaymentViaNeftComponent implements OnInit {
       htmlString += "Ward No";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Cheque Number";
+      htmlString += "NEFT Number";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Cheque Date";
+      htmlString += "NEFT Date";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Bank Name";
@@ -351,10 +351,10 @@ export class PaymentViaNeftComponent implements OnInit {
         htmlString += list[i]["zone"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += list[i]["chequeNo"];
+        htmlString += list[i]["neftNo"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += list[i]["checkDateFormat"];
+        htmlString += list[i]["neftDateFormat"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += list[i]["bankName"];
