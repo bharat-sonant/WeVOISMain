@@ -402,6 +402,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'sikar/:id/payment-via-neft', component: PaymentViaNeftComponent },
     { path: 'sikar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'sikar/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -892,6 +893,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'reengus/:id/payment-via-neft', component: PaymentViaNeftComponent },
     { path: 'reengus/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'reengus/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'reengus/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'reengus/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //Shahpura
@@ -1129,6 +1133,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'shahpura/:id/payment-via-neft', component: PaymentViaNeftComponent },
     { path: 'shahpura/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'shahpura/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'shahpura/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'shahpura/:id/penalty-review', component: PenaltyReviewComponent },
 
     //test
     { path: 'test/home', component: HomeComponent },
@@ -1365,6 +1372,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'test/:id/payment-via-neft', component: PaymentViaNeftComponent },
     { path: 'test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'test/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'test/:id/penalty-review', component: PenaltyReviewComponent },
 
 
 
@@ -1604,6 +1614,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'jaipur-office/:id/payment-via-neft', component: PaymentViaNeftComponent },
     { path: 'jaipur-office/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-office/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-office/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-office/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //kishangarh
@@ -1839,6 +1852,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'kishangarh/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'kishangarh/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'kishangarh/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'kishangarh/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'kishangarh/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //Nawai
@@ -2074,6 +2090,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'niwai/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'niwai/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'niwai/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'niwai/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'niwai/:id/penalty-review', component: PenaltyReviewComponent },
 
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
@@ -2308,6 +2327,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaisalmer/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaisalmer/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaisalmer/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaisalmer/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaisalmer/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //Salasar
@@ -2543,6 +2565,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'salasar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'salasar/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'salasar/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'salasar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'salasar/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //Behror
@@ -2778,6 +2803,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'behror/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'behror/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'behror/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'behror/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'behror/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
@@ -3011,6 +3039,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
@@ -3244,6 +3275,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-jhotwara/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-jhotwara/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-jhotwara/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-jhotwara/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-jhotwara/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //jaipur-jagatpura
@@ -3478,6 +3512,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-jagatpura/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-jagatpura/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-jagatpura/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-jagatpura/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-jagatpura/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3712,6 +3749,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-malviyanagar/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'jaipur-malviyanagar/:id/remove-deleted-scancards', component: RemoveDeletedScancardsComponent },
+    { path: 'jaipur-malviyanagar/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-malviyanagar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-malviyanagar/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur-mansarovar
@@ -3946,6 +3985,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-mansarovar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-mansarovar/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-mansarovar/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-mansarovar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-mansarovar/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //jaipur-murlipura
@@ -4182,6 +4224,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'jaipur-murlipura/:id/remove-deleted-scancards', component: RemoveDeletedScancardsComponent },
     { path: 'jaipur-murlipura/:id/penalty-review', component: PenaltyReviewComponent },
+    { path: 'jaipur-murlipura/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-murlipura/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-murlipura/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur-sanganer
     { path: 'jaipur-sanganer/home', component: HomeComponent },
@@ -4415,6 +4460,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-sanganer/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-sanganer/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-sanganer/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-sanganer/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-sanganer/:id/penalty-review', component: PenaltyReviewComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4648,6 +4696,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jaipur-vidhyadhar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-vidhyadhar/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jaipur-vidhyadhar/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-vidhyadhar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-vidhyadhar/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //Bhiwadi
@@ -4882,6 +4933,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'bhiwadi/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'bhiwadi/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'bhiwadi/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'bhiwadi/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'bhiwadi/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //Chhapar
@@ -5116,6 +5170,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'chhapar/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'chhapar/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'chhapar/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'chhapar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'chhapar/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //Churu
@@ -5350,6 +5407,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'churu/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'churu/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'churu/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'churu/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'churu/:id/penalty-review', component: PenaltyReviewComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5584,6 +5644,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'wevois-other/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'wevois-other/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'wevois-other/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'wevois-other/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'wevois-other/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     //gwalior
@@ -5819,6 +5882,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'gwalior/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'gwalior/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'gwalior/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'gwalior/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'gwalior/:id/penalty-review', component: PenaltyReviewComponent },
 
 
 
@@ -6055,6 +6121,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'tonk/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'tonk/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'tonk/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'tonk/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'tonk/:id/penalty-review', component: PenaltyReviewComponent },
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -6288,6 +6357,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'ratangarh/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'ratangarh/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'ratangarh/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'ratangarh/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'ratangarh/:id/penalty-review', component: PenaltyReviewComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -6521,6 +6593,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'nokha/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'nokha/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'nokha/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'nokha/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'nokha/:id/penalty-review', component: PenaltyReviewComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6754,6 +6829,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'losal/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'losal/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'losal/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'losal/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'losal/:id/penalty-review', component: PenaltyReviewComponent },
 
 
 
@@ -6990,6 +7068,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jaipur-test/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'jaipur-test/:id/set-marker-images', component: SetMarkerImagesComponent },
+    { path: 'jaipur-test/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jaipur-test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-test/:id/penalty-review', component: PenaltyReviewComponent },
 
     
 
@@ -7225,6 +7306,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'mnz-test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'mnz-test/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'mnz-test/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'mnz-test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'mnz-test/:id/penalty-review', component: PenaltyReviewComponent },
 
 
 
@@ -7461,6 +7545,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'mpz-test/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'mpz-test/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'mpz-test/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'mpz-test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'mpz-test/:id/penalty-review', component: PenaltyReviewComponent },
 
     
 
@@ -7697,6 +7784,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'jammu-survey/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'jammu-survey/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'jammu-survey/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'jammu-survey/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jammu-survey/:id/penalty-review', component: PenaltyReviewComponent },
 
     
     //Khandela
@@ -7931,6 +8021,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'khandela/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'khandela/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'khandela/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'khandela/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'khandela/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'khandela/:id/penalty-review', component: PenaltyReviewComponent },
 
     
     //watteye-office
@@ -8165,6 +8258,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'watteye-office/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'watteye-office/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'watteye-office/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'watteye-office/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'watteye-office/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'watteye-office/:id/penalty-review', component: PenaltyReviewComponent },
 
 
     
@@ -8400,5 +8496,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'dehradun/:id/update-surveyor-virtual', component: UpdateSurveyorVirtualComponent },
     { path: 'dehradun/:id/non-salaried-calculation', component: NonSalariedCalculationComponent },
     { path: 'dehradun/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
+    { path: 'dehradun/:id/payment-via-neft', component: PaymentViaNeftComponent },
+    { path: 'dehradun/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'dehradun/:id/penalty-review', component: PenaltyReviewComponent },
 
 ]; 
