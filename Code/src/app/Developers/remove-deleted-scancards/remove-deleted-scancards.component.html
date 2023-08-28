@@ -1,0 +1,53 @@
+<div id="divLoaderLineMove" class="loaderClass">
+    <span class="spanLoader" id="spLoader">
+      <img src="../../../assets/img/loading.gif" width="50"><br/><span style="color:#fff; font-weight: normal;font-size: 18px;"> Card and Marker are mapping....<br/> system has mapped lines <b></b><br/></span>
+    <span style="color:#0ba118; font-size: 24px;"> Please wait...</span>
+    </span>
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-2 header1">
+        </div>
+        <div class="col-md-8 header2">
+
+        </div>
+        <div class="col-md-2 header3"></div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">        
+        <div class="col-md-6 Update2">           
+            <div class="card card3">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Remove Deleted Scan Cards</b></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body card-body3">
+                    <div class="outer">
+
+                        <div class="row">
+                            <div class="col-md-12  pr-1">
+                                <label>Zone No</label>
+                                <div class="d-flex wrap-class">
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select caret-select2" id="ddlZone">
+                                    <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                                </select>
+                                    </div>
+                                    <div class="form-group button">
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="removeDeletedCards();">SAVE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

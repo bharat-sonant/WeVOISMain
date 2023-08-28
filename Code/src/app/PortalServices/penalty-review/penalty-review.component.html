@@ -1,0 +1,281 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<div>
+    <section class="header ">
+        <div class="row no-gutters ">
+            <div class="offset-3 col-6 heading text-center">
+                <b class="header-text"> Penalty Review </b>
+            </div>
+        </div>
+    </section>
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-12 loaderClass-outer">
+                <div id="divLoader" class="loaderClass">
+                    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+                </div>
+                <div class="card custom-header-outer">
+                    <div class="card-header custom-header">
+                        <div class="row align">
+                            <div class="col-md-8 text-left align-iner">
+                                <div class="row">
+                                    <div class="col-md-12 text-left p-r ml-20 select-div">
+                                        <select class="caret-select year-select" id="ddlYear"
+                                            (change)="getMonthPenalty()" [(ngModel)]="selectedYear">
+                                            <option value="0">Year</option>
+                                            <option value={{yer.year}} *ngFor="let yer of yearList"
+                                                ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}
+                                            </option>
+                                        </select>
+                                        <select class="caret-select month-select" id="ddlMonth"
+                                            (change)="getMonthPenalty()">
+                                            <option value="0">Month</option>
+                                            <option value="01">January</option>
+                                            <option value="02">February</option>
+                                            <option value="03">March</option>
+                                            <option value="04">April</option>
+                                            <option value="05">May</option>
+                                            <option value="06">June</option>
+                                            <option value="07">July</option>
+                                            <option value="08">August</option>
+                                            <option value="09">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                        <input id="flpUpload" type="file" style="margin-left: 20px;" />
+                                        <button id="btnSave" class="btn btn-success btn-xs"
+                                                    (click)="getFileData();">SAVE</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 detail-box">
+                                <div class="row">
+                                    <div class="col-md-12 text-right export-main">
+                                        <span class="export-span">
+                                            <i class="fa-solid fa-file-export export-icon"
+                                            (click)="downloadTemplate();" ></i><br />
+                                            Sample File
+                                        </span>
+                                        <span class="export-span">
+                                            <b style="font-size: 17px;">{{totalCards}}</b><br />
+                                            Unscaned Cards
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        <div id="divList" class="table-wrapper table-one">
+                                            <table class="table table-line">
+                                                <thead>
+                                                    <th class="text-left br-1 border-none">
+                                                        Zone</th>
+                                                    <th class="text-left br-1 border-none">
+                                                        1</th>
+                                                    <th class="text-right br-1 border-none">
+                                                        2
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        3
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        4
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        5
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        6
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        7
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        8
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        9
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        10
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        11
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        12
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        13
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        14
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        15
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        16
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        17
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        18
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        19
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        20
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        21
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        22
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        23
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        24
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        25
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        26
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        27
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        28
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        29
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        30
+                                                    </th>
+                                                    <th class="text-right br-1 border-none">
+                                                        31
+                                                    </th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr id="tr{{i}}" *ngFor="let data of monthPenaltyList; let i=index">
+                                                        <td class="text-left br-1">
+                                                            {{data.zone}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day1}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day2}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day3}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day4}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day5}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day6}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day7}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day8}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day9}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day10}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day11}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day12}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day13}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day14}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day15}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day16}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day17}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day18}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day19}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day20}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day21}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day22}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day23}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day24}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day25}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day26}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day27}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day28}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day29}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day30}}
+                                                        </td>
+                                                        <td class="text-left br-1">
+                                                            {{data.day31}}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
