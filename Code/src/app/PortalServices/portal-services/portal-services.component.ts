@@ -75,6 +75,9 @@ export class PortalServicesComponent implements OnInit {
             $("#divBGManagement").show();
           }
         }
+        if (userAccessList[i]["pageId"] == "8A2" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divPortalReview").show();
+        }
       }
     }
   }
