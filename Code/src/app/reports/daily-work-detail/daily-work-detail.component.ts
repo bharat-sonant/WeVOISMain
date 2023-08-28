@@ -31,7 +31,6 @@ export class DailyWorkDetailComponent implements OnInit {
   setDefault() {
     this.isShowActual = false;
     if (localStorage.getItem("isActualWorkPercentage") != null) {
-      console.log(localStorage.getItem("isActualWorkPercentage"))
       if (localStorage.getItem("isActualWorkPercentage") == "1") {
         this.isShowActual = true;
       }
@@ -91,7 +90,6 @@ export class DailyWorkDetailComponent implements OnInit {
     let locationInstance = this.db.object(dbPath).valueChanges().subscribe(
       locationData => {
         locationInstance.unsubscribe();
-        console.log(locationData);
         let distance = "0";
         if (locationData != null) {
           let keyArray = Object.keys(locationData);
@@ -261,7 +259,7 @@ export class DailyWorkDetailComponent implements OnInit {
             if (detail != undefined) {
               detail.startTime = startTime;
               detail.endTime = endTime;
-              detail.trips = trips;
+              //detail.trips = trips;
               detail.wardRunKm = wardRunKm;
               detail.workPercentage = workPercentage;
               detail.actualWorkPercentage = actualWorkPercentage;
@@ -272,10 +270,22 @@ export class DailyWorkDetailComponent implements OnInit {
               }
               let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
               detail.workTime = this.commonService.getHrsFull(totalMinutes);
+              this.getTrips(zoneNo);
             }
           }
         }
       });
+  }
+
+  getTrips(zoneNo: any) {
+    let dbPath = "WardTrips/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + zoneNo;
+    let tripInstance = this.db.list(dbPath).valueChanges().subscribe(tripData => {
+      tripInstance.unsubscribe();
+      let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
+      if (detail != undefined) {
+        detail.trips = tripData.length;
+      }
+    });
   }
 
   getWorkerDetail(zoneNo: any) {
