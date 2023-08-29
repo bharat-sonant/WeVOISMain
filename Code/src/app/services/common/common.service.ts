@@ -254,6 +254,9 @@ export class CommonService {
     else if (cityName == "dehradun") {
       latLng.push({ lat: 30.3164945, lng: 78.0321918 });
     }
+    else if (cityName == "pali") {
+      latLng.push({ lat: 25.7794331, lng: 73.3779516 });
+    }
     return latLng;
   }
 
