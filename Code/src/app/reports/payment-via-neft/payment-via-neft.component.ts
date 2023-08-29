@@ -80,7 +80,7 @@ export class PaymentViaNeftComponent implements OnInit {
 
   getPaymentNEFTDetail() {
     this.neftList = [];
-    // $(this.divLoader).show();
+     $(this.divLoader).show();
     let dbPath = "PaymentCollectionInfo/PaymentViaNEFT";
     let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
       instance.unsubscribe();
