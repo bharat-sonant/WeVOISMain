@@ -44,9 +44,9 @@
                                             <option value="11">November</option>
                                             <option value="12">December</option>
                                         </select>
-                                        <input id="flpUpload" type="file" style="margin-left: 20px;" />
+                                        <input id="flpUpload" type="file" style="margin-left: 20px;" accept=".xls,.xlsx"/>
                                         <button id="btnSave" class="btn btn-success btn-xs"
-                                                    (click)="getFileData();">SAVE</button>
+                                                    (click)="openModel(contentConfirmation);">Upload </button>
                                     </div>
                                 </div>
                             </div>
@@ -275,7 +275,30 @@
                             </form>
                         </div>
                     </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <ng-template #contentConfirmation>
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to save this file for selected month & year  ?</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="padding-top: 20px;">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-success w-100 submit-btn" (click)="getFileData()">
+                                Confirm</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                                Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </ng-template>
