@@ -235,5 +235,6 @@ export class PenaltyReviewComponent implements OnInit {
     link.href = this.commonService.fireStoragePath + "Common%2FPenaltySample.xlsx?alt=media";
     link.click();
     link.remove();
+    this.commonService.setAlertMessage("success","File downloaded successfully !!!");
   }
 }
