@@ -108,6 +108,7 @@ export class PenaltyReviewComponent implements OnInit {
         }
         if (i == days) {
           setTimeout(() => {
+            this.getMonthPenalty();
             $(this.divLoader).hide();
           }, 600);
         }
