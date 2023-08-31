@@ -75,7 +75,7 @@ export class PaymentViaNeftComponent implements OnInit {
   getZones() {
     this.zoneList = [];
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-    this.zoneList[0]["ZoneName"] = "--Select Zone--";
+    this.zoneList[0]["zoneName"] = "--Select Zone--";
   }
 
   getPaymentNEFTDetail() {
@@ -309,7 +309,7 @@ export class PaymentViaNeftComponent implements OnInit {
   }
 
   exportToExcel() {
-    let list = this.neftList;
+    let list = this.neftFilterList;
     if (list.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
@@ -334,6 +334,9 @@ export class PaymentViaNeftComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Amount";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment Month";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Collected By";
@@ -364,6 +367,9 @@ export class PaymentViaNeftComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += list[i]["amount"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += list[i]["monthYear"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += list[i]["collectedByName"];
