@@ -326,7 +326,7 @@
   
   /***********Ward Scroll List Start************/
   .scroll-list{
-    height: calc(100vh - 50px);
+    height: calc(100vh - 65px);
     overflow-y: scroll;
     overflow-x: hidden;
     border: 1px solid lightgray;
@@ -591,7 +591,7 @@
 
   
 .field-box{
-  width: 300px!important;
+  width: 480px!important;
     position: fixed;
     top: 10px;
     right: 10px;
@@ -610,7 +610,7 @@
 }
 
 .refresh{
-  width: 50px;
+  width: 160px;
   float: left;
   border-right: 1px solid #fff;
   cursor: pointer;

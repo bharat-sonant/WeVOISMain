@@ -3,6 +3,14 @@
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers no-gutters-iner">
             Monthly Fuel Report
         </div>
+        
+        <div class="field-box">
+            <div class="refresh" (click)="updateJSONData();" style="text-align: right!important; padding-right: 10px;">
+                <h1><i class="fas fa-sync-alt" style="color:#57e663;font-size: 24px;"></i>
+                    <p>Last Update {{fuelDetail.lastUpdateDate}}</p>
+                </h1>
+            </div>
+        </div>
     </div>
 </section>
 <div class="main-content">
@@ -53,18 +61,16 @@
                         <div class="col-md-3 text-center total-km-main">
                             <div class="row">
                                 <div class="col-md-12 text-center total-km-outer">
-                                    <b> {{fuelDetail.totalKm}}</b> <br /><span class="tatal-km-span"> Km
-                                        Running</span>
-
+                                    <b> {{fuelDetail.totalAmount}}</b> <br /><span class="total-ammount-span">
+                                        Amount</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 text-center total-ammount-main">
                             <div class="row">
                                 <div class="col-md-12 text-center  total-ammount-outer">
-                                    <b> {{fuelDetail.totalAmount}}</b> <br /><span class="total-ammount-span">
-                                        Amount</span>
-
+                                    <b> {{fuelDetail.totalKm}}</b> <br /><span class="tatal-km-span"> Km
+                                        Running</span>
                                 </div>
                             </div>
                         </div>

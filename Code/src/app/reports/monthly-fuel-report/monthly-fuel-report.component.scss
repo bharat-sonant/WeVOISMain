@@ -2125,3 +2125,30 @@ input {
 }
 
 
+.field-box{
+    width: 200px!important;
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      text-align: center;
+      z-index: 9999;
+  }
+.refresh{
+    width: 200px;
+    float: left;
+    cursor: pointer;
+  }
+  .field-box h1{
+    margin: 0px!important;
+    font-size: 16px;
+    color: #fff;
+    font-weight: bold;
+  }
+  .field-box p{
+    margin: 0px!important;
+    font-size: 10px;
+    color: #fff;
+    font-weight: normal;
+  }
+
+
