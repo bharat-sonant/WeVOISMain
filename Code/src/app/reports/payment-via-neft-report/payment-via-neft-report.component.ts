@@ -46,7 +46,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
   getZones() {
     this.zoneList = [];
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-    this.zoneList[0]["ZoneName"] = "--Select Zone--";
+    this.zoneList[0]["zoneName"] = "--Select Zone--";
   }
 
   getPaymentCollector() {
@@ -77,6 +77,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
       if (data != null) {
         this.lastUpdateDate = data["lastUpdateDate"];
         this.neftList = JSON.parse(JSON.stringify(data["cards"]));
+        this.neftList = this.neftList.sort((a, b) => Number(b.timeStemp) < Number(a.timeStemp) ? 1 : -1);
         this.neftFilterList = this.neftList;
         $(this.divLoader).hide();
       }
@@ -141,6 +142,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
         let fileName = "PaymentViaNEFT.json";
         this.commonService.saveJsonFile(obj, fileName, filePath);
         this.neftList = neftListJSON;
+        this.neftList = this.neftList.sort((a, b) => Number(b.timeStemp) < Number(a.timeStemp) ? 1 : -1);
         this.neftFilterList = this.neftList;
         this.commonService.setAlertMessage("success", "Data update successfully !!!");
         $(this.divLoader).hide();
@@ -189,7 +191,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
 
 
   exportToExcel() {
-    let list = this.neftList;
+    let list = this.neftFilterList;
     if (list.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
@@ -223,6 +225,9 @@ export class PaymentViaNeftReportComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Amount";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment Month";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Collected By";
@@ -259,6 +264,9 @@ export class PaymentViaNeftReportComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += list[i]["amount"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += list[i]["monthYear"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += list[i]["collectedByName"];
