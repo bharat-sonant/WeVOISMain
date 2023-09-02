@@ -120,6 +120,9 @@ export class MonthlyFuelReportComponent implements OnInit {
         this.fuelDetail.totalFuel = totalQuantity.toFixed(2);
       }
       $(this.divLoader).hide();
+    },error=>{
+      $(this.divLoader).hide();
+
     });
   }
 
