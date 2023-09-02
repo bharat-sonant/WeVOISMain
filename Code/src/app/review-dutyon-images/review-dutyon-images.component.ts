@@ -180,34 +180,34 @@ export class ReviewDutyonImagesComponent implements OnInit {
             if (summaryData["dutyOnImage"] != null) {
               let list = summaryData["dutyOnImage"].split(',');
               let timeList = summaryData["dutyInTime"].split(',');
-              let listDutyOff=[];
-              let timeDutyOffList=[];
-              if(summaryData["dutyOutImage"]!=null){
-                listDutyOff= summaryData["dutyOutImage"].split(',');
+              let listDutyOff = [];
+              let timeDutyOffList = [];
+              if (summaryData["dutyOutImage"] != null) {
+                listDutyOff = summaryData["dutyOutImage"].split(',');
               }
-              if(summaryData["dutyOutTime"]!=null){
-                timeDutyOffList= summaryData["dutyOutTime"].split(',');
+              if (summaryData["dutyOutTime"] != null) {
+                timeDutyOffList = summaryData["dutyOutTime"].split(',');
               }
               let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
               if (detail != undefined) {
                 for (let i = 0; i < list.length; i++) {
                   let imageName = list[i];
                   let time = timeList[i];
-                  let imageNameDutyOff="";
-                  let timeDutyOff="";
-                  if(listDutyOff[i]!=null){
-                    imageNameDutyOff=listDutyOff[i].trim();
+                  let imageNameDutyOff = "";
+                  let timeDutyOff = "";
+                  if (listDutyOff[i] != null) {
+                    imageNameDutyOff = listDutyOff[i].trim();
                   }
-                  if(timeDutyOffList[i]!=null){
-                    timeDutyOff=timeDutyOffList[i].trim();
+                  if (timeDutyOffList[i] != null) {
+                    timeDutyOff = timeDutyOffList[i].trim();
                   }
                   if (imageName != "") {
-                    let imageDutyOffUrl="";
+                    let imageDutyOffUrl = "";
                     let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
-                    if(imageNameDutyOff!=""){
-                      imageDutyOffUrl=this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageNameDutyOff + "?alt=media";
+                    if (imageNameDutyOff != "") {
+                      imageDutyOffUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageNameDutyOff + "?alt=media";
                     }
-                    detail.dutyOnImages.push({ imageUrl: imageUrl, time: time, driver: "---", helper: "---", vehicle: "---",timeDutyOff:timeDutyOff,imageDutyOffUrl:imageDutyOffUrl });
+                    detail.dutyOnImages.push({ imageUrl: imageUrl, time: time, driver: "---", helper: "---", vehicle: "---", timeDutyOff: timeDutyOff, imageDutyOffUrl: imageDutyOffUrl });
                   }
                 }
               }
@@ -268,6 +268,9 @@ export class ReviewDutyonImagesComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Selected date can not be more than " + this.todayDate + "");
       return;
     }
+    this.selectedYear = this.selectedDate.split('-')[0];
+    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+
     this.getZones();
   }
 
