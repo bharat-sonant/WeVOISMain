@@ -138,7 +138,7 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <span style="color:green" [hidden]="data.status=='Declined'">{{data.status}}</span>
-                                                    <span style="color:red; cursor: pointer;" (click)="openModel(contentReason,i)"  [hidden]="data.status=='Paid'">{{data.status}}</span>
+                                                    <span style="color:red; cursor: pointer;" (click)="openModel(contentReason,i)"  [hidden]="data.status=='Paid'" title="Click here to view comment">{{data.status}}</span>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.collectedByName}}

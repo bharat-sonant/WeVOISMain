@@ -232,6 +232,9 @@ export class PaymentViaNeftReportComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Collected By";
       htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Comment";
+      htmlString += "</td>";
       htmlString += "</tr>";
       for (let i = 0; i < list.length; i++) {
         htmlString += "<tr>";
@@ -270,6 +273,9 @@ export class PaymentViaNeftReportComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += list[i]["collectedByName"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += list[i]["declinedReason"]!==undefined?list[i]["declinedReason"]:"";
         htmlString += "</td>";
         htmlString += "</tr>";
       }
