@@ -33,6 +33,8 @@ export class PaymentViaChequeComponent implements OnInit {
   hddDeclinedKey = "#hddDeclinedKey";
   txtDeclinedDate = "#txtDeclinedDate";
   txtDeclinedReason = "#txtDeclinedReason";
+  entityType:any="";
+  entityId:any="";
 
 
 
@@ -94,7 +96,40 @@ export class PaymentViaChequeComponent implements OnInit {
           let dateArray = Object.keys(cardData);
           for (let j = 0; j < dateArray.length; j++) {
             let collectedDate = dateArray[j];
-            let dateData = cardData[collectedDate];
+
+            //******************Case of Sub Entities********************
+            if(collectedDate==='Entities'){
+              const subEntityArray=Object.keys(cardData[collectedDate]);
+              subEntityArray.map(entity=>{
+                const subEntityDateArray=Object.keys(cardData[collectedDate][entity]);
+                subEntityDateArray.map(date=>{
+                  const dateEntriesArray=Object.keys(cardData[collectedDate][entity][date]);
+                  dateEntriesArray.map(key=>{
+                    const dataKey=cardData[collectedDate][entity][date];
+                    if (dataKey[key]["status"] == "Pending") {
+                      let timeStemp = new Date(date).getTime();
+                      let month = date.split("-")[1];
+                      let year = date.split("-")[0];
+                      let day = date.split("-")[2];
+                      let monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                      let collectedDateFormat = day + " " + monthName + " " + year;
+                      let checkDate = dataKey[key]["chequeDate"];
+                      month = checkDate.split("-")[1];
+                      year = checkDate.split("-")[0];
+                      day = checkDate.split("-")[2];
+                      monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                      let checkDateFormat = day + " " + monthName + " " + year;
+                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2FEntities%2F"+entity +"%2F" + dataKey[key]["chequeDate"] + "%2F" + dataKey[key]["image"] + "?alt=media";
+                      this.chequeList.push({ key: key, cardNo: cardNo, zone: dataKey[key]["ward"], chequeNo: dataKey[key]["chequeNo"], chequeDate: dataKey[key]["chequeDate"], checkDateFormat: checkDateFormat, name: dataKey[key]["name"], bankName: dataKey[key]["bankName"], collectedBy: dataKey[key]["collectedById"], collectedByName: dataKey[key]["collectedByName"], collectedDate: date, collectedDateFormat: collectedDateFormat, amount: dataKey[key]["amount"], monthYear: dataKey[key]["monthYear"], merchantTransactionId: dataKey[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl,entityType:"subEntity",entityId:entity });
+                    }
+
+                  });
+                });
+              });
+            }
+            //******************Case of Main Entity********************
+            else{
+             let dateData = cardData[collectedDate];
             let keyArray = Object.keys(dateData);
             for (let k = 0; k < keyArray.length; k++) {
               let key = keyArray[k];
@@ -112,9 +147,35 @@ export class PaymentViaChequeComponent implements OnInit {
                 monthName = this.commonService.getCurrentMonthShortName(Number(month));
                 let checkDateFormat = day + " " + monthName + " " + year;
                 let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + dateData[key]["chequeDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
-                this.chequeList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: dateData[key]["chequeDate"], checkDateFormat: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl });
+                this.chequeList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: dateData[key]["chequeDate"], checkDateFormat: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl,entityType:'mainEntity' });
               }
             }
+
+            }
+
+
+            
+            // let dateData = cardData[collectedDate];
+            // let keyArray = Object.keys(dateData);
+            // for (let k = 0; k < keyArray.length; k++) {
+            //   let key = keyArray[k];
+            //   if (dateData[key]["status"] == "Pending") {
+            //     let timeStemp = new Date(collectedDate).getTime();
+            //     let month = collectedDate.split("-")[1];
+            //     let year = collectedDate.split("-")[0];
+            //     let day = collectedDate.split("-")[2];
+            //     let monthName = this.commonService.getCurrentMonthShortName(Number(month));
+            //     let collectedDateFormat = day + " " + monthName + " " + year;
+            //     let checkDate = dateData[key]["chequeDate"];
+            //     month = checkDate.split("-")[1];
+            //     year = checkDate.split("-")[0];
+            //     day = checkDate.split("-")[2];
+            //     monthName = this.commonService.getCurrentMonthShortName(Number(month));
+            //     let checkDateFormat = day + " " + monthName + " " + year;
+            //     let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + dateData[key]["chequeDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+            //     this.chequeList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: dateData[key]["chequeDate"], checkDateFormat: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl });
+            //   }
+            // }
           }
         }
         this.chequeList = this.chequeList.sort((a, b) => Number(b.timeStemp) < Number(a.timeStemp) ? 1 : -1);
@@ -144,7 +205,7 @@ export class PaymentViaChequeComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  openModel(content: any, cardNo: any, date: any, key: any, type: any) {
+  openModel(content: any, cardNo: any, date: any, key: any, type: any,entityType:any,entityId:any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 330;
@@ -157,11 +218,15 @@ export class PaymentViaChequeComponent implements OnInit {
       $(this.hddCardNo).val(cardNo);
       $(this.hddDate).val(date);
       $(this.hddKey).val(key);
+      this.entityType=entityType;
+      this.entityId=entityId;
     }
     else {
       $(this.hddDeclinedCardNo).val(cardNo);
       $(this.hddDeclinedDate).val(date);
       $(this.hddDeclinedKey).val(key);
+      this.entityType=entityType;
+      this.entityId=entityId;
     }
   }
 
@@ -185,73 +250,78 @@ export class PaymentViaChequeComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Confirmation required !!!");
       return;
     }
-    $(this.divLoader).show();
-    let cardNo = $(this.hddCardNo).val();
-    let date = $(this.hddDate).val();
-    let key = $(this.hddKey).val();
-    let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
-    this.db.object(dbPath).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid" });
 
-    let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
-    if (detail != undefined) {
-      let monthYearList = detail.monthYear.split(",");
-      for (let i = 0; i < monthYearList.length; i++) {
-        let month = monthYearList[i].split('-')[0];
-        let year = monthYearList[i].split('-')[1];
-        let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
-        this.db.object(dbPath).update({ status: "Paid" });
-      }
+    this.entityType=='mainEntity'?this.acceptMainEntitytransaction():this.acceptSubEntitytransaction();
 
-      const transData = {
-        merchantTransactionId: detail.merchantTransactionId,
-        monthYear: detail.monthYear,
-        payMethod: "By Cheque",
-        paymentCollectionById: detail.collectedBy,
-        paymentCollectionByName: detail.collectedByName,
-        retrievalReferenceNo: transactionId,
-        transactionAmount: detail.amount,
-        transactionDateTime: transactionDate,
-        updatedBy: localStorage.getItem("userID"),
-        updatedDate: this.commonService.getCurrentTimeWithSecond()
-      }
 
-      let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1])-1);
-      let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/" + transactionDate.toString().split('-')[0] + "/" + monthName + "/" + transactionDate;
-      let transactionInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
-        transactionInstance.unsubscribe();
-        let transkey = 1;
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          transkey = keyArray.length + 1;
-        }
-        this.db.object(dbPath + "/" + transkey).update(transData);
 
-        dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/" + detail.collectedDate;
-        let collectorInstance = this.db.object(dbPath).valueChanges().subscribe(colectorData => {
-          collectorInstance.unsubscribe();
-          let collectorKey = 1;
-          if (colectorData != null) {
-            let keyArray = Object.keys(colectorData);
-            collectorKey = keyArray.length + 1;
-          }
-          const collectorData = {
-            cardNo: cardNo,
-            merchantTransactionId: detail.merchantTransactionId,
-            payMethod: "By Cheque",
-            transactionAmount: detail.amount,
-            retrievalReferenceNo: transactionId
-          }
-          this.db.object(dbPath + "/" + collectorKey).update(collectorData);
-          let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
-          this.chequeList = this.chequeList.filter((e, i) => i !== index);
-          this.getFilter();
-          this.clearAll();
-          this.closeModel();
-          this.commonService.setAlertMessage("success", "Transaction detail added successfully !!!");
-          $(this.divLoader).hide();
-        });
-      });
-    }
+    // $(this.divLoader).show();
+    // let cardNo = $(this.hddCardNo).val();
+    // let date = $(this.hddDate).val();
+    // let key = $(this.hddKey).val();
+    // let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
+    // this.db.object(dbPath).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid" });
+
+    // let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    // if (detail != undefined) {
+    //   let monthYearList = detail.monthYear.split(",");
+    //   for (let i = 0; i < monthYearList.length; i++) {
+    //     let month = monthYearList[i].split('-')[0];
+    //     let year = monthYearList[i].split('-')[1];
+    //     let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
+    //     this.db.object(dbPath).update({ status: "Paid" });
+    //   }
+
+    //   const transData = {
+    //     merchantTransactionId: detail.merchantTransactionId,
+    //     monthYear: detail.monthYear,
+    //     payMethod: "By Cheque",
+    //     paymentCollectionById: detail.collectedBy,
+    //     paymentCollectionByName: detail.collectedByName,
+    //     retrievalReferenceNo: transactionId,
+    //     transactionAmount: detail.amount,
+    //     transactionDateTime: transactionDate,
+    //     updatedBy: localStorage.getItem("userID"),
+    //     updatedDate: this.commonService.getCurrentTimeWithSecond()
+    //   }
+
+    //   let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1])-1);
+    //   let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/" + transactionDate.toString().split('-')[0] + "/" + monthName + "/" + transactionDate;
+    //   let transactionInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+    //     transactionInstance.unsubscribe();
+    //     let transkey = 1;
+    //     if (data != null) {
+    //       let keyArray = Object.keys(data);
+    //       transkey = keyArray.length + 1;
+    //     }
+    //     this.db.object(dbPath + "/" + transkey).update(transData);
+
+    //     dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/" + detail.collectedDate;
+    //     let collectorInstance = this.db.object(dbPath).valueChanges().subscribe(colectorData => {
+    //       collectorInstance.unsubscribe();
+    //       let collectorKey = 1;
+    //       if (colectorData != null) {
+    //         let keyArray = Object.keys(colectorData);
+    //         collectorKey = keyArray.length + 1;
+    //       }
+    //       const collectorData = {
+    //         cardNo: cardNo,
+    //         merchantTransactionId: detail.merchantTransactionId,
+    //         payMethod: "By Cheque",
+    //         transactionAmount: detail.amount,
+    //         retrievalReferenceNo: transactionId
+    //       }
+    //       this.db.object(dbPath + "/" + collectorKey).update(collectorData);
+    //       let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    //       this.chequeList = this.chequeList.filter((e, i) => i !== index);
+    //       this.getFilter();
+    //       this.clearAll();
+    //       this.closeModel();
+    //       this.commonService.setAlertMessage("success", "Transaction detail added successfully !!!");
+    //       $(this.divLoader).hide();
+    //     });
+    //   });
+    // }
   }
 
   updateDecliened() {
@@ -269,30 +339,33 @@ export class PaymentViaChequeComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Confirmation required !!!");
       return;
     }
-    $(this.divLoader).show();
-    let cardNo = $(this.hddDeclinedCardNo).val();
-    let date = $(this.hddDeclinedDate).val();
-    let key = $(this.hddDeclinedKey).val();
-    let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
-    this.db.object(dbPath).update({ declinedReason: txtDeclinedReason, transactionDate: txtDeclinedDate, status: "Declined" });
-    let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
-    if (detail != undefined) {
-      let monthYearList = detail.monthYear.split(",");
-      for (let i = 0; i < monthYearList.length; i++) {
-        let month = monthYearList[i].split('-')[0];
-        let year = monthYearList[i].split('-')[1];
-        let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
-        this.db.object(dbPath).update({ status: "Pending" });
-      }
-    }
 
-    let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
-    this.chequeList = this.chequeList.filter((e, i) => i !== index);
-    this.getFilter();
-    this.clearAll();
-    this.closeModel();
-    this.commonService.setAlertMessage("error", "Decliened data updated successfully !!!");
-    $(this.divLoader).hide();
+    this.entityType=='mainEntity'?this.declineMainEntitytransaction():this.declineSubEntitytransaction();
+
+    // $(this.divLoader).show();
+    // let cardNo = $(this.hddDeclinedCardNo).val();
+    // let date = $(this.hddDeclinedDate).val();
+    // let key = $(this.hddDeclinedKey).val();
+    // let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
+    // this.db.object(dbPath).update({ declinedReason: txtDeclinedReason, transactionDate: txtDeclinedDate, status: "Declined" });
+    // let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    // if (detail != undefined) {
+    //   let monthYearList = detail.monthYear.split(",");
+    //   for (let i = 0; i < monthYearList.length; i++) {
+    //     let month = monthYearList[i].split('-')[0];
+    //     let year = monthYearList[i].split('-')[1];
+    //     let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
+    //     this.db.object(dbPath).update({ status: "Pending" });
+    //   }
+    // }
+
+    // let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    // this.chequeList = this.chequeList.filter((e, i) => i !== index);
+    // this.getFilter();
+    // this.clearAll();
+    // this.closeModel();
+    // this.commonService.setAlertMessage("error", "Decliened data updated successfully !!!");
+    // $(this.divLoader).hide();
 
   }
 
@@ -308,6 +381,8 @@ export class PaymentViaChequeComponent implements OnInit {
     $(this.hddDeclinedCardNo).val("");
     $(this.hddDeclinedDate).val("");
     $(this.hddDeclinedKey).val("");
+    this.entityType="";
+    this.entityId="";
   }
 
   exportToExcel() {
@@ -380,4 +455,216 @@ export class PaymentViaChequeComponent implements OnInit {
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
+
+  acceptMainEntitytransaction(){
+    let transactionId = $(this.txtTransactionId).val();
+    let transactionDate = $(this.txtTransactionDate).val();
+    $(this.divLoader).show();
+    let cardNo = $(this.hddCardNo).val();
+    let date = $(this.hddDate).val();
+    let key = $(this.hddKey).val();
+    let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
+    this.db.object(dbPath).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid" });
+
+    let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    if (detail != undefined) {
+      let monthYearList = detail.monthYear.split(",");
+      for (let i = 0; i < monthYearList.length; i++) {
+        let month = monthYearList[i].split('-')[0];
+        let year = monthYearList[i].split('-')[1];
+        let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
+        this.db.object(dbPath).update({ status: "Paid" });
+      }
+
+      const transData = {
+        merchantTransactionId: detail.merchantTransactionId,
+        monthYear: detail.monthYear,
+        payMethod: "By Cheque",
+        paymentCollectionById: detail.collectedBy,
+        paymentCollectionByName: detail.collectedByName,
+        retrievalReferenceNo: transactionId,
+        transactionAmount: detail.amount,
+        transactionDateTime: transactionDate,
+        updatedBy: localStorage.getItem("userID"),
+        updatedDate: this.commonService.getCurrentTimeWithSecond()
+      }
+
+      let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1])-1);
+      let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/" + transactionDate.toString().split('-')[0] + "/" + monthName + "/" + transactionDate;
+      let transactionInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        transactionInstance.unsubscribe();
+        let transkey = 1;
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          transkey = keyArray.length + 1;
+        }
+        this.db.object(dbPath + "/" + transkey).update(transData);
+
+        dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/" + detail.collectedDate;
+        let collectorInstance = this.db.object(dbPath).valueChanges().subscribe(colectorData => {
+          collectorInstance.unsubscribe();
+          let collectorKey = 1;
+          if (colectorData != null) {
+            let keyArray = Object.keys(colectorData);
+            collectorKey = keyArray.length + 1;
+          }
+          const collectorData = {
+            cardNo: cardNo,
+            merchantTransactionId: detail.merchantTransactionId,
+            payMethod: "By Cheque",
+            transactionAmount: detail.amount,
+            retrievalReferenceNo: transactionId
+          }
+          this.db.object(dbPath + "/" + collectorKey).update(collectorData);
+          let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+          this.chequeList = this.chequeList.filter((e, i) => i !== index);
+          this.getFilter();
+          this.clearAll();
+          this.closeModel();
+          this.commonService.setAlertMessage("success", "Transaction detail added successfully !!!");
+          $(this.divLoader).hide();
+        });
+      });
+    }
+
+  }
+  declineMainEntitytransaction(){
+   
+    let txtDeclinedReason = $(this.txtDeclinedReason).val();
+    let txtDeclinedDate = $(this.txtDeclinedDate).val();
+    $(this.divLoader).show();
+    let cardNo = $(this.hddDeclinedCardNo).val();
+    let date = $(this.hddDeclinedDate).val();
+    let key = $(this.hddDeclinedKey).val();
+    let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
+    this.db.object(dbPath).update({ declinedReason: txtDeclinedReason, transactionDate: txtDeclinedDate, status: "Declined" });
+    let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    if (detail != undefined) {
+      let monthYearList = detail.monthYear.split(",");
+      for (let i = 0; i < monthYearList.length; i++) {
+        let month = monthYearList[i].split('-')[0];
+        let year = monthYearList[i].split('-')[1];
+        let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
+        this.db.object(dbPath).update({ status: "Pending" });
+      }
+    }
+
+    let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
+    this.chequeList = this.chequeList.filter((e, i) => i !== index);
+    this.getFilter();
+    this.clearAll();
+    this.closeModel();
+    this.commonService.setAlertMessage("error", "Decliened data updated successfully !!!");
+    $(this.divLoader).hide();
+
+  }
+
+  
+  acceptSubEntitytransaction(){
+    let transactionId = $(this.txtTransactionId).val();
+    let transactionDate = $(this.txtTransactionDate).val();
+    $(this.divLoader).show();
+    let cardNo = $(this.hddCardNo).val();
+    let date = $(this.hddDate).val();
+    let key = $(this.hddKey).val();
+  let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date && item.entityType==this.entityType && item.entityId==this.entityId);
+  if (detail != undefined) {
+
+    let path = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/Entities/"+ detail.entityId+"/"+ date + "/" + key;
+   this.db.object(path).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid" });
+
+    let monthYearList = detail.monthYear.split(",");
+    for (let i = 0; i < monthYearList.length; i++) {
+      let month = monthYearList[i].split('-')[0];
+      let year = monthYearList[i].split('-')[1];  
+      let dbPath ="PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/Entities/" + detail.entityId+"/"+ year + "/" + month;
+      this.db.object(dbPath).update({ status: "Paid" });
+    }
+
+    const transData = {
+      merchantTransactionId: detail.merchantTransactionId,
+      monthYear: detail.monthYear,
+      payMethod: "By Cheque",
+      paymentCollectionById: detail.collectedBy,
+      paymentCollectionByName: detail.collectedByName,
+      retrievalReferenceNo: transactionId,
+      transactionAmount: detail.amount,
+      transactionDateTime: transactionDate,
+      updatedBy: localStorage.getItem("userID"),
+      updatedDate: this.commonService.getCurrentTimeWithSecond()
+    }
+
+
+    let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1])-1);
+    let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/Entities/"+detail.entityId+"/" + transactionDate.toString().split('-')[0] + "/" + monthName + "/" + transactionDate;
+   
+    let transactionInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      transactionInstance.unsubscribe();
+      let transkey = 1;
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        transkey = keyArray.length + 1;
+      }
+      this.db.object(dbPath + "/" + transkey).update(transData);
+
+      dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/Entities/" + detail.entityId+"/" + detail.collectedDate;
+      let collectorInstance = this.db.object(dbPath).valueChanges().subscribe(colectorData => {
+        collectorInstance.unsubscribe();
+        let collectorKey = 1;
+        if (colectorData != null) {
+          let keyArray = Object.keys(colectorData);
+          collectorKey = keyArray.length + 1;
+        }
+        const collectorData = {
+          cardNo: cardNo,
+          merchantTransactionId: detail.merchantTransactionId,
+          payMethod: "By Cheque",
+          transactionAmount: detail.amount,
+          retrievalReferenceNo: transactionId
+        }
+        this.db.object(dbPath + "/" + collectorKey).update(collectorData);
+        let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date && item.entityType==this.entityType && item.entityId==this.entityId);
+        this.chequeList = this.chequeList.filter((e, i) => i !== index);
+        this.getFilter();
+        this.clearAll();
+        this.closeModel();
+        this.commonService.setAlertMessage("success", "Transaction detail added successfully !!!");
+        $(this.divLoader).hide();
+      });
+    });
+   }
+
+  }
+
+  
+  declineSubEntitytransaction(){
+    let txtDeclinedReason = $(this.txtDeclinedReason).val();
+    let txtDeclinedDate = $(this.txtDeclinedDate).val();
+    $(this.divLoader).show();
+    let cardNo = $(this.hddDeclinedCardNo).val();
+    let date = $(this.hddDeclinedDate).val();
+    let key = $(this.hddDeclinedKey).val();
+    let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date && item.entityType==this.entityType && item.entityId==this.entityId); 
+    if (detail != undefined) {
+      let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/Entities/"+ detail.entityId+"/"+ date + "/" + key;
+      this.db.object(dbPath).update({ declinedReason: txtDeclinedReason, transactionDate: txtDeclinedDate, status: "Declined" });
+      let monthYearList = detail.monthYear.split(",");
+      for (let i = 0; i < monthYearList.length; i++) {
+        let month = monthYearList[i].split('-')[0];
+        let year = monthYearList[i].split('-')[1];
+        let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/Entities/" + detail.entityId+"/"+ year + "/" + month;
+        this.db.object(dbPath).update({ status: "Pending" });
+      }
+    }
+
+    let index = this.chequeList.findIndex(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date && item.entityType==this.entityType && item.entityId==this.entityId);
+    this.chequeList =  this.chequeList.filter((e, i) => i !== index);
+    this.getFilter();
+    this.clearAll();
+    this.closeModel();
+    this.commonService.setAlertMessage("error", "Decliened data updated successfully !!!");
+    $(this.divLoader).hide();
+  }
+  
+
 }

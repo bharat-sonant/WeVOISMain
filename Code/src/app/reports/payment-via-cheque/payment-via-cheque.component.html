@@ -14,7 +14,7 @@
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
-                        <div class="col-md-5 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-9 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <select class="filter-select filter-input" id="ddlZone" (change)="getFilter()">
@@ -34,7 +34,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-7 text-center" style="padding-right:0px!important;">
+                        <div class="col-md-3 text-center" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-right p-r ml-20" style="padding-right: 20px!important;">
                                     <i class="fa-solid fa-file-export"
@@ -133,10 +133,10 @@
                                                 <td class="text-center br-1">
                                                     <i class="fa-solid fa-file-circle-exclamation"
                                                         style="cursor: pointer;font-size: 18px;"
-                                                        (click)="openModel(contentDetail,data.cardNo,data.collectedDate,data.key,'clear')"></i>
+                                                        (click)="openModel(contentDetail,data.cardNo,data.collectedDate,data.key,'clear',data.entityType,data.entityId)"></i>
                                                         <i class="fa-solid fa-ban"
                                                         style="cursor: pointer;font-size: 18px; color: red; margin-left: 10px;"
-                                                        (click)="openModel(contentDeclinedDetail,data.cardNo,data.collectedDate,data.key,'decilned')"></i> 
+                                                        (click)="openModel(contentDeclinedDetail,data.cardNo,data.collectedDate,data.key,'decilned',data.entityType,data.entityId)"></i> 
                                                 </td>
                                             </tr>
                                         </tbody>
