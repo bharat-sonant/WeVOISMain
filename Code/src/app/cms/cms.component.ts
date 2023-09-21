@@ -27,6 +27,7 @@ export class CmsComponent implements OnInit {
   userid: any;
   cityName: any;
   db: any;
+  isDehradun: boolean;
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
@@ -44,6 +45,9 @@ export class CmsComponent implements OnInit {
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
+      if (this.cityName == "dehradun" || this.cityName == "test") {
+        this.isDehradun = true;
+      }
       let detail = userAccessList.find((item) => item.pageId == pageId);
       if (detail != undefined) {
         $("#pageName").html(detail.name);
@@ -51,41 +55,47 @@ export class CmsComponent implements OnInit {
       }
       let k = 0;
       for (let i = 0; i < userAccessList.length; i++) {
-        if (
-          userAccessList[i]["parentId"] == pageId &&
-          userAccessList[i]["userId"] == this.userid &&
-          userAccessList[i]["city"] == this.cityName
-        ) {
-          if (userAccessList[i]["url"].toString().includes("https")) {
-            if (this.cityName == "test") {
-              k = k + 1;
-              this.setLink(k, userAccessList, i);
-            }
-            else if (this.cityName == "dehradun") {
-              let url = userAccessList[i]["url"];
-              let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
-
-              let isLink = true;
-              if (newUrl == "dashboard") {
-                isLink = false;
-              }
-              if (isLink == true) {
-                k = k + 1;
-                this.setLink(k, userAccessList, i);
-              }
-              /* 
-                           k = k + 1;
-                           this.setLink(k, userAccessList, i);*/
-            }
-            else {
-              k = k + 1;
-              this.setLink(k, userAccessList, i);
-            }
-          }
-          else {
+        if (userAccessList[i]["parentId"] == pageId && userAccessList[i]["userId"] == this.userid && userAccessList[i]["city"] == this.cityName) {
+          k = k + 1;
+          this.setLink(k, userAccessList, i);
+          /*
+        if (userAccessList[i]["url"].toString().includes("https")) {
             k = k + 1;
             this.setLink(k, userAccessList, i);
-          }
+
+        
+          
+                      if (this.cityName == "test") {
+                        k = k + 1;
+                        this.setLink(k, userAccessList, i);
+                      }
+                      else if (this.cityName == "dehradun") {
+                        let url = userAccessList[i]["url"];
+                        let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
+          
+                        let isLink = true;
+                        if (newUrl == "dashboard") {
+                          isLink = false;
+                        }
+                        if (isLink == true) {
+                          k = k + 1;
+                          this.setLink(k, userAccessList, i);
+                        }
+                       
+                                     k = k + 1;
+                                     this.setLink(k, userAccessList, i);
+                      }
+                      else {
+                        k = k + 1;
+                        this.setLink(k, userAccessList, i);
+                      }
+                      
+        }
+        else {
+          k = k + 1;
+          this.setLink(k, userAccessList, i);
+        }
+        */
         }
       }
     }
@@ -133,10 +143,10 @@ export class CmsComponent implements OnInit {
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
     if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.userid + "/" + newUrl;
+      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + newUrl;
     }
     else {
-      url = "https://main-wevois.firebaseapp.com/" + this.userid + "/" + newUrl;
+      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
     }
     window.open(url, "_blank");
   }
