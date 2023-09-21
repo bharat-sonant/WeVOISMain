@@ -60,34 +60,48 @@ export class HomeComponent implements OnInit {
         this.isDehradun = true;
       }
       for (let i = 0; i < userAccessList.length; i++) {
-        if (
-          userAccessList[i]["parentId"] == 0 &&
-          userAccessList[i]["userId"] == this.userid &&
-          userAccessList[i]["city"] == this.cityName
-        ) {
+        if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid && userAccessList[i]["city"] == this.cityName) {
           let url = "javaScript:void(0);";
           let dataClass = "dashboard-widgets";
           this.isShow = false;
-          if (userAccessList[i]["url"].includes("task-manager")) {
-            if (localStorage.getItem("officeAppUserId") != null) {
-              this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
+          let isOuterUrl = "no";
+          if (userAccessList[i]["url"].includes("https")) {
+            isOuterUrl = "yes";
+            let newUrl = userAccessList[i]["url"].split("https://mainportal-react.web.app/userId/")[1];
+            if (this.cityName == "test") {
+              url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + newUrl;
+            }
+            else {
+              url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
+            }
+            if (userAccessList[i]["url"].includes("deharadun-pmc")) {
+              if (this.isDehradun == true) {
+                this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+              }
+            }
+            else {
+              this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
             }
           }
-          else if (userAccessList[i]["url"].includes("/cms/22")) {
-            if (this.isDehradun == true) {
-              this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
-
+          else {
+            if (userAccessList[i]["url"].includes("task-manager")) {
+              if (localStorage.getItem("officeAppUserId") != null) {
+                this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+              }
+            }
+            else if (userAccessList[i]["url"].includes("/cms/22")) {
+              if (this.isDehradun == true) {
+                this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+              }
+            }
+            else if (userAccessList[i]["url"].includes("/cms/21")) {
+              if (this.cityName == "jaipur-greater") {
+                this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+              }
+            } else {
+              this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
             }
           }
-          else if(userAccessList[i]["url"].includes("/cms/21")){
-            if(this.cityName=="jaipur-greater"){
-              this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
-            }
-          } else {
-            this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, });
-          }
-
-
         }
       }
     }
