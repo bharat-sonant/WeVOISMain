@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
             else {
               url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
             }
-            if (userAccessList[i]["url"].includes("deharadun-pmc")) {
+            if (userAccessList[i]["url"].includes("dehradun-pmc")) {
               if (this.isDehradun == true) {
                 this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
               }
