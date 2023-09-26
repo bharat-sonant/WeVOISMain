@@ -104,28 +104,33 @@ export class CardTransectionDetailComponent implements OnInit {
           let yearArray = Object.keys(data);
           for (let i = 0; i < yearArray.length; i++) {
             let year = yearArray[i];
-            let yearData = data[year];
-            let monthArray = Object.keys(yearData);
-            for (let j = 0; j < monthArray.length; j++) {
-              let month = monthArray[j];
-              let monthData = yearData[month];
-              let dateyArray = Object.keys(monthData);
-              for (let k = 0; k < dateyArray.length; k++) {
-                let date = dateyArray[k];
-                let dateData = monthData[date];
-                let keyArray = Object.keys(dateData);
-                for (let l = 0; l < keyArray.length; l++) {
-                  let key = keyArray[l];
-                  amount = amount + Number(dateData[key]["transactionAmount"]);
-                  let timestemp = new Date(date).getTime();
-                  this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: dateData[key]["retrievalReferenceNo"], payMethod: dateData[key]["payMethod"], collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
-                  this.transactionList = this.transactionList.sort((a, b) =>
-                    b.timestemp < a.timestemp ? 1 : -1
-                  );
-                  this.getDateTimeFormat(key, dateData[key]["transactionDateTime"], date, year, month);
-
+            if (year != "Entities") {
+              let yearData = data[year];
+              let monthArray = Object.keys(yearData);
+              for (let j = 0; j < monthArray.length; j++) {
+                let month = monthArray[j];
+                let monthData = yearData[month];
+                let dateyArray = Object.keys(monthData);
+                for (let k = 0; k < dateyArray.length; k++) {
+                  let date = dateyArray[k];
+                  let dateData = monthData[date];
+                  let keyArray = Object.keys(dateData);
+                  for (let l = 0; l < keyArray.length; l++) {
+                    let key = keyArray[l];
+                    amount = amount + Number(dateData[key]["transactionAmount"]);
+                    let timestemp = new Date(date).getTime();
+                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: dateData[key]["retrievalReferenceNo"], payMethod: dateData[key]["payMethod"], collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
+                    this.transactionList = this.transactionList.sort((a, b) =>
+                      b.timestemp < a.timestemp ? 1 : -1
+                    );
+                    this.getDateTimeFormat(key, dateData[key]["transactionDateTime"], date, year, month);
+                  }
                 }
               }
+            }
+            else {
+              let entityData = data["Entities"];
+              this.getEntityPayment(entityData,amount);
             }
           }
           this.totalAmount = amount.toFixed(2);
@@ -137,6 +142,43 @@ export class CardTransectionDetailComponent implements OnInit {
         }
       }
     );
+  }
+
+  getEntityPayment(entityData: any,amount:any) {
+    let entityKeyArray = Object.keys(entityData);
+    for(let i=0;i<entityKeyArray.length;i++){
+      let entityKey=entityKeyArray[i];
+      let data=entityData[entityKey];
+      let yearArray = Object.keys(data);
+          for (let i = 0; i < yearArray.length; i++) {
+            let year = yearArray[i];
+            if (year != "Entities") {
+              let yearData = data[year];
+              let monthArray = Object.keys(yearData);
+              for (let j = 0; j < monthArray.length; j++) {
+                let month = monthArray[j];
+                let monthData = yearData[month];
+                let dateyArray = Object.keys(monthData);
+                for (let k = 0; k < dateyArray.length; k++) {
+                  let date = dateyArray[k];
+                  let dateData = monthData[date];
+                  let keyArray = Object.keys(dateData);
+                  for (let l = 0; l < keyArray.length; l++) {
+                    let key = keyArray[l];
+                    amount = amount + Number(dateData[key]["transactionAmount"]);
+                    let timestemp = new Date(date).getTime();
+                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: dateData[key]["retrievalReferenceNo"], payMethod: dateData[key]["payMethod"], collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
+                    this.transactionList = this.transactionList.sort((a, b) =>
+                      b.timestemp < a.timestemp ? 1 : -1
+                    );
+                    this.getDateTimeFormat(key, dateData[key]["transactionDateTime"], date, year, month);
+                  }
+                }
+              }
+            }
+          }
+          this.totalAmount = amount.toFixed(2);
+    }
   }
 
   getDateTimeFormat(key: any, transDate: any, date: any, year: any, month: any) {

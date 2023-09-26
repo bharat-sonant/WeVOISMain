@@ -102,35 +102,80 @@ export class PaymentViaNeftReportComponent implements OnInit {
           let dateArray = Object.keys(cardData);
           for (let j = 0; j < dateArray.length; j++) {
             let collectedDate = dateArray[j];
-            let dateData = cardData[collectedDate];
-            let keyArray = Object.keys(dateData);
-            for (let k = 0; k < keyArray.length; k++) {
-              let key = keyArray[k];
-              if (dateData[key]["status"] != "Pending" && collectedDate!='Entities') {
-                let timeStemp = new Date(collectedDate).getTime();
-                let month = collectedDate.split("-")[1];
-                let year = collectedDate.split("-")[0];
-                let day = collectedDate.split("-")[2];
-                let monthName = this.commonService.getCurrentMonthShortName(Number(month));
-                let collectionDate = day + " " + monthName + " " + year;
-                let transactionDateFormat = dateData[key]["transactionDate"];
-                month = transactionDateFormat.split("-")[1];
-                year = transactionDateFormat.split("-")[0];
-                day = transactionDateFormat.split("-")[2];
-                monthName = this.commonService.getCurrentMonthShortName(Number(month));
-                transactionDateFormat = day + " " + monthName + " " + year;
-                let neftDateFormat = dateData[key]["neftDate"];
-                month = neftDateFormat.split("-")[1];
-                year = neftDateFormat.split("-")[0];
-                day = neftDateFormat.split("-")[2];
-                monthName = this.commonService.getCurrentMonthShortName(Number(month));
-                neftDateFormat = day + " " + monthName + " " + year;
-                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + dateData[key]["neftDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
-                let transactionId="NA";
-                if(dateData[key]["transactionId"]!=null){
-                  transactionId=dateData[key]["transactionId"];
+            if (collectedDate == "Entities") {
+              let entityData = cardData["Entities"];
+              let entityKeyArray = Object.keys(entityData);
+              for (let m = 0; m < entityKeyArray.length; m++) {
+                let entityKey = entityKeyArray[m];
+                let entityKeyData = entityData[entityKey];
+                let entityDateKeyArray = Object.keys(entityKeyData);
+                for (let n = 0; n < entityDateKeyArray.length; n++) {
+                  let entityCollectedDate = entityDateKeyArray[n];
+                  let dateData = entityKeyData[entityCollectedDate];
+                  let keyArray = Object.keys(dateData);
+                  for (let k = 0; k < keyArray.length; k++) {
+                    let key = keyArray[k];
+                    if (dateData[key]["status"] != "Pending") {
+                      let timeStemp = new Date(entityCollectedDate).getTime();
+                      let month = entityCollectedDate.split("-")[1];
+                      let year = entityCollectedDate.split("-")[0];
+                      let day = entityCollectedDate.split("-")[2];
+                      let monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                      let collectionDate = day + " " + monthName + " " + year;
+                      let transactionDateFormat = dateData[key]["transactionDate"];
+                      month = transactionDateFormat.split("-")[1];
+                      year = transactionDateFormat.split("-")[0];
+                      day = transactionDateFormat.split("-")[2];
+                      monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                      transactionDateFormat = day + " " + monthName + " " + year;
+                      let neftDateFormat = dateData[key]["neftDate"];
+                      month = neftDateFormat.split("-")[1];
+                      year = neftDateFormat.split("-")[0];
+                      day = neftDateFormat.split("-")[2];
+                      monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                      neftDateFormat = day + " " + monthName + " " + year;
+                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + dateData[key]["neftDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                      let transactionId = "NA";
+                      if (dateData[key]["transactionId"] != null) {
+                        transactionId = dateData[key]["transactionId"];
+                      }
+                      neftListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], neftNo: dateData[key]["neftNo"], neftDate: neftDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: entityCollectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: transactionId, transactionDate: dateData[key]["transactionDate"], transactionDateFormat: transactionDateFormat, timeStemp: timeStemp, imageUrl: imageUrl, status: dateData[key]["status"], declinedReason: dateData[key]["declinedReason"] });
+                    }
+                  }
                 }
-                neftListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], neftNo: dateData[key]["neftNo"], neftDate: neftDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: transactionId, transactionDate: dateData[key]["transactionDate"],transactionDateFormat:transactionDateFormat, timeStemp: timeStemp,imageUrl:imageUrl,status: dateData[key]["status"],declinedReason:dateData[key]["declinedReason"]});
+              }
+            }
+            else {
+              let dateData = cardData[collectedDate];
+              let keyArray = Object.keys(dateData);
+              for (let k = 0; k < keyArray.length; k++) {
+                let key = keyArray[k];
+                if (dateData[key]["status"] != "Pending") {
+                  let timeStemp = new Date(collectedDate).getTime();
+                  let month = collectedDate.split("-")[1];
+                  let year = collectedDate.split("-")[0];
+                  let day = collectedDate.split("-")[2];
+                  let monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                  let collectionDate = day + " " + monthName + " " + year;
+                  let transactionDateFormat = dateData[key]["transactionDate"];
+                  month = transactionDateFormat.split("-")[1];
+                  year = transactionDateFormat.split("-")[0];
+                  day = transactionDateFormat.split("-")[2];
+                  monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                  transactionDateFormat = day + " " + monthName + " " + year;
+                  let neftDateFormat = dateData[key]["neftDate"];
+                  month = neftDateFormat.split("-")[1];
+                  year = neftDateFormat.split("-")[0];
+                  day = neftDateFormat.split("-")[2];
+                  monthName = this.commonService.getCurrentMonthShortName(Number(month));
+                  neftDateFormat = day + " " + monthName + " " + year;
+                  let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + dateData[key]["neftDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                  let transactionId = "NA";
+                  if (dateData[key]["transactionId"] != null) {
+                    transactionId = dateData[key]["transactionId"];
+                  }
+                  neftListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], neftNo: dateData[key]["neftNo"], neftDate: neftDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: transactionId, transactionDate: dateData[key]["transactionDate"], transactionDateFormat: transactionDateFormat, timeStemp: timeStemp, imageUrl: imageUrl, status: dateData[key]["status"], declinedReason: dateData[key]["declinedReason"] });
+                }
               }
             }
           }
@@ -180,7 +225,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    let reason=this.neftFilterList[index]["declinedReason"];
+    let reason = this.neftFilterList[index]["declinedReason"];
     $('#lblReason').html(reason);
   }
 
@@ -281,7 +326,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
         htmlString += list[i]["status"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += list[i]["declinedReason"]!==undefined?list[i]["declinedReason"]:"";
+        htmlString += list[i]["declinedReason"] !== undefined ? list[i]["declinedReason"] : "";
         htmlString += "</td>";
         htmlString += "</tr>";
       }
