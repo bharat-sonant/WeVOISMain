@@ -162,18 +162,7 @@ export class EntityPaymentReportComponent implements OnInit {
 
   setPaymentListJSON(index: any) {
     if (index == this.collectorList.length) {
-      this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
-      this.getTotalAmount();
-      this.getFilter();
-      if (this.wardPaymentList.length > 0) {
-        let filePath = "/PaymentCollectionHistory/EntityWisePayment/" + this.selectedYear + "/";
-        const obj = { "wards": this.wardPaymentList, "entities": this.entityPaymentList, "lastUpdateDate": this.lastUpdateDate };
-        let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
-        let fileName = monthName + ".json";
-        this.commonService.saveJsonFile(obj, fileName, filePath);
-      }
-      $(this.divLoaderMain).hide();
-      this.commonService.setAlertMessage("success", "Payment detail updated successfully !!!");
+      this.setEntityCollection(0);
     }
     else {
       let collectorId = this.collectorList[index]["collectorId"];
@@ -212,6 +201,66 @@ export class EntityPaymentReportComponent implements OnInit {
         else {
           index++;
           this.setPaymentListJSON(index);
+        }
+      });
+    }
+  }
+
+  setEntityCollection(index: any) {
+    if (index == this.collectorList.length) {
+      this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
+      this.getTotalAmount();
+      this.getFilter();
+      if (this.wardPaymentList.length > 0) {
+        let filePath = "/PaymentCollectionHistory/EntityWisePayment/" + this.selectedYear + "/";
+        const obj = { "wards": this.wardPaymentList, "entities": this.entityPaymentList, "lastUpdateDate": this.lastUpdateDate };
+        let monthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+        let fileName = monthName + ".json";
+        this.commonService.saveJsonFile(obj, fileName, filePath);
+      }
+      $(this.divLoaderMain).hide();
+      this.commonService.setAlertMessage("success", "Payment detail updated successfully !!!");
+    }
+    else {
+      let collectorId = this.collectorList[index]["collectorId"];
+      let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + collectorId + "/Entities";
+      let patmentInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        patmentInstance.unsubscribe();
+        if (data != null) {
+          let entityKeyArray = Object.keys(data);
+          for (let m = 0; m < entityKeyArray.length; m++) {
+            let entytyKey = entityKeyArray[m];
+            let entityData = data[entytyKey];
+            let dateArray = Object.keys(entityData);
+            for (let i = 0; i < dateArray.length; i++) {
+              let date = dateArray[i];
+              if (this.selectedYear == date.split('-')[0] && this.selectedMonth == date.split('-')[1]) {
+                let dateData = entityData[date];
+                let keyArray = Object.keys(dateData);
+                for (let j = 0; j < keyArray.length; j++) {
+                  let key = keyArray[j];
+                  if (dateData[key]["cardNo"] != null) {
+                    let cardNo = dateData[key]["cardNo"];
+                    let amount = dateData[key]["transactionAmount"];
+                    let wardNo = "";
+                    let lineNo = "";
+                    let cardDetail = this.cardWardList.find(item => item.cardNo == cardNo);
+                    if (cardDetail != undefined) {
+                      wardNo = cardDetail.ward;
+                      lineNo = cardDetail.line;
+                    }
+                    this.getCardEntityType(wardNo, lineNo, cardNo, amount);
+                  }
+                }
+              }
+            }
+          }
+          index++;
+          this.setEntityCollection(index);
+        }
+        else {
+          index++;
+          this.setEntityCollection(index);
         }
       });
     }

@@ -74,9 +74,9 @@ export class DailyPaymentReportComponent implements OnInit {
     if (this.collectorList.length > 0) {
       this.list = [];
       this.setcollectorWiseList(0);
-    }    
-    else{
-      this.commonService.setAlertMessage("error","No data found  !!!");
+    }
+    else {
+      this.commonService.setAlertMessage("error", "No data found  !!!");
       $(this.divLoader).hide();
     }
   }
@@ -115,20 +115,7 @@ export class DailyPaymentReportComponent implements OnInit {
 
   setcollectorWiseList(index: any) {
     if (index == this.collectorList.length) {
-      this.getTotalAmount();
-      this.getFilter();
-      if (this.wardPaymentList.length > 0) {
-        if (this.selectedDate != this.todayDate) {
-          let filePath = "/PaymentCollectionHistory/DailyPayment/";
-          const obj = { "wards": this.wardPaymentList, "collectors": this.collectorPaymentList };
-          let fileName = this.selectedDate + ".json";
-          this.commonService.saveJsonFile(obj, fileName, filePath);
-        }
-      }
-      else{
-        this.commonService.setAlertMessage("error","No data found  !!!");
-        $(this.divLoader).hide();
-      }
+      this.getEntityCollection(0);
     }
     else {
       let collectorId = this.collectorList[index]["collectorId"];
@@ -171,7 +158,6 @@ export class DailyPaymentReportComponent implements OnInit {
 
               }
             }
-
           }
           index++;
           this.setcollectorWiseList(index);
@@ -179,6 +165,89 @@ export class DailyPaymentReportComponent implements OnInit {
         else {
           index++;
           this.setcollectorWiseList(index);
+        }
+      });
+    }
+  }
+
+  getEntityCollection(index: any) {
+    if (index == this.collectorList.length) {
+      this.getTotalAmount();
+      this.getFilter();
+      if (this.wardPaymentList.length > 0) {
+        if (this.selectedDate != this.todayDate) {
+          let filePath = "/PaymentCollectionHistory/DailyPayment/";
+          const obj = { "wards": this.wardPaymentList, "collectors": this.collectorPaymentList };
+          let fileName = this.selectedDate + ".json";
+          this.commonService.saveJsonFile(obj, fileName, filePath);
+          this.commonService.setAlertMessage("success", "Payment detail updated successfully !!!");
+          $(this.divLoader).hide();
+        }
+      }
+      else {
+        this.commonService.setAlertMessage("error", "No data found  !!!");
+        $(this.divLoader).hide();
+      }
+    }
+    else {
+      let collectorId = this.collectorList[index]["collectorId"];
+      let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + collectorId + "/Entities";
+      let patmentInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        patmentInstance.unsubscribe();
+        if (data != null) {
+          let entityKeyArray = Object.keys(data);
+          for (let m = 0; m < entityKeyArray.length; m++) {
+            let entytyKey = entityKeyArray[m];
+            let entityData = data[entytyKey];
+            let dateArray = Object.keys(entityData);
+            for (let n = 0; n < dateArray.length; n++) {
+              let date = dateArray[n];
+              if (date == this.selectedDate) {
+                let dateData = entityData[date];
+                let keyArray = Object.keys(dateData);
+                if (keyArray.length > 0) {
+                  for (let i = 0; i < keyArray.length; i++) {
+                    let key = keyArray[i];
+                    if (dateData[key]["cardNo"] != null) {
+                      let cardNo = dateData[key]["cardNo"];
+                      let amount = dateData[key]["transactionAmount"];
+                      let wardNo = "";
+                      let cardDetail = this.cardWardList.find(item => item.cardNo == cardNo);
+                      if (cardDetail != undefined) {
+                        wardNo = cardDetail.ward;
+                      }
+                      let name = "";
+                      let nameDetail = this.collectorList.find(item => item.collectorId == collectorId);
+                      if (nameDetail != undefined) {
+                        name = nameDetail.name;
+                      }
+                      this.list.push({ cardNo: cardNo, wardNo: wardNo, name: name, amount: amount });
+                      let wardDetail = this.wardPaymentList.find(item => item.name == wardNo);
+                      if (wardDetail == undefined) {
+                        this.wardPaymentList.push({ name: wardNo, amount: Number(amount) });
+                      }
+                      else {
+                        wardDetail.amount += Number(amount);
+                      }
+                      let collectorDetail = this.collectorPaymentList.find(item => item.collectorId == collectorId);
+                      if (collectorDetail == undefined) {
+                        this.collectorPaymentList.push({ collectorId: collectorId, name: name, amount: Number(amount) });
+                      }
+                      else {
+                        collectorDetail.amount += Number(amount);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          index++;
+          this.getEntityCollection(index);
+        }
+        else {
+          index++;
+          this.getEntityCollection(index);
         }
       });
     }
