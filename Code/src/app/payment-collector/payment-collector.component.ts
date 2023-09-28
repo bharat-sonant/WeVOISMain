@@ -29,7 +29,7 @@ export class PaymentCollectorComponent implements OnInit {
     totalCollection: "0",
     totalDays: 0,
     name: "",
-    sumTotalCollection:"0"
+    sumTotalCollection: "0"
   };
 
   ngOnInit() {
@@ -54,7 +54,6 @@ export class PaymentCollectorComponent implements OnInit {
         }
       }
     });
-
   }
 
   getZoneList() {
@@ -104,6 +103,7 @@ export class PaymentCollectorComponent implements OnInit {
               }, 600);
             }
           }
+
         }
       }
     }, error => {
@@ -112,42 +112,113 @@ export class PaymentCollectorComponent implements OnInit {
   }
 
   getCollectionDetail(empId: any) {
-    let collectionList=[];
+    let collectionList = [];
     let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId;
     let instance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         instance.unsubscribe();
         if (data != null) {
+
           let totalCollectionAmount = 0;
+
           let dateArray = Object.keys(data);
           for (let i = 0; i < dateArray.length; i++) {
             let date = dateArray[i];
-            let totalAmount=0;
-            let keyArray = Object.keys(data[date]);
-            if (keyArray.length > 0) {              
-            let detailArray = [];
-              for (let j = 0; j < keyArray.length; j++) {
-                let key = keyArray[j];
-                if (data[date][key]["cardNo"] != null) {
-                  if (data[date][key]["transactionAmount"] != null) {
-                    totalCollectionAmount += Number(data[date][key]["transactionAmount"]);
-                    totalAmount+=Number(data[date][key]["transactionAmount"]);
+            if (date != "Entities") {
+              let totalAmount = 0;
+              let keyArray = Object.keys(data[date]);
+              if (keyArray.length > 0) {
+                let detailArray = [];
+                for (let j = 0; j < keyArray.length; j++) {
+                  let key = keyArray[j];
+                  if (data[date][key]["cardNo"] != null) {
+                    if (data[date][key]["transactionAmount"] != null) {
+                      totalCollectionAmount += Number(data[date][key]["transactionAmount"]);
+                      totalAmount += Number(data[date][key]["transactionAmount"]);
+                    }
+                    detailArray.push({ cardNo: data[date][key]["cardNo"], merchantTransactionId: data[date][key]["merchantTransactionId"], payMethod: data[date][key]["payMethod"], retrievalReferenceNo: data[date][key]["retrievalReferenceNo"], transactionAmount: data[date][key]["transactionAmount"] });
                   }
-                  detailArray.push({ cardNo: data[date][key]["cardNo"], merchantTransactionId: data[date][key]["merchantTransactionId"], payMethod: data[date][key]["payMethod"], retrievalReferenceNo: data[date][key]["retrievalReferenceNo"], transactionAmount: data[date][key]["transactionAmount"] });
                 }
+                collectionList.push({ date: date, collection: totalAmount.toFixed(2), detailArray: detailArray });
               }
-              collectionList.push({date:date,collection:totalAmount.toFixed(2),detailArray:detailArray});
-              
             }
           }
-          let detail = this.userList.find(item => item.empId == empId);
-          if (detail != undefined) {
-            detail.collectedAmount = totalCollectionAmount.toFixed(2);
-            detail.collectionList = collectionList;
-            this.collectionData.sumTotalCollection=(Number(this.collectionData.sumTotalCollection)+totalCollectionAmount).toFixed(2);
-          }
+          /*
+         let detail = this.userList.find(item => item.empId == empId);
+         if (detail != undefined) {
+           detail.collectedAmount = totalCollectionAmount.toFixed(2);
+           detail.collectionList = collectionList;
+           this.collectionData.sumTotalCollection = (Number(this.collectionData.sumTotalCollection) + totalCollectionAmount).toFixed(2);
+         }
+         */
+          this.getEntityCollection(empId, collectionList, totalCollectionAmount);
         }
       });
+  }
+
+  getEntityCollection(empId: any, collectionList: any, totalCollectionAmount: any) {
+    let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId + "/Entities";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let entityKeyArray = Object.keys(data);
+          for (let m = 0; m < entityKeyArray.length; m++) {
+            let entityKey = entityKeyArray[m];
+            let dateData = data[entityKey];
+            let dateArray = Object.keys(dateData);
+            for (let n = 0; n < dateArray.length; n++) {
+              let date = dateArray[n];
+              let totalAmount = 0;
+              let detail = collectionList.find(item => item.date == date);
+              if (detail != undefined) {
+                let keyArray = Object.keys(dateData[date]);
+                if (keyArray.length > 0) {
+                  let detailArray = detail.detailArray;
+                  for (let j = 0; j < keyArray.length; j++) {
+                    let key = keyArray[j];
+                    if (dateData[date][key]["cardNo"] != null) {
+
+                      if (dateData[date][key]["transactionAmount"] != null) {
+                        totalCollectionAmount += Number(dateData[date][key]["transactionAmount"]);
+                        totalAmount += Number(dateData[date][key]["transactionAmount"]);
+                      }
+                      detailArray.push({ cardNo: dateData[date][key]["cardNo"], merchantTransactionId: dateData[date][key]["merchantTransactionId"], payMethod: dateData[date][key]["payMethod"], retrievalReferenceNo: dateData[date][key]["retrievalReferenceNo"], transactionAmount: dateData[date][key]["transactionAmount"] });
+                    }
+                  }
+                  detail.collection = (Number(detail.collection) + totalAmount).toFixed(2);
+                  detail.detailArray = detailArray;
+                }
+              }
+              else {
+                let keyArray = Object.keys(dateData[date]);
+                if (keyArray.length > 0) {
+                  let detailArray = [];
+                  for (let j = 0; j < keyArray.length; j++) {
+                    let key = keyArray[j];
+                    if (dateData[date][key]["cardNo"] != null) {
+                      if (dateData[date][key]["transactionAmount"] != null) {
+                        totalCollectionAmount += Number(dateData[date][key]["transactionAmount"]);
+                        totalAmount += Number(dateData[date][key]["transactionAmount"]);
+                      }
+                      detailArray.push({ cardNo: dateData[date][key]["cardNo"], merchantTransactionId: dateData[date][key]["merchantTransactionId"], payMethod: dateData[date][key]["payMethod"], retrievalReferenceNo: dateData[date][key]["retrievalReferenceNo"], transactionAmount: dateData[date][key]["transactionAmount"] });
+                    }
+                  }
+                  collectionList.push({ date: date, collection: totalAmount.toFixed(2), detailArray: detailArray });
+                }
+              }
+            }
+          }
+        }
+
+        let detail = this.userList.find(item => item.empId == empId);
+        if (detail != undefined) {
+          detail.collectedAmount = totalCollectionAmount.toFixed(2);
+          detail.collectionList = collectionList;
+          this.collectionData.sumTotalCollection = (Number(this.collectionData.sumTotalCollection) + totalCollectionAmount).toFixed(2);
+        }
+      });
+
   }
 
   showCollectionDetail(empId: any, index: any) {
@@ -344,8 +415,8 @@ export class PaymentCollectorComponent implements OnInit {
         if (userDetail.wardNo != "") {
           setTimeout(() => {
             //if (userDetail.wardNo != "") {
-           //   $("#ddlWard").val(userDetail.wardNo);
-           // }
+            //   $("#ddlWard").val(userDetail.wardNo);
+            // }
             if (userDetail.deviceNo != "") {
               $("#ddlDevice").val(userDetail.deviceNo);
             }
@@ -469,5 +540,5 @@ export class collectionDatail {
   totalCollection: string;
   totalDays: number;
   name: string;
-  sumTotalCollection:string;
+  sumTotalCollection: string;
 }
