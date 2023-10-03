@@ -576,6 +576,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
         if (zoneDetails != undefined) {
           zoneDetails.tripCount=keyArray.length;
+          this.workerDetails.tripCount = zoneDetails.tripCount;
         }
       }
     });
@@ -831,7 +832,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
     if (zoneDetails != undefined) {
       this.workerDetails.wardReachTime = zoneDetails.wardReachTime;
-      this.workerDetails.wardKM = zoneDetails.wardKM;      
+      this.workerDetails.wardKM = zoneDetails.wardKM;
       if (zoneDetails.lineWeight.length == 0) {
         this.getCurrentLine(this.selectedZone);
       }
