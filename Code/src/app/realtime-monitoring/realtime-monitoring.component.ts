@@ -479,7 +479,8 @@ export class RealtimeMonitoringComponent implements OnInit {
               summaryData["vehicleCurrentLocation"];
           }
           if (summaryData["trip"] != null) {
-            zoneDetails.tripCount = summaryData["trip"];
+            this.getWardTrips(zoneNo);
+            //zoneDetails.tripCount = summaryData["trip"];
           }
           if (summaryData["skippedLines"] != null) {
             zoneDetails.skippedLines = summaryData["skippedLines"];
@@ -561,6 +562,20 @@ export class RealtimeMonitoringComponent implements OnInit {
             this.getWardProgress();
             this.getVehicleStatus();
           }
+        }
+      }
+    });
+  }
+
+  getWardTrips(zoneNo:any){
+    let dbPath="WardTrips/"+this.currentYear+"/"+this.currentMonthName+"/" + this.toDayDate + "/"+zoneNo;
+    let tripInstance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+      tripInstance.unsubscribe();
+      if(data!=null){
+        let keyArray=Object.keys(data);
+        let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
+        if (zoneDetails != undefined) {
+          zoneDetails.tripCount=keyArray.length;
         }
       }
     });
@@ -816,13 +831,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
     if (zoneDetails != undefined) {
       this.workerDetails.wardReachTime = zoneDetails.wardReachTime;
-      this.workerDetails.wardKM = zoneDetails.wardKM;
-      if (zoneDetails.tripCount != null) {
-        this.workerDetails.tripCount = zoneDetails.tripCount;
-      }
-      else {
-        this.workerDetails.tripCount = "0";
-      }
+      this.workerDetails.wardKM = zoneDetails.wardKM;      
       if (zoneDetails.lineWeight.length == 0) {
         this.getCurrentLine(this.selectedZone);
       }
@@ -837,6 +846,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.getWardInTime();
     this.getRemarks(this.selectedZone);
     this.getTotalTime(this.selectedZone);
+    this.getWardTrips(this.selectedZone);
     this.getWardProgress();
     this.checkTodayWorkStatus();
     this.getVehicleStatus();
