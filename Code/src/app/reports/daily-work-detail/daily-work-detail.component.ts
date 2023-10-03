@@ -189,14 +189,30 @@ export class DailyWorkDetailComponent implements OnInit {
                       let startTime = "";
                       let endTime = "";
                       if (Object.keys(workDetailData["task" + i + ""]["in-out"])[0] != null) {
-                        startTime = this.commonService.tConvert(Object.keys(workDetailData["task" + i + ""]["in-out"])[0]);
-                        let removeSecond = startTime.split(" ");
-                        startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
+                        console.log(Object.values(workDetailData["task" + i + ""]["in-out"])[0]);
+                        if (Object.values(workDetailData["task" + i + ""]["in-out"])[0] == "In") {
+                          startTime = this.commonService.tConvert(Object.keys(workDetailData["task" + i + ""]["in-out"])[0]);
+                          let removeSecond = startTime.split(" ");
+                          startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
+                        }
+                        else {
+                          endTime = this.commonService.tConvert(Object.keys(workDetailData["task" + i + ""]["in-out"])[0]);
+                          let removeSecond = endTime.split(" ");
+                          endTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
+                        }
+
                       }
                       if (Object.keys(workDetailData["task" + i + ""]["in-out"])[1] != null) {
-                        endTime = this.commonService.tConvert(Object.keys(workDetailData["task" + i + ""]["in-out"])[1]);
-                        let removeSecond = endTime.split(" ");
-                        endTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
+                        if (Object.values(workDetailData["task" + i + ""]["in-out"])[1] == "In") {
+                          startTime = this.commonService.tConvert(Object.keys(workDetailData["task" + i + ""]["in-out"])[1]);
+                          let removeSecond = startTime.split(" ");
+                          startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
+                        }
+                        else {
+                          endTime = this.commonService.tConvert(Object.keys(workDetailData["task" + i + ""]["in-out"])[1]);
+                          let removeSecond = endTime.split(" ");
+                          endTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
+                        }
                       }
                       detail.vehicle = vehicle;
                       detail.startTime = startTime;
