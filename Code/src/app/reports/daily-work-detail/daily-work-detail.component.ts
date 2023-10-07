@@ -189,7 +189,6 @@ export class DailyWorkDetailComponent implements OnInit {
                       let startTime = "";
                       let endTime = "";
                       if (Object.keys(workDetailData["task" + i + ""]["in-out"])[0] != null) {
-                        console.log(Object.values(workDetailData["task" + i + ""]["in-out"])[0]);
                         if (Object.values(workDetailData["task" + i + ""]["in-out"])[0] == "In") {
                           startTime = this.commonService.tConvert(Object.keys(workDetailData["task" + i + ""]["in-out"])[0]);
                           let removeSecond = startTime.split(" ");

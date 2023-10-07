@@ -458,7 +458,11 @@ export class DustbinAnalysisComponent implements OnInit {
     let dbPath = "DustbinData/TotalDustbinAnalysisPending";
     this.db.object(dbPath).valueChanges().subscribe((data) => {
       if (data != null) {
-        this.dustbinData.pendingAnalysis = data.toString();
+        let pending = Number(data);
+        if (pending < 0) {
+          pending = 0;
+        }
+        this.dustbinData.pendingAnalysis = pending.toString();
       }
     });
   }
