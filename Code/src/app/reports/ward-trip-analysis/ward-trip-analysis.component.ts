@@ -91,11 +91,12 @@ export class WardTripAnalysisComponent implements OnInit {
           let tripList = [];
           let tripCount = 0;
           if (data != null) {
-            iconClass = "fas fa-check-double";
+            iconClass = "fas fa-diagnoses";
             divClass = "address";
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
               tripCount = keyArray.length;
+              let tripAnalysisCount=0;
               for (let j = 0; j < keyArray.length; j++) {
                 let tripID = keyArray[j];
                 let driverId = data[tripID]["driverId"];
@@ -116,6 +117,7 @@ export class WardTripAnalysisComponent implements OnInit {
                 }
                 if (data[tripID]["analysisBy"] != null) {
                   analysisBy = data[tripID]["analysisBy"];
+                  tripAnalysisCount++;                  
                 }
                 if (data[tripID]["remark"] != null) {
                   remark = data[tripID]["remark"];
@@ -145,13 +147,17 @@ export class WardTripAnalysisComponent implements OnInit {
                   });
                 });
               }
+              if(tripAnalysisCount==tripCount){
+                iconClass="fas fa-check-double";
+              }
               this.zoneList.push({
                 zoneNo: zoneNo,
                 zoneName: zoneName,
                 divClass: divClass,
                 iconClass: iconClass,
                 tripList: tripList,
-                tripCount: tripCount
+                tripCount: tripCount,
+                tripAnalysisCount:tripAnalysisCount
               });
             }
           } else {
@@ -161,7 +167,9 @@ export class WardTripAnalysisComponent implements OnInit {
               divClass: divClass,
               iconClass: iconClass,
               tripList: tripList,
-              tripCount: tripCount
+              tripCount: tripCount,
+              tripAnalysisCount:0
+
             });
           }
           if (this.allZoneList.length - 1 == this.zoneList.length) {
@@ -382,6 +390,10 @@ export class WardTripAnalysisComponent implements OnInit {
       (item) => item.zoneNo == this.selectedZone
     );
     zondDetail.tripList = this.tripList;
+    zondDetail.tripAnalysisCount=zondDetail.tripAnalysisCount+1;
+    if(zondDetail.tripAnalysisCount==zondDetail.tripCount){
+    zondDetail.iconClass="fas fa-check-double";
+    }
   }
 
   updatePendingAnalysis() {
