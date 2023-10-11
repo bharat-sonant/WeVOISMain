@@ -91,7 +91,7 @@ export class WardTripAnalysisComponent implements OnInit {
           let tripList = [];
           let tripCount = 0;
           if (data != null) {
-            iconClass = "fas fa-diagnoses";
+            iconClass = "fas fa-check-double";
             divClass = "address";
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
@@ -148,7 +148,7 @@ export class WardTripAnalysisComponent implements OnInit {
                 });
               }
               if(tripAnalysisCount==tripCount){
-                iconClass="fas fa-check-double";
+                iconClass="fas fa-diagnoses";
               }
               this.zoneList.push({
                 zoneNo: zoneNo,
@@ -392,7 +392,7 @@ export class WardTripAnalysisComponent implements OnInit {
     zondDetail.tripList = this.tripList;
     zondDetail.tripAnalysisCount=zondDetail.tripAnalysisCount+1;
     if(zondDetail.tripAnalysisCount==zondDetail.tripCount){
-    zondDetail.iconClass="fas fa-check-double";
+    zondDetail.iconClass="fas fa-diagnoses";
     }
   }
 
