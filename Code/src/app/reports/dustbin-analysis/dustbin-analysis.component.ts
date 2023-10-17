@@ -117,15 +117,17 @@ export class DustbinAnalysisComponent implements OnInit {
         if (assignedPlans.length > 0) {
           for (let index = 0; index < assignedPlans.length; index++) {
             const element = assignedPlans[index];
-            this.planList.push({
-              planId: element["planId"],
-              planName: element["planName"],
-              driver: element["driver"],
-              helper: element["helper"],
-              secondHelper: element["secondHelper"],
-              thirdHelper: element["thirdHelper"],
-              vehicle: element["vehicle"],
-            });
+            if (element["planName"] != "") {
+              this.planList.push({
+                planId: element["planId"],
+                planName: element["planName"],
+                driver: element["driver"],
+                helper: element["helper"],
+                secondHelper: element["secondHelper"],
+                thirdHelper: element["thirdHelper"],
+                vehicle: element["vehicle"],
+              });
+            }
           }
 
           this.getBinsForSelectedPlan(this.planList[0]["planId"]);
