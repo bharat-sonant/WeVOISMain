@@ -169,7 +169,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   wardInInfo: any;
   dutyStatusList: any[];
   dutyOnImageList: any[];
-  dutyOffImageList:any[];
+  dutyOffImageList: any[];
   instancesList: any[];
 
   divRemark = "#divRemark";
@@ -567,15 +567,15 @@ export class RealtimeMonitoringComponent implements OnInit {
     });
   }
 
-  getWardTrips(zoneNo:any){
-    let dbPath="WardTrips/"+this.currentYear+"/"+this.currentMonthName+"/" + this.toDayDate + "/"+zoneNo;
-    let tripInstance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+  getWardTrips(zoneNo: any) {
+    let dbPath = "WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + zoneNo;
+    let tripInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       tripInstance.unsubscribe();
-      if(data!=null){
-        let keyArray=Object.keys(data);
+      if (data != null) {
+        let keyArray = Object.keys(data);
         let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
         if (zoneDetails != undefined) {
-          zoneDetails.tripCount=keyArray.length;
+          zoneDetails.tripCount = keyArray.length;
           this.workerDetails.tripCount = zoneDetails.tripCount;
         }
       }
@@ -894,10 +894,19 @@ export class RealtimeMonitoringComponent implements OnInit {
             let index = keyArray[i];
             let remark = data[index];
             if (remark == "ward-in" && i < keyArray.length - 1) {
-              this.getWardIn(data, keyArray, i, i + 1, this.totalMinutesInWard);
+              if (data[keyArray[(i + 1)]] == "ward-in") {
+                i = i + 1;
+                this.getWardIn(data, keyArray, i, i + 1, this.totalMinutesInWard);
+              }
+              else{
+                this.getWardIn(data, keyArray, i, i + 1, this.totalMinutesInWard);
+              }
             } else if (remark == "ward-in" && i == keyArray.length - 1) {
               let dat1 = new Date(this.toDayDate + " " + index);
               let dat2 = new Date();
+              if (this.workerDetails.endTime != "---") {
+                dat2 = new Date(this.toDayDate + " " + this.workerDetails.endTime.split(" ")[0]);
+              }
               this.totalMinutesInWard = this.totalMinutesInWard + this.commonService.timeDifferenceMin(dat2, dat1);
               this.workerDetails.wardTime = this.commonService.getHrsFull(this.totalMinutesInWard);
             }
@@ -1425,7 +1434,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
   }
 
-  
+
   openDutyOffImageModel(content: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -2108,7 +2117,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     let dutyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       this.instancesList.push({ instances: dutyInstance });
       if (data != null) {
-        let counts=0;
+        let counts = 0;
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let empId = keyArray[i];
