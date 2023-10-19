@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
+import { NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: "app-dustbin-analysis",
@@ -250,7 +251,9 @@ export class DustbinAnalysisComponent implements OnInit {
             analysisAt: this.checkAnalysisValues(dustbinHistoryData, "analysisAt"),
             filledPercentage: this.checkAnalysisValues(dustbinHistoryData, "filledPercentage"),
             analysisRemark: this.checkAnalysisValues(dustbinHistoryData, "remark"),
+            isPicked:"0"
           });
+          this.setPickedBins(index);
 
           if (this.dustbinList[index]["divClass"] != "address md-background" && firstIndexNeedtobeSelected == -1) {
             firstIndexNeedtobeSelected = index;
@@ -275,6 +278,31 @@ export class DustbinAnalysisComponent implements OnInit {
     }
 
     // this.totalDustbins = binsArray.length;
+  }
+
+  setPickedBins(index:any){    
+    let isPicked=false;
+    if(this.dustbinList[index]["emptyFarFromImage"]!=this.imageNotAvailablePath){
+      isPicked=true;
+    }
+    if(this.dustbinList[index]["emptyTopViewImage"]!=this.imageNotAvailablePath){
+      isPicked=true;
+    }
+    if(this.dustbinList[index]["filledFarFromImage"]!=this.imageNotAvailablePath){
+      isPicked=true;
+    }
+    if(this.dustbinList[index]["filledTopViewImage"]!=this.imageNotAvailablePath){
+      isPicked=true;
+    }
+    if(this.dustbinList[index]["emptyDustbinFarFromImage"]!=this.imageNotAvailablePath){
+      isPicked=true;
+    }
+    if(this.dustbinList[index]["emptyDustbinTopViewImage"]!=this.imageNotAvailablePath){
+      isPicked=true;
+    }
+    if(isPicked==true){
+      this.dustbinList[index]["isPicked"]="1";
+    }
   }
 
   showPlanDetails(planId: any) {
@@ -309,7 +337,7 @@ export class DustbinAnalysisComponent implements OnInit {
     if (countType == "picked") {
       for (let index = 0; index < this.dustbinList.length; index++) {
         const element = this.dustbinList[index];
-        if (element["emptyFarFromImage"] != this.imageNotAvailablePath && element["emptyTopViewImage"] != this.imageNotAvailablePath && element["filledFarFromImage"] != this.imageNotAvailablePath && element["filledTopViewImage"] != this.imageNotAvailablePath) {
+        if (element["isPicked"] == "1") {
           count++;
         }
       }
