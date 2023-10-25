@@ -205,6 +205,7 @@ export class DustbinMonitoringComponent {
   getData() {
     this.planDetail = [];
     this.pickkingPlanList = [];
+    this.dustbinShow = [];
     this.pickkingPlanList.push({ planId: 0, planName: "Select Dustbin Pick Plan" });
     this.setMapOnAll();
     $('#ddlZone').val("0");
@@ -242,7 +243,7 @@ export class DustbinMonitoringComponent {
                 this.getDriverDetail(driver);
                 this.getStartTime(driver, index);
                 this.getDistanceCovered(vehicle, index, year, monthName);
-                this.dustbinShow = [];
+
                 if (this.selectedDate == this.todayDate) {
                   let vehicleLocation = this.db.object('CurrentLocationInfo/BinLifting/' + vehicle + '/CurrentLoc').valueChanges().subscribe(
                     vehicleLocationData => {
@@ -585,13 +586,25 @@ export class DustbinMonitoringComponent {
       this.isAll = false;
     if (this.isAll == true) {
       if (this.assignedMarker.length == 0) {
-        for (let i = 0; i < this.dustbinShow.length; i++) {
-          if (this.dustbinShow[i]["assigned"] == 0) {
-            let lat = this.dustbinShow[i]["lat"];
-            let lng = this.dustbinShow[i]["lng"];
+        if (this.dustbinShow.length > 0) {
+          for (let i = 0; i < this.dustbinShow.length; i++) {
+            if (this.dustbinShow[i]["assigned"] == 0) {
+              let lat = this.dustbinShow[i]["lat"];
+              let lng = this.dustbinShow[i]["lng"];
+              let markerLabel = null;
+              let markerURL = this.dustbinShow[i]["img"];
+              let contentString = 'Dustbin: ' + this.dustbinShow[i]["dustbin"] + '<br/> Address : ' + this.dustbinShow[i]["address"];
+              this.setMarker(lat, lng, markerLabel, markerURL, 25, 31, contentString, "allDustbin", 0, 15, 25);
+            }
+          }
+        }
+        else {
+          for (let i = 0; i < this.allDustbin.length; i++) {
+            let lat = this.allDustbin[i]["lat"];
+            let lng = this.allDustbin[i]["lng"];
             let markerLabel = null;
-            let markerURL = this.dustbinShow[i]["img"];
-            let contentString = 'Dustbin: ' + this.dustbinShow[i]["dustbin"] + '<br/> Address : ' + this.dustbinShow[i]["address"];
+            let markerURL =this.defaultDustbinUrl;
+            let contentString = 'Dustbin: ' + this.allDustbin[i]["dustbin"] + '<br/> Address : ' + this.allDustbin[i]["address"];
             this.setMarker(lat, lng, markerLabel, markerURL, 25, 31, contentString, "allDustbin", 0, 15, 25);
           }
         }
@@ -756,6 +769,7 @@ export class DustbinMonitoringComponent {
       }
     }
     else {
+
       this.setMaps();
     }
   }
