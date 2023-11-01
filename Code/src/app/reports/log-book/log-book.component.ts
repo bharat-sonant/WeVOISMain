@@ -81,7 +81,7 @@ export class LogBookComponent implements OnInit {
               divClass = "address";
               image = data;
             }
-            this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, image: image, iconClass: iconClass, divClass: divClass, reason: "" });
+            this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, image: image, iconClass: iconClass, divClass: divClass, reason: "",vehicle:"" });
             this.dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/Summary/logBookImageNotCaptureReason";
             let logBookReasonInstance = this.db.object(this.dbPath).valueChanges().subscribe(
               data => {
@@ -99,21 +99,32 @@ export class LogBookComponent implements OnInit {
                   }
                 }
 
-                if (this.allZoneList.length - 1 == this.zoneList.length) {
-
-                  setTimeout(() => {
-                    for (let index = 0; index < this.zoneList.length; index++) {
-                      if (this.isFirst == true) {
-                        if (this.zoneList[index]["divClass"] == "address") {
-                          this.isFirst = false;
-                          this.selectedZone = this.zoneList[index]["zoneNo"];
-                          this.getLogBookDetail(this.selectedZone, index);
-                          index = this.zoneList.length;
+                this.dbPath="WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/WorkerDetails/vehicle";
+                let vehicleInstance=this.db.object(this.dbPath).valueChanges().subscribe(vehicleName=>{
+                  vehicleInstance.unsubscribe();
+                  if(vehicleName!=null){
+                    let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
+                    if (zoneDetail != undefined) {
+                      zoneDetail.vehicle = vehicleName.split(",")[0];
+                    }
+                  }
+                  if (this.allZoneList.length - 1 == this.zoneList.length) {
+                    setTimeout(() => {
+                      for (let index = 0; index < this.zoneList.length; index++) {
+                        if (this.isFirst == true) {
+                          if (this.zoneList[index]["divClass"] == "address") {
+                            this.isFirst = false;
+                            this.selectedZone = this.zoneList[index]["zoneNo"];
+                            this.getLogBookDetail(this.selectedZone, index);
+                            index = this.zoneList.length;
+                          }
                         }
                       }
-                    }
-                  }, 1000);
-                }
+                    }, 1000);
+                  }
+                })
+
+               
               });
           }
         );
