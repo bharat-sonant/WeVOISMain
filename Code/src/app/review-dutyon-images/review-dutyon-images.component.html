@@ -12,13 +12,16 @@
         <div class="col-md-4" style="padding-left: 10px;margin-top: -8px;">
             <div class="col-md-12 col-sm-12 searh-pad">
                 <button class="btn-hvr" (click)="setDate('previous');"><span style="color: #fff;">
-          << </span></button>
-                <input id="txtDate" name="selectedDate" [(ngModel)]="selectedDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate('current')" style="height: 45px; width: 150px; margin-right: 8px;" />
+                        << </span></button>
+                <input id="txtDate" name="selectedDate" [(ngModel)]="selectedDate"
+                    class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate('current')"
+                    style="height: 45px; width: 150px; margin-right: 8px;" />
                 <button class="btn-hvr" (click)="setDate('next');"><span style="color: #fff;">>></span></button>
 
             </div>
         </div>
-        <div class="col-md-4 text-center" style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
+        <div class="col-md-4 text-center"
+            style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
             Ward Duty On/Off Images
         </div>
     </div>
@@ -35,35 +38,46 @@
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div id="divList" class="table-wrapper table-one" style="white-space: nowrap;">
-                                    <table class="table table-one-iner" >
+                                    <table class="table table-one-iner">
                                         <thead>
                                             <th class="table-head1">S.No.</th>
-                                            <th class="table-head2">Zone</th>
+                                            <th class="table-head2"  style="width:100px">Zone</th>
                                             <th class="table-head3">Duty On/Off Images</th>
                                         </thead>
                                         <tbody>
                                             <tr class="table-row" *ngFor="let dt of zoneDutyOnList; let i=index">
                                                 <td class="table-data-1">{{i+1}}</td>
-                                                <td class="table-data-2">
+                                                <td class="table-data-2" style="width:100px">
                                                     {{dt.zoneName}}
                                                 </td>
                                                 <td class="table-data-3">
                                                     <div style="width: 100%; display: flex;">
-                                                            <div *ngFor="let dtImage of dt.dutyOnImages;" style="width:240px; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
-                                                                <a href="{{dtImage.imageUrl}}" target="_blank"  style="color:#000">
-                                                                <img [src]="dtImage.imageUrl" style="width:100px;height:150px;" /></a>
-                                                                <a href="{{dtImage.imageDutyOffUrl}}" target="_blank"  style="color:#000" [hidden]="dtImage.imageDutyOffUrl==''">
-                                                                <img [src]="dtImage.imageDutyOffUrl"style="width:100px; height:150px; margin-left:10px;" /></a>
-                                                                <br/>
-                                                                <div style="text-align: left;">
-                                                                    <b>Driver : </b> {{dtImage.driver}}<br/>
-                                                                    <b>Helper : </b> {{dtImage.helper}}<br/>
-                                                                    <b>Vehicle : </b> {{dtImage.vehicle}}<br/>
-                                                                    <b>In Time : </b> {{dtImage.time}}<br/>
-                                                                    <span [hidden]="dtImage.timeDutyOff==''">
-                                                                    <b>Off Time : </b> {{dtImage.timeDutyOff}}</span>
-                                                                </div>
+                                                        <div *ngFor="let dtImage of dt.dutyOnImages;"
+                                                            style="width:260px; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                                                            
+                                                            <div style="width:110px; float: left;">
+                                                                <a href="{{dtImage.imageUrl}}" target="_blank"
+                                                                    style="color:#000; width:100px">
+                                                                    <img [src]="dtImage.imageUrl"
+                                                                        style="width:110px;height:150px;"
+                                                                        [hidden]="dtImage.imageUrl==''" /></a>
                                                             </div>
+                                                            <div style="width:110px; float: right;">
+                                                                <a href="{{dtImage.imageDutyOffUrl}}" target="_blank"
+                                                                    style="color:#000"
+                                                                    [hidden]="dtImage.imageDutyOffUrl==''">
+                                                                    <img [src]="dtImage.imageDutyOffUrl"
+                                                                        style="width:110px; height:150px; margin-right:10px;" /></a>
+                                                            </div>
+                                                            <div style="text-align: left; float:left">
+                                                                <b>Driver : </b> {{dtImage.driver}}<br />
+                                                                <b>Helper : </b> {{dtImage.helper}}<br />
+                                                                <b>Vehicle : </b> {{dtImage.vehicle}}<br />
+                                                                <b>In Time : </b> {{dtImage.time}}<br />
+                                                                <span [hidden]="dtImage.timeDutyOff==''">
+                                                                    <b>Off Time : </b> {{dtImage.timeDutyOff}}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>

@@ -53,7 +53,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
       for (let i = 1; i < this.zoneList.length; i++) {
         this.zoneDutyOnList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], dutyOnImages: [] });
       }
-      this.getDutyOnImages(0);
+     // this.getDutyOnImages(0);
+      $(this.divMainLoader).hide();
     });
   }
 
@@ -177,6 +178,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
         summaryData => {
           summaryInstance.unsubscribe();
           if (summaryData != null) {
+
             if (summaryData["dutyOnImage"] != null) {
               let list = summaryData["dutyOnImage"].split(',');
               let timeList = summaryData["dutyInTime"].split(',');
@@ -204,6 +206,43 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   if (imageName != "") {
                     let imageDutyOffUrl = "";
                     let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+                    if (imageNameDutyOff != "") {
+                      imageDutyOffUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageNameDutyOff + "?alt=media";
+                    }
+                    detail.dutyOnImages.push({ imageUrl: imageUrl, time: time, driver: "---", helper: "---", vehicle: "---", timeDutyOff: timeDutyOff, imageDutyOffUrl: imageDutyOffUrl });
+                  }
+                }
+              }
+              if (detail.dutyOnImages.length > 0) {
+                this.getDriverHelper(zone);
+              }
+            }
+            else if (summaryData["dutyOutImage"] != null) {
+              let timeList = summaryData["dutyInTime"].split(',');
+              let listDutyOff = [];
+              let timeDutyOffList = [];
+              if (summaryData["dutyOutImage"] != null) {
+                listDutyOff = summaryData["dutyOutImage"].split(',');
+              }
+              if (summaryData["dutyOutTime"] != null) {
+                timeDutyOffList = summaryData["dutyOutTime"].split(',');
+              }
+              let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
+              if (detail != undefined) {
+                for (let i = 0; i < timeDutyOffList.length; i++) {
+                  let imageName = timeDutyOffList[i];
+                  let time = timeList[i];
+                  let imageNameDutyOff = "";
+                  let timeDutyOff = "";
+                  if (listDutyOff[i] != null) {
+                    imageNameDutyOff = listDutyOff[i].trim();
+                  }
+                  if (timeDutyOffList[i] != null) {
+                    timeDutyOff = timeDutyOffList[i].trim();
+                  }
+                  if (imageName != "") {
+                    let imageDutyOffUrl = "";
+                    let imageUrl = "";
                     if (imageNameDutyOff != "") {
                       imageDutyOffUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageNameDutyOff + "?alt=media";
                     }
