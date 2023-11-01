@@ -53,8 +53,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
       for (let i = 1; i < this.zoneList.length; i++) {
         this.zoneDutyOnList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], dutyOnImages: [] });
       }
-     // this.getDutyOnImages(0);
-      $(this.divMainLoader).hide();
+      this.getDutyOnImages(0);
     });
   }
 
