@@ -18,11 +18,13 @@
     </select>
   </div>
 
-  <div class="col-md-2" >
-    <h3 class="header-txt"> <b> ROUTE TRACKING </b> </h3>
-   </div>
+  
 
-   <div class="col-md-5 txt-right">
+   <div class="col-md-7 txt-right">
+    <div>
+    <input type="checkbox" id="chkVTS" (change)="drowVTSRoute();"/><label style="padding-top: 20px;">Show VTS Route</label> </div>
+
+
       <select class="caret-select" id="ddlSpeed" (change)="setSpeed($event.target.value)" style="width: 80px;">
         <option value="0">Speed</option>
         <option value="1">1x</option>
@@ -70,6 +72,18 @@
     </div>
     <h1>{{trackData.totalTime}}<br />
       <p>Travel Time</p>
+    </h1>
+  </div>
+</div>
+<div id="divVTSRoute" class="tracking-bg-vts" style="display: none;">
+  <div class="main-info" style="padding-top: 10px;">
+    <h1>{{vtsVehicleName}}<br />
+      <p>Vehicle</p>
+    </h1>
+  </div>
+  <div class="main-info" style="padding-top: 10px;border-bottom: none;">
+    <h1>{{vtsRouteKM}} km<br />
+      <p>Distance Covered</p>
     </h1>
   </div>
 </div>

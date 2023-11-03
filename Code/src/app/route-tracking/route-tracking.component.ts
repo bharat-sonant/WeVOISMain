@@ -62,6 +62,7 @@ export class RouteTrackingComponent {
   totalTiminingKM: any;
   isPreviousTime: any;
   vehicleName: any;
+  vtsRouteKM: any;
   routeMarker: any[] = [];
   timerHandle: any[] = [];
   isStart = false;
@@ -75,6 +76,10 @@ export class RouteTrackingComponent {
   routePath: any[] = [];
   instancesList: any[];
   isActualData: any;
+  vtsRouteList: any[] = [];
+  vtsRouteMarker: any[] = [];
+  vtsVehicleName: any;
+  routePolyline: any;
   trackData: trackDetail =
     {
       totalKM: 0,
@@ -107,6 +112,7 @@ export class RouteTrackingComponent {
     this.preSelectedYear = this.toDayDate.split('-')[0];
     this.timeInterval = 0;
     this.selectedZone = "0";
+    this.vtsRouteKM = "0.00";
     this.getZoneList();
 
     const id = this.actRoute.snapshot.paramMap.get('id');
@@ -164,6 +170,77 @@ export class RouteTrackingComponent {
     return icon;
   }
 
+  getVTSRoute() {
+    this.vtsVehicleName="";
+    let selectedYear = this.selectedDate.split("-")[0];
+    let selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
+    let path = "WasteCollectionInfo/" + this.selectedZone + "/" + selectedYear + "/" + selectedMonthName + "/" + this.selectedDate + "/WorkerDetails/vehicle";
+    let vehicleInstance = this.db.object(path).valueChanges().subscribe(vehicleData => {
+      vehicleInstance.unsubscribe();
+      if (vehicleData != null) {
+        this.vtsVehicleName = vehicleData.split(",")[0];
+        path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + this.vtsVehicleName + "/" + this.selectedDate + ".json";
+        this.httpService.get(path).subscribe(data => {
+          if (data == null) {
+            this.commonService.setAlertMessage("error", "No route found !!!");
+            return;
+          }
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length - 2; i++) {
+            let time = keyArray[i];
+            this.vtsRouteList.push({ time: time, latLng: data[time] });
+          }
+          this.drowVTSRoute();
+          this.getVTSRouteDistance();
+        });
+      }
+    });
+  }
+
+  drowVTSRoute() {
+    if ((<HTMLInputElement>document.getElementById("chkVTS")).checked == false) {
+      $("#divVTSRoute").hide();
+      this.routePolyline.setMap(null);
+    }
+    else {
+      $("#divVTSRoute").show();
+      if (this.vtsRouteList.length > 0) {
+        let lineData = [];
+        for (let i = 0; i < this.vtsRouteList.length; i++) {
+          let lat = this.vtsRouteList[i]["latLng"].split(",")[0];
+          let lng = this.vtsRouteList[i]["latLng"].split(",")[1];
+          lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+        }
+        let line = new google.maps.Polyline({
+          path: lineData,
+          strokeColor: "blue",
+          strokeWeight: 2
+        });
+        this.routePolyline = line;
+        this.routePolyline.setMap(this.map);
+        this.getVTSRouteDistance();
+      }
+      else {
+        this.getVTSRoute();
+      }
+    }
+
+  }
+
+  getVTSRouteDistance() {
+    let vtsKM = 0;
+    for (let i = 0; i < this.vtsRouteList.length - 1; i++) {
+      let lat = this.vtsRouteList[i]["latLng"].split(",")[0];
+      let lng = this.vtsRouteList[i]["latLng"].split(",")[1];
+      let latNext = this.vtsRouteList[i + 1]["latLng"].split(",")[0];
+      let lngNext = this.vtsRouteList[i + 1]["latLng"].split(",")[1];
+      vtsKM += Math.round(Number(this.commonService.getDistanceFromLatLonInKm(lat, lng, latNext, lngNext)));
+    }
+    if (vtsKM > 0) {
+      this.vtsRouteKM = (vtsKM / 1000).toFixed(2);
+    }
+  }
+
   getMinmumMaximumDistance() {
     let dbDistancePath = "Settings/RoueTrackings";
     let distanceDetail = this.db.object(dbDistancePath).valueChanges().subscribe(
@@ -175,6 +252,7 @@ export class RouteTrackingComponent {
         }
       });
   }
+
 
   setDate(filterVal: any, type: string) {
     this.setMapOnAll();
@@ -201,6 +279,7 @@ export class RouteTrackingComponent {
       $('#btnReset').hide();
       $('#txtDate').val();
       this.lineDataList = [];
+      this.vtsRouteList = [];
       this.lineIndex = 0;
       this.isTiming = false;
       this.isPreviousTime = false;
@@ -227,6 +306,7 @@ export class RouteTrackingComponent {
     $('#btnPre').show();
     $('#btnReset').hide();
     this.lineDataList = [];
+    this.vtsRouteList = [];
     this.lineIndex = 0;
     this.isTiming = false;
     this.isPreviousTime = false;
@@ -280,6 +360,10 @@ export class RouteTrackingComponent {
     this.isTiming = false;
     this.isPreviousTime = false;
     this.totalTiminingKM = 0;
+    this.vtsRouteKM = "0.00";
+    (<HTMLInputElement>document.getElementById("chkVTS")).checked = false;
+    this.vtsRouteList = [];
+    $("#divVTSRoute").hide();
     this.selectedDate = $('#txtDate').val();
     let selectedMonth = this.selectedDate.split('-')[1];
     let selectedYear = this.selectedDate.split('-')[0];
@@ -290,6 +374,7 @@ export class RouteTrackingComponent {
     //   this.preSelectedMonth = selectedMonth;
     //  }
     this.selectedZoneNo = this.selectedZone;
+    this.routePolyline = [];
     this.polylines = [];
     this.setMaps();
     this.setWardBoundary();
@@ -313,6 +398,9 @@ export class RouteTrackingComponent {
       routePath => {
         if (routePath != null) {
           this.vehicleName = routePath;
+          if (this.vehicleName.includes(",")) {
+            this.vehicleName = this.vehicleName.split(",")[this.vehicleName.split(",").length - 1];
+          }
           if (this.vehicleLocationInstance != undefined) {
             this.vehicleLocationInstance.unsubscribe();
           }

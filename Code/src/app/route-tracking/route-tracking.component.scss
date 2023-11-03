@@ -142,6 +142,55 @@
   text-align: center;
 }
 
+/************** VTS Route tracking box start **************/
+.tracking-bg-vts{
+  background: #0ba118;
+  width: 174px;
+  box-shadow: 0 0.175rem 0.75rem rgba(0, 0, 0, 0.158);
+  border-radius: 8px;
+  position: fixed;
+  right: 300px;
+  top: 150px;
+}
+.tracking-bg-vts .main-info{
+  float: left;
+  width: 100%;
+  border-bottom: 1px dotted #fff;
+  padding: 8px;
+}
+.tracking-bg-vts .main-info:hover{
+  background: #f96332;
+  transition: 0.5s;
+}
+.tracking-bg-vts .icon-bg{
+  float: left;
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+  border: 1px solid rgba(211, 211, 211, 0.582);
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.185);
+}
+.tracking-bg-vts  .main-info h1{
+  float: right;
+  padding-top: 5px;
+  width: 100%;
+  font-size: 18px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #fff;
+  margin: 0px!important;
+  text-align: right;
+}
+
+.tracking-bg-vts .main-info p{
+font-size: 12px;
+color: #fff;
+margin: 0px!important;
+}
+/************** VTS Route tracking box end **************/
+
 
 
 /************** Route tracking box start **************/
