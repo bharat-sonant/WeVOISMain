@@ -2,6 +2,13 @@
   <div class="container-fluid">
     <div class="row no-gutters" style="position:initial;">
       <div class="col-md-5 mob-l" style="margin-top: 2px;">
+        <select class="caret-select" id="ddlCompany" style="width: 150px;" (change)="changeCompanySelection();">
+          <option value="All">All</option>
+          <option value="Econ">Econ</option>
+          <option value="Sunlight">Sunlight</option>
+
+        </select>
+        <div id="divOthersCity">
         <button style="margin-right: 6px; " type="submit" (click)="setDate('','previous');" class="btn mob-btn">
           << </button>
             <input id="txtDate" style="border-radius:5px;" class="report-controls custom-date-input" type="date"
@@ -12,6 +19,7 @@
 
             <button type="submit" (click)="showImageDetail();" class="btn mob-hide">
               View Dustbin Analysis</button>
+            </div>
       </div>
 
       <div class="col-md-7">
@@ -59,7 +67,7 @@
   </div>
 </div>
 
-<div class="d-zone">
+<div id="divOthersZone" class="d-zone">
   <div class="row">
     <div class="col-md-6" style="padding-right: 5px; display: none;">
       <select class="form-control mr-sm-2" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
@@ -94,7 +102,7 @@
 
 <span id="showHide" style="display: none;">0</span>
 
-<button class="toggle-btn" onclick="myFunction()">
+<button id="divOthersToggle" class="toggle-btn" onclick="myFunction()">
   <i class="fas fa-caret-right" style="font-size: 36px;"></i>
 </button>
 

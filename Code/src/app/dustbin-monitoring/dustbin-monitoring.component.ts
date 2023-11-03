@@ -66,9 +66,11 @@ export class DustbinMonitoringComponent {
   pickedDustbinUrl: any;
   assignedDustbinUrl: any;
   defaultDustbinUrl: any;
+  dehradunSunlightDustbinUrl: any;
+  dehradunEconDustbinUrl: any;
   cityName: any;
   db: any;
-  instancesList: any[];
+  instancesList: any[]=[];
   // route tracking
 
   routePathStore: any[];
@@ -98,25 +100,33 @@ export class DustbinMonitoringComponent {
   }
 
   setDefault() {
-    this.todayDate = this.commonService.setTodayDate();
-    this.selectedDate = this.todayDate;
-    this.minHalt = 5;
-    this.isHalt = false;
-    this.isRoute = false;
-    this.setMaps();
-    (<HTMLInputElement>document.getElementById("halt")).checked = false;
-    (<HTMLInputElement>document.getElementById("route")).checked = false;
-    $('#txtDate').val(this.selectedDate);
-    this.currentYear = new Date().getFullYear();
-    this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-    this.activeZone = 0;
-    this.assignedBinList = [];
-    this.instancesList = [];
     this.getDefaultImageUrl();
+    this.setMaps();
+    if (this.cityName == "dehradun") {
+      $("#divOthersCity").hide();
+      $("#divOthersZone").hide();
+      $("#divOthersToggle").hide();
+    }
+    else {
+      $("#ddlCompany").hide();
+      this.todayDate = this.commonService.setTodayDate();
+      this.selectedDate = this.todayDate;
+      this.minHalt = 5;
+      this.isHalt = false;
+      this.isRoute = false;
+      (<HTMLInputElement>document.getElementById("halt")).checked = false;
+      (<HTMLInputElement>document.getElementById("route")).checked = false;
+      $('#txtDate').val(this.selectedDate);
+      this.currentYear = new Date().getFullYear();
+      this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+      this.activeZone = 0;
+      this.assignedBinList = [];
+      this.instancesList = [];
+      setTimeout(() => {
+        this.setMarkerNew();
+      }, 5000);
+    }
     this.getDustbins();
-    setTimeout(() => {
-      this.setMarkerNew();
-    }, 5000);
   }
 
   getDefaultImageUrl() {
@@ -127,6 +137,8 @@ export class DustbinMonitoringComponent {
     this.pickedDustbinUrl = "../assets/img/green-rectange-dustbin.svg";
     this.assignedDustbinUrl = "../../assets/img/blue-rectange-dustbin.svg";
     this.defaultDustbinUrl = "../assets/img/dark gray without tick rectangle.png";
+    this.dehradunSunlightDustbinUrl = "../assets/img/green-rectange-dustbin.svg";
+    this.dehradunEconDustbinUrl = "../assets/img/blue-rectange-dustbin.svg";
   }
 
   setHeight() {
@@ -198,9 +210,47 @@ export class DustbinMonitoringComponent {
       for (let i = 0; i < dustbinStorageList.length; i++) {
         this.allDustbin.push({ dustbin: dustbinStorageList[i]["dustbin"], address: dustbinStorageList[i]["address"], isAssigned: dustbinStorageList[i]["isAssigned"], lat: dustbinStorageList[i]["lat"], lng: dustbinStorageList[i]["lng"], pickFrequency: dustbinStorageList[i]["pickFrequency"], spelledRight: dustbinStorageList[i]["spelledRight"], type: dustbinStorageList[i]["type"], ward: dustbinStorageList[i]["ward"], zone: dustbinStorageList[i]["zone"], planId: "", img: "", planName: "", vehicle: "", driver: "", sequence: 0, assigned: 0 });
       }
-      this.getData();
+      if (this.cityName != "dehradun") {
+        this.getData();
+      }
+      else {
+        this.showDehradunDustbin();
+      }
     }
   }
+
+  /* ----------Dehradun Dustbin Start----------------- */
+
+  changeCompanySelection() {
+    if (this.allMarkers.length > 0) {
+      for (let i = 0; i < this.allMarkers.length; i++) {
+        this.allMarkers[i]["marker"].setMap(null);
+      }
+      this.allMarkers = [];
+    }
+    this.showDehradunDustbin();
+  }
+
+  showDehradunDustbin() {
+    let list = this.allDustbin;
+    if ($("#ddlCompany").val() == "Sunlight") {
+      list = this.allDustbin.filter(item => item.type == "Circular");
+    }
+    if ($("#ddlCompany").val() == "Econ") {
+      list = this.allDustbin.filter(item => item.type == "Rectangular");
+    }
+    for (let i = 0; i < list.length; i++) {
+      let imageUrl = this.dehradunEconDustbinUrl;
+      if (list[i]["type"] == "Circular") {
+        imageUrl = this.dehradunSunlightDustbinUrl;
+      }
+      this.setMarker(list[i]["lat"], list[i]["lng"], list[i]["pickFrequency"], imageUrl, 30, 35, "", "dehradun", 0, 15, 25);
+    }
+  }
+
+
+
+  /* ----------Dehradun Dustbin End----------------- */
 
   getData() {
     this.planDetail = [];
@@ -603,7 +653,7 @@ export class DustbinMonitoringComponent {
             let lat = this.allDustbin[i]["lat"];
             let lng = this.allDustbin[i]["lng"];
             let markerLabel = null;
-            let markerURL =this.defaultDustbinUrl;
+            let markerURL = this.defaultDustbinUrl;
             let contentString = 'Dustbin: ' + this.allDustbin[i]["dustbin"] + '<br/> Address : ' + this.allDustbin[i]["address"];
             this.setMarker(lat, lng, markerLabel, markerURL, 25, 31, contentString, "allDustbin", 0, 15, 25);
           }
@@ -737,6 +787,9 @@ export class DustbinMonitoringComponent {
     }
     else if (type == "allDustbin") {
       this.assignedMarker.push({ marker });
+    }
+    else if (type == "dehradun") {
+      this.allMarkers.push({ marker });
     }
   }
 
