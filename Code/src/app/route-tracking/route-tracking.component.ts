@@ -79,6 +79,7 @@ export class RouteTrackingComponent {
   vtsRouteList: any[] = [];
   vtsRouteMarker: any[] = [];
   vtsVehicleName: any;
+  vtsVehicleList:any[]=[];
   routePolyline: any;
   trackData: trackDetail =
     {
@@ -113,6 +114,8 @@ export class RouteTrackingComponent {
     this.timeInterval = 0;
     this.selectedZone = "0";
     this.vtsRouteKM = "0.00";
+    this.vtsVehicleList=[];
+
     this.getZoneList();
 
     const id = this.actRoute.snapshot.paramMap.get('id');
@@ -170,6 +173,36 @@ export class RouteTrackingComponent {
     return icon;
   }
 
+  getColor(index:number){
+    // var randomColor = Math.floor(Math.random()*16777215).toString(16);
+    // return "#"+randomColor;
+    switch(index){
+      case 0:
+      return "#7400FF";
+      case 1:
+      return "#6A2D42";
+      case 2:
+      return "#8AF123";
+      case 3:
+      return "#23F1EE";
+      case 4:
+      return "#6A0976";
+      case 5:
+      return "#EF0C46";
+      case 6:
+      return "#0651A4";
+      case 7:
+      return "#6E7B32";
+      case 8:
+      return "#F7C600";
+      case 9:
+      return "#6DD8F5";
+      case 10:
+      return "#F14723";
+    }
+  }
+
+
   getVTSRoute() {
     this.vtsVehicleName="";
     let selectedYear = this.selectedDate.split("-")[0];
@@ -178,6 +211,18 @@ export class RouteTrackingComponent {
     let vehicleInstance = this.db.object(path).valueChanges().subscribe(vehicleData => {
       vehicleInstance.unsubscribe();
       if (vehicleData != null) {
+        let vehicles=vehicleData.split(",");
+        for(let i=0;i<vehicles.length;i++){
+          let color="blue";
+          if(i==1){
+            color=this.getColor(1);
+          }
+          else if(i==2){
+            color=this.getColor(2);
+          }
+          this.vtsVehicleList.push({vehicle:vehicles[i].toString().trim(),color:color});
+        }
+        console.log(this.vtsVehicleList);
         this.vtsVehicleName = vehicleData.split(",")[0];
         path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + this.vtsVehicleName + "/" + this.selectedDate + ".json";
         this.httpService.get(path).subscribe(data => {
@@ -360,9 +405,10 @@ export class RouteTrackingComponent {
     this.isTiming = false;
     this.isPreviousTime = false;
     this.totalTiminingKM = 0;
-    this.vtsRouteKM = "0.00";
     (<HTMLInputElement>document.getElementById("chkVTS")).checked = false;
+    this.vtsRouteKM = "0.00";
     this.vtsRouteList = [];
+    this.vtsVehicleList=[];
     $("#divVTSRoute").hide();
     this.selectedDate = $('#txtDate').val();
     let selectedMonth = this.selectedDate.split('-')[1];
