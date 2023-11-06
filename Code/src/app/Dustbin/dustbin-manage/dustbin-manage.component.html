@@ -1,7 +1,8 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4">
-            <input type="button" class="btn btn-success submit-btn-add" value="Add New" (click)="openModel(contentDustbin,'0','add');" />
+            <input type="button" class="btn btn-success submit-btn-add" value="Add New"
+                (click)="openModel(contentDustbin,'0','add');" />
         </div>
         <div class="col-md-4 Ward-Marking-heading">
             Manage Dustbin
@@ -9,8 +10,7 @@
         </div>
         <div class="col-md-4 Ward-Marking-heading">
             <span style="float: right; text-align: center; font-size: 10px!important; padding-right: 20px">
-                <i class="fa-solid fa-file-export"
-                    style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
+                <i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
                     (click)="exportToExcel();"></i><br />
                 Export to Excel
             </span>
@@ -26,7 +26,7 @@
 <div class="main-content">
 
     <div class="row">
-        <div class="col-md-5 loaderClass-outer">
+        <div class="col-md-7 loaderClass-outer">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
@@ -35,7 +35,8 @@
                     <div class="row">
                         <div class="col-md-4 input-class">
                             <div class="wrap-input-effects" required>
-                                <select class="caret-select zone-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)">
+                                <select class="caret-select zone-select" id="ddlZone"
+                                    (change)="changeZoneSelection($event.target.value)">
                                     <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
                                         {{zone.zone}}
                                     </option>
@@ -45,7 +46,8 @@
                         </div>
                         <div class="col-md-4 input-class">
                             <div class="wrap-input-effects" required>
-                                <select class="caret-select zone-select" id="ddlStatus" (change)="changeStatusSelection($event.target.value)">
+                                <select class="caret-select zone-select" id="ddlStatus"
+                                    (change)="changeStatusSelection($event.target.value)">
                                     <option value="all">
                                         All Dustbin
                                     </option>
@@ -81,9 +83,11 @@
                                                 <thead>
                                                     <th class="table-data-line2">Address</th>
                                                     <th class="table-data-Markers2">Type</th>
-                                                    <th class="table-data-Markers2">Lat-Lng</th>
+                                                    <th class="table-data-line2">Lat-Lng</th>
                                                     <th class="table-data-Markers2">Frequency</th>
-                                                    <th class="table-data-Markers2">Action</th>
+                                                    <th class="table-data-line2" [hidden]="isShowDisabledBy=='0'">
+                                                        Disabled By</th>
+                                                    <th class="table-data-action">Action</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let data of dustbinList; let i=index">
@@ -98,10 +102,21 @@
                                                         <td class="table-data2 text-right">
                                                             {{data.pickFrequency}}
                                                         </td>
+                                                        <td class="table-data2" [hidden]="isShowDisabledBy=='0'">
+                                                            {{data.disabledByName}}
+                                                        </td>
                                                         <td class="table-data2">
-                                                            <i class="far fa-edit edit-icon" (click)="openModel(contentDustbin,data.dustbin,'update');" title="Edit Entry"></i>
-                                                            <i class="fa-solid fa-check check-icon" [hidden]="data.isDisabled=='yes'" (click)="updateDustbinStatus(data.dustbin,'yes');" title="Disable Dustbin"></i>
-                                                            <i class="fa-solid fa-xmark xmark-icon" [hidden]="data.isDisabled=='no'" (click)="updateDustbinStatus(data.dustbin,'no');" title="Enable Dustbin"></i>
+                                                            <i class="far fa-edit edit-icon"
+                                                                (click)="openModel(contentDustbin,data.dustbin,'update');"
+                                                                title="Edit Entry"></i>
+                                                            <i class="fa-solid fa-check check-icon"
+                                                                [hidden]="data.isDisabled=='yes'"
+                                                                (click)="updateDustbinStatus(data.dustbin,'yes');"
+                                                                title="Disable Dustbin"></i>
+                                                            <i class="fa-solid fa-xmark xmark-icon"
+                                                                [hidden]="data.isDisabled=='no'"
+                                                                (click)="updateDustbinStatus(data.dustbin,'no');"
+                                                                title="Enable Dustbin"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>
