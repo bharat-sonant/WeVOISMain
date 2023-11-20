@@ -7,7 +7,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-5 card-outer">
+        <div class="col-md-8 card-outer">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
@@ -84,19 +84,25 @@
                                         <thead>
                                             <th class="text-left br-1 table-heading1" [hidden]="filterType=='byEmployee'">
                                                 Name</th>
-                                            <th class="text-left br-1 table-heading1" [hidden]="filterType=='byDate'">
+                                            <th class="text-left br-1 table-heading1 " [hidden]="filterType=='byDate'">
                                                 Date</th>
-                                            <th class="text-left br-1 table-heading1">
+                                            <th class="text-left br-1 table-heading1 ">
                                                 In Time</th>
-                                            <th class="text-left br-1 table-heading1">
+                                            <th class="text-left br-1 table-heading1 ">
                                                 Out Time
                                             </th>
-                                            <th class="text-left br-1 table-heading1">
+                                            <th class="text-left br-1 table-heading1 " >
                                             Working Hrs
                                             </th>
                                             <th class="text-left br-1 table-heading1" [hidden]="showStatus==false">
                                             Status
                                             </th>
+                                            <th class="text-left br-1 table-heading1 col-w" >
+                                                In Location
+                                                </th>
+                                                <th class="text-left br-1 table-heading1 col-w">
+                                                    Out Location
+                                                </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index">
@@ -117,6 +123,12 @@
                                                 </td>
                                                 <td class="text-left br-1" class="{{data.cssWorkingClass}}" [hidden]="showStatus==false">
                                                     {{data.status}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.inLocation}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.outLocation}}
                                                 </td>
                                             </tr>
                                         </tbody>
