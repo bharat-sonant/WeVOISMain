@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
+//  <reference types="@types/googlemaps" />
+
 
 @Component({
   selector: 'app-employee-attendance',
@@ -9,6 +11,9 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ['./employee-attendance.component.scss']
 })
 export class EmployeeAttendanceComponent implements OnInit {
+ 
+  @ViewChild("gmap", null) gmap: any;
+  public map: google.maps.Map;
 
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
@@ -34,7 +39,9 @@ export class EmployeeAttendanceComponent implements OnInit {
   txtDateFrom = "#txtDateFrom";
   txtDateTo = "#txtDateTo";
   ddlEmployee = "#ddlEmployee";
-  showStatus:any;
+  markers: any[] = [];
+  
+  showStatus:any; 
   public filterType: any;
 
   ngOnInit() {
@@ -44,6 +51,8 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setDefault() {
+    this. setHeight()
+    this.setDefaultMap()
     this.showStatus=false;
     this.filterType = "byDate";
     (<HTMLInputElement>document.getElementById(this.rdoByDate)).checked = true;
@@ -131,7 +140,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       let employeeAttendanceInstance = this.db.object(dbPath).valueChanges().subscribe(
         attendanceData => {
           employeeAttendanceInstance.unsubscribe();
-      
+         
           if (attendanceData != null) {
             let detail = this.allEmployeeList.find(item => item.empId == empId);
             if (detail != undefined) {
@@ -141,12 +150,23 @@ export class EmployeeAttendanceComponent implements OnInit {
               let inTimestemp = 0;
               let inLocation ="";
               let outLocation="";
+              let inLat=0;
+              let inLng =0;
+              let outLat=0;
+              let outLng=0;
+              
               let cssClass = "text-left br-1";
               let cssWorkingClass = "text-left br-1";
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
                   inLocation = attendanceData["inDetails"]["address"];
+                    let latLngString =attendanceData["inDetails"]["location"]
+                    let [latitude, longitude] = latLngString.split(',');
+                    inLat =Number(latitude)
+                    inLng = Number(longitude)
+                  
+                    
                   inTimestemp = new Date(this.selectedDate + " " + inTime).getTime();
                   let afterTimestemp = new Date(this.selectedDate + " 08:10").getTime();
                   if (inTimestemp > afterTimestemp) {
@@ -157,7 +177,11 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (attendanceData["outDetails"] != null) {
                 if (attendanceData["outDetails"]["time"] != null) {
                   outTime = attendanceData["outDetails"]["time"];
-                  outLocation = attendanceData["inDetails"]["address"];
+                  outLocation = attendanceData["outDetails"]["address"];
+                  let latLngString =attendanceData["outDetails"]["location"]
+                  let [latitude, longitude] = latLngString.split(',');
+                  outLat =Number(latitude)
+                  outLng = Number(longitude)
                 }
               }
               if (outTime != "") {
@@ -174,9 +198,11 @@ export class EmployeeAttendanceComponent implements OnInit {
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
 
               }
-              this.employeeList.push({ empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass ,inLocation:inLocation,outLocation:outLocation});
-             
+              this.employeeList.push({ empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour, 
+                inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass ,inLocation:inLocation,
+                outLocation:outLocation,inLatLng:{inLat:inLat,inLng:inLng},outLatLng:{outLat:outLat,outLng:outLng}});
             }
+            console.log(this.employeeList)
           }
           if (i == this.allEmployeeList.length - 1) {
             this.filterData();
@@ -224,6 +250,10 @@ export class EmployeeAttendanceComponent implements OnInit {
               let status="";
               let inLocation ="";
               let outLocation="";
+              let inLat =0;
+              let inLng =0;
+              let outLat =0;
+              let outLng =0;
               let cssClass = "text-left br-1";
               let cssWorkingClass="text-left br-1";
               if (attendanceData["inDetails"] != null) {
@@ -252,6 +282,10 @@ export class EmployeeAttendanceComponent implements OnInit {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
                   inLocation = attendanceData['inDetails']["address"]
+                  let latLngString =attendanceData["inDetails"]["location"]
+                  let [latitude, longitude] = latLngString.split(',');
+                  inLat =Number(latitude)
+                  inLng = Number(longitude)
                   inTimestemp = new Date(date + " " + inTime).getTime();
                   let afterTimestemp = new Date(date + " 08:10").getTime();
                   if (inTimestemp > afterTimestemp) {
@@ -262,7 +296,11 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (attendanceData["outDetails"] != null) {
                 if (attendanceData["outDetails"]["time"] != null) {
                   outTime = attendanceData["outDetails"]["time"];
-                  outLocation = attendanceData['inDetails']["address"]
+                  outLocation = attendanceData['outDetails']["address"]
+                let latLngString =attendanceData["outDetails"]["location"]
+                let [latitude, longitude] = latLngString.split(',');
+                outLat =Number(latitude)
+                outLng = Number(longitude)
                 }
               }
               if (outTime != "") {
@@ -277,7 +315,8 @@ export class EmployeeAttendanceComponent implements OnInit {
                   }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass,cssWorkingClass:cssWorkingClass,status:status ,inLocation:inLocation,outLocation:outLocation });
+              this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass,cssWorkingClass:cssWorkingClass,status:status ,inLocation:inLocation,outLocation:outLocation,inLatLng:{inLat:inLat,inLng:inLng},outLatLng:{outLat:outLat,outLng:outLng}});
+              console.log(this.attendanceList)
             }
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
           }
@@ -409,4 +448,51 @@ export class EmployeeAttendanceComponent implements OnInit {
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
+
+  setMarkerOnMap(inLatLng:any,outLatLng:any){
+      this.clearMarkers();
+    let loginTitle ="Login Location"
+    let logoutTitile ="Logout Location"
+    const loginIconURL = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
+    const logoutIconURL = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'; 
+    this.setMarker(loginIconURL,inLatLng.inLat,inLatLng.inLng ,loginTitle)
+     this.setMarker(logoutIconURL, outLatLng.outLat,outLatLng.outLng,logoutTitile)
+
+  }
+  clearMarkers() {
+    // Remove all existing markers from the map
+    this.markers.forEach(marker => {
+      marker.setMap(null);
+    });
+    // Clear the markers array
+    this.markers = [];
+  }
+  setHeight() {
+    $(".navbar-toggler").show();
+    const newHeight = 650; 
+    const newWidth = 470;
+  
+    $("#divMap").css({
+      "height": newHeight + "px", 
+      "width": newWidth + "px",
+    });
+  }
+  setDefaultMap() {
+    let mapProp = this.commonService.initMapProperties();
+    this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
+    this.map.setOptions({ zoomControl: false });
+  }
+
+  setMarker(iconUrl:any,Lat:any,Lng:any,title:any ){
+   let marker =  new google.maps.Marker({
+      position: { lat: Number(Lat), lng: Number(Lng) },
+      map: this.map, 
+      title: title,
+      icon:iconUrl
+    });
+    
+    this.markers.push(marker);
+    
+  }
+
 }
