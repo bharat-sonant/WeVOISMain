@@ -40,6 +40,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   txtDateTo = "#txtDateTo";
   ddlEmployee = "#ddlEmployee";
   markers: any[] = [];
+  logoutMarkers :any[]=[];
   bounds = new google.maps.LatLngBounds();
   showStatus:any; 
   public filterType: any;
@@ -316,7 +317,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
               this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass,cssWorkingClass:cssWorkingClass,status:status ,inLocation:inLocation,outLocation:outLocation,inLatLng:{inLat:inLat,inLng:inLng},outLatLng:{outLat:outLat,outLng:outLng}});
-             
+              console.log(this.attendanceList)
             }
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
           }
@@ -450,24 +451,31 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setMarkerOnMap(inLatLng:any,outLatLng:any){
-      this.clearMarkers();
-    let loginTitle ="Login Location"
-    let logoutTitile ="Logout Location"
-    const loginIconURL = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
-    const logoutIconURL = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'; 
-    this.setMarker(loginIconURL,inLatLng.inLat,inLatLng.inLng ,loginTitle)
-    if(outLatLng.outLat !="" && outLatLng.outLng !=""){
-      this.setMarker(logoutIconURL, outLatLng.outLat,outLatLng.outLng,logoutTitile)
+    this.clearMarkers();
+    if(this.showStatus==true){
+      this.setAllMarker()
     }
-     
+    else{
+      let loginTitle ="Login Location"
+      let logoutTitile ="Logout Location"
+      const loginIconURL = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
+      const logoutIconURL = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'; 
+      this.setMarker(loginIconURL,inLatLng.inLat,inLatLng.inLng ,loginTitle)
+      if(outLatLng.outLat !="" && outLatLng.outLng !=""){
+        this.setMarker(logoutIconURL, outLatLng.outLat,outLatLng.outLng,logoutTitile)
+      }
+    }
 
   }
   clearMarkers() {
     this.markers.forEach(marker => {
       marker.setMap(null);
     });
-  
+    this.logoutMarkers.forEach(marker => {
+      marker.setMap(null);
+    });
     this.markers = [];
+    this.logoutMarkers=[];
   }
   setHeight() {
     $(".navbar-toggler").show();
@@ -496,6 +504,32 @@ export class EmployeeAttendanceComponent implements OnInit {
       this.map.fitBounds(this.bounds);
     this.markers.push(marker);
     
+  }
+
+  setAllMarker(){
+    for (let i=0 ;i<this.attendanceList.length;i++){
+      let loginLatLng = this.attendanceList[i].inLatLng
+      let logoutLatLng = this.attendanceList[i].outLatLng
+      let loginMarker =  new google.maps.Marker({
+        position: { lat: Number(loginLatLng.inLat), lng: Number(loginLatLng.inLng) },
+        map: this.map, 
+        title: "Login Location",
+        icon:'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+      });
+      let logoutMarker =  new google.maps.Marker({
+        position: { lat: Number(logoutLatLng.outLat), lng: Number(logoutLatLng.outLng) },
+        map: this.map, 
+        title: "Logout Location",
+        icon:'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
+      });
+
+       this.bounds.extend({lat: Number(loginLatLng.inLat), lng: Number(loginLatLng.inLng)})
+        this.map.fitBounds(this.bounds);
+        this.bounds.extend({lat: Number(logoutLatLng.outLat), lng: Number(logoutLatLng.outLng)})
+        this.map.fitBounds(this.bounds);
+       this.markers.push(loginMarker);
+       this.logoutMarkers.push(logoutMarker)
+    }
   }
 
 }
