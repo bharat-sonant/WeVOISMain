@@ -78,10 +78,14 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.attendanceList = [];
     if (this.filterType == "byDate") {
       this.getAttendance();
-      this.showStatus=false;
+      this.showStatus=false; 
+      this.setDefaultMap()
+      this.clearMarkers()
     }
     else{
       this.showStatus=true;
+      this.setDefaultMap()
+      this.clearMarkers()
     }
 
   }
@@ -229,6 +233,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
     $(this.divLoader).show();
     this.getAttendanceEmployee(empId, dateFrom, dateTo);
+    this.clearMarkers()
   }
 
   getAttendanceEmployee(empId: any, date: any, dateTo: any) {
@@ -251,8 +256,8 @@ export class EmployeeAttendanceComponent implements OnInit {
               let status="";
               let inLocation ="";
               let outLocation="";
-              let inLat :'';
-              let inLng :'';
+              let inLat :"";
+              let inLng :"";
               let outLat ="";
               let outLng ="";
               let cssClass = "text-left br-1";
@@ -317,8 +322,8 @@ export class EmployeeAttendanceComponent implements OnInit {
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
               this.attendanceList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass,cssWorkingClass:cssWorkingClass,status:status ,inLocation:inLocation,outLocation:outLocation,inLatLng:{inLat:inLat,inLng:inLng},outLatLng:{outLat:outLat,outLng:outLng}});
-              console.log(this.attendanceList)
             }
+            this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
           }
           else {
@@ -452,10 +457,7 @@ export class EmployeeAttendanceComponent implements OnInit {
 
   setMarkerOnMap(inLatLng:any,outLatLng:any){
     this.clearMarkers();
-    if(this.showStatus==true){
-      this.setAllMarker()
-    }
-    else{
+ 
       let loginTitle ="Login Location"
       let logoutTitile ="Logout Location"
       const loginIconURL = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
@@ -463,7 +465,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       this.setMarker(loginIconURL,inLatLng.inLat,inLatLng.inLng ,loginTitle)
       if(outLatLng.outLat !="" && outLatLng.outLng !=""){
         this.setMarker(logoutIconURL, outLatLng.outLat,outLatLng.outLng,logoutTitile)
-      }
+      
     }
 
   }
@@ -500,35 +502,37 @@ export class EmployeeAttendanceComponent implements OnInit {
       title: title,
       icon:iconUrl
     });
-     this.bounds.extend({lat: Number(Lat), lng: Number(Lng)})
+      this.bounds.extend({lat: Number(Lat), lng: Number(Lng)})
       this.map.fitBounds(this.bounds);
-    this.markers.push(marker);
-    
+      this.markers.push(marker);
   }
 
   setAllMarker(){
     for (let i=0 ;i<this.attendanceList.length;i++){
       let loginLatLng = this.attendanceList[i].inLatLng
       let logoutLatLng = this.attendanceList[i].outLatLng
+     
       let loginMarker =  new google.maps.Marker({
         position: { lat: Number(loginLatLng.inLat), lng: Number(loginLatLng.inLng) },
         map: this.map, 
         title: "Login Location",
         icon:'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
       });
-      let logoutMarker =  new google.maps.Marker({
-        position: { lat: Number(logoutLatLng.outLat), lng: Number(logoutLatLng.outLng) },
-        map: this.map, 
-        title: "Logout Location",
-        icon:'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
-      });
-
-       this.bounds.extend({lat: Number(loginLatLng.inLat), lng: Number(loginLatLng.inLng)})
-        this.map.fitBounds(this.bounds);
+      if(logoutLatLng.outLat !="" && logoutLatLng.outLng !=""){
+        let logoutMarker =  new google.maps.Marker({
+          position: { lat: Number(logoutLatLng.outLat), lng: Number(logoutLatLng.outLng) },
+          map: this.map, 
+          title: "Logout Location",
+          icon:'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
+        });
+        this.logoutMarkers.push(logoutMarker)
         this.bounds.extend({lat: Number(logoutLatLng.outLat), lng: Number(logoutLatLng.outLng)})
         this.map.fitBounds(this.bounds);
-       this.markers.push(loginMarker);
-       this.logoutMarkers.push(logoutMarker)
+      }
+        this.bounds.extend({lat: Number(loginLatLng.inLat), lng: Number(loginLatLng.inLng)})
+        this.map.fitBounds(this.bounds);
+        this.markers.push(loginMarker);
+     
     }
   }
 
