@@ -479,12 +479,12 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
   setHeight() {
     $(".navbar-toggler").show();
-    const newHeight = 648; 
-    const newWidth = 470;
+    const newHeight = 88; 
+    const newWidth = 100;
   
     $("#divMap").css({
-      "height": newHeight + "px", 
-      "width": newWidth + "px",
+      "height": newHeight + "vh", 
+      "width": newWidth + "vh",
     });
   }
   setDefaultMap() {
