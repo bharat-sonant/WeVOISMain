@@ -456,8 +456,8 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setMarkerOnMap(inLatLng:any,outLatLng:any){
-    this.clearMarkers();
- 
+    if(this.showStatus!=true){
+      this.clearMarkers();
       let loginTitle ="Login Location"
       let logoutTitile ="Logout Location"
       const loginIconURL = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
@@ -467,6 +467,8 @@ export class EmployeeAttendanceComponent implements OnInit {
         this.setMarker(logoutIconURL, outLatLng.outLat,outLatLng.outLng,logoutTitile)
       
     }
+    }
+   
 
   }
   clearMarkers() {
