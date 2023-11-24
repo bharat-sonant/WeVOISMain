@@ -93,6 +93,7 @@ import { SalaryCalculationComponent } from '../../salary-management/salary-calcu
 import { DailyFuelReportComponent } from '../../reports/daily-fuel-report/daily-fuel-report.component';
 import { SalaryCalculationsComponent } from '../../salary-management/salary-calculations/salary-calculations.component';
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
+import { MonthlyAttendanceComponent } from '../../EmployeeManagement/monthly-attendance/monthly-attendance.component';
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
 import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
@@ -157,6 +158,7 @@ import { FieldExecutiveTrackingComponent } from '../../VTS/field-executive-track
 import { ShowRouteComponent } from '../../VTS/show-route/show-route.component';
 import { FieldExecutiveAttendanceComponent } from '../../VTS/field-executive-attendance/field-executive-attendance.component';
 import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-daily-work-report.component';
+
 
 
 
@@ -324,6 +326,7 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     PaymentViaNeftReportComponent,
     RemoveDeletedScancardsComponent,
     PenaltyReviewComponent,
+    MonthlyAttendanceComponent,
   ]
 })
 
