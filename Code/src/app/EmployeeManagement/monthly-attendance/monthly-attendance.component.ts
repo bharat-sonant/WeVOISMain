@@ -35,6 +35,7 @@ export class MonthlyAttendanceComponent implements OnInit {
   divLoader = "#divLoader";
   ddlYear = "#ddlYear";
   lastSyncData: any;
+  employeeName :any;
   constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
 
   ngOnInit() {
@@ -153,7 +154,8 @@ export class MonthlyAttendanceComponent implements OnInit {
         if (value != null) {
 
           this.reportList = value.Data.filter(item => item.empId === this.selectedEmployee);
-
+           this.employeeName = this.reportList[0].name
+           console.log(this.reportList[0].name)
           const inputDate = new Date(value.lastUpdated)
           this.lastSyncData = `${inputDate.getDate()} ${this.getMonthAbbreviation(inputDate.getMonth())} ${inputDate.getFullYear()} ${this.formatTime(inputDate)}`;
 
@@ -313,6 +315,252 @@ export class MonthlyAttendanceComponent implements OnInit {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
+  }
+
+  exportToExcel() {
+    
+    if (this.reportList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+   
+        htmlString += "<td>";
+        htmlString += "Name";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Total";
+        htmlString += "</td>";
+     
+        htmlString += "<td>";
+        htmlString += "Day-01";
+        htmlString += "</td>";
+      
+      htmlString += "<td>";
+      htmlString += "Day-02";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-03";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-04";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-05"
+      htmlString += "</td>";
+    
+    htmlString += "<td>";
+    htmlString += "Day-06";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-07";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-08";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-09";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-10";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-11";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-12";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-13";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-14";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-15";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-16";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-17";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-18";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-19";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-20";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-21";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-22";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-23";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-24";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-25";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-26";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-27";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-28";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-29";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-30";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Day-31";
+    htmlString += "</td>";
+    htmlString += "</tr>";
+    
+      for (let i = 0; i < this.reportList.length; i++) {
+        htmlString += "<tr>";
+        
+          htmlString += "<td>";
+          htmlString += this.reportList[i]["name"];
+          htmlString += "</td>";
+        
+        htmlString += "<td t='s'>";
+        htmlString += this.reportList[i]["total"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[0]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[1]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[2]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[3]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[4]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[5]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[6]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[7]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[8]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[9]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[10]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[11]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[12]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[13]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[14]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[15]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[16]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[17]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[18]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[19]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[20]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[21]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[22]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[23]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[24]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[25]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[26]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.reportList[i].list[27]["attendanceType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.reportList[i].list.length > 28) {
+          htmlString += this.reportList[i].list[28]["attendanceType"];
+      } else {
+         
+          htmlString += "--";
+      }
+      htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.reportList[i].list.length > 29) {
+          htmlString += this.reportList[i].list[29]["attendanceType"];
+      } else {
+         
+          htmlString += "--";
+      }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.reportList[i].list.length > 30) {
+          htmlString += this.reportList[i].list[30]["attendanceType"];
+      } else {
+          htmlString += "--";
+      }
+      
+        htmlString += "</td>";
+        htmlString += "</tr>";
+       
+
+      }
+      htmlString += "</table>";
+      let fileName = "";
+      if(this.selectedEmployee!=0){
+        fileName =this.employeeName  +'-'+ this.selectedMonthName+'-'+this.selectedYear+"-attendanceReport.xlsx";
+      }
+      else{
+        fileName = this.selectedMonthName+'-'+this.selectedYear+'-attendanceReport.xlsx'
+      }
+    
+      this.commonService.exportExcel(htmlString, fileName);
+    }
   }
 
 
