@@ -133,7 +133,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   getAttendance() {
-  
+    console.log(this.allEmployeeList)
     $(this.ddlTime).val("0");
     this.employeeList = [];
     this.attendanceList = [];
@@ -237,6 +237,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   getAttendanceEmployee(empId: any, date: any, dateTo: any) {
+  
     this.showStatus=true;
     if (new Date(date) <= new Date(dateTo)) {
       let year = date.split('-')[0];
@@ -456,8 +457,8 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   setMarkerOnMap(inLatLng:any,outLatLng:any){
-    this.clearMarkers();
- 
+    if(this.showStatus!=true){
+      this.clearMarkers();
       let loginTitle ="Login Location"
       let logoutTitile ="Logout Location"
       const loginIconURL = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
@@ -467,6 +468,8 @@ export class EmployeeAttendanceComponent implements OnInit {
         this.setMarker(logoutIconURL, outLatLng.outLat,outLatLng.outLng,logoutTitile)
       
     }
+    }
+   
 
   }
   clearMarkers() {
