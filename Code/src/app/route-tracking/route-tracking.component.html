@@ -21,8 +21,8 @@
   
 
    <div class="col-md-7 txt-right">
-    <div style="display:none">
-    <input type="checkbox" id="chkVTS" (change)="drowVTSRoute();"/><label style="padding-top: 20px; ">Show VTS Route</label> </div>
+    <div>
+    <input type="checkbox" id="chkVTS" (change)="getVTSRoute();"/><label style="padding-top: 20px; ">Show VTS Route</label> </div>
 
 
       <select class="caret-select" id="ddlSpeed" (change)="setSpeed($event.target.value)" style="width: 80px;">
@@ -75,16 +75,32 @@
     </h1>
   </div>
 </div>
-<div id="divVTSRoute" class="tracking-bg-vts" style="display: none;">
-  <div class="main-info" style="padding-top: 10px;">
-    <h1>{{vtsVehicleName}}<br />
-      <p>Vehicle</p>
-    </h1>
-  </div>
-  <div class="main-info" style="padding-top: 10px;border-bottom: none;">
-    <h1>{{vtsRouteKM}} km<br />
-      <p>Distance Covered</p>
-    </h1>
+<div id="divVTSRoute" class="tracking-bg-vts">
+  <div class="accordion" >
+    <div class="card" style="margin-bottom:-5px!important" >
+      <div aria-labelledby="headingOne" >
+        <div  class="dth">
+          <div class="table-bg">
+            <div class="tableFixHead" style="height: 150px!important;">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" colspan="2"><b>Vehicles</b></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let dt of vtsVehicleList; let i=index ">
+                    <td style="vertical-align: top; width: 20px;"><input type="checkbox" id="chk{{i}}" (change)="drowVTSRoute(i)"/> </td>
+                    <td class="text-left">{{dt.vehicle}} <b style="float: right;">{{dt.km}} km</b></td>                       
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
   </div>
 </div>
 <div id="timeBox">

@@ -79,8 +79,8 @@ export class RouteTrackingComponent {
   vtsRouteList: any[] = [];
   vtsRouteMarker: any[] = [];
   vtsVehicleName: any;
-  vtsVehicleList:any[]=[];
-  routePolyline: any;
+  vtsVehicleList: any[] = [];
+  routePolyline: any[] = [];
   trackData: trackDetail =
     {
       totalKM: 0,
@@ -104,7 +104,6 @@ export class RouteTrackingComponent {
       localStorage.setItem("routeMonthDetail", null);
       localStorage.setItem("savedRouteData", null);
     }
-
     this.selectedDate = this.toDayDate;
     $('#txtDate').val(this.toDayDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
@@ -114,7 +113,7 @@ export class RouteTrackingComponent {
     this.timeInterval = 0;
     this.selectedZone = "0";
     this.vtsRouteKM = "0.00";
-    this.vtsVehicleList=[];
+    this.vtsVehicleList = [];
 
     this.getZoneList();
 
@@ -173,116 +172,141 @@ export class RouteTrackingComponent {
     return icon;
   }
 
-  getColor(index:number){
+  getColor(index: number) {
     // var randomColor = Math.floor(Math.random()*16777215).toString(16);
     // return "#"+randomColor;
-    switch(index){
+    switch (index) {
       case 0:
-      return "#7400FF";
+        return "#7400FF";
       case 1:
-      return "#6A2D42";
+        return "#6A2D42";
       case 2:
-      return "#8AF123";
+        return "#8AF123";
       case 3:
-      return "#23F1EE";
+        return "#23F1EE";
       case 4:
-      return "#6A0976";
+        return "#6A0976";
       case 5:
-      return "#EF0C46";
+        return "#EF0C46";
       case 6:
-      return "#0651A4";
+        return "#0651A4";
       case 7:
-      return "#6E7B32";
+        return "#6E7B32";
       case 8:
-      return "#F7C600";
+        return "#F7C600";
       case 9:
-      return "#6DD8F5";
+        return "#6DD8F5";
       case 10:
-      return "#F14723";
+        return "#F14723";
     }
   }
 
 
   getVTSRoute() {
-    this.vtsVehicleName="";
-    let selectedYear = this.selectedDate.split("-")[0];
-    let selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
-    let path = "WasteCollectionInfo/" + this.selectedZone + "/" + selectedYear + "/" + selectedMonthName + "/" + this.selectedDate + "/WorkerDetails/vehicle";
-    let vehicleInstance = this.db.object(path).valueChanges().subscribe(vehicleData => {
-      vehicleInstance.unsubscribe();
-      if (vehicleData != null) {
-        let vehicles=vehicleData.split(",");
-        for(let i=0;i<vehicles.length;i++){
-          let color="blue";
-          if(i==1){
-            color=this.getColor(1);
-          }
-          else if(i==2){
-            color=this.getColor(2);
-          }
-          this.vtsVehicleList.push({vehicle:vehicles[i].toString().trim(),color:color});
-        }
-        console.log(this.vtsVehicleList);
-        this.vtsVehicleName = vehicleData.split(",")[0];
-        path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + this.vtsVehicleName + "/" + this.selectedDate + ".json";
-        this.httpService.get(path).subscribe(data => {
-          if (data == null) {
-            this.commonService.setAlertMessage("error", "No route found !!!");
-            return;
-          }
-          let keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length - 2; i++) {
-            let time = keyArray[i];
-            this.vtsRouteList.push({ time: time, latLng: data[time] });
-          }
-          this.drowVTSRoute();
-          this.getVTSRouteDistance();
-        });
-      }
-    });
-  }
-
-  drowVTSRoute() {
     if ((<HTMLInputElement>document.getElementById("chkVTS")).checked == false) {
       $("#divVTSRoute").hide();
-      this.routePolyline.setMap(null);
+      if (this.routePolyline.length > 0) {
+        for (let i = 0; i < this.routePolyline.length; i++) {
+          this.routePolyline[i].setMap(null);
+        }
+      }
     }
     else {
       $("#divVTSRoute").show();
-      if (this.vtsRouteList.length > 0) {
+      if (this.vtsVehicleList.length == 0) {
+        this.vtsVehicleName = "";
+        let selectedYear = this.selectedDate.split("-")[0];
+        let selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
+        let path = "WasteCollectionInfo/" + this.selectedZone + "/" + selectedYear + "/" + selectedMonthName + "/" + this.selectedDate + "/WorkerDetails/vehicle";
+        let vehicleInstance = this.db.object(path).valueChanges().subscribe(vehicleData => {
+          vehicleInstance.unsubscribe();
+          if (vehicleData != null) {
+            let vehicles = vehicleData.split(",");
+            for (let i = 0; i < vehicles.length; i++) {
+              let color = "blue";
+              if (i == 1) {
+                color = this.getColor(1);
+              }
+              else if (i == 2) {
+                color = this.getColor(2);
+              }
+              else if (i == 3) {
+                color = this.getColor(3);
+              }
+              let detail = this.vtsVehicleList.find(item => item.vehicle == vehicles[i].toString().trim());
+              if (detail == undefined) {
+                this.vtsVehicleList.push({ vehicle: vehicles[i].toString().trim(), color: color, km: '0.00', routeList: [] });
+                path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicles[i] + "/" + this.selectedDate + ".json";
+                this.httpService.get(path).subscribe(data => {
+                  if (data != null) {
+                    let keyArray = Object.keys(data);
+                    for (let j = 0; j < keyArray.length - 2; j++) {
+                      let time = keyArray[j];
+                      this.vtsVehicleList[i].routeList.push({ time: time, latLng: data[time] });
+                    }
+                    (<HTMLInputElement>document.getElementById("chk" + i)).checked = true;
+                    this.drowVTSRoute(i);
+                    this.getVTSRouteDistance(i);
+                  }
+                  else {
+                    (<HTMLInputElement>document.getElementById("chk" + i)).checked = false;
+                    this.commonService.setAlertMessage("error", "No VTS Route found for vehicle " + vehicles[i].toString().trim());
+                  };
+                });
+              }
+            }
+          }
+        });
+      }
+      else {
+        for (let i = 0; i < this.vtsVehicleList.length; i++) {
+          if (this.vtsVehicleList[i].routeList.length > 0) {
+            (<HTMLInputElement>document.getElementById("chk" + i)).checked = true;
+            this.drowVTSRoute(i);
+          }
+          else {
+            (<HTMLInputElement>document.getElementById("chk" + i)).checked = false;
+            this.commonService.setAlertMessage("error", "No VTS Route found for vehicle " + this.vtsVehicleList[i].vehicle);
+          }
+        }
+      }
+    }
+  }
+
+  drowVTSRoute(index: any) {
+    if ((<HTMLInputElement>document.getElementById("chk" + index)).checked == false) {
+      this.routePolyline[index].setMap(null);
+    }
+    else {
+      if (this.vtsVehicleList[index].routeList.length > 0) {
         let lineData = [];
-        for (let i = 0; i < this.vtsRouteList.length; i++) {
-          let lat = this.vtsRouteList[i]["latLng"].split(",")[0];
-          let lng = this.vtsRouteList[i]["latLng"].split(",")[1];
+        for (let i = 0; i < this.vtsVehicleList[index].routeList.length; i++) {
+          let lat = this.vtsVehicleList[index].routeList[i]["latLng"].split(",")[0];
+          let lng = this.vtsVehicleList[index].routeList[i]["latLng"].split(",")[1];
           lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
         }
         let line = new google.maps.Polyline({
           path: lineData,
-          strokeColor: "blue",
+          strokeColor: this.vtsVehicleList[index].color,
           strokeWeight: 2
         });
-        this.routePolyline = line;
-        this.routePolyline.setMap(this.map);
-        this.getVTSRouteDistance();
-      }
-      else {
-        this.getVTSRoute();
+        this.routePolyline[index] = line;
+        this.routePolyline[index].setMap(this.map);
       }
     }
-
   }
 
-  getVTSRouteDistance() {
+  getVTSRouteDistance(index: any) {
     let vtsKM = 0;
-    for (let i = 0; i < this.vtsRouteList.length - 1; i++) {
-      let lat = this.vtsRouteList[i]["latLng"].split(",")[0];
-      let lng = this.vtsRouteList[i]["latLng"].split(",")[1];
-      let latNext = this.vtsRouteList[i + 1]["latLng"].split(",")[0];
-      let lngNext = this.vtsRouteList[i + 1]["latLng"].split(",")[1];
+    for (let i = 0; i < this.vtsVehicleList[index].routeList.length - 1; i++) {
+      let lat = this.vtsVehicleList[index].routeList[i]["latLng"].split(",")[0];
+      let lng = this.vtsVehicleList[index].routeList[i]["latLng"].split(",")[1];
+      let latNext = this.vtsVehicleList[index].routeList[i + 1]["latLng"].split(",")[0];
+      let lngNext = this.vtsVehicleList[index].routeList[i + 1]["latLng"].split(",")[1];
       vtsKM += Math.round(Number(this.commonService.getDistanceFromLatLonInKm(lat, lng, latNext, lngNext)));
     }
     if (vtsKM > 0) {
-      this.vtsRouteKM = (vtsKM / 1000).toFixed(2);
+      this.vtsVehicleList[index].km = (vtsKM / 1000).toFixed(2);
     }
   }
 
@@ -408,8 +432,13 @@ export class RouteTrackingComponent {
     (<HTMLInputElement>document.getElementById("chkVTS")).checked = false;
     this.vtsRouteKM = "0.00";
     this.vtsRouteList = [];
-    this.vtsVehicleList=[];
+    this.vtsVehicleList = [];
     $("#divVTSRoute").hide();
+    if (this.routePolyline.length > 0) {
+      for (let i = 0; i < this.routePolyline.length; i++) {
+        this.routePolyline[i].setMap(null);
+      }
+    }
     this.selectedDate = $('#txtDate').val();
     let selectedMonth = this.selectedDate.split('-')[1];
     let selectedYear = this.selectedDate.split('-')[0];
