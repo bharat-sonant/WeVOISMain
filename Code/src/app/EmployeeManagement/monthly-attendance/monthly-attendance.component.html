@@ -3,19 +3,21 @@
 </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-5" style="padding-left: 10px;    margin-top: -8px;">
-            <select class="caret-select"  (change)="changeSelection();" style="width: 226px; height:36px"[(ngModel)]="selectedEmployee">
+        <div class="col-md-6" style="padding-left: 10px;    margin-top: -8px;">
+            <select class="caret-select"  (change)="changeSelection();" style="width: 210px; height:36px"[(ngModel)]="selectedEmployee">
              
                      <option value="0">Select Employee</option>
-                    <option value={{emp.empId}} *ngFor="let emp of allEmployeeList" ngSelected="emp.name == selectedEmployee?'selected':''">{{emp.name}} ({{emp.empCode}})</option> 
+                    <option value={{emp.empId}} *ngFor="let emp of filterEmployeeList" ngSelected="emp.name == selectedEmployee?'selected':''">{{emp.name}} ({{emp.empCode}})</option> 
                  
             </select>
         
-            <select class="caret-select" id="ddlYear" (change)="changeSelection();" style="width: 150px; height:36px" [(ngModel)]="selectedYear">
+            <select class="caret-select" id="ddlYear" (change)="changeSelection();" style="width: 100px; height:36px" [(ngModel)]="selectedYear">
                 <option value={{yer.year}} *ngFor="let yer of yearList"
                     ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
             </select>
-            <select class="caret-select" id="ddlZone" (change)="changeSelection();" style="width: 150px; height:36px" [(ngModel)]="selectedMonth">
+            
+                 
+            <select class="caret-select" id="ddlZone" (change)="changeSelection();" style="width: 110px; height:36px" [(ngModel)]="selectedMonth">
                 <option value="01">January</option>
                 <option value="02">February</option>
                 <option value="03">March</option>
@@ -29,22 +31,33 @@
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
+            <Span >
+                <input id="chkIncludeInactive" type="checkbox" (change)="getFilterEmployee()"
+                style="margin-left: 9px;">
+            <label style="font-size: 60%;">&nbsp; Include In-Active Employee</label>
+             </Span>
         </div>
-        <div class="col-md-5 text-center" style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
-            Monthly Attendance Report
-                <i class="fa-solid fa-file-export export-icon "  (click)="exportToExcel();"></i><br />
-                <p style="padding-left: 85% ;font-size: 9px">Export</p>
-           
+        <div class="col-md-3 " style="margin-left: -18px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
+            Monthly Attendance 
         </div>
-      
+        
+        
        
-        <div class="col-md-2 text-end"style='margin-top:-13px' >
-         
-           <div>
+        <div class="col-md-3 "style='margin-top:-13px' >
+            <div class="d-flex justify-content-end align-items-center ">
+                <div class="text-center me-3">
+            <i class="fa-solid fa-file-export export-icon ps-0  text-center font-size: 12px"  (click)="exportToExcel();"></i><br>
+            <p class="mb-0" style="font-size: 9px ">Export</p>
+        </div>
+            <div class="text-center">
             <button (click)="getEmployeeAttandanceData();"><i
-                class="fas fa-redo-alt" style="padding: 1px;"></i></button><br>
+                class="fas fa-redo-alt" style="padding: 1px; "></i></button>
         <h6 style="font-size: 12px;">{{lastSyncData}}</h6>
-           </div>
+    </div>
+        </div>
+           <!-- <div> -->
+           
+           <!-- </div> -->
            
         </div>
     </div>
@@ -60,7 +73,7 @@
                         <div class="tableFixHead">
                             <table class="table table-hover">
                                 <thead>
-                                    <tr>
+                                    <tr >
                                         <th scope="col" class=" thFixed" style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important; width: 310px!important;">
                                             <div style="width: 180px!important;">Name</div>
                                         </th>
@@ -94,9 +107,9 @@
                                         <th scope="col" class="text-center">26</th>
                                         <th scope="col" class="text-center">27</th>
                                         <th scope="col" class="text-center">28</th>
-                                        <th scope="col" class="text-center">29</th>
-                                        <th scope="col" class="text-center">30</th>
-                                        <th scope="col" class="text-center">31</th>
+                                        <th scope="col" class="text-center"*ngIf="arraylength > 28">29</th>
+                                        <th scope="col" class="text-center"*ngIf="arraylength > 29">30</th>
+                                        <th scope="col" class="text-center" *ngIf="arraylength > 30">31</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -127,7 +140,7 @@
                                             </div>
                                         </td>
                                         <td class="tdStyle">
-                                            <div style="width:5%">
+                                            <div style="width:100%">
                                                 {{dt.list[4].attendanceType}}
                                             </div>
                                            
@@ -256,21 +269,31 @@
                                             <div style="width:100%">
                                                 {{dt.list[27].attendanceType}}
                                             </div>
+                                            <!-- <div style="width:100%">
+                                                <ng-container *ngIf="compareDates(dt.list[27].date, currentDate); else elseBlock">
+                                                    {{ dt.list[27].attendanceType }}
+                                                </ng-container>
+                                                <ng-template #elseBlock>
+
+                                                    --
+                                                  
+                                                </ng-template>
+                                            </div> -->
                                         </td>
-                                        <td class="tdStyle">
+                                        <td class="tdStyle" *ngIf="arraylength > 28">
                                             <div style="width:100%">
-                                                {{ dt.list.length > 28 ? dt.list[28].attendanceType : '--' }}
+                                                {{ dt.list[28].attendanceType}}
                                             </div>
                                         </td>
-                                        <td class="tdStyle">
+                                        <td class="tdStyle"*ngIf="arraylength > 29">
                                             <div style="width:100%">
                                                 
-                                                {{ dt.list.length > 29 ? dt.list[29].attendanceType : '--' }}
+                                                {{ dt.list[29].attendanceType }}
                                             </div>
                                         </td>
-                                        <td class="tdStyle">
+                                        <td class="tdStyle" *ngIf="arraylength > 30">
                                             <div style="width:100%">
-                                                {{ dt.list.length > 30 ? dt.list[30].attendanceType : '--' }}
+                                                {{ dt.list[30].attendanceType }}
                                             </div>
                                         </td> 
                                         
