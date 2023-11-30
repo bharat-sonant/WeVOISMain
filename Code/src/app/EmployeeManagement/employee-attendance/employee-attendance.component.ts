@@ -133,7 +133,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   getAttendance() {
-    console.log(this.allEmployeeList)
+    
     $(this.ddlTime).val("0");
     this.employeeList = [];
     this.attendanceList = [];
@@ -167,10 +167,12 @@ export class EmployeeAttendanceComponent implements OnInit {
                   inTime = attendanceData["inDetails"]["time"];
                   inLocation = attendanceData["inDetails"]["address"];
                     let latLngString =attendanceData["inDetails"]["location"]
-                    let [latitude, longitude] = latLngString.split(',');
-                    inLat =latitude
-                    inLng = longitude
-                  
+                    if(latLngString!=undefined){
+                      let [latitude, longitude] = latLngString.split(',');
+                      inLat =latitude
+                      inLng = longitude  
+                    }
+               
                     
                   inTimestemp = new Date(this.selectedDate + " " + inTime).getTime();
                   let afterTimestemp = new Date(this.selectedDate + " 08:10").getTime();
@@ -184,9 +186,12 @@ export class EmployeeAttendanceComponent implements OnInit {
                   outTime = attendanceData["outDetails"]["time"];
                   outLocation = attendanceData["outDetails"]["address"];
                   let latLngString =attendanceData["outDetails"]["location"]
-                  let [latitude, longitude] = latLngString.split(',');
-                  outLat =latitude
-                  outLng = longitude
+                  if(latLngString !=undefined){
+                    let [latitude, longitude] = latLngString.split(',');
+                    outLat =latitude
+                    outLng = longitude
+                  }
+                
                 }
               }
               if (outTime != "") {
@@ -290,9 +295,12 @@ export class EmployeeAttendanceComponent implements OnInit {
                   inTime = attendanceData["inDetails"]["time"];
                   inLocation = attendanceData['inDetails']["address"]
                   let latLngString =attendanceData["inDetails"]["location"]
-                  let [latitude, longitude] = latLngString.split(',');
-                  inLat =latitude
-                  inLng = longitude
+                  if(latLngString !=undefined){
+                    let [latitude, longitude] = latLngString.split(',');
+                    inLat =latitude
+                    inLng = longitude
+                  }
+                
                   inTimestemp = new Date(date + " " + inTime).getTime();
                   let afterTimestemp = new Date(date + " 08:10").getTime();
                   if (inTimestemp > afterTimestemp) {
@@ -305,10 +313,13 @@ export class EmployeeAttendanceComponent implements OnInit {
                   outTime = attendanceData["outDetails"]["time"];
                   outLocation = attendanceData['outDetails']["address"]
                 let latLngString =attendanceData["outDetails"]["location"]
-                let [latitude, longitude] = latLngString.split(',');
+                if(latLngString != undefined){
+                  let [latitude, longitude] = latLngString.split(',');
                 outLat =latitude
                 outLng = longitude
                 }
+                }
+                
               }
               if (outTime != "") {
                 let currentTime = new Date(this.selectedDate + " " + outTime);
@@ -505,9 +516,9 @@ export class EmployeeAttendanceComponent implements OnInit {
       title: title,
       icon:iconUrl
     });
-      this.bounds.extend({lat: Number(Lat), lng: Number(Lng)})
-      this.map.fitBounds(this.bounds);
-      this.markers.push(marker);
+       this.bounds.extend({lat: Number(Lat), lng: Number(Lng)})
+       this.map.fitBounds(this.bounds);
+       this.markers.push(marker);
   }
 
   setAllMarker(){

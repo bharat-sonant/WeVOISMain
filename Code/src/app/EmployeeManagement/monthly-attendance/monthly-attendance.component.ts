@@ -277,7 +277,15 @@ export class MonthlyAttendanceComponent implements OnInit {
       if (this.selectedEmployee != '0') {
         this.reportList = results.filter(item => item.empId === this.selectedEmployee);
       }
-      else {
+      else  if ((<HTMLInputElement>document.getElementById(this.chkIncludeInactive)).checked == true) {
+        if (this.selectedEmployee != '0') {
+          this.reportList = results.filter(item => item.empId === this.selectedEmployee);
+        }
+        else{
+          this.reportList = results
+        }
+       
+      } else {
         let list =[]
         list = results.filter(item => item.status == "1");
        this.reportList = list;
