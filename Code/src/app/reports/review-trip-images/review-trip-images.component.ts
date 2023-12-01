@@ -37,6 +37,11 @@ export class ReviewTripImagesComponent implements OnInit {
     this.getZones();
   }
 
+  getSelectedYearMonthName() {
+    this.selectedYear = this.selectedDate.split('-')[0];
+    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+  }
+
   getZones() {
     $(this.divMainLoader).show();
     let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTripJSON%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + ".json?alt=media";
@@ -75,6 +80,7 @@ export class ReviewTripImagesComponent implements OnInit {
       let detail = this.zoneTripList.find(item => item.zoneNo == zone);
       if (detail != undefined) {
         let dbPath = "WardTrips/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + zone;
+        console.log(dbPath)
         let tripInstance = this.db.object(dbPath).valueChanges().subscribe(
           tripData => {
             tripInstance.unsubscribe();
@@ -121,6 +127,7 @@ export class ReviewTripImagesComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Selected date can not be more than " + this.todayDate + "");
       return;
     }
+    this.getSelectedYearMonthName();
     this.getZones();
   }
 }
