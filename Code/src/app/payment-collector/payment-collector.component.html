@@ -10,8 +10,8 @@
         </div>
         <div class="col-md-2" style="color:#fff; text-align: right; padding-right: 10px;">
             <div style="margin-top:-10px; width: 100%; padding-bottom: 0px; font-size: 22px;">
-            {{collectionData.sumTotalCollection}}</div>
-           <div style="font-size: 8px; width: 100%; ">Total Collection</div> 
+                {{collectionData.sumTotalCollection}}</div>
+            <div style="font-size: 8px; width: 100%; ">Total Collection</div>
         </div>
     </div>
 </section>
@@ -45,39 +45,45 @@
                                                 <td class="table-data-2">
                                                     {{data.name}}</td>
                                                 <td class="table-data-3">
-                                                    {{data.empId}}</td>
-                                                    <td class="table-data-3">
-                                                        <span [hidden]="data.deviceNo==''">{{data.deviceNo}}</span><br/>
-                                                        <span [hidden]="data.collectedAmount==0"><b> Collection : {{data.collectedAmount}}</b></span>
-                                                        </td>
+                                                    <span [hidden]="data.empId=='100'">
+                                                    {{data.empId}}</span></td>
+                                                <td class="table-data-3">
+                                                    <span [hidden]="data.deviceNo==''">{{data.deviceNo}}</span><br />
+                                                    <span [hidden]="data.collectedAmount==0"><b> Collection :
+                                                            {{data.collectedAmount}}</b></span>
+                                                </td>
 
                                                 <td class="text-center table-data-4">
-                                                    <span class="actives" [hidden]="data.isActive==false">
-                                                        Active
+                                                    <span [hidden]="data.empId=='100'">
+                                                        <span class="actives" [hidden]="data.isActive==false">
+                                                            Active
+                                                        </span>
+                                                        <span class="inactive"
+                                                            [hidden]="data.isActive==true">Inactive</span>
                                                     </span>
-                                                    <span class="inactive"
-                                                        [hidden]="data.isActive==true">Inactive</span>
                                                 </td>
                                                 <td class="text-center table-data-2">
-                                                    <i class="fas fa-map-marked-alt marked-icon"
-                                                        (click)="openModel(contentWard,data.empId,'ward');"
-                                                        title="Assign Ward"></i>
-                                                    <i class="far fa-times-circle circle-icon"
-                                                        (click)="openModel(contentConfirmation,data.empId,'delete')"
-                                                        title="Remove Assignment"></i>
+                                                    <span [hidden]="data.empId=='100'">
+                                                        <i class="fas fa-map-marked-alt marked-icon"
+                                                            (click)="openModel(contentWard,data.empId,'ward');"
+                                                            title="Assign Ward"></i>
+                                                        <i class="far fa-times-circle circle-icon"
+                                                            (click)="openModel(contentConfirmation,data.empId,'delete')"
+                                                            title="Remove Assignment"></i>
 
 
-                                                    <a href="{{data.docImageUrl}}" target="blank" title="Document">
-                                                        <i class="fa fa-download download-icon"
-                                                            style="color: green;padding-right: 10px;cursor: pointer;"></i>
-                                                    </a>
-                                                    <a href="{{data.qrCodeImageUrl}}" target="blank" title="Qr Code">
-                                                        <i class="fa-solid fa-qrcode"
-                                                            style="padding-right: 10px;cursor: pointer;"></i></a>
-                                                    <i class="far fa-edit edit-icon"
-                                                        (click)="openModel(contentEmployee,data.empId,'update');"
-                                                        title="Edit Entry"></i>
-
+                                                        <a href="{{data.docImageUrl}}" target="blank" title="Document">
+                                                            <i class="fa fa-download download-icon"
+                                                                style="color: green;padding-right: 10px;cursor: pointer;"></i>
+                                                        </a>
+                                                        <a href="{{data.qrCodeImageUrl}}" target="blank"
+                                                            title="Qr Code">
+                                                            <i class="fa-solid fa-qrcode"
+                                                                style="padding-right: 10px;cursor: pointer;"></i></a>
+                                                        <i class="far fa-edit edit-icon"
+                                                            (click)="openModel(contentEmployee,data.empId,'update');"
+                                                            title="Edit Entry"></i>
+                                                    </span>
                                                 </td>
                                             </tr>
 
