@@ -134,6 +134,7 @@ import { PaymentViaNeftComponent } from '../../reports/payment-via-neft/payment-
 import { PaymentViaNeftReportComponent } from '../../reports/payment-via-neft-report/payment-via-neft-report.component';
 import { RemoveDeletedScancardsComponent } from '../../Developers/remove-deleted-scancards/remove-deleted-scancards.component';
 import { PenaltyReviewComponent } from '../../PortalServices/penalty-review/penalty-review.component';
+import { PaymentViaCitizenappComponent } from '../../reports/payment-via-citizenapp/payment-via-citizenapp.component';
 
 
 
@@ -404,6 +405,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'sikar/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'sikar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'sikar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -640,6 +642,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/vheicle-current-info', component: VheicleCurrentInfoComponent },
     { path: 'jaipur-greater/:id/payment-via-neft', component: PaymentViaNeftComponent },
     { path: 'jaipur-greater/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
+    { path: 'jaipur-greater/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -900,6 +903,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'reengus/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'reengus/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'reengus/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -1140,6 +1144,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'shahpura/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'shahpura/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'shahpura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     //test
     { path: 'test/home', component: HomeComponent },
     { path: 'test/dashboard', component: DashboardComponent },
@@ -1379,6 +1384,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'test/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'test/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
 
 
@@ -1621,6 +1627,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-office/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaipur-office/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-office/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
@@ -1859,6 +1866,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'kishangarh/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'kishangarh/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'kishangarh/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //Nawai
     { path: 'niwai/home', component: HomeComponent },
@@ -2097,6 +2105,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'niwai/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'niwai/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'niwai/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
     { path: 'jaisalmer/dashboard', component: DashboardComponent },
@@ -2334,6 +2343,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaisalmer/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaisalmer/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaisalmer/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2572,6 +2582,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'salasar/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'salasar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'salasar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //Behror
     { path: 'behror/home', component: HomeComponent },
@@ -2810,6 +2821,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'behror/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'behror/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'behror/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
     { path: 'jaipur/account-detail', component: AccountDetailComponent },
@@ -3046,6 +3058,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaipur/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
     { path: 'jaipur-jhotwara/account-detail', component: AccountDetailComponent },
@@ -3282,6 +3295,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-jhotwara/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaipur-jhotwara/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-jhotwara/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //jaipur-jagatpura
     { path: 'jaipur-jagatpura/home', component: HomeComponent },
@@ -3519,6 +3533,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-jagatpura/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaipur-jagatpura/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-jagatpura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
@@ -3757,6 +3772,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-malviyanagar/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaiput-malviyanagar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-malviyanagar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
     { path: 'jaipur-mansarovar/account-detail', component: AccountDetailComponent },
@@ -3993,6 +4009,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-mansarovar/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaipur-mansarovar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-mansarovar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
     { path: 'jaipur-murlipura/account-detail', component: AccountDetailComponent },
@@ -4231,6 +4248,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-murlipura/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaiput-murlipura/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-murlipura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     //jaipur-sanganer
     { path: 'jaipur-sanganer/home', component: HomeComponent },
     { path: 'jaipur-sanganer/account-detail', component: AccountDetailComponent },
@@ -4467,6 +4485,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-sanganer/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaipur-sanganer/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-sanganer/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4704,6 +4723,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-vidhyadhar/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaipur-vidhyadhar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-vidhyadhar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
@@ -4941,6 +4961,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'bhiwadi/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'bhiwadi/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'bhiwadi/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
@@ -5178,6 +5199,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'chhapar/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'chhapar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'chhapar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -5415,6 +5437,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'churu/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'churu/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'churu/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5653,6 +5676,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'wevois-other/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'wevois-other/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'wevois-other/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //gwalior
     { path: 'gwalior/home', component: HomeComponent },
@@ -5891,6 +5915,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'gwalior/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'gwalior/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'gwalior/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
 
 
@@ -6130,6 +6155,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'tonk/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'tonk/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'tonk/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
+
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
@@ -6367,6 +6394,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'ratangarh/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'ratangarh/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'ratangarh/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
     { path: 'nokha/account-detail', component: AccountDetailComponent },
@@ -6603,6 +6631,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'nokha/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'nokha/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'nokha/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6840,6 +6869,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'losal/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'losal/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'losal/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
 
     //Jaipur Test
@@ -7079,6 +7109,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-test/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jaipur-test/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jaipur-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     
 
     //MNZ-Test
@@ -7317,6 +7348,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'mnz-test/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'mnz-test/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'mnz-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
 
     
@@ -7556,6 +7588,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'mpz-test/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'mpz-test/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'mpz-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     
 
     
@@ -7795,6 +7828,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jammu-survey/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'jammu-survey/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'jammu-survey/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     
     //Khandela
     { path: 'khandela/home', component: HomeComponent },
@@ -8032,6 +8066,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'khandela/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'khandela/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'khandela/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'khandela/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     
     //watteye-office
     { path: 'watteye-office/home', component: HomeComponent },
@@ -8269,6 +8304,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'watteye-office/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'watteye-office/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'watteye-office/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'watteye-office/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
     
     //dehradun
@@ -8507,6 +8543,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'dehradun/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'dehradun/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'dehradun/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'dehradun/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     
 
 
@@ -8747,5 +8784,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'pali/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'pali/:id/penalty-review', component: PenaltyReviewComponent },
     { path: 'pali/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
+    { path: 'pali/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
 
 ]; 
