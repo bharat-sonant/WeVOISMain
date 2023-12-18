@@ -257,6 +257,9 @@ export class CommonService {
     else if (cityName == "pali") {
       latLng.push({ lat: 25.7794331, lng: 73.3779516 });
     }
+    else if (cityName == "phulwari-sharif") {
+      latLng.push({ lat: 25.57114118014974, lng: 85.07024975142416 });
+    }
     return latLng;
   }
 
@@ -1001,6 +1004,7 @@ export class CommonService {
             let index = keyArrray[i];
             let pickFrequency = 0;
             let isDisabled = "no";
+            let disabledBy="";
             let isBroken = false;
             if (dustbin[index]["pickFrequency"] != null) {
               pickFrequency = Number(dustbin[index]["pickFrequency"]);
@@ -1010,6 +1014,9 @@ export class CommonService {
             }
             if (dustbin[index]["isBroken"] != null) {
               isBroken = dustbin[index]["isBroken"];
+            }
+            if (dustbin[index]["disabledBy"] != null) {
+              disabledBy = dustbin[index]["disabledBy"];
             }
             dustbinList.push({
               zone: dustbin[index]["zone"],
@@ -1024,6 +1031,7 @@ export class CommonService {
               ward: dustbin[index]["ward"],
               isDisabled: isDisabled,
               isBroken: isBroken,
+              disabledBy:disabledBy
             });
           }
         }
