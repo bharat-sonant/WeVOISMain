@@ -32,8 +32,11 @@ export class CardTransectionDetailComponent implements OnInit {
     if (this.cityName == "jaipur-malviyanagar") {
       this.cardPrefix = "MNZ";
     }
-    else {
+    else if (this.cityName == "jaipur-murlipura"){
       this.cardPrefix = "MPZ";
+    }
+    else {
+      this.cardPrefix = "PAL";
     }
     this.ward = "---";
     this.name = "---";
