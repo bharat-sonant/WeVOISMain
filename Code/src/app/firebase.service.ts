@@ -15,6 +15,7 @@ export class FirebaseService {
     let databaseName = "";
     let databaseURL = "";
     let storageBucket="";
+    console.log(city);
 
     if (city == 'sikar') {
       this.fireBase = {
@@ -463,8 +464,20 @@ export class FirebaseService {
         storageBucket: "dtdnavigator.appspot.com",
         messagingSenderId: "381118272786",
       };
-      databaseName = "dtddehradun";
+      databaseName = "dtdpali";
       databaseURL = "https://dtdpali.firebaseio.com";
+    }
+    else if (city == 'phulwari-sharif') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdphulwari-sharif.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdphulwari-sharif";
+      databaseURL = "https://dtdphulwari-sharif.firebaseio.com";
     }
 
     return new AngularFireDatabase(
