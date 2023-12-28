@@ -83,6 +83,7 @@ export class MultipleMapsComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Monitoring","Multiple-Maps",localStorage.getItem("userID"));
     let element = <HTMLAnchorElement>document.getElementById("homeLink");
     element.href = "/" + this.cityName + "/home";
     $(".navbar-toggler").hide();
