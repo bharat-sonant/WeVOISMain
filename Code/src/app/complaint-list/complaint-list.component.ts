@@ -20,6 +20,7 @@ export class ComplaintListComponent implements OnInit {
   txtDate = "#txtDate";
   constructor(public db: AngularFireDatabase, public commonService: CommonService) { }
   ngOnInit() {
+    this.commonService.savePageLoadHistory("Monitoring","Complaints",localStorage.getItem("userID"));
     this.getComplaint()
     this.getYear()
 
