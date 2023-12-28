@@ -834,7 +834,7 @@ export class CommonService {
     let storageCityName = "";
     let cityName = localStorage.getItem("cityName");
     if (cityName == "jaipur-test") {
-      storageCityName="Nokha";
+      storageCityName = "Nokha";
     }
     else {
       let cityList = JSON.parse(localStorage.getItem("cityList"));
@@ -1004,7 +1004,7 @@ export class CommonService {
             let index = keyArrray[i];
             let pickFrequency = 0;
             let isDisabled = "no";
-            let disabledBy="";
+            let disabledBy = "";
             let isBroken = false;
             if (dustbin[index]["pickFrequency"] != null) {
               pickFrequency = Number(dustbin[index]["pickFrequency"]);
@@ -1031,7 +1031,7 @@ export class CommonService {
               ward: dustbin[index]["ward"],
               isDisabled: isDisabled,
               isBroken: isBroken,
-              disabledBy:disabledBy
+              disabledBy: disabledBy
             });
           }
         }
@@ -1872,6 +1872,24 @@ export class CommonService {
         newDate = selectedDate;
       }
       resolve(newDate);
+    });
+  }
+
+  savePageLoadHistory(mainPage: any, pageName: any, userId: any) {
+    let date = this.setTodayDate();
+    let year = date.split("-")[0];
+    let monthName = this.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+    let dbPath = "PageLoadHistory/" + year + "/" + monthName + "/" + mainPage + "/" + pageName + "/" + date + "/"+userId;
+    let pageHistoryInstance = this.db.object(dbPath).valueChanges().subscribe((response) => {
+      pageHistoryInstance.unsubscribe();
+      let count = response === null ? 1 : (Number(response) + 1);
+      this.db.object(dbPath).set(count );
+      dbPath = "PageLoadHistory/Summary/"+pageName;
+      let summaryInstance = this.db.object(dbPath).valueChanges().subscribe((respSummary) => {
+        summaryInstance.unsubscribe();
+        let summaryCount = respSummary === null ? 1 : (Number(respSummary) + 1);
+        this.db.object(dbPath).set(summaryCount);
+      })
     });
   }
 }
