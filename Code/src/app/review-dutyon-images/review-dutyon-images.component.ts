@@ -26,6 +26,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Monitoring","Review-Duty-On-Images",localStorage.getItem("userID"));
     this.setDefault();
   }
 
