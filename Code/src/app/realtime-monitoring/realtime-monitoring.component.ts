@@ -209,6 +209,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.zoneList = [];
     this.firstData = false;
     this.userId = localStorage.getItem("userID");
+    this.commonService.savePageLoadHistory("Monitoring","RealTime",localStorage.getItem("userID"));
     if (localStorage.getItem("userType") == "External User") {
       $(this.divRemark).hide();
     }
