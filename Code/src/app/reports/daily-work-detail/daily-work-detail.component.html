@@ -19,10 +19,11 @@
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                         << </button>
-                                    <input id="txtDate" class="filter-select filter-input" type="date" (change)="setDate($event.target.value,'current');" />
-                                    <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
-                                        >>
-                                      </button>
+                                            <input id="txtDate" class="filter-select filter-input" type="date"
+                                                (change)="setDate($event.target.value,'current');" />
+                                            <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
+                                                >>
+                                            </button>
                                 </div>
                             </div>
                         </div>
@@ -35,7 +36,8 @@
                         </div>
                         <div class="col-md-4 text-left" style="padding-right:0px!important;">
                             <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
-                                <i class="fa-solid fa-file-export" style="cursor:pointer; color:green;  font-size: 24px; "
+                                <i class="fa-solid fa-file-export"
+                                    style="cursor:pointer; color:green;  font-size: 24px; "
                                     (click)="exportToExcel();"></i><br />
                                 Export to Excel
                             </span>
@@ -53,6 +55,8 @@
                                                 Zone </th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Start Time</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Ward Reach On</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 End Time
                                             </th>
@@ -74,7 +78,11 @@
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Work Time
                                             </th>
-                                            <th class="text-left br-1" style="border:none!important;" [hidden]="isShowActual==false">
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Halt Time
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;"
+                                                [hidden]="isShowActual==false">
                                                 Actual Work Percentage
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
@@ -94,6 +102,9 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.startTime}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.wardReachedOn}}
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.endTime}}
@@ -120,6 +131,10 @@
                                                     {{data.workTime}}
 
                                                 </td>
+                                                <td class="text-left br-1">
+                                                    {{data.haltTime}}
+
+                                                </td>
                                                 <td class="text-right br-1" [hidden]="isShowActual==false">
                                                     {{data.actualWorkPercentage}}
 
@@ -139,7 +154,8 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -153,7 +169,8 @@
         </div>
         <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
-                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                <div id="content" #content class="card-body"
+                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
                     <div class="row">
 
                         <div class="col-md-12">
@@ -162,7 +179,8 @@
                                     <div class="col-md-12 pr-1">
 
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
