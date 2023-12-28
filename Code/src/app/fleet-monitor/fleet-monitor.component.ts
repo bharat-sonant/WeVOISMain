@@ -39,6 +39,7 @@ export class FleetMonitorComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Monitoring","Vehicles",localStorage.getItem("userID"));
     this.setDefault();
   }
 
