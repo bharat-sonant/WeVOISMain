@@ -35,6 +35,7 @@ export class MapsComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Monitoring", "Maps", localStorage.getItem("userID"));
     this.setDefault();
   }
 
