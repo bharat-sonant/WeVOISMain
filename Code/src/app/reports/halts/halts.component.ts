@@ -54,6 +54,7 @@ export class HaltsComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Monitoring","Halts",localStorage.getItem("userID"));
     if (localStorage.getItem("haltDisableAccess") == "1") {
       this.ishaltDisableAccess = true;
     }
