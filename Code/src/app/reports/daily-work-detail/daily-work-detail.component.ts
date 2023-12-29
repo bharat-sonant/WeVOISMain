@@ -410,7 +410,7 @@ export class DailyWorkDetailComponent implements OnInit {
                 }
                 let zoneDetails = this.dailyWorkList.find((item) => item.zoneNo == zoneNo);
                 if (zoneDetails != undefined) {
-                  zoneDetails.haltTime = this.commonService.getHrs(totalBreak);
+                  zoneDetails.haltTime = this.commonService.getHrs(totalBreak) +" hr";
                 }
               }
             }
@@ -422,6 +422,7 @@ export class DailyWorkDetailComponent implements OnInit {
 
 
   exportToExcel() {
+    
     let htmlString = "";
     htmlString = "<table>";
     htmlString += "<tr>";
@@ -430,6 +431,9 @@ export class DailyWorkDetailComponent implements OnInit {
     htmlString += "</td>";
     htmlString += "<td>";
     htmlString += "Start Time";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Ward Reach On";
     htmlString += "</td>";
     htmlString += "<td>";
     htmlString += "End Time";
@@ -479,6 +483,11 @@ export class DailyWorkDetailComponent implements OnInit {
         htmlString += "<td>";
         if (this.dailyWorkList[i]["startTime"] != null) {
           htmlString += this.dailyWorkList[i]["startTime"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.dailyWorkList[i]["wardReachedOn"] != null) {
+          htmlString += this.dailyWorkList[i]["wardReachedOn"];
         }
         htmlString += "</td>";
         htmlString += "<td>";
