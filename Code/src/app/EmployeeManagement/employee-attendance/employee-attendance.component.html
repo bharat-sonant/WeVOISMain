@@ -16,8 +16,10 @@
                     <div class="row">
 
                         <div class="col-md-12 text-left date-box" style="padding-left:20px;height: 50px;">
-                            <input type="radio" id="rdoByDate" [checked]="filterType=='byDate'" (change)="setFilterType('byDate','0')"> <label>&nbsp;Filter By Date</label> &nbsp;&nbsp;&nbsp; <input type="radio" id="rdoByEmployee" [checked]="filterType=='byEmployee'"
-                                (change)="setFilterType('byEmployee','0')">
+                            <input type="radio" id="rdoByDate" [checked]="filterType=='byDate'"
+                                (change)="setFilterType('byDate','0')"> <label>&nbsp;Filter By Date</label>
+                            &nbsp;&nbsp;&nbsp; <input type="radio" id="rdoByEmployee"
+                                [checked]="filterType=='byEmployee'" (change)="setFilterType('byEmployee','0')">
                             <label>&nbsp;Filter By
                                 Employee</label>
                             <span [hidden]="filterType=='byDate'">
@@ -26,22 +28,24 @@
                                 <label>&nbsp; Include In-Active Employee</label></span>
 
                             <span class="export-span">
-                                    <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel();"></i><br />
-                                    <span class="export-span-iner">Export</span>
+                                <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel();"></i><br />
+                                <span class="export-span-iner">Export</span>
                             </span>
                         </div>
                         <hr />
                     </div>
-                    <div id="divByDate" class="row" style="padding-left:20px;" [hidden]="filterType=='byEmployee'" >
+                    <div id="divByDate" class="row" style="padding-left:20px;" [hidden]="filterType=='byEmployee'">
                         <div class="col-md-12 text-left date-box">
                             <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                 << </button>
-                            <input id="txtDate" class="filter-select text-input" type="date" (change)="setDate($event.target.value,'current')">
-                            <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
+                                    <input id="txtDate" class="filter-select text-input" type="date"
+                                        (change)="setDate($event.target.value,'current')">
+                                    <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
                                         >>
                                     </button>
 
-                            <select id="ddlTime" class="filter-select filter-input" (change)="filterData()" style="width:130px ;">
+                                    <select id="ddlTime" class="filter-select filter-input" (change)="filterData()"
+                                        style="width:130px ;">
                                         <option value="0">
                                             All
                                         </option>
@@ -51,11 +55,12 @@
                                         <option value="08:30">
                                             After 8:30
                                         </option>
-    
+
 
                                     </select>
 
-                            <input type="checkbox" id="chkFieldExecutive" (change)="filterData()" style="margin-left: 10px;"> &nbsp;Field Executive
+                                    <input type="checkbox" id="chkFieldExecutive" (change)="filterData()"
+                                        style="margin-left: 10px;"> &nbsp;Field Executive
                         </div>
                     </div>
                     <div id="divByEmployee" class="row" [hidden]="filterType=='byDate'">
@@ -65,12 +70,15 @@
                                     --Select--
                                 </option>
                                 <option value="{{dt.empId}}" *ngFor="let dt of filterEmployeeList;">
-                                    {{dt.name}} ({{dt.empCode}})  
+                                    {{dt.name}} ({{dt.empCode}})
                                 </option>
                             </select>
-                            <input id="txtDateFrom" class="filter-select text-input" type="date" style="width: 100px; margin-left: 10px;">
-                            <input id="txtDateTo" class="filter-select text-input" type="date" style="width: 100px; margin-left: 10px;">
-                            <button class="btn btn-success" style="margin-top:10px ;" (click)="getAttendanceByEmployee();">Search</button>
+                            <input id="txtDateFrom" class="filter-select text-input" type="date"
+                                style="width: 100px; margin-left: 10px;">
+                            <input id="txtDateTo" class="filter-select text-input" type="date"
+                                style="width: 100px; margin-left: 10px;">
+                            <button class="btn btn-success" style="margin-top:10px ;"
+                                (click)="getAttendanceByEmployee();">Search</button>
                         </div>
 
                     </div>
@@ -82,7 +90,8 @@
                                 <div id="divList" class="table-wrapper table-one">
                                     <table class="table table-line">
                                         <thead>
-                                            <th class="text-left br-1 table-heading1" [hidden]="filterType=='byEmployee'">
+                                            <th class="text-left br-1 table-heading1"
+                                                [hidden]="filterType=='byEmployee'">
                                                 Name</th>
                                             <th class="text-left br-1 table-heading1 " [hidden]="filterType=='byDate'">
                                                 Date</th>
@@ -91,22 +100,26 @@
                                             <th class="text-left br-1 table-heading1 ">
                                                 Out Time
                                             </th>
-                                            <th class="text-left br-1 table-heading1 " >
-                                            Working Hrs
+                                            <th class="text-left br-1 table-heading1 ">
+                                                Working Hrs
                                             </th>
                                             <th class="text-left br-1 table-heading1" [hidden]="showStatus==false">
-                                            Status
+                                                Status
                                             </th>
-                                            <th class="text-left br-1 table-heading1 col-w" >
+                                            <th class="text-left br-1 table-heading1 col-w">
                                                 In Location
-                                                </th>
-                                                <th class="text-left br-1 table-heading1 col-w">
-                                                    Out Location
-                                                </th>
+                                            </th>
+                                            <th class="text-left br-1 table-heading1 col-w">
+                                                Out Location
+                                            </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index" (click)="setMarkerOnMap(data.inLatLng,data.outLatLng)" style="cursor: pointer;">
-                                                <td class="text-left br-1" [hidden]="filterType=='byEmployee'" style="cursor: pointer;" (click)="setFilterType('byEmployee',data.empId)">
+                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index"
+                                                (click)="setMarkerOnMap(data.inLatLng,data.outLatLng)"
+                                                style="cursor: pointer;">
+                                                <td class="text-left br-1" [hidden]="filterType=='byEmployee'"
+                                                    style="cursor: pointer;"
+                                                    (click)="setFilterType('byEmployee',data.empId)">
                                                     {{data.name}} <b>[{{data.empCode}}]</b>
                                                 </td>
                                                 <td class="text-left br-1" [hidden]="filterType=='byDate'">
@@ -121,7 +134,8 @@
                                                 <td class="text-left br-1" class="{{data.cssWorkingClass}}">
                                                     {{data.workingHour}}
                                                 </td>
-                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}" [hidden]="showStatus==false">
+                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}"
+                                                    [hidden]="showStatus==false">
                                                     {{data.status}}
                                                 </td>
                                                 <td class="text-left br-1">
@@ -141,7 +155,7 @@
             </div>
         </div>
         <div class="col-md-5 card-outer">
-        <div #gmap class="gmap" id="divMap" style="border: solid 1px white;"></div>
+            <div #gmap class="gmap" id="divMap" style="border: solid 1px white;"></div>
         </div>
         <div class="col-md-6 card-main">
             <div class="card card-body-outer">

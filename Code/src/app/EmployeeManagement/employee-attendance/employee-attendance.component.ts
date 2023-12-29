@@ -21,6 +21,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   divLoader = "#divLoader";
   allEmployeeList: any[] = [];
   filterEmployeeList: any[] = [];
+  options:any[]=[];
   employeeList: any[];
   attendanceList: any[];
   fireStorePath: any;
@@ -112,8 +113,7 @@ export class EmployeeAttendanceComponent implements OnInit {
             }
           }
         }
-        this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
-        this.getFilterEmployee();
+        this.allEmployeeList =this.commonService.transformNumeric(this.allEmployeeList,"name");       this.getFilterEmployee();
         this.getAttendance();
       }
     }, error => {
