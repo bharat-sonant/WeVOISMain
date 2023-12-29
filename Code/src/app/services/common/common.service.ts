@@ -13,7 +13,7 @@ import * as XLSX from 'xlsx';
   providedIn: "root",
 })
 export class CommonService {
-  constructor(private router: Router, private storage: AngularFireStorage, public dbFireStore: AngularFirestore, public fs: FirebaseService, public db: AngularFireDatabase, private toastr: ToastrService, public httpService: HttpClient) { }
+  constructor(private router: Router, private storage: AngularFireStorage, public dbFireStore: AngularFirestore, public fs: FirebaseService, private toastr: ToastrService, public httpService: HttpClient) { }
 
   notificationInterval: any;
   fsDb: any;
@@ -1876,19 +1876,20 @@ export class CommonService {
   }
 
   savePageLoadHistory(mainPage: any, pageName: any, userId: any) {
+    this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     let date = this.setTodayDate();
     let year = date.split("-")[0];
     let monthName = this.getCurrentMonthName(Number(date.split('-')[1]) - 1);
     let dbPath = "PageLoadHistory/" + year + "/" + monthName + "/" + mainPage + "/" + pageName + "/" + date + "/"+userId;
-    let pageHistoryInstance = this.db.object(dbPath).valueChanges().subscribe((response) => {
+    let pageHistoryInstance = this.fsDb.object(dbPath).valueChanges().subscribe((response) => {
       pageHistoryInstance.unsubscribe();
       let count = response === null ? 1 : (Number(response) + 1);
-      this.db.object(dbPath).set(count );
+      this.fsDb.object(dbPath).set(count );
       dbPath = "PageLoadHistory/Summary/"+pageName;
-      let summaryInstance = this.db.object(dbPath).valueChanges().subscribe((respSummary) => {
+      let summaryInstance = this.fsDb.object(dbPath).valueChanges().subscribe((respSummary) => {
         summaryInstance.unsubscribe();
         let summaryCount = respSummary === null ? 1 : (Number(respSummary) + 1);
-        this.db.object(dbPath).set(summaryCount);
+        this.fsDb.object(dbPath).set(summaryCount);
       })
     });
   }
