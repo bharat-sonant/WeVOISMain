@@ -113,6 +113,7 @@ export class WardWorkTrackingComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Monitoring","Ward-Work-Tracking",localStorage.getItem("userID"));
     this.setDefault();
   }
 
