@@ -71,6 +71,7 @@ export class UpdateSurveyorVirtualComponent implements OnInit {
           ward = detail.ward;
           line = detail.line;
           let dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
+          
           this.db.object(dbPath).update({ surveyorId: "-2" });
         }
         this.updateList.push({ cardNo: cardNo, ward: ward, line: line });
