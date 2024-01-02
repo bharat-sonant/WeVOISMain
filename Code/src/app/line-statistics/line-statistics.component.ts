@@ -93,6 +93,7 @@ export class LineStatisticsComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Time-Distance","Time-Distance",localStorage.getItem("userID"));
     this.todayDate = this.commonService.setTodayDate();
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.todayDate).getMonth());
     this.currentYear = new Date().getFullYear();
