@@ -92,6 +92,7 @@ export class RouteTrackingComponent {
   ngOnInit() {
     this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.commonService.savePageLoadHistory("Monitoring","Route-Tracking",localStorage.getItem("userID"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.isActualData = localStorage.getItem("isActual");
     this.setSpeed(Number($('#ddlSpeed').val()));
