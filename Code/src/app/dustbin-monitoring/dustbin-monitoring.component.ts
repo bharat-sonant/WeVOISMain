@@ -32,6 +32,7 @@ export class DustbinMonitoringComponent {
   activePlan: any;
   vehicleLocationFirstTime: any;
   polylines: any[] = [];
+  routePolyline: any[] = [];
   todayDate: any;
   previousScannedCard: any[];
   todayScannedCard: any[];
@@ -70,7 +71,7 @@ export class DustbinMonitoringComponent {
   dehradunEconDustbinUrl: any;
   cityName: any;
   db: any;
-  instancesList: any[]=[];
+  instancesList: any[] = [];
   // route tracking
 
   routePathStore: any[];
@@ -96,7 +97,7 @@ export class DustbinMonitoringComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Monitoring","Dustbin-Monitoring",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Monitoring", "Dustbin-Monitoring", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -220,6 +221,57 @@ export class DustbinMonitoringComponent {
     }
   }
 
+  showVTSRoute() {
+    let element = <HTMLInputElement>document.getElementById("vtsRoute");
+    if (element.checked == true) {
+      if (this.activePlan == null || this.activePlan == "0") {
+        element.checked = false;
+        this.commonService.setAlertMessage("error", "Please select plan.");
+        return;
+      }
+      let detail = this.planDetail.find(item => item.id == this.activePlan);
+      if (detail != undefined) {
+        this.getVTSRoute(detail.vehicle);
+      }
+    }
+    else {
+      if (this.routePolyline.length > 0) {
+        for (let i = 0; i < this.routePolyline.length; i++) {
+          this.routePolyline[i].setMap(null);
+        }
+        this.routePolyline = [];
+      }
+    }
+  }
+
+  getVTSRoute(vehicle: any) {
+    let path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicle + "/" + this.selectedDate + ".json";
+    this.httpService.get(path).subscribe(data => {
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        let lineData = [];
+        for (let j = 0; j < keyArray.length - 2; j++) {
+          let time = keyArray[j];
+          let lat = data[time].split(",")[0];
+          let lng = data[time].split(",")[1];
+          lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+        }
+        let line = new google.maps.Polyline({
+          path: lineData,
+          strokeColor: "blue",
+          strokeWeight: 2
+        });
+        this.routePolyline[0] = line;
+        this.routePolyline[0].setMap(this.map);
+      }
+      else {
+        (<HTMLInputElement>document.getElementById("vtsRoute")).checked = false;
+        this.commonService.setAlertMessage("error", "No VTS Route found for vehicle " + vehicle);
+      };
+    });
+
+  }
+
   /* ----------Dehradun Dustbin Start----------------- */
 
   changeCompanySelection() {
@@ -264,6 +316,8 @@ export class DustbinMonitoringComponent {
     (<HTMLInputElement>document.getElementById("halt")).checked = false;
     (<HTMLInputElement>document.getElementById("route")).checked = false;
     (<HTMLInputElement>document.getElementById("dustbin")).checked = false;
+    (<HTMLInputElement>document.getElementById("vtsRoute")).checked = false;
+    $("#divTrack").hide();
     this.isHalt = false;
     this.isRoute = false;
     let dbPath = "";
@@ -564,12 +618,25 @@ export class DustbinMonitoringComponent {
       }
       this.assignedMarker = [];
     }
+    if (this.routePolyline.length > 0) {
+      for (let i = 0; i < this.routePolyline.length; i++) {
+        this.routePolyline[i].setMap(null);
+      }
+      this.routePolyline = [];
+    }
   }
 
   showHalt() {
     let element = <HTMLInputElement>document.getElementById("halt");
-    if (element.checked == true)
+
+    if (element.checked == true) {
+      if (this.activePlan == null || this.activePlan == "0") {
+        element.checked = false;
+        this.commonService.setAlertMessage("error", "Please select plan.");
+        return;
+      }
       this.isHalt = true;
+    }
     else
       this.isHalt = false;
     if (this.haltMarker.length > 0) {
@@ -595,6 +662,11 @@ export class DustbinMonitoringComponent {
   showRoute() {
     let element = <HTMLInputElement>document.getElementById("route");
     if (element.checked == true) {
+      if (this.activePlan == null || this.activePlan == "0") {
+        element.checked = false;
+        this.commonService.setAlertMessage("error", "Please select plan.");
+        return;
+      }
       this.isRoute = true;
       $("#divTrack").show();
     }
@@ -833,6 +905,8 @@ export class DustbinMonitoringComponent {
     (<HTMLInputElement>document.getElementById("halt")).checked = false;
     (<HTMLInputElement>document.getElementById("route")).checked = false;
     (<HTMLInputElement>document.getElementById("dustbin")).checked = false;
+    (<HTMLInputElement>document.getElementById("vtsRoute")).checked = false;
+    $('#divTrack').hide();
     this.isHalt = false;
     this.isRoute = false;
     let selectedPlan = $('#ddlPickPlans').val();

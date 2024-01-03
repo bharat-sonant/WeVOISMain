@@ -62,6 +62,9 @@
 <input id="fileUpload" type="file" name="file" class="file-upload-field" value="">
 <br />
 <br />
+<button (click)="CompairPayment();" style="margin-left: 20px; margin-top: 10px;">Compair Payment</button> &nbsp; &nbsp;<button (click)="getAllPaymentOrderId();" style="margin-left: 20px; margin-top: 10px;">Get All Payment Ordder Id</button> 
+<br />
+<br />
 <button (click)="uploadDustbinData();" style="margin-left: 20px; margin-top: 10px;">Update Dustbin Detail</button> &nbsp; &nbsp;
 <button (click)="uploadImage();" style="margin-left: 20px; margin-top: 10px;">Upload Image</button>&nbsp; &nbsp;
 <button (click)="addMarkerAgainstCardNo();" style="margin-left: 20px; margin-top: 10px;">Add Marker Against Card Number</button>
@@ -91,9 +94,26 @@
 <br />
 <button (click)="exportCardNo();" style="margin-left: 20px; margin-top: 10px;">Export Card No</button>
 
+
+
 <br />
 <br />
-<button (click)="exportAllHouseData();" style="margin-left: 20px; margin-top: 10px;">Export House Data</button>
+<button (click)="exportWardCardNo();" style="margin-left: 20px; margin-top: 10px;">Export Ward Card No</button>
+
+<br />
+<br />
+<button (click)="exportNewCardNo();" style="margin-left: 20px; margin-top: 10px;">Export New Cards</button>
+
+<br />
+<br />
+<br />
+<input id="flpUpload" type="file" name="file" class="file-upload-field" value="">&nbsp;&nbsp;&nbsp;&nbsp;<button (click)="checkCardMove();" style="margin-left: 20px; margin-top: 10px;">Check Card Move</button>
+<br />
+<br />
+<button (click)="getOldDataMalviyanagar();" style="margin-left: 20px; margin-top: 10px;">Get Old Data Malviyanagar</button> &nbsp; &nbsp;<button (click)="deleteOldDataMalviyanagar();" style="margin-left: 20px; margin-top: 10px;">Delete Old Data Malviyanagar</button> &nbsp; &nbsp;<button (click)="addNewDataMalviyanagar();" style="margin-left: 20px; margin-top: 10px;">Add New Data Malviyanagar</button> &nbsp; &nbsp;
+<br />
+<br />
+<button (click)="exportHouseData();" style="margin-left: 20px; margin-top: 10px;">Export House Data</button>
 
 <br />
 <br />
@@ -233,6 +253,40 @@
 <br />
 <br />
 <button (click)="removeVerifiedCards();" style="margin-left: 20px; margin-top: 10px;">Remove Verified Card </button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="getCardWardMAppingAndHouseCount();" style="margin-left: 20px; margin-top: 10px;">get CardWardMApping And HouseCount </button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="updateMonthYear();" style="margin-left: 20px; margin-top: 10px;">Update Month Year in transactions </button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="exportEmployeeData();" style="margin-left: 20px; margin-top: 10px;">Export Employee Data </button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="updateCardsFromTestDataToMalviyanagarDatabase();" style="margin-left: 20px; margin-top: 10px;">Update Cards From Test Database To Malviyanagar Database </button>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<button (click)="setMarkerID();" style="margin-left: 20px; margin-top: 10px;">Set Marker ID </button>
 
 <br />
 <br />

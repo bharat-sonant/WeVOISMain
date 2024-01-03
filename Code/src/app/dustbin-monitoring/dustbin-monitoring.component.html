@@ -92,6 +92,10 @@
         <input class="mr-8" type="checkbox" type="checkbox" id="route" name="route" value="00" (change)="showRoute();"
           style="width: 12px; height: 12px;">Route
       </label>
+      <label class="checkbox-inline" for="route">
+        <input class="mr-8" type="checkbox" type="checkbox" id="vtsRoute" name="vtsRoute" value="00" (change)="showVTSRoute();"
+          style="width: 12px; height: 12px;">VTS Route
+      </label>
       <label class="checkbox-inline" for="dustbin">
         <input class="mr-8" type="checkbox" type="checkbox" id="dustbin" name="halt" value="00"
           (change)="showAll();">All Dustbin
@@ -113,7 +117,7 @@
       <div class="card-header" id="headingOne{{pd.id}}" style="margin-bottom: 2px;">
         <h2 class="mb-0">
           <div class="plan-header" data-toggle="collapse" [attr.data-target]="'#'+pd.id" aria-expanded="true"
-            aria-controls="collapseOne" style="width: 280px;">
+            aria-controls="collapseOne" style="width: 310px;">
             {{pd.planName}}
           </div>
         </h2>

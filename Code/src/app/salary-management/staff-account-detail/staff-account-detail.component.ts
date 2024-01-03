@@ -69,6 +69,8 @@ export class StaffAccountDetailComponent implements OnInit {
     this.allAccountList = [];
     this.designationList = [];
     this.accountList = [];
+    this.checkForNewEmployee();
+    /*
     const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let accountInstance = this.httpService.get(path).subscribe(data => {
       accountInstance.unsubscribe();
@@ -80,6 +82,7 @@ export class StaffAccountDetailComponent implements OnInit {
     }, error => {
       this.checkForNewEmployee();
     });
+    */
   }
 
   checkForNewEmployee() {

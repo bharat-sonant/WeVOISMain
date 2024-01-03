@@ -15,7 +15,6 @@ export class FirebaseService {
     let databaseName = "";
     let databaseURL = "";
     let storageBucket="";
-    console.log(city);
 
     if (city == 'sikar') {
       this.fireBase = {

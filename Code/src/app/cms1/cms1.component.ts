@@ -33,31 +33,98 @@ export class Cms1Component implements OnInit {
     //this.getDeletedRevisit();
   }
 
-  removeVerifiedCards(){
-    let wardNo="125-R2";
-    let dbPath="SurveyVerifierData/VerifiedHouses/"+wardNo;
-    let instance=this.db.object(dbPath).valueChanges().subscribe(
-      data=>{
-        instance.unsubscribe();
-        if(data!=null)
-        {
-          let keyArray=Object.keys(data);
-          for(let i=0;i<keyArray.length;i++){
-            let lineNo=keyArray[i];
-            let lineObject=data[lineNo];
-            let lineArray=Object.keys(lineObject);
-            for(let j=0;j<lineArray.length;j++){
-              let cardNo=lineArray[j];
-              if(lineObject[cardNo]["latLng"]==null){
-                console.log(lineNo+" >> "+cardNo);
-                dbPath="SurveyVerifierData/VerifiedHouses/"+wardNo+"/"+lineNo+"/"+cardNo;
-                this.db.object(dbPath).remove();
+  removeVerifiedCards() {
+    let duplicateCardList = [];
+    let cardWardList = [];
+    let wardNo = $("#txtDates").val();
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyVerificationJson%2FCardWardMapping.json?alt=media";
+    let lastUpdateInstance = this.httpService.get(path).subscribe(data => {
+      lastUpdateInstance.unsubscribe();
+      let cardWardList = JSON.parse(JSON.stringify(data));
+      console.log(cardWardList);
+      let dbPath = "SurveyVerifierData/VerifiedHouses/" + wardNo;
+      let instance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          instance.unsubscribe();
+          if (data != null) {
+
+            let lineFoundInVerified = [];
+            let lineNotFound = [];
+            let deleteCardList = [];
+            let keyArray = Object.keys(data);
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineObject = data[lineNo];
+              let lineArray = Object.keys(lineObject);
+              for (let j = 0; j < lineArray.length; j++) {
+                let cardNo = lineArray[j];
+                let detail = duplicateCardList.find(item => item.cardNo == cardNo);
+                if (detail == undefined) {
+                  duplicateCardList.push({ wardNo: wardNo, cardNo: cardNo, lineNo: lineNo, count: 1 });
+                }
+                else {
+                  detail.lineNo = detail.lineNo + "," + lineNo;
+                  detail.count++;
+                }
               }
+            }
+            duplicateCardList = duplicateCardList.filter(item => item.count > 1);
+            console.log(duplicateCardList);
+            for (let i = 0; i < duplicateCardList.length; i++) {
+              let cardNo = duplicateCardList[i]["cardNo"];
+              let houseLineNo = "";
+              let houseDetail = cardWardList.find(item => item.cardNo == cardNo);
+              if (houseDetail != undefined) {
+                houseLineNo = houseDetail.lineNo;
+              }
+              let lineList = duplicateCardList[i]["lineNo"].split(',');
+              let sameLine = false;
+              for (let j = 0; j < lineList.length; j++) {
+                let verifiLineNo = lineList[j].trim();
+                if (Number(houseLineNo) == Number(verifiLineNo)) {
+                  sameLine = true;
+                }
+              }
+              if (sameLine == true) {
+                lineFoundInVerified.push({ cardNo: cardNo, lineNo: duplicateCardList[i]["lineNo"], houseLineNo: houseLineNo });
+              }
+              else {
+                lineNotFound.push({ cardNo: cardNo, lineNo: duplicateCardList[i]["lineNo"] });
+              }
+            }
+            for (let i = 0; i < lineFoundInVerified.length; i++) {
+              let houseLineNo = lineFoundInVerified[i]["houseLineNo"];
+              let lineList = lineFoundInVerified[i]["lineNo"].split(',');
+              for (let j = 0; j < lineList.length; j++) {
+                let verifiLineNo = lineList[j].trim();
+                if (Number(houseLineNo) != Number(verifiLineNo)) {
+                  deleteCardList.push({ cardNo: lineFoundInVerified[i]["cardNo"], deleteLine: verifiLineNo });
+                }
+              }
+            }
+
+            for (let i = 0; i < lineNotFound.length; i++) {
+              let lineList = lineNotFound[i]["lineNo"].split(',');
+              for (let j = 1; j < lineList.length; j++) {
+                let verifiLineNo = lineList[j].trim();
+                deleteCardList.push({ cardNo: lineNotFound[i]["cardNo"], deleteLine: verifiLineNo });
+              }
+            }
+
+            console.log(lineFoundInVerified);
+            console.log(lineNotFound);
+            console.log(deleteCardList);
+            for (let i = 0; i < deleteCardList.length; i++) {
+              let cardNo = deleteCardList[i]["cardNo"];
+              let deleteLine = deleteCardList[i]["deleteLine"];
+              let dbPath = "SurveyVerifierData/VerifiedHouses/" + wardNo + "/" + deleteLine + "/" + cardNo;
+              console.log(dbPath);
+              this.db.object(dbPath).remove();
             }
           }
         }
-      }
-    )
+      )
+    });
   }
 
   createUserJson() {
@@ -75,7 +142,7 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(1592, 0);
+    this.addDevices(29, 0);
   }
 
   addDevices(lastDevice: any, index: any) {
@@ -85,17 +152,18 @@ export class Cms1Component implements OnInit {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
-        lastActive: "25/07/2022 09:10",
-        name: "SIK-" + lastDevice,
-        readerAppVersion: "1.0.2.9",
+        lastActive: "06/09/2023 09:10",
+        name: "PAL-" + lastDevice,
+        readerAppVersion: "1.0.2.8",
         status: "1"
       }
-console.log("SIK-" + lastDevice);
-      let dbPath = "Devices/Sikar/" + key;
+      console.log("PAL-" + lastDevice);
+      let dbPath = "Devices/Pali/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }
     else {
+      console.log("lastDevice=>" + lastDevice)
       this.db.object("Devices").update({ LastConfigurationNo: lastDevice });
     }
   }
@@ -782,10 +850,60 @@ console.log("SIK-" + lastDevice);
       let cardNo = fileList[index]["CardNo"];
       let zoneNo = fileList[index]["ZoneNo"];
     }
+  }
 
+  getAllPaymentOrderId(){
+    
+  }
+
+  CompairPayment() {
+    let element = <HTMLInputElement>document.getElementById("fileUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      let orderIdList = [];
+      let paytmList = [];
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      for (let i = 0; i < fileList.length; i++) {
+        let orderId = fileList[i]["PaymentCollection"];
+        let paytm = fileList[i]["PayTm"];
+        if (orderId != undefined) {
+          orderIdList.push({ orderId: orderId });
+        }
+        if (paytm != undefined) {
+          paytmList.push({ orderId: paytm });
+        }
+      }
+      console.log(orderIdList);
+      console.log(paytmList);
+      for (let i = 0; i < paytmList.length; i++) {
+        let orderId = paytmList[i]["orderId"];
+        let detail = orderIdList.find(item => item.orderId == orderId);
+        if (detail == undefined) {
+          console.log(orderId);
+        }
+      }
+      for (let i = 0; i < orderIdList.length; i++) {
+        let orderId = orderIdList[i]["orderId"];
+        let detail = paytmList.find(item => item.orderId == orderId);
+        if (detail == undefined) {
+          //console.log(orderId);
+        }
+      }
+    }
   }
 
   uploadDustbinData() {
+    console.log(this.db);
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -800,13 +918,13 @@ console.log("SIK-" + lastDevice);
       this.first_sheet_name = workbook.SheetNames[0];
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
-      let key = 1;
+      let key = 116;
       const jsonObj = {};
       for (let i = 0; i < fileList.length; i++) {
-        let wardNo = fileList[i]["Ward Number"];
+        let wardNo = fileList[i]["Ward No"];
         let address = fileList[i]["Address"];
-        let lat = fileList[i]["Latitude"];
-        let lng = fileList[i]["Longitude"];
+        let lat = fileList[i]["Lat"];
+        let lng = fileList[i]["Long"];
         const data = {
           address: address,
           lat: lat,
@@ -816,13 +934,14 @@ console.log("SIK-" + lastDevice);
           type: "Rectangular",
           ward: wardNo,
           zone: "A",
-          createdDate: "2023-03-01"
+          createdDate: "2023-11-16"
         }
+        this.db.object("DustbinData/DustbinDetails/" + key.toString()).update(data);
         jsonObj[key] = data;
         key++;
       }
       console.log(jsonObj);
-      this.db.object("DustbinData/DustbinDetails").set(jsonObj);
+      //this.db.object("DustbinData/DustbinDetails").set(jsonObj);
 
     }
   }
@@ -1630,11 +1749,14 @@ console.log("SIK-" + lastDevice);
 
   exportHouseData() {
     let houseList = [];
-    let ward = "10-R1";
+    let ward = "mkt4";
+
     let path = "Houses/" + ward;
+    console.log(path)
     let instance = this.db.object(path).valueChanges().subscribe(data => {
       if (data != null) {
         instance.unsubscribe();
+        console.log(data)
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
@@ -1652,8 +1774,7 @@ console.log("SIK-" + lastDevice);
                 let phaseNo = cardData[cardNo]["phaseNo"];
                 let rfid = cardData[cardNo]["rfid"];
                 let ward = cardData[cardNo]["ward"];
-                let isNameCorrect = cardData[cardNo]["isNameCorrect"];
-                houseList.push({ lineNo: lineNo, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, phaseNo: phaseNo, rfid: rfid, ward: ward, isNameCorrect: isNameCorrect });
+                houseList.push({ lineNo: lineNo, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, phaseNo: phaseNo, rfid: rfid, ward: ward });
               }
             }
           }
@@ -1731,7 +1852,7 @@ console.log("SIK-" + lastDevice);
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
             /* save to file */
-            let fileName = "Ward-" + ward + "-house-Data.xlsx";
+            let fileName = "Ward-Market4-house-Data.xlsx";
             XLSX.writeFile(wb, fileName);
 
           }
@@ -1742,38 +1863,60 @@ console.log("SIK-" + lastDevice);
 
 
   exportCardNo() {
+
     let houseList = [];
     let dbPath = "Houses";
+    let duplicateList = [];
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       houseInstance.unsubscribe();
       let keyArray = Object.keys(data);
       for (let i = 0; i < keyArray.length; i++) {
+        let ward=keyArray[i];
         let wardObj = data[keyArray[i]];
         let wardArray = Object.keys(wardObj);
         for (let j = 0; j < wardArray.length; j++) {
+          let lineNo=wardArray[j];
           let lineObj = wardObj[wardArray[j]];
           let cardArray = Object.keys(lineObj);
           for (let k = 0; k < cardArray.length; k++) {
             let cardNo = cardArray[k];
-            houseList.push({ cardNo: cardNo });
-            // console.log(cardNo);
+            let detail = houseList.find(item => item.cardNo == cardNo);
+            if (detail != undefined) {
+              duplicateList.push({ cardNo: cardNo });
+
+            }
+            houseList.push({ cardNo: cardNo,ward:ward,lineNo:lineNo });
+             console.log(cardNo);
           }
         }
       }
+      console.log(duplicateList);
       if (houseList.length > 0) {
 
-        console.log(houseList);
+       // console.log(houseList);
         let htmlString = "";
         htmlString = "<table>";
         htmlString += "<tr>";
         htmlString += "<td>";
         htmlString += "cardNo";
         htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "WardNo";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "lineNo";
+        htmlString += "</td>";
         htmlString += "</tr>";
         for (let i = 0; i < houseList.length; i++) {
           htmlString += "<tr>";
           htmlString += "<td>";
           htmlString += houseList[i]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += houseList[i]["ward"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += houseList[i]["lineNo"];
           htmlString += "</td>";
           htmlString += "</tr>";
         }
@@ -1788,6 +1931,953 @@ console.log("SIK-" + lastDevice);
 
         /* save to file */
         XLSX.writeFile(wb, "houses.xlsx");
+
+
+
+      }
+
+      if (houseList.length > 0) {
+
+        // console.log(houseList);
+         let htmlString = "";
+         htmlString = "<table>";
+         htmlString += "<tr>";
+         htmlString += "<td>";
+         htmlString += "cardNo";
+         htmlString += "</td>";
+         htmlString += "<td>";
+         htmlString += "WardNo";
+         htmlString += "</td>";
+         htmlString += "<td>";
+         htmlString += "lineNo";
+         htmlString += "</td>";
+         htmlString += "</tr>";
+         for (let i = 0; i < houseList.length; i++) {
+           htmlString += "<tr>";
+           htmlString += "<td>";
+           htmlString += houseList[i]["cardNo"];
+           htmlString += "</td>";
+           htmlString += "<td>";
+           htmlString += houseList[i]["ward"];
+           htmlString += "</td>";
+           htmlString += "<td>";
+           htmlString += houseList[i]["lineNo"];
+           htmlString += "</td>";
+           htmlString += "</tr>";
+         }
+         htmlString += "<table>";
+         var parser = new DOMParser();
+         var doc = parser.parseFromString(htmlString, 'text/html');
+         const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+ 
+         /* generate workbook and add the worksheet */
+         const wb: XLSX.WorkBook = XLSX.utils.book_new();
+         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+ 
+         /* save to file */
+         XLSX.writeFile(wb, "malviyanagar-houses.xlsx");
+ 
+ 
+         
+       }
+
+    });
+  }
+
+  exportWardCardNo() {
+    let notInMalviyaNagarList = [];
+    let notInMNZList = [];
+    let ward = "137-R1";
+    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCards%2F" + ward + ".json?alt=media";
+    let Instance = this.httpService.get(path).subscribe(MData => {
+      Instance.unsubscribe();
+      let mainHouseList = [];
+      console.log(MData);
+      let keyArray = Object.keys(MData);
+      for (let i = 0; i < keyArray.length; i++) {
+        let lineNo = keyArray[i];
+        if (MData[lineNo] != null) {
+          let houseData = MData[lineNo];
+          let cardKeyArray = Object.keys(houseData);
+          if (cardKeyArray.length > 0) {
+            for (let j = 0; j < cardKeyArray.length; j++) {
+              let cardNo = cardKeyArray[j];
+              let ward = "";
+              let surveyDate = "";
+              if (houseData[cardNo]["createdDate"] != null) {
+                surveyDate = houseData[cardNo]["createdDate"];
+              }
+              if (houseData[cardNo]["ward"] != null) {
+                ward = houseData[cardNo]["ward"];
+              }
+              mainHouseList.push({ cardNo: cardNo, lineNo: lineNo, surveyDate: surveyDate, ward: ward });
+
+            }
+          }
+        }
+      }
+      console.log(mainHouseList);
+      let houseList = [];
+      let dbPath = "Houses/" + ward;
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        if (data != null) {
+          instance.unsubscribe();
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let cardData = data[lineNo];
+              let cardKeyArray = Object.keys(cardData);
+              if (cardKeyArray.length > 0) {
+                for (let j = 0; j < cardKeyArray.length; j++) {
+                  let cardNo = cardKeyArray[j];
+                  let surveyDate = "";
+                  if (cardData[cardNo]["createdDate"] != null) {
+                    surveyDate = cardData[cardNo]["createdDate"];
+                  }
+                  houseList.push({ cardNo: cardNo, lineNo: lineNo, surveyDate: surveyDate });
+                }
+              }
+            }
+          }
+        }
+        console.log(houseList);
+        for (let i = 0; i < houseList.length; i++) {
+          let cardNo = houseList[i]["cardNo"];
+          let lineNo = houseList[i]["lineNo"];
+          let detail = mainHouseList.find(item => item.cardNo == cardNo && item.lineNo == lineNo);
+          if (detail == undefined) {
+            notInMalviyaNagarList.push({ cardNo: cardNo, lineNo: houseList[i]["lineNo"], surveyDate: houseList[i]["surveyDate"] });
+          }
+        }
+        console.log("---Not in Malviyanagar----");
+        console.log(notInMalviyaNagarList);
+
+        for (let i = 0; i < mainHouseList.length; i++) {
+          let cardNo = mainHouseList[i]["cardNo"];
+          let lineNo = mainHouseList[i]["lineNo"];
+          let detail = houseList.find(item => item.cardNo == cardNo && item.lineNo == lineNo);
+          if (detail == undefined) {
+            notInMNZList.push({ cardNo: cardNo, lineNo: mainHouseList[i]["lineNo"], surveyDate: mainHouseList[i]["surveyDate"] });
+          }
+        }
+        console.log("---Not in MNZ-Test----");
+        console.log(notInMNZList);
+
+        dbPath = "CardWardMapping";
+        let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
+          cardInstance.unsubscribe();
+          console.log(cardData);
+          let cardWardList = [];
+          let cardKeyArray = Object.keys(cardData);
+          for (let i = 0; i < cardKeyArray.length; i++) {
+            let cardNo = cardKeyArray[i];
+            let ward = cardData[cardNo]["ward"];
+            let line = cardData[cardNo]["line"];
+            cardWardList.push({ cardNo: cardNo, ward: ward, line: line });
+          }
+          console.log(cardWardList);
+
+          for (let i = 0; i < notInMNZList.length; i++) {
+            let cardNo = notInMNZList[i]["cardNo"];
+            let detail = cardWardList.find(item => item.cardNo == cardNo);
+            if (detail != undefined) {
+              let detail1 = notInMNZList.find(item => item.cardNo == cardNo);
+              detail1.testWard = detail.ward;
+              detail1.testLine = detail.line;
+            }
+
+          }
+          console.log("---Not in MNZ-Test Final----");
+          console.log(notInMNZList);
+          if (notInMNZList.length > 0) {
+            let htmlString = "";
+            htmlString = "<table>";
+            htmlString += "<tr>";
+            htmlString += "<td>";
+            htmlString += "Card No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Line No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Survey Date";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Test Ward";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Test Line No";
+            htmlString += "</td>";
+            htmlString += "</tr>";
+            for (let i = 0; i < notInMNZList.length; i++) {
+              htmlString += "<tr>";
+              htmlString += "<td>";
+              htmlString += notInMNZList[i]["cardNo"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += notInMNZList[i]["lineNo"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += notInMNZList[i]["surveyDate"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += notInMNZList[i]["testWard"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += notInMNZList[i]["testLine"];
+              htmlString += "</td>";
+              htmlString += "</tr>";
+            }
+            htmlString += "<table>";
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(htmlString, 'text/html');
+            const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+            const wb: XLSX.WorkBook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            let fileName = "Ward-" + ward + "-notInMNZList.xlsx";
+            XLSX.writeFile(wb, fileName);
+
+          }
+
+        });
+
+
+        let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCards%2FCardWardMapping.json?alt=media";
+        let Instance = this.httpService.get(path).subscribe(cardData => {
+          Instance.unsubscribe();
+          let cardWardList = [];
+          let cardKeyArray = Object.keys(cardData);
+          for (let i = 0; i < cardKeyArray.length; i++) {
+            let cardNo = cardKeyArray[i];
+            let ward = cardData[cardNo]["ward"];
+            let line = cardData[cardNo]["line"];
+            cardWardList.push({ cardNo: cardNo, ward: ward, line: line });
+          }
+          console.log(cardWardList);
+
+          for (let i = 0; i < notInMalviyaNagarList.length; i++) {
+            let cardNo = notInMalviyaNagarList[i]["cardNo"];
+            let detail = cardWardList.find(item => item.cardNo == cardNo);
+            if (detail != undefined) {
+              let detail1 = notInMalviyaNagarList.find(item => item.cardNo == cardNo);
+              detail1.MWard = detail.ward;
+              detail1.MLine = detail.line;
+            }
+
+          }
+          console.log("---Not in Malviyanagar Final----");
+          console.log(notInMalviyaNagarList);
+
+          if (notInMalviyaNagarList.length > 0) {
+            let htmlString = "";
+            htmlString = "<table>";
+            htmlString += "<tr>";
+            htmlString += "<td>";
+            htmlString += "Card No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Line No";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "Survey Date";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "M Ward";
+            htmlString += "</td>";
+            htmlString += "<td>";
+            htmlString += "M Line No";
+            htmlString += "</td>";
+            htmlString += "</tr>";
+            for (let i = 0; i < notInMalviyaNagarList.length; i++) {
+              htmlString += "<tr>";
+              htmlString += "<td>";
+              htmlString += notInMalviyaNagarList[i]["cardNo"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += notInMalviyaNagarList[i]["lineNo"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += notInMalviyaNagarList[i]["surveyDate"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += notInMalviyaNagarList[i]["MWard"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += notInMalviyaNagarList[i]["MLine"];
+              htmlString += "</td>";
+              htmlString += "</tr>";
+            }
+            htmlString += "<table>";
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(htmlString, 'text/html');
+            const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+            const wb: XLSX.WorkBook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            let fileName = "Ward-" + ward + "-notInMalviyaNagarList.xlsx";
+            XLSX.writeFile(wb, fileName);
+          }
+        });
+      });
+    });
+
+
+
+    /*
+        let houseList = [];
+        let ward = "129-R3";
+        let dbPath = "Houses/" + ward;
+        console.log(path)
+        let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+          if (data != null) {
+            instance.unsubscribe();
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let cardData = data[lineNo];
+                let cardKeyArray = Object.keys(cardData);
+                if (cardKeyArray.length > 0) {
+                  for (let j = 0; j < cardKeyArray.length; j++) {
+                    let cardNo = cardKeyArray[j];
+                    houseList.push({ cardNo: cardNo });
+                  }
+                }
+              }
+              console.log(houseList);
+              if (houseList.length > 0) {
+                let htmlString = "";
+                htmlString = "<table>";
+                htmlString += "<tr>";
+                htmlString += "<td>";
+                htmlString += "Card No";
+                htmlString += "</td>";
+                htmlString += "</tr>";
+                for (let i = 0; i < houseList.length; i++) {
+                  htmlString += "<tr>";
+                  htmlString += "<td>";
+                  htmlString += houseList[i]["cardNo"];
+                  htmlString += "</td>";
+                  htmlString += "</tr>";
+                }
+                htmlString += "<table>";
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(htmlString, 'text/html');
+                const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+    
+                const wb: XLSX.WorkBook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    
+                let fileName = "Ward-" + ward + "-house-Data.xlsx";
+                XLSX.writeFile(wb, fileName);
+    
+              }
+            }
+          }
+        });
+        */
+
+  }
+  
+  getMistakeMarkerNo(list: any, index: any) {
+    if (index == list.length) {
+      console.log(list);
+      if (list.length > 0) {
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "Card No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "WardNo";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Line No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Marker Line No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Marker No";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        for (let i = 0; i < list.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += list[i]["CardNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["Ward"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["Line"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["markerLineNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["markerNo"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+        htmlString += "<table>";
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(htmlString, 'text/html');
+        const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        let fileName = "Ward-135-R2-house-Data.xlsx";
+        XLSX.writeFile(wb, fileName);
+
+      }
+
+    }
+    else {
+      let cardNo = list[index]["CardNo"];
+      let ward = list[index]["Ward"];
+      let line = list[index]["Line"];
+      let dbPath = "CardDataUpdateTest/MNZ-Test/MarkedHouses/" + ward+"/"+line;
+      console.log(dbPath);
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        if (data != null) {
+          console.log(data);
+          let markerData = data;
+            let markerKeyArray = Object.keys(markerData);
+            for (let j = 0; j < markerKeyArray.length; j++) {
+              if (parseInt(markerKeyArray[j])) {
+                let markerNo = markerKeyArray[j];
+                if (markerData[markerNo]["cardNumber"] != null) {
+                  if (markerData[markerNo]["cardNumber"] == cardNo) {
+                    list[index]["markerNo"] = markerNo;
+                    list[index]["markerLineNo"] = line;
+                    j = markerKeyArray.length;
+                  }
+                }
+              }
+            }
+        }
+        index++;
+        this.getMistakeMarkerNo(list, index);
+      });
+    }
+  }
+
+  
+
+
+  checkCardMove() {
+    let wardNo = "149-R2";
+    let element = <HTMLInputElement>document.getElementById("flpUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      console.log(fileList);
+      for(let i=0;i<fileList.length;i++){
+        let cardNo=fileList[i]["Card No"];
+        let line=fileList[i]["Line No"];
+        let dbPath="Houses/"+wardNo+"/"+line+"/"+cardNo;
+        let instance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+          instance.unsubscribe();
+          if(data!=null){
+            console.log("Yes");
+          }
+          else{
+            console.log("No");
+          }
+        })
+
+
+      }
+    }
+
+  }
+
+
+  addNewDataMalviyanagar() {
+    let wardNo = "149-R2";
+    let element = <HTMLInputElement>document.getElementById("flpUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      console.log(fileList);
+      this.addCardsMalviyanagar(fileList, 0, wardNo);
+    }
+  }
+
+  exportNewCardNo() {
+    let ward = "149-R2";
+    let markerList = [];
+    let houseList = [];
+    let path = "CardDataUpdateTest/MNZ-Test/MarkedHouses/" + ward;
+    let marlerInstance = this.db.object(path).valueChanges().subscribe(MData => {
+      marlerInstance.unsubscribe();
+      if (MData != null) {
+        let mKeyArray = Object.keys(MData);
+        for (let i = 0; i < mKeyArray.length; i++) {
+          let lineNo = mKeyArray[i];
+          let lineData = MData[lineNo];
+          let markerKeyArray = Object.keys(lineData);
+          for (let j = 0; j < markerKeyArray.length; j++) {
+            if (parseInt(markerKeyArray[j])) {
+              let markerNo = markerKeyArray[j];
+              if (lineData[markerNo]["cardNumber"] != null) {
+                markerList.push({ cardNo: lineData[markerNo]["cardNumber"], lineNo: lineNo, markerNo: markerNo });
+              }
+            }
+          }
+        }
+
+
+        let dbPath = "CardDataUpdateTest/MNZ-Test/Houses/" + ward;
+        let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+          if (data != null) {
+            instance.unsubscribe();
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let cardData = data[lineNo];
+                let cardKeyArray = Object.keys(cardData);
+                if (cardKeyArray.length > 0) {
+                  for (let j = 0; j < cardKeyArray.length; j++) {
+                    let cardNo = cardKeyArray[j];
+                    let surveyDate = "";
+                    if (cardData[cardNo]["createdDate"] != null) {
+                      surveyDate = cardData[cardNo]["createdDate"];
+                      let date = new Date("2023-06-14");
+                      let newSurveyDate = new Date(surveyDate);
+                      if (newSurveyDate > date) {
+                        let markerNo = "";
+                        let markerLineNo = ""
+                        let detail = markerList.find(item => item.cardNo == cardNo);
+                        if (detail != undefined) {
+                          markerLineNo = detail.lineNo;
+                          markerNo = detail.markerNo;
+                        }
+                        houseList.push({ cardNo: cardNo, lineNo: lineNo, surveyDate: surveyDate, markerLineNo: markerLineNo, markerNo: markerNo });
+                      }
+                    }
+                  }
+                }
+              }
+
+
+              console.log(houseList);
+              if (houseList.length > 0) {
+                let htmlString = "";
+                htmlString = "<table>";
+                htmlString += "<tr>";
+                htmlString += "<td>";
+                htmlString += "Card No";
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += "Line No";
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += "Marker Line No";
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += "Marker No";
+                htmlString += "</td>";
+                htmlString += "<td>";
+                htmlString += "Survey Date";
+                htmlString += "</td>";
+                htmlString += "</tr>";
+                for (let i = 0; i < houseList.length; i++) {
+                  htmlString += "<tr>";
+                  htmlString += "<td>";
+                  htmlString += houseList[i]["cardNo"];
+                  htmlString += "</td>";
+                  htmlString += "<td>";
+                  htmlString += houseList[i]["lineNo"];
+                  htmlString += "</td>";
+                  htmlString += "<td>";
+                  htmlString += houseList[i]["markerLineNo"];
+                  htmlString += "</td>";
+                  htmlString += "<td>";
+                  htmlString += houseList[i]["markerNo"];
+                  htmlString += "</td>";
+                  htmlString += "<td>";
+                  htmlString += houseList[i]["surveyDate"];
+                  htmlString += "</td>";
+                  htmlString += "</tr>";
+                }
+                htmlString += "<table>";
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(htmlString, 'text/html');
+                const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+                const wb: XLSX.WorkBook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+                let fileName = "Ward-" + ward + "-house-Data.xlsx";
+                XLSX.writeFile(wb, fileName);
+
+              }
+            }
+          }
+        });
+      }
+    })
+
+  }
+
+  getOldDataMalviyanagar() {
+    let element = <HTMLInputElement>document.getElementById("flpUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      console.log(fileList);
+
+      let dbPath = "CardWardMapping";
+      let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
+        cardInstance.unsubscribe();
+        console.log(cardData);
+        let cardWardList = [];
+        let cardKeyArray = Object.keys(cardData);
+        for (let i = 0; i < cardKeyArray.length; i++) {
+          let cardNo = cardKeyArray[i];
+          let ward = cardData[cardNo]["ward"];
+          let line = cardData[cardNo]["line"];
+          cardWardList.push({ cardNo: cardNo, ward: ward, line: line });
+        }
+        console.log(cardWardList);
+        for (let i = 0; i < fileList.length; i++) {
+          let cardNo = fileList[i]["Card No"];
+          let detail = cardWardList.find(item => item.cardNo == cardNo);
+          if (detail != undefined) {
+            fileList[i]["OldLine"] = detail.line;
+            fileList[i]["OldWard"] = detail.ward;
+          }
+        }
+        this.getOldMarkerDataMalviyaNagar(fileList, 0);
+      });
+    }
+  }
+
+  getOldMarkerDataMalviyaNagar(list: any, index: any) {
+    console.log(index);
+    if (index == list.length) {
+      if (list.length > 0) {
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "Card No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Line No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Marker Line No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Marker No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Survey Date";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Old Ward";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Old Line";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Old Marker Line No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Old Marker No";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        for (let i = 0; i < list.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += list[i]["Card No"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["Line No"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["Marker Line No"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["Marker No"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["Survey Date"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["OldWard"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["OldLine"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["MarkerLineNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += list[i]["MarkerNo"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+        htmlString += "<table>";
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(htmlString, 'text/html');
+        const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        let fileName = "Ward-149-R2-Data-With-OldLocation.xlsx";
+        XLSX.writeFile(wb, fileName);
+      }
+    }
+    else {
+      let cardNo = list[index]["Card No"];
+      let oldWard = list[index]["OldWard"];
+      let oldLine = list[index]["OldLine"];
+      let dbPath = "EntityMarkingData/MarkedHouses/" + oldWard;
+      console.log(dbPath);
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        if (data != null) {
+          console.log(data);
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let markerData = data[lineNo];
+            let markerKeyArray = Object.keys(markerData);
+            for (let j = 0; j < markerKeyArray.length; j++) {
+              if (parseInt(markerKeyArray[j])) {
+                let markerNo = markerKeyArray[j];
+                if (markerData[markerNo]["cardNumber"] != null) {
+                  if (markerData[markerNo]["cardNumber"] == cardNo) {
+                    list[index]["MarkerNo"] = markerNo;
+                    list[index]["MarkerLineNo"] = lineNo;
+                    j = markerKeyArray.length;
+                  }
+                }
+              }
+            }
+          }
+        }
+        index++;
+        this.getOldMarkerDataMalviyaNagar(list, index);
+      })
+    }
+  }
+
+  deleteOldDataMalviyanagar() {
+    let element = <HTMLInputElement>document.getElementById("flpUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      for (let i = 0; i < fileList.length; i++) {
+        let ward = fileList[i]["Old Ward"];
+        let line = fileList[i]["Old Line"];
+        let cardNo = fileList[i]["Card No"];
+        let dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
+        this.db.object(dbPath).remove();
+       // if(fileList[i]["Old Marker Line No"]!=undefined){
+        let markerLine = fileList[i]["Old Marker Line No"];
+        let markerNo = fileList[i]["Old Marker No"];
+        dbPath = "EntityMarkingData/MarkedHouses/" + ward + "/" + markerLine + "/" + markerNo;
+        this.db.object(dbPath).remove();
+        //}
+      }
+      this.commonService.setAlertMessage("success", "Data Deleted Successfully !!!");
+    }
+  }
+
+
+  addCardsMalviyanagar(list: any, index: any, wardNo: any) {
+    if (index == list.length) {
+      this.commonService.setAlertMessage("success", "card added successfully!!!");
+    }
+    else {
+      let cardNo = list[index]["Card No"];
+      let lineNo = list[index]["Line No"];
+      let markerLineNo = list[index]["Marker Line No"];
+      let markerNo = list[index]["Marker No"];
+      console.log(wardNo+" "+cardNo + " " + lineNo + " " + markerLineNo + " " + markerNo);
+      console.log("------------------");
+      let dbPath = "CardDataUpdateTest/MNZ-Test/Houses/" + wardNo + "/" + lineNo + "/" + cardNo;
+      let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
+        cardInstance.unsubscribe();
+        if (cardData != null) {
+          console.log(cardData);
+          let dbPathUpdate = "Houses/" + wardNo + "/" + lineNo + "/" + cardNo;
+
+          this.db.object(dbPathUpdate).set(cardData);
+          dbPath = "CardDataUpdateTest/MNZ-Test/MarkedHouses/" + wardNo + "/" + markerLineNo + "/" + markerNo;
+
+          let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+            instance.unsubscribe();
+            if (data != null) {
+              console.log(data);
+              dbPathUpdate = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + markerLineNo + "/" + markerNo;
+              this.db.object(dbPathUpdate).set(data);
+            }
+            index++;
+            this.addCardsMalviyanagar(list, index, wardNo);
+          });
+        }
+      })
+    }
+  }
+
+  exportEmployeeData() {
+    let empList = [];
+    let dbPath = "Employees";
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      houseInstance.unsubscribe();
+      let keyArray = Object.keys(data);
+      console.log(data);
+      for (let i = 0; i < keyArray.length; i++) {
+        let empId = keyArray[i];
+        if (empId != "lastEmpId") {
+          if (data[empId]["GeneralDetails"] != null) {
+            let name = data[empId]["GeneralDetails"]["name"];
+            let fname = data[empId]["GeneralDetails"]["fatherName"];
+            let empCode = data[empId]["GeneralDetails"]["empCode"];
+            let joinningDate = data[empId]["GeneralDetails"]["dateOfJoining"];
+            let address = "";
+            if (data[empId]["AddressDetails"] != null) {
+              if (data[empId]["AddressDetails"]["CurrentAddress"] != null) {
+                if (data[empId]["AddressDetails"]["CurrentAddress"]["houseName"] != null) {
+                  address = address + " " + data[empId]["AddressDetails"]["CurrentAddress"]["houseName"];
+                }
+                if (data[empId]["AddressDetails"]["CurrentAddress"]["subLocality"] != null) {
+                  address = address + ", " + data[empId]["AddressDetails"]["CurrentAddress"]["subLocality"];
+                }
+                if (data[empId]["AddressDetails"]["CurrentAddress"]["locality"] != null) {
+                  address = address + ", " + data[empId]["AddressDetails"]["CurrentAddress"]["locality"];
+                }
+                if (data[empId]["AddressDetails"]["CurrentAddress"]["city"] != null) {
+                  address = address + ", " + data[empId]["AddressDetails"]["CurrentAddress"]["city"];
+                }
+                if (data[empId]["AddressDetails"]["CurrentAddress"]["pinCode"] != null) {
+                  address = address + ", " + data[empId]["AddressDetails"]["CurrentAddress"]["pinCode"];
+                }
+                if (data[empId]["AddressDetails"]["CurrentAddress"]["state"] != null) {
+                  address = address + ", " + data[empId]["AddressDetails"]["CurrentAddress"]["state"];
+                }
+              }
+            }
+            else {
+              if (data[empId]["address"] != null) {
+                address = data[empId]["address"];
+              }
+            }
+            empList.push({ name: name, fname: fname, empCode: empCode, joinningDate: joinningDate, address: address });
+          }
+        }
+      }
+
+      if (empList.length > 0) {
+        console.log(empList);
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "Employee ID";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Name";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Father Name";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Joinning Date";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Address";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        for (let i = 0; i < empList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += empList[i]["empCode"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += empList[i]["name"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += empList[i]["fname"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += empList[i]["joinningDate"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += empList[i]["address"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+        htmlString += "<table>";
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(htmlString, 'text/html');
+        const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+        /* generate workbook and add the worksheet */
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        /* save to file */
+        XLSX.writeFile(wb, "EmployeeDetail.xlsx");
       }
 
     });
@@ -2533,9 +3623,217 @@ console.log("SIK-" + lastDevice);
 
   getNextDates() {
     let date = $("#txtDates").val();
-    
-   let date1= this.commonService.getNextDate(date,5);
+
+    let date1 = this.commonService.getNextDate(date, 5);
     $("#lblNextData").html(date1);
+  }
+
+  getCardWardMAppingAndHouseCount() {
+    let dbPath = "CardWardMapping";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          console.log(keyArray.length);
+        }
+      }
+    );
+    let totalCards = 0;
+    let duplicateCardList = [];
+    let zoneList = JSON.parse(localStorage.getItem("markingWards"));
+    for (let i = 1; i < zoneList.length; i++) {
+      let zoneNo = zoneList[i]["zoneNo"];
+      dbPath = "Houses/" + zoneNo;
+      let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        houseInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let j = 0; j < keyArray.length; j++) {
+            let lineNo = keyArray[j];
+            let lineData = data[lineNo];
+            let cardArray = Object.keys(lineData);
+            totalCards = totalCards + cardArray.length;
+            for (let k = 0; k < cardArray.length; k++) {
+              let detail = duplicateCardList.find(item => item.cardNo == cardArray[k]);
+              if (detail == undefined) {
+                duplicateCardList.push({ cardNo: cardArray[k] });
+              }
+              else {
+                console.log(cardArray[k]);
+              }
+            }
+          }
+        }
+      });
+    }
+
+  }
+
+  updateMonthYear() {
+    let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      instance.unsubscribe();
+      if (data != null) {
+        let cardArray = Object.keys(data);
+        for (let i = 0; i < cardArray.length; i++) {
+          let cardNo = cardArray[i];
+          let cardData = data[cardNo];
+          let yearArray = Object.keys(cardData);
+          for (let j = 0; j < yearArray.length; j++) {
+            let year = yearArray[j];
+            let yearData = cardData[year];
+            let monthArray = Object.keys(yearData);
+            for (let k = 0; k < monthArray.length; k++) {
+              let month = monthArray[k];
+              let dateData = yearData[month];
+              let dateArray = Object.keys(dateData);
+              for (let l = 0; l < dateArray.length; l++) {
+                let date = dateArray[l];
+                let keyData = dateData[date];
+                let keyArray = Object.keys(keyData);
+                for (let m = 0; m < keyArray.length; m++) {
+                  let key = keyArray[m];
+
+                  console.log(cardNo + " " + year + " " + month + " " + date + " " + key);
+                  this.setMonthYear(cardNo, year, month, date, key);
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+  }
+
+  setMonthYear(cardNo: any, year: any, month: any, date: any, key: any) {
+    let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo;
+    let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      if (data != null) {
+        let monthYearList = [];
+        let monthYear = "";
+        let yearArray = Object.keys(data);
+        for (let i = 0; i < yearArray.length; i++) {
+          let dueYear = yearArray[i];
+          let yearData = data[dueYear];
+          let monthArrray = Object.keys(yearData);
+          for (let j = 0; j < monthArrray.length; j++) {
+            let dueMonth = monthArrray[j];
+            if (yearData[dueMonth]["status"] == "Paid") {
+              let monthNumber = this.commonService.getMonthShortNameToMonth(dueMonth);
+              monthYearList.push({ month: Number(monthNumber), dueMonth: dueMonth, dueYear });
+            }
+          }
+          monthYearList = monthYearList.sort((a, b) =>
+            b.month < a.month ? 1 : -1
+          );
+          for (let j = 0; j < monthYearList.length; j++) {
+            if (j == 0) {
+              monthYear = monthYearList[j]["dueMonth"] + "-" + monthYearList[j]["dueYear"];
+            }
+            else {
+              monthYear = monthYear + ", " + monthYearList[j]["dueMonth"] + "-" + monthYearList[j]["dueYear"];
+            }
+          }
+
+
+          let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/" + year + "/" + month + "/" + date + "/" + key;
+          this.db.object(dbPath).update({ monthYear: monthYear });
+
+        }
+
+      }
+    });
+  }
+
+  updateCardsFromTestDataToMalviyanagarDatabase() {
+    let testCardWardList = [];
+    let cardWardList = [];
+    const path = "https://dtdmnz-test.firebaseio.com/CardWardMapping.json?alt=media";
+    let cardWardMappingTestInstance = this.httpService.get(path).subscribe(data => {
+      cardWardMappingTestInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let cardNo = keyArray[i];
+          let ward = data[cardNo]["ward"];
+          let line = data[cardNo]["line"];
+          testCardWardList.push({ cardNo: cardNo, ward: ward, line: line });
+        }
+        console.log("Test Cards Count => " + testCardWardList.length);
+        let dbPath = "CardWardMapping";
+        let instance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
+          instance.unsubscribe();
+          if (cardData != null) {
+            let cardKeyArray = Object.keys(cardData);
+            for (let i = 0; i < cardKeyArray.length; i++) {
+              let cardNo = cardKeyArray[i];
+              let ward = cardData[cardNo]["ward"];
+              let line = cardData[cardNo]["line"];
+              cardWardList.push({ cardNo: cardNo, ward: ward, line: line });
+            }
+            console.log("Cards Count => " + cardWardList.length);
+          }
+          console.log("--Cards not in malviyanagar---");
+          for (let i = 0; i < testCardWardList.length; i++) {
+            let testCard = testCardWardList[i]["cardNo"];
+            let detail = cardWardList.find(item => item.cardNo == testCard);
+            if (detail == undefined) {
+              console.log("Card No : " + testCard);
+            }
+          }
+        })
+      }
+    });
+
+  }
+
+  
+  setMarkerID() {
+    let selectedZone = $("#txtDates").val();
+    let lastMarkerID = 0;
+    console.log(selectedZone);
+    let dbPath = "EntityMarkingData/lastMarkerId";
+    let lastMarkerIdInstance = this.db.object(dbPath).valueChanges().subscribe(
+      lastId => {
+        lastMarkerIdInstance.unsubscribe();
+        if (lastId != null) {
+          lastMarkerID = Number(lastId);
+        }
+        dbPath = "EntityMarkingData/MarkedHouses/" + selectedZone;
+        let markerDataInstance = this.db.object(dbPath).valueChanges().subscribe(
+          data => {
+            markerDataInstance.unsubscribe();
+            if (data != null) {
+              let keyArray = Object.keys(data);
+              if (keyArray.length > 0) {
+                for (let i = 0; i < keyArray.length; i++) {
+                  let lineNo = keyArray[i];
+                  let markerData = data[lineNo];
+                  let markerKeyArray = Object.keys(markerData);
+                  for (let j = 0; j < markerKeyArray.length; j++) {
+                    let markerNo = markerKeyArray[j];
+                    if (parseInt(markerNo)) {
+                      if (markerData[markerNo]["markerId"] == null) {
+                        lastMarkerID++;
+                        dbPath = "EntityMarkingData/MarkedHouses/" + selectedZone + "/" + lineNo + "/" + markerNo;
+                        this.db.object(dbPath).update({ markerId: "M"+lastMarkerID });
+                      }
+                    }
+                  }
+                }
+              }
+              dbPath = "EntityMarkingData/lastMarkerId";
+              this.db.object(dbPath).set(lastMarkerID);
+              console.log(lastMarkerID);
+            }
+            else {
+              console.log("No Markers");
+            }
+          }
+        );
+      }
+    );
   }
 
 
