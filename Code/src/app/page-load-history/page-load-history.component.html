@@ -36,8 +36,7 @@
                     </div>
 
                     <div class="field-box" hidden>
-                        <div class="refresh" 
-                            style="text-align: right!important; padding-right: 10px;">
+                        <div class="refresh" style="text-align: right!important; padding-right: 10px;">
                             <h1><i class="fas fa-sync-alt" style="color:#57e663"></i>
                                 <p>Last Update {{lastUpdateDate}}</p>
                             </h1>
@@ -47,36 +46,59 @@
                 <!------------- Header End ---------->
                 <div class="row" style="margin-top: 8px;">
                     <!------------- Halt Scroll List Start ---------->
-                    <div class="col-md-4 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
+                    <div class="col-md-3 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
                         <div class="scrollable-halt">
                             <div class="halt-bg" style="height: calc(100vh - 150px);">
                                 <div class="dth">
-                                    <div id="divMainPage{{i}}" style="width:100%; text-align: left; padding: 10px;cursor: pointer; border-bottom: 1px solid lightgray;" *ngFor="let data of mainPageList, let i=index" (click)="getPageHistory(data.mainPage,i)">
-                                    {{data.mainPage}} <i class="fa-solid fa-arrow-right" style="float: right; color: green;"></i>
+                                    <div id="divMainPage{{i}}"
+                                        style="width:100%; text-align: left; padding: 10px;cursor: pointer; border-bottom: 1px solid lightgray;"
+                                        *ngFor="let data of mainPageList, let i=index"
+                                        (click)="getPageHistory(data.mainPage,i)">
+                                        {{data.mainPage}} <i class="fa-solid fa-arrow-right"
+                                            style="float: right; color: green;"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!------------- Halt Scroll List End ---------->
-                    <div class="col-md-4 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
+                    <div class="col-md-3 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
                         <div class="scrollable-halt">
                             <div class="halt-bg" style="height: calc(100vh - 150px);">
                                 <div class="dth">
-                                    <div class="text-left" style="width:100%; padding: 10px; cursor: pointer; border-bottom: 1px solid lightgray;" *ngFor="let data of pageList, let i=index"  (click)="getPageDateHistory(data.mainPage,data.page)">
-                                        {{data.page}} <i class="fa-solid fa-arrow-right" style="float: right; color: green;"></i>
-                                        </div>
+                                    <div class="text-left"
+                                        style="width:100%; padding: 10px; cursor: pointer; border-bottom: 1px solid lightgray;"
+                                        *ngFor="let data of pageList, let i=index"
+                                        (click)="getPageDateHistory(data.mainPage,data.page)">
+                                        {{data.page}} <i class="fa-solid fa-arrow-right"
+                                            style="float: right; color: green;"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
+                    <div class="col-md-3 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
                         <div class="scrollable-halt">
                             <div class="halt-bg" style="height: calc(100vh - 150px);">
                                 <div class="dth">
-                                    <div class="text-left" style="width:100%; padding: 10px;cursor: pointer; border-bottom: 1px solid lightgray;" *ngFor="let data of dateList, let i=index" (click)="getDetail(content,data.date)">
+                                    <div class="text-left"
+                                        style="width:100%; padding: 10px;cursor: pointer; border-bottom: 1px solid lightgray;"
+                                        *ngFor="let data of dateList, let i=index" (click)="getUserList(data.date)">
                                         {{data.date}} <span style="float: right;">{{data.totalCount}}</span>
-                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
+                        <div class="scrollable-halt">
+                            <div class="halt-bg" style="height: calc(100vh - 150px);">
+                                <div class="dth">
+                                    <div class="text-left"
+                                        style="width:100%; padding: 10px;border-bottom: 1px solid lightgray;"
+                                        *ngFor="let data of userList, let i=index">
+                                        {{data.name}} <span style="float: right;">{{data.count}}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -87,39 +109,40 @@
         </div>
     </div>
 
-    
-<ng-template #content>
-    <div class="modal-header">
-        <h5 class="modal-title text-center">
-            Page Load Detail
-        </h5>
-        <button type="button" class="close" (click)="closeModel();" style="border: none;">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body content-scroll-outer" style="padding-top: 20px; margin-left: -15px; margin-right: -15px;">
-        <div id="divHouseStatus" class="content-scroll">
-            <div class="row">
-                <div class="table-wrapper table-one">
-                    <table class="table table-one-iner">
-                        <thead>
-                            <th class="ward-table-heading" style="width:75%">Name</th>
-                            <th class="text-right Markers-table-heading" style="width:25%">
-                                Counts</th>
-                        </thead>
-                        <tbody>
-                            <tr class="table-row" *ngFor="let data of pageLoadDetailList; let i=index">
-                                <td class="table-data" style="width:75%">
-                                    {{data.name}}</td>
-                                <td class="text-right table-data" style="width:25%">
-                                    {{data.count}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
+    <ng-template #content>
+        <div class="modal-header">
+            <h5 class="modal-title text-center">
+                Page Load Detail
+            </h5>
+            <button type="button" class="close" (click)="closeModel();" style="border: none;">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-    </div>
-</ng-template>
+        <div class="modal-body content-scroll-outer"
+            style="padding-top: 20px; margin-left: -15px; margin-right: -15px;">
+            <div id="divHouseStatus" class="content-scroll">
+                <div class="row">
+                    <div class="table-wrapper table-one">
+                        <table class="table table-one-iner">
+                            <thead>
+                                <th class="ward-table-heading" style="width:75%">Name</th>
+                                <th class="text-right Markers-table-heading" style="width:25%">
+                                    Counts</th>
+                            </thead>
+                            <tbody>
+                                <tr class="table-row" *ngFor="let data of pageLoadDetailList; let i=index">
+                                    <td class="table-data" style="width:75%">
+                                        {{data.name}}</td>
+                                    <td class="text-right table-data" style="width:25%">
+                                        {{data.count}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </ng-template>
 </section>
