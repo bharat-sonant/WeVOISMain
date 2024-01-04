@@ -49,6 +49,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Dashboard", "Dashboard", localStorage.getItem("userID"));
     this.setDefault();
   }
 
