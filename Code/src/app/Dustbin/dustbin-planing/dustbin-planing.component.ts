@@ -84,6 +84,7 @@ export class DustbinPlaningComponent implements OnInit {
 
   ngOnInit() {
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
+    this.commonService.savePageLoadHistory("Dustbin-Management","Dustbin-Planing",localStorage.getItem("userID"));
     this.setDefault();
   }
 

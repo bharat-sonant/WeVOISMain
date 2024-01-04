@@ -42,6 +42,7 @@ export class DustbinServiceComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Dustbin-Management","Dustbin-Offline-Entry",localStorage.getItem("userID"));
     this.setDefault();
   }
 
