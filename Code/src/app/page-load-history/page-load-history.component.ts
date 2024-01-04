@@ -44,7 +44,6 @@ export class PageLoadHistoryComponent implements OnInit {
 
   setDefault() {
     this.portalUserList = JSON.parse(localStorage.getItem("webPortalUserList"));
-    console.log(this.portalUserList);
     this.toDayDate = this.commonService.setTodayDate();
     this.yearList = [];
     this.getYear();
@@ -216,7 +215,6 @@ export class PageLoadHistoryComponent implements OnInit {
     for (let i = 0; i < this.mainPageList.length; i++) {
       let id = "divMainPage" + i;
       let element = <HTMLElement>document.getElementById(id);
-      console.log(element);
       let className = element.className;
       if (className != null) {
         $("#divMainPage" + i).removeClass("active");

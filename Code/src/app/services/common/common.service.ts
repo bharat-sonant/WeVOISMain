@@ -1127,11 +1127,11 @@ export class CommonService {
     letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
 
     const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-    console.log(path);
+    
     let availableWardInstance = this.httpService.get(path).subscribe(data => {
       availableWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
-      console.log(list)
+      
       if (list.length > 0) {
         for (let index = 0; index < list.length; index++) {
           if (list[index] != null) {
