@@ -33,6 +33,7 @@ export class PageLoadHistoryComponent implements OnInit {
   portalUserList: any[] = [];
   pageLoadDetailList: any[] = [];
   userList: any[] = [];
+  pageLoadSummaryList:any[]=[];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -54,6 +55,7 @@ export class PageLoadHistoryComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(
       Number(this.selectedMonth) - 1
     );
+    this.getSummaryData();
     this.getHistoryData();
   }
 
@@ -91,10 +93,24 @@ export class PageLoadHistoryComponent implements OnInit {
     this.getHistoryData();
   }
 
+  getSummaryData(){
+    let dbPath="PageLoadHistory/Summary";
+    let summaryInstance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+      summaryInstance.unsubscribe();
+      if(data!=null){
+        let keyArray=Object.keys(data);
+        for(let i=0;i<keyArray.length;i++){
+          this.pageLoadSummaryList.push({name:keyArray[i],counts:data[keyArray[i]]});
+        }
+      }
+    });
+  }
+
   getHistoryData() {
     this.mainPageList = [];
     this.pageList = [];
     this.dateList = [];
+    this.userList=[];
     this.dataObject = null;
     let dbPath =
       "PageLoadHistory/" + this.selectedYear + "/" + this.selectedMonthName;
@@ -122,11 +138,17 @@ export class PageLoadHistoryComponent implements OnInit {
   getPageHistory(mainPage: any, index: any) {
     this.pageList = [];
     this.dateList = [];
+    this.userList=[];
     let pageData = this.dataObject[mainPage];
     let pageKeyArray = Object.keys(pageData);
     for (let j = 0; j < pageKeyArray.length; j++) {
       let page = pageKeyArray[j];
-      this.pageList.push({ mainPage: mainPage, page: page });
+      let pageCount=0;
+      let detail=this.pageLoadSummaryList.find(item=>item.name==page);
+      if(detail!=undefined){
+        pageCount=detail.counts;
+      }
+      this.pageList.push({ mainPage: mainPage, page: page,pageCount:pageCount });
       if (j == 0) {
         this.getPageDateHistory(mainPage, page);
       }
@@ -168,39 +190,6 @@ export class PageLoadHistoryComponent implements OnInit {
     if (detail != undefined) {
       this.userList = detail.userList;
     }
-  }
-
-  getDetail(content: any, date: any) {
-    this.pageLoadDetailList = [];
-    let detail = this.dateList.find((item) => item.date == date);
-    if (detail != undefined) {
-      let list = detail.userList;
-      for (let i = 0; i < list.length; i++) {
-        this.pageLoadDetailList.push({
-          name: list[i]["name"],
-          count: list[i]["count"],
-        });
-      }
-    }
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 500;
-    let width = 400;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 130 + "px";
-    $("div .modal-content")
-      .parent()
-      .css("max-width", "" + width + "px")
-      .css("margin-top", marginTop);
-    $("div .modal-content")
-      .css("height", height + "px")
-      .css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#divStatus").css("height", divHeight);
-  }
-
-  closeModel() {
-    this.modalService.dismissAll();
   }
 
   setActiveClass(type: any, index: any) {

@@ -70,8 +70,7 @@
                                         style="width:100%; padding: 10px; cursor: pointer; border-bottom: 1px solid lightgray;"
                                         *ngFor="let data of pageList, let i=index"
                                         (click)="getPageDateHistory(data.mainPage,data.page)">
-                                        {{data.page}} <i class="fa-solid fa-arrow-right"
-                                            style="float: right; color: green;"></i>
+                                        {{data.page}} <span style="float: right;margin-right: 10px;">{{data.pageCount}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -108,41 +107,4 @@
             </div>
         </div>
     </div>
-
-
-    <ng-template #content>
-        <div class="modal-header">
-            <h5 class="modal-title text-center">
-                Page Load Detail
-            </h5>
-            <button type="button" class="close" (click)="closeModel();" style="border: none;">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body content-scroll-outer"
-            style="padding-top: 20px; margin-left: -15px; margin-right: -15px;">
-            <div id="divHouseStatus" class="content-scroll">
-                <div class="row">
-                    <div class="table-wrapper table-one">
-                        <table class="table table-one-iner">
-                            <thead>
-                                <th class="ward-table-heading" style="width:75%">Name</th>
-                                <th class="text-right Markers-table-heading" style="width:25%">
-                                    Counts</th>
-                            </thead>
-                            <tbody>
-                                <tr class="table-row" *ngFor="let data of pageLoadDetailList; let i=index">
-                                    <td class="table-data" style="width:75%">
-                                        {{data.name}}</td>
-                                    <td class="text-right table-data" style="width:25%">
-                                        {{data.count}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </ng-template>
 </section>
