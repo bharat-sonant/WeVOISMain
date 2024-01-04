@@ -15,7 +15,7 @@ export class PageLoadHistoryComponent implements OnInit {
     private commonService: CommonService,
     public httpService: HttpClient,
     private modalService: NgbModal
-  ) {}
+  ) { }
   db: any;
   cityName: any;
   toDayDate: any;
@@ -33,7 +33,7 @@ export class PageLoadHistoryComponent implements OnInit {
   portalUserList: any[] = [];
   pageLoadDetailList: any[] = [];
   userList: any[] = [];
-  pageLoadSummaryList:any[]=[];
+  pageLoadSummaryList: any[] = [];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -93,14 +93,14 @@ export class PageLoadHistoryComponent implements OnInit {
     this.getHistoryData();
   }
 
-  getSummaryData(){
-    let dbPath="PageLoadHistory/Summary";
-    let summaryInstance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+  getSummaryData() {
+    let dbPath = "PageLoadHistory/Summary";
+    let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       summaryInstance.unsubscribe();
-      if(data!=null){
-        let keyArray=Object.keys(data);
-        for(let i=0;i<keyArray.length;i++){
-          this.pageLoadSummaryList.push({name:keyArray[i],counts:data[keyArray[i]]});
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          this.pageLoadSummaryList.push({ name: keyArray[i], counts: data[keyArray[i]] });
         }
       }
     });
@@ -110,7 +110,7 @@ export class PageLoadHistoryComponent implements OnInit {
     this.mainPageList = [];
     this.pageList = [];
     this.dateList = [];
-    this.userList=[];
+    this.userList = [];
     this.dataObject = null;
     let dbPath =
       "PageLoadHistory/" + this.selectedYear + "/" + this.selectedMonthName;
@@ -138,20 +138,40 @@ export class PageLoadHistoryComponent implements OnInit {
   getPageHistory(mainPage: any, index: any) {
     this.pageList = [];
     this.dateList = [];
-    this.userList=[];
+    this.userList = [];
     let pageData = this.dataObject[mainPage];
     let pageKeyArray = Object.keys(pageData);
     for (let j = 0; j < pageKeyArray.length; j++) {
       let page = pageKeyArray[j];
-      let pageCount=0;
-      let detail=this.pageLoadSummaryList.find(item=>item.name==page);
-      if(detail!=undefined){
-        pageCount=detail.counts;
+      let pageCount = 0;
+      let detail = this.pageLoadSummaryList.find(item => item.name == page);
+      if (detail != undefined) {
+        pageCount = detail.counts;
       }
-      this.pageList.push({ mainPage: mainPage, page: page,pageCount:pageCount });
+      this.pageList.push({ mainPage: mainPage, page: page, pageCount: pageCount, monthCounts: 0 });
       if (j == 0) {
         this.getPageDateHistory(mainPage, page);
       }
+      this.getMonthCount(mainPage, page);
+    }
+  }
+
+  getMonthCount(mainPage: any, page: any) {
+    let dateData = this.dataObject[mainPage][page];
+    let counts = 0;
+    let dateKeyArray = Object.keys(dateData);
+    for (let i = 0; i < dateKeyArray.length; i++) {
+      let date = dateKeyArray[i];
+      let countdata = dateData[date];
+      let countKeyArray = Object.keys(countdata);
+      for (let l = 0; l < countKeyArray.length; l++) {
+        let userId = countKeyArray[l];
+        counts += Number(countdata[userId]);
+      }
+    }
+    let detail = this.pageList.find(item => item.page == page);
+    if (detail != undefined) {
+      detail.monthCounts = counts;
     }
   }
 

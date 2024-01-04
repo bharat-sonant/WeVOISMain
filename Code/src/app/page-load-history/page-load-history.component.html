@@ -70,7 +70,7 @@
                                         style="width:100%; padding: 10px; cursor: pointer; border-bottom: 1px solid lightgray;"
                                         *ngFor="let data of pageList, let i=index"
                                         (click)="getPageDateHistory(data.mainPage,data.page)">
-                                        {{data.page}} <span style="float: right;margin-right: 10px;">{{data.pageCount}}</span>
+                                        {{data.page}} <span style="float: right;margin-right: 10px;">{{data.pageCount}}<b> / </b>{{data.monthCounts}}</span>
                                     </div>
                                 </div>
                             </div>
