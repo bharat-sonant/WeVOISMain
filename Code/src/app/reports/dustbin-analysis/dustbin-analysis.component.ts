@@ -19,6 +19,7 @@ export class DustbinAnalysisComponent implements OnInit {
   currentSlide: any;
   dbPath: any;
   fillPercentage: any;
+  txtManualRemark="#txtManualRemark";
   userId: any;
   remark: any;
   planId: any;
@@ -45,6 +46,7 @@ export class DustbinAnalysisComponent implements OnInit {
     filledPercentage: "",
     analysisRemarks: "",
     analysisDetail: "",
+    manualRemarks:"",
   };
 
   planDetail: planDetails = {
@@ -69,6 +71,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Dustbin-Management","Dustbin-Analysis",localStorage.getItem("userID"));
 
     let element = <HTMLAnchorElement>(
       document.getElementById("dustbinReportLink")
@@ -87,6 +90,7 @@ export class DustbinAnalysisComponent implements OnInit {
         this.selectedDate = newDate;
         this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
         this.currentYear = this.selectedDate.split("-")[0];
+        $(this.txtManualRemark).val("");
         this.getAssignedPlans();
       }
       else {
@@ -109,6 +113,7 @@ export class DustbinAnalysisComponent implements OnInit {
     $("#txtDate").val(this.selectedDate);
     this.dustbinData.refreshTime = this.commonService.getCurrentTime();
     this.fillPercentage = 0;
+    $(this.txtManualRemark).val("");
   }
 
   getAssignedPlans() {
@@ -144,6 +149,7 @@ export class DustbinAnalysisComponent implements OnInit {
   resetData() {
     this.dustbinList = [];
     this.binDetail.binId = "0";
+    $(this.txtManualRemark).val("");
     this.binDetail.filledTopViewImageUrl = this.imageNotAvailablePath;
     this.binDetail.filledFarFromImageUrl = this.imageNotAvailablePath;
     this.binDetail.emptyTopViewImageUrl = this.imageNotAvailablePath;
@@ -159,6 +165,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.analysisBy = "";
     this.binDetail.filledPercentage = "";
     this.binDetail.analysisRemarks = "";
+    this.binDetail.manualRemarks="";
     this.binDetail.analysisDetail = "";
     this.binDetail.canDoAnalysis = "no";
 
@@ -251,6 +258,7 @@ export class DustbinAnalysisComponent implements OnInit {
             analysisAt: this.checkAnalysisValues(dustbinHistoryData, "analysisAt"),
             filledPercentage: this.checkAnalysisValues(dustbinHistoryData, "filledPercentage"),
             analysisRemark: this.checkAnalysisValues(dustbinHistoryData, "remark"),
+            manualRemarks:this.checkAnalysisValues(dustbinHistoryData,"manualRemark"),
             isPicked:"0"
           });
           this.setPickedBins(index);
@@ -519,6 +527,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.filledPercentage = this.dustbinList[index]["filledPercentage"];
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
+    this.binDetail.manualRemarks=this.dustbinList[index]["manualRemarks"];
 
     setTimeout(function () {
       $("#ImageLoader").hide();
@@ -662,6 +671,7 @@ export class DustbinAnalysisComponent implements OnInit {
     data.analysisAt = this.commonService.getTodayDateTime();
     data.analysisBy = this.userId;
     data.analysisRemark = this.getRemarks();
+    data.manualRemarks=$(this.txtManualRemark).val().toString();
     data.filledPercentage = this.fillPercentage;
     data.iconClass = "fas fa-diagnoses";
 
@@ -669,6 +679,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.analysisAt = this.commonService.getTodayDateTime();
     this.binDetail.filledPercentage = this.fillPercentage;
     this.binDetail.analysisRemarks = this.getRemarks();
+    this.binDetail.manualRemarks=$(this.txtManualRemark).val().toString();
   }
 
   updatePendingAnalysis() {
@@ -688,7 +699,7 @@ export class DustbinAnalysisComponent implements OnInit {
   saveDustbinAnalysis() {
 
     if (this.binDetail.canDoAnalysis == "yes") {
-      this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(), });
+      this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(),manualRemark:$(this.txtManualRemark).val() });
       this.updatePendingAnalysis();
       this.updateBinListAndDetails();
       this.setAnalysisDetails();
@@ -805,6 +816,7 @@ export class dustbinDetails {
   filledPercentage: string;
   analysisRemarks: string;
   analysisDetail: string;
+  manualRemarks:string;
 }
 
 export class planDetails {
