@@ -22,16 +22,20 @@ export class WardScancardSummaryComponent implements OnInit {
   toDayDate: any;
   wardDataList: any[];
   wardScaanedList: any;
+  totalScannedCards: any;
+  totalNotScannedCards: any;
   isFirst = true;
   db: any;
-  public cityName:any;
+  public cityName: any;
 
   ngOnInit() {
-    this.cityName=localStorage.getItem("cityName");
+    this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
+    this.totalNotScannedCards = 0;
+    this.totalScannedCards = 0;
     $("#txtDate").val(this.selectedDate);
     this.getWards();
   }
@@ -62,10 +66,10 @@ export class WardScancardSummaryComponent implements OnInit {
   onSubmit() {
     this.wardDataList = [];
     let circleWardList = this.wardList.filter((item) => item.circle == this.selectedCircle);
-    if (circleWardList.length > 0) {      
+    if (circleWardList.length > 0) {
       for (let i = 0; i < circleWardList.length; i++) {
         if (circleWardList[i]["wardNo"] != undefined) {
-          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0,helperCode:"", helper: "" });
+          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, helperCode: "", helper: "" });
         }
       }
       this.getWardDetail();
@@ -73,6 +77,8 @@ export class WardScancardSummaryComponent implements OnInit {
   }
 
   getWardDetail() {
+    this.totalScannedCards = 0;
+    this.totalNotScannedCards = 0;
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
     for (let i = 0; i < this.wardList.length; i++) {
@@ -82,69 +88,66 @@ export class WardScancardSummaryComponent implements OnInit {
         data => {
           helperInstance.unsubscribe();
           let helper = "";
-          let helperId="0";
-          let empCode="";
+          let helperId = "0";
+          let empCode = "";
           let scanned = 0;
           let notScanned = 0;
           if (data != null) {
             helper = data.toString();
           }
-        let dbPath="WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/helper";
-        let helperIdInstance = this.db.object(dbPath).valueChanges().subscribe(
-          helperdata => {
-            helperIdInstance.unsubscribe();
-            if (helperdata != null) {
-             helperId = helperdata.toString().split(',')[0];
-             dbPath="Employees/"+helperId+"/GeneralDetails/empCode";
-             let empInstance=this.db.object(dbPath).valueChanges().subscribe(
-              empCodeData=>{
-                empInstance.unsubscribe();
-                if(empCodeData!=null){
-                  empCode=empCodeData.toString();
+          let dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/helper";
+          let helperIdInstance = this.db.object(dbPath).valueChanges().subscribe(
+            helperdata => {
+              helperIdInstance.unsubscribe();
+              if (helperdata != null) {
+                helperId = helperdata.toString().split(',')[0];
+                dbPath = "Employees/" + helperId + "/GeneralDetails/empCode";
+                let empInstance = this.db.object(dbPath).valueChanges().subscribe(
+                  empCodeData => {
+                    empInstance.unsubscribe();
+                    if (empCodeData != null) {
+                      empCode = empCodeData.toString();
 
-                }
-                dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/totalCount";
-                let notScannedInstance = this.db.object(dbPath).valueChanges().subscribe(
-                  notScannedData => {
-                    notScannedInstance.unsubscribe();
-                    if (notScannedData != null) {
-                      notScanned = Number(notScannedData);
                     }
-                    dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
-                    let scannedInstance = this.db.object(dbPath).valueChanges().subscribe(
-                      scannedData => {
-                        scannedInstance.unsubscribe();
-                        if (scannedData != null) {
-                          let keyArray = Object.keys(scannedData);
-                          for (let j = 0; j < keyArray.length; j++) {
-                            let index = keyArray[j];
-                            if (index != "recentScanned" && index != "totalScanned" && index != "ImagesData") {
-                              if (scannedData[index]["scanBy"] != "-1") {
-                                scanned = scanned + 1;
+                    dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/totalCount";
+                    let notScannedInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      notScannedData => {
+                        notScannedInstance.unsubscribe();
+                        if (notScannedData != null) {
+                          notScanned = Number(notScannedData);
+                        }
+                        dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
+                        let scannedInstance = this.db.object(dbPath).valueChanges().subscribe(
+                          scannedData => {
+                            scannedInstance.unsubscribe();
+                            if (scannedData != null) {
+                              let keyArray = Object.keys(scannedData);
+                              for (let j = 0; j < keyArray.length; j++) {
+                                let index = keyArray[j];
+                                if (index != "recentScanned" && index != "totalScanned" && index != "ImagesData") {
+                                  if (scannedData[index]["scanBy"] != "-1") {
+                                    scanned = scanned + 1;
+                                  }
+                                }
                               }
                             }
+                            let detail = this.wardDataList.find(item => item.wardNo == wardNo);
+                            if (detail != undefined) {
+                              detail.helper = helper;
+                              detail.helperCode = empCode;
+                              detail.scanned = scanned;
+                              detail.notScanned = notScanned;
+                              this.totalNotScannedCards += Number(notScanned);
+                              this.totalScannedCards += Number(scanned);
+                            }
                           }
-                        }
-                        let detail = this.wardDataList.find(item => item.wardNo == wardNo);
-                        if (detail != undefined) {
-                          detail.helper = helper;
-                          detail.helperCode=empCode;
-                          detail.scanned = scanned;
-                          detail.notScanned = notScanned;
-                        }
+                        );
                       }
                     );
                   }
-                );
+                )
               }
-             )
-
-
-
-            }
-           
-          })
-         
+            })
         }
       );
     }
@@ -181,16 +184,50 @@ export class WardScancardSummaryComponent implements OnInit {
         htmlString += "<td t='s'>";
         htmlString += this.wardDataList[i]["helper"];
         htmlString += "</td>";
-        htmlString += "<td t='s'>";
+        htmlString += "<td >";
         htmlString += this.wardDataList[i]["scanned"];
         htmlString += "</td>";
-        htmlString += "<td t='s'>";
+        htmlString += "<td >";
         htmlString += this.wardDataList[i]["notScanned"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += " ";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Total";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += this.totalScannedCards;
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += this.totalNotScannedCards;
+      htmlString += "</td>";
+      htmlString += "</tr>";
       htmlString += "</table>";
-      let fileName ="WardScanSummary.xlsx";      
+      let fileName = "WardScanSummary-" + this.selectedDate + ".xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
@@ -204,14 +241,14 @@ export class WardScancardSummaryComponent implements OnInit {
           this.wardDataList[i]["helper"] = "";
           this.wardDataList[i]["scanned"] = 0;
           this.wardDataList[i]["notScanned"] = 0;
-          this.wardDataList[i]["helperId"]="0";
+          this.wardDataList[i]["helperId"] = "0";
         }
-        this.getWardDetail();        
+        this.getWardDetail();
       }
       else {
         this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
       }
-    });    
+    });
   }
 }
 
