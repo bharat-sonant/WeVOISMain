@@ -22,9 +22,12 @@ export class PaymentCollectorComponent implements OnInit {
   userList: any[];
   collectionList: any[];
   collectionDetailList: any[];
+  lineList: any[] = [];
   lastEmpId: any;
   db: any;
   fileName: any;
+  cityName: any;
+  public isWardShow: any;
   collectionData: collectionDatail = {
     totalCollection: "0",
     totalDays: 0,
@@ -33,7 +36,14 @@ export class PaymentCollectorComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
+      this.isWardShow = false;
+    }
+    else {
+      this.isWardShow = true;
+    }
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.getDevices();
     this.getZoneList();
     this.getEmployee();
@@ -75,11 +85,15 @@ export class PaymentCollectorComponent implements OnInit {
             if (empId != "lastKey") {
               let wardNo = "";
               let deviceNo = "";
+              let lines = "";
               if (userJsonData[empId]["assignedWard"] != null) {
                 wardNo = userJsonData[empId]["assignedWard"];
               }
               if (userJsonData[empId]["assignedDevice"] != null) {
                 deviceNo = userJsonData[empId]["assignedDevice"];
+              }
+              if (userJsonData[empId]["assignedLines"] != null) {
+                lines = userJsonData[empId]["assignedLines"];
               }
               this.userList.push({
                 empId: empId,
@@ -93,7 +107,8 @@ export class PaymentCollectorComponent implements OnInit {
                 qrCodeImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["qrImage"] + "?alt=media",
                 docImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["fileName"] + "?alt=media",
                 collectedAmount: 0,
-                collectionList: []
+                collectionList: [],
+                lines: lines
               });
               this.getCollectionDetail(empId);
             }
@@ -108,6 +123,28 @@ export class PaymentCollectorComponent implements OnInit {
       }
     }, error => {
       this.lastEmpId = 100;
+    });
+  }
+
+
+  getLines(wardNo: any) {
+    return new Promise((resolve) => {
+      this.lineList = [];
+      if (wardNo == "0") {
+        this.commonService.setAlertMessage("error", "Plese select ward !!!");
+        return;
+      }
+      this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((response:any) => {
+        let data=JSON.parse(response);
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo=keyArray[i];
+          if (parseInt(lineNo)) {
+            this.lineList.push({ lineNo:lineNo, isChecked: 0 });
+          }
+        }
+        resolve("success");
+      });     
     });
   }
 
@@ -403,8 +440,12 @@ export class PaymentCollectorComponent implements OnInit {
       }
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let height = 300;
+      let height = 250;
       let width = 400;
+      if (this.isWardShow == true) {
+        height = 600;
+        width = 600;
+      }
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
       $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
@@ -412,15 +453,42 @@ export class PaymentCollectorComponent implements OnInit {
       $("#empID").val(id);
       userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
-        if (userDetail.wardNo != "") {
-          setTimeout(() => {
-            //if (userDetail.wardNo != "") {
-            //   $("#ddlWard").val(userDetail.wardNo);
-            // }
-            if (userDetail.deviceNo != "") {
-              $("#ddlDevice").val(userDetail.deviceNo);
-            }
-          }, 100);
+        if (userDetail.deviceNo != "") {
+          if (this.isWardShow == false) {
+            setTimeout(() => {
+              if (userDetail.deviceNo != "") {
+                $("#ddlDevice").val(userDetail.deviceNo);
+              }
+            }, 100);
+          }
+          else {
+            setTimeout(() => {
+              if (userDetail.wardNo != "") {
+                if (userDetail.deviceNo != "") {
+                  $("#ddlDevice").val(userDetail.deviceNo);
+                }
+                if (userDetail.wardNo != "") {
+                  $("#ddlWard").val(userDetail.wardNo);
+                  this.getLines(userDetail.wardNo).then((response) => {
+                    setTimeout(() => {
+                      if (userDetail.lines != "") {
+                        let list = userDetail.lines.split(",");
+                        for (let i = 0; i < list.length; i++) {
+                          let detail = this.lineList.find(item => item.lineNo == list[i].trim());
+                          if (detail != undefined) {
+                            let chk = "chk" + detail.lineNo;
+                            (<HTMLInputElement>document.getElementById(chk)).checked = true;
+                          }
+                        }
+                      }
+                    }, 200);
+                    
+                  });
+                }
+              }
+            }, 100);
+
+          }
         }
       }
     } else if (type == "delete") {
@@ -474,14 +542,43 @@ export class PaymentCollectorComponent implements OnInit {
 
   saveWard() {
     let empID = $("#empID").val();
+    let lines = "";
     if ($("#ddlDevice").val() == "0") {
       this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
       return;
     }
+    if (this.isWardShow == true) {
+      if ($("#ddlWard").val() == "0") {
+        this.commonService.setAlertMessage("error", "Please select ward !!!");
+        return;
+      }
+      let isLine = false;
+
+      if (this.lineList.length > 0) {
+        for (let i = 0; i < this.lineList.length; i++) {
+          let lineNo = this.lineList[i]["lineNo"];
+          let chk = "chk" + lineNo;
+          let element = <HTMLInputElement>document.getElementById(chk);
+          if (element.checked == true) {
+            isLine = true;
+            if (lines != "") {
+              lines = lines + ",";
+            }
+            lines = lines + lineNo;
+          }
+        }
+      }
+      if (isLine == false) {
+        this.commonService.setAlertMessage("error", "Plese select at least one line !!!");
+        return;
+      }
+    }
 
     if (empID != "0") {
       let deviceNo = $("#ddlDevice").val();
-      let detail = this.userList.find(item => item.deviceNo == deviceNo);
+      let wardNo = $("#ddlWard").val();
+      let list=this.userList.filter(item=>item.empId!=empID);
+      let detail = list.find(item => item.deviceNo == deviceNo);
       if (detail != undefined) {
         this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
         return;
@@ -489,6 +586,8 @@ export class PaymentCollectorComponent implements OnInit {
       let element = <HTMLInputElement>document.getElementById("chkRemove");
       if (element.checked == true) {
         deviceNo = null;
+        wardNo = null;
+        lines = null;
       }
 
       const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
@@ -496,15 +595,24 @@ export class PaymentCollectorComponent implements OnInit {
         userJSONInstance.unsubscribe();
         if (userJsonData != null) {
           userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
+          userJsonData[empID.toString()]["assignedWard"] = wardNo;
+          userJsonData[empID.toString()]["assignedLines"] = lines;
           let fileName = "paymentCollector.json";
           let filePath = "/CollectionManagement/";
           this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
             this.commonService.setAlertMessage("success", "Device assigned successfully !!!");
             $("#empID").val("0");
+            $("#ddlDevice").val("0");
+            $("#ddlWard").val("0");
+            this.lineList = [];
             this.closeModel();
             let userDetail = this.userList.find((item) => item.empId == empID);
             if (userDetail != undefined) {
               userDetail.deviceNo = deviceNo;
+              if(this.isWardShow==true){
+                userDetail.wardNo=wardNo;
+                userDetail.lines=lines;
+              }
             }
           });
         }

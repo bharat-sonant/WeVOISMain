@@ -777,3 +777,13 @@ table tr:hover {
         overflow-x: scroll !important;
     }
 }
+
+
+.checkbox-scroll {
+    height: 270px;
+    overflow: hidden;
+    overflow-y: scroll;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+    padding: 10px;
+}

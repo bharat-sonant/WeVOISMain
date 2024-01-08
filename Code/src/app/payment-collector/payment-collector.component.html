@@ -207,19 +207,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <input id="empID" type="hidden" value="0" />
-                <!--
-                <label>Ward</label>
-                <div class="wrap-input-effects" required>
-                    <select id="ddlWard" class="input-green">
-                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
-                            {{zone.zoneName}}</option>
-                    </select>
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
-                    </span>
-                </div>-->
+                <input id="empID" type="hidden" value="0" />                
                 <label>Device Serial No.</label>
                 <div class="wrap-input-effects" required>
                     <select id="ddlDevice" class="input-green">
@@ -231,6 +219,27 @@
                     <span class="symbol-input">
                         <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i>
                     </span>
+                </div>
+                <label hidden="isWardShow==false">Ward</label>
+                <div class="wrap-input-effects" required  hidden="isWardShow==false">
+                    <select id="ddlWard" class="input-green"  (change)="getLines($event.target.value);">
+                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
+                            {{zone.zoneName}}</option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <label  hidden="isWardShow==false">Select Lines</label>
+                <div class="wrap-input-effects" required  hidden="isWardShow==false">
+                    <div class="checkbox-scroll">
+                        <div class="row">
+                            <div class="col-md-2 checkbox-div" *ngFor="let line of lineList">
+                                <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" /> {{line.lineNo}}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="wrap-input-effects" required style="display: none;">
                     <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward

@@ -76,6 +76,11 @@ export class HomeComponent implements OnInit {
             }
             if (userAccessList[i]["url"].includes("dehradun-pmc")) {
               if (this.isDehradun == true) {
+                let userType = "1";
+                if (localStorage.getItem("userType") != "Internal User") {
+                  userType = "2";
+                }
+                url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + userType + "/" + newUrl;
                 this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
               }
             }
