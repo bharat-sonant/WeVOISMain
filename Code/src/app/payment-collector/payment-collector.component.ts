@@ -38,10 +38,10 @@ export class PaymentCollectorComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
-      this.isWardShow = false;
+      this.isWardShow = "0";
     }
     else {
-      this.isWardShow = true;
+      this.isWardShow = "1";
     }
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.getDevices();
@@ -442,7 +442,7 @@ export class PaymentCollectorComponent implements OnInit {
       let windowHeight = $(window).height();
       let height = 250;
       let width = 400;
-      if (this.isWardShow == true) {
+      if (this.isWardShow == "1") {
         height = 600;
         width = 600;
       }
@@ -454,7 +454,7 @@ export class PaymentCollectorComponent implements OnInit {
       userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         if (userDetail.deviceNo != "") {
-          if (this.isWardShow == false) {
+          if (this.isWardShow == "0") {
             setTimeout(() => {
               if (userDetail.deviceNo != "") {
                 $("#ddlDevice").val(userDetail.deviceNo);
@@ -547,7 +547,7 @@ export class PaymentCollectorComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
       return;
     }
-    if (this.isWardShow == true) {
+    if (this.isWardShow == "1") {
       if ($("#ddlWard").val() == "0") {
         this.commonService.setAlertMessage("error", "Please select ward !!!");
         return;
@@ -576,7 +576,10 @@ export class PaymentCollectorComponent implements OnInit {
 
     if (empID != "0") {
       let deviceNo = $("#ddlDevice").val();
-      let wardNo = $("#ddlWard").val();
+      let wardNo = "";
+      if(this.isWardShow=="1"){
+        wardNo=$("#ddlWard").val().toString();
+      }
       let list=this.userList.filter(item=>item.empId!=empID);
       let detail = list.find(item => item.deviceNo == deviceNo);
       if (detail != undefined) {
@@ -609,7 +612,7 @@ export class PaymentCollectorComponent implements OnInit {
             let userDetail = this.userList.find((item) => item.empId == empID);
             if (userDetail != undefined) {
               userDetail.deviceNo = deviceNo;
-              if(this.isWardShow==true){
+              if(this.isWardShow=="1"){
                 userDetail.wardNo=wardNo;
                 userDetail.lines=lines;
               }
