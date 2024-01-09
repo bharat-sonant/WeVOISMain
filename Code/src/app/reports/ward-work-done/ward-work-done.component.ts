@@ -22,6 +22,7 @@ export class WardWorkDoneComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("General-Reports","7-Days-Work-Done-Report",localStorage.getItem("userID"));
     this.setDefault();
   }
 

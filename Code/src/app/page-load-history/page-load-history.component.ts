@@ -127,6 +127,10 @@ export class PageLoadHistoryComponent implements OnInit {
             if (i == 0) {
               this.getPageHistory(mainPage, 0);
             }
+            setTimeout(() => {
+              this.setActiveClass("mainPage",0);
+            }, 200);
+            
           }
         } else {
           this.commonService.setAlertMessage("error", "No record found");
@@ -149,9 +153,13 @@ export class PageLoadHistoryComponent implements OnInit {
       }
       this.pageList.push({ mainPage: mainPage, page: page, pageCount: pageCount, monthCounts: 0 });
       if (j == 0) {
-        this.getPageDateHistory(mainPage, page);
+        this.getPageDateHistory(mainPage, page,0);
       }
-      this.getMonthCount(mainPage, page);
+      this.getMonthCount(mainPage, page);      
+      setTimeout(() => {        
+      this.setActiveClass("mainPage",index);
+        this.setActiveClass("page",0);
+      }, 200);
     }
   }
 
@@ -174,7 +182,7 @@ export class PageLoadHistoryComponent implements OnInit {
     }
   }
 
-  getPageDateHistory(mainPage: any, page: any) {
+  getPageDateHistory(mainPage: any, page: any,index:any) {
     this.dateList = [];
     let dateData = this.dataObject[mainPage][page];
     let dateKeyArray = Object.keys(dateData);
@@ -200,11 +208,18 @@ export class PageLoadHistoryComponent implements OnInit {
         userList: userList,
         totalCount: totalCount,
       });
-      this.getUserList(this.dateList[0]["date"]);
+      this.getUserList(this.dateList[0]["date"],0);          
+      setTimeout(() => {
+        this.setActiveClass("page",index);
+        this.setActiveClass("date",0);
+      }, 200);
     }
   }
 
-  getUserList(date: any) {
+  getUserList(date: any,index:any) {
+    setTimeout(() => {
+      this.setActiveClass("date",index);      
+    }, 200);
     let detail = this.dateList.find((item) => item.date == date);
     if (detail != undefined) {
       this.userList = detail.userList;
@@ -212,15 +227,25 @@ export class PageLoadHistoryComponent implements OnInit {
   }
 
   setActiveClass(type: any, index: any) {
-    for (let i = 0; i < this.mainPageList.length; i++) {
-      let id = "divMainPage" + i;
+    let list=this.mainPageList;
+    let divId="divMainPage";
+    if(type=="page"){
+      list=this.pageList;
+      divId="divPage";
+    }
+    if(type=="date"){
+      list=this.dateList;
+      divId="divDate";
+    }
+    for (let i = 0; i < list.length; i++) {
+      let id = divId + i;
       let element = <HTMLElement>document.getElementById(id);
       let className = element.className;
       if (className != null) {
-        $("#divMainPage" + i).removeClass("active");
+        $("#" + id).removeClass("active");
       }
       if (i == index) {
-        $("#divMainPage" + i).addClass("active");
+        $("#" + id).addClass("active");
       }
     }
   }

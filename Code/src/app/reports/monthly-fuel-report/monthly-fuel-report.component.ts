@@ -38,6 +38,7 @@ export class MonthlyFuelReportComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("General-Reports","Monthly-Fuel-Report",localStorage.getItem("userID"));
     this.setDefault();
   }
 

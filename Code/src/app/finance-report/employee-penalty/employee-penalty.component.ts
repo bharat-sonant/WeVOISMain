@@ -36,6 +36,7 @@ export class EmployeePenaltyComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Finance-Reports","Penalty-Report",localStorage.getItem("userID"));
     this.setDefault();
   }
 

@@ -31,6 +31,7 @@ export class WardScancardSummaryComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("General-Reports","Ward-Scan-Card-Summary",localStorage.getItem("userID"));
     this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;

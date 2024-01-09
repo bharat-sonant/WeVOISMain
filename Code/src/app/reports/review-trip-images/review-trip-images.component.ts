@@ -26,6 +26,7 @@ export class ReviewTripImagesComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("General-Reports","Review-Trip-Images",localStorage.getItem("userID"));
     this.setDefault();
   }
 

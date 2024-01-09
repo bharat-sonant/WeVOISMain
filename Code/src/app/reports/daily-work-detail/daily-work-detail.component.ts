@@ -25,6 +25,7 @@ export class DailyWorkDetailComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("General-Reports","Daily-Work-Report",localStorage.getItem("userID"));
     this.setDefault();
   }
 

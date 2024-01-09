@@ -23,6 +23,7 @@ export class CardScanningReportComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    this.commonService.savePageLoadHistory("General-Reports","Card-Scanning-Report",localStorage.getItem("userID"));
     this.setDefaults();
   }
 

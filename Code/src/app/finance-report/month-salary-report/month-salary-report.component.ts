@@ -172,6 +172,7 @@ export class MonthSalaryReportComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Finance-Reports","Ward-Monthly-Report",localStorage.getItem("userID"));
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.getYear();

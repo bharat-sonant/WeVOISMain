@@ -137,6 +137,7 @@ export class HaltSummaryComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Finance-Reports","Halt-Summary-Report",localStorage.getItem("userID"));
     $('#divG').hide();
     $('#divTbl').show();
     $('#spGraph').show();

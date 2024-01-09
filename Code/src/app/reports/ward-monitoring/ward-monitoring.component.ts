@@ -56,6 +56,7 @@ export class WardMonitoringComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("General-Reports","Ward-Collection-Report",localStorage.getItem("userID"));
     this.setDefault();
   }
 

@@ -66,10 +66,10 @@
                         <div class="scrollable-halt">
                             <div class="halt-bg" style="height: calc(100vh - 150px);">
                                 <div class="dth">
-                                    <div class="text-left"
+                                    <div id="divPage{{i}}" class="text-left"
                                         style="width:100%; padding: 10px; cursor: pointer; border-bottom: 1px solid lightgray;"
                                         *ngFor="let data of pageList, let i=index"
-                                        (click)="getPageDateHistory(data.mainPage,data.page)">
+                                        (click)="getPageDateHistory(data.mainPage,data.page,i)">
                                         {{data.page}} <span style="float: right;margin-right: 10px;">{{data.pageCount}}<b> / </b>{{data.monthCounts}}</span>
                                     </div>
                                 </div>
@@ -80,9 +80,9 @@
                         <div class="scrollable-halt">
                             <div class="halt-bg" style="height: calc(100vh - 150px);">
                                 <div class="dth">
-                                    <div class="text-left"
+                                    <div id="divDate{{i}}" class="text-left"
                                         style="width:100%; padding: 10px;cursor: pointer; border-bottom: 1px solid lightgray;"
-                                        *ngFor="let data of dateList, let i=index" (click)="getUserList(data.date)">
+                                        *ngFor="let data of dateList, let i=index" (click)="getUserList(data.date,i)">
                                         {{data.date}} <span style="float: right;">{{data.totalCount}}</span>
                                     </div>
                                 </div>

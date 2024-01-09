@@ -24,6 +24,7 @@ export class WardMonitoringReportComponent implements OnInit {
   ngOnInit() {
     this.cityName=localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("General-Reports","Ward-Monitoring-Report",localStorage.getItem("userID"));
     this.selectedCircle = "Circle1";
     this.selectedDate = this.commonService.setTodayDate();
     this.getWardForLineWeitage();
