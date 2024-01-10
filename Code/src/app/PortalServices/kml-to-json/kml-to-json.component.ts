@@ -21,6 +21,7 @@ export class KmlToJsonComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Boundary-KML-To-JSON",localStorage.getItem("userID"));
     this.selectedZone = "0";
     this.zoneList = [];
     this.getZones();

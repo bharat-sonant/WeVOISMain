@@ -26,6 +26,7 @@ export class UserListComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem('cityName');
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Users","Users",localStorage.getItem("userID"));
     this.getUserList();
   }
 

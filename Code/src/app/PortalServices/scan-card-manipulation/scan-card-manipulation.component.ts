@@ -26,6 +26,7 @@ export class ScanCardManipulationComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Scan-Card-Modification",localStorage.getItem("userID"));
     this.setDefault();
   }
 

@@ -66,6 +66,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Settings",localStorage.getItem("userID"));
     this.setDefault();
   }
 

@@ -65,6 +65,7 @@ export class LineCardMappingComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management","Line-Card-Mapping",localStorage.getItem("userID"));
     this.selectedCardDetails = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.setHeight();

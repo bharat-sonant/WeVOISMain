@@ -34,6 +34,7 @@ export class WardRoadDetailComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management","Ward-Road-Detail",localStorage.getItem("userID"));
     this.setDefaults();
   }
 

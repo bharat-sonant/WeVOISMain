@@ -26,6 +26,7 @@ export class PenaltyPortalServiceComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Penalty",localStorage.getItem("userID"));
     this.setDefault();
   }
 

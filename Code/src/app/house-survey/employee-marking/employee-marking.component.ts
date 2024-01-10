@@ -34,6 +34,7 @@ export class EmployeeMarkingComponent implements OnInit {
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.commonService.savePageLoadHistory("Survey-Management","Manage-Surveyor",localStorage.getItem("userID"));
     this.getZoneList();
     this.getEmployee();
   }

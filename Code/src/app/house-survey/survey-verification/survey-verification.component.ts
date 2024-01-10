@@ -59,6 +59,7 @@ export class SurveyVerificationComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management","Survey-Verification",localStorage.getItem("userID"));
     this.setDefaults();
   }
 

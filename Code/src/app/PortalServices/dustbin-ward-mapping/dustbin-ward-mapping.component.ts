@@ -45,6 +45,7 @@ export class DustbinWardMappingComponent implements OnInit {
   setDefault() {
     this.todayDate = this.commonService.setTodayDate();
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Dustbin-Ward-Mapping",localStorage.getItem("userID"));
     this.setDefaultMap();
     this.setHeight();
     this.getZones();

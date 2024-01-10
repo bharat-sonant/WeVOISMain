@@ -31,6 +31,7 @@ export class LineWeightageComponent implements OnInit {
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Ward-Line-Weightage",localStorage.getItem("userID"));
     this.selectedZone = "0";
     this.todayDate = this.commonService.setTodayDate();
     this.getZones();

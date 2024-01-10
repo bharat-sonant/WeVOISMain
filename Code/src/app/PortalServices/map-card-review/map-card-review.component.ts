@@ -85,6 +85,7 @@ export class MapCardReviewComponent {
   ngOnInit() {
     this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.commonService.savePageLoadHistory("Portal-Services","Map-Card-Review",localStorage.getItem("userID"));
     this.toDayDate = this.commonService.setTodayDate();
     this.currentYear = new Date().getFullYear();
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());

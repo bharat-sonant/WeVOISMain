@@ -99,6 +99,7 @@ export class HouseMarkingComponent {
 
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management","Marker-Approval",localStorage.getItem("userID"));
     this.isActionShow = true;
     this.isShowWardAndLine=false;
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {

@@ -25,6 +25,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Change-Line-Surveyed-Data",localStorage.getItem("userID"));
     this.setDefault();
   }
 

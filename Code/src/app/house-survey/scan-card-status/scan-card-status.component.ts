@@ -30,6 +30,7 @@ export class ScanCardStatusComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management","Scan-Card-Status",localStorage.getItem("userID"));
     this.setDefault();
   }
 

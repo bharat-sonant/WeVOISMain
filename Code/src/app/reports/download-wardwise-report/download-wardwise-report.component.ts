@@ -57,6 +57,7 @@ export class DownloadWardwiseReportComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Download-Ward-Report","Download-Ward-Report",localStorage.getItem("userID"));
     this.setDefault();
   }
 

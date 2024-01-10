@@ -22,6 +22,7 @@ export class SupervisorReportComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management","Supervisor-Report",localStorage.getItem("userID"));
     this.getLastUpdate();
     this.getSurviorSummary();
   }

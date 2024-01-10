@@ -37,6 +37,7 @@ export class SetNearbyWardComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Set-Nearby-Ward",localStorage.getItem("userID"));
     this.commonService.setMapHeight();
     this.map = this.commonService.setMap(this.gmap);
     this.getZones();

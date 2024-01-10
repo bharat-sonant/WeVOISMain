@@ -24,6 +24,7 @@ export class WardWorkPercentageComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Work-Percentage",localStorage.getItem("userID"));
     this.setDefault();
   }
 

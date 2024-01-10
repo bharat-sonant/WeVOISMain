@@ -63,6 +63,7 @@ export class LineMarkerMappingComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management","Line-Marker-Mapping",localStorage.getItem("userID"));
     this.movedMarkerCount = 0;
     this.totalMoveMarkerCount = 0;
     this.lineNo = 1;

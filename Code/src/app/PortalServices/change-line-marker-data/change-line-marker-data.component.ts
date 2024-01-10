@@ -24,6 +24,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Portal-Services","Change-Line-Marker-Data",localStorage.getItem("userID"));
     this.setDefault();
   }
 

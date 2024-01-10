@@ -70,6 +70,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management","Marking-Summary",localStorage.getItem("userID"));
     this.isActionShow = true;
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       this.isActionShow = false;
