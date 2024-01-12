@@ -144,7 +144,7 @@ import { RemoveDeletedScancardsComponent } from '../../Developers/remove-deleted
 import { PenaltyReviewComponent } from '../../PortalServices/penalty-review/penalty-review.component';
 import { PaymentViaCitizenappComponent } from '../../reports/payment-via-citizenapp/payment-via-citizenapp.component';
 import { PageLoadHistoryComponent } from '../../page-load-history/page-load-history.component';
-
+import { DatabaseUtilizationComponent } from '../../database-utilization/database-utilization.component';
 
 
 // Jaipur-Greater
@@ -332,7 +332,8 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     PenaltyReviewComponent,
     MonthlyAttendanceComponent,
     PaymentViaCitizenappComponent,
-    PageLoadHistoryComponent
+    PageLoadHistoryComponent,
+    DatabaseUtilizationComponent
   ]
 })
 

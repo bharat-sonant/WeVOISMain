@@ -136,6 +136,7 @@ import { RemoveDeletedScancardsComponent } from '../../Developers/remove-deleted
 import { PenaltyReviewComponent } from '../../PortalServices/penalty-review/penalty-review.component';
 import { PaymentViaCitizenappComponent } from '../../reports/payment-via-citizenapp/payment-via-citizenapp.component';
 import { PageLoadHistoryComponent } from '../../page-load-history/page-load-history.component';
+import { DatabaseUtilizationComponent } from '../../database-utilization/database-utilization.component';
 
 
 
@@ -408,6 +409,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'sikar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'sikar/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'sikar/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -646,6 +648,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/payment-via-neft-report', component: PaymentViaNeftReportComponent },
     { path: 'jaipur-greater/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-greater/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-greater/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -908,6 +911,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'reengus/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'reengus/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'reengus/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -1150,6 +1154,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'shahpura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'shahpura/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'shahpura/:id/database-utilization', component: DatabaseUtilizationComponent },
     //test
     { path: 'test/home', component: HomeComponent },
     { path: 'test/dashboard', component: DashboardComponent },
@@ -1391,6 +1396,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'test/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'test/:id/database-utilization', component: DatabaseUtilizationComponent },
 
 
 
@@ -1635,6 +1641,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-office/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-office/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-office/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
@@ -1875,6 +1882,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'kishangarh/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'kishangarh/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'kishangarh/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //Nawai
     { path: 'niwai/home', component: HomeComponent },
@@ -2115,6 +2123,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'niwai/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'niwai/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'niwai/:id/database-utilization', component: DatabaseUtilizationComponent },
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
     { path: 'jaisalmer/dashboard', component: DashboardComponent },
@@ -2354,6 +2363,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaisalmer/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaisalmer/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaisalmer/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2594,6 +2604,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'salasar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'salasar/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'salasar/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //Behror
     { path: 'behror/home', component: HomeComponent },
@@ -2834,6 +2845,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'behror/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'behror/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'behror/:id/database-utilization', component: DatabaseUtilizationComponent },
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
     { path: 'jaipur/account-detail', component: AccountDetailComponent },
@@ -3072,6 +3084,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur/:id/database-utilization', component: DatabaseUtilizationComponent },
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
     { path: 'jaipur-jhotwara/account-detail', component: AccountDetailComponent },
@@ -3310,6 +3323,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-jhotwara/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-jhotwara/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-jhotwara/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //jaipur-jagatpura
     { path: 'jaipur-jagatpura/home', component: HomeComponent },
@@ -3549,6 +3563,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-jagatpura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-jagatpura/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-jagatpura/:id/database-utilization', component: DatabaseUtilizationComponent },
 
 
     //jaipur-malviyanagar
@@ -3790,6 +3805,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaiput-malviyanagar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-malviyanagar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-malviyanagar/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-malviyanagar/:id/database-utilization', component: DatabaseUtilizationComponent },
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
     { path: 'jaipur-mansarovar/account-detail', component: AccountDetailComponent },
@@ -4028,6 +4044,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-mansarovar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-mansarovar/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-mansarovar/:id/database-utilization', component: DatabaseUtilizationComponent },
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
     { path: 'jaipur-murlipura/account-detail', component: AccountDetailComponent },
@@ -4268,6 +4285,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaiput-murlipura/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-murlipura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-murlipura/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-murlipura/:id/database-utilization', component: DatabaseUtilizationComponent },
     //jaipur-sanganer
     { path: 'jaipur-sanganer/home', component: HomeComponent },
     { path: 'jaipur-sanganer/account-detail', component: AccountDetailComponent },
@@ -4506,6 +4524,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-sanganer/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-sanganer/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-sanganer/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4745,6 +4764,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-vidhyadhar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-vidhyadhar/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-vidhyadhar/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
@@ -4984,6 +5004,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'bhiwadi/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'bhiwadi/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'bhiwadi/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
@@ -5223,6 +5244,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'chhapar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'chhapar/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'chhapar/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -5462,6 +5484,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'churu/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'churu/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'churu/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5702,6 +5725,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'wevois-other/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'wevois-other/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'wevois-other/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //gwalior
     { path: 'gwalior/home', component: HomeComponent },
@@ -5942,6 +5966,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'gwalior/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'gwalior/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'gwalior/:id/database-utilization', component: DatabaseUtilizationComponent },
 
 
 
@@ -6183,6 +6208,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'tonk/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'tonk/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'tonk/:id/database-utilization', component: DatabaseUtilizationComponent },
 
 
     //Ratangarh
@@ -6423,6 +6449,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'ratangarh/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'ratangarh/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'ratangarh/:id/database-utilization', component: DatabaseUtilizationComponent },
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
     { path: 'nokha/account-detail', component: AccountDetailComponent },
@@ -6661,6 +6688,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'nokha/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'nokha/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'nokha/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6900,6 +6928,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'losal/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'losal/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'losal/:id/database-utilization', component: DatabaseUtilizationComponent },
 
 
     //Jaipur Test
@@ -7141,6 +7170,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jaipur-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-test/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jaipur-test/:id/database-utilization', component: DatabaseUtilizationComponent },
     
 
     //MNZ-Test
@@ -7381,6 +7411,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'mnz-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'mnz-test/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'mnz-test/:id/database-utilization', component: DatabaseUtilizationComponent },
 
 
     
@@ -7622,6 +7653,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'mpz-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'mpz-test/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'mpz-test/:id/database-utilization', component: DatabaseUtilizationComponent },
     
 
     
@@ -7863,6 +7895,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'jammu-survey/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jammu-survey/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'jammu-survey/:id/database-utilization', component: DatabaseUtilizationComponent },
     
     //Khandela
     { path: 'khandela/home', component: HomeComponent },
@@ -8102,6 +8135,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'khandela/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'khandela/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'khandela/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'khandela/:id/database-utilization', component: DatabaseUtilizationComponent },
     
     //watteye-office
     { path: 'watteye-office/home', component: HomeComponent },
@@ -8341,6 +8375,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'watteye-office/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'watteye-office/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'watteye-office/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'watteye-office/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     
     //dehradun
@@ -8581,6 +8616,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'dehradun/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'dehradun/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'dehradun/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'dehradun/:id/database-utilization', component: DatabaseUtilizationComponent },
     
 
 
@@ -8823,6 +8859,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'pali/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'pali/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'pali/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'pali/:id/database-utilization', component: DatabaseUtilizationComponent },
 
     
     
@@ -9064,5 +9101,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'phulwari-sharif/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
     { path: 'phulwari-sharif/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'phulwari-sharif/:id/page-load-history', component: PageLoadHistoryComponent },
+    { path: 'phulwari-sharif/:id/database-utilization', component: DatabaseUtilizationComponent },
 
 ]; 
