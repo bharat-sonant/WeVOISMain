@@ -71,6 +71,7 @@ export class NonSalariedCalculationComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Salary-Management-Driver","Non-Salaried-Calculation",localStorage.getItem("userID"));
     this.setDefault();
   }
 

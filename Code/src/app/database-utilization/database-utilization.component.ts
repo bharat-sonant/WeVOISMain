@@ -71,22 +71,26 @@ export class DatabaseUtilizationComponent implements OnInit {
           let functionList = [];
           let totalCounts = 0;
           let totalDataSize = 0;
+          let totalDataSizeUnit="";
           for (let j = 0; j < functionArray.length; j++) {
             let functionName = functionArray[j];
             let count = 0;
             let dataSize = 0;
+            let unit="";
             if (functionData[functionName]["count"] != null) {
               count = functionData[functionName]["count"];
               totalCounts += count;
             }
             if (functionData[functionName]["dataSize"] != null) {
               dataSize = functionData[functionName]["dataSize"];
+              unit=dataSize > 1024 ? "Mb" : "Kb";
               totalDataSize += dataSize;
             }
-            functionList.push({ servicePage: servicePage, functionName: functionName, count: count, dataSize: dataSize > 1024 ? (dataSize / 1024).toFixed(2) + " MB" : dataSize.toFixed(2) + " KB" });
+            functionList.push({ servicePage: servicePage, functionName: functionName, count: count, dataSize: dataSize > 1024 ? (dataSize / 1024).toFixed(2) : dataSize.toFixed(2),unit:unit });
           }
+          totalDataSizeUnit=totalDataSize > 1024 ? "Mb" : "Kb";
 
-          this.summaryList.push({ servicePage: servicePage, functionList: functionList, totalCounts: totalCounts, totalDataSize: totalDataSize > 1024 ? (totalDataSize / 1024).toFixed(2) + " MB" : totalDataSize.toFixed(2) + " KB" });
+          this.summaryList.push({ servicePage: servicePage, functionList: functionList, totalCounts: totalCounts, totalDataSize: totalDataSize > 1024 ? (totalDataSize / 1024).toFixed(2)  : totalDataSize.toFixed(2),totalDataSizeUnit:totalDataSizeUnit });
         }
         this.servicePageList = this.summaryList;
         this.getServiceNameData(this.servicePageList[0]["servicePage"], 0);
@@ -108,7 +112,7 @@ export class DatabaseUtilizationComponent implements OnInit {
     this.setActiveClass("page", index);
     this.dateList = [];
     this.monthCounts = "0";
-    this.monthDataSize = "0 KB";
+    this.monthDataSize = "0";
     let detail = this.serviceList.find(item => item.functionName == functionName);
     if (detail != undefined) {
       let dbPath = "BackEndFunctionCallingHistory/History/" + detail.servicePage + "/" + functionName + "/" + this.selectedYear + "/" + this.selectedMonthName;
@@ -126,9 +130,11 @@ export class DatabaseUtilizationComponent implements OnInit {
               this.monthDataSize = data[date] == null ? 0 + " KB" : data[date] > 1024 ? (data[date] / 1024).toFixed(2) + " MB" : data[date].toFixed(2) + " KB";
             }
             else {
+              let formatedDate=date.split('-')[2]+" "+this.commonService.getCurrentMonthShortName(Number(date.split('-')[1]));
               let count = data[date]["count"] == null ? 0 : data[date]["count"];
               let dataSize = data[date]["dataSize"] == null ? 0 : data[date]["dataSize"];
-              list.push({ date: date, count: count, dataSize: dataSize > 1024 ? (dataSize / 1024).toFixed(2) + " MB" : dataSize.toFixed(2) + " KB" });
+              let unit=dataSize > 1024 ? "Mb" : "Kb";
+              list.push({ date: formatedDate, count: count, dataSize: dataSize > 1024 ? (dataSize / 1024).toFixed(2) : dataSize.toFixed(2),unit:unit});
             }
           }
           this.dateList = list;

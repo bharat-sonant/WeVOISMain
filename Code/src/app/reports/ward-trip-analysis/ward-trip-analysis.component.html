@@ -11,7 +11,7 @@
             <div class="col-md-12 desk-hide">
                 <div class="header">
                     <h3 class="header-text">Ward Trip Analysis
-                        
+
                     </h3>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                                         <div class="col-md-12 mob-hide-iner3">
                                             <button class="btn btn-primary " (click)="setDate('','previous');">
                                                 << </button> <input id="txtDate" class="date-input" type="date"
-                                                    (change)="setDate($event.target.value,'current')">
+                                                        (change)="setDate($event.target.value,'current')">
                                                     <button class="btn btn-primary" (click)="setDate('','next');"> >>
                                                     </button>
                                         </div>
@@ -73,7 +73,7 @@
                                                     <div class="data-1 all-data-iner">
                                                         <p class="remark-analysis">
                                                             {{tripData.wasteCollection}} Kg
-                                                            <h5>Waste Collection</h5>
+                                                        <h5>Waste Collection</h5>
                                                     </div>
                                                     <div class="data-2">
                                                         <p class="pen-analysis">
@@ -91,7 +91,7 @@
                                                     <div class="data-3">
                                                         <p class="remark-analysis">
                                                             {{tripData.startTime}}
-                                                            <h5>Time</h5>
+                                                        <h5>Time</h5>
                                                     </div>
                                                 </div>
                                             </div>
@@ -101,17 +101,29 @@
                                             <div class="col-md-12">
                                                 <div class="review-page">
                                                     <div class="col-12 radio-text radio-text2">
-                                                        <input class="Status2" type="checkbox" id="chkFilledStatus" value="0" (click)="getSelected('chkFilledStatus');"
-                                                            >
+                                                        <input class="Status2" type="checkbox" id="chkFilledStatus"
+                                                            value="0" (click)="getSelected('chkFilledStatus');">
                                                         <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
                                                     </div>
-                                                    <div class="col-12 radio-text"> <input class="Status3" type="checkbox" id="chkRemark"
-                                                            value="0" (click)="getSelected('chkRemark');">
+                                                    <div class="col-12 radio-text radio-text2"> <input class="Status2"
+                                                            type="checkbox" id="chkRemark" value="0"
+                                                            (click)="getSelected('chkRemark');">
                                                         <label for="radio0">&nbsp;वाहन पर तिरपाल है ?</label>
                                                     </div>
+                                                    <div class="col-12 radio-text radio-text2"> <input class="Status2"
+                                                            type="checkbox" id="chkOverLoad" value="0"
+                                                            (click)="getSelected('chkOverLoad');">
+                                                        <label for="radio0">&nbsp;अधिक भार है ?</label>
+                                                    </div>
+                                                    <div class="col-12 radio-text">
+                                                        <textarea id="txtManualRemark" style="width:100%"
+                                                            placeholder="Remark"
+                                                            value="{{tripData.manualRemarks}}">{{tripData.manualRemarks}}</textarea>
+                                                    </div>
                                                     <div class="dustbin-progress dustbin-progress2">
-                                                        <button type="button" class="btn w-100 btn-success btn2" (click)="saveTripAnalysis();"
-                                                            >Save <i class="fas fa-save"></i></button>
+                                                        <button type="button" class="btn w-100 btn-success btn2"
+                                                            (click)="saveTripAnalysis();">Save <i
+                                                                class="fas fa-save"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -126,11 +138,12 @@
                                     <div class="col-md-9 mob-res mob-res3">
                                         <div class="row">
                                             <div class="col-12 main-carousel">
-                                                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
-                                                    data-interval="false">
+                                                <div id="carouselExampleControls" class="carousel slide"
+                                                    data-ride="carousel" data-interval="false">
                                                     <div class="carousel-inner">
                                                         <div id="slide1" class="carousel-item active">
-                                                            <img id="slideImg1" class="rotate0 d-block img-fluid" src="{{tripData.imageUrl}}">
+                                                            <img id="slideImg1" class="rotate0 d-block img-fluid"
+                                                                src="{{tripData.imageUrl}}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -142,28 +155,29 @@
                                                     <div class="data-3">
                                                         <p class="remark-analysis remark-analysis2">
                                                             {{tripData.tripCount}}
-                                                            <h5 class="trip2">Total Trip</h5>
+                                                        <h5 class="trip2">Total Trip</h5>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-10 main2">
                                                 <div class="row mt-10 main2-iner">
-                                                        <div id="tripDiv1" class="col-md-3 text-center trip-summary active-trip"
-                                                            (click)="getTripData(1)">
-                                                            TRIP 1
-                                                        </div>
-                                                        <div id="tripDiv2" class="col-md-3 text-center trip-summary"
-                                                            (click)="getTripData(2)">
-                                                            TRIP 2
-                                                        </div>
-                                                        <div id="tripDiv3" class="col-md-3 text-center trip-summary"
-                                                            (click)="getTripData(3)">
-                                                            TRIP 3
-                                                        </div>
-                                                        <div id="tripDiv4" class="col-md-3 text-center trip-summary"
-                                                            (click)="getTripData(4)">
-                                                            TRIP 4
-                                                        </div>
+                                                    <div id="tripDiv1"
+                                                        class="col-md-3 text-center trip-summary active-trip"
+                                                        (click)="getTripData(1)">
+                                                        TRIP 1
+                                                    </div>
+                                                    <div id="tripDiv2" class="col-md-3 text-center trip-summary"
+                                                        (click)="getTripData(2)">
+                                                        TRIP 2
+                                                    </div>
+                                                    <div id="tripDiv3" class="col-md-3 text-center trip-summary"
+                                                        (click)="getTripData(3)">
+                                                        TRIP 3
+                                                    </div>
+                                                    <div id="tripDiv4" class="col-md-3 text-center trip-summary"
+                                                        (click)="getTripData(4)">
+                                                        TRIP 4
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

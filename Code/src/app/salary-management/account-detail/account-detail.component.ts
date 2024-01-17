@@ -45,6 +45,7 @@ export class AccountDetailComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Salary-Management-Driver","Account-Detail",localStorage.getItem("userID"));
     this.setDefault();
   }
 

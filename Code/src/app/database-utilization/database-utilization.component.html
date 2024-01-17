@@ -12,53 +12,57 @@
                     </div>
                 </div>
                 <!------------- Header End ---------->
-                <div class="row" style="margin-top: 8px;">
+                <div class="row" style="margin-top: 8px; padding-left: 20px;padding-right: 20px;">
                     <!------------- Halt Scroll List Start ---------->
-                    <div class="col-md-3 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
-                        <div class="scrollable-halt">
-                            <div class="halt-bg" style="height: calc(100vh - 50px);">
+                    <div class="col-md-4"  >
+                        <div>
+                            <div class="halt-bg scrollable-halt" style="height: calc(100vh - 100px);">
                                 <div class="dth">
-                                    <div id="divMainPage{{i}}"
-                                        style="width:100%; text-align: left; padding: 10px;cursor: pointer; border-bottom: 1px solid lightgray;"
+                                    <div class="col-md-12 d-flex" id="divMainPage{{i}}"
+                                        style="text-align: left; cursor: pointer; border-bottom: 1px solid lightgray;padding: 5px;"
                                         *ngFor="let data of servicePageList, let i=index"
                                         (click)="getServiceNameData(data.servicePage,i)">
-                                        {{data.servicePage}} <span
-                                            style="float: right;margin-right: 10px;">{{data.totalDataSize}}</span>
+                                        <div class="col-8" style="margin-left: -10px;">{{data.servicePage}}</div>
+                                        <div class="col-4" style="text-align: right;"><b>{{data.totalDataSize}}</b>
+                                            <br /><span style="font-size: 12px;color:gray"> {{data.totalDataSizeUnit}}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!------------- Halt Scroll List End ---------->
-                    <div class="col-md-4 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
-                        <div class="scrollable-halt">
-                            <div class="halt-bg" style="height: calc(100vh - 50px);">
+                    <div class="col-md-4 " >
+                        <div>
+                            <div class="halt-bg scrollable-halt" style="height: calc(100vh - 100px);">
                                 <div class="dth">
-                                    <div id="divPage{{i}}" class="text-left"
-                                        style="width:100%; padding: 10px; cursor: pointer; border-bottom: 1px solid lightgray;"
+                                    <div class="col-md-12 d-flex" id="divPage{{i}}"
+                                        style="text-align: left; cursor: pointer; border-bottom: 1px solid lightgray;padding: 5px;"
                                         *ngFor="let data of serviceList, let i=index"
                                         (click)="getMonthData(data.functionName,i)">
-                                        {{data.functionName}} <span
-                                            style="float: right;margin-right: 10px;">{{data.count}}<b> /
-                                            </b>{{data.dataSize}}</span>
+                                        <div class="col-8" style="margin-left: -10px;">{{data.functionName}}</div>
+                                        <div class="col-2" style="text-align: right;"><span
+                                                [hidden]="data.dataSize==0.00"> <b>{{data.dataSize}}</b> <br /><span
+                                                    style="font-size: 12px; color:gray"> {{data.unit}}</span></span></div>
+                                        <div class="col-2" style="text-align: right;"><b> {{data.count}}</b></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
-                        <div class="scrollable-halt">
-                            <div class="halt-bg" style="height: calc(100vh - 50px);">
+                    <div class="col-md-4 " >
+                        <div>
+                            <div class="halt-bg" style="height: calc(100vh - 100px);">
                                 <div class="col-md-12" style="text-align: left; border-bottom: 3px solid lightgray;">
                                     <select class="caret-select" id="ddlYear"
-                                        (change)="changeYearSelection($event.target.value)" style="width: 100px;"
+                                        (change)="changeYearSelection($event.target.value)" style="width: 100px;margin-left: -15px!important;"
                                         [(ngModel)]="selectedYear">
                                         <option value="0">Year</option>
                                         <option value={{yer.year}} *ngFor="let yer of yearList"
                                             ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
                                     </select>
                                     <select class="caret-select" id="ddlMonth"
-                                        (change)="changeMonthSelection($event.target.value)" style="width: 130px;">
+                                        (change)="changeMonthSelection($event.target.value)" style="width: 130px; ">
                                         <option value="0">Month</option>
                                         <option value="01">January</option>
                                         <option value="02">February</option>
@@ -73,17 +77,37 @@
                                         <option value="11">November</option>
                                         <option value="12">December</option>
                                     </select>
-                                    <span style="float: right; margin-right: 10px;">{{monthCounts}}<b> /
-                                    </b>{{monthDataSize}}</span>
+                                    <span style="float: right; margin-right: 10px; margin-top: 10px; padding: 10px 21px;
+                                    border-radius: 3px;
+                                    color: #48b549;
+                                    text-align: center;
+                                    border: 1px solid #eee;"><b>{{monthCounts}}
+                                        </b></span>
                                 </div>
-                                <div class="dth">
-                                    <div id="divDate{{i}}" class="text-left"
-                                        style="width:100%; padding: 10px; border-bottom: 1px solid lightgray;"
-                                        *ngFor="let data of dateList, let i=index">
-                                        {{data.date}} <span
-                                            style="float: right; margin-right: 10px;">{{data.count}}<b> /
-                                            </b>{{data.dataSize}}</span>
-                                    </div>
+                                <div class="table-wrapper" style="height:calc(100vh - 180px); overflow: auto;">
+                                    <table class="table table-one-iner">
+                                        <thead>
+                                            <th class="table-head2 text-left">Date</th>
+                                            <th class="table-head3 text-right">Counts
+                                            </th>
+                                            <th class="text-left table-head3  text-right">
+                                                Size</th>
+                                        </thead>
+                                        <tbody style="background-color: #fff;">
+                                            <tr class="table-row"
+                                                *ngFor="let data of dateList; let i=index">
+                                                <td class="table-data-2 text-left" style="margin-left: 15px;">
+                                                    {{data.date}}</td>
+                                                <td class="table-data-3 text-right margin-right:10px;">
+                                                  <b>  {{data.count}}</b>
+                                                </td>
+                                                <td class="table-data-3 text-right margin-right:10px;">
+                                                    <b>  {{data.dataSize}}</b><br/>
+                                                    <span>{{data.unit}}</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

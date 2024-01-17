@@ -19,6 +19,7 @@ export class WardTripAnalysisComponent implements OnInit {
   dbPath: any;
   userId: any;
   filledStatus: any;
+  overLoad: any;
   remarkStatus: any;
   allZoneList: any[];
   selectedZone: any[];
@@ -36,15 +37,19 @@ export class WardTripAnalysisComponent implements OnInit {
     remark: "",
     filledStatus: "",
     tripCount: 0,
-    wasteCollection: 0
+    wasteCollection: 0,
+    manualRemarks: "",
+    overLoad: ""
   };
   cityName: any;
   db: any;
+  txtManualRemark = "#txtManualRemark";
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Monitoring","Trip-Analysis",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Monitoring", "Trip-Analysis", localStorage.getItem("userID"));
     this.setDefaultValues();
     this.getPendingAnalysis();
     this.getWardTrips();
@@ -62,6 +67,7 @@ export class WardTripAnalysisComponent implements OnInit {
     $("#txtDate").val(this.selectedDate);
     this.filledStatus = "";
     this.remarkStatus = "";
+    this.overLoad="";
     this.userId = localStorage.getItem("userID");
     this.allZoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
@@ -97,7 +103,7 @@ export class WardTripAnalysisComponent implements OnInit {
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
               tripCount = keyArray.length;
-              let tripAnalysisCount=0;
+              let tripAnalysisCount = 0;
               for (let j = 0; j < keyArray.length; j++) {
                 let tripID = keyArray[j];
                 let driverId = data[tripID]["driverId"];
@@ -109,6 +115,8 @@ export class WardTripAnalysisComponent implements OnInit {
                 let analysisBy = "";
                 let remark = "";
                 let imageName = "";
+                let manualRemarks = "";
+                let overLoad = "";
                 let vehicleType = data[tripID]["vehicle"].split('-')[0];
                 if (data[tripID]["filledStatus"] != null) {
                   filledStatus = data[tripID]["filledStatus"];
@@ -118,10 +126,16 @@ export class WardTripAnalysisComponent implements OnInit {
                 }
                 if (data[tripID]["analysisBy"] != null) {
                   analysisBy = data[tripID]["analysisBy"];
-                  tripAnalysisCount++;                  
+                  tripAnalysisCount++;
                 }
                 if (data[tripID]["remark"] != null) {
                   remark = data[tripID]["remark"];
+                }
+                if (data[tripID]["manualRemarks"] != null) {
+                  manualRemarks = data[tripID]["manualRemarks"];
+                }
+                if (data[tripID]["overLoad"] != null) {
+                  overLoad = data[tripID]["overLoad"];
                 }
                 if (data[tripID]["imageName"] != null) {
                   imageName = data[tripID]["imageName"];
@@ -144,12 +158,14 @@ export class WardTripAnalysisComponent implements OnInit {
                     analysisBy: analysisBy,
                     remark: remark,
                     imageName: imageName,
-                    vehicleType: vehicleType
+                    vehicleType: vehicleType,
+                    manualRemarks: manualRemarks,
+                    overLoad: overLoad
                   });
                 });
               }
-              if(tripAnalysisCount==tripCount){
-                iconClass="fas fa-diagnoses";
+              if (tripAnalysisCount == tripCount) {
+                iconClass = "fas fa-diagnoses";
               }
               this.zoneList.push({
                 zoneNo: zoneNo,
@@ -158,7 +174,7 @@ export class WardTripAnalysisComponent implements OnInit {
                 iconClass: iconClass,
                 tripList: tripList,
                 tripCount: tripCount,
-                tripAnalysisCount:tripAnalysisCount
+                tripAnalysisCount: tripAnalysisCount
               });
             }
           } else {
@@ -169,7 +185,7 @@ export class WardTripAnalysisComponent implements OnInit {
               iconClass: iconClass,
               tripList: tripList,
               tripCount: tripCount,
-              tripAnalysisCount:0
+              tripAnalysisCount: 0
 
             });
           }
@@ -273,10 +289,13 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.startTime = tripDetails.time;
       this.tripData.filledStatus = tripDetails.filledStatus;
       this.tripData.remark = tripDetails.remark;
+      this.tripData.manualRemarks = tripDetails.manualRemarks;
+      this.tripData.overLoad=tripDetails.overLoad;
       this.filledStatus = tripDetails.filledStatus;
       this.remarkStatus = tripDetails.remark;
+      this.overLoad = tripDetails.overLoad;
       this.tripData.imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName + "?alt=media";
-
+      this.setOverload();
       this.setFilledStatus();
       this.setTripAnalysis();
       this.setRemarkStatus();
@@ -335,6 +354,29 @@ export class WardTripAnalysisComponent implements OnInit {
         this.remarkStatus = "";
       }
     }
+    if (id == "chkOverLoad") {
+      if (element.checked == true) {
+        this.overLoad = "yes";
+      } else {
+        this.overLoad = "";
+      }
+    }
+  }
+
+  setOverload() {
+    let element = <HTMLInputElement>document.getElementById("chkOverLoad");
+    if (
+      this.tripData.overLoad == undefined ||
+      this.tripData.overLoad == ""
+    ) {
+      this.tripData.overLoad = "";
+      this.overLoad = "";
+    }
+    if (this.tripData.overLoad == "yes") {
+      element.checked = true;
+    } else {
+      element.checked = false;
+    }
   }
 
   setFilledStatus() {
@@ -373,6 +415,8 @@ export class WardTripAnalysisComponent implements OnInit {
       analysisAt: this.commonService.getTodayDateTime(),
       analysisBy: this.userId,
       remark: this.remarkStatus,
+      manualRemarks: $(this.txtManualRemark).val(),
+      overLoad:this.overLoad
     });
     this.updatePendingAnalysis();
     this.updateTripAndDetails();
@@ -386,14 +430,16 @@ export class WardTripAnalysisComponent implements OnInit {
     data.analysisAt = this.commonService.getTodayDateTime();
     data.analysisBy = this.userId;
     data.remark = this.remarkStatus;
+    data.manualRemarks = $(this.txtManualRemark).val();
     data.filledStatus = this.filledStatus;
+    data.overLoad=this.overLoad;
     let zondDetail = this.zoneList.find(
       (item) => item.zoneNo == this.selectedZone
     );
     zondDetail.tripList = this.tripList;
-    zondDetail.tripAnalysisCount=zondDetail.tripAnalysisCount+1;
-    if(zondDetail.tripAnalysisCount==zondDetail.tripCount){
-    zondDetail.iconClass="fas fa-diagnoses";
+    zondDetail.tripAnalysisCount = zondDetail.tripAnalysisCount + 1;
+    if (zondDetail.tripAnalysisCount == zondDetail.tripCount) {
+      zondDetail.iconClass = "fas fa-diagnoses";
     }
   }
 
@@ -413,14 +459,19 @@ export class WardTripAnalysisComponent implements OnInit {
     this.tripData.driverMobile = "";
     this.tripData.driverName = "";
     this.tripData.filledStatus = "";
+    this.tripData.manualRemarks = "";
+    $(this.txtManualRemark).val("");
     this.tripData.imageUrl = this.imageNotAvailablePath;
     this.tripData.remark = "";
     this.tripData.startTime = "00:00:00";
     this.tripData.wasteCollection = 0;
     this.tripData.tripCount = 0;
+    this.tripData.overLoad="";
     let element = <HTMLInputElement>document.getElementById("chkFilledStatus");
     element.checked = false;
     element = <HTMLInputElement>document.getElementById("chkRemark");
+    element.checked = false;
+    element = <HTMLInputElement>document.getElementById("chkOverLoad");
     element.checked = false;
   }
 }
@@ -435,6 +486,8 @@ export class tripDetail {
   imageUrl: string;
   remark: string;
   filledStatus: string;
+  overLoad: string;
   tripCount: number;
   wasteCollection: number;
+  manualRemarks: string;
 }
