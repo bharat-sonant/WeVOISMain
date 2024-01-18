@@ -24,7 +24,7 @@ export class WardWorkPercentageComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Portal-Services","Work-Percentage",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Portal-Services", "Work-Percentage", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -148,8 +148,13 @@ export class WardWorkPercentageComponent implements OnInit {
       if (count <= expectedLine) {
         let detail = lineStatusList.find(item => item.lineNo == i);
         if (detail == undefined) {
+          let lineLength = "0";
+          let lineDetail = wardLines.find(item => item.lineNo == i);
+          if (lineDetail != undefined) {
+            lineLength = lineDetail.lineLength;
+          }
           let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
-          this.db.object(dbPath).update({ Status: "LineCompleted" });
+          this.db.object(dbPath).update({ Status: "LineCompleted", "line-distance": lineLength.toString() });
           count++;
         }
       }
