@@ -145,7 +145,11 @@ import { PenaltyReviewComponent } from '../../PortalServices/penalty-review/pena
 import { PaymentViaCitizenappComponent } from '../../reports/payment-via-citizenapp/payment-via-citizenapp.component';
 import { PageLoadHistoryComponent } from '../../page-load-history/page-load-history.component';
 import { DatabaseUtilizationComponent } from '../../database-utilization/database-utilization.component';
-
+import { SecondaryCollectionMonitoringComponent } from '../../secondary-collection-monitoring/secondary-collection-monitoring.component';
+import { SecondaryCollectionAnalysisComponent } from '../../secondary-collection-analysis/secondary-collection-analysis.component';
+import { SecondaryCollectionPlaningComponent } from '../../secondary-collection-planing/secondary-collection-planing.component';
+import { SecondaryCollectionServiceComponent } from '../../secondary-collection-service/secondary-collection-service.component';
+import { SecondaryCollectionManageComponent } from '../../secondary-collection-manage/secondary-collection-manage.component';
 
 // Jaipur-Greater
 
@@ -333,7 +337,12 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     MonthlyAttendanceComponent,
     PaymentViaCitizenappComponent,
     PageLoadHistoryComponent,
-    DatabaseUtilizationComponent
+    DatabaseUtilizationComponent,
+    SecondaryCollectionMonitoringComponent,
+    SecondaryCollectionAnalysisComponent,
+    SecondaryCollectionPlaningComponent,
+    SecondaryCollectionServiceComponent,
+    SecondaryCollectionManageComponent,
   ]
 })
 

@@ -1,0 +1,109 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<div>
+    <section class="header ">
+        <div class="row no-gutters ">
+            <div class="offset-3 col-6 heading text-center">
+                <b class="header-text">  </b>
+            </div>
+        </div>
+    </section>
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Date</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDate" class="caret-select custom-date-input" type="date" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Zone</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlZone" (change)="getDustbins();">
+                                        <option value="0">All Zone</option>
+                                        <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zone}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Driver</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlDriver">
+                                        <option value="0">Select</option>
+                                        <option value="{{d.id}}" *ngFor="let d of driverList">{{d.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Vehicle</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlVahicle">
+                                        <option value="0">Select</option>
+                                        <option value="{{d.vehicle}}" *ngFor="let d of vehicleList">{{d.vehicle}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Sec. Collection</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlDustbin">
+                                        <option value="0">Select</option>
+                                        <option value="{{d.dustbin}}" *ngFor="let d of dustbinList">{{d.address}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Filled Percentage</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtPercentage" class="caret-select" type="text"
+                                        />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Pick Time</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtPickTime" class="caret-select" type="time"
+                                       />
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="display: none;">
+                                <label>Analysis Time </label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtTimeDiff" class="caret-select" type="text"
+                                       value="30" />
+                                </div>
+                            </div>
+                          
+                            <div class="col-md-2">
+                                <label>&nbsp;</label>
+                                <div class="form-group">
+                                    <input type="checkbox" id="chk"> Is Picked
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-12 pr-1">
+                                <div class="form-group">
+                                    <button id="btnSave" class="btn btn-success btn-xs"
+                                        (click)="saveData();">SAVE</button>
+
+                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30"
+                                        style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,342 @@
+<section class="dustbin-analysis">
+    <div id="divLoader" class="loaderClass">
+        <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    </div>
+    <div id="ImageLoader" class="loaderClass-no-bg">
+        <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    </div>
+    <div class="container-fluid no-gutters">
+        <div class="row">
+            
+            <div class="col-md-12 desk-hide">
+                <div class="header">
+                    <h3 class="header-text">
+                        <span class="dustin-span">Sec. Collection Analysis</span>
+                        <div class="refresh">
+                            <span class="header-span"
+                                >last
+                                Update<br />
+                                <span class="header-span-inner"
+                                    >{{dustbinData.refreshTime}}
+                                </span></span>
+                            <button class="refresh-button" (click)="refreshData();"
+                                title="Refresh Data">
+                                <i class="fas fa-redo-alt"></i></button>
+                        </div>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-md-12 mob-20 date-main">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12 pr-0 date-main-iner">
+                                <div class="top">
+                                    <div class="row date-main-iner2">
+                                        <div class="col-md-12 date-main-iner4">
+                                            <button class="btn btn-primary " (click)="setDate('','previous');">
+                                                << </button>
+                                                    <input id="txtDate" class="date-input" type="date"
+                                                        (change)="setDate($event.target.value,'current')">
+                                                    <button class="btn btn-primary" (click)="setDate('','next');"> >>
+                                                    </button>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <select class="caret-select" id="ddlZone"
+                                                (change)="changePlan($event.target.value)">
+                                                <option value="{{plan.planId}}" *ngFor="let plan of planList">
+                                                    {{plan.planName}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mt-10 pr-0">
+                                <div class="dustbin-card">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="float">
+                                                <div class="fleft">
+                                                    <h6> <img src="../../../assets/img/man.png"> &nbsp;
+                                                        {{planDetail.driverName}} </h6>
+                                                </div>
+                                                <div class="fright">
+                                                    <p>{{planDetail.vehicle}}
+                                                      
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="float">
+                                                <div class="fleft">
+                                                    <h6> <img src="../../../assets/img/man.png">
+                                                        &nbsp;{{planDetail.helper}} </h6>
+                                                </div>
+                                                <div class="fright">
+                                                    <p class="fright-iner"
+                                                        >
+                                                        {{binDetail.startTime}}
+                                                        <br> <span>Start Time</span>
+                                                    </p>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 ">
+                                            <div class="float fleft-outer">
+                                                <div class="fleft">
+                                                    <h6> <img src="../../../assets/img/man.png">
+                                                        &nbsp;{{planDetail.secondHelper}} </h6>
+                                                </div>
+                                                <div class="fright end-time-outer">
+                                                    <p
+                                                        >
+                                                        {{binDetail.endTime}}
+                                                        <br><span>End Time</span>
+                                                    </p>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 pl-0 pr-0 mt-10">
+                                    <div class="all-data ">
+                                        <div class="data-1 pen-analysis-outer">
+                                           
+                                            <p class="pen-analysis">
+                                                {{dustbinData.pendingAnalysis}}</p>
+                                            <h5>Pending Analysis</h5>
+                                        </div>
+                                        <div class="data-2 summ-text-outer">
+                                           
+                                            <p class="summ-text"> {{planDetail.pickedCount}}{{planDetail.assignedCount}} </p>
+                                            <h5>Summary</h5>
+                                        </div>
+                                        <div class="data-3">
+                                           
+                                            <p class="pen-analysis">
+                                                {{planDetail.notAtLocationCount}}</p>
+                                            <h5>Not at Location</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="divAccess" class="col-md-12 mt-10 pl-0 pr-0">
+                                    <div class="progress-card">
+                                        <div class="row">
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio0"
+                                                    name="gender" value="0" checked (click)="getFillPercentage('0');">
+                                                <label for="radio0">&nbsp;0%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio10"
+                                                    name="gender" value="10" (click)="getFillPercentage('10');">
+                                                <label for="radio10">&nbsp;10%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio20"
+                                                    name="gender" value="20" (click)="getFillPercentage('20');">
+                                                <label for="radio20">&nbsp;20%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio30"
+                                                    name="gender" value="30" (click)="getFillPercentage('30');">
+                                                <label for="radio30">&nbsp;30%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio40"
+                                                    name="gender" value="40" (click)="getFillPercentage('40');">
+                                                <label for="radio40">&nbsp;40%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio50"
+                                                    name="gender" value="50" (click)="getFillPercentage('50');">
+                                                <label for="radio50">&nbsp;50%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio60"
+                                                    name="gender" value="60" (click)="getFillPercentage('60');">
+                                                <label for="radio60">&nbsp;60%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio70"
+                                                    name="gender" value="70" (click)="getFillPercentage('70');">
+                                                <label for="radio70">&nbsp;70%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio80"
+                                                    name="gender" value="80" (click)="getFillPercentage('80');">
+                                                <label for="radio80">&nbsp;80%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio90"
+                                                    name="gender" value="90" (click)="getFillPercentage('90');">
+                                                <label for="radio90">&nbsp;90%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio100"
+                                                    name="gender" value="100" (click)="getFillPercentage('100');">
+                                                <label for="radio100">&nbsp;100%</label>
+                                            </div>
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio120"
+                                                    name="gender" value="120" (click)="getFillPercentage('120');">
+                                                <label for="radio120">&nbsp;120%</label>
+                                            </div>
+                                            <div class="col-lg-12 radio-text padding-bottom">
+                                                <hr />
+                                                <b>Remarks</b>
+                                            </div>
+
+                                            <div class="col-7 pr-0 radio-text dust-main">
+                                                <input type="checkbox" id="chkRemark1">
+                                                <label for="check1">&nbsp;कचरा बाहर फैला हुआ है</label>
+                                            </div>
+                                            <div class="col-5 pl-0 radio-text dust-main">
+                                                <input type="checkbox" id="chkRemark2">
+                                                <label for="check2">&nbsp;डस्टबिन टूटा हुआ है</label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <textarea id="txtManualRemark" style="width:100%" placeholder="Remark" value="{{binDetail.manualRemarks}}" >{{binDetail.manualRemarks}}</textarea>
+                                        </div>
+                                        <div class="dustbin-progress align-self-center-outer">
+                                            <p class="align-self-center"><b
+                                                    [innerHTML]="binDetail.analysisDetail"></b> </p>
+                                            <button type="button" class="btn btn-success"
+                                                (click)="saveDustbinAnalysis();">Save <i
+                                                    class="fas fa-save"></i></button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-10 pl-0 pr-0 dustbin-history">
+                                    <a id="dustbinReportLink" href="#" target="_blank">
+                                        <button class="button"><span>View Sec. Collection
+                                                History </span></button>
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 mob-mid mob-hide-outer">
+                        <div class="row">
+                            <div class="col-md-12 mob-hide">
+                                <div class="header">
+                                    <h3 class="header-text">
+                                        <span class="dustin-span">Sec. Collection Analysis</span>
+                                        <div class="refresh">
+                                            <span class="header-span"
+                                                >last
+                                                Update<br />
+                                                <span class="header-span-iner"
+                                                    >{{dustbinData.refreshTime}}
+                                                </span></span>
+                                            <button class="refresh-button" (click)="refreshData();"
+                                                title="Refresh Data">
+                                                <i class="fas fa-redo-alt"></i></button>
+                                        </div>
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mob-res slide-outer">
+                                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
+                                    data-interval="false">
+                                    <div class="carousel-inner">
+                                        <div id="slide1" class="carousel-item active">
+                                            <img id="slideImg1" class="rotate0 d-block w-100 img-fluid"
+                                                src="{{binDetail.filledTopViewImageUrl}}">
+                                        </div>
+                                        <div id="slide2" class="carousel-item">
+                                            <img id="slideImg2" class="rotate0 d-block w-100 img-fluid"
+                                                src="{{binDetail.filledFarFromImageUrl}}">
+                                        </div>
+                                        <div id="slide3" class="carousel-item">
+                                            <img id="slideImg3" class="rotate0 d-block w-100 img-fluid"
+                                                src="{{binDetail.emptyTopViewImageUrl}}">
+                                        </div>
+                                        <div id="slide4" class="carousel-item">
+                                            <img id="slideImg4" class="rotate0 d-block w-100 img-fluid"
+                                                src="{{binDetail.emptyFarFromImageUrl}}">
+                                        </div>
+                                    </div>
+                                    <a class="carousel-control-prev" href="javaScript:void(0);" role="button">
+                                        <span id="preLink" class="carousel-control-prev-icon" aria-hidden="true"
+                                            (click)="setSlideImage(0,'previous');"><i
+                                                class="fas fa-angle-left"></i></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="javaScript:void(0);" role="button">
+                                        <span id="nextLink" class="carousel-control-next-icon" aria-hidden="true"
+                                            (click)="setSlideImage(0,'next')"><i class="fas fa-angle-right"></i></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-10 pr-5 pl-15">
+                                <div id="box1" class="icon-box active-box text-center"
+                                    (click)="setSlideImage(1,'selected');">
+                                    <i id="i1" class="fas fa-caret-up"></i>
+                                    <div class="text-field">
+                                        <img id="img1" src="../../../assets/img/dustbin-hover.png" class="img-fluid">
+                                        <h6 id="hText1" class="mt-15 full">ऊपर से भरा
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-10 pl-5 pr-5">
+                                <div id="box2" class="icon-box text-center" (click)="setSlideImage(2,'selected');">
+                                    <i id="i2" class="fas fa-caret-up" style="display: none;"></i>
+                                    <div class="text-field">
+                                        <img id="img2" src="../../../assets/img/dustbin.png" class="img-fluid">
+                                        <h6 id="hText2" class="mt-15 full">भरा दूर से </h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-10 pl-5 pr-5">
+                                <div id="box3" class="icon-box text-center" (click)="setSlideImage(3,'selected');">
+                                    <i id="i3" class="fas fa-caret-up" style="display: none;"></i>
+                                    <div class="text-field">
+                                        <img id="img3" src="../../../assets/img/dustbin.png" class="img-fluid">
+                                        <h6 id="hText3" class="mt-15 full" >ऊपर से खाली
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-10 pl-5">
+                                <div id="box4" class="icon-box text-center" (click)="setSlideImage(4,'selected');">
+                                    <i id="i4" class="fas fa-caret-up" style="display: none;"></i>
+                                    <div class="text-field">
+                                        <img id="img4" src="../../../assets/img/dustbin.png" class="img-fluid">
+                                        <h6 id="hText3" class="mt-15 full">खाली दूर से
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 desk-right mob-bottom">
+                        <div class="scroll-list">
+                            <div id="filter{{i}}" class="{{data.divClass}}"
+                                *ngFor="let data of dustbinList ; let i=index"
+                                (click)="data.iconClass!='fas fa-ellipsis-h' && showDustbinData(i);">
+                                <i class="{{data.iconClass}}"></i>
+                                <div class="address-text-outer">
+                                    <div class="address-text">
+                                        <h6>
+                                            {{data.address}}
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="address-main">
+                                    <div class="address-text">
+                                        <h6 [innerHTML]="data.duration">
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

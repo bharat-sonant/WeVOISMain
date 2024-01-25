@@ -67,7 +67,7 @@ export class WardTripAnalysisComponent implements OnInit {
     $("#txtDate").val(this.selectedDate);
     this.filledStatus = "";
     this.remarkStatus = "";
-    this.overLoad="";
+    this.overLoad = "";
     this.userId = localStorage.getItem("userID");
     this.allZoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
@@ -140,13 +140,9 @@ export class WardTripAnalysisComponent implements OnInit {
                 if (data[tripID]["imageName"] != null) {
                   imageName = data[tripID]["imageName"];
                 }
-                this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
-                  driverName =
-                    employee["name"] != null
-                      ? employee["name"].toUpperCase()
-                      : "---";
-                  driverMobile =
-                    employee["mobile"] != null ? employee["mobile"] : "---";
+                if (data[tripID]["driverName"] != null) {
+                  driverName = data[tripID]["driverName"];
+                  driverMobile=data[tripID]["driverMobile"];
                   tripList.push({
                     tripId: tripID,
                     tripName: "trip " + tripID,
@@ -162,7 +158,36 @@ export class WardTripAnalysisComponent implements OnInit {
                     manualRemarks: manualRemarks,
                     overLoad: overLoad
                   });
-                });
+                }
+                else {
+                  this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
+                    driverName =
+                      employee["name"] != null
+                        ? employee["name"].toUpperCase()
+                        : "---";
+                    driverMobile =
+                      employee["mobile"] != null ? employee["mobile"] : "---";
+                    tripList.push({
+                      tripId: tripID,
+                      tripName: "trip " + tripID,
+                      driverName: driverName,
+                      driverMobile: driverMobile,
+                      time: time,
+                      filledStatus: filledStatus,
+                      analysisAt: analysisAt,
+                      analysisBy: analysisBy,
+                      remark: remark,
+                      imageName: imageName,
+                      vehicleType: vehicleType,
+                      manualRemarks: manualRemarks,
+                      overLoad: overLoad
+                    });
+                    let path="WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + zoneNo+"/"+tripID;
+                    this.db.object(path).update({driverName:driverName,driverMobile:driverMobile});
+                  });
+
+                }
+
               }
               if (tripAnalysisCount == tripCount) {
                 iconClass = "fas fa-diagnoses";
@@ -290,7 +315,7 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.filledStatus = tripDetails.filledStatus;
       this.tripData.remark = tripDetails.remark;
       this.tripData.manualRemarks = tripDetails.manualRemarks;
-      this.tripData.overLoad=tripDetails.overLoad;
+      this.tripData.overLoad = tripDetails.overLoad;
       this.filledStatus = tripDetails.filledStatus;
       this.remarkStatus = tripDetails.remark;
       this.overLoad = tripDetails.overLoad;
@@ -416,7 +441,7 @@ export class WardTripAnalysisComponent implements OnInit {
       analysisBy: this.userId,
       remark: this.remarkStatus,
       manualRemarks: $(this.txtManualRemark).val(),
-      overLoad:this.overLoad
+      overLoad: this.overLoad
     });
     this.updatePendingAnalysis();
     this.updateTripAndDetails();
@@ -432,7 +457,7 @@ export class WardTripAnalysisComponent implements OnInit {
     data.remark = this.remarkStatus;
     data.manualRemarks = $(this.txtManualRemark).val();
     data.filledStatus = this.filledStatus;
-    data.overLoad=this.overLoad;
+    data.overLoad = this.overLoad;
     let zondDetail = this.zoneList.find(
       (item) => item.zoneNo == this.selectedZone
     );
@@ -466,7 +491,7 @@ export class WardTripAnalysisComponent implements OnInit {
     this.tripData.startTime = "00:00:00";
     this.tripData.wasteCollection = 0;
     this.tripData.tripCount = 0;
-    this.tripData.overLoad="";
+    this.tripData.overLoad = "";
     let element = <HTMLInputElement>document.getElementById("chkFilledStatus");
     element.checked = false;
     element = <HTMLInputElement>document.getElementById("chkRemark");

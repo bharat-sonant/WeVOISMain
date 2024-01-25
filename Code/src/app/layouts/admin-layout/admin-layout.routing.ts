@@ -137,6 +137,11 @@ import { PenaltyReviewComponent } from '../../PortalServices/penalty-review/pena
 import { PaymentViaCitizenappComponent } from '../../reports/payment-via-citizenapp/payment-via-citizenapp.component';
 import { PageLoadHistoryComponent } from '../../page-load-history/page-load-history.component';
 import { DatabaseUtilizationComponent } from '../../database-utilization/database-utilization.component';
+import { SecondaryCollectionMonitoringComponent } from '../../secondary-collection-monitoring/secondary-collection-monitoring.component';
+import { SecondaryCollectionAnalysisComponent } from '../../secondary-collection-analysis/secondary-collection-analysis.component';
+import { SecondaryCollectionPlaningComponent } from '../../secondary-collection-planing/secondary-collection-planing.component';
+import { SecondaryCollectionServiceComponent } from '../../secondary-collection-service/secondary-collection-service.component';
+import { SecondaryCollectionManageComponent } from '../../secondary-collection-manage/secondary-collection-manage.component';
 
 
 
@@ -410,6 +415,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'sikar/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'sikar/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'sikar/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'sikar/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'sikar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'sikar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'sikar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -649,6 +659,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-greater/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-greater/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-greater/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-greater/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-greater/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-greater/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-greater/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -912,6 +927,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'reengus/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'reengus/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'reengus/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'reengus/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'reengus/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'reengus/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'reengusr/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -1155,6 +1175,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'shahpura/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'shahpura/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'shahpura/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'shahpura/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'shahpura/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'shahpura/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'shahpura/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     //test
     { path: 'test/home', component: HomeComponent },
     { path: 'test/dashboard', component: DashboardComponent },
@@ -1397,6 +1422,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'test/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'test/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'test/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'test/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'test/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'test/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'test/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
 
 
@@ -1642,6 +1672,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-office/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-office/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-office/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-office/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-office/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-office/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-office/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
@@ -1883,6 +1918,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'kishangarh/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'kishangarh/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'kishangarh/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'kishangarh/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'kishangarh/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'kishangarh/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'kishangarh/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //Nawai
     { path: 'niwai/home', component: HomeComponent },
@@ -2124,6 +2164,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'niwai/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'niwai/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'niwai/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'niwai/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'niwai/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'niwai/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'niwai/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
     { path: 'jaisalmer/dashboard', component: DashboardComponent },
@@ -2364,6 +2409,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaisalmer/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaisalmer/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaisalmer/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaisalmer/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaisalmer/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaisalmer/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaisalmer/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2605,6 +2655,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'salasar/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'salasar/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'salasar/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'salasar/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'salasar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'salasar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'salasar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //Behror
     { path: 'behror/home', component: HomeComponent },
@@ -2846,6 +2901,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'behror/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'behror/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'behror/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'behror/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'behror/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'behror/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'behror/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
     { path: 'jaipur/account-detail', component: AccountDetailComponent },
@@ -3085,6 +3145,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
     { path: 'jaipur-jhotwara/account-detail', component: AccountDetailComponent },
@@ -3324,6 +3389,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-jhotwara/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-jhotwara/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-jhotwara/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-jhotwara/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-jhotwara/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-jhotwara/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-jhotwara/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //jaipur-jagatpura
     { path: 'jaipur-jagatpura/home', component: HomeComponent },
@@ -3564,6 +3634,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-jagatpura/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-jagatpura/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-jagatpura/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-jagatpura/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-jagatpura/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-jagatpura/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-jagatpura/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
 
     //jaipur-malviyanagar
@@ -3806,6 +3881,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-malviyanagar/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-malviyanagar/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-malviyanagar/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-malviyanagar/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-malviyanagar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-malviyanagar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-malviyanagar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
     { path: 'jaipur-mansarovar/account-detail', component: AccountDetailComponent },
@@ -4045,6 +4125,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-mansarovar/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-mansarovar/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-mansarovar/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-mansarovar/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-mansarovar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-mansarovar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-mansarovar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
     { path: 'jaipur-murlipura/account-detail', component: AccountDetailComponent },
@@ -4286,6 +4371,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-murlipura/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-murlipura/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-murlipura/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-murlipura/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-murlipura/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-murlipura/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-murlipura/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     //jaipur-sanganer
     { path: 'jaipur-sanganer/home', component: HomeComponent },
     { path: 'jaipur-sanganer/account-detail', component: AccountDetailComponent },
@@ -4525,6 +4615,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-sanganer/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-sanganer/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-sanganer/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-sanganer/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-sanganer/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-sanganer/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-sanganer/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4765,6 +4860,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-vidhyadhar/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-vidhyadhar/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-vidhyadhar/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-vidhyadhar/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-vidhyadhar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-vidhyadhar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-vidhyadhar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
@@ -5005,6 +5105,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'bhiwadi/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'bhiwadi/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'bhiwadi/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'bhiwadi/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'bhiwadi/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'bhiwadi/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'bhiwadi/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
@@ -5245,6 +5350,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'chhapar/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'chhapar/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'chhapar/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'chhapar/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'chhapar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'chhapar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'chhapar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -5485,6 +5595,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'churu/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'churu/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'churu/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'churu/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'churu/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'churu/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'churu/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5726,6 +5841,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'wevois-other/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'wevois-other/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'wevois-other/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'wevois-other/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'wevois-other/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'wevois-other/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'wevois-other/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //gwalior
     { path: 'gwalior/home', component: HomeComponent },
@@ -5967,6 +6087,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'gwalior/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'gwalior/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'gwalior/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'gwalior/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'gwalior/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'gwalior/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'gwalior/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
 
 
@@ -6209,6 +6334,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'tonk/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'tonk/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'tonk/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'tonk/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'tonk/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'tonk/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'tonk/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
 
     //Ratangarh
@@ -6450,6 +6580,12 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'ratangarh/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'ratangarh/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'ratangarh/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'ratangarh/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'ratangarh/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'ratangarh/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'ratangarh/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
     { path: 'nokha/account-detail', component: AccountDetailComponent },
@@ -6689,6 +6825,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'nokha/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'nokha/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'nokha/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'nokha/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'nokha/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'nokha/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'nokha/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -6929,6 +7070,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'losal/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'losal/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'losal/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'losal/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'losal/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'losal/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'losal/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
 
     //Jaipur Test
@@ -7171,6 +7317,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jaipur-test/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jaipur-test/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jaipur-test/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jaipur-test/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jaipur-test/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jaipur-test/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jaipur-test/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     
 
     //MNZ-Test
@@ -7412,6 +7563,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'mnz-test/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'mnz-test/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'mnz-test/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'mnz-test/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'mnz-test/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'mnz-test/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'mnz-test/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
 
     
@@ -7654,6 +7810,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'mpz-test/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'mpz-test/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'mpz-test/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'mpz-test/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'mpz-test/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'mpz-test/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'mpz-test/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     
 
     
@@ -7896,6 +8057,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'jammu-survey/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'jammu-survey/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'jammu-survey/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'jammu-survey/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'jammu-survey/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'jammu-survey/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'jammu-survey/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     
     //Khandela
     { path: 'khandela/home', component: HomeComponent },
@@ -8136,6 +8302,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'khandela/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'khandela/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'khandela/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'khandela/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'khandela/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'khandela/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'khandela/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'khandela/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     
     //watteye-office
     { path: 'watteye-office/home', component: HomeComponent },
@@ -8376,6 +8547,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'watteye-office/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'watteye-office/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'watteye-office/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'watteye-office/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'watteye-office/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'watteye-office/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'watteye-office/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'watteye-office/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     
     //dehradun
@@ -8617,6 +8793,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'dehradun/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'dehradun/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'dehradun/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'dehradun/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'dehradun/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'dehradun/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'dehradun/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'dehradun/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
     
 
 
@@ -8860,6 +9041,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'pali/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'pali/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'pali/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'pali/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'pali/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'pali/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'pali/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'pali/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
     
     
@@ -9102,5 +9288,10 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'phulwari-sharif/:id/payment-via-citizenapp', component: PaymentViaCitizenappComponent },
     { path: 'phulwari-sharif/:id/page-load-history', component: PageLoadHistoryComponent },
     { path: 'phulwari-sharif/:id/database-utilization', component: DatabaseUtilizationComponent },
+    { path: 'phulwari-sharif/:id/secondary-collection-monitoring', component: SecondaryCollectionMonitoringComponent },
+    { path: 'phulwari-sharif/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
+    { path: 'phulwari-sharif/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
+    { path: 'phulwari-sharif/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
+    { path: 'phulwari-sharif/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
 
 ]; 

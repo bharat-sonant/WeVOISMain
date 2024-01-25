@@ -121,7 +121,7 @@ export class DatabaseUtilizationComponent implements OnInit {
         if (data != null) {
           let list = [];
           let keyArray = Object.keys(data);
-          for (let i = 0; i < keyArray.length; i++) {
+          for (let i = keyArray.length-1; i >= 0; i--) {
             let date = keyArray[i];
             if (date == "count") {
               this.monthCounts = data[date] == null ? 0 : data[date];
