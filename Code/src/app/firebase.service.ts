@@ -478,6 +478,18 @@ export class FirebaseService {
       databaseName = "dtdphulwari-sharif";
       databaseURL = "https://dtdphulwari-sharif.firebaseio.com";
     }
+    else if (city == 'sujangarh') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdsujangarh.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdsujangarh";
+      databaseURL = "https://dtdsujangarh.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),

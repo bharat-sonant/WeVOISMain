@@ -3,6 +3,7 @@ import { interval } from 'rxjs';
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
 import { HttpClient } from '@angular/common/http';
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,6 +36,7 @@ export class DashboardComponent implements OnInit {
   public lineBigDashboardChartColors: Array<any>;
   db: any;
   cityName: any;
+  serviceName= "dashboard";
 
   dashboardData: dashboardSummary =
     {
@@ -44,7 +46,7 @@ export class DashboardComponent implements OnInit {
       wasteCollected: 0
     };
 
-  constructor(public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -84,10 +86,12 @@ export class DashboardComponent implements OnInit {
   }
 
   getWardCollection() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardCollection");
     let collectionInstance = this.db.object("WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/totalWasteCollection").valueChanges().subscribe(
       data => {
         this.instancesList.push({ instances: collectionInstance });
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardCollection", data);
           this.dashboardData.wasteCollected = data.toString();
         }
       }
@@ -95,9 +99,13 @@ export class DashboardComponent implements OnInit {
   }
 
   getActiveVehicles() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getActiveVehicles");
     let vehicleData = this.db.list('Vehicles').valueChanges().subscribe(
       data => {
         this.instancesList.push({ instances: vehicleData });
+        if (vehicleData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getActiveVehicles", vehicleData);
+        }
         let activeVehicleCount = 0;
         for (let index = 0; index < data.length; index++) {
           if (data[index]["status"] == "3") {
@@ -110,11 +118,13 @@ export class DashboardComponent implements OnInit {
   }
 
   getCompletedWards() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCompletedWards");
     for (let index = 0; index < this.zoneList.length; index++) {
       let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + this.zoneList[index]["zoneNo"] + "").valueChanges().subscribe(
         data => {
           this.instancesList.push({ instances: getRealTimeWardDetails });
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCompletedWards", data);
             let status = data["activityStatus"];
             if (status == "completed") {
               this.dashboardData.wardCompleted += 1;
@@ -125,13 +135,15 @@ export class DashboardComponent implements OnInit {
   }
 
   getpeopleAtWork() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getpeopleAtWork");
     let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate;
-    let dutyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {      
+    let dutyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       this.instancesList.push({ instances: dutyInstance });
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getpeopleAtWork", data);
         let counts = 0;
         let keyArray = Object.keys(data);
-        let vehicleList=[];
+        let vehicleList = [];
         for (let i = 0; i < keyArray.length; i++) {
           let empId = keyArray[i];
 
@@ -149,11 +161,11 @@ export class DashboardComponent implements OnInit {
             }
             if (isOn == true) {
               counts++;
-              if(taskData["vehicle"]!=""){
-                if(taskData["vehicle"]!="NotApplicable"){
-                  let detail=vehicleList.find(item=>item.vehicle==taskData["vehicle"]);
-                  if(detail==undefined){
-                    vehicleList.push({vehicle:taskData["vehicle"]});
+              if (taskData["vehicle"] != "") {
+                if (taskData["vehicle"] != "NotApplicable") {
+                  let detail = vehicleList.find(item => item.vehicle == taskData["vehicle"]);
+                  if (detail == undefined) {
+                    vehicleList.push({ vehicle: taskData["vehicle"] });
                   }
                 }
               }
@@ -161,14 +173,18 @@ export class DashboardComponent implements OnInit {
           }
         }
         this.dashboardData.peopleAtWork = counts;
-        console.log("Vehicle => "+vehicleList.length);
+        console.log("Vehicle => " + vehicleList.length);
       }
     });
   }
 
   getAssignedWardList() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedWardList");
     let workDetails = this.db.list("DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate).valueChanges().subscribe(
       data => {
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedWardList", data);
+        }
         this.assignedWards = [];
         for (let index = 0; index < data.length; index++) {
           for (let j = 1; j < 10; j++) {
@@ -236,6 +252,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getWardWorkProgressData(zoneDetail: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardWorkProgressData");
     let dbPath = 'WasteCollectionInfo/' + zoneDetail.zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/LineStatus';
     let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
       lineStatusData => {
@@ -243,6 +260,7 @@ export class DashboardComponent implements OnInit {
         this.instancesList.push({ instances: lineStatusInstance });
 
         if (lineStatusData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardWorkProgressData", lineStatusData);
           let keyArray = Object.keys(lineStatusData);
           if (keyArray.length > 0) {
             let percentage = 0;
@@ -319,6 +337,7 @@ export class DashboardComponent implements OnInit {
   }
 
   setWorkNotStartedforWards() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "setWorkNotStartedforWards");
     for (let index = 1; index < this.zoneList.length; index++) {
       let ZoneNo = this.zoneList[index]["zoneNo"];
       let isAssigned = this.assignedWards.find(item => item.zoneNo == this.zoneList[index]["zoneNo"]);
@@ -326,6 +345,9 @@ export class DashboardComponent implements OnInit {
         let setWardStatus = this.db.object("RealTimeDetails/WardDetails/" + ZoneNo).valueChanges().subscribe(
           data => {
             setWardStatus.unsubscribe();
+            if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setWorkNotStartedforWards", data);
+            }
             this.db.object('RealTimeDetails/WardDetails/' + ZoneNo).set({
               activityStatus: 'workNotStarted',
               isOnDuty: 'no'
@@ -337,12 +359,14 @@ export class DashboardComponent implements OnInit {
         let driverDetail = this.db.object("WasteCollectionInfo/" + this.zoneList[index]["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/WorkerDetails/driver").valueChanges().subscribe(
           driverdata => {
             if (driverdata != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setWorkNotStartedforWards", driverdata);
               let driverId = driverdata;
               let workStartTimePath = 'DailyWorkDetail/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/' + driverId;
               let workStarts = this.db.object(workStartTimePath).valueChanges().subscribe(
                 startData => {
                   workStarts.unsubscribe();
                   if (startData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setWorkNotStartedforWards", startData);
                     let endTime = "";
                     for (let k = 10; k > 0; k--) {
                       if (startData["task" + k + ""] != null) {

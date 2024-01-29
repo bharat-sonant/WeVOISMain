@@ -260,6 +260,9 @@ export class CommonService {
     else if (cityName == "phulwari-sharif") {
       latLng.push({ lat: 25.57114118014974, lng: 85.07024975142416 });
     }
+    else if (cityName == "sujangarh") {
+      latLng.push({ lat: 27.7066465, lng: 74.4631898 });
+    }
     return latLng;
   }
 
