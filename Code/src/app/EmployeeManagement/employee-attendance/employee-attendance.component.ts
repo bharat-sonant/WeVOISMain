@@ -175,7 +175,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                
                     
                   inTimestemp = new Date(this.selectedDate + " " + inTime).getTime();
-                  let afterTimestemp = new Date(this.selectedDate + " 08:10").getTime();
+                  let afterTimestemp = new Date(this.selectedDate + " 08:30").getTime();
                   if (inTimestemp > afterTimestemp) {
                     cssClass = "text-left br-1 afterTime";
                   }
@@ -302,7 +302,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                   }
                 
                   inTimestemp = new Date(date + " " + inTime).getTime();
-                  let afterTimestemp = new Date(date + " 08:10").getTime();
+                  let afterTimestemp = new Date(date + " 08:30").getTime();
                   if (inTimestemp > afterTimestemp) {
                     cssClass = "text-left br-1 afterTime";
                   }
