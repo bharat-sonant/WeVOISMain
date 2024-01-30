@@ -81,7 +81,6 @@ export class ReviewTripImagesComponent implements OnInit {
       let detail = this.zoneTripList.find(item => item.zoneNo == zone);
       if (detail != undefined) {
         let dbPath = "WardTrips/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + zone;
-        console.log(dbPath)
         let tripInstance = this.db.object(dbPath).valueChanges().subscribe(
           tripData => {
             tripInstance.unsubscribe();
@@ -103,6 +102,14 @@ export class ReviewTripImagesComponent implements OnInit {
           });
       }
     }
+  }
+
+  syncData(){
+    $(this.divMainLoader).show();
+    for(let i=0;i<this.zoneTripList.length;i++){
+      this.zoneTripList[i]["tripImageList"]=[];
+    }
+    this.getTripImages(0);
   }
 
   getEmployeeNamebyId(zone: any) {

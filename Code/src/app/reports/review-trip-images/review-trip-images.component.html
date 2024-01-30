@@ -20,14 +20,12 @@
 
             </div>
         </div>
-        <div class="col-md-3 text-center"
+        <div class="col-md-4 text-center"
             style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
             Ward Trip Images
         </div>
-        <div class="col-md-3 text-right" style="margin-top: -16px;position: absolute;right: 92px;">
-
-        </div>
-        <div class="col-md-1">
+        <div class="col-md-3 text-right" style="position: absolute;right: 30px;">
+            <i class="fas fa-redo-alt" style="color: #2dbd23; font-size: 24px; cursor: pointer;" (click)="syncData();"></i>
         </div>
     </div>
 </section>
@@ -64,9 +62,10 @@
                                                                     style="max-width: 180px;max-height: 180px;" /></a>
                                                             <br />
                                                             <div class="row" style="text-align: left;">
-                                                                <div class="col-md-12" style="text-align: left;"><b>Driver : </b>
+                                                                <div class="col-md-12" style="text-align: left;">
+                                                                    <b>Driver : </b>
                                                                     {{dtImage.driver}}</div>
-                                                                <div class="col-md-12" ><b>Vehicle : </b>
+                                                                <div class="col-md-12"><b>Vehicle : </b>
                                                                     {{dtImage.vehicle}}</div>
                                                                 <div class="col-md-12"><b>Trip Time : </b>
                                                                     {{dtImage.time}}</div>

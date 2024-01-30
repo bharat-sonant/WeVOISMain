@@ -112,6 +112,14 @@ export class ReviewDutyonImagesComponent implements OnInit {
           }, 3000);
         }
       });
+  }  
+
+  syncData(){
+    $(this.divMainLoader).show();
+    for(let i=0;i<this.zoneDutyOnList.length;i++){
+      this.zoneDutyOnList[i]["dutyOnImages"]=[];
+    }
+    this.getDutyOnImages(0);
   }
 
   getDutyOnTime(zone: any) {

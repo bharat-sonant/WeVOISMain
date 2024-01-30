@@ -15,6 +15,7 @@ export class DailyWorkDetailComponent implements OnInit {
   db: any;
   zoneList: any[] = [];
   dailyWorkList: any[];
+  pickedDustbinList: any[] = [];
   selectedDate: any;
   selectedMonth: any;
   selectedMonthName: any;
@@ -25,7 +26,7 @@ export class DailyWorkDetailComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.savePageLoadHistory("General-Reports","Daily-Work-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("General-Reports", "Daily-Work-Report", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -70,6 +71,7 @@ export class DailyWorkDetailComponent implements OnInit {
 
   getDailyWorkDetail() {
     this.dailyWorkList = [];
+    this.pickedDustbinList = [];
     if (this.zoneList.length > 0) {
       for (let i = 1; i < this.zoneList.length; i++) {
         let zoneNo = this.zoneList[i]["zoneNo"];
@@ -82,11 +84,25 @@ export class DailyWorkDetailComponent implements OnInit {
 
       }
     }
-    if (this.selectedDate == this.commonService.setTodayDate()) {
-      this.getBinLiftingDetail("DustbinData/DustbinPickingPlans/" + this.selectedDate);
-    }
-    let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-    this.getBinLiftingDetail(dbPath);
+    this.getPickedDustbin();
+  }
+
+  getPickedDustbin() {
+    let dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+    let pickedDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      pickedDustbinInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          this.pickedDustbinList.push({ dustbin: keyArray[i] });
+        }
+      }
+      if (this.selectedDate == this.commonService.setTodayDate()) {
+        this.getBinLiftingDetail("DustbinData/DustbinPickingPlans/" + this.selectedDate);
+      }
+      dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+      this.getBinLiftingDetail(dbPath);
+    })
   }
 
   getTotalRunning(zoneNo: any, dbPath: any) {
@@ -126,15 +142,17 @@ export class DailyWorkDetailComponent implements OnInit {
               if (planData[planKey]["isAssigned"] == "true") {
                 if (planData[planKey]["planName"] != "") {
                   let pickedDustbin = 0;
-                  if (planData[planKey]["pickedDustbin"] != null) {
-                    if (planData[planKey]["pickedDustbin"] != "") {
-                      pickedDustbin = planData[planKey]["pickedDustbin"].split(',').length;
-                    }
-                  }
                   let assignedDustbin = 0;
                   if (planData[planKey]["bins"] != null) {
                     if (planData[planKey]["bins"] != "") {
                       assignedDustbin = planData[planKey]["bins"].split(',').length;
+                      let list=planData[planKey]["bins"].split(',');
+                      for(let j=0;j<list.length;j++){
+                        let detail=this.pickedDustbinList.find(item=>item.dustbin==list[j].toString().trim());
+                        if(detail!=undefined){
+                          pickedDustbin+=1;
+                        }
+                      }
                     }
                   }
                   let bins = pickedDustbin + "/" + assignedDustbin;
@@ -255,7 +273,7 @@ export class DailyWorkDetailComponent implements OnInit {
             let workPercentage = "";
             let actualWorkPercentage = "0%";
             let wardRunKm = "0.000";
-            let wardReachedOn="";
+            let wardReachedOn = "";
             if (summaryData["dutyOutTime"] != null) {
               endTime = summaryData["dutyOutTime"].split(',')[summaryData["dutyOutTime"].split(',').length - 1];
             }
@@ -272,8 +290,8 @@ export class DailyWorkDetailComponent implements OnInit {
             if (summaryData["wardCoveredDistance"] != null) {
               wardRunKm = (Number(summaryData["wardCoveredDistance"]) / 1000).toFixed(3);
             }
-            if(summaryData["wardReachedOn"]!=null){
-              wardReachedOn=summaryData["wardReachedOn"];
+            if (summaryData["wardReachedOn"] != null) {
+              wardReachedOn = summaryData["wardReachedOn"];
             }
 
             let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
@@ -291,7 +309,7 @@ export class DailyWorkDetailComponent implements OnInit {
               }
               let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
               detail.workTime = this.commonService.getHrsFull(totalMinutes);
-              detail.wardReachedOn=wardReachedOn;
+              detail.wardReachedOn = wardReachedOn;
               this.getTrips(zoneNo);
             }
           }
@@ -391,8 +409,8 @@ export class DailyWorkDetailComponent implements OnInit {
     );
   }
 
-  
-  getHaltTime(zoneNo:any) {
+
+  getHaltTime(zoneNo: any) {
     let haltInfoPath = "HaltInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe((haltData) => {
       haltInfoData.unsubscribe();
@@ -411,7 +429,7 @@ export class DailyWorkDetailComponent implements OnInit {
                 }
                 let zoneDetails = this.dailyWorkList.find((item) => item.zoneNo == zoneNo);
                 if (zoneDetails != undefined) {
-                  zoneDetails.haltTime = this.commonService.getHrs(totalBreak) +" hr";
+                  zoneDetails.haltTime = this.commonService.getHrs(totalBreak) + " hr";
                 }
               }
             }
@@ -423,7 +441,7 @@ export class DailyWorkDetailComponent implements OnInit {
 
 
   exportToExcel() {
-    
+
     let htmlString = "";
     htmlString = "<table>";
     htmlString += "<tr>";
@@ -460,10 +478,10 @@ export class DailyWorkDetailComponent implements OnInit {
     htmlString += "<td>";
     htmlString += "Halt Time";
     htmlString += "</td>";
-    if(this.isShowActual==true){
-    htmlString += "<td>";
-    htmlString += "Actual Work Percentage";
-    htmlString += "</td>";
+    if (this.isShowActual == true) {
+      htmlString += "<td>";
+      htmlString += "Actual Work Percentage";
+      htmlString += "</td>";
     }
     htmlString += "<td>";
     htmlString += "Work Percentage";
@@ -531,13 +549,13 @@ export class DailyWorkDetailComponent implements OnInit {
           htmlString += this.dailyWorkList[i]["haltTime"];
         }
         htmlString += "</td>";
-        if(this.isShowActual==true){
-        htmlString += "<td t='s'>";
-        if (this.dailyWorkList[i]["actualWorkPercentage"] != null) {
-          htmlString += this.dailyWorkList[i]["actualWorkPercentage"];
+        if (this.isShowActual == true) {
+          htmlString += "<td t='s'>";
+          if (this.dailyWorkList[i]["actualWorkPercentage"] != null) {
+            htmlString += this.dailyWorkList[i]["actualWorkPercentage"];
+          }
+          htmlString += "</td>";
         }
-        htmlString += "</td>";
-      }
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         if (this.dailyWorkList[i]["workPercentage"] != null) {
