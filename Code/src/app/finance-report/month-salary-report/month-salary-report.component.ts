@@ -3,6 +3,7 @@ import { CommonService } from '../../services/common/common.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-month-salary-report',
@@ -11,7 +12,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class MonthSalaryReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -31,6 +32,7 @@ export class MonthSalaryReportComponent implements OnInit {
   OtherList: any[];
   db: any
   public cityName: any;
+  serviceName = "ward-monthly-report";
 
   costData: costDatail =
     {
@@ -192,9 +194,11 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getSetting() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSetting");
     let dbPath = "Settings/Salary";
     let salaryData = this.db.object(dbPath).valueChanges().subscribe(
       data => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSetting", salaryData);
         this.driveySalary = data["driver_salary_per_hour"];
         this.halperSalary = data["helper_salary_per_hour"];
         this.totalSalary = parseFloat(this.driveySalary) + parseFloat(this.halperSalary);
@@ -203,6 +207,7 @@ export class MonthSalaryReportComponent implements OnInit {
     dbPath = "Settings/Petrol";
     let petrolData = this.db.object(dbPath).valueChanges().subscribe(
       data => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSetting", data);
         this.vechicleAvg = data["avg"];
         this.petrolPrice = data["price"];
         petrolData.unsubscribe();
@@ -210,6 +215,7 @@ export class MonthSalaryReportComponent implements OnInit {
     dbPath = "Settings/Penalty";
     let penaltyData = this.db.object(dbPath).valueChanges().subscribe(
       data => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSetting", data);
         this.penaltyArray = Object.entries(data);
         penaltyData.unsubscribe();
       });
@@ -302,6 +308,7 @@ export class MonthSalaryReportComponent implements OnInit {
 
 
   getOtherWages() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getOtherWages");
     let days = new Date(parseInt(this.selectedYear), parseInt(this.selectedMonth), 0).getDate();
     let rowTo = days;
     if (this.selectedMonth == this.commonService.setTodayDate().split("-")[1]) {
@@ -319,6 +326,7 @@ export class MonthSalaryReportComponent implements OnInit {
           data => {
             dataInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOtherWages", data);
               let keyArray = Object.keys(data);
               if (keyArray.length > 0) {
                 let d = "day" + parseFloat(monthDate.split("-")[2]);
@@ -360,11 +368,13 @@ export class MonthSalaryReportComponent implements OnInit {
         this.getOtherWagesDetail(workData,monthDate,monthName,j);
       }
     }, error => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getOtherWagesData");
       let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + monthName + "/" + monthDate;
       workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         workData => {
           workDetailInstance.unsubscribe();
           if (workData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOtherWagesData", workData);
             if (monthDate != this.commonService.setTodayDate()) {
               this.commonService.saveJsonFile(workData, monthDate + ".json", "/DailyWorkDetail/" + this.selectedYear + "/" + monthName + "/");
             }
@@ -453,6 +463,7 @@ export class MonthSalaryReportComponent implements OnInit {
 
   // open model 
   openDetail(content: any, detail: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "openDetail");
     this.OtherList = [];
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
@@ -477,6 +488,7 @@ export class MonthSalaryReportComponent implements OnInit {
         data => {
           detailInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "openDetail", data);
             if (data["task-wages"] != null) {
               let wages = Number(data["task-wages"]);
               if (wages < 0) {
@@ -557,10 +569,12 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getPenalty(wardNo: string, monthName: any, monthDate: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPenalty");
     let workPercentPath = 'WasteCollectionInfo/' + wardNo + '/' + this.selectedYear + '/' + monthName + '/' + monthDate + '/Summary/workPercentage';
     let workPercentDetails = this.db.object(workPercentPath).valueChanges().subscribe(
       workePercentData => {
         if (workePercentData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPenalty", workePercentData);
           let zoneDetails = this.wardDataList.find(item => item.wardNo == wardNo);
           if (zoneDetails != undefined) {
             let d = "day" + parseFloat(monthDate.split("-")[2]);
@@ -600,11 +614,13 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getDriverHelperSalary(wardNo: any, monthName: any, monthDate: any, empId: any, type: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDriverHelperSalary");
     let dbPath = 'DailyWorkDetail/' + this.selectedYear + '/' + monthName + '/' + monthDate + '/' + empId;
     let salaryInstance = this.db.object(dbPath).valueChanges().subscribe(
       salaryData => {
         salaryInstance.unsubscribe();
         if (salaryData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDriverHelperSalary", salaryData);
           let salary = 0;
           for (let i = 0; i < 5; i++) {
             if (salaryData["task" + i + ""] != null) {
@@ -753,12 +769,14 @@ export class MonthSalaryReportComponent implements OnInit {
       this.getWardSalary(wardNo, monthName, monthDate);
     }
     else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSalary");
       let Path = 'WasteCollectionInfo/' + wardNo + '/' + this.selectedYear + '/' + monthName + '/' + monthDate + '/Summary';
       let driverDetails = this.db.object(Path).valueChanges().subscribe(
         data => {
           let isData = false;
           driverDetails.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSalary", data);
             if (data["driverSalary"] == null) {
               isData = true;
             }
@@ -845,11 +863,13 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getWardSalary(wardNo: any, monthName: any, monthDate: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardSalary");
     let workDetailsPath = 'WasteCollectionInfo/' + wardNo + '/' + this.selectedYear + '/' + monthName + '/' + monthDate + '/WorkerDetails';
     let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe(
       workerData => {
         workDetails.unsubscribe();
         if (workerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSalary", workerData);
           let driverId = "";
           let helperId = "";
           let secondHelperId = "";
@@ -911,6 +931,7 @@ export class MonthSalaryReportComponent implements OnInit {
       this.getPetrolCost(wardNo, monthName, monthDate);
     }
     else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPetrolData");
       let Path = 'WasteCollectionInfo/' + wardNo + '/' + this.selectedYear + '/' + monthName + '/' + monthDate + '/Summary/petrolCost';
       let Details = this.db.object(Path).valueChanges().subscribe(
         Data => {
@@ -921,6 +942,7 @@ export class MonthSalaryReportComponent implements OnInit {
             this.getPetrolCost(wardNo, monthName, monthDate);
           }
           else {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPetrolData", Data);
             let zoneDetails = this.wardDataList.find(item => item.wardNo == wardNo);
             if (zoneDetails != undefined) {
               let d = "day" + parseFloat(monthDate.split("-")[2]);
@@ -944,14 +966,17 @@ export class MonthSalaryReportComponent implements OnInit {
   }
 
   getPetrolCost(wardNo: any, monthName: any, monthDate: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPetrolCost");
     let workDetailsPath = 'WasteCollectionInfo/' + wardNo + '/' + this.selectedYear + '/' + monthName + '/' + monthDate + '/WorkerDetails';
     let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe(
       workerData => {
         if (workerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPetrolCost", workerData);
           let distanceDetailsPath = 'LocationHistory/' + wardNo + '/' + this.selectedYear + '/' + monthName + '/' + monthDate + '';
           let distanceDetails = this.db.list(distanceDetailsPath).valueChanges().subscribe(
             distanceData => {
               if (distanceData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPetrolCost", distanceData);
                 let distance = 0;
                 for (let i = 0; i < distanceData.length; i++) {
                   if (distanceData[i]["distance-in-meter"] != null) {

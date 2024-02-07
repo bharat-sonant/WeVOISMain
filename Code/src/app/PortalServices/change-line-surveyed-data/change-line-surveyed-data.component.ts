@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { AngularFireStorage } from "angularfire2/storage";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-change-line-surveyed-data',
@@ -10,7 +11,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class ChangeLineSurveyedDataComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private storage: AngularFireStorage) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private storage: AngularFireStorage) { }
   cityName: any;
   db: any;
   public selectedZone: any;
@@ -22,6 +23,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   ddlZone = "#ddlZone";
   divLoader = "#divLoader";
   ddlZoneCount = "#ddlZoneCount";
+  serviceName = "portal-service-change-line-surveyed-data";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -39,6 +41,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   }
 
   saveData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "saveData");
     if ($(this.ddlZoneFrom).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select zone from !!!");
       return;
@@ -69,11 +72,13 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
       fromDataList => {
         houseFromInstance.unsubscribe();
         if (fromDataList.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", fromDataList);
           let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/lastMarkerKey";
           let lastMarkerKeyInstance = this.db.object(dbPath).valueChanges().subscribe(
             lastMarkerKeyData => {
               lastMarkerKeyInstance.unsubscribe();
               if (lastMarkerKeyData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", lastMarkerKeyData);
                 lastMarkerKey = Number(lastMarkerKeyData) + 1;
               }
               dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom;
@@ -82,6 +87,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                   let markerList = [];
                   markerInstance.unsubscribe();
                   if (markerData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", markerData);
                     let keyArray = Object.keys(markerData);
                     for (let i = 0; i < keyArray.length; i++) {
                       let markerNo = keyArray[i];
@@ -104,6 +110,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   }
 
   moveHouseData(index: any, zoneFrom: any, zoneTo: any, lineFrom: any, lineTo: any, lastMarkerKey: any, markerList: any, fromDataList: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveHouseData");
     if (index == fromDataList.length) {
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
       this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
@@ -138,6 +145,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
             markerData => {
               markerInstance.unsubscribe();
               if (markerData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveHouseData", markerData);
                 let oldImageName = markerData["image"];
                 markerData["image"] = lastMarkerKey + ".jpg";
                 let newImageName = lastMarkerKey + ".jpg";
@@ -198,6 +206,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   }
 
   updateCardLineData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCardLineData");
     if ($(this.ddlZone).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select zone from !!!");
       return;
@@ -208,6 +217,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
       houseData => {
         houseInstance.unsubscribe();
         if (houseData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCardLineData", houseData);
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
             let count = 0;
@@ -230,6 +240,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   }
 
   updateSurveyCount() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSurveyCount");
     if ($(this.ddlZoneCount).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select zone from !!!");
       return;
@@ -301,6 +312,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   }
 
   getWardWiseCards(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardWiseCards");
     if (index == this.zoneList.length) {
       $(this.divLoader).hide();
       this.commonService.setAlertMessage("success", "Ward wise JSON updated successfully !!!");

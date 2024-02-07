@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-dustbin-analysis",
@@ -9,7 +10,7 @@ import { NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ["./dustbin-analysis.component.scss"],
 })
 export class DustbinAnalysisComponent implements OnInit {
-  constructor(private commonService: CommonService, public fs: FirebaseService) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService) { }
 
   planList: any[];
   dustbinList: any[];
@@ -19,7 +20,7 @@ export class DustbinAnalysisComponent implements OnInit {
   currentSlide: any;
   dbPath: any;
   fillPercentage: any;
-  txtManualRemark="#txtManualRemark";
+  txtManualRemark = "#txtManualRemark";
   userId: any;
   remark: any;
   planId: any;
@@ -27,6 +28,7 @@ export class DustbinAnalysisComponent implements OnInit {
   maxSlideCount: any;
   cityName: any;
   db: any;
+  serviceName = "dustbin-analysis";
   binDetail: dustbinDetails = {
     binId: "",
     filledTopViewImageUrl: "",
@@ -46,7 +48,7 @@ export class DustbinAnalysisComponent implements OnInit {
     filledPercentage: "",
     analysisRemarks: "",
     analysisDetail: "",
-    manualRemarks:"",
+    manualRemarks: "",
   };
 
   planDetail: planDetails = {
@@ -71,7 +73,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Dustbin-Management","Dustbin-Analysis",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Dustbin-Management", "Dustbin-Analysis", localStorage.getItem("userID"));
 
     let element = <HTMLAnchorElement>(
       document.getElementById("dustbinReportLink")
@@ -117,10 +119,12 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   getAssignedPlans() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedPlans");
     this.planList = [];
     let assignedPlanPath = this.db.list("DustbinData/DustbinAssignment/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate).valueChanges()
       .subscribe((assignedPlans) => {
         if (assignedPlans.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedPlans", assignedPlans);
           for (let index = 0; index < assignedPlans.length; index++) {
             const element = assignedPlans[index];
             if (element["planName"] != "") {
@@ -165,7 +169,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.analysisBy = "";
     this.binDetail.filledPercentage = "";
     this.binDetail.analysisRemarks = "";
-    this.binDetail.manualRemarks="";
+    this.binDetail.manualRemarks = "";
     this.binDetail.analysisDetail = "";
     this.binDetail.canDoAnalysis = "no";
 
@@ -178,15 +182,21 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   getBinsForSelectedPlan(planId: string) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getBinsForSelectedPlan");
     $("#divLoader").show();
     this.resetData();
 
     let pickingPlanPath = this.db.object("DustbinData/DustbinPickingPlans/" + planId).valueChanges().subscribe((pickingPlanData) => {
       if (pickingPlanData == null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", pickingPlanData);
         // now need to find with date
         let pickingPlanWithDatePath = this.db.object("DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId).valueChanges().subscribe((pickingPlanWithDateData) => {
           if (pickingPlanWithDateData == null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", pickingPlanWithDateData);
             let pickingPlanHistory = this.db.object("DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId).valueChanges().subscribe((dustbinPlanHistoryData) => {
+              if (dustbinPlanHistoryData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", dustbinPlanHistoryData);
+              }
               let bins = dustbinPlanHistoryData["bins"];
               this.getBinsDetail(bins, planId);
               pickingPlanHistory.unsubscribe();
@@ -207,6 +217,7 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   getBinsDetail(bins: string, planId: string) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getBinsDetail");
     let firstIndexNeedtobeSelected = -1;
     let binsArray = bins.toString().split(",");
     this.dustbinList = [];
@@ -214,6 +225,9 @@ export class DustbinAnalysisComponent implements OnInit {
       let binId = binsArray[index].replace(" ", "");
       let binsDetailsPath = this.db.object("DustbinData/DustbinDetails/" + binId + "/address").valueChanges().subscribe((dustbinAddress) => {
         let dustbinPickHistoryPath = this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + binId + "/" + planId).valueChanges().subscribe((dustbinHistoryData) => {
+          if(dustbinHistoryData!=null){
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsDetail", dustbinHistoryData);
+          }
           this.dustbinList.push({
             dustbinId: binId,
             address: dustbinAddress,
@@ -258,8 +272,8 @@ export class DustbinAnalysisComponent implements OnInit {
             analysisAt: this.checkAnalysisValues(dustbinHistoryData, "analysisAt"),
             filledPercentage: this.checkAnalysisValues(dustbinHistoryData, "filledPercentage"),
             analysisRemark: this.checkAnalysisValues(dustbinHistoryData, "remark"),
-            manualRemarks:this.checkAnalysisValues(dustbinHistoryData,"manualRemark"),
-            isPicked:"0"
+            manualRemarks: this.checkAnalysisValues(dustbinHistoryData, "manualRemark"),
+            isPicked: "0"
           });
           this.setPickedBins(index);
 
@@ -288,28 +302,28 @@ export class DustbinAnalysisComponent implements OnInit {
     // this.totalDustbins = binsArray.length;
   }
 
-  setPickedBins(index:any){    
-    let isPicked=false;
-    if(this.dustbinList[index]["emptyFarFromImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+  setPickedBins(index: any) {
+    let isPicked = false;
+    if (this.dustbinList[index]["emptyFarFromImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["emptyTopViewImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["emptyTopViewImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["filledFarFromImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["filledFarFromImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["filledTopViewImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["filledTopViewImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["emptyDustbinFarFromImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["emptyDustbinFarFromImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["emptyDustbinTopViewImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["emptyDustbinTopViewImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(isPicked==true){
-      this.dustbinList[index]["isPicked"]="1";
+    if (isPicked == true) {
+      this.dustbinList[index]["isPicked"] = "1";
     }
   }
 
@@ -493,9 +507,11 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   getPandingAnalysis() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPandingAnalysis");
     let dbPath = "DustbinData/TotalDustbinAnalysisPending";
     this.db.object(dbPath).valueChanges().subscribe((data) => {
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPandingAnalysis", data);
         let pending = Number(data);
         if (pending < 0) {
           pending = 0;
@@ -527,7 +543,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.filledPercentage = this.dustbinList[index]["filledPercentage"];
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
-    this.binDetail.manualRemarks=this.dustbinList[index]["manualRemarks"];
+    this.binDetail.manualRemarks = this.dustbinList[index]["manualRemarks"];
 
     setTimeout(function () {
       $("#ImageLoader").hide();
@@ -554,6 +570,7 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   setRemark() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "setRemark");
     let chkRemark1 = <HTMLInputElement>document.getElementById("chkRemark1");
     let chkRemark2 = <HTMLInputElement>document.getElementById("chkRemark2");
 
@@ -581,6 +598,7 @@ export class DustbinAnalysisComponent implements OnInit {
         )
         .valueChanges()
         .subscribe((isBroken) => {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setRemark", isBroken);
           let chkRemark2 = <HTMLInputElement>(
             document.getElementById("chkRemark2")
           );
@@ -671,7 +689,7 @@ export class DustbinAnalysisComponent implements OnInit {
     data.analysisAt = this.commonService.getTodayDateTime();
     data.analysisBy = this.userId;
     data.analysisRemark = this.getRemarks();
-    data.manualRemarks=$(this.txtManualRemark).val().toString();
+    data.manualRemarks = $(this.txtManualRemark).val().toString();
     data.filledPercentage = this.fillPercentage;
     data.iconClass = "fas fa-diagnoses";
 
@@ -679,16 +697,20 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.analysisAt = this.commonService.getTodayDateTime();
     this.binDetail.filledPercentage = this.fillPercentage;
     this.binDetail.analysisRemarks = this.getRemarks();
-    this.binDetail.manualRemarks=$(this.txtManualRemark).val().toString();
+    this.binDetail.manualRemarks = $(this.txtManualRemark).val().toString();
   }
 
   updatePendingAnalysis() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updatePendingAnalysis");
     if (this.binDetail.analysisAt == "") {
       let pendingCountPath = this.db
         .object("DustbinData/TotalDustbinAnalysisPending")
         .valueChanges()
         .subscribe((pedingCount) => {
           pendingCountPath.unsubscribe();
+          if(pedingCount!=null){            
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updatePendingAnalysis", pedingCount);
+          }
           this.db.object("DustbinData").update({
             TotalDustbinAnalysisPending: Number(pedingCount) - 1,
           });
@@ -699,7 +721,7 @@ export class DustbinAnalysisComponent implements OnInit {
   saveDustbinAnalysis() {
 
     if (this.binDetail.canDoAnalysis == "yes") {
-      this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(),manualRemark:$(this.txtManualRemark).val() });
+      this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(), manualRemark: $(this.txtManualRemark).val() });
       this.updatePendingAnalysis();
       this.updateBinListAndDetails();
       this.setAnalysisDetails();
@@ -816,7 +838,7 @@ export class dustbinDetails {
   filledPercentage: string;
   analysisRemarks: string;
   analysisDetail: string;
-  manualRemarks:string;
+  manualRemarks: string;
 }
 
 export class planDetails {

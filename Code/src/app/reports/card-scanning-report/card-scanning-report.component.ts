@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 //services
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-card-scanning-report',
@@ -11,7 +12,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class CardScanningReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService) { }
 
   wardList: any[];
   selectedDate: any;
@@ -20,6 +21,7 @@ export class CardScanningReportComponent implements OnInit {
   db: any;
   public cityName: any;
   txtDate = "#txtDate";
+  serviceName = "card-scanning-report";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -74,11 +76,13 @@ export class CardScanningReportComponent implements OnInit {
   }
 
   getCardsData(ward: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardsData");
     let dbPath = "EntitySurveyData/TotalHouseCount/" + ward;
     let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       houseCountData => {
         houseCountInstance.unsubscribe();
         if (houseCountData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCardsData", houseCountData);
           let detail = this.scannedList.find(item => item.ward == ward);
           if (detail != undefined) {
             detail.cards = Number(houseCountData);
@@ -101,6 +105,7 @@ export class CardScanningReportComponent implements OnInit {
   }
 
   getScannedCards(ward: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScannedCards");
     let year = this.selectedDate.split('-')[0];
     let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + this.selectedDate + "/totalScanned";
@@ -108,6 +113,7 @@ export class CardScanningReportComponent implements OnInit {
       totalScanned => {
         scannedCardsInstance.unsubscribe();
         if (totalScanned != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScannedCards", totalScanned);
           let detail = this.scannedList.find(item => item.ward == ward);
           if (detail != undefined) {
             detail.scanned = totalScanned;

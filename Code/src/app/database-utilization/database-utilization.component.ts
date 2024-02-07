@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FirebaseService } from "../firebase.service";
 import { CommonService } from "../services/common/common.service";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-database-utilization',
@@ -9,7 +10,7 @@ import { CommonService } from "../services/common/common.service";
 })
 export class DatabaseUtilizationComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
 
   db: any;
   cityName: any;
@@ -26,6 +27,7 @@ export class DatabaseUtilizationComponent implements OnInit {
   dateList: any[] = [];
   public monthCounts: any;
   public monthDataSize: any;
+  serviceName = "developer-database-utilization";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -59,10 +61,12 @@ export class DatabaseUtilizationComponent implements OnInit {
   }
 
   getSummaryData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSummaryData");
     let dbPath = "BackEndFunctionCallingHistory/Summary";
     let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       summaryInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSummaryData", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let servicePage = keyArray[i];
@@ -109,6 +113,7 @@ export class DatabaseUtilizationComponent implements OnInit {
   }
 
   getMonthData(functionName: any, index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMonthData");
     this.setActiveClass("page", index);
     this.dateList = [];
     this.monthCounts = "0";
@@ -119,6 +124,7 @@ export class DatabaseUtilizationComponent implements OnInit {
       let detailInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         detailInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthData", data);
           let list = [];
           let keyArray = Object.keys(data);
           for (let i = keyArray.length-1; i >= 0; i--) {

@@ -7,6 +7,7 @@ import { MapService } from "../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
 import { FirebaseService } from "../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-multiple-maps",
@@ -76,7 +77,8 @@ export class MultipleMapsComponent {
   markerMarketRoute1 = new google.maps.Marker();
   markerMarketRoute2 = new google.maps.Marker();
   db: any;
-  constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  serviceName = "multiple-maps";
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.instancesList = [];
@@ -233,6 +235,7 @@ export class MultipleMapsComponent {
   }
 
   showVehicleMovement(selectedZone: any, vehicleStatusInstance: any, vehicleLocationInstance: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showVehicleMovement");
     if (vehicleStatusInstance != undefined) {
       vehicleStatusInstance.unsubscribe();
     }
@@ -240,6 +243,7 @@ export class MultipleMapsComponent {
     vehicleStatusInstance = this.db.object("CurrentLocationInfo/" + selectedZone + "/StatusId").valueChanges().subscribe((statusId) => {
       this.instancesList.push({ instances: vehicleStatusInstance });
       if (statusId != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicleMovement", statusId);
         if (vehicleLocationInstance != undefined) {
           vehicleLocationInstance.unsubscribe();
         }
@@ -247,6 +251,7 @@ export class MultipleMapsComponent {
         vehicleLocationInstance = this.db.object("CurrentLocationInfo/" + selectedZone + "/CurrentLoc/location").valueChanges().subscribe((data) => {
           this.instancesList.push({ instances: vehicleStatusInstance });
           if (data != undefined) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicleMovement", data);
             let vehicleIcon = "../assets/img/tipper-green.png";
             if (statusId == "3") {
               vehicleIcon = "../assets/img/tipper-gray.png";
@@ -372,14 +377,21 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap(selectedZone: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLinesOnMap");
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
       this.instancesList.push({ instances: lastLineDone });
+      if(lastLine!=null){        
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap", lastLine);
+      }
       this.polylinesWard1 = [];
       for (let index = 0; index < this.allLinesWard1.length; index++) {
         let lineNo = index + 1;
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+          if(status!=null){
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap", status);
+          }
           this.instancesList.push({ instances: lineStatus });
           if (this.polylinesWard1[index] != undefined) {
             this.polylinesWard1[index].setMap(null);
@@ -411,14 +423,21 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap1(selectedZone: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLinesOnMap1");
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
       this.instancesList.push({ instances: lastLineDone });
+      if(lastLine!=null){        
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap1", lastLine);
+      }
       this.polylinesWard2 = [];
       for (let index = 0; index < this.allLinesWard2.length; index++) {
         let lineNo = index + 1;
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+          if(status!=null){
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap1", status);
+          }
           this.instancesList.push({ instances: lineStatus });
           if (this.polylinesWard2[index] != undefined) {
             this.polylinesWard2[index].setMap(null);
@@ -452,7 +471,11 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap2(selectedZone: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLinesOnMap2");
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
+      if(lastLine!=null){        
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap2", lastLine);
+      }
       this.instancesList.push({ instances: lastLineDone });
       this.polylinesWard3 = [];
       for (let index = 0; index < this.allLinesWard3.length; index++) {
@@ -460,6 +483,9 @@ export class MultipleMapsComponent {
         let dbPathLineStatus = "WasteCollectionInfo/" + selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
+          if(status!=null){
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap2", status);
+          }
           this.instancesList.push({ instances: lineStatus });
           if (this.polylinesWard3[index] != undefined) {
             this.polylinesWard3[index].setMap(null);
@@ -493,8 +519,12 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap3(selectedZone: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLinesOnMap3");
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
       this.instancesList.push({ instances: lastLineDone });
+      if(lastLine!=null){        
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap3", lastLine);
+      }
       this.polylinesWard4 = [];
       for (let index = 0; index < this.allLinesWard4.length; index++) {
         let lineNo = index + 1;
@@ -502,6 +532,9 @@ export class MultipleMapsComponent {
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
           this.instancesList.push({ instances: lineStatus });
+          if(status!=null){
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap3", status);
+          }
           if (this.polylinesWard4[index] != undefined) {
             this.polylinesWard4[index].setMap(null);
           }
@@ -534,8 +567,12 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap4(selectedZone: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLinesOnMap4");
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
       this.instancesList.push({ instances: lastLineDone });
+      if(lastLine!=null){        
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap4", lastLine);
+      }
       this.polylinesMarketRoute1 = [];
       for (let index = 0; index < this.allLinesMarketRoute1.length; index++) {
         let lineNo = index + 1;
@@ -543,6 +580,9 @@ export class MultipleMapsComponent {
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
           this.instancesList.push({ instances: lineStatus });
+          if(status!=null){
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap4", status);
+          }
           if (this.polylinesMarketRoute1[index] != undefined) {
             this.polylinesMarketRoute1[index].setMap(null);
           }
@@ -575,8 +615,12 @@ export class MultipleMapsComponent {
   }
 
   plotLinesOnMap5(selectedZone: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLinesOnMap5");
     let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + selectedZone).valueChanges().subscribe((lastLine) => {
       this.instancesList.push({ instances: lastLineDone });
+      if(lastLine!=null){        
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap5", lastLine);
+      }
       this.polylinesMarketRoute2 = [];
       for (let index = 0; index < this.allLinesMarketRoute2.length; index++) {
         let lineNo = index + 1;
@@ -584,6 +628,9 @@ export class MultipleMapsComponent {
 
         let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
           this.instancesList.push({ instances: lineStatus });
+          if(status!=null){
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLinesOnMap5", status);
+          }
           if (this.polylinesMarketRoute2[index] != undefined) {
             this.polylinesMarketRoute2[index].setMap(null);
           }

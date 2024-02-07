@@ -6,6 +6,7 @@ import { CommonService } from "../../services/common/common.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-ward-scancard-summary',
@@ -14,7 +15,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class WardScancardSummaryComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService) { }
 
   wardList: any[];
   selectedCircle: any;
@@ -27,6 +28,7 @@ export class WardScancardSummaryComponent implements OnInit {
   isFirst = true;
   db: any;
   public cityName: any;
+  serviceName = "ward-scan-card-summary";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -78,6 +80,7 @@ export class WardScancardSummaryComponent implements OnInit {
   }
 
   getWardDetail() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardDetail");
     this.totalScannedCards = 0;
     this.totalNotScannedCards = 0;
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
@@ -87,6 +90,7 @@ export class WardScancardSummaryComponent implements OnInit {
       let dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/helperName";
       let helperInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", data);
           helperInstance.unsubscribe();
           let helper = "";
           let helperId = "0";
@@ -101,6 +105,7 @@ export class WardScancardSummaryComponent implements OnInit {
             helperdata => {
               helperIdInstance.unsubscribe();
               if (helperdata != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", helperdata);
                 helperId = helperdata.toString().split(',')[0];
                 dbPath = "Employees/" + helperId + "/GeneralDetails/empCode";
                 let empInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -115,6 +120,7 @@ export class WardScancardSummaryComponent implements OnInit {
                       notScannedData => {
                         notScannedInstance.unsubscribe();
                         if (notScannedData != null) {
+                          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", notScannedData);
                           notScanned = Number(notScannedData);
                         }
                         dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
@@ -122,6 +128,7 @@ export class WardScancardSummaryComponent implements OnInit {
                           scannedData => {
                             scannedInstance.unsubscribe();
                             if (scannedData != null) {
+                              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", scannedData);
                               let keyArray = Object.keys(scannedData);
                               for (let j = 0; j < keyArray.length; j++) {
                                 let index = keyArray[j];

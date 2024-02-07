@@ -10,6 +10,7 @@ import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
 import { AngularFireStorage } from "angularfire2/storage";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-line-card-mapping",
@@ -20,7 +21,7 @@ export class LineCardMappingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -43,6 +44,7 @@ export class LineCardMappingComponent {
   previousLine: any;
   db: any;
   cityName: any;
+  serviceName = "line-card-mapping";
   cardDetails: CardDetails = {
     mobile: "",
     address: "",
@@ -139,6 +141,7 @@ export class LineCardMappingComponent {
   }
 
   moveToNewLine() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveToNewLine");
 
     if ($("#txtNewLine").val() == "") {
       this.commonService.setAlertMessage("error", "Please enter line no.");
@@ -160,6 +163,7 @@ export class LineCardMappingComponent {
       lastMarkerKeyData => {
         lastMarkerKeyInstance.unsubscribe();
         if (lastMarkerKeyData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", lastMarkerKeyData);
           lastMarkerKey = Number(lastMarkerKeyData) + 1;
         }
         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineFrom;
@@ -168,6 +172,7 @@ export class LineCardMappingComponent {
             let markerList = [];
             markerInstance.unsubscribe();
             if (markerData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", markerData);
               let keyArray = Object.keys(markerData);
               for (let i = 0; i < keyArray.length; i++) {
                 let markerNo = keyArray[i];
@@ -184,6 +189,7 @@ export class LineCardMappingComponent {
   }
 
   moveHouseData(index: any, lineFrom: any, lineTo: any, lastMarkerKey: any, markerList: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveHouseData");
     if (index == this.selectedCardDetails.length) {
       let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineTo;
       this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
@@ -218,6 +224,7 @@ export class LineCardMappingComponent {
             markerData => {
               markerInstance.unsubscribe();
               if (markerData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveHouseData", markerData);
                 let oldImageName = markerData["image"];
                 markerData["image"] = lastMarkerKey + ".jpg";
                 let newImageName = lastMarkerKey + ".jpg";
@@ -392,6 +399,7 @@ export class LineCardMappingComponent {
   }
 
   showHouses(lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showHouses");
     this.cardDetails.totalCardOnLine = 0;
     this.selectedCardDetails = [];
     let housePath = "Houses/" + this.selectedZone + "/" + lineNo;
@@ -404,6 +412,7 @@ export class LineCardMappingComponent {
     let housesData = this.db.object(housePath).valueChanges().subscribe((data) => {
       housesData.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showHouses", data);
         var keyArray = Object.keys(data);
         for (let index = 0; index < keyArray.length; index++) {
           const cardNo = keyArray[index];

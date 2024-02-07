@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { UserService } from "../services/common/user.service";
 import { FirebaseService } from "../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-realtime-monitoring",
@@ -16,7 +17,7 @@ import { FirebaseService } from "../firebase.service";
   styleUrls: ["./realtime-monitoring.component.scss"],
 })
 export class RealtimeMonitoringComponent implements OnInit {
-  constructor(public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public usrService: UserService, private actRoute: ActivatedRoute, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public usrService: UserService, private actRoute: ActivatedRoute, private modalService: NgbModal) { }
 
   db: any;
   public selectedZone: any;
@@ -182,6 +183,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   currentHaltH3 = "#currentHaltH3";
   appStatusH3 = "#appStatusH3";
   txtVehicle = "#txtVehicle";
+  serviceName = "realtime-monitoring";
 
   ngOnInit() {
 
@@ -209,7 +211,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.zoneList = [];
     this.firstData = false;
     this.userId = localStorage.getItem("userID");
-    this.commonService.savePageLoadHistory("Monitoring","RealTime",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Monitoring", "RealTime", localStorage.getItem("userID"));
     if (localStorage.getItem("userType") == "External User") {
       $(this.divRemark).hide();
     }
@@ -255,9 +257,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setWorkNotStarted() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "setWorkNotStarted");
     for (let index = 1; index < this.allZones.length; index++) {
       const element = this.allZones[index];
       this.db.list("WasteCollectionInfo/" + element["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/WorkerDetails").valueChanges().subscribe((workerData) => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setWorkNotStarted", workerData);
         if (workerData.length == 0) {
           this.db.object("RealTimeDetails/WardDetails/" + element["zoneNo"]).set({ activityStatus: "workNotStarted", isOnDuty: "no", });
         }
@@ -286,10 +290,12 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   setWardCompleted() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "setWardCompleted");
     for (let index = 1; index < this.allZones.length; index++) {
       const element = this.allZones[index];
       this.db.object("WasteCollectionInfo/" + element["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/Summary/dutyOutTime").valueChanges().subscribe((dutyOutTime) => {
         if (dutyOutTime != undefined) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setWardCompleted", dutyOutTime);
           this.db.object("RealTimeDetails/WardDetails/" + element["zoneNo"]).set({ activityStatus: "completed", isOnDuty: "no", });
         }
       });
@@ -297,8 +303,12 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWardsStatusWise() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardsStatusWise");
     let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails").valueChanges().subscribe((data) => {
       this.instancesList.push({ instances: getRealTimeWardDetails });
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardsStatusWise", data);
+      }
       let activeWard = 0;
       let inActiveWard = 0;
       let stoppedWard = 0;
@@ -427,9 +437,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWardDetail(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardDetail");
     let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/Summary";
     let summaryDataUpate = this.db.object(dbPath).valueChanges().subscribe((summaryData) => {
       if (summaryData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", summaryData);
         this.instancesList.push({ instances: summaryDataUpate });
         let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
         if (zoneDetails != undefined) {
@@ -491,6 +503,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             let driverDataInstance = this.db.object(dbPath).valueChanges().subscribe((driverData) => {
               driverDataInstance.unsubscribe();
               if (driverData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", driverData);
                 zoneDetails.driverId = driverData;
               }
             });
@@ -499,6 +512,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             let driverNameInstance = this.db.object(dbPath).valueChanges().subscribe((driverData) => {
               driverNameInstance.unsubscribe();
               if (driverData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", driverData);
                 zoneDetails.driverName = driverData;
               }
             });
@@ -508,6 +522,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             let helperDataInstance = this.db.object(dbPath).valueChanges().subscribe((helperData) => {
               helperDataInstance.unsubscribe();
               if (helperData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", helperData);
                 zoneDetails.helperId = helperData;
               }
             });
@@ -515,6 +530,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             let helperNameInstance = this.db.object(dbPath).valueChanges().subscribe((helperData) => {
               helperNameInstance.unsubscribe();
               if (helperData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", helperData);
                 zoneDetails.helperName = helperData;
               }
             });
@@ -524,6 +540,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             let vehicleDataInstance = this.db.object(dbPath).valueChanges().subscribe((vehicleData) => {
               vehicleDataInstance.unsubscribe();
               if (vehicleData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", vehicleData);
                 zoneDetails.vehicleNo = vehicleData;
               }
             });
@@ -569,10 +586,12 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWardTrips(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardTrips");
     let dbPath = "WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/" + zoneNo;
     let tripInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       tripInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardTrips", data);
         let keyArray = Object.keys(data);
         let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
         if (zoneDetails != undefined) {
@@ -584,10 +603,12 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getCurrentLine(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCurrentLine");
     if (zoneNo == this.selectedZone) {
       let lastLineDone = this.db.object("WasteCollectionInfo/LastLineCompleted/" + this.selectedZone).valueChanges().subscribe((lastLine) => {
         lastLineDone.unsubscribe();
         if (lastLine != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCurrentLine", lastLine);
           this.workerDetails.currentLine = (Number(lastLine) + 1).toString();
         }
       });
@@ -595,10 +616,14 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWorkPercentage(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkPercentage");
     let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus";
     let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe(
       lineStatusData => {
         lineStatusInstance.unsubscribe();
+        if (lineStatusData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkPercentage", lineStatusData);
+        }
         let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
         if (zoneDetails != undefined) {
           if (lineStatusData == null) {
@@ -781,9 +806,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getDistanceCovered(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDistanceCovered");
     let dbPath = "LocationHistory/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/TotalCoveredDistance";
     let distanceCovered = this.db.object(dbPath).valueChanges().subscribe((distanceData) => {
       if (distanceData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDistanceCovered", distanceData);
         this.workerDetails.totalKM = (parseFloat(distanceData.toString()) / 1000).toFixed(2);
       }
       else {
@@ -855,6 +882,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWardInTime() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardInTime");
     if (this.wardInInfo != undefined) {
       this.wardInInfo.unsubscribe();
     }
@@ -865,6 +893,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.wardInInfo = this.db.object(dbPath).valueChanges().subscribe((data) => {
       this.instancesList.push({ instances: this.wardInInfo });
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardInTime", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           let tripCount = 0;
@@ -874,6 +903,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             let locationDetail = this.db.object(dbLocationPath).valueChanges().subscribe((locationPath) => {
               locationDetail.unsubscribe();
               if (locationPath != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardInTime", locationPath);
                 this.workerDetails.vehicleCurrentLocation = locationPath.toString() + " " + data[keyArray[keyArray.length - 1]].replace(vehicleLocation + "-", "");
               }
               if (this.workerDetails.vehicleCurrentLocation == "ward in") {
@@ -899,7 +929,7 @@ export class RealtimeMonitoringComponent implements OnInit {
                 i = i + 1;
                 this.getWardIn(data, keyArray, i, i + 1, this.totalMinutesInWard);
               }
-              else{
+              else {
                 this.getWardIn(data, keyArray, i, i + 1, this.totalMinutesInWard);
               }
             } else if (remark == "ward-in" && i == keyArray.length - 1) {
@@ -1021,6 +1051,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getRemarks(wardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRemarks");
     $(this.key).val("0");
     this.remarkList = [];
     let dbPath = "Remarks/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
@@ -1029,6 +1060,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       if (wardNo == this.selectedZone) {
         this.remarkList = [];
         if (Data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRemarks", Data);
           var keyArray = Object.keys(Data);
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
@@ -1062,6 +1094,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
 
   showHaltTime() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showHaltTime");
     this.todayHaltList = [];
     this.workerDetails.currentHaltTime = "0:00";
     this.workerDetails.haltTime = "0:00";
@@ -1073,6 +1106,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.instancesList.push({ instances: this.haltInfoData });
       this.todayHaltList = [];
       if (haltData != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showHaltTime", haltData);
         let totalBreak = 0;
         this.workerDetails.currentHaltTime = "0:00";
 
@@ -1274,6 +1308,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
 
   getApplicationStatus(driverID) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getApplicationStatus");
     this.applicationDataList = [];
     if (this.application != null) {
       this.application.unsubscribe();
@@ -1282,6 +1317,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.application = this.db.object(applicationPath).valueChanges().subscribe((applicationData) => {
       this.instancesList.push({ instances: this.application });
       if (applicationData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getApplicationStatus", applicationData);
         this.applicationDataList = [];
         let applicationArray = Object.entries(applicationData);
         for (let index = applicationArray.length - 1; index >= 0; index--) {
@@ -1306,11 +1342,13 @@ export class RealtimeMonitoringComponent implements OnInit {
   // Vehicle Status Detail
 
   getVehicleStatus() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getVehicleStatus");
     this.vehicleStstusList = [];
     let dbPath = "GeoGraphicallySurfingHistory/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
     let vehicleStatusInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       vehicleStatusInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVehicleStatus", data);
         this.vehicleStstusList = [];
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -1500,6 +1538,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   // Application Detail
 
   getUnassignedVehicle() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getUnassignedVehicle");
     let vehiclePath = "Vehicles";
     this.unAssignedVehicle = [];
     if (this.vehicle != null) {
@@ -1509,6 +1548,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.instancesList.push({ instances: this.vehicle });
       this.unAssignedVehicle = [];
       if (vehicleData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getUnassignedVehicle", vehicleData);
         let vehicleArray = Object.entries(vehicleData);
         let total = 0;
         for (let index = 0; index < vehicleArray.length; index++) {
@@ -1525,6 +1565,7 @@ export class RealtimeMonitoringComponent implements OnInit {
               let isChecked = false;
               let userId = this.userId;
               if (data != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getUnassignedVehicle", data);
                 reason = data["reason"].toString();
                 userId = data["userId"].toString();
                 textAreaClass = "remark-active";
@@ -1652,9 +1693,13 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWardLineStatus() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardLineStatus");
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus";
     let wardLineData = this.db.object(dbPath).valueChanges().subscribe((data) => {
       this.instancesList.push({ instances: wardLineData });
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardLineStatus", data);
+      }
       this.graphHeaderData.date = this.getDate(0);
       this.graphHeaderData.workprogress = "0";
       this.wardLineStatus = data;
@@ -1961,12 +2006,17 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   showVehicleMovement() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showVehicleMovement");
     let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
     this.vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       if (data != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicleMovement", data);
         dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
         let statusInstance = this.db.object(dbPath).valueChanges().subscribe((statusData) => {
           statusInstance.unsubscribe();
+          if (statusData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicleMovement", statusData);
+          }
           let statusId = statusData.toString();
           let vehicleIcon;
           if (this.workerDetails.vehicleNo.includes("TRACTOR")) {
@@ -2114,10 +2164,12 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getpeopleAtWork() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getpeopleAtWork");
     let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
     let dutyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       this.instancesList.push({ instances: dutyInstance });
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getpeopleAtWork", data);
         let counts = 0;
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
@@ -2146,11 +2198,13 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getGarageWorkDutyOn() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getGarageWorkDutyOn");
     this.garageDutyList = [];
     let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
     let garageInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       garageInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getGarageWorkDutyOn", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {

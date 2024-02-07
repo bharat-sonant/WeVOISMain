@@ -4,6 +4,7 @@ import { CommonService } from '../../services/common/common.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-vehicle-report',
@@ -13,7 +14,7 @@ import { FirebaseService } from "../../firebase.service";
 
 export class VehicleReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private modalService: NgbModal) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -23,6 +24,7 @@ export class VehicleReportComponent implements OnInit {
   yearList: any[];
   db: any;
   cityName: any;
+  serviceName = "vehicle-not-assigned-report";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -90,11 +92,13 @@ export class VehicleReportComponent implements OnInit {
   }
 
   getReasonData(vehicle: any, monthName: any, monthDate: any) {
+    //this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getReasonData");
     let dbPath = "VehicleNotAssignedReasons/" + vehicle + "/" + this.selectedYear + "/" + monthName + "/" + monthDate + "/reason";
     let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         vehicleInstance.unsubscribe();
         if (data != null) {
+          //this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getReasonData", data);
           let d = "day" + parseFloat(monthDate.split("-")[2]);
           let vehicleDetails = this.vehicleDataList.find(item => item.vehicle == vehicle);
           if (vehicleDetails != undefined) {

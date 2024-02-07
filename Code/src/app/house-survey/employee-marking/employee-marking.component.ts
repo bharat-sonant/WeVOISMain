@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-employee-marking",
@@ -12,7 +13,7 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./employee-marking.component.scss"],
 })
 export class EmployeeMarkingComponent implements OnInit {
-  constructor(private router: Router, public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
+  constructor(private router: Router, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
 
   userList: any[];
   markerList: any[];
@@ -31,6 +32,7 @@ export class EmployeeMarkingComponent implements OnInit {
   isFirst = true;
   db: any;
   fireStoragePath = this.commonService.fireStoragePath;
+  serviceName = "manage-surveyor";
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
@@ -47,11 +49,13 @@ export class EmployeeMarkingComponent implements OnInit {
   }
 
   getEmployee() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEmployee");
     this.userList = [];
     let dbPath = "EntityMarkingData/MarkerAppAccess";
     let userInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       userInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEmployee", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
@@ -91,6 +95,7 @@ export class EmployeeMarkingComponent implements OnInit {
   }
 
   getMarkerDetail(empId: any, wardNo: any, index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkerDetail");
     if (this.isFirst == false) {
       this.setActiveClass(index);
     } else {
@@ -111,11 +116,16 @@ export class EmployeeMarkingComponent implements OnInit {
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       markerInstance.unsubscribe();
       if (data != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkerDetail", data);
         this.markerData.totalMarking = data.toString();
       }
     });
     dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
     let totalmarkingInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
+      totalmarkingInstance.unsubscribe();
+      if(data!=null){
+      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkerDetail", data);
+      }
       let lastscandata=data.split(":");
       let scandata=lastscandata[0]+":"+lastscandata[1]
       this.markerData.lastScan = scandata;
@@ -125,6 +135,7 @@ export class EmployeeMarkingComponent implements OnInit {
     let wardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       wardInstance.unsubscribe();
       if (data != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkerDetail", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length - 1; i++) {
@@ -144,6 +155,7 @@ export class EmployeeMarkingComponent implements OnInit {
     let dateInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       dateInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkerDetail", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {

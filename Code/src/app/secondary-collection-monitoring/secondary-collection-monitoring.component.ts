@@ -8,6 +8,7 @@ import { MapService } from '../services/map/map.service';
 import * as $ from "jquery";
 import { Router } from '@angular/router';
 import { FirebaseService } from "../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-secondary-collection-monitoring',
@@ -19,7 +20,7 @@ export class SecondaryCollectionMonitoringComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(private router: Router, public fs: FirebaseService, public toastr: ToastrService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
+  constructor(private router: Router, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public toastr: ToastrService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
 
   public selectedZone: any;
   selectedDate: any;
@@ -72,6 +73,7 @@ export class SecondaryCollectionMonitoringComponent {
   cityName: any;
   db: any;
   instancesList: any[] = [];
+  serviceName = "secondary-collection-monitoring";
   // route tracking
 
   routePathStore: any[];
@@ -306,6 +308,7 @@ export class SecondaryCollectionMonitoringComponent {
   /* ----------Dehradun Dustbin End----------------- */
 
   getData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getData");
     this.planDetail = [];
     this.pickkingPlanList = [];
     this.dustbinShow = [];
@@ -330,6 +333,7 @@ export class SecondaryCollectionMonitoringComponent {
         data => {
           assignedPlanInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", data);
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
               for (let i = 0; i < keyArray.length; i++) {
@@ -353,6 +357,7 @@ export class SecondaryCollectionMonitoringComponent {
                   let vehicleLocation = this.db.object('CurrentLocationInfo/BinLifting/' + vehicle + '/CurrentLoc').valueChanges().subscribe(
                     vehicleLocationData => {
                       if (vehicleLocationData != null) {
+                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", vehicleLocationData);
                         if (this.selectedDate == this.todayDate) {
                           let lat = vehicleLocationData["lat"];
                           let lng = vehicleLocationData["lng"];
@@ -369,6 +374,7 @@ export class SecondaryCollectionMonitoringComponent {
                   planData => {
                     planInstance.unsubscribe();
                     if (planData != null) {
+                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", planData);
                       this.getPickedDustbin(planData, i, index, planName, year, monthName, vehicle, driver);
                     }
                     else {
@@ -377,6 +383,7 @@ export class SecondaryCollectionMonitoringComponent {
                         planData => {
                           planInstance.unsubscribe();
                           if (planData != null) {
+                            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", planData);
                             this.getPickedDustbin(planData, i, index, planName, year, monthName, vehicle, driver);
                           }
                           else {
@@ -385,6 +392,7 @@ export class SecondaryCollectionMonitoringComponent {
                               planData => {
                                 planInstance.unsubscribe();
                                 if (planData != null) {
+                                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", planData);
                                   this.getPickedDustbin(planData, i, index, planName, year, monthName, vehicle, driver);
                                 }
                               }
@@ -403,6 +411,8 @@ export class SecondaryCollectionMonitoringComponent {
   }
 
   getPickedDustbin(planData: any, planIndex: any, index: any, planName: any, year: any, monthName: any, vehicle: any, driver: any) {
+    
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPickedDustbin");
     let picked = 0;
     let assignedDustbin = planData["bins"];
     assignedDustbin = assignedDustbin.replace(" ", "");
@@ -419,6 +429,7 @@ export class SecondaryCollectionMonitoringComponent {
             let isPicked = 0;
             let dustbins = dustbin;
             if (dustbinsPickedData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPickedDustbin", dustbinsPickedData);
               picked += 1;
               isPicked = 1;
             }
@@ -441,6 +452,7 @@ export class SecondaryCollectionMonitoringComponent {
 
 
   getRoute(vehicle: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRoute");
     let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let year = this.selectedDate.split("-")[0];
     let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + year + "/" + monthName + "/" + this.selectedDate;
@@ -449,6 +461,7 @@ export class SecondaryCollectionMonitoringComponent {
         vehicleTracking.unsubscribe();
         this.routePathStore = [];
         if (routePath != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRoute", routePath);
           let keyArray = Object.keys(routePath);
           for (let i = 0; i < keyArray.length - 2; i++) {
             let time = keyArray[i];
@@ -499,6 +512,7 @@ export class SecondaryCollectionMonitoringComponent {
                         dutyData => {
                           this.instancesList.push({ instances: vehicleDutyData });
                           if (dutyData != null) {
+                            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRoute", dutyData);
                             if (dutyData["isOnDuty"] != "yes") {
                               let lat = lineData[lineData.length - 1]["lat"];
                               let lng = lineData[lineData.length - 1]["lng"];
@@ -541,6 +555,7 @@ export class SecondaryCollectionMonitoringComponent {
   }
 
   getHalt(vehicle: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHalt");
     let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let year = this.selectedDate.split("-")[0];
     let dbPath = "HaltInfo/BinLifting/" + vehicle + "/" + year + "/" + monthName + "/" + this.selectedDate;
@@ -548,6 +563,7 @@ export class SecondaryCollectionMonitoringComponent {
       haltData => {
         halt.unsubscribe();
         if (haltData.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHalt", haltData);
           let totalBreak = 0;
           for (let index = 0; index < haltData.length; index++) {
             if (haltData[index]["haltType"] != "network-off") {
@@ -750,12 +766,14 @@ export class SecondaryCollectionMonitoringComponent {
   }
 
   getStartTime(driverId: any, planId: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getStartTime");
     for (let i = 1; i < 5; i++) {
       let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + driverId + "/task" + i + "";
       let taskInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
           taskInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getStartTime", data);
             if (data["binLiftingPlanId"] == planId) {
               if (Object.keys(data["in-out"])[0] != null) {
                 {
@@ -799,11 +817,13 @@ export class SecondaryCollectionMonitoringComponent {
   }
 
   getDistanceCovered(vehicle: any, planId: any, year: any, monthName: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDistanceCovered");
     let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + year + "/" + monthName + "/" + this.selectedDate + "/TotalCoveredDistance";
     let distanceInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         distanceInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDistanceCovered", data);
           let planDetails = this.planDetail.find(item => item.id == planId);
           if (planDetails != undefined) {
             planDetails.totDistance = (Number(data) / 1000).toFixed(3);

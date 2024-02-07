@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { AngularFireStorage } from "angularfire2/storage";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-ward-road-detail',
@@ -15,7 +16,7 @@ export class WardRoadDetailComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private httpService: HttpClient, private storage: AngularFireStorage) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private httpService: HttpClient, private storage: AngularFireStorage) { }
   db: any;
   selectedZone: any;
   zoneList: any;
@@ -30,6 +31,7 @@ export class WardRoadDetailComponent {
   toDayDate: any;
   invisibleImageUrl = "../assets/img/invisible-location.svg";
   divLoader = "#divLoader";
+  serviceName = "ward-road-detail";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -166,11 +168,13 @@ export class WardRoadDetailComponent {
   }
 
   getWardRoadList() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardRoadList");
     $(this.divLoader).show();
     let dbPath = "EntityMarkingData/WardRoadDetail/" + this.selectedZone;
     let roadInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       roadInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRoadList", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let lineNo = keyArray[i];

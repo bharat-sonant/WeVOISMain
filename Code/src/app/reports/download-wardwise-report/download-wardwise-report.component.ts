@@ -9,6 +9,7 @@ import * as html2canvas from "html2canvas";
 import * as jspdf from "jspdf";
 import * as $ from "jquery";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-download-wardwise-report",
@@ -46,7 +47,7 @@ export class DownloadWardwiseReportComponent {
   partailDoneCount: number;
   reportImages: any[];
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
 
   db: any;
   cityName: any;
@@ -54,6 +55,7 @@ export class DownloadWardwiseReportComponent {
   wardTotalLines: any;
   txtDate = "#txtDate";
   divLoader="#divLoader";
+  serviceName = "download-report";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -204,6 +206,7 @@ export class DownloadWardwiseReportComponent {
   }
 
   drawRealTimePloylines(isLineWeghtageAllow: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "drawRealTimePloylines");
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != null) {
@@ -223,6 +226,7 @@ export class DownloadWardwiseReportComponent {
           let lineData = this.allLines.find(item => item.lineNo == lineNo);
           let lineColor = "#87CEFA";
           if (lineStatusData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "drawRealTimePloylines", lineStatusData);
             if (lineStatusData[lineNo] != undefined) {
               if (lineStatusData[lineNo]["Status"] != 'undefined') {
                 if (lineStatusData[lineNo]["Status"] == "LineCompleted") {
@@ -269,10 +273,12 @@ export class DownloadWardwiseReportComponent {
   }
 
   getSummaryDetail() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSummaryDetail");
     let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/WorkerDetails";
     let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
       workDetails.unsubscribe();
       if (workerData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSummaryDetail", workerData);
         let driverList = workerData["driverName"].split(',');
         let driverName = "";
         for (let i = 0; i < driverList.length; i++) {

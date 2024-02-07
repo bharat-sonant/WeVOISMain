@@ -3,6 +3,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { MapService } from '../../services/map/map.service';
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-work-assign-report',
@@ -11,7 +12,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class WorkAssignReportComponent implements OnInit {
 
-  constructor(private commonService: CommonService, public fs: FirebaseService, private mapService: MapService) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private mapService: MapService) { }
 
   workList: any[] = [];
   selectedDate: any;
@@ -19,25 +20,31 @@ export class WorkAssignReportComponent implements OnInit {
   currentYear: any;
   db: any;
   cityName: any;
+  serviceName = "work-assign-report";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("General-Reports","Work-Assign-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("General-Reports", "Work-Assign-Report", localStorage.getItem("userID"));
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = new Date().getFullYear();
-    this.onSubmit();
+    this.getWorkAssigned();
   }
 
-  onSubmit() {
+
+  getWorkAssigned() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkAssigned");
     this.workList = [];
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
     let dbPath = "WhoAssignWork/" + year + "/" + monthName + "/" + this.selectedDate;
     let workData = this.db.object(dbPath).valueChanges().subscribe(
       Data => {
+        if (Data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkAssigned", Data);
+        }
         workData.unsubscribe();
         var keyArray = Object.keys(Data);
         for (let index = 0; index < keyArray.length; index++) {
@@ -71,7 +78,7 @@ export class WorkAssignReportComponent implements OnInit {
 
   setDate(filterVal: any) {
     this.selectedDate = filterVal;
-    this.onSubmit();
+    this.getWorkAssigned();
 
   }
   setNextDate() {
@@ -79,14 +86,14 @@ export class WorkAssignReportComponent implements OnInit {
     let nextDate = this.commonService.getNextDate(currentDate, 1);
     $('#txtDate').val(nextDate);
     this.selectedDate = nextDate;
-    this.onSubmit();
+    this.getWorkAssigned();
   }
   setPreviousDate() {
     let currentDate = $('#txtDate').val();
     let previousDate = this.commonService.getPreviousDate(currentDate, 1);
     $('#txtDate').val(previousDate);
     this.selectedDate = previousDate;
-    this.onSubmit();
+    this.getWorkAssigned();
   }
 
 }

@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
 import * as XLSX from 'xlsx';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-penalty-review',
@@ -13,7 +14,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class PenaltyReviewComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   toDayDate: any;
@@ -31,6 +32,7 @@ export class PenaltyReviewComponent implements OnInit {
   monthPenaltyList: any[];
   public totalCards: any;
   divLoader = "#divLoader";
+  serviceName = "portal-service-penalty-review";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -70,6 +72,7 @@ export class PenaltyReviewComponent implements OnInit {
   }
 
   getMonthPenalty() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMonthPenalty");
     this.totalCards = 0;
     this.monthPenaltyList = [];
     for (let i = 1; i < this.zoneList.length; i++) {
@@ -96,6 +99,7 @@ export class PenaltyReviewComponent implements OnInit {
       let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         penaltyInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthPenalty", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let j = 0; j < keyArray.length; j++) {

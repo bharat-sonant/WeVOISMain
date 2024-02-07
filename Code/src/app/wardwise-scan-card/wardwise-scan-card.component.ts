@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { AngularFireStorage } from "@angular/fire/storage";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-wardwise-scan-card',
@@ -11,7 +12,7 @@ import { AngularFireStorage } from "@angular/fire/storage";
   styleUrls: ['./wardwise-scan-card.component.scss']
 })
 export class WardwiseScanCardComponent implements OnInit {
-  constructor(public fs: FirebaseService, private storage: AngularFireStorage, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
   zoneList: any[] = [];
   cardList: any[];
   cardFinalList: any[];
@@ -27,6 +28,7 @@ export class WardwiseScanCardComponent implements OnInit {
   divLoader = "#divLoader";
   divMainLoader = "#divMainLoader";
   lastUpdateDate: any;
+  serviceName = "review-scan-card-images";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -110,11 +112,13 @@ export class WardwiseScanCardComponent implements OnInit {
   }
 
   getDataFromDatabase() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDataFromDatabase");
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let houseCollectionInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         houseCollectionInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDataFromDatabase", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -227,6 +231,7 @@ export class WardwiseScanCardComponent implements OnInit {
   }
 
   updateScanData(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateScanData");
     let scanBy = this.cardList[index]["scanBy"];
     let scanTime = this.cardList[index]["scanTime"];
     let latLng = this.cardList[index]["latLng"];
@@ -249,6 +254,7 @@ export class WardwiseScanCardComponent implements OnInit {
       preData => {
         cardInstance.unsubscribe();
         if (preData == null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateScanData", preData);
           this.updatetotalScanCounts();
         }
         this.db.object(dbPath).update(data);
@@ -269,6 +275,7 @@ export class WardwiseScanCardComponent implements OnInit {
   }
 
   removeImageDataRecord(key: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "removeImageDataRecord");
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/ImagesData/" + key;
     if (lineNo != undefined) {
       dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/ImagesData/" + lineNo + "/" + key;
@@ -281,6 +288,7 @@ export class WardwiseScanCardComponent implements OnInit {
           imageData => {
             imageDataInstance.unsubscribe();
             if (imageData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "removeImageDataRecord", imageData);
               let keyArray = Object.keys(imageData);
               let isData = false;
               for (let i = 0; i < keyArray.length; i++) {
@@ -300,11 +308,13 @@ export class WardwiseScanCardComponent implements OnInit {
   }
 
   updatetotalScanCounts() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updatetotalScanCounts");
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/totalActualScanned";
     let totalActualScannedInstance = this.db.object(dbPath).valueChanges().subscribe(countData => {
       totalActualScannedInstance.unsubscribe();
       let count = 1;
       if (countData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updatetotalScanCounts", countData);
         count = count + Number(countData);
       }
       dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
@@ -315,6 +325,7 @@ export class WardwiseScanCardComponent implements OnInit {
       totalScannedInstance.unsubscribe();
       let count = 1;
       if (countData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updatetotalScanCounts", countData);
         count = count + Number(countData);
       }
       dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;

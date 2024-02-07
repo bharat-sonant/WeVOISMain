@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-ward-survey-summary",
@@ -10,7 +11,7 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ["./ward-survey-summary.component.scss"],
 })
 export class WardSurveySummaryComponent implements OnInit {
-  constructor(public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
 
   selectedCircle: any;
   wardList: any[];
@@ -42,6 +43,7 @@ export class WardSurveySummaryComponent implements OnInit {
   ddlHouseType = "#ddlHouseType";
   txtServingCount = "#txtServingCount";
   divServingCount = "#divServingCount";
+  serviceName = "survey-summary";
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -83,11 +85,13 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getLastUpdate() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLastUpdate");
     let dbPath = "EntitySurveyData/surveySummarylastUpdate";
     let lastUpdateInstance = this.db.object(dbPath).valueChanges().subscribe(
       lastUpdateData => {
         lastUpdateInstance.unsubscribe();
         if (lastUpdateData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLastUpdate", lastUpdateData);
           this.surveyData.lastUpdate = lastUpdateData;
         }
       }
@@ -95,11 +99,13 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getSurveyorList() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSurveyorList");
     this.surveyorList = [];
     let surveyorInstance = this.db.object("Surveyors/").valueChanges().subscribe(
       surveyorData => {
         surveyorInstance.unsubscribe();
         if (surveyorData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSurveyorList", surveyorData);
           let keyArray = Object.keys(surveyorData);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -173,6 +179,7 @@ export class WardSurveySummaryComponent implements OnInit {
   cardNumberList: any[] = [];
 
   checkWithCardWardMapping() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkWithCardWardMapping");
     let dbPath = "CardWardMapping";
     let houseinstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -191,6 +198,7 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "</tr>";
 
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkWithCardWardMapping", data);
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let cardNo = keyArray[i];
@@ -238,6 +246,7 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   updateCounts_Bharat(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCounts_Bharat");
     if (index == this.wardList.length) {
       let date = this.commonService.setTodayDate();
       let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
@@ -279,6 +288,7 @@ export class WardSurveySummaryComponent implements OnInit {
           markerInstance.unsubscribe();
 
           if (markerData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts_Bharat", markerData);
 
             let keyArray = Object.keys(markerData);
 
@@ -391,11 +401,13 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   updateVirtualCards(zoneNo: any, lineNo: any, markerNo: any, cardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateVirtualCards");
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       markerData => {
         markerInstance.unsubscribe();
         if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateVirtualCards", markerData);
           let newCardNo = "MPZ" + (Number(cardNo.replace("MPZ", "")) + 100000);
           markerData["cardNumber"] = newCardNo;
           //console.log(markerData);
@@ -410,6 +422,7 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   updateSurveyComplexCount_Bharat(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSurveyComplexCount_Bharat");
 
     let dbPath = "Houses/" + zoneNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -421,6 +434,7 @@ export class WardSurveySummaryComponent implements OnInit {
         let totalResidencialCount = 0;
         let totalCommercialCount = 0;
         if (houseData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyComplexCount_Bharat", houseData);
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
             let cardsCount=0;
@@ -591,6 +605,7 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getExportCardData(index: any, type: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportCardData");
     if (index == this.wardList.length) {
       if (this.cardHousesList.length > 0) {
         let totalHouses = 0;
@@ -701,6 +716,7 @@ export class WardSurveySummaryComponent implements OnInit {
         houseData => {
           houseInstance.unsubscribe();
           if (houseData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getExportCardData", houseData);
             let keyArray = Object.keys(houseData);
             if (keyArray.length > 0) {
               for (let i = 0; i < keyArray.length; i++) {
@@ -769,16 +785,19 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getWardSummary(index: any, wardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardSummary");
     let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/marked";
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       markerInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
         this.wardProgressList[index]["markers"] = Number(data);
         this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(data);
         dbPath = "EntitySurveyData/TotalHouseCount/" + wardNo;
         let surveyedInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
           surveyedInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
             this.wardProgressList[index]["surveyed"] = Number(data);
             this.surveyData.totalSurveyed = this.surveyData.totalSurveyed + Number(data);
             this.wardProgressList[index]["status"] = "In Progress";
@@ -791,6 +810,7 @@ export class WardSurveySummaryComponent implements OnInit {
         let housesInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
           housesInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
             this.wardProgressList[index]["houses"] = Number(data);
             this.surveyData.totalHouses = this.surveyData.totalHouses + Number(data);
           }
@@ -802,6 +822,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       alreadyInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
         this.wardProgressList[index]["already"] = Number(data);
       }
     });
@@ -810,6 +831,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let revisitInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       revisitInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
         this.wardProgressList[index]["revisit"] = Number(data);
         this.surveyData.totalRevisit = this.surveyData.totalRevisit + Number(data);
       }
@@ -819,6 +841,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       oldCardInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
         this.wardProgressList[index]["oldCard"] = Number(data);
         this.surveyData.totalOldCards = this.surveyData.totalOldCards + Number(data);
       }
@@ -828,6 +851,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let houseHoldInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseHoldInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
         this.wardProgressList[index]["houseHold"] = Number(data);
       }
     });
@@ -836,6 +860,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let complexInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       complexInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
         this.wardProgressList[index]["complex"] = Number(data);
       }
     });
@@ -844,6 +869,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let residentailInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       residentailInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
         this.wardProgressList[index]["residential"] = Number(data);
         this.surveyData.totalResidential = this.surveyData.totalResidential + Number(data);
       }
@@ -853,6 +879,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let commercialInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       commercialInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
         this.wardProgressList[index]["commercial"] = Number(data);
         this.surveyData.totalCommercial = this.surveyData.totalCommercial + Number(data);
       }
@@ -895,6 +922,7 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getSurveyDetail(wardNo: any, listIndex: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSurveyDetail");
     this.clearWardDetailData();
     this.selectedWard = wardNo;
     $('#divLoaderMain').show();
@@ -925,6 +953,7 @@ export class WardSurveySummaryComponent implements OnInit {
           markedHouseData => {
             markedHouseInstance.unsubscribe();
             if (markedHouseData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSurveyDetail", markedHouseData);
               for (let i = 1; i <= this.wardLineCount; i++) {
 
                 this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
@@ -1075,11 +1104,13 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getLineDetail(wardNo: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineDetail");
     let dbPath = "Houses/" + wardNo + "/" + lineNo;
     let lineDetailInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         lineDetailInstance.unsubscribe();
         if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineDetail", data);
           for (let i = 0; i < data.length; i++) {
             if (data[i]["latLng"] != null) {
               let city = this.commonService.getFireStoreCity();
@@ -1196,6 +1227,7 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   updateHouseType() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateHouseType");
     let wardNo = $(this.houseWardNo).val();
     let lineNo = $(this.houseLineNo).val();
     let index = $(this.houseIndex).val();
@@ -1228,6 +1260,7 @@ export class WardSurveySummaryComponent implements OnInit {
       data => {
         markerInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHouseType", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -1301,12 +1334,14 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getHouses() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHouses");
     let dateList = [];
     let dbPath = "EntitySurveyData/DailyHouseCount";
     let surveyedInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         surveyedInstance.unsubscribe();
         if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHouses", data);
           for (let i = 0; i < data.length; i++) {
             let obj = data[i];
             let keyArray = Object.keys(obj);
@@ -1337,12 +1372,14 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getRevisitRequests() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRevisitRequests");
     let dateList = [];
     let dbPath = "EntitySurveyData/DailyRevisitRequestCount";
     let revisitInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         revisitInstance.unsubscribe();
         if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRevisitRequests", data);
           for (let i = 0; i < data.length; i++) {
             let obj = data[i];
             let keyArray = Object.keys(obj);
@@ -1373,12 +1410,14 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getRFIDNotFound() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRFIDNotFound");
     let dateList = [];
     let dbPath = "EntitySurveyData/DailyRfidNotFoundCount";
     let rfidInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         rfidInstance.unsubscribe();
         if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRFIDNotFound", data);
           for (let i = 0; i < data.length; i++) {
             let obj = data[i];
             let keyArray = Object.keys(obj);
@@ -1410,6 +1449,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
 
   getZoneHouseTypeList(content: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
     this.zoneHouseTypeList = [];
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -1430,6 +1470,7 @@ export class WardSurveySummaryComponent implements OnInit {
           this.closeModel();
         }
         else {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseTypeList", markerData);
           let keyArray = Object.keys(markerData);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
@@ -1560,6 +1601,7 @@ export class WardSurveySummaryComponent implements OnInit {
       this.exportHouseTypeList("1");
     }
     else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseType");
 
       let totalCounts = 0;
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
@@ -1576,6 +1618,7 @@ export class WardSurveySummaryComponent implements OnInit {
             }
           }
           else {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseType", markerData);
             let keyArray = Object.keys(markerData);
             for (let i = 0; i < keyArray.length; i++) {
               let lineNo = keyArray[i];
@@ -1643,11 +1686,13 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   updateHousesType(zoneNo: any, lineNo: any, markerNo: any, cardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateHousesType");
     let dbPath = "CardWardMapping/" + cardNo;
     let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(
       mappingData => {
         cardWardInstance.unsubscribe();
         if (mappingData != undefined) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHousesType", mappingData);
           let line = mappingData["line"];
           let ward = mappingData["ward"];
           dbPath = "Houses/" + ward + "/" + line + "/" + cardNo + "/houseType";
@@ -1656,6 +1701,7 @@ export class WardSurveySummaryComponent implements OnInit {
               let houseType = "1";
               houseTypeInstance.unsubscribe();
               if (houseTypeData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHousesType", houseTypeData);
                 if (houseTypeData != "") {
                   houseType = houseTypeData;
                 }

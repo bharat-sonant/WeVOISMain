@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from "../../services/common/common.service";
 import { HttpClient } from "@angular/common/http";
 import { AngularFireList, AngularFireObject } from 'angularfire2/database';
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +13,11 @@ export class DustbinService {
   plansRef: AngularFireList<any>;
   planRef: AngularFireObject<any>;
   db: any;
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  serviceName = "dustbin-service";
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
 
   getDustbinZone() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinZone");
     return new Promise((resolve) => {
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
       let dbPath = "DustbinData/AvailableZone/zone";
@@ -22,6 +25,7 @@ export class DustbinService {
         data => {
           zoneInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinZone", data);
             resolve(data);
           }
         }, error => {
@@ -65,12 +69,16 @@ export class DustbinService {
   }
 
   getDustbinPickingPlanHistory(year: any, monthName: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPickingPlanHistory");
     return new Promise((resolve) => {
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
       let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName;
       let dustbinPlanHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(
         planHistoryData => {
           dustbinPlanHistoryInstance.unsubscribe();
+          if (planHistoryData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPickingPlanHistory", planHistoryData);
+          }
           resolve(planHistoryData);
         }
       );
@@ -78,6 +86,7 @@ export class DustbinService {
   }
 
   getDustbinPickingPlanHistoryDateWise(year: any, monthName: any, date: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPickingPlanHistoryDateWise");
     return new Promise((resolve) => {
       const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FDustbinPickingPlanHistory%2F" + year + "%2F" + monthName + "%2F" + date + ".json?alt=media";
       let dustbinPlanHistoryInstance = this.httpService.get(path).subscribe(planHistoryData => {
@@ -88,6 +97,9 @@ export class DustbinService {
         let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date;
         let dustbinPlanHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(
           planHistoryData => {
+            if (planHistoryData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPickingPlanHistoryDateWise", planHistoryData);
+            }
             dustbinPlanHistoryInstance.unsubscribe();
             this.commonService.saveJsonFile(planHistoryData, date + ".json", "/DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/")
             resolve(planHistoryData);
@@ -99,11 +111,15 @@ export class DustbinService {
 
   getDustbinPickingPlans() {
     return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPickingPlans");
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
       let dbPath = "DustbinData/DustbinPickingPlans";
       let dustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
         planData => {
           dustbinPlanInstance.unsubscribe();
+          if (planData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPickingPlans", planData);
+          }
           resolve(planData);
         }
       );
@@ -112,16 +128,20 @@ export class DustbinService {
 
   getDustbinPickingPlansByDate(date: any) {
     return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPickingPlansByDate");
       let year = date.split('-')[0];
       let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
       let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date;
-      if(date==this.commonService.setTodayDate()){
+      if (date == this.commonService.setTodayDate()) {
         dbPath = "DustbinData/DustbinPickingPlans/" + date;
       }
       let dustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
         planListData => {
           dustbinPlanInstance.unsubscribe();
+          if (planListData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPickingPlansByDate", planListData);
+          }
           resolve(planListData);
         }
       );
@@ -130,11 +150,15 @@ export class DustbinService {
 
   getWardAssignedDustbin(year: any, monthName: any) {
     return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardAssignedDustbin");
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
       let dbPath = "DustbinData/DustbinAssignToWard/" + year + "/" + monthName;
       let wardDustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
         planData => {
           wardDustbinPlanInstance.unsubscribe();
+          if (planData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardAssignedDustbin", planData);
+          }
           resolve(planData);
         }
       );
@@ -153,11 +177,15 @@ export class DustbinService {
 
   getDustbinPlanDetail(date: any, key: any) {
     return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPlanDetail");
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
       let dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + key + "";
       let planInstance = this.db.object(dbPath).valueChanges().subscribe(
         planData => {
           planInstance.unsubscribe();
+          if (planData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPlanDetail", planData);
+          }
           resolve(planData);
         });
     });
@@ -165,6 +193,7 @@ export class DustbinService {
 
   getDustbinPlanData(date: any, planId: any, type: any, year: any, monthName: any) {
     return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPlanData");
       let dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + planId + "";
       if (type == "History") {
         dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date + "/" + planId + "";
@@ -172,6 +201,9 @@ export class DustbinService {
       let planDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(
         planDustbinData => {
           planDustbinInstance.unsubscribe();
+          if (planDustbinData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPlanData", planDustbinData);
+          }
           resolve(planDustbinData);
         });
     });
@@ -179,10 +211,14 @@ export class DustbinService {
 
   getDustbinPickHistory(year: any, monthName: any, date: any, dustbinId: any, planId: any) {
     return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPickHistory");
       let dbPath = "DustbinData/DustbinPickHistory/" + year + "/" + monthName + "/" + date + "/" + dustbinId + "/" + planId;
       let dustbinPickInstance = this.db.object(dbPath).valueChanges().subscribe(
         dustbinPickData => {
           dustbinPickInstance.unsubscribe();
+          if (dustbinPickData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPickHistory", dustbinPickData);
+          }
           resolve(dustbinPickData);
         });
     });
@@ -190,10 +226,14 @@ export class DustbinService {
 
   getDustbinPickedAnalysisDetail(year: any, monthName: any, date: any, dustbinId: any, planId: any) {
     return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPickedAnalysisDetail");
       let dbPath = "DustbinData/DustbinPickHistory/" + year + "/" + monthName + "/" + date + "/" + dustbinId + "/" + planId + "/Analysis";
       let pickedAnalysisDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(
         pickAnalysisData => {
           pickedAnalysisDustbinInstance.unsubscribe();
+          if (pickAnalysisData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPickedAnalysisDetail", pickAnalysisData);
+          }
           resolve(pickAnalysisData);
         });
     });

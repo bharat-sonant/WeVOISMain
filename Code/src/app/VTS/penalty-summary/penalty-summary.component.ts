@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { FirebaseService } from "../../firebase.service";
 import * as XLSX from 'xlsx';
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-penalty-summary',
@@ -10,7 +11,7 @@ import * as XLSX from 'xlsx';
 })
 export class PenaltySummaryComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -23,6 +24,7 @@ export class PenaltySummaryComponent implements OnInit {
   db: any;
   rowTo: any;
   cityName: any;
+  serviceName = "penalty-summary";
 
   penaltyData: penaltyDatail =
     {
@@ -221,6 +223,7 @@ export class PenaltySummaryComponent implements OnInit {
   }
 
   getRoutes() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRoutes");
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
         let wardNo = this.wardList[i]["wardNo"];
@@ -229,6 +232,7 @@ export class PenaltySummaryComponent implements OnInit {
           data => {
             routeInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRoutes", data);
               let routes = this.wardList[i]["routes"];
               let penalty = this.wardList[i]["penalty"];
               let dayList = this.wardList[i]["dayList"];
@@ -330,11 +334,13 @@ export class PenaltySummaryComponent implements OnInit {
   }
 
   getPenalty(wardNo: any, routeIndex: any, lineList: any, workDate: any, totalLength: any, day: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPenalty");
     let dbPath = "WasteCollectionInfo/" + wardNo + "/" + workDate.split('-')[0] + "/" + this.commonService.getCurrentMonthName(new Date(workDate).getMonth()) + "/" + workDate + "/LineStatus";
     let lineInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       lineInstance.unsubscribe();
       let coveredLength = 0;
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPenalty", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let lineNo = keyArray[i];

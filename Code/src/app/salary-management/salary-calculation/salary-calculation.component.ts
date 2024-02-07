@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import * as XLSX from 'xlsx';
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-salary-calculation',
@@ -11,7 +12,7 @@ import * as XLSX from 'xlsx';
 })
 export class SalaryCalculationComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
   db: any;
   fireStoreCity: any;
@@ -30,6 +31,7 @@ export class SalaryCalculationComponent implements OnInit {
   wardWagesList: any[] = [];
   divLoader = "#divLoader";
   monthDays: any;
+  serviceName = "salary-calculation";
 
 
   salarySummary: salarySummary =
@@ -131,6 +133,7 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getEmployee() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEmployee");
     $(this.divLoader).show();
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let employeeInstance = this.httpService.get(path).subscribe(data => {
@@ -146,6 +149,7 @@ export class SalaryCalculationComponent implements OnInit {
             let isSalaried = false;
 
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEmployee", data);
               if (data == "salaried") {
                 isSalaried = true;
               }
@@ -199,11 +203,13 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getSalaryFromDailyWork(monthDate: any, index: any, days: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSalaryFromDailyWork");
     let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
     let dailyWorkInstance = this.db.object(dbPath).valueChanges().subscribe(
       dailyWorkData => {
         dailyWorkInstance.unsubscribe();
         if (dailyWorkData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSalaryFromDailyWork", dailyWorkData);
           let keyArray = Object.keys(dailyWorkData);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -278,11 +284,13 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
   getWorkPercentage(empId: any, ward: any, monthDate: any, index: any, days: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkPercentage");
     let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/workPercentage";
     let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
       workPercentageData => {
         workPercentageInstance.unsubscribe();
         if (workPercentageData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkPercentage", workPercentageData);
           let salaryDetail = this.salaryList.find(item => item.empId == empId);
           if (salaryDetail != undefined) {
             let day = "day" + Number(monthDate.split('-')[2]);

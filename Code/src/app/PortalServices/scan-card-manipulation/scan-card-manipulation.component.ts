@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 
 @Component({
@@ -10,7 +11,7 @@ import { CommonService } from '../../services/common/common.service';
 })
 export class ScanCardManipulationComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
 
   db: any;
   cityName: any;
@@ -22,6 +23,7 @@ export class ScanCardManipulationComponent implements OnInit {
   public processDate: any;
   public processLine: any;
   divLoader = "#divLoader";
+  serviceName = "portal-service-scan-card-manipulation";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -46,6 +48,7 @@ export class ScanCardManipulationComponent implements OnInit {
 
 
   saveData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "saveData");
     this.processDate = "---";
     this.processLine = "---";
     if ($("#txtDateFrom").val() == "") {
@@ -81,6 +84,7 @@ export class ScanCardManipulationComponent implements OnInit {
         let wardHouses = [];
         let wardTotalLines = 0;
         if (houseData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", houseData);
           let lineArray = Object.keys(houseData);
           if (lineArray.length > 0) {
             wardTotalLines = Number(lineArray[lineArray.length - 1]);
@@ -122,6 +126,7 @@ export class ScanCardManipulationComponent implements OnInit {
   }
 
   updateLineCard(lineNo: any, date: any, endDate: any, wardHouses: any, wardTotalLines: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateLineCard");
     if (lineNo > wardTotalLines) {
       date = this.commonService.getNextDate(date, 1);
       this.saveScanCardManipulation(date, endDate, wardHouses, wardTotalLines);
@@ -135,6 +140,7 @@ export class ScanCardManipulationComponent implements OnInit {
         data => {
           wardCollectionInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateLineCard", data);
             // if (data["Status"] == "LineCompleted") {
             let startTime = "";
             let endTime = "";
@@ -158,6 +164,7 @@ export class ScanCardManipulationComponent implements OnInit {
                   houseCollectionData => {
                     houseCollectionInstance.unsubscribe();
                     if (houseCollectionData == null) {
+                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateLineCard", houseCollectionData);
                       let scanTime = this.getRandomScanTime(scanStartTime, scanEndTime);
                       const scanData = {
                         latLng: cardList[i]["latlng"],
@@ -197,6 +204,7 @@ export class ScanCardManipulationComponent implements OnInit {
   }
 
   updateTotalScaned(date: any, endDate: any, wardHouses: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateTotalScaned");
     if (new Date(date) > new Date(endDate)) {
       $(this.divLoader).hide();
       this.commonService.setAlertMessage("success", "Scan card data processing has been completed !!!");
@@ -209,6 +217,7 @@ export class ScanCardManipulationComponent implements OnInit {
         scanData => {
           totalScanedInstance.unsubscribe();
           if (scanData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateTotalScaned", scanData);
             let scanCardCount = 0;
             let actualScanCount = 0;
             let keyArray = Object.keys(scanData);

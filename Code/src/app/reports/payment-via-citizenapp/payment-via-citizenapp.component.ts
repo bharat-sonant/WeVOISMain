@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-payment-via-citizenapp',
@@ -24,11 +25,12 @@ export class PaymentViaCitizenappComponent implements OnInit {
   ddlMonth = "#ddlMonth";
   divLoader = "#divLoader";
   divLoaderMain = "#divLoaderMain";
+  serviceName = "collection-management-payment-via-citizenapp";
   public columnType: any;
   public totalAmount: any;
 
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -61,11 +63,13 @@ export class PaymentViaCitizenappComponent implements OnInit {
   }
 
   getCardWardMapping() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardWardMapping");
     this.cardWardList = [];
     let dbPath = "CardWardMapping";
     let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       cardWardInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "CardWardMapping", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let cardNo = keyArray[i];
@@ -130,6 +134,7 @@ export class PaymentViaCitizenappComponent implements OnInit {
   }
 
   getData(index: any, year: any, month: any, days: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getData");
     if (index > days) {
       this.getTotalAmount();
       this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
@@ -146,6 +151,7 @@ export class PaymentViaCitizenappComponent implements OnInit {
       let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
         instance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", data);
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let ward = "";

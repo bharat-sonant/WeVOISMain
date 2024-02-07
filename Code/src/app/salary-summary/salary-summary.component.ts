@@ -9,6 +9,7 @@ import { FirebaseService } from "../firebase.service";
 //services
 import { CommonService } from "../services/common/common.service";
 import * as CanvasJS from "../../assets/canvasjs.min";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-salary-summary",
@@ -16,7 +17,7 @@ import * as CanvasJS from "../../assets/canvasjs.min";
   styleUrls: ["./salary-summary.component.scss"],
 })
 export class SalarySummaryComponent implements OnInit {
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private modalService: NgbModal) { }
 
   selectedDate: any;
   currentMonth: any;
@@ -27,6 +28,7 @@ export class SalarySummaryComponent implements OnInit {
   cityName: any;
   public selectedYear: any;
   db: any;
+  serviceName = "salary-summary";
   monthSalaryListShow: any[] = [];
   salaryData: salaryDetail = {
     totalSalary: "0.00",
@@ -51,10 +53,12 @@ export class SalarySummaryComponent implements OnInit {
   }
 
   getLastUpdate() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLastUpdate");
     let dbPath = "FinanceSummary/Salary/lastUpdateDate";
     let lastUpdateInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       lastUpdateInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLastUpdate", data);
         this.salaryData.lastUpdateTime = data.toString();
       }
     });
@@ -70,6 +74,7 @@ export class SalarySummaryComponent implements OnInit {
   }
 
   getMonthSalary() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMonthSalary");
     this.salaryData.totalSalary = "0.00";
     let currentMonth = Number(this.currentDate.split("-")[1]);
     if (this.selectedYear != this.currentYear) {
@@ -89,6 +94,7 @@ export class SalarySummaryComponent implements OnInit {
       let salaryInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
         salaryInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthSalary", data);
           let monthDetail = this.monthSalaryList.find((item) => item.id === i);
           if (monthDetail != undefined) {
             monthDetail.salary = Number(data).toFixed(2);
@@ -128,6 +134,7 @@ export class SalarySummaryComponent implements OnInit {
   }
 
   getCurrentMonthSalary(index: any, monthName: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCurrentMonthSalary");
     let days = new Date(parseInt(this.selectedYear), parseInt(index), 0).getDate();
     let rowTo = days;
     if (index == Number(this.commonService.setTodayDate().split("-")[1])) {
@@ -140,6 +147,7 @@ export class SalarySummaryComponent implements OnInit {
       let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + monthName + "/" + monthDate;
       let monthSalaryInfo = this.db.list(dbPath).valueChanges().subscribe((salaryData) => {
         if (salaryData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCurrentMonthSalary", salaryData);
           for (let j = 0; j < salaryData.length; j++) {
             if (salaryData[j]["today-wages"] != null) {
               monthSalary += parseFloat(salaryData[j]["today-wages"]);

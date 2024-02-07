@@ -8,6 +8,7 @@ import * as $ from "jquery";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-survey-verification',
@@ -46,6 +47,7 @@ export class SurveyVerificationComponent {
   houseVerifiedCardList: any[] = [];
   houseMarkerCardList: any[] = [];
   reVerifiedCardList: any[] = [];
+  serviceName = "survey-verification";
   verifiedDetail: verifiedDetail = {
     lastUpdate: "---",
     greenCount: 0,
@@ -54,7 +56,7 @@ export class SurveyVerificationComponent {
     redCount: 0
   }
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, private httpService: HttpClient, private storage: AngularFireStorage) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private modalService: NgbModal, private httpService: HttpClient, private storage: AngularFireStorage) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -313,6 +315,7 @@ export class SurveyVerificationComponent {
 
 
   showVerifiedMarkersOnMap(type: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showVerifiedMarkersOnMap");
     $(this.exportNewMarkers).hide();
     (<HTMLInputElement>document.getElementById(this.chkShowAll)).checked = false;
     if (type == "marker") {
@@ -341,6 +344,7 @@ export class SurveyVerificationComponent {
           data => {
             markerInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVerifiedMarkersOnMap", data);
               let keyArray = Object.keys(data);
               for (let i = 0; i < keyArray.length; i++) {
                 let lineNo = keyArray[i];
@@ -399,6 +403,7 @@ export class SurveyVerificationComponent {
           data => {
             markerInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVerifiedMarkersOnMap", data);
               let keyArray = Object.keys(data);
               for (let i = 0; i < keyArray.length; i++) {
                 let lineNo = keyArray[i];
@@ -619,11 +624,13 @@ export class SurveyVerificationComponent {
 
 
   getVerifiedCardData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getVerifiedCardData");
     let dbPath = "SurveyVerifierData/VerifiedHouses/" + this.selectedZone;
     let verifiedCardInstance = this.db.object(dbPath).valueChanges().subscribe(
       verifiedCardData => {
         verifiedCardInstance.unsubscribe();
         if (verifiedCardData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVerifiedCardData", verifiedCardData);
           let keyArray = Object.keys(verifiedCardData);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
@@ -657,11 +664,13 @@ export class SurveyVerificationComponent {
   }
 
   getCardWardMappingData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardWardMappingData");
     let dbPath = "CardWardMapping";
     let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(
       cardWardData => {
         cardWardInstance.unsubscribe();
         if (cardWardData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCardWardMappingData", cardWardData);
           let keyArray = Object.keys(cardWardData);
           for (let i = 0; i < keyArray.length; i++) {
             let cardNo = keyArray[i];
@@ -687,11 +696,13 @@ export class SurveyVerificationComponent {
 
 
   getHouseCardData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHouseCardData");
     let dbPath = "Houses/" + this.selectedZone;
     let houseCardInstance = this.db.object(dbPath).valueChanges().subscribe(
       houseCardData => {
         houseCardInstance.unsubscribe();
         if (houseCardData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHouseCardData", houseCardData);
           let keyArray = Object.keys(houseCardData);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
@@ -914,12 +925,14 @@ export class SurveyVerificationComponent {
         this.updateLatLng(index);
       }
       else {
+        this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateLatLng");
         let detail = this.cardWardList.find(item => item.cardNo == cardNo);
         if (detail != undefined) {
           let dbPath = "Houses/" + detail.ward + "/" + detail.lineNo + "/" + cardNo + "/latLng";
           let latlngInstance = this.db.object(dbPath).valueChanges().subscribe(latLngData => {
             latlngInstance.unsubscribe();
             if (latLngData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateLatLng", latLngData);
               let latLng = "";
               latLng = latLngData.toString().replace("(", "").replace(")", "");
               this.houseVerifiedCardList[index]["latLng"] = latLng;

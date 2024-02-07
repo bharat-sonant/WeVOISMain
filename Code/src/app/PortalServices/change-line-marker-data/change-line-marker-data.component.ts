@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-change-line-marker-data',
@@ -11,7 +12,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class ChangeLineMarkerDataComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
   db: any;
   zoneList: any[];
@@ -21,6 +22,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   txtLineNoTo = "#txtLineNoTo";
   ddlZone = "#ddlZone";
   divLoader = "#divLoader";
+  serviceName = "portal-service-change-line-marker-data";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -38,6 +40,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   }
 
   saveData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "saveData");
     if ($(this.ddlZoneFrom).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select zone from !!!");
       return;
@@ -67,6 +70,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
       markerData => {
         markerInstance.unsubscribe();
         if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", markerData);
           let keyArray = Object.keys(markerData);
           if (keyArray.length > 0) {
             let lastKey = 0;
@@ -75,6 +79,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
               lastMarkerData => {
                 lastMarkerInstance.unsubscribe();
                 if (lastMarkerData != null) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", lastMarkerData);
                   lastKey = Number(lastMarkerData);
                 }
                 let markerNoList = [];
@@ -96,6 +101,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   }
 
   moveData(index: any, markerNoList: any, lastKey: any, markerData: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, failureCount: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveData");
     if (index < markerNoList.length) {
       lastKey = lastKey + 1;
       let markerNo = markerNoList[index]["markerNo"];
@@ -121,6 +127,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                 let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
                   cardInstance.unsubscribe();
                   if (cardData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveData", cardData);
                     data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
                     cardData["line"] = lineTo;
                     cardData["ward"] = zoneTo;
@@ -148,6 +155,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
                 let revisitInstance = this.db.object(dbPathPre).valueChanges().subscribe(revisitData => {
                   revisitInstance.unsubscribe();
                   if (revisitData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveData", revisitData);
                     let dbPath = "EntitySurveyData/RevisitRequest/" + zoneTo + "/" + lineTo + "/" + revisitKey;
                     this.db.object(dbPath).update(revisitData);
                     this.db.object(dbPathPre).remove();
@@ -186,12 +194,14 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   }
 
   updateCounts(zoneNo: any, zoneTo: any, type: any, failureCount: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCounts");
     $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       markerData => {
         markerInstance.unsubscribe();
         if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts", markerData);
           let keyArray = Object.keys(markerData);
           if (keyArray.length > 0) {
             let zoneMarkerCount = 0;

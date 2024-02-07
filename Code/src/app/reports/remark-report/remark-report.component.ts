@@ -3,6 +3,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { MapService } from '../../services/map/map.service';
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-remark-report',
@@ -11,7 +12,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class RemarkReportComponent implements OnInit {
 
-  constructor(private commonService: CommonService, public fs: FirebaseService, private mapService: MapService) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private mapService: MapService) { }
 
 
   public selectedZone: any;
@@ -24,6 +25,7 @@ export class RemarkReportComponent implements OnInit {
   filterList: any[] = [];
   db: any;
   cityName: any;
+  serviceName = "remark-report";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -94,6 +96,7 @@ export class RemarkReportComponent implements OnInit {
 
 
   getCategoryRemark() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCategoryRemark");
     this.remarkList = [];
     if (this.zoneList.length > 0) {
       for (let i = 0; i < this.zoneList.length; i++) {
@@ -104,6 +107,7 @@ export class RemarkReportComponent implements OnInit {
         let remarkData = this.db.list(dbPath).valueChanges().subscribe(
           Data => {
             if (Data.length > 0) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCategoryRemark", Data);
               for (let j = 0; j < Data.length; j++) {
                 if (Data[j]["category"] == this.selectedCategory) {
                   let topicId = Data[j]["category"];
@@ -131,6 +135,7 @@ export class RemarkReportComponent implements OnInit {
                   let userInfoData = this.db.list(dbPath).valueChanges().subscribe(
                     userData => {
                       if (userData.length > 0) {
+                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCategoryRemark", userData);
                         for (let usr = 0; usr < userData.length; usr++) {
                           for (let index = 0; index < this.remarkList.length; index++) {
                             if (userData[usr]["userId"] == this.remarkList[index]["userId"]) {
@@ -152,6 +157,7 @@ export class RemarkReportComponent implements OnInit {
 
 
   getRemark() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRemark");
     this.remarkList = [];
     if (this.zoneList.length > 0) {
       for (let i = 0; i < this.zoneList.length; i++) {
@@ -162,6 +168,7 @@ export class RemarkReportComponent implements OnInit {
         let remarkData = this.db.list(dbPath).valueChanges().subscribe(
           Data => {
             if (Data.length > 0) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRemark", Data);
               for (let j = 0; j < Data.length; j++) {
                 let topicId = Data[j]["category"];
                 let topic = "";
@@ -195,6 +202,7 @@ export class RemarkReportComponent implements OnInit {
                 let userInfoData = this.db.list(dbPath).valueChanges().subscribe(
                   userData => {
                     if (userData.length > 0) {
+                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRemark", userData);
                       for (let usr = 0; usr < userData.length; usr++) {
                         for (let index = 0; index < this.remarkList.length; index++) {
                           if (userData[usr]["userId"] == this.remarkList[index]["userId"]) {
@@ -214,6 +222,7 @@ export class RemarkReportComponent implements OnInit {
   }
 
   getWardRemark() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardRemark");
     this.remarkList = [];
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
@@ -222,6 +231,7 @@ export class RemarkReportComponent implements OnInit {
     let remarkData = this.db.list(dbPath).valueChanges().subscribe(
       Data => {
         if (Data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRemark", Data);
           for (let j = 0; j < Data.length; j++) {
             let topicId = Data[j]["category"];
             let topic = "";
@@ -255,6 +265,7 @@ export class RemarkReportComponent implements OnInit {
             let userInfoData = this.db.list(dbPath).valueChanges().subscribe(
               userData => {
                 if (userData.length > 0) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRemark", userData);
                   for (let usr = 0; usr < userData.length; usr++) {
 
                     for (let index = 0; index < this.remarkList.length; index++) {

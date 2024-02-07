@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-ward-trip-analysis",
@@ -10,7 +11,7 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./ward-trip-analysis.component.scss"],
 })
 export class WardTripAnalysisComponent implements OnInit {
-  constructor(private commonService: CommonService, public fs: FirebaseService) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService) { }
   tripList: any[];
   zoneList: any[];
   selectedDate: any;
@@ -44,6 +45,7 @@ export class WardTripAnalysisComponent implements OnInit {
   cityName: any;
   db: any;
   txtManualRemark = "#txtManualRemark";
+  serviceName = "trip-analysis";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -73,18 +75,21 @@ export class WardTripAnalysisComponent implements OnInit {
   }
 
   getPendingAnalysis() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPendingAnalysis");
     this.dbPath = "WardTrips/TotalTripAnalysisPending";
     let pendingInstance = this.db
       .object(this.dbPath)
       .valueChanges()
       .subscribe((data) => {
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPendingAnalysis", data);
           this.tripData.pendingAnalysis = data.toString();
         }
       });
   }
 
   getWardTrips() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardTrips");
     this.zoneList = [];
     if (this.allZoneList.length > 0) {
       for (let i = 1; i < this.allZoneList.length; i++) {
@@ -98,6 +103,7 @@ export class WardTripAnalysisComponent implements OnInit {
           let tripList = [];
           let tripCount = 0;
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardTrips", data);
             iconClass = "fas fa-check-double";
             divClass = "address";
             let keyArray = Object.keys(data);
@@ -331,6 +337,7 @@ export class WardTripAnalysisComponent implements OnInit {
   }
 
   getTripWasteCollection() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTripWasteCollection");
     if (this.tripList.length > 0) {
       for (let i = 0; i < this.tripList.length; i++) {
         let vehicle = this.tripList[i]["vehicleType"];
@@ -339,6 +346,7 @@ export class WardTripAnalysisComponent implements OnInit {
           data => {
             wasteInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTripWasteCollection", data);
               this.tripData.wasteCollection = this.tripData.wasteCollection + Number(data);
             }
           }

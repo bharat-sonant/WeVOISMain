@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-account-detail',
@@ -11,7 +12,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class AccountDetailComponent implements OnInit {
 
-  constructor(private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(private modalService: NgbModal, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   designationList: any[];
@@ -34,6 +35,7 @@ export class AccountDetailComponent implements OnInit {
   remarkJsonObject: any;
   userId: any;
   public isLockUnlock: any;
+  serviceName = "account-detail";
   remarkDetail: remarkDetail = {
     by: "",
     remark: "",
@@ -86,9 +88,11 @@ export class AccountDetailComponent implements OnInit {
   }
 
   checkForNewEmployee() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkForNewEmployee");
     let dbPath = "Employees/lastEmpId";
     let lastEmpIdInstance = this.db.object(dbPath).valueChanges().subscribe(
-      lastEmpIdData => {
+      lastEmpIdData => {        
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkForNewEmployee", lastEmpIdData);
         lastEmpIdInstance.unsubscribe();
         let lastEmpId = Number(lastEmpIdData);
         let jsonLastEmpId = 100;
@@ -434,6 +438,7 @@ export class AccountDetailComponent implements OnInit {
   }
 
   updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateJsonForNewEmployee");
     if (jsonLastEmpId > lastEmpId) {
       this.getRoles();
       this.filterData();
@@ -446,6 +451,7 @@ export class AccountDetailComponent implements OnInit {
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
           if (employeeDetail != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateJsonForNewEmployee", employeeDetail);
             if (employeeDetail["GeneralDetails"] != null) {
               let status = employeeDetail["GeneralDetails"]["status"];
               let name = employeeDetail["GeneralDetails"]["name"];

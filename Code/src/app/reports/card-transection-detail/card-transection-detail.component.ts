@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class CardTransectionDetailComponent implements OnInit {
 
-  constructor(private commonService: CommonService, public httpService: HttpClient, public fs: FirebaseService) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService) { }
   cityName: any;
   db: any;
   transactionList: any[];
@@ -23,6 +24,7 @@ export class CardTransectionDetailComponent implements OnInit {
   public ward: any;
   public name: any;
   public entityType: any;
+  serviceName = "collection-management-card-payment-report";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -60,6 +62,7 @@ export class CardTransectionDetailComponent implements OnInit {
   }
 
   getCardDetail() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardDetail");
     this.ward = "---";
     this.name = "---";
     this.entityType = "---";
@@ -68,6 +71,7 @@ export class CardTransectionDetailComponent implements OnInit {
     let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       cardWardInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCardDetail", data);
         this.ward = data["ward"];
         let lineNo = data["line"];
         dbPath = "Houses/" + this.ward + "/" + lineNo + "/" + cardNo;
@@ -88,6 +92,7 @@ export class CardTransectionDetailComponent implements OnInit {
   }
 
   getTransaction() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTransaction");
     this.totalAmount = "0.00";
     this.transactionList = [];
     if ($(this.txtCardNo).val() == "") {
@@ -104,6 +109,7 @@ export class CardTransectionDetailComponent implements OnInit {
         instance.unsubscribe();
         console.log(data);
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTransaction", data);
           let yearArray = Object.keys(data);
           for (let i = 0; i < yearArray.length; i++) {
             let year = yearArray[i];

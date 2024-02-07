@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-daily-work-detail',
@@ -10,7 +11,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class DailyWorkDetailComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
   db: any;
   zoneList: any[] = [];
@@ -22,6 +23,7 @@ export class DailyWorkDetailComponent implements OnInit {
   selectedYear: any;
   txtDate = "#txtDate";
   isShowActual: any;
+  serviceName = "daily-work-report";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -84,14 +86,16 @@ export class DailyWorkDetailComponent implements OnInit {
 
       }
     }
-    this.getPickedDustbin();
+     this.getPickedDustbin();
   }
 
   getPickedDustbin() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPickedDustbin");
     let dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let pickedDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       pickedDustbinInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPickedDustbin", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           this.pickedDustbinList.push({ dustbin: keyArray[i] });
@@ -106,35 +110,52 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   getTotalRunning(zoneNo: any, dbPath: any) {
-    let locationInstance = this.db.object(dbPath).valueChanges().subscribe(
-      locationData => {
-        locationInstance.unsubscribe();
-        let distance = "0";
-        if (locationData != null) {
-          let keyArray = Object.keys(locationData);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let time = keyArray[i];
-              if (locationData[time]["distance-in-meter"] != null) {
-                let coveredDistance = locationData[time]["distance-in-meter"];
-                distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTotalRunning");
+    let distanceInstance = this.db.object(dbPath + "/calculatedDistance").valueChanges().subscribe(calDiatance => {
+      distanceInstance.unsubscribe();
+      if (calDiatance != null) {
+        let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
+        if (detail != undefined) {
+          detail.runKm = calDiatance;
+        }
+      }
+      else {
+        let locationInstance = this.db.object(dbPath).valueChanges().subscribe(
+          locationData => {
+            locationInstance.unsubscribe();
+            let distance = "0";
+            if (locationData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalRunning", locationData);
+              let keyArray = Object.keys(locationData);
+              if (keyArray.length > 0) {
+                for (let i = 0; i < keyArray.length; i++) {
+                  let time = keyArray[i];
+                  if (locationData[time]["distance-in-meter"] != null) {
+                    let coveredDistance = locationData[time]["distance-in-meter"];
+                    distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
+                  }
+                }
+              }
+              let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
+              if (detail != undefined) {
+                detail.runKm = (Number(distance) / 1000).toFixed(3);
+                if (this.selectedDate != this.commonService.setTodayDate()) {
+                  this.db.object(dbPath).update({ calculatedDistance: (Number(distance) / 1000).toFixed(3) });
+                }
               }
             }
-
-          }
-          let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
-          if (detail != undefined) {
-            detail.runKm = (Number(distance) / 1000).toFixed(3);
-          }
-        }
-      });
+          });
+      }
+    });
   }
 
   getBinLiftingDetail(dbPath: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getBinLiftingDetail");
     let dustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
       planData => {
         dustbinPlanInstance.unsubscribe();
         if (planData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinLiftingDetail", planData);
           let keyArray = Object.keys(planData);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -146,11 +167,11 @@ export class DailyWorkDetailComponent implements OnInit {
                   if (planData[planKey]["bins"] != null) {
                     if (planData[planKey]["bins"] != "") {
                       assignedDustbin = planData[planKey]["bins"].split(',').length;
-                      let list=planData[planKey]["bins"].split(',');
-                      for(let j=0;j<list.length;j++){
-                        let detail=this.pickedDustbinList.find(item=>item.dustbin==list[j].toString().trim());
-                        if(detail!=undefined){
-                          pickedDustbin+=1;
+                      let list = planData[planKey]["bins"].split(',');
+                      for (let j = 0; j < list.length; j++) {
+                        let detail = this.pickedDustbinList.find(item => item.dustbin == list[j].toString().trim());
+                        if (detail != undefined) {
+                          pickedDustbin += 1;
                         }
                       }
                     }
@@ -169,11 +190,13 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   getPlanAssignment(planKey: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPlanAssignment");
     let dbPath = "DustbinData/DustbinAssignment/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + planKey;
     let assignmentDataInstance = this.db.object(dbPath).valueChanges().subscribe(
       assignedData => {
         assignmentDataInstance.unsubscribe();
         if (assignedData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPlanAssignment", assignedData);
           let driverId = assignedData["driver"];
           let helperId = assignedData["helper"];
           let vehicle = assignedData["vehicle"];
@@ -191,6 +214,7 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   getBinliftingData(empId: any, planKey: any, type: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getBinliftingData");
     this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
       let name = employee["name"];
       let detail = this.dailyWorkList.find(item => item.zoneNo == planKey);
@@ -202,6 +226,7 @@ export class DailyWorkDetailComponent implements OnInit {
             workDetailData => {
               workDetailInstance.unsubscribe();
               if (workDetailData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinliftingData", workDetailData);
                 for (let i = 0; i <= 5; i++) {
                   if (workDetailData["task" + i] != null) {
                     if (workDetailData["task" + i]["binLiftingPlanId"] == planKey) {
@@ -261,11 +286,13 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   getSummaryDetail(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSummaryDetail");
     let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
     let summaryDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
       summaryData => {
         summaryDetailInstance.unsubscribe();
         if (summaryData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSummaryDetail", summaryData);
           if (summaryData["dutyInTime"] != null) {
             let startTime = summaryData["dutyInTime"].split(',')[0];
             let endTime = "";
@@ -318,9 +345,14 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   getTrips(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTrips");
     let dbPath = "WardTrips/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + zoneNo;
     let tripInstance = this.db.list(dbPath).valueChanges().subscribe(tripData => {
       tripInstance.unsubscribe();
+      if (tripData != null) {
+
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTrips", tripData);
+      }
       let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
       if (detail != undefined) {
         detail.trips = tripData.length;
@@ -329,11 +361,13 @@ export class DailyWorkDetailComponent implements OnInit {
   }
 
   getWorkerDetail(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkerDetail");
     let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/WorkerDetails";
     let workerDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
       workerData => {
         workerDetailInstance.unsubscribe();
         if (workerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkerDetail", workerData);
           let driverList = workerData["driverName"].split(',');
           let driverIdList = workerData["driver"].split(',');
           let driver = "";
@@ -411,10 +445,12 @@ export class DailyWorkDetailComponent implements OnInit {
 
 
   getHaltTime(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltTime");
     let haltInfoPath = "HaltInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe((haltData) => {
       haltInfoData.unsubscribe();
       if (haltData != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltTime", haltData);
         let totalBreak = 0;
         if (haltData.length > 0) {
           for (let index = 0; index < haltData.length; index++) {

@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from "../../services/common/common.service";
 import { HttpClient } from "@angular/common/http";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 @Component({
   selector: 'app-supervisor-report',
   templateUrl: './supervisor-report.component.html',
@@ -18,7 +19,8 @@ export class SupervisorReportComponent implements OnInit {
   lastUpdatedTime: any;
   supervisorName: any;
   divLoaderCounts = "#divLoaderCounts";
-  constructor(public fs: FirebaseService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal) { }
+  serviceName = "supervisor-report";
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal) { }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -103,12 +105,14 @@ export class SupervisorReportComponent implements OnInit {
   }
 
   updateSupervisorReport() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSupervisorReport");
     this.supervisorJsonList = [];
     $(this.divLoaderCounts).show();
     let dbPath = "EntityMarkingData/MarkedHouses/";
     let supervisorInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       supervisorInstance.unsubscribe();
       if (data != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSupervisorReport", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i <= keyArray.length; i++) {
           let ward = keyArray[i];

@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { CommonService } from "../../services/common/common.service";
 import { AngularFireStorage } from "angularfire2/storage";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-survey-verified-report',
@@ -15,7 +16,7 @@ export class SurveyVerifiedReportComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private httpService: HttpClient, private storage: AngularFireStorage) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private httpService: HttpClient, private storage: AngularFireStorage) { }
   db: any;
   selectedZone: any;
   zoneList: any;
@@ -34,6 +35,7 @@ export class SurveyVerifiedReportComponent {
   toDayDate: any;
   divLoaderUpdate = "#divLoaderUpdate";
   invisibleImageUrl = "../assets/img/invisible-location.svg";
+  serviceName = "survey-verification-report";
   public totalVerifiedCount: any;
   public multipleCardsCount: any;
   public notVerifiedCardsCount: any;
@@ -332,11 +334,13 @@ export class SurveyVerifiedReportComponent {
   }
 
   getReverifiedCards() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getReverifiedCards");
     let dbPath = "SurveyVerifierData/HousesByVerifier/" + this.selectedZone;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         markerInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getReverifiedCards", data);
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];

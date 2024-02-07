@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-ward-work-percentage',
@@ -9,7 +10,7 @@ import { CommonService } from '../../services/common/common.service';
 })
 export class WardWorkPercentageComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
 
   db: any;
   cityName: any;
@@ -20,6 +21,7 @@ export class WardWorkPercentageComponent implements OnInit {
   zoneList: any[] = [];
   expectedPercentage: any;
   lblMsg = "#lblMsg";
+  serviceName = "portal-service-work-percentage";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -65,6 +67,7 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   getWardLines() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardLines");
     $("#divLoader").show();
     let wardLines = [];
     this.commonService.getWardLine(this.selectedZone, this.selectedDate).then((linesData: any) => {
@@ -87,6 +90,7 @@ export class WardWorkPercentageComponent implements OnInit {
         dutyOnData => {
           dutyOnInstance.unsubscribe();
           if (dutyOnData != undefined) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardLines", dutyOnData);
             let dutyInTime = dutyOnData;
             let completedLines = 0;
             let skippedLines = 0;
@@ -96,6 +100,7 @@ export class WardWorkPercentageComponent implements OnInit {
                 lineStatusIndtance.unsubscribe();
                 let lineStatusList = [];
                 if (lineStatusData != null) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardLines", lineStatusData);
                   let keyArray = Object.keys(lineStatusData);
                   for (let i = 0; i < keyArray.length; i++) {
                     let lineNo = keyArray[i];
@@ -165,6 +170,7 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   updateSummary(wardLines: any, wardTotalLines: any, dutyInTime: any, lineStatusList: any, expectedLine: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSummary");
     let coveredLength = 0;
     let completedLines = 0;
     let skippedLines = 0;
@@ -174,6 +180,7 @@ export class WardWorkPercentageComponent implements OnInit {
       lineStatusData => {
         lineStatusInstance.unsubscribe();
         if (lineStatusData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSummary", lineStatusData);
           let keyArray = Object.keys(lineStatusData);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
@@ -197,6 +204,7 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   updateLocationHistory(dutyInTime: any, lineStatusList: any, expectedLine: any, wardLines: any, skippedLines: any, percentage: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateLocationHistory");
     let coveredLength = 0;
     let lastUpdatedTime = dutyInTime;
     if (lineStatusList.length > 0) {
@@ -227,6 +235,7 @@ export class WardWorkPercentageComponent implements OnInit {
         totalDistanceCovered => {
           totalDistanceCoveredInstance.unsubscribe();
           if (totalDistanceCovered != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateLocationHistory", totalDistanceCovered);
             coveredLength += Number(totalDistanceCovered);
           }
           let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
@@ -260,11 +269,35 @@ export class WardWorkPercentageComponent implements OnInit {
       this.db.object(dbPath).update({ TotalCoveredDistance: coveredLength, 'last-update-time': lastUpdatedTime });
       $("#divLoader").hide();
       this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
+      this.updateCalculatedDistance();
       if (skippedLines > 0) {
         let msg = "We can not modify the work % upto " + this.expectedPercentage + "% due to " + skippedLines + " skipped line, Now modified % is : " + percentage + " %, Please contact to admin for further process."
         $(this.lblMsg).html(msg);
       }
     }
+  }
+
+  updateCalculatedDistance(){
+    let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+    let locationInstance = this.db.object(dbPath).valueChanges().subscribe(
+      locationData => {
+        locationInstance.unsubscribe();
+        let distance = "0";
+        if (locationData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalRunning", locationData);
+          let keyArray = Object.keys(locationData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let time = keyArray[i];
+              if (locationData[time]["distance-in-meter"] != null) {
+                let coveredDistance = locationData[time]["distance-in-meter"];
+                distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
+              }
+            }
+          }
+          this.db.object(dbPath).update({ calculatedDistance: (Number(distance) / 1000).toFixed(3) });
+        }
+      });
   }
 
   getLatLng(points: any) {

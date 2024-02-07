@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-payment-via-neft-report',
@@ -23,8 +24,9 @@ export class PaymentViaNeftReportComponent implements OnInit {
   ddlCollector = "#ddlCollector";
   txtNeftNo = "#txtNeftNo";
   divLoader = "#divLoader";
+  serviceName = "collection-management-payment-via-neft-report";
   lastUpdateDate: any;
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -88,6 +90,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
   }
 
   updateReportJSON() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateReportJSON");
     let neftListJSON = [];
     this.neftList = [];
     $(this.divLoader).show();
@@ -95,6 +98,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
     let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
       instance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateReportJSON", data);
         let cardArray = Object.keys(data);
         for (let i = 0; i < cardArray.length; i++) {
           let cardNo = cardArray[i];

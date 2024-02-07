@@ -10,6 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
 import { MapService } from '../services/map/map.service';
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 import * as CanvasJS from '../../assets/canvasjs.min';
 import * as html2canvas from "html2canvas";
@@ -22,7 +23,7 @@ import { parse } from 'querystring';
   styleUrls: ['./halt-summary.component.scss']
 })
 export class HaltSummaryComponent implements OnInit {
-  constructor(public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
   zoneList: any[];
   selectedDate: any;
   currentMonth: any;
@@ -51,6 +52,7 @@ export class HaltSummaryComponent implements OnInit {
   marker = new google.maps.Marker();
   public bounds: any;
   cityName: any;
+  serviceName = "halt-summary";
 
   haltData: haltDetail =
     {
@@ -164,9 +166,11 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   getSalary() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSalary");
     let dbPath = "Settings/Salary";
     let salaryData = this.db.object(dbPath).valueChanges().subscribe(
       data => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSalary", data);
         this.instancesList.push({ instances: salaryData });
         this.driveySalary = data["driver_salary_per_hour"];
         this.halperSalary = data["helper_salary_per_hour"];
@@ -203,15 +207,18 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   getHaltDataRealTime() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltDataRealTime");
     let toDayHaltInfoPath = 'HaltInfo';
     let haltInfoData = this.db.object(toDayHaltInfoPath).valueChanges().subscribe(
       haltData => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltDataRealTime", haltData);
         this.instancesList.push({ instances: haltInfoData });
         this.getHaltDataToday();
       });
   }
 
   getHaltDataToday() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltDataToday");
     let halt = 0;
     let haltApproved = 0;
     for (let index = 1; index < this.zoneList.length; index++) {
@@ -229,6 +236,7 @@ export class HaltSummaryComponent implements OnInit {
       let haltInfoData = this.db.list(toDayHaltInfoPath).valueChanges().subscribe(
         haltData => {
           if (haltData.length > 0) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltDataToday", haltData);
             for (let index = 0; index < haltData.length; index++) {
               if (haltData[index]["haltType"] != "network-off") {
                 let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
@@ -267,6 +275,7 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   getHaltDataMonth() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltDataMonth");
     let monthHalt = 0;
     let monthHaltApproved = 0;
     for (let index = 1; index < this.zoneList.length; index++) {
@@ -283,6 +292,7 @@ export class HaltSummaryComponent implements OnInit {
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
             if (haltMonthData.length > 0) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltDataMonth", haltMonthData);
               for (let index = 0; index < haltMonthData.length; index++) {
                 if (haltMonthData[index]["haltType"] != "network-off") {
                   let duration = haltMonthData[index]["duration"] != undefined ? haltMonthData[index]["duration"] : 0;
@@ -310,6 +320,7 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   getHaltDataWeek() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltDataWeek");
     let halt = 0;
     let haltApproved = 0;
     for (let i = 0; i <= 7; i++) {
@@ -347,6 +358,7 @@ export class HaltSummaryComponent implements OnInit {
         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
           haltData => {
             if (haltData.length > 0) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltDataWeek", haltData);
               let totalBreak = 0;
               let totalHalt = 0;
               let haltApproved1 = 0;
@@ -454,6 +466,7 @@ export class HaltSummaryComponent implements OnInit {
 
 
   getHaltDataLastWeek() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltDataLastWeek");
     let halt = 0;
     let haltApproved = 0;
     for (let index = 1; index < this.zoneList.length; index++) {
@@ -464,6 +477,7 @@ export class HaltSummaryComponent implements OnInit {
         let haltInfoPath = 'HaltInfo/' + this.zoneList[index]["zoneNo"] + '/' + year + '/' + monthName + '/' + haltDate;
         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe(
           haltData => {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltDataLastWeek", haltData);
             if (haltData.length > 0) {
               for (let index = 0; index < haltData.length; index++) {
                 if (haltData[index]["haltType"] != "network-off") {
@@ -490,6 +504,7 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   getHaltDataLastMonth() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltDataLastMonth");
     let lastMonthHalt = 0;
     let d = new Date();
     let monthPre = d.getMonth();
@@ -508,6 +523,7 @@ export class HaltSummaryComponent implements OnInit {
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
             if (haltMonthData.length > 0) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltDataLastMonth", haltMonthData);
               for (let index = 0; index < haltMonthData.length; index++) {
                 if (haltMonthData[index]["haltType"] != "network-off") {
                   let duration = haltMonthData[index]["duration"] != undefined ? haltMonthData[index]["duration"] : 0;
@@ -675,6 +691,7 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   getDriverData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDriverData");
     this.haltList = [];
     let d = new Date();
     let today = d.getDate();
@@ -691,6 +708,7 @@ export class HaltSummaryComponent implements OnInit {
         let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe(
           workerInfo => {
             if (workerInfo) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDriverData", workerInfo);
               this.commonService.getEmplyeeDetailByEmployeeId(workerInfo["driver"]).then((employee) => {
 
                 let driverName = employee["name"];
@@ -708,6 +726,7 @@ export class HaltSummaryComponent implements OnInit {
               let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
                 haltMonthData => {
                   if (haltMonthData.length > 0) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDriverData", haltMonthData);
                     let totalBreak = 0;
                     for (let i = 0; i < haltMonthData.length; i++) {
                       if (haltMonthData[i]["haltType"] != "network-off") {
@@ -792,6 +811,7 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   getHaltData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltData");
     let todayHalt = 0;
     let todayHaltApproved = 0;
     let lastDayHalt = 0;
@@ -832,6 +852,7 @@ export class HaltSummaryComponent implements OnInit {
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
             if (haltMonthData.length > 0) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltData", haltMonthData);
               for (let index = 0; index < haltMonthData.length; index++) {
                 if (haltMonthData[index]["haltType"] != "network-off") {
                   let duration = haltMonthData[index]["duration"] != undefined ? haltMonthData[index]["duration"] : 0;
@@ -860,6 +881,7 @@ export class HaltSummaryComponent implements OnInit {
           let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
             haltMonthData => {
               if (haltMonthData.length > 0) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltData", haltMonthData);
                 for (let index = 0; index < haltMonthData.length; index++) {
                   if (haltMonthData[index]["haltType"] != "network-off") {
                     let duration = haltMonthData[index]["duration"] != undefined ? haltMonthData[index]["duration"] : 0;
@@ -889,6 +911,7 @@ export class HaltSummaryComponent implements OnInit {
           let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
             haltMonthData => {
               if (haltMonthData.length > 0) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltData", haltMonthData);
                 for (let index = 0; index < haltMonthData.length; index++) {
                   if (haltMonthData[index]["haltType"] != "network-off") {
                     let duration = haltMonthData[index]["duration"] != undefined ? haltMonthData[index]["duration"] : 0;
@@ -915,6 +938,7 @@ export class HaltSummaryComponent implements OnInit {
           let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
             haltMonthData => {
               if (haltMonthData.length > 0) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltData", haltMonthData);
                 for (let index = 0; index < haltMonthData.length; index++) {
                   if (haltMonthData[index]["haltType"] != "network-off") {
                     let duration = haltMonthData[index]["duration"] != undefined ? haltMonthData[index]["duration"] : 0;
@@ -944,6 +968,7 @@ export class HaltSummaryComponent implements OnInit {
           let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
             haltMonthData => {
               if (haltMonthData.length > 0) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltData", haltMonthData);
                 for (let index = 0; index < haltMonthData.length; index++) {
                   if (haltMonthData[index]["haltType"] != "network-off") {
                     let duration = haltMonthData[index]["duration"] != undefined ? haltMonthData[index]["duration"] : 0;
@@ -978,6 +1003,7 @@ export class HaltSummaryComponent implements OnInit {
         let haltInfoMonthData = this.db.list(haltInfoMonthPath).valueChanges().subscribe(
           haltMonthData => {
             if (haltMonthData.length > 0) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltData", haltMonthData);
               for (let index = 0; index < haltMonthData.length; index++) {
                 if (haltMonthData[index]["haltType"] != "network-off") {
                   let duration = haltMonthData[index]["duration"] != undefined ? haltMonthData[index]["duration"] : 0;
@@ -1007,6 +1033,7 @@ export class HaltSummaryComponent implements OnInit {
   }
 
   getHaltDataTodayDetail() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltDataTodayDetail");
     if (this.allMarkers.length > 0) {
       for (let i = 0; i < this.allMarkers.length; i++) {
         this.allMarkers[i]["marker"].setMap(null);
@@ -1030,6 +1057,7 @@ export class HaltSummaryComponent implements OnInit {
         haltData => {
 
           if (haltData.length > 0) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltDataTodayDetail", haltData);
             let totalBreak = 0;
             let totalHalt = 0;
             let haltApproved = 0;
@@ -1095,6 +1123,7 @@ export class HaltSummaryComponent implements OnInit {
               workerInfo => {
                 workerDetails.unsubscribe();
                 if (workerInfo) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltDataTodayDetail", workerInfo);
                   this.commonService.getEmplyeeDetailByEmployeeId(workerInfo["driver"]).then((employee) => {
                     this.todayHaltList.push({ driverName: employee["name"] != null ? employee["name"].toUpperCase() : "---", zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"].replace("Ward ", ""), halt: halt, approved: approved, unApproved: unApproved, salary: haltSalary, bgColor: "" });
                   });

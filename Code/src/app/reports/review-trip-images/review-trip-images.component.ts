@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { AngularFireStorage } from "@angular/fire/storage";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-review-trip-images',
@@ -12,7 +13,7 @@ import { AngularFireStorage } from "@angular/fire/storage";
 })
 export class ReviewTripImagesComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private storage: AngularFireStorage, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
   zoneList: any[] = [];
   zoneTripList: any[] = [];
   db: any;
@@ -22,6 +23,7 @@ export class ReviewTripImagesComponent implements OnInit {
   selectedYear: any;
   selectedMonthName: any;
   divMainLoader = "#divMainLoader";
+  serviceName = "review-trip-images";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -77,6 +79,7 @@ export class ReviewTripImagesComponent implements OnInit {
       }
     }
     else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTripImages");
       let zone = this.zoneTripList[index]["zoneNo"];
       let detail = this.zoneTripList.find(item => item.zoneNo == zone);
       if (detail != undefined) {
@@ -85,6 +88,7 @@ export class ReviewTripImagesComponent implements OnInit {
           tripData => {
             tripInstance.unsubscribe();
             if (tripData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTripImages", tripData);
               let keyArray = Object.keys(tripData);
               for (let i = 0; i < keyArray.length; i++) {
                 let key = keyArray[i];

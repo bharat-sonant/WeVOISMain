@@ -12,6 +12,7 @@ import { CommonService } from "../../services/common/common.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-ward-scancard-report",
@@ -19,7 +20,7 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./ward-scancard-report.component.scss"],
 })
 export class WardScancardReportComponent implements OnInit {
-  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private commonService: CommonService) { }
 
   wardList: any[];
   selectedCircle: any;
@@ -30,6 +31,7 @@ export class WardScancardReportComponent implements OnInit {
   isFirst = true;
   db: any;
   public cityName: any;
+  serviceName = "ward-scan-card-report";
 
   header = [["Card No.", "Name", "RFID", "Time", "Scaned By"]];
   headerWard = [["Ward No.", "Ward Length(km)", "Covered Length(km)"]];
@@ -199,13 +201,15 @@ export class WardScancardReportComponent implements OnInit {
     }
   }
 
-  getCoveredLength(index, wardNo) {
+  getCoveredLength(index:any, wardNo:any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCoveredLength");
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
     let dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/Summary/wardCoveredDistance";
     let instance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       instance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCoveredLength", data);
         let wardCoveredLength = (parseFloat(data.toString()) / 1000).toFixed(2);
         this.wardDataList[index]["wardCoveredLength"] =
           Number(wardCoveredLength);
@@ -217,12 +221,14 @@ export class WardScancardReportComponent implements OnInit {
   }
 
   getHouseSummary() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHouseSummary");
     if (this.wardDataList.length > 0) {
       for (let i = 0; i < this.wardDataList.length; i++) {
         let dbPath = "Houses/" + this.wardDataList[i]["wardNo"] + "/totalHouse";
         let totalHouseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
           totalHouseInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHouseSummary", data);
             this.wardDataList[i]["houses"] = Number(data);
             this.getSacnedHouses(i, this.wardDataList[i]["wardNo"]);
           }
@@ -252,12 +258,14 @@ export class WardScancardReportComponent implements OnInit {
   }
 
   getSacnedHouses(index: any, wardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSacnedHouses");
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
     let dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/totalScanned";
     let totalHouseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       totalHouseInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSacnedHouses", data);
         this.wardDataList[index]["scanned"] = Number(data);
       } else {
         this.wardDataList[index]["scanned"] = 0;
@@ -281,6 +289,7 @@ export class WardScancardReportComponent implements OnInit {
   }
 
   getScanDetail(wardNo: any, index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScanDetail");
     this.showLoder();
     if (this.isFirst == false) {
       this.setActiveClass(index);
@@ -299,10 +308,12 @@ export class WardScancardReportComponent implements OnInit {
       scannedHouseInstance.unsubscribe();
       if (data != null) {
 
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", data);
         let employeePath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/helperName";
         let employeeInstance = this.db.object(employeePath).valueChanges().subscribe((empData) => {
           employeeInstance.unsubscribe();
           if (empData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", empData);
             let name = empData.split(',')[0];
 
             let keyArray = Object.keys(data);
@@ -317,6 +328,7 @@ export class WardScancardReportComponent implements OnInit {
                 let mapInstance = this.db.object(dbPath).valueChanges().subscribe((mapData) => {
                   mapInstance.unsubscribe();
                   if (mapData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", mapData);
                     let line = mapData["line"];
                     let ward = mapData["ward"];
 
@@ -327,6 +339,7 @@ export class WardScancardReportComponent implements OnInit {
                       let rfId = "";
                       let personName = "";
                       if (houseData != null) {
+                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", houseData);
                         rfId = houseData["rfid"];
                         personName = houseData["name"];
                         this.wardScaanedList.push({

@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-daily-payment-report',
@@ -26,9 +27,10 @@ export class DailyPaymentReportComponent implements OnInit {
   divLoader = "#divLoader";
   public columnType: any;
   public totalAmount: any;
+  serviceName = "collection-management-daily-payment-report";
 
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -50,12 +52,14 @@ export class DailyPaymentReportComponent implements OnInit {
   }
 
   getCardWardMapping() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardWardMapping");
     this.cardWardList = [];
     $(this.divLoader).show();
     let dbPath = "CardWardMapping";
     let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       cardWardInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCardWardMapping", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let cardNo = keyArray[i];
@@ -114,6 +118,7 @@ export class DailyPaymentReportComponent implements OnInit {
   }
 
   setcollectorWiseList(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "setcollectorWiseList");
     if (index == this.collectorList.length) {
       this.getEntityCollection(0);
     }
@@ -123,6 +128,7 @@ export class DailyPaymentReportComponent implements OnInit {
       let patmentInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         patmentInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setcollectorWiseList", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -171,6 +177,7 @@ export class DailyPaymentReportComponent implements OnInit {
   }
 
   getEntityCollection(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEntityCollection");
     if (index == this.collectorList.length) {
       this.getTotalAmount();
       this.getFilter();
@@ -195,6 +202,7 @@ export class DailyPaymentReportComponent implements OnInit {
       let patmentInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         patmentInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEntityCollection", data);
           let entityKeyArray = Object.keys(data);
           for (let m = 0; m < entityKeyArray.length; m++) {
             let entytyKey = entityKeyArray[m];

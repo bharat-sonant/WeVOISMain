@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { AngularFireStorage } from "@angular/fire/storage";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-review-dutyon-images',
@@ -12,7 +13,7 @@ import { AngularFireStorage } from "@angular/fire/storage";
 })
 export class ReviewDutyonImagesComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private storage: AngularFireStorage, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private httpService: HttpClient, public actRoute: ActivatedRoute, private commonService: CommonService) { }
   zoneList: any[] = [];
   zoneDutyOnList: any[] = [];
   db: any;
@@ -22,6 +23,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
   selectedYear: any;
   selectedMonthName: any;
   divMainLoader = "#divMainLoader";
+  serviceName = "review-duty-on-images";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -60,11 +62,13 @@ export class ReviewDutyonImagesComponent implements OnInit {
   }
 
   getDustbinDutyOnImages() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinDutyOnImages");
     let dbPath = "DustbinData/DustbinAssignment/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "";
     let dustbinAssignInstance = this.db.list(dbPath).valueChanges().subscribe(
       dataList => {
         dustbinAssignInstance.unsubscribe();
         if (dataList.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinDutyOnImages", dataList);
           for (let i = 0; i < dataList.length; i++) {
             let dutyOnImages = [];
             let planName = dataList[i]["planName"];
@@ -123,6 +127,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
   }
 
   getDutyOnTime(zone: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDutyOnTime");
     let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
     if (detail != undefined) {
       let list = detail.dutyOnImages;
@@ -133,6 +138,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
           data => {
             instance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnTime", data);
               for (let j = 0; j <= 5; j++) {
                 if (data["task" + j] != null) {
                   if (data["task" + j]["task"].includes("BinLifting")) {
@@ -177,6 +183,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
   }
 
   getDutyOnImages(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDutyOnImages");
     if (index == this.zoneDutyOnList.length) {
       this.getDustbinDutyOnImages();
     }
@@ -187,6 +194,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
         summaryData => {
           summaryInstance.unsubscribe();
           if (summaryData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnImages", summaryData);
 
             if (summaryData["dutyOnImage"] != null) {
               let list = summaryData["dutyOnImage"].split(',');
@@ -272,11 +280,13 @@ export class ReviewDutyonImagesComponent implements OnInit {
   }
 
   getDriverHelper(zone: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDriverHelper");
     let dbPath = "WasteCollectionInfo/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/WorkerDetails";
     let workerDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
       workerData => {
         workerDetailInstance.unsubscribe();
         if (workerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDriverHelper", workerData);
           let driverList = workerData["driverName"].split(',');
           let helperList = workerData["helperName"].split(',');
           let vehicleList = workerData["vehicle"].split(',');

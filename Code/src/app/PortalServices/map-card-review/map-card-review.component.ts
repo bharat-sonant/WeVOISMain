@@ -11,6 +11,7 @@ import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-map-card-review",
@@ -21,7 +22,7 @@ export class MapCardReviewComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private mapService: MapService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private mapService: MapService, private commonService: CommonService) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -62,6 +63,7 @@ export class MapCardReviewComponent {
   parhadhouseMarker: any;
   allMatkers: any[] = [];
   instancesList: any[];
+  serviceName = "portal-service-map-card-review";
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -240,9 +242,13 @@ export class MapCardReviewComponent {
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLineOnMap");
     let dbPathLineStatus = "WasteCollectionInfo/" + wardNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatus = this.db.object(dbPathLineStatus).valueChanges().subscribe((status) => {
       this.instancesList.push({ instances: lineStatus });
+      if(status!=null){
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLineOnMap", status);
+      }
       if (wardNo == this.selectedZone) {
         if (this.polylines[index] != undefined) {
           this.polylines[index].setMap(null);
@@ -301,6 +307,7 @@ export class MapCardReviewComponent {
   }
 
   getHouses() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHouses");
     if (this.houseMarkerList.length > 0) {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
         this.houseMarkerList[i]["marker"].setMap(null);
@@ -315,6 +322,7 @@ export class MapCardReviewComponent {
       let houseInstance = this.db.list(housePath).valueChanges().subscribe((houseData) => {
         houseInstance.unsubscribe();
         if (houseData.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHouses", houseData);
           for (let j = 0; j < houseData.length; j++) {
             let lat = houseData[j]["latLng"].replace("(", "").replace(")", "").split(",")[0];
             let lng = houseData[j]["latLng"].replace("(", "").replace(")", "").split(",")[1];

@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit {
       data => {
         this.instancesList.push({ instances: vehicleData });
         if (vehicleData != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getActiveVehicles", vehicleData);
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getActiveVehicles", data);
         }
         let activeVehicleCount = 0;
         for (let index = 0; index < data.length; index++) {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-ward-work-done',
@@ -9,7 +10,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class WardWorkDoneComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
   public cityName: any;
   db: any;
   toDayDate: any;
@@ -18,6 +19,7 @@ export class WardWorkDoneComponent implements OnInit {
   workDateList: any[] = [];
   workDoneList: any[] = [];
   wardForWeightageList:any[]=[];
+  serviceName = "7-days-work-done-report";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -80,6 +82,7 @@ export class WardWorkDoneComponent implements OnInit {
   }
 
   getWorkDone(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkDone");
     if (this.workDateList.length > 0) {
       for (let i = 0; i < this.workDateList.length; i++) {
         let date = this.workDateList[i]["date"];
@@ -94,6 +97,7 @@ export class WardWorkDoneComponent implements OnInit {
               let dateDetail = this.workDateList.find(item => item.date == date);
               if (dateDetail != undefined) {
                 if (workPercentage != null) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkDone", workPercentage);
                   detail[dateDetail.day] = workPercentage;
                   if (Number(workPercentage) < 85) {
                     detail[dateDetail.class] = "lessWork";
@@ -111,6 +115,7 @@ export class WardWorkDoneComponent implements OnInit {
   }
 
   getWorkDoneWithLineWeightage(zoneNo: any, date: any, lineWeightageList: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkDoneWithLineWeightage");
     let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
     let year = date.split('-')[0];
     let dbPathLineStatus = "WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + date + "/LineStatus";
@@ -125,6 +130,7 @@ export class WardWorkDoneComponent implements OnInit {
         let dateDetail = this.workDateList.find(item => item.date == date);
         if (dateDetail != undefined) {
           if (lineStatusData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkDoneWithLineWeightage", lineStatusData);
             let keyArray = Object.keys(lineStatusData);
             for (let i = 0; i < keyArray.length; i++) {
               let lineNo = keyArray[i];

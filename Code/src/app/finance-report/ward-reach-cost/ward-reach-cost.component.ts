@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { CommonService } from '../../services/common/common.service';
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-ward-reach-cost',
@@ -11,7 +12,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class WardReachCostComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -27,6 +28,7 @@ export class WardReachCostComponent implements OnInit {
   yearList: any[] = [];
   db:any;
   public cityName:any;
+  serviceName = "ward-reach-cost";
 
   costData: costDatail =
     {
@@ -89,9 +91,11 @@ export class WardReachCostComponent implements OnInit {
   }
 
   getSalary() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSalary");
     let dbPath = "Settings/Salary";
     let salaryData = this.db.object(dbPath).valueChanges().subscribe(
       data => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSalary", data);
         this.driveySalary = data["driver_salary_per_hour"];
         this.halperSalary = data["helper_salary_per_hour"];
         this.totalSalary = parseFloat(this.driveySalary) + parseFloat(this.halperSalary);
@@ -162,11 +166,13 @@ export class WardReachCostComponent implements OnInit {
   }
 
   getWardReachTime(wardNo: any, monthName: any, monthDate: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardReachTime");
     let workDetailsPath = 'WasteCollectionInfo/' + wardNo + '/' + this.selectedYear + '/' + monthName + '/' + monthDate + '/Summary';
     let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe(
       workData => {
         workDetails.unsubscribe();
         if (workData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardReachTime", workData);
           let zoneDetails = this.wardDataList.find(item => item.wardNo == wardNo);
           if (zoneDetails != undefined) {
             let d = "day" + parseFloat(monthDate.split("-")[2]);
@@ -193,6 +199,7 @@ export class WardReachCostComponent implements OnInit {
                 workerData => {
                   workerDetails.unsubscribe();
                   if (workerData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardReachTime", workerData);
                     let zoneDetails = this.wardDataList.find(item => item.wardNo == wardNo);
                     if (zoneDetails != undefined) {
                       let d = "day" + parseFloat(monthDate.split("-")[2]);

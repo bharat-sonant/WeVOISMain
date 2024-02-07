@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-penalty-portal-service',
@@ -11,7 +12,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class PenaltyPortalServiceComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   toDayDate: any;
@@ -21,6 +22,7 @@ export class PenaltyPortalServiceComponent implements OnInit {
   yearList: any[];
   penaltyList: any[];
   specialUserList: any[];
+  serviceName = "portal-service-penalty";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -40,11 +42,13 @@ export class PenaltyPortalServiceComponent implements OnInit {
   }
 
   getSpecialUsers() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSpecialUsers");
     let dbPath = "Settings/SpecialUsers";
     let userInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         userInstance.unsubscribe();
         if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSpecialUsers", data);
           for (let i = 0; i < data.length; i++) {
             this.specialUserList.push({ name: data[i]["username"] });
           }
@@ -63,6 +67,7 @@ export class PenaltyPortalServiceComponent implements OnInit {
   }
 
   saveData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "saveData");
     this.selectedYear = $('#ddlYear').val();
     this.selectedMonth = $('#ddlMonth').val();
     if (this.selectedYear == "0") {
@@ -84,6 +89,7 @@ export class PenaltyPortalServiceComponent implements OnInit {
       data => {
         penaltyInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -106,6 +112,7 @@ export class PenaltyPortalServiceComponent implements OnInit {
                       empData => {
                         empInstance.unsubscribe();
                         if (empData != null) {
+                          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", empData);
                           createdBy = empData;
                         }
                         this.penaltyList.push({ name: name, empId: empId,empCode:empCode, date: date, amount: amount, createdOn: createdOn, penaltyType: penaltyType, reason: reason, createdBy: createdBy });

@@ -4,6 +4,7 @@ import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
 import * as XLSX from 'xlsx';
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-employee-penalty',
@@ -12,7 +13,7 @@ import * as XLSX from 'xlsx';
 })
 export class EmployeePenaltyComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   toDayDate: any;
@@ -31,6 +32,7 @@ export class EmployeePenaltyComponent implements OnInit {
   ddlUser = "#ddlUser";
   txtDate = "#txtDate";
   divLoader = "#divLoader";
+  serviceName = "penalty";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -59,11 +61,13 @@ export class EmployeePenaltyComponent implements OnInit {
 
 
   getSpecialUsers() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSpecialUsers");
     let dbPath = "Settings/SpecialUsers";
     let userInstance = this.db.list(dbPath).valueChanges().subscribe(
       data => {
         userInstance.unsubscribe();
         if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSpecialUsers", data);
           for (let i = 0; i < data.length; i++) {
             this.specialUserList.push({ name: data[i]["username"] });
           }
@@ -154,11 +158,13 @@ export class EmployeePenaltyComponent implements OnInit {
         $(this.divLoader).hide();
       }
     }, error => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPenality");
       let dbPath = "Penalties/" + this.selectedYear + "/" + this.selectedMonthName;
       let penalityInstance = this.db.object(dbPath).valueChanges().subscribe(
         data => {
           penalityInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPenality", data);
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
               for (let i = 0; i < keyArray.length; i++) {
@@ -191,6 +197,7 @@ export class EmployeePenaltyComponent implements OnInit {
                           empData => {
                             empInstance.unsubscribe();
                             if (empData != null) {
+                              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPenality", empData);
                               createdBy = empData;
                             }
                             this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });

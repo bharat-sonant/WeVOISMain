@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-collected-amount-report',
@@ -9,7 +10,7 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ['./collected-amount-report.component.scss']
 })
 export class CollectedAmountReportComponent implements OnInit {
-  constructor(private commonService: CommonService, public fs: FirebaseService, public httpService: HttpClient) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public httpService: HttpClient) { }
   zoneList: any[];
   yearList: any[];
   wardCardList: any[];
@@ -28,6 +29,7 @@ export class CollectedAmountReportComponent implements OnInit {
   ddlZone = "#ddlZone";
   divLoader = "#divLoader";
   divLoaderGet = "#divLoaderGet";
+  serviceName = "collection-management-collected-amount-report";
   Jan: any;
   Feb: any;
   Mar: any;
@@ -95,11 +97,13 @@ export class CollectedAmountReportComponent implements OnInit {
   }
 
   getStartChargesMonthYear() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getStartChargesMonthYear");
     let dbPath = "Settings/PaymentCollectionSettings/userChargesApplicableFrom";
     let userChargeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         userChargeInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getStartChargesMonthYear", data);
           this.chargeStartMonth = Number(this.commonService.getMonthShortNameToMonth(data.toString().split('-')[0]));
           this.chargeStartYear = Number(data.toString().split('-')[1]);
         }
@@ -108,12 +112,14 @@ export class CollectedAmountReportComponent implements OnInit {
   }
 
   getEntityTypes() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEntityTypes");
     this.entityTypeList = [];
     let dbPath = "Settings/PaymentCollectionSettings/EntityType";
     let entityTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         entityTypeInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEntityTypes", data);
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let entityTypeId = keyArray[i];
@@ -286,6 +292,7 @@ export class CollectedAmountReportComponent implements OnInit {
   }
 
   getCollectedAmount(index: any, monthFrom: any, monthTo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCollectedAmount");
     if (index == this.wardCardPaymentList.length) {
       this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
       this.wardCardList = this.wardCardPaymentList;
@@ -310,6 +317,7 @@ export class CollectedAmountReportComponent implements OnInit {
           collectionInstance.unsubscribe();
           let totalAmount = 0;
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCollectedAmount", data);
             for (let i = monthFrom; i <= monthTo; i++) {
               let monthName = this.commonService.getCurrentMonthShortName(i);
               let amount = "0";

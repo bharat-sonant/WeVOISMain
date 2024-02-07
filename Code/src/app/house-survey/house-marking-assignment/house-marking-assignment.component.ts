@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-house-marking-assignment",
@@ -12,7 +13,7 @@ import { FirebaseService } from "../../firebase.service";
   styleUrls: ["./house-marking-assignment.component.scss"],
 })
 export class HouseMarkingAssignmentComponent implements OnInit {
-  constructor(private router: Router, public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
+  constructor(private router: Router, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
   toDayDate: any;
   selectedMonth: any;
   public selectedYear: any;
@@ -32,6 +33,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   lineList: any[];
   lineMarkerList: any[];
   isFirst = true;
+  serviceName = "survey-assignment";
   houseData: houseDatail = {
     days: "0",
     cards: "0",
@@ -63,11 +65,13 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   }
 
   getLastUpdate() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLastUpdate");
     let dbPath = "EntitySurveyData/SurveyorSurveySummary/Summary";
     let lastUpdateInstance = this.db.object(dbPath).valueChanges().subscribe(
       summaryData => {
         lastUpdateInstance.unsubscribe();
         if (summaryData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLastUpdate", summaryData);
           this.houseData.lastUpdate = summaryData["lastUpdate"];
           this.houseData.totalCards = summaryData["cards"];
           this.houseData.totalHouses = summaryData["houses"];
@@ -79,6 +83,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   cardNumberList: any[] = [];
 
   updateSurveyorSummary() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSurveyorSummary");
     $(this.divLoader).show();
     this.totalCards = 0;
     this.totalHouses = 0;
@@ -88,6 +93,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       houseData => {
         housesInstance.unsubscribe();
         if (houseData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyorSummary", houseData);
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
             this.updateSummaryCounts(0, keyArray, houseData);
@@ -98,6 +104,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   }
 
   checkWithCardWardMapping() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkWithCardWardMapping");
     let dbPath = "CardWardMapping";
     let houseinstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -109,6 +116,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "</tr>";
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkWithCardWardMapping", data);
           let keyArray = Object.keys(data);
           // console.log(keyArray.length);
           for (let i = 0; i < keyArray.length; i++) {
@@ -267,9 +275,13 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   }
 
   updateVirtualCards(zoneNo: any, lineNo: any, cardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateVirtualCards");
     let dbCardPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
     let cardInstance = this.db.object(dbCardPath).valueChanges().subscribe(
       cardData => {
+        if(cardData!=null){
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateVirtualCards", cardData);
+        }
         cardInstance.unsubscribe();
         let newCardNo = "MPZ" + (Number(cardNo.replace("MPZ", "")) + 100000);
         cardData["cardNo"] = newCardNo;
@@ -299,6 +311,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   }
 
   getServeyorDetail(userId: any, index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getServeyorDetail");
     if (this.isFirst == false) {
       this.setActiveClass(index);
     } else {
@@ -320,6 +333,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
         data => {
           summaryInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getServeyorDetail", data);
             let keyArray = Object.keys(data);
             if (keyArray.length > 0) {
               for (let i = 0; i < keyArray.length; i++) {
@@ -365,6 +379,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   //#region  List Detail
 
   getAssignedList() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedList");
     this.assignedList = [];
     this.surveyorList = [];
     this.userList = [];
@@ -372,6 +387,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     let userInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
       userInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedList", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length - 1; i++) {
@@ -393,6 +409,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
               let assignInstance = this.db.object(this.dbPath).valueChanges().subscribe((dataSurvey) => {
                 assignInstance.unsubscribe();
                 if (dataSurvey != null) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedList", dataSurvey);
                   let linelist = dataSurvey["line"].split(',');
                   let lines = "";
                   if (linelist.length > 0) {
@@ -460,6 +477,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
   }
 
   getLines(wardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLines");
     this.lineList = [];
     if (wardNo == "0") {
       this.commonService.setAlertMessage("error", "Plese select ward !!!");
@@ -469,6 +487,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     let lineInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
       lineInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLines", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {

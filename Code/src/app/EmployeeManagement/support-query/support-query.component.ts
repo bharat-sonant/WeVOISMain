@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-support-query',
@@ -10,7 +11,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class SupportQueryComponent implements OnInit {
 
-  constructor(private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private modalService: NgbModal) { }
   toDayDate: any;
   complaintsJSON: any;
   divLoader = "#divLoader";
@@ -41,6 +42,7 @@ export class SupportQueryComponent implements OnInit {
   chkShowAll = "chkShowAll";
   roleId: any;
   showAllData:any;
+  serviceName = "employee-queries";
 
   ngOnInit() {
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));

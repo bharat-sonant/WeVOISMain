@@ -3,6 +3,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-fleet-monitor',
@@ -12,7 +13,7 @@ import { FirebaseService } from "../firebase.service";
 
 export class FleetMonitorComponent {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
 
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
@@ -24,6 +25,7 @@ export class FleetMonitorComponent {
   currentMonthName: any;
   currentYear: any;
   cityName: any;
+  serviceName = "vehicles";
   workerDetails: WorkderDetails =
     {
       vehicleNo: '',
@@ -39,7 +41,7 @@ export class FleetMonitorComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Monitoring","Vehicles",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Monitoring", "Vehicles", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -72,6 +74,7 @@ export class FleetMonitorComponent {
   }
 
   getZones() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZones");
     this.zoneList = [];
     let allZones = JSON.parse(localStorage.getItem("latest-zones"));
     for (let index = 0; index < allZones.length; index++) {
@@ -80,7 +83,8 @@ export class FleetMonitorComponent {
         lineStatusData => {
           lineStatusInstance.unsubscribe();
           if (lineStatusData != null) {
-            this.zoneList.push({ zoneNo: allZones[index]["zoneNo"], zoneName: allZones[index]["zoneName"], totalLines: 0, lineWeightageList: [], lineStatusData: lineStatusData, driverName: "", driverMobile: "", helperName: "", vehicle: "", driverId: 0, helperId: 0,driverImageUrl:"",helperImageUrl:"" });
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZones", lineStatusData);
+            this.zoneList.push({ zoneNo: allZones[index]["zoneNo"], zoneName: allZones[index]["zoneName"], totalLines: 0, lineWeightageList: [], lineStatusData: lineStatusData, driverName: "", driverMobile: "", helperName: "", vehicle: "", driverId: 0, helperId: 0, driverImageUrl: "", helperImageUrl: "" });
             this.getWardWorkProgressDetails(allZones[index]["zoneNo"]);
           }
         });
@@ -110,11 +114,13 @@ export class FleetMonitorComponent {
   }
 
   getWorkerDetail(zoneNo: any, isWardLignWeightage: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkerDetail");
     let workerDetailsdbPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.currentYear + '/' + this.currentMonthName + '/' + this.todayDate + '/WorkerDetails';
     let workerDetailsInstance = this.db.object(workerDetailsdbPath).valueChanges().subscribe(
       workerData => {
         workerDetailsInstance.unsubscribe();
         if (workerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkerDetail", workerData);
           let zoneDetail = this.zoneList.find(item => item.zoneNo == zoneNo);
           if (zoneDetail != undefined) {
             let vehicleList = workerData["vehicle"].split(',');
@@ -135,7 +141,7 @@ export class FleetMonitorComponent {
         }
       });
   }
-  
+
   getDriverHelperDetail(zoneDetail: any, empId: any, type: any) {
     this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
       if (type == "driver") {
@@ -209,14 +215,21 @@ export class FleetMonitorComponent {
   }
 
   showVehicle(zoneNo: string, workPercentage: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showVehicle");
     let currentLocationPath = "CurrentLocationInfo/" + zoneNo + "/latLng";
     let vehicleLocation = this.db.object(currentLocationPath).valueChanges().subscribe(
       locationData => {
         vehicleLocation.unsubscribe();
+        if (locationData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicle", locationData);
+        }
         let cureentStatusDPath = 'RealTimeDetails/WardDetails/' + zoneNo + '/activityStatus';
         let currentStatusInstance = this.db.object(cureentStatusDPath).valueChanges().subscribe(
           statusId => {
             currentStatusInstance.unsubscribe();
+            if (statusId != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicle", statusId);
+            }
             let vehiclePath = '../assets/img/tipper-green.png';
             if (statusId == 'completed') {
               vehiclePath = '../assets/img/tipper-gray.png';
@@ -231,6 +244,7 @@ export class FleetMonitorComponent {
                 dailyWorkData => {
                   dailyWorkInstance.unsubscribe();
                   if (dailyWorkData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicle", dailyWorkData);
                     for (let i = 5; i >= 1; i--) {
                       if (dailyWorkData["task" + i] != null) {
                         if (dailyWorkData["task" + i]["task"] == zoneNo) {
@@ -269,24 +283,24 @@ export class FleetMonitorComponent {
 
                     setTimeout(function () {
                       $('.gm-ui-hover-effect').css("display", "none");
-                      $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px").css("z-index","99");
+                      $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px").css("z-index", "99");
                       $('.gm-style-iw-d').css("overflow", "unset");
                     }, 300);
 
                     let details = this.workerDetails;
-                    let cityName=this.cityName;
+                    let cityName = this.cityName;
                     marker.addListener('click', function () {
-                      if(zoneNo.includes('(')){
-                        zoneNo=zoneNo.toString().replace("(","~").replace(")","");
+                      if (zoneNo.includes('(')) {
+                        zoneNo = zoneNo.toString().replace("(", "~").replace(")", "");
                       }
                       details.wardMonitorUrl = "/" + cityName + "/ward-work-tracking/" + zoneNo;
                       details.driverName = zoneDetail.driverName;
                       details.helperName = zoneDetail.helperName;
                       details.vehicleNo = zoneDetail.vehicle;
-                      details.driverImageUrl=zoneDetail.driverImageUrl;
-                      details.helperImageUrl=zoneDetail.helperImageUrl;
-                      details.driverMobile=zoneDetail.driverMobile;
-                      details.helperMobile=zoneDetail.helperMobile;
+                      details.driverImageUrl = zoneDetail.driverImageUrl;
+                      details.helperImageUrl = zoneDetail.helperImageUrl;
+                      details.driverMobile = zoneDetail.driverMobile;
+                      details.helperMobile = zoneDetail.helperMobile;
                       $('#helperMsgD').hide();
                       $('#helperMsgM').hide();
                       $('#detailD').show();

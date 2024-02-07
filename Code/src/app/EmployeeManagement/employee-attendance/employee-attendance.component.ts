@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 //  <reference types="@types/googlemaps" />
 
 
@@ -15,7 +16,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   divLoader = "#divLoader";
@@ -45,6 +46,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   bounds = new google.maps.LatLngBounds();
   showStatus: any;
   public filterType: any;
+  serviceName = "employee-attendance";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -133,6 +135,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   getAttendance() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAttendance");
 
     $(this.ddlTime).val("0");
     this.employeeList = [];
@@ -147,6 +150,7 @@ export class EmployeeAttendanceComponent implements OnInit {
           employeeAttendanceInstance.unsubscribe();
 
           if (attendanceData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAttendance", attendanceData);
             let detail = this.allEmployeeList.find(item => item.empId == empId);
             if (detail != undefined) {
               let inTime = "";
@@ -244,6 +248,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   getAttendanceEmployee(empId: any, date: any, dateTo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAttendanceEmployee");
 
     this.showStatus = true;
     if (new Date(date) <= new Date(dateTo)) {
@@ -254,6 +259,7 @@ export class EmployeeAttendanceComponent implements OnInit {
         attendanceData => {
           employeeAttendanceInstance.unsubscribe();
           if (attendanceData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAttendanceEmployee", attendanceData);
 
             let detail = this.allEmployeeList.find(item => item.empId == empId);
             if (detail != undefined) {

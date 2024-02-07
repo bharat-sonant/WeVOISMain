@@ -4,6 +4,7 @@ import { MapService } from "../services/map/map.service";
 import { HttpClient } from "@angular/common/http";
 import { FirebaseService } from "../firebase.service";
 import * as $ from "jquery";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-line-statistics",
@@ -87,7 +88,8 @@ export class LineStatisticsComponent implements OnInit {
   endInterval: any;
   db: any;
   cityName: any;
-  constructor(public fs: FirebaseService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
+  serviceName = "time-distance";
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private mapService: MapService, public httpService: HttpClient, private commonService: CommonService) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -110,12 +112,14 @@ export class LineStatisticsComponent implements OnInit {
   }
 
   checkTodayWorkStatus() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkTodayWorkStatus");
     let dbPath = "WasteCollectionInfo/" + this.activeZone + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.todayDate + "/LineStatus";
     let wardLineData = this.db.list(dbPath).valueChanges().subscribe((data) => {
       wardLineData.unsubscribe();
       this.graphHeaderData.date = this.getDate(0);
       this.graphHeaderData.workprogress = "0";
       if (data.length > 0) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkTodayWorkStatus", data);
         $("#divNoRecord").hide();
         this.getGrpahDataTodayAndLastFiveDays(15);
       } else {
@@ -168,12 +172,14 @@ export class LineStatisticsComponent implements OnInit {
   }
 
   getData(interval: any, timeCollection: any[], distanceCollection: any[], date: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getData");
     let year = date.split("-")[0];
     let monthName = this.commonService.getCurrentMonthName(new Date(date).getMonth());
     let dbPath = "WasteCollectionInfo/" + this.activeZone + "/" + year + "/" + monthName + "/" + date + "/LineStatus";
     let wardLineData = this.db.list(dbPath).valueChanges().subscribe((data) => {
       let lineCompleted = 0;
       if (data.length > 0) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", data);
         wardLineData.unsubscribe();
         data = this.commonService.transformString(data, "start-time");
         let intervalInMinutes = interval;

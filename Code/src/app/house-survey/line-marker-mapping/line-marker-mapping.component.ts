@@ -11,6 +11,7 @@ import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
 import { AngularFireStorage } from "angularfire2/storage";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-line-marker-mapping',
@@ -21,7 +22,7 @@ export class LineMarkerMappingComponent {
 
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private storage: AngularFireStorage, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
 
   public selectedZone: any;
   db: any;
@@ -57,6 +58,7 @@ export class LineMarkerMappingComponent {
   plansRef: AngularFireList<any>;
   divLoader = "#divLoader";
   divLoaderMarkerMove = "#divLoaderMarkerMove";
+  serviceName = "line-marker-mapping";
 
   ngOnInit() {
     this.toDayDate = this.commonService.setTodayDate();
@@ -220,6 +222,7 @@ export class LineMarkerMappingComponent {
   }
 
   getMarkedHouses(lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkedHouses");
     if (this.houseMarker.length > 0) {
       for (let i = 0; i < this.houseMarker.length; i++) {
         this.houseMarker[i]["marker"].setMap(null);
@@ -231,6 +234,7 @@ export class LineMarkerMappingComponent {
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkedHouses", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
@@ -393,6 +397,7 @@ export class LineMarkerMappingComponent {
   }
 
   moveToNewLine() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveToNewLine");
     if ($("#txtNewLine").val() == "") {
       this.commonService.setAlertMessage("error", "Please enter line no.");
       return;
@@ -422,6 +427,7 @@ export class LineMarkerMappingComponent {
         let lastKey = 0;
         let newLineNo = $("#txtNewLine").val();
         if (lastMarkerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", lastMarkerData);
           lastKey = Number(lastMarkerData);
         }
         this.moveData(0, lastKey, this.selectedZone, this.lineNo, this.selectedZone, newLineNo, 0);
@@ -430,6 +436,7 @@ export class LineMarkerMappingComponent {
   }
 
   moveData(index: any, lastKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, failureCount: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveData");
     if (index < this.selectedCardDetails.length) {
       lastKey = lastKey + 1;
       let markerNo = this.selectedCardDetails[index]["markerNo"];
@@ -456,6 +463,7 @@ export class LineMarkerMappingComponent {
                 let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
                   cardInstance.unsubscribe();
                   if (cardData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveData", cardData);
                     data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
                     cardData["line"] = lineTo;
                     cardData["ward"] = zoneTo;
@@ -519,12 +527,14 @@ export class LineMarkerMappingComponent {
   }
 
   updateCounts(zoneNo: any, failureCount: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCounts");
     $(this.divLoaderMarkerMove).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       markerData => {
         markerInstance.unsubscribe();
         if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts", markerData);
           let keyArray = Object.keys(markerData);
           if (keyArray.length > 0) {
             let zoneMarkerCount = 0;

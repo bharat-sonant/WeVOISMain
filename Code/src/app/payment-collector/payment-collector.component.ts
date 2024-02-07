@@ -7,6 +7,7 @@ import { FirebaseService } from "../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "@angular/fire/storage";
 //import * as QRCode from 'qrcode';
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-payment-collector',
@@ -15,7 +16,7 @@ import { AngularFireStorage } from "@angular/fire/storage";
 })
 export class PaymentCollectorComponent implements OnInit {
 
-  constructor(private router: Router, private storage: AngularFireStorage, public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
+  constructor(private router: Router, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public fs: FirebaseService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
 
   zoneList: any[];
   deviceList: any[];
@@ -28,6 +29,7 @@ export class PaymentCollectorComponent implements OnInit {
   fileName: any;
   cityName: any;
   public isWardShow: any;
+  serviceName = "collection-management-payment-collector";
   collectionData: collectionDatail = {
     totalCollection: "0",
     totalDays: 0,
@@ -149,12 +151,14 @@ export class PaymentCollectorComponent implements OnInit {
   }
 
   getCollectionDetail(empId: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCollectionDetail");
     let collectionList = [];
     let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId;
     let instance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         instance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCollectionDetail", data);
 
           let totalCollectionAmount = 0;
 
@@ -194,11 +198,13 @@ export class PaymentCollectorComponent implements OnInit {
   }
 
   getEntityCollection(empId: any, collectionList: any, totalCollectionAmount: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEntityCollection");
     let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId + "/Entities";
     let instance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         instance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEntityCollection", data);
           let entityKeyArray = Object.keys(data);
           for (let m = 0; m < entityKeyArray.length; m++) {
             let entityKey = entityKeyArray[m];

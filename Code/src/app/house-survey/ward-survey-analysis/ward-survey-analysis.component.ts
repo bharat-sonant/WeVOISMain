@@ -10,6 +10,7 @@ import * as $ from "jquery";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-ward-survey-analysis",
@@ -20,7 +21,7 @@ export class WardSurveyAnalysisComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   public mapRevisit: google.maps.Map;
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, public afd: AngularFireDatabase, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public afd: AngularFireDatabase, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -61,6 +62,7 @@ export class WardSurveyAnalysisComponent {
   divServingCount = "#divServingCount";
   wardLineMarkerImageList: any[] = [];
   isActionShow: any;
+  serviceName = "survey-analysis";
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -108,11 +110,13 @@ export class WardSurveyAnalysisComponent {
 
 
   getSurveyorList() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSurveyorList");
     this.surveyorList = [];
     let surveyorInstance = this.db.object("Surveyors/").valueChanges().subscribe(
       surveyorData => {
         surveyorInstance.unsubscribe();
         if (surveyorData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSurveyorList", surveyorData);
           let keyArray = Object.keys(surveyorData);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -190,12 +194,14 @@ export class WardSurveyAnalysisComponent {
   }
 
   getMarkerImages() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkerImages");
     this.wardLineMarkerImageList = [];
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
     let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
       markedHouseData => {
         markedHouseInstance.unsubscribe();
         if (markedHouseData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkerImages", markedHouseData);
           for (let i = 1; i <= this.wardLineCount; i++) {
             let markerData = markedHouseData[i];
             let keyArray = Object.keys(markerData);
@@ -218,10 +224,12 @@ export class WardSurveyAnalysisComponent {
   }
 
   getTotalMarkers() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTotalMarkers");
     let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/marked";
     let totalInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       totalInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalMarkers", data);
         this.progressData.totalMarkers = Number(data);
       }
     });
@@ -230,6 +238,7 @@ export class WardSurveyAnalysisComponent {
     let surveyedInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       surveyedInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalMarkers", data);
         this.progressData.totalSurveyed = Number(data);
       }
     });
@@ -239,6 +248,7 @@ export class WardSurveyAnalysisComponent {
       data => {
         revisitInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalMarkers", data);
           this.progressData.totalRevisit = Number(data);
 
           $('#divRevisitCount').css("cursor", "pointer");
@@ -250,6 +260,7 @@ export class WardSurveyAnalysisComponent {
     let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       oldCardInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalMarkers", data);
         this.progressData.totalOldCards = Number(data);
       }
     });
@@ -341,6 +352,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getMarkedHouses(lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkedHouses");
     this.clearLineData();
     if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == false) {
       this.getRevisitRequest();
@@ -351,6 +363,7 @@ export class WardSurveyAnalysisComponent {
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkedHouses", data);
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
@@ -413,11 +426,13 @@ export class WardSurveyAnalysisComponent {
   }
 
   getLineSurveyed() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineSurveyed");
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/surveyedCount";
     let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         revisitInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineSurveyed", data);
           this.progressData.totalLineSurveyed = Number(data);
           $('#divLineRevisitCount').css("cursor", "pointer");
         }
@@ -426,11 +441,13 @@ export class WardSurveyAnalysisComponent {
   }
 
   getRevisitRequest() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRevisitRequest");
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRevisitCount";
     let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         revisitInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRevisitRequest", data);
           this.progressData.totalLineRevisit = Number(data);
           $('#divLineRevisitCount').css("cursor", "pointer");
         }
@@ -439,11 +456,13 @@ export class WardSurveyAnalysisComponent {
   }
 
   getOldCards() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getOldCards");
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRfidNotFoundCount";
     let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         oldCardInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOldCards", data);
           this.progressData.totalLineOldCard = Number(data);
           $('#divLineOldCardCount').css("cursor", "pointer");
         }
@@ -475,6 +494,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   setMarkerForHouse(lat: any, lng: any, markerURL: any, cardNo: any, revisitKey: any, rfidNotFoundKey: any, lineNo: any, map: any, imageName: any, entityType: any, markerNo: any, address: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "setMarkerForHouse");
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: map,
@@ -616,6 +636,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   processVirtualSurvey() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "processVirtualSurvey");
     let wardNo = $("#virtualWardNo").val();
     let lineNo = $("#virtualLineNo").val();
     let markerNo = $("#virtualMarkerNo").val();
@@ -636,6 +657,7 @@ export class WardSurveyAnalysisComponent {
       cardNumberData => {
         cardNumberInstance.unsubscribe();
         if (cardNumberData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "processVirtualSurvey", cardNumberData);
           let current = Number(cardNumberData["current"]);
           let end = Number(cardNumberData["end"]);
           if (current == end) {
@@ -738,6 +760,7 @@ export class WardSurveyAnalysisComponent {
                 revisitKeyData => {
                   revisitInstance.unsubscribe();
                   if (revisitKeyData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "processVirtualSurvey", revisitKeyData);
                     this.db.object(dbPath).remove();
                     dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/lineRevisitCount"
                     let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -756,6 +779,7 @@ export class WardSurveyAnalysisComponent {
                       count => {
                         totalRevisitCountInstance.unsubscribe();
                         if (count != null) {
+                          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "processVirtualSurvey", count);
                           let revisitCount = Number(count) - 1;
                           dbPath = "EntitySurveyData/TotalRevisitRequest/" + wardNo;
                           this.db.database.ref(dbPath).set(revisitCount);
@@ -863,6 +887,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getScannedCard() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScannedCard");
     if (this.scannedCardList.length == 0) {
       let dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo;
       let scannedCardInstance = this.db.list(dbPath).valueChanges().subscribe(
@@ -870,6 +895,7 @@ export class WardSurveyAnalysisComponent {
           scannedCardInstance.unsubscribe();
           let city = this.commonService.getFireStoreCity();
           if (data.length > 0) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScannedCard", data);
             for (let i = 0; i < data.length; i++) {
               if (data[i]["createdDate"] != null) {
                 let entityList = [];
@@ -978,6 +1004,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   updateHouseType() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateHouseType");
     let wardNo = this.selectedZone;
     let lineNo = this.lineNo;
     let index = $(this.houseIndex).val();
@@ -1010,6 +1037,7 @@ export class WardSurveyAnalysisComponent {
       data => {
         markerInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHouseType", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -1054,6 +1082,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getOldCard() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getOldCard");
     if (this.oldCardList.length == 0) {
       let dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo;
       let oldCardInstance = this.db.list(dbPath).valueChanges().subscribe(
@@ -1061,6 +1090,7 @@ export class WardSurveyAnalysisComponent {
           oldCardInstance.unsubscribe();
           let city = this.commonService.getFireStoreCity();
           if (data.length > 0) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOldCard", data);
             for (let i = 0; i < data.length; i++) {
               if (data[i]["createdDate"] != null) {
                 let imageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
@@ -1188,6 +1218,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getRevisitLineRequest() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRevisitLineRequest");
     this.revisitSurveyList = [];
     this.revisitMarker = [];
     this.preRevisitIndex = -1;
@@ -1197,6 +1228,7 @@ export class WardSurveyAnalysisComponent {
         data => {
           revisitInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRevisitLineRequest", data);
             let keyArray = Object.keys(data);
             for (let j = 0; j < keyArray.length; j++) {
               let index = keyArray[j];
@@ -1224,6 +1256,7 @@ export class WardSurveyAnalysisComponent {
                       surveyorInstance.unsubscribe();
                       let surveyorName = "";
                       if (surveyorData != null) {
+                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRevisitLineRequest", surveyorData);
                         surveyorName = surveyorData;
                       }
                       this.revisitSurveyList.push({ lineNo: this.lineNo, surveyorName: surveyorName, lines: 0, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
@@ -1247,6 +1280,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getRevisitAllRequest() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRevisitAllRequest");
     this.revisitSurveyList = [];
     this.revisitMarker = [];
     this.preRevisitIndex = -1;
@@ -1258,6 +1292,7 @@ export class WardSurveyAnalysisComponent {
           data => {
             revisitInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRevisitAllRequest", data);
               let keyArray = Object.keys(data);
               for (let j = 0; j < keyArray.length; j++) {
                 let index = keyArray[j];
@@ -1284,6 +1319,7 @@ export class WardSurveyAnalysisComponent {
                         surveyorInstance.unsubscribe();
                         let surveyorName = "";
                         if (surveyorData != null) {
+                          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRevisitAllRequest", surveyorData);
                           surveyorName = surveyorData;
                         }
                         this.revisitSurveyList.push({ lineNo: lineNo, surveyorName: surveyorName, lines: lineNo, name: data[index]["name"], requestDate: requestDate, reason: data[index]["reason"], houseType: houseType, lat: data[index]["lat"], lng: data[index]["lng"], activeClass: "halt-data-theme", imageURL: imageURL, surveyorId: data[index]["id"], date: data[index]["date"].split(' ')[0], revisitKey: index, houseTypeId: type });
@@ -1316,6 +1352,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   checkRevisit() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkRevisit");
     let index = Number($('#revisitIndex').val());
     $('#divConfirm').hide();
     $('#revisitIndex').val("0");
@@ -1329,6 +1366,7 @@ export class WardSurveyAnalysisComponent {
       data => {
         checkInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkRevisit", data);
           let canDelete = true;
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
@@ -1356,6 +1394,7 @@ export class WardSurveyAnalysisComponent {
               count => {
                 lineRevisitCountInstance.unsubscribe();
                 if (count != null) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkRevisit", count);
                   let revisitCount = Number(count) - 1;
                   dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
                   this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
@@ -1369,11 +1408,13 @@ export class WardSurveyAnalysisComponent {
   }
 
   deleteRevisit(lineNo: any, revisitKey: any, date: any, surveyorId: any, index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "deleteRevisit");
     let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + lineNo + "/" + revisitKey;
     let revisiteInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         revisiteInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "deleteRevisit", data);
           dbPath = "EntitySurveyData/RemovedRevisitRequest/" + this.selectedZone + "/" + lineNo + "/" + revisitKey;
           this.db.object(dbPath).update(data);
 
@@ -1523,12 +1564,14 @@ export class WardSurveyAnalysisComponent {
   }
 
   generateNewCardNumber(index: any, markerNo: any, mobileNo: any, surveyType: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "generateNewCardNumber");
     let dbPath = "Settings/virtualRevisitLastCardNumber";
     let cardNumberInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         cardNumberInstance.unsubscribe();
         let cardCount = 10001;
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "generateNewCardNumber", data);
           cardCount = Number(data) + 1;
         }
         this.checkFromCardWardMapping(index, cardCount, markerNo, mobileNo, surveyType);
@@ -1537,6 +1580,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   checkFromCardWardMapping(index: any, cardCount: any, markerNo: any, mobileNo: any, surveyType: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkFromCardWardMapping");
     let cardNo = "00001";
     if (cardCount.toString().length == 1) {
       cardNo = "0000" + cardCount;
@@ -1559,6 +1603,7 @@ export class WardSurveyAnalysisComponent {
         data => {
           cardNumberInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkFromCardWardMapping", data);
             cardCount = Number(data) + 1;
             this.db.object("Settings").update({ revisitLastCardNumber: cardCount });
             this.db.object("Settings").update({ virtualRevisitLastCardNumber: cardCount });
@@ -1590,6 +1635,7 @@ export class WardSurveyAnalysisComponent {
           data => {
             checkInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkFromCardWardMapping", data);
               cardCount = cardCount + 1;
               this.checkFromCardWardMapping(index, cardCount, markerNo, mobileNo, surveyType);
             }
@@ -1696,11 +1742,13 @@ export class WardSurveyAnalysisComponent {
   }
 
   moveToRevisitSurveyData(lineNo: any, revisitKey: any, cardNo: any, index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveToRevisitSurveyData");
     let dbPath = "EntitySurveyData/RevisitRequest/" + this.selectedZone + "/" + lineNo + "/" + revisitKey;
     let revisiteMoveInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         revisiteMoveInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToRevisitSurveyData", data);
           data.cardNumber = cardNo;
           let date = data.date.split(' ')[0];
           let surveyorId = data.id;
@@ -1721,6 +1769,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   updateRevisitCounts(lineNo: any, date: any, surveyorId: any, type: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateRevisitCounts");
     let dbPath = "";
     if (type != "delete") {
       dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRevisitCount"
@@ -1728,6 +1777,7 @@ export class WardSurveyAnalysisComponent {
         count => {
           lineRevisitCountInstance.unsubscribe();
           if (count != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateRevisitCounts", count);
             let revisitCount = Number(count) - 1;
             dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
             this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
@@ -1742,6 +1792,7 @@ export class WardSurveyAnalysisComponent {
       count => {
         dailyRevisitCountInstance.unsubscribe();
         if (count != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateRevisitCounts", count);
           let revisitCount = Number(count) - 1;
           dbPath = "EntitySurveyData/DailyRevisitRequestCount/" + this.selectedZone + "/" + surveyorId + "/" + dateNew;
           this.db.database.ref(dbPath).set(revisitCount);
@@ -1754,6 +1805,7 @@ export class WardSurveyAnalysisComponent {
       count => {
         totalRevisitCountInstance.unsubscribe();
         if (count != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateRevisitCounts", count);
           let revisitCount = Number(count) - 1;
           dbPath = "EntitySurveyData/TotalRevisitRequest/" + this.selectedZone;
           this.db.database.ref(dbPath).set(revisitCount);
@@ -1763,12 +1815,14 @@ export class WardSurveyAnalysisComponent {
   }
 
   updateSurveyedCounts(lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSurveyedCounts");
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/surveyedCount";
     let lineSurvedCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       count => {
         lineSurvedCountInstance.unsubscribe();
         let surveyedCount = 1;
         if (count != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyedCounts", count);
           surveyedCount = Number(count) + 1;
         }
         dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/surveyedCount";
@@ -1783,6 +1837,7 @@ export class WardSurveyAnalysisComponent {
         totalRevisitCountInstance.unsubscribe();
         let surveyedCount = 1;
         if (count != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyedCounts", count);
           surveyedCount = Number(count) + 1;
         }
         dbPath = "EntitySurveyData/TotalHouseCount/" + this.selectedZone;
@@ -1799,6 +1854,7 @@ export class WardSurveyAnalysisComponent {
 
 
   getProcessRfId(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getProcessRfId");
     $('#divLoaderUpdate').show();
     let cardNumber = $('#txt' + index).val();
     let mobileNo = $('#spMobile' + index).html().trim();
@@ -1813,6 +1869,7 @@ export class WardSurveyAnalysisComponent {
           data => {
             checkInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getProcessRfId", data);
               this.commonService.setAlertMessage("error", "You can not process this card number!!!");
               $('#divLoaderUpdate').hide();
             }
@@ -1841,11 +1898,13 @@ export class WardSurveyAnalysisComponent {
   }
 
   updateRFIDNotCounts(lineNo: any, date: any, surveyorId: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateRFIDNotCounts");
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRfidNotFoundCount"
     let lineRFIDCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       count => {
         lineRFIDCountInstance.unsubscribe();
         if (count != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateRFIDNotCounts", count);
           let rfidCount = Number(count) - 1;
           dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
           this.db.object(dbPath).update({ lineRfidNotFoundCount: rfidCount });
@@ -1859,6 +1918,7 @@ export class WardSurveyAnalysisComponent {
       count => {
         dailyRFIDCountInstance.unsubscribe();
         if (count != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateRFIDNotCounts", count);
           let rfidCount = Number(count) - 1;
           dbPath = "EntitySurveyData/DailyRfidNotFoundCount/" + this.selectedZone + "/" + surveyorId + "/" + dateNew;
           this.db.database.ref(dbPath).set(rfidCount);
@@ -1871,6 +1931,7 @@ export class WardSurveyAnalysisComponent {
       count => {
         totalRFIDCountInstance.unsubscribe();
         if (count != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateRFIDNotCounts", count);
           let rfidCount = Number(count) - 1;
           dbPath = "EntitySurveyData/TotalRfidNotFoundCount/" + this.selectedZone;
           this.db.database.ref(dbPath).set(rfidCount);
@@ -1894,6 +1955,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   saveRFIDSurveyData(index: any, cardNumber: any, mobileNo: any, rfidCardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "saveRFIDSurveyData");
     let dbPath = "CardWardMapping/" + cardNumber;
     this.db.object(dbPath).update({ line: this.lineNo, ward: this.selectedZone });
     if (mobileNo != "") {
@@ -1906,6 +1968,7 @@ export class WardSurveyAnalysisComponent {
       rfidData => {
         rfidInstance.unsubscribe();
         if (rfidData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveRFIDSurveyData", rfidData);
           let date = rfidData["createdDate"].split(' ')[0];
           let surveyorId = rfidData["surveyorId"];
           let rfid = rfidData["rfid"];
@@ -1929,6 +1992,7 @@ export class WardSurveyAnalysisComponent {
             data => {
               rfidHouseInstance.unsubscribe();
               if (data != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveRFIDSurveyData", data);
                 let keyArray = Object.keys(data);
                 let markerNo = "";
                 if (keyArray.length > 0) {

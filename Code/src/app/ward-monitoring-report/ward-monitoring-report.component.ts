@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../services/common/common.service';
 import { FirebaseService } from "../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-ward-monitoring-report',
@@ -8,7 +9,7 @@ import { FirebaseService } from "../firebase.service";
   styleUrls: ['./ward-monitoring-report.component.scss']
 })
 export class WardMonitoringReportComponent implements OnInit {
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
 
   selectedDate: any;
   selectedMonthName: any;
@@ -19,12 +20,13 @@ export class WardMonitoringReportComponent implements OnInit {
   zoneList: any[] = [];
   db: any;
   txtDate = "#txtDate";
-  public cityName:any;
+  public cityName: any;
+  serviceName = "ward-monitoring-report";
 
   ngOnInit() {
-    this.cityName=localStorage.getItem("cityName");
+    this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.savePageLoadHistory("General-Reports","Ward-Monitoring-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("General-Reports", "Ward-Monitoring-Report", localStorage.getItem("userID"));
     this.selectedCircle = "Circle1";
     this.selectedDate = this.commonService.setTodayDate();
     this.getWardForLineWeitage();
@@ -105,6 +107,7 @@ export class WardMonitoringReportComponent implements OnInit {
   }
 
   getStartTime(zoneNo: any, totalLines: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getStartTime");
     let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/dutyInTime";
     let dutyStartInstance = this.db.object(dbPath).valueChanges().subscribe(
       dutyStartTime => {
@@ -112,6 +115,7 @@ export class WardMonitoringReportComponent implements OnInit {
         let zoneDetails = this.zoneProgressList.find(item => item.zoneNo == zoneNo);
         if (zoneDetails != undefined) {
           if (dutyStartTime == null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getStartTime", dutyStartTime);
             zoneDetails.class = "inactive";
           }
           else {
@@ -125,11 +129,13 @@ export class WardMonitoringReportComponent implements OnInit {
   }
 
   getWorkProgress(zoneNo: any, totalLines: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkProgress");
     let workProgressPath = 'WasteCollectionInfo/' + zoneNo + '/' + this.selectedYear + '/' + this.selectedMonthName + '/' + this.selectedDate + '/LineStatus';
     let workProgressDetails = this.db.object(workProgressPath).valueChanges().subscribe(
       workerProgressData => {
         workProgressDetails.unsubscribe();
         if (workerProgressData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkProgress", workerProgressData);
           let zoneDetail = this.zoneProgressList.find(item => item.zoneNo == zoneNo);
           if (zoneDetail != undefined) {
             let lineWeightageList = zoneDetail.lineWeightage;
@@ -252,9 +258,13 @@ export class WardMonitoringReportComponent implements OnInit {
   }
 
   getWardStatus(zoneDetails: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardStatus");
     if (this.selectedDate == this.commonService.setTodayDate()) {
       let getRealTimeWardDetails = this.db.object("RealTimeDetails/WardDetails/" + zoneDetails.zoneNo + "/activityStatus").valueChanges().subscribe(
         statusData => {
+          if (statusData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardStatus", statusData);
+          }
           getRealTimeWardDetails.unsubscribe();
           if (statusData == "completed") {
             zoneDetails.class = "completed";

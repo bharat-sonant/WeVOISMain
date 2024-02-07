@@ -4,6 +4,7 @@ import { Component, ViewChild } from "@angular/core";
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-maps',
@@ -13,7 +14,7 @@ import { HttpClient } from "@angular/common/http";
 export class MapsComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
   db: any;
   toDayDate: any;
@@ -31,6 +32,7 @@ export class MapsComponent {
   txtDate = "#txtDate";
   divLoader = "#divLoader";
   invisibleImageUrl = "../assets/img/invisible-location.svg";
+  serviceName = "maps";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -171,11 +173,13 @@ export class MapsComponent {
   }
 
   plotLineOnMap(zoneNo: any, lineNo: any, latlng: any, index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLineOnMap");
     let dbPathLineStatus = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatusInstance = this.db.object(dbPathLineStatus).valueChanges().subscribe((lineStatus) => {
       lineStatusInstance.unsubscribe();
       let strokeColor = this.commonService.getLineColor(null);
       if (lineStatus != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLineOnMap", lineStatus);
         strokeColor = this.commonService.getLineColor(lineStatus);
         let lineDetail = this.lines.find(item => item.lineNo == lineNo);
         if (lineDetail != undefined) {

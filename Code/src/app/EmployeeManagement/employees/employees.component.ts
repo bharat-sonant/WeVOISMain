@@ -3,6 +3,7 @@ import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-employees',
@@ -11,7 +12,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class EmployeesComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   designationList: any[] = [];
@@ -30,6 +31,7 @@ export class EmployeesComponent implements OnInit {
   divLoader = "#divLoader";
   txtName = "#txtName";
   accountList: any[] = [];
+  serviceName = "employees";
 
   employeeCountSummary: employeeCountSummary = {
     active: 0
@@ -89,9 +91,11 @@ export class EmployeesComponent implements OnInit {
   }
 
   checkForNewEmployee() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkForNewEmployee");
     let dbPath = "Employees/lastEmpId";
     let lastEmpIdInstance = this.db.object(dbPath).valueChanges().subscribe(
       lastEmpIdData => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkForNewEmployee", lastEmpIdData);
         lastEmpIdInstance.unsubscribe();
         let lastEmpId = Number(lastEmpIdData);
         let jsonLastEmpId = 100;
@@ -122,12 +126,14 @@ export class EmployeesComponent implements OnInit {
       this.saveJSONData();
     }
     else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateJsonForNewEmployee");
       jsonLastEmpId++;
       let dbPath = "Employees/" + jsonLastEmpId + "/GeneralDetails";
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
           if (employeeDetail != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateJsonForNewEmployee", employeeDetail);
             let designation = "";
             let empType = 1;
             if (this.designationUpdateList.length > 0) {
@@ -340,6 +346,7 @@ export class EmployeesComponent implements OnInit {
   }
 
   exportEmployee() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "exportEmployee");
     let exportEmployeeList = [];
     $(this.divLoader).show();
     let dbPath = "Employees/";
@@ -347,6 +354,7 @@ export class EmployeesComponent implements OnInit {
       data => {
         employeeInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "exportEmployee", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {

@@ -6,6 +6,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 import * as XLSX from 'xlsx';
 import { AngularFirestore } from "@angular/fire/firestore";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-employee-salary',
@@ -14,7 +15,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class EmployeeSalaryComponent implements OnInit {
 
-  constructor(public dbFireStore: AngularFirestore, private modalService: NgbModal, private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public dbFireStore: AngularFirestore, private besuh: BackEndServiceUsesHistoryService, private modalService: NgbModal, private storage: AngularFireStorage, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   toDayDate: any;
@@ -47,6 +48,7 @@ export class EmployeeSalaryComponent implements OnInit {
   ddlDesignation = "#ddlDesignation";
   divLoader = "#divLoader";
   key = "#key";
+  serviceName = "employee-salary";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -155,6 +157,8 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   getSalary() {
+    
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSalary");
     $(this.divLoader).show();
     this.getUploadedSalary();
     this.getHoldSalary();
@@ -180,6 +184,7 @@ export class EmployeeSalaryComponent implements OnInit {
           data => {
             workInstance.unsubscribe();
             if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSalary", data);
               let keyArray = Object.keys(data);
               if (keyArray.length > 0) {
                 for (let i = 0; i < keyArray.length; i++) {
@@ -395,11 +400,13 @@ export class EmployeeSalaryComponent implements OnInit {
   }
 
   getPenalty() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPenalty");
     let dbPath = "Penalties/" + this.selectedYear + "/" + this.selectedMonthName;
     let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         penaltyInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPenalty", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-daily-fuel-report',
@@ -10,7 +11,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class DailyFuelReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
   db: any;
   vehicleList: any[] = [];
@@ -23,6 +24,7 @@ export class DailyFuelReportComponent implements OnInit {
   divLoader = "#divLoader";
   workDetailList: any[] = [];
   zoneDetailList: any[] = [];
+  serviceName = "daily-fuel-report";
 
   fuelDetail: fuelDetail = {
     date: "",
@@ -93,6 +95,7 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   getDieselQty() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDieselQty");
     $('#divLoader').show();
     let totalFuel = 0;
     let totalAmount = 0;
@@ -101,6 +104,7 @@ export class DailyFuelReportComponent implements OnInit {
       dieselData => {
         dieselInstance.unsubscribe();
         if (dieselData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDieselQty", dieselData);
           let keyArray = Object.keys(dieselData);
           for (let i = 0; i < keyArray.length; i++) {
             let key = keyArray[i];
@@ -131,12 +135,14 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   getDailyWorkDetail() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDailyWorkDetail");
     let workDetailList = [];
     let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
       workData => {
         workDetailInstance.unsubscribe();
         if (workData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDailyWorkDetail", workData);
           if (this.selectedDate != this.commonService.setTodayDate()) {
             this.commonService.saveJsonFile(workData, this.selectedDate + ".json", "/DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/");
           }
@@ -216,6 +222,7 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   getWardRunningDistance(listIndex: any, index: any, vehicleWorkList: any, workDetailList: any, vehicleLengthList: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardRunningDistance");
     if (listIndex == vehicleWorkList.length) {
       if (index == vehicleLengthList.length - 1) {
         let totalKM=0;
@@ -251,6 +258,7 @@ export class DailyFuelReportComponent implements OnInit {
           locationInstance.unsubscribe();
           let distance = "0";
           if (locationData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRunningDistance", locationData);
             let keyArray = Object.keys(locationData);
             if (keyArray.length > 0) {
               let startDate = new Date(this.selectedDate + " " + startTime);

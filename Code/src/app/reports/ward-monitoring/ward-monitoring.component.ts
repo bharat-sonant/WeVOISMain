@@ -7,6 +7,7 @@ import { CommonService } from '../../services/common/common.service';
 
 import * as CanvasJS from '../../../assets/canvasjs.min';
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-ward-monitoring',
@@ -41,6 +42,7 @@ export class WardMonitoringComponent {
   divGraph = "#divGraph";
   chartContainer = "#chartContainer";
   divGeneralData = "#divGeneralData";
+  serviceName = "collection-report";
 
   reportData: ReportData =
     {
@@ -51,7 +53,7 @@ export class WardMonitoringComponent {
       vehicleNo: "--"
     };
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -206,6 +208,7 @@ export class WardMonitoringComponent {
   }
 
   plotLineOnMap(isLineWeghtageAllow: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLineOnMap");
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != null) {
@@ -225,6 +228,7 @@ export class WardMonitoringComponent {
           let lineData = this.allLines.find(item => item.lineNo == lineNo);
           let lineColor = "#87CEFA";
           if (lineStatusData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLineOnMap", lineStatusData);
             if (lineStatusData[lineNo] != undefined) {
               if (lineStatusData[lineNo]["Status"] != 'undefined') {
                 if (lineStatusData[lineNo]["Status"] == "LineCompleted") {
@@ -271,10 +275,12 @@ export class WardMonitoringComponent {
   }
 
   getSummaryDetail() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSummaryDetail");
     let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/WorkerDetails";
     let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
       workDetails.unsubscribe();
       if (workerData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSummaryDetail", workerData);
         let driverList = workerData["driverName"].split(',');
         let driverName = "";
         for (let i = 0; i < driverList.length; i++) {

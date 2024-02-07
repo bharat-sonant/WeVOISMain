@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 
 
@@ -33,7 +34,8 @@ export class MonthlyAttendanceComponent implements OnInit {
   lastSyncData: any;
   employeeName :any;
   currentDate:any;
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  serviceName = "monthly-attendance-report";
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
 
   ngOnInit() {
 
@@ -45,8 +47,7 @@ export class MonthlyAttendanceComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.selectedEmployee = '0'
-    this.selectedYear = '2023'
+    this.selectedEmployee = '0';
 
     this.selectedMonth = this.todayDate.split('-')[1];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
@@ -190,6 +191,7 @@ export class MonthlyAttendanceComponent implements OnInit {
   }
 
   getEmployeeAttandanceData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEmployeeAttandanceData");
 
     $(this.divLoader).show();
     this.attendanceReportList = [];
@@ -208,6 +210,7 @@ export class MonthlyAttendanceComponent implements OnInit {
             let dateString: any;
 
             if (attendanceData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEmployeeAttandanceData", attendanceData);
               let keyArray = Object.keys(attendanceData);
 
               for (let j = 0; j < this.dates.length; j++) {

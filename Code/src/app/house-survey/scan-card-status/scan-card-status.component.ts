@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-scan-card-status',
@@ -10,7 +11,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class ScanCardStatusComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private httpService: HttpClient) { }
   db: any;
   cityName: any;
   scanCardList: any[] = [];
@@ -19,6 +20,7 @@ export class ScanCardStatusComponent implements OnInit {
   public lastUpdateDate: any;
   txtSearch = "#txtSearch";
   divLoader = "#divLoader";
+  serviceName = "scan-card-status";
   replaceKey: any;
   rowsProgressListIndex: any;
   summaryData: summary = {
@@ -103,6 +105,7 @@ export class ScanCardStatusComponent implements OnInit {
   }
 
   getScanCardData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScanCardData");
     $(this.divLoader).show();
     let cardList = [];
     let dbPath = "CardScanData";
@@ -110,6 +113,7 @@ export class ScanCardStatusComponent implements OnInit {
       scanCardData => {
         scanCardDataInstance.unsubscribe();
         if (scanCardData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanCardData", scanCardData);
           const data = {};
           let keyArray = Object.keys(scanCardData);
           if (keyArray.length > 0) {

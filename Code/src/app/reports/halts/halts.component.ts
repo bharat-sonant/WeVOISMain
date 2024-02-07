@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
 import { CommonService } from "../../services/common/common.service";
 import { MapService } from "../../services/map/map.service";
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-halts",
@@ -17,7 +18,7 @@ import { FirebaseService } from "../../firebase.service";
 export class HaltsComponent {
   require: any;
   public map: google.maps.Map;
-  constructor(private router: Router, public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private router: Router, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   zoneList: any[];
   selectedDate: any;
@@ -40,6 +41,7 @@ export class HaltsComponent {
   preSelectedMarker: any;
   cityName: any;
   ishaltDisableAccess = false;
+  serviceName = "halt";
   haltDetails: haltDetail = {
     zoneName: "---",
     driverName: "---",
@@ -82,6 +84,7 @@ export class HaltsComponent {
   }
 
   getHaltList() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltList");
     this.haltList = [];
     this.haltDataInfo = [];
     this.haltDetails.wardHalt = "00.00";
@@ -96,6 +99,7 @@ export class HaltsComponent {
           let zoneName = this.zoneList[i]["zoneName"];
           let totalBreak = 0;
           if (haltData.length > 0) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltList", haltData);
             for (let index = 0; index < haltData.length; index++) {
               if (haltData[index]["haltType"] != "network-off") {
                 let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
@@ -324,6 +328,7 @@ export class HaltsComponent {
   }
 
   getEmployee(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEmployee");
     let zoneDetail = this.zoneList.find((item) => item.zoneNo == zoneNo);
     if (zoneDetail != undefined) {
       if (zoneDetail.driverId == null) {
@@ -331,6 +336,7 @@ export class HaltsComponent {
         let workerDetails = this.db.object(workerDataPath).valueChanges().subscribe((workerInfo) => {
           workerDetails.unsubscribe();
           if (workerInfo != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEmployee", workerInfo);
             let driverList = workerInfo["driver"].toString().split(",");
             let helperList = workerInfo["helper"].toString().split(",");
             let driverId = driverList[driverList.length - 1].trim();

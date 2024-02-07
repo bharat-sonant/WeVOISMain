@@ -3,6 +3,7 @@ import { FirebaseService } from "../firebase.service";
 import { CommonService } from "../services/common/common.service";
 import { HttpClient } from "@angular/common/http";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: "app-page-load-history",
@@ -11,7 +12,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class PageLoadHistoryComponent implements OnInit {
   constructor(
-    public fs: FirebaseService,
+    public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService,
     private commonService: CommonService,
     public httpService: HttpClient,
     private modalService: NgbModal
@@ -34,6 +35,7 @@ export class PageLoadHistoryComponent implements OnInit {
   pageLoadDetailList: any[] = [];
   userList: any[] = [];
   pageLoadSummaryList: any[] = [];
+  serviceName = "developer-pageload-history";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -93,10 +95,12 @@ export class PageLoadHistoryComponent implements OnInit {
   }
 
   getSummaryData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSummaryData");
     let dbPath = "PageLoadHistory/Summary";
     let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       summaryInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSummaryData", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           this.pageLoadSummaryList.push({ name: keyArray[i], counts: data[keyArray[i]] });
@@ -106,6 +110,7 @@ export class PageLoadHistoryComponent implements OnInit {
   }
 
   getHistoryData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHistoryData");
     this.mainPageList = [];
     this.pageList = [];
     this.dateList = [];
@@ -119,6 +124,7 @@ export class PageLoadHistoryComponent implements OnInit {
       .subscribe((data) => {
         historyInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHistoryData", data);
           this.dataObject = data;
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
@@ -128,9 +134,9 @@ export class PageLoadHistoryComponent implements OnInit {
               this.getPageHistory(mainPage, 0);
             }
             setTimeout(() => {
-              this.setActiveClass("mainPage",0);
+              this.setActiveClass("mainPage", 0);
             }, 200);
-            
+
           }
         } else {
           this.commonService.setAlertMessage("error", "No record found");
@@ -153,12 +159,12 @@ export class PageLoadHistoryComponent implements OnInit {
       }
       this.pageList.push({ mainPage: mainPage, page: page, pageCount: pageCount, monthCounts: 0 });
       if (j == 0) {
-        this.getPageDateHistory(mainPage, page,0);
+        this.getPageDateHistory(mainPage, page, 0);
       }
-      this.getMonthCount(mainPage, page);      
-      setTimeout(() => {        
-      this.setActiveClass("mainPage",index);
-        this.setActiveClass("page",0);
+      this.getMonthCount(mainPage, page);
+      setTimeout(() => {
+        this.setActiveClass("mainPage", index);
+        this.setActiveClass("page", 0);
       }, 200);
     }
   }
@@ -182,7 +188,7 @@ export class PageLoadHistoryComponent implements OnInit {
     }
   }
 
-  getPageDateHistory(mainPage: any, page: any,index:any) {
+  getPageDateHistory(mainPage: any, page: any, index: any) {
     this.dateList = [];
     let dateData = this.dataObject[mainPage][page];
     let dateKeyArray = Object.keys(dateData);
@@ -208,17 +214,17 @@ export class PageLoadHistoryComponent implements OnInit {
         userList: userList,
         totalCount: totalCount,
       });
-      this.getUserList(this.dateList[0]["date"],0);          
+      this.getUserList(this.dateList[0]["date"], 0);
       setTimeout(() => {
-        this.setActiveClass("page",index);
-        this.setActiveClass("date",0);
+        this.setActiveClass("page", index);
+        this.setActiveClass("date", 0);
       }, 200);
     }
   }
 
-  getUserList(date: any,index:any) {
+  getUserList(date: any, index: any) {
     setTimeout(() => {
-      this.setActiveClass("date",index);      
+      this.setActiveClass("date", index);
     }, 200);
     let detail = this.dateList.find((item) => item.date == date);
     if (detail != undefined) {
@@ -227,15 +233,15 @@ export class PageLoadHistoryComponent implements OnInit {
   }
 
   setActiveClass(type: any, index: any) {
-    let list=this.mainPageList;
-    let divId="divMainPage";
-    if(type=="page"){
-      list=this.pageList;
-      divId="divPage";
+    let list = this.mainPageList;
+    let divId = "divMainPage";
+    if (type == "page") {
+      list = this.pageList;
+      divId = "divPage";
     }
-    if(type=="date"){
-      list=this.dateList;
-      divId="divDate";
+    if (type == "date") {
+      list = this.dateList;
+      divId = "divDate";
     }
     for (let i = 0; i < list.length; i++) {
       let id = divId + i;

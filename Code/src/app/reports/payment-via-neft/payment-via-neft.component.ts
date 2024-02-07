@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-payment-via-neft',
@@ -33,10 +34,11 @@ export class PaymentViaNeftComponent implements OnInit {
   hddDeclinedKey = "#hddDeclinedKey";
   txtDeclinedDate = "#txtDeclinedDate";
   txtDeclinedReason = "#txtDeclinedReason";
+  serviceName = "collection-management-payment-via-neft";
   entityType:any="";
   entityId:any="";
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -81,12 +83,14 @@ export class PaymentViaNeftComponent implements OnInit {
   }
 
   getPaymentNEFTDetail() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPaymentNEFTDetail");
     this.neftList = [];
      $(this.divLoader).show();
     let dbPath = "PaymentCollectionInfo/PaymentViaNEFT";
     let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
       instance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPaymentNEFTDetail", data);
         let cardArray = Object.keys(data);
         for (let i = 0; i < cardArray.length; i++) {
           let cardNo = cardArray[i];
@@ -345,6 +349,7 @@ export class PaymentViaNeftComponent implements OnInit {
 
 
   acceptMainEntitytransaction(){
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "acceptMainEntitytransaction");
     let transactionId = $(this.txtTransactionId).val();
     let transactionDate = $(this.txtTransactionDate).val();
     $(this.divLoader).show();
@@ -383,6 +388,7 @@ export class PaymentViaNeftComponent implements OnInit {
         transactionInstance.unsubscribe();
         let transkey = 1;
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "acceptMainEntitytransaction", data);
           let keyArray = Object.keys(data);
           transkey = keyArray.length + 1;
         }
@@ -393,6 +399,7 @@ export class PaymentViaNeftComponent implements OnInit {
           collectorInstance.unsubscribe();
           let collectorKey = 1;
           if (colectorData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "acceptMainEntitytransaction", colectorData);
             let keyArray = Object.keys(colectorData);
             collectorKey = keyArray.length + 1;
           }
@@ -448,6 +455,7 @@ export class PaymentViaNeftComponent implements OnInit {
 
   }
   acceptSubEntitytransaction(){
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "acceptSubEntitytransaction");
     let transactionId = $(this.txtTransactionId).val();
     let transactionDate = $(this.txtTransactionDate).val();
     $(this.divLoader).show();
@@ -489,6 +497,7 @@ export class PaymentViaNeftComponent implements OnInit {
       transactionInstance.unsubscribe();
       let transkey = 1;
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "acceptSubEntitytransaction", data);
         let keyArray = Object.keys(data);
         transkey = keyArray.length + 1;
       }
@@ -499,6 +508,7 @@ export class PaymentViaNeftComponent implements OnInit {
         collectorInstance.unsubscribe();
         let collectorKey = 1;
         if (colectorData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "acceptSubEntitytransaction", colectorData);
           let keyArray = Object.keys(colectorData);
           collectorKey = keyArray.length + 1;
         }

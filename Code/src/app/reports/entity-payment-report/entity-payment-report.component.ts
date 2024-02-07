@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-entity-payment-report',
@@ -31,11 +32,12 @@ export class EntityPaymentReportComponent implements OnInit {
   ddlMonth = "#ddlMonth";
   divLoader = "#divLoader";
   divLoaderMain = "#divLoaderMain";
+  serviceName = "collection-management-entity-payment-report";
   public columnType: any;
   public totalAmount: any;
 
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -58,12 +60,14 @@ export class EntityPaymentReportComponent implements OnInit {
   }
 
   getEntityTypes() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEntityTypes");
     this.entityTypeList = [];
     let dbPath = "Settings/PaymentCollectionSettings/EntityType";
     let entityTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         entityTypeInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEntityTypes", data);
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let entityTypeId = keyArray[i];
@@ -87,11 +91,13 @@ export class EntityPaymentReportComponent implements OnInit {
   }
 
   getCardWardMapping() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardWardMapping");
     this.cardWardList = [];
     let dbPath = "CardWardMapping";
     let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       cardWardInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCardWardMapping", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let cardNo = keyArray[i];
@@ -161,6 +167,7 @@ export class EntityPaymentReportComponent implements OnInit {
   }
 
   setPaymentListJSON(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "setPaymentListJSON");
     if (index == this.collectorList.length) {
       this.setEntityCollection(0);
     }
@@ -170,6 +177,7 @@ export class EntityPaymentReportComponent implements OnInit {
       let patmentInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         patmentInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setPaymentListJSON", data);
           let dateArray = Object.keys(data);
           if (dateArray.length > 0) {
             for (let i = 0; i < dateArray.length; i++) {
@@ -207,6 +215,7 @@ export class EntityPaymentReportComponent implements OnInit {
   }
 
   setEntityCollection(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "setEntityCollection");
     if (index == this.collectorList.length) {
       this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
       this.getTotalAmount();
@@ -227,6 +236,7 @@ export class EntityPaymentReportComponent implements OnInit {
       let patmentInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         patmentInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setEntityCollection", data);
           let entityKeyArray = Object.keys(data);
           for (let m = 0; m < entityKeyArray.length; m++) {
             let entytyKey = entityKeyArray[m];
@@ -267,10 +277,12 @@ export class EntityPaymentReportComponent implements OnInit {
   }
 
   getCardEntityType(wardNo: any, lineNo: any, cardNo: any, amount: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardEntityType");
     let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNo + "/houseType";
     let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe(houseTypeData => {
       houseTypeInstance.unsubscribe();
       if (houseTypeData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCardEntityType", houseTypeData);
         let entityTypeId = houseTypeData;
         let name = "";
         let nameDetail = this.entityTypeList.find(item => item.entityTypeId == Number(entityTypeId));

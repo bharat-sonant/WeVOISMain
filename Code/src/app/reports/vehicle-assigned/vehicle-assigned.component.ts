@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FirebaseService } from "../../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-vehicle-assigned',
@@ -10,7 +11,7 @@ import { FirebaseService } from "../../firebase.service";
 })
 export class VehicleAssignedComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private modalService: NgbModal) { }
   toDayDate: any;
   selectedDate: any;
   vehicleList: any[];
@@ -19,6 +20,7 @@ export class VehicleAssignedComponent implements OnInit {
   currentMonth: any[];
   db: any;
   cityName: any;
+  serviceName = "vehicle-assigned-report";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -33,10 +35,12 @@ export class VehicleAssignedComponent implements OnInit {
     this.vehicleList = [];
     let vehicleStorageList = JSON.parse(localStorage.getItem("vehicle"));
     if (vehicleStorageList == null) {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getVehicle");
       let dbPath = "Vehicles";
       let vehicleInstance = this.db.object(dbPath).valueChanges().subscribe((vehicle) => {
         vehicleInstance.unsubscribe();
         if (vehicle != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVehicle", vehicle);
           let keyArrray = Object.keys(vehicle);
           if (keyArrray.length > 0) {
             for (let i = 0; i < keyArrray.length; i++) {
@@ -56,6 +60,7 @@ export class VehicleAssignedComponent implements OnInit {
   }
 
   getAssignedVehicle() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedVehicle");
     this.assignedVehicleList = [];
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
@@ -66,6 +71,7 @@ export class VehicleAssignedComponent implements OnInit {
       data => {
         dustbinInstance.unsubscribe();
         if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedVehicle", data);
           for (let i = 0; i < data.length; i++) {
             let vehicle = data[i]["vehicle"];
             let driverId = data[i]["driver"];
@@ -87,6 +93,7 @@ export class VehicleAssignedComponent implements OnInit {
             data => {
               vehicleInstance.unsubscribe();
               if (data != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedVehicle", data);
                 let vehicles = data["vehicle"].toString().split(',');
                 let drivers = data["driver"].toString().split(',');
                 for (let k = 0; k < vehicles.length; k++) {

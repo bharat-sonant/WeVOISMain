@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-card-updated-history',
@@ -13,12 +14,13 @@ export class CardUpdatedHistoryComponent implements OnInit {
   cityName: any;
   db: any;
   divLoader = "#divLoader";
+  serviceName = "collection-management-card-update-history";
   lastUpdateDate: any;
   cardUpdateList: any[];
   cardUpdateFilterList: any[];
   entityTypeList: any[];
   updateCardDetailList: any[];
-  constructor(public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -34,12 +36,14 @@ export class CardUpdatedHistoryComponent implements OnInit {
   }
 
   getEntityTypes() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEntityTypes");
     this.entityTypeList = [];
     let dbPath = "Settings/PaymentCollectionSettings/EntityType";
     let entityTypeInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         entityTypeInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEntityTypes", data);
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let entityTypeId = keyArray[i];
@@ -90,12 +94,14 @@ export class CardUpdatedHistoryComponent implements OnInit {
   }
 
   updateCardHistoryJSON() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCardHistoryJSON");
     let cardUpdateListJSON = [];
     $(this.divLoader).show();
     let dbPath = "PaymentCollectionInfo/EntityUpdateHistory";
     let dbInatance = this.db.object(dbPath).valueChanges().subscribe(data => {
       dbInatance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCardHistoryJSON", data);
         let cardArray = Object.keys(data);
         for (let i = 0; i < cardArray.length; i++) {
           let cardNo = cardArray[i];
