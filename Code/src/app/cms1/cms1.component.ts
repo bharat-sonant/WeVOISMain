@@ -852,8 +852,8 @@ export class Cms1Component implements OnInit {
     }
   }
 
-  getAllPaymentOrderId(){
-    
+  getAllPaymentOrderId() {
+
   }
 
   CompairPayment() {
@@ -1871,11 +1871,11 @@ export class Cms1Component implements OnInit {
       houseInstance.unsubscribe();
       let keyArray = Object.keys(data);
       for (let i = 0; i < keyArray.length; i++) {
-        let ward=keyArray[i];
+        let ward = keyArray[i];
         let wardObj = data[keyArray[i]];
         let wardArray = Object.keys(wardObj);
         for (let j = 0; j < wardArray.length; j++) {
-          let lineNo=wardArray[j];
+          let lineNo = wardArray[j];
           let lineObj = wardObj[wardArray[j]];
           let cardArray = Object.keys(lineObj);
           for (let k = 0; k < cardArray.length; k++) {
@@ -1885,15 +1885,15 @@ export class Cms1Component implements OnInit {
               duplicateList.push({ cardNo: cardNo });
 
             }
-            houseList.push({ cardNo: cardNo,ward:ward,lineNo:lineNo });
-             console.log(cardNo);
+            houseList.push({ cardNo: cardNo, ward: ward, lineNo: lineNo });
+            console.log(cardNo);
           }
         }
       }
       console.log(duplicateList);
       if (houseList.length > 0) {
 
-       // console.log(houseList);
+        // console.log(houseList);
         let htmlString = "";
         htmlString = "<table>";
         htmlString += "<tr>";
@@ -1939,47 +1939,47 @@ export class Cms1Component implements OnInit {
       if (houseList.length > 0) {
 
         // console.log(houseList);
-         let htmlString = "";
-         htmlString = "<table>";
-         htmlString += "<tr>";
-         htmlString += "<td>";
-         htmlString += "cardNo";
-         htmlString += "</td>";
-         htmlString += "<td>";
-         htmlString += "WardNo";
-         htmlString += "</td>";
-         htmlString += "<td>";
-         htmlString += "lineNo";
-         htmlString += "</td>";
-         htmlString += "</tr>";
-         for (let i = 0; i < houseList.length; i++) {
-           htmlString += "<tr>";
-           htmlString += "<td>";
-           htmlString += houseList[i]["cardNo"];
-           htmlString += "</td>";
-           htmlString += "<td>";
-           htmlString += houseList[i]["ward"];
-           htmlString += "</td>";
-           htmlString += "<td>";
-           htmlString += houseList[i]["lineNo"];
-           htmlString += "</td>";
-           htmlString += "</tr>";
-         }
-         htmlString += "<table>";
-         var parser = new DOMParser();
-         var doc = parser.parseFromString(htmlString, 'text/html');
-         const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
- 
-         /* generate workbook and add the worksheet */
-         const wb: XLSX.WorkBook = XLSX.utils.book_new();
-         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
- 
-         /* save to file */
-         XLSX.writeFile(wb, "malviyanagar-houses.xlsx");
- 
- 
-         
-       }
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "cardNo";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "WardNo";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "lineNo";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        for (let i = 0; i < houseList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += houseList[i]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += houseList[i]["ward"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += houseList[i]["lineNo"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+        htmlString += "<table>";
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(htmlString, 'text/html');
+        const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+        /* generate workbook and add the worksheet */
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        /* save to file */
+        XLSX.writeFile(wb, "malviyanagar-houses.xlsx");
+
+
+
+      }
 
     });
   }
@@ -2282,7 +2282,7 @@ export class Cms1Component implements OnInit {
         */
 
   }
-  
+
   getMistakeMarkerNo(list: any, index: any) {
     if (index == list.length) {
       console.log(list);
@@ -2343,26 +2343,26 @@ export class Cms1Component implements OnInit {
       let cardNo = list[index]["CardNo"];
       let ward = list[index]["Ward"];
       let line = list[index]["Line"];
-      let dbPath = "CardDataUpdateTest/MNZ-Test/MarkedHouses/" + ward+"/"+line;
+      let dbPath = "CardDataUpdateTest/MNZ-Test/MarkedHouses/" + ward + "/" + line;
       console.log(dbPath);
       let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
         instance.unsubscribe();
         if (data != null) {
           console.log(data);
           let markerData = data;
-            let markerKeyArray = Object.keys(markerData);
-            for (let j = 0; j < markerKeyArray.length; j++) {
-              if (parseInt(markerKeyArray[j])) {
-                let markerNo = markerKeyArray[j];
-                if (markerData[markerNo]["cardNumber"] != null) {
-                  if (markerData[markerNo]["cardNumber"] == cardNo) {
-                    list[index]["markerNo"] = markerNo;
-                    list[index]["markerLineNo"] = line;
-                    j = markerKeyArray.length;
-                  }
+          let markerKeyArray = Object.keys(markerData);
+          for (let j = 0; j < markerKeyArray.length; j++) {
+            if (parseInt(markerKeyArray[j])) {
+              let markerNo = markerKeyArray[j];
+              if (markerData[markerNo]["cardNumber"] != null) {
+                if (markerData[markerNo]["cardNumber"] == cardNo) {
+                  list[index]["markerNo"] = markerNo;
+                  list[index]["markerLineNo"] = line;
+                  j = markerKeyArray.length;
                 }
               }
             }
+          }
         }
         index++;
         this.getMistakeMarkerNo(list, index);
@@ -2370,7 +2370,7 @@ export class Cms1Component implements OnInit {
     }
   }
 
-  
+
 
 
   checkCardMove() {
@@ -2390,16 +2390,16 @@ export class Cms1Component implements OnInit {
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
       console.log(fileList);
-      for(let i=0;i<fileList.length;i++){
-        let cardNo=fileList[i]["Card No"];
-        let line=fileList[i]["Line No"];
-        let dbPath="Houses/"+wardNo+"/"+line+"/"+cardNo;
-        let instance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+      for (let i = 0; i < fileList.length; i++) {
+        let cardNo = fileList[i]["Card No"];
+        let line = fileList[i]["Line No"];
+        let dbPath = "Houses/" + wardNo + "/" + line + "/" + cardNo;
+        let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
           instance.unsubscribe();
-          if(data!=null){
+          if (data != null) {
             console.log("Yes");
           }
-          else{
+          else {
             console.log("No");
           }
         })
@@ -2731,7 +2731,7 @@ export class Cms1Component implements OnInit {
         let cardNo = fileList[i]["Card No"];
         let dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
         this.db.object(dbPath).remove();
-       // if(fileList[i]["Old Marker Line No"]!=undefined){
+        // if(fileList[i]["Old Marker Line No"]!=undefined){
         let markerLine = fileList[i]["Old Marker Line No"];
         let markerNo = fileList[i]["Old Marker No"];
         dbPath = "EntityMarkingData/MarkedHouses/" + ward + "/" + markerLine + "/" + markerNo;
@@ -2752,7 +2752,7 @@ export class Cms1Component implements OnInit {
       let lineNo = list[index]["Line No"];
       let markerLineNo = list[index]["Marker Line No"];
       let markerNo = list[index]["Marker No"];
-      console.log(wardNo+" "+cardNo + " " + lineNo + " " + markerLineNo + " " + markerNo);
+      console.log(wardNo + " " + cardNo + " " + lineNo + " " + markerLineNo + " " + markerNo);
       console.log("------------------");
       let dbPath = "CardDataUpdateTest/MNZ-Test/Houses/" + wardNo + "/" + lineNo + "/" + cardNo;
       let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
@@ -3788,7 +3788,7 @@ export class Cms1Component implements OnInit {
 
   }
 
-  
+
   setMarkerID() {
     let selectedZone = $("#txtDates").val();
     let lastMarkerID = 0;
@@ -3817,7 +3817,7 @@ export class Cms1Component implements OnInit {
                       if (markerData[markerNo]["markerId"] == null) {
                         lastMarkerID++;
                         dbPath = "EntityMarkingData/MarkedHouses/" + selectedZone + "/" + lineNo + "/" + markerNo;
-                        this.db.object(dbPath).update({ markerId: "M"+lastMarkerID });
+                        this.db.object(dbPath).update({ markerId: "M" + lastMarkerID });
                       }
                     }
                   }
@@ -3836,6 +3836,63 @@ export class Cms1Component implements OnInit {
     );
   }
 
+  setDehradunWardLineData() {
+    let ward = $("#txtDates").val();
+    let dbPath = "EntityMarkingData/MarkedHouses/" + ward;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      markerInstance.unsubscribe();
+      let totalMarkerCount = 0;
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          let markerCount = "0";
+          if (data[lineNo]["marksCount"] != null) {
+            markerCount = data[lineNo]["marksCount"];
+            totalMarkerCount += Number(markerCount);
+          }
+          let path = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardLineWise/" + ward + "/" + lineNo;
+          console.log(path);
+          this.db.object(path).set(markerCount);
+        }
+        dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardLineWise/" + ward + "/markerCounts";
+        this.db.object(dbPath).set(totalMarkerCount);
+      }
+    })
+  }
 
 
+  removeWardTripDriver() {
+    let date = $("#txtDates").val();
+    let year = date.toString().split('-')[0];
+    let maonthName = this.commonService.getCurrentMonthName(Number(date.toString().split('-')[1]) - 1);
+    let dbPath = "WardTrips/" + year + "/" + maonthName + "/" + date;
+    let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      instance.unsubscribe();
+      if (data != null) {
+        console.log(data);
+        let keyArray=Object.keys(data);
+        if(keyArray.length>0){
+          for(let i=0;i<keyArray.length;i++){
+            let ward=keyArray[i];
+            let tripArray=Object.keys(data[ward]);
+            for(let j=0;j<tripArray.length;j++){
+              let tripId=tripArray[j];
+              if(data[ward][tripId]!=null){
+               // if(data[ward][tripId]["driverName"]!=null){
+                  let path=dbPath+"/"+ward+"/"+tripId+"/driverName";
+                  let path1=dbPath+"/"+ward+"/"+tripId+"/driverMobile";
+                  console.log(path);
+                  console.log(path1);
+                  this.db.object(path).remove();
+                  this.db.object(path1).remove();
+               // }
+              }
+            }
+          }
+        }
+      }
+    })
+  }
 }
+

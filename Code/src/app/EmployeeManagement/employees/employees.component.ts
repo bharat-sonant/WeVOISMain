@@ -25,6 +25,7 @@ export class EmployeesComponent implements OnInit {
   ddlSalaryTypeUpdate = "#ddlSalaryTypeUpdate";
   ddlUser = "#ddlUser";
   empID = "#empID";
+  spStatus = "#spStatus";
   empIDActive = "#empIDActive";
   empStatus = "#empStatus";
   confirmTitle = "#confirmTitle";
@@ -79,10 +80,12 @@ export class EmployeesComponent implements OnInit {
             if (data[empId]["GeneralDetails"]["salaryType"] != null) {
               salaryType = data[empId]["GeneralDetails"]["salaryType"];
             }
-            this.allEmployeeList.push({ empId: empId.toString(), empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], status: data[empId]["GeneralDetails"]["status"], empType: data[empId]["GeneralDetails"]["empType"], salaryType: salaryType });
+            this.allEmployeeList.push({ empId: empId.toString(), status: data[empId]["GeneralDetails"]["status"], empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], empType: data[empId]["GeneralDetails"]["empType"], salaryType: salaryType });
           }
         }
+        console.log(this.allEmployeeList)
         this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+        $(this.spStatus).html("Active");
         this.checkForNewEmployee();
       }
     }, error => {
@@ -112,10 +115,6 @@ export class EmployeesComponent implements OnInit {
         }
       }
     );
-  }
-
-  getCountSummary() {
-    this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
   }
 
   updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
@@ -153,7 +152,15 @@ export class EmployeesComponent implements OnInit {
                 }
               }
             }
-            this.allEmployeeList.push({ empId: jsonLastEmpId.toString(), empCode: employeeDetail["empCode"], name: employeeDetail["name"], designationId: employeeDetail["designationId"], designation: designation, status: employeeDetail["status"], empType: empType });
+            let mobile = "";
+            if (employeeDetail["mobile"] != null) {
+              mobile = employeeDetail["mobile"];
+            }
+            let salaryType="salaried";
+            if(employeeDetail["salaryType"]!=null){
+              salaryType=employeeDetail["salaryType"];
+            }
+            this.allEmployeeList.push({ empId: jsonLastEmpId.toString(), empCode: employeeDetail["empCode"], name: employeeDetail["name"], designationId: employeeDetail["designationId"], designation: designation, status: employeeDetail["status"], empType: empType, mobile: mobile,salaryType:salaryType });
           }
           this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
         }
@@ -172,7 +179,8 @@ export class EmployeesComponent implements OnInit {
         designation: this.allEmployeeList[i]["designation"],
         status: this.allEmployeeList[i]["status"],
         empType: this.allEmployeeList[i]["empType"],
-        salaryType: this.allEmployeeList[i]["salaryType"]
+        salaryType: this.allEmployeeList[i]["salaryType"],
+        mobile: this.allEmployeeList[i]["mobile"]
       }
       obj[this.allEmployeeList[i]["empId"]] = { GeneralDetails: data };
     }
@@ -200,12 +208,18 @@ export class EmployeesComponent implements OnInit {
   showAccountDetail(status: any, designation: any, name: any) {
     if (status == "all") {
       this.employeeList = this.allEmployeeList;
+      this.employeeCountSummary.active = this.employeeList.length;
+      $(this.spStatus).html("All");
     }
     else if (status == "active") {
       this.employeeList = this.allEmployeeList.filter(item => item.status == "1" && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
+      $(this.spStatus).html("Active");
+      this.employeeCountSummary.active = this.employeeList.length;
     }
     else {
       this.employeeList = this.allEmployeeList.filter(item => item.status != "1" && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
+      $(this.spStatus).html("In-Active");
+      this.employeeCountSummary.active = this.employeeList.length;
     }
     if (designation != "all") {
       this.employeeList = this.employeeList.filter(item => item.designation == designation && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
@@ -346,85 +360,55 @@ export class EmployeesComponent implements OnInit {
   }
 
   exportEmployee() {
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "exportEmployee");
-    let exportEmployeeList = [];
-    $(this.divLoader).show();
-    let dbPath = "Employees/";
-    let employeeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        employeeInstance.unsubscribe();
-        if (data != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "exportEmployee", data);
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let empId = keyArray[i];
-              if (data[empId]["GeneralDetails"] != null) {
-                if (data[empId]["GeneralDetails"]["status"] != null) {
-                  let status = data[empId]["GeneralDetails"]["status"];
-                  let designation = "";
-                  let detail = this.designationUpdateList.find(item => item.designationId == data[empId]["GeneralDetails"]["designationId"]);
-                  if (detail != undefined) {
-                    designation = detail.designation;
-                  }
-                  let empStatus = "In-Active";
-                  if (status == "1") {
-                    empStatus = "Active";
-                  }
-                  exportEmployeeList.push({ name: data[empId]["GeneralDetails"]["name"], mobile: data[empId]["GeneralDetails"]["mobile"], designation: designation, empId:Number(empId), empStatus: empStatus });
-                }
-              }
-            }
-            if (exportEmployeeList.length > 0) {
-              exportEmployeeList=this.commonService.transformNumeric(exportEmployeeList,"empId");
-              let htmlString = "";
-              htmlString = "<table>";
-              htmlString += "<tr>";
-              htmlString += "<td>";
-              htmlString += "Employee ID";
-              htmlString += "</td>";
-              htmlString += "<td>";
-              htmlString += "Name";
-              htmlString += "</td>";
-              htmlString += "<td>";
-              htmlString += "Mobile";
-              htmlString += "</td>";
-              htmlString += "<td>";
-              htmlString += "Designation";
-              htmlString += "</td>";
-              htmlString += "<td>";
-              htmlString += "Status";
-              htmlString += "</td>";
-              htmlString += "</tr>";
-              for (let i = 0; i < exportEmployeeList.length; i++) {
-                htmlString += "<tr>";
-                htmlString += "<td>";
-                htmlString += exportEmployeeList[i]["empId"];
-                htmlString += "</td>";
-                htmlString += "<td>";
-                htmlString += exportEmployeeList[i]["name"];
-                htmlString += "</td>";
-                htmlString += "<td t='s'>";
-                htmlString += exportEmployeeList[i]["mobile"];
-                htmlString += "</td>";
-                htmlString += "<td>";
-                htmlString += exportEmployeeList[i]["designation"];
-                htmlString += "</td>";
-                htmlString += "<td>";
-                htmlString += exportEmployeeList[i]["empStatus"];
-                htmlString += "</td>";
-                htmlString += "</tr>";
-              }
-              htmlString += "<table>";
-              let fileName = "Employee [" + this.commonService.getFireStoreCity() + "].xlsx";
-              this.commonService.exportExcel(htmlString, fileName);
-              $(this.divLoader).hide();
-            }
-          }
+    if (this.employeeList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Employee ID";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Mobile";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Designation";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Status";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.employeeList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += this.employeeList[i]["empCode"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.employeeList[i]["name"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.employeeList[i]["mobile"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.employeeList[i]["designation"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.employeeList[i]["status"] == "1") {
+          htmlString += "Active";
         }
+        else {
+          htmlString += "In-Active";
+        }
+        htmlString += "</td>";
+        htmlString += "</tr>";
       }
-    );
-
+      htmlString += "<table>";
+      let fileName = "Employee [" + this.commonService.getFireStoreCity() + "].xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+      $(this.divLoader).hide();
+    }
   }
 }
 

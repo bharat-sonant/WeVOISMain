@@ -11,7 +11,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class StaffAccountDetailComponent implements OnInit {
 
-  constructor( private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(private modalService: NgbModal, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient) { }
   db: any;
   cityName: any;
   designationList: any[];
@@ -43,7 +43,7 @@ export class StaffAccountDetailComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Salary-Management-Staff","Staff-Account-Detail",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Salary-Management-Staff", "Staff-Account-Detail", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -97,7 +97,8 @@ export class StaffAccountDetailComponent implements OnInit {
           jsonLastEmpId = Number(this.allAccountList[this.allAccountList.length - 1]["empId"]);
         }
         if (lastEmpId != jsonLastEmpId) {
-          this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
+          this.updateJSONForNewEmployees(lastEmpId);
+          // this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
         }
         else {
           this.getRoles();
@@ -148,7 +149,7 @@ export class StaffAccountDetailComponent implements OnInit {
   }
 
   showAccountDetail(status: any, designation: any) {
-    let driverHelperList = this.allAccountList.filter(item => item.empType == 1 && item.salaryType!="non-salaried");
+    let driverHelperList = this.allAccountList.filter(item => item.empType == 1 && item.salaryType != "non-salaried");
     if (status == "all") {
       this.accountList = driverHelperList;
     }
@@ -434,15 +435,31 @@ export class StaffAccountDetailComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
-    if (jsonLastEmpId > lastEmpId) {
+  updateJSONForNewEmployees(lastEmpId: any) {
+
+    const promises=[];
+    for (let i = 1; i < lastEmpId; i++) {
+      promises.push(Promise.resolve(this.getEmployeeDetail(i)));
+    }
+
+    Promise.all(promises).then((results) => {
+      let merged = [];
+      for (let i = 0; i < results.length; i++) {
+        if(results[i]["status"]=="success"){
+        merged = merged.concat(results[i]["data"]);
+        }
+      }
+      this.allAccountList=merged;
       this.getRoles();
       this.filterData();
       this.saveJSONData();
-    }
-    else {
-      jsonLastEmpId++;
-      let dbPath = "Employees/" + jsonLastEmpId;
+    });
+  }
+
+  getEmployeeDetail(empId: any) {
+    return new Promise((resolve) => {
+      let employeeData = {};
+      let dbPath = "Employees/" + empId;
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
@@ -501,13 +518,21 @@ export class StaffAccountDetailComponent implements OnInit {
                   }
                 }
               }
-              this.allAccountList.push({ empId: jsonLastEmpId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType });
+              employeeData={ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType };
+              //console.log(employeeData);
+              resolve({ status: "success", data: employeeData });
+            }
+            else {
+              resolve({ status: "fail", data: employeeData });
             }
           }
-          this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
+          else {
+            resolve({ status: "fail", data: employeeData });
+          }
         }
       );
-    }
+
+    });
   }
 }
 

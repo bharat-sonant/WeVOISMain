@@ -75,27 +75,32 @@ export class DatabaseUtilizationComponent implements OnInit {
           let functionList = [];
           let totalCounts = 0;
           let totalDataSize = 0;
-          let totalDataSizeUnit="";
+          let totalDataSizeUnit = "";
+          let totalDataSizeOrder = 0;
           for (let j = 0; j < functionArray.length; j++) {
             let functionName = functionArray[j];
             let count = 0;
             let dataSize = 0;
-            let unit="";
+            let dataSizeOrder = 0;
+            let unit = "";
             if (functionData[functionName]["count"] != null) {
               count = functionData[functionName]["count"];
               totalCounts += count;
             }
             if (functionData[functionName]["dataSize"] != null) {
               dataSize = functionData[functionName]["dataSize"];
-              unit=dataSize > 1024 ? "Mb" : "Kb";
               totalDataSize += dataSize;
+              dataSizeOrder += dataSize;
+              totalDataSizeOrder+=dataSize;
+              unit = dataSize > 1024000 ? "Gb" : dataSize > 1024 ? "Mb" : "Kb";
             }
-            functionList.push({ servicePage: servicePage, functionName: functionName, count: count, dataSize: dataSize > 1024 ? (dataSize / 1024).toFixed(2) : dataSize.toFixed(2),unit:unit });
+            functionList.push({ servicePage: servicePage, functionName: functionName, count: count, dataSize: dataSize > 1024000 ? (dataSize / 1024000).toFixed(2) : dataSize > 1024 ? (dataSize / 1024).toFixed(2) : dataSize.toFixed(2), unit: unit,dataSizeOrder:dataSizeOrder });
           }
-          totalDataSizeUnit=totalDataSize > 1024 ? "Mb" : "Kb";
-
-          this.summaryList.push({ servicePage: servicePage, functionList: functionList, totalCounts: totalCounts, totalDataSize: totalDataSize > 1024 ? (totalDataSize / 1024).toFixed(2)  : totalDataSize.toFixed(2),totalDataSizeUnit:totalDataSizeUnit });
+          functionList = functionList.sort((a, b) => a.dataSizeOrder > b.dataSizeOrder ? -1 : 1);
+          totalDataSizeUnit = totalDataSize > 1024000 ? "Gb" : totalDataSize > 1024 ? "Mb" : "Kb";
+          this.summaryList.push({ servicePage: servicePage, functionList: functionList, totalCounts: totalCounts, totalDataSize: totalDataSize > 1024000 ? (totalDataSize / 1024000).toFixed(2) : totalDataSize > 1024 ? (totalDataSize / 1024).toFixed(2) : totalDataSize.toFixed(2), totalDataSizeUnit: totalDataSizeUnit,totalDataSizeOrder:totalDataSizeOrder });
         }
+        this.summaryList = this.summaryList.sort((a, b) => a.totalDataSizeOrder > b.totalDataSizeOrder ? -1 : 1);
         this.servicePageList = this.summaryList;
         this.getServiceNameData(this.servicePageList[0]["servicePage"], 0);
       }
@@ -127,7 +132,7 @@ export class DatabaseUtilizationComponent implements OnInit {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthData", data);
           let list = [];
           let keyArray = Object.keys(data);
-          for (let i = keyArray.length-1; i >= 0; i--) {
+          for (let i = keyArray.length - 1; i >= 0; i--) {
             let date = keyArray[i];
             if (date == "count") {
               this.monthCounts = data[date] == null ? 0 : data[date];
@@ -136,11 +141,11 @@ export class DatabaseUtilizationComponent implements OnInit {
               this.monthDataSize = data[date] == null ? 0 + " KB" : data[date] > 1024 ? (data[date] / 1024).toFixed(2) + " MB" : data[date].toFixed(2) + " KB";
             }
             else {
-              let formatedDate=date.split('-')[2]+" "+this.commonService.getCurrentMonthShortName(Number(date.split('-')[1]));
+              let formatedDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1]));
               let count = data[date]["count"] == null ? 0 : data[date]["count"];
               let dataSize = data[date]["dataSize"] == null ? 0 : data[date]["dataSize"];
-              let unit=dataSize > 1024 ? "Mb" : "Kb";
-              list.push({ date: formatedDate, count: count, dataSize: dataSize > 1024 ? (dataSize / 1024).toFixed(2) : dataSize.toFixed(2),unit:unit});
+              let unit = dataSize > 1024 ? "Mb" : "Kb";
+              list.push({ date: formatedDate, count: count, dataSize: dataSize > 1024 ? (dataSize / 1024).toFixed(2) : dataSize.toFixed(2), unit: unit });
             }
           }
           this.dateList = list;

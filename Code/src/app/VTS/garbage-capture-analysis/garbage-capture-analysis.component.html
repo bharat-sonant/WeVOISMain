@@ -30,11 +30,11 @@
         </div>
         <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
             <div class="fix-home">
-                <div id="topPenality" class="float-first ml-10 mt-0">
+                <div id="topPenality" class="float-first ml-10 mt-0" style="display: none;">
                     <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
                     <h6>Penalty</h6>
                 </div>
-                <div id="topPenality" class="float-first" style="display:none;">
+                <div id="topPenality" class="float-first">
                     <span class="house"><i class="fas fa-check-double double2"></i>
                         {{progressData.totalResolved}}</span><br>
                     <h6>Resolved</h6>
@@ -82,7 +82,7 @@
                         </option>
                     </select>
                 </div>
-                <div id="topPenalityNav" class="col-6 pr-0 ">
+                <div id="topPenalityNav" class="col-6 pr-0 "  style="display: none;">
                     <div class="mb-home text-left">
                         <span class="house"><i class="far fa-times-circle"></i> {{progressData.totalPenalty}}</span><br>
                         <h6>Penalty</h6>
@@ -137,7 +137,7 @@
                                         </option>
                                     </select>
                                     <select class="filter-select filter-input" id="ddlCategory"
-                                        (change)="filterData();">
+                                        (change)="filterData();" style="display: none;">
                                         <option value="0">
                                             All Category
                                         </option>
@@ -148,11 +148,11 @@
                                             कचरा उठा लिया है
                                         </option>
                                     </select>
-                                    <select class="filter-select filter-input" id="ddlZone" (change)="getWard();">
+                                    <select class="filter-select filter-input" id="ddlZone" (change)="getWard();" style="display:none">
                                         <option value="0">
                                             All Zone
                                         </option>
-                                        <option *ngFor="let zone of zoneList" value={{zone.zoneName}}>
+                                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
                                             {{zone.zoneName}}
                                         </option>
                                     </select>
@@ -161,8 +161,8 @@
                                         <option value="0">
                                             All Ward
                                         </option>
-                                        <option *ngFor="let ward of wardList" value={{ward.wardNo}}>
-                                            {{ward.wardName}}
+                                        <option *ngFor="let ward of wardList" value={{ward.zoneNo}}>
+                                            {{ward.zoneName}}
                                         </option>
                                     </select>
                                     <i class="fas fa-filter" data-toggle="collapse" data-parent="#accordion"
@@ -204,7 +204,10 @@
                                 <div class="col-md-12 img-text img-text2">
                                     <h3>IMAGES :</h3><span> {{progressData.count}}</span>
                                 </div>
-                                <div class="col-md-12 mt-15">
+                                <div class="col-md-12 img-text img-text2">
+                                    <h3>Resolved :</h3><span> {{progressData.resolved}}</span>
+                                </div>
+                                <div class="col-md-12 mt-15" style="display: none;">
                                     <div class="f-all">
                                         <div id="leftPenality" class="table-heading heading1 text-center">
                                             <h3>
@@ -236,9 +239,9 @@
                                             <th class="br-1 locality2">Locality</th>
                                             <th class="text-right br-1 Time3">
                                                 Time</th>
-                                            <th class="text-left br-1 text-left2">
+                                            <th class="text-left br-1 text-left2" style="display: none;">
                                                 #</th>
-                                            <th id="tblPenalty" class="text-right br-1 Penalty2">
+                                            <th id="tblPenalty" class="text-right br-1 Penalty2" style="display: none;">
                                                 Penalty</th>
                                             <th class="text-left br-1 User2">
                                                 User</th>
@@ -256,9 +259,9 @@
                                                 </td>
                                                 <td class="text-right br-1">
                                                     {{data.time}}</td>
-                                                <td class="text-left br-1">
+                                                <td class="text-left br-1" style="display: none;">
                                                     {{data.isClean}}</td>
-                                                <td class="text-right br-1">
+                                                <td class="text-right br-1"  style="display: none;">
                                                     {{data.penalty}} </td>
                                                 <td class="text-left br-1">
                                                     {{data.user}}</td>
@@ -374,7 +377,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="divAnalysis" class="col-md-12 pr-0 pl-5 margin-top">
+                    <div id="divAnalysis" class="col-md-12 pr-0 pl-5 margin-top" style="display: none;">
                         <div class="inner-box main-final-blk">
                             <div class="row">
                                 <div class="col-md-4 d-blk br-1">

@@ -44,7 +44,7 @@
                             <input id="txtName" class="filter-select text-input" type="text" (keyup)="filterData();" placeholder="Search by name, code">
                         </div>
                         <div class="col-md-2 text-center text-input-iner active-input">
-                            {{employeeCountSummary.active}}<br/><span class="text-input-iner-span">Active</span>
+                            {{employeeCountSummary.active}}<br/><span id="spStatus" class="text-input-iner-span">Active</span>
                         </div>
                         <div class="col-md-1 text-center" style="font-size: 12px;padding-top:8px;">
                             <i class="fa-solid fa-file-export" style="font-size: 25px; color:green; cursor: pointer;" (click)="exportEmployee()"></i><br/> Export

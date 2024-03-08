@@ -92,7 +92,7 @@ export class RouteTrackingComponent {
   ngOnInit() {
     this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.savePageLoadHistory("Monitoring","Route-Tracking",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Monitoring", "Route-Tracking", localStorage.getItem("userID"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.isActualData = localStorage.getItem("isActual");
     this.setSpeed(Number($('#ddlSpeed').val()));
@@ -810,13 +810,160 @@ export class RouteTrackingComponent {
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
     let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
-    let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-      routePath => {
-        vehicleTracking.unsubscribe();
+    this.commonService.getStorageLocationHistory(dbPath).then(response => {
+      this.routePathStore = [];
+      let lineData = [];
+      let totalKM: number = 0;
+      if (response["status"] == "Fail") {
+        let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
+          routePath => {
+            vehicleTracking.unsubscribe();
+            if (routePath != null) {
+              let routeKeyArray = Object.keys(routePath);
+              let keyArray = [];
+              if (routeKeyArray.length > 0) {
+                if (this.isActualData == 0) {
+                  keyArray = routeKeyArray;
+                }
+                else {
+                  for (let i = 0; i < routeKeyArray.length; i++) {
+                    if (!routeKeyArray[i].toString().includes('-')) {
+                      keyArray.push(routeKeyArray[i]);
+                    }
+                  }
+                }
+              }
+
+              let arrayLength = keyArray.length - 2;
+              if (this.selectedDate != this.toDayDate) {
+                arrayLength = keyArray.length - 3;
+              }
+
+              for (let i = 0; i < arrayLength; i++) {
+                let index = keyArray[i];
+                let time = index.toString().split('-')[0];
+                let totalDistance = 0;
+                this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+
+                let myTotalKM: number = 0;
+                totalKM += parseFloat(parseFloat(routePath[index]["distance-in-meter"]).toFixed(8));
+                if (lineData.length > 0) {
+                  let lat = lineData[lineData.length - 1]["lat"];
+                  let lng = lineData[lineData.length - 1]["lng"];
+                  lineData = [];
+                  lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+                }
+                let routeDateList = [];
+                let latLong: string = routePath[index]["lat-lng"];
+                routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+                for (let j = 0; j < routeDateList.length; j++) {
+                  let routePart = routeDateList[j].split(',');
+                  if (routePart.length == 2) {
+                    if (lineData.length > 0) {
+                      let lat = lineData[lineData.length - 1]["lat"];
+                      let lng = lineData[lineData.length - 1]["lng"];
+                      let distance = this.getDistanceFromLatLonInKm(lat, lng, parseFloat(routePart[0]), parseFloat(routePart[1]));
+                      let distanceInMeter = distance * 1000;
+                      totalDistance += distanceInMeter;
+                      lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: distance });
+                    }
+                    else {
+                      lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: 0 });
+                    }
+                  }
+                }
+                if (lineData != undefined) {
+                  let status = "LineCompleted";
+                  let line = new google.maps.Polyline({
+                    path: lineData,
+                    strokeColor: this.commonService.getLineColor(status),
+                    strokeWeight: 2
+                  });
+
+                  if (i == 0) {
+                    let lat = lineData[0]["lat"];
+                    let lng = lineData[0]["lng"];
+                    let markerURL = this.getIcon("start");
+                    var markerLabel = "";
+                    let contentString = '<br/>Start time: ' + index;
+                    this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+                  }
+
+                  if (this.selectedDate != this.toDayDate) {
+                    if (i == keyArray.length - 3) {
+                      let lat = lineData[lineData.length - 1]["lat"];
+                      let lng = lineData[lineData.length - 1]["lng"];
+                      let markerURL = this.getIcon("stop");
+                      var markerLabel = "";
+                      let contentString = '<br/>End time: ' + index;
+                      this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+                    }
+                  }
+                  else {
+                    if (i == keyArray.length - 3) {
+                      dbPath = "RealTimeDetails/WardDetails/" + this.selectedZoneNo;
+                      let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
+                        dutyData => {
+                          vehicleDutyData.unsubscribe();
+                          if (dutyData != null) {
+                            if (dutyData["isOnDuty"] != "yes") {
+                              let lat = lineData[lineData.length - 1]["lat"];
+                              let lng = lineData[lineData.length - 1]["lng"];
+                              let markerURL = this.getIcon("stop");
+                              var markerLabel = "";
+                              let contentString = '<br/>End time: ' + index;
+                              this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+                            }
+                          }
+                        });
+                    }
+                  }
+                  this.polylines[i] = line;
+                  this.polylines[i].setMap(this.map);
+                  this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(2));
+                  this.trackData.time = index;
+                }
+                myTotalKM = parseFloat((parseFloat((totalDistance).toFixed(8)) / 1000).toFixed(8));
+              }
+              if (this.routePathStore.length > 0) {
+                let startTime = this.routePathStore[0]["time"];
+                let endTime = this.routePathStore[0]["time"];
+                if (this.routePathStore.length > 1) {
+                  endTime = this.routePathStore[this.routePathStore.length - 1]["time"];
+                }
+                let sTime = this.selectedDate + " " + startTime;
+
+                let eTime = this.selectedDate + " " + endTime;
+                let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
+                this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
+              }
+              if (this.isStart == true) {
+                this.lineDataList = [];
+                for (let i = 0; i < this.polylines.length; i++) {
+                  let routeDateList = [];
+                  let latLong: string = this.routePathStore[i]["latlng"];
+                  routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+                  for (let j = 0; j < routeDateList.length; j++) {
+                    let routePart = routeDateList[j].split(',');
+                    if (routePart.length == 2) {
+                      this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
+                    }
+                  }
+                }
+                if (this.lineIndex == 0) {
+                  this.createMarker();
+                }
+                this.animate(this.lineIndex);
+              }
+              this.savedDataList.push({ wardNo: this.selectedZone, date: this.selectedDate, routePath: routePath });
+              localStorage.setItem('savedRouteData', JSON.stringify(this.savedDataList));
+            }
+          });
+
+      }
+      else{
+        let routePath=response["data"];
         if (routePath != null) {
-          this.routePathStore = [];
-          let lineData = [];
-          let totalKM: number = 0;
           let routeKeyArray = Object.keys(routePath);
           let keyArray = [];
           if (routeKeyArray.length > 0) {
@@ -832,7 +979,12 @@ export class RouteTrackingComponent {
             }
           }
 
-          for (let i = 0; i < keyArray.length - 2; i++) {
+          let arrayLength = keyArray.length - 2;
+          if (this.selectedDate != this.toDayDate) {
+            arrayLength = keyArray.length - 3;
+          }
+
+          for (let i = 0; i < arrayLength; i++) {
             let index = keyArray[i];
             let time = index.toString().split('-')[0];
             let totalDistance = 0;
@@ -951,7 +1103,9 @@ export class RouteTrackingComponent {
           this.savedDataList.push({ wardNo: this.selectedZone, date: this.selectedDate, routePath: routePath });
           localStorage.setItem('savedRouteData', JSON.stringify(this.savedDataList));
         }
-      });
+      }
+    })
+
   }
 
   getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
@@ -1069,90 +1223,179 @@ export class RouteTrackingComponent {
   getMonthDetailData(days: any, year: any, month: any, monthName: any) {
     let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
     let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate;
-    let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-      routePath => {
-        if (routePath != null) {
-          let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
-          let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
-          let day = monthDate.split("-")[2] + " " + monthShortName;
-          let totalKM: number = 0;
+    this.commonService.getStorageLocationHistory(dbPath).then(response => {
+      let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
+      let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
+      let day = monthDate.split("-")[2] + " " + monthShortName;
+      let totalKM: number = 0;
+      if (response["status"] == "Fail") {
+        let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
+          routePath => {
+            if (routePath != null) {
+              if (monthDate != this.toDayDate) {
+                this.commonService.saveJsonFile(routePath, "route.json", "/" + dbPath + "/");
+              }
 
-          let routeKeyArray = Object.keys(routePath);
-          let keyArray = [];
-          if (routeKeyArray.length > 0) {
-            if (this.isActualData == 0) {
-              keyArray = routeKeyArray;
-            }
-            else {
-              for (let i = 0; i < routeKeyArray.length; i++) {
-                if (!routeKeyArray[i].toString().includes('-')) {
-                  keyArray.push(routeKeyArray[i]);
+              let routeKeyArray = Object.keys(routePath);
+              let keyArray = [];
+              if (routeKeyArray.length > 0) {
+                if (this.isActualData == 0) {
+                  keyArray = routeKeyArray;
                 }
+                else {
+                  for (let i = 0; i < routeKeyArray.length; i++) {
+                    if (!routeKeyArray[i].toString().includes('-')) {
+                      keyArray.push(routeKeyArray[i]);
+                    }
+                  }
+                }
+              }
+
+              for (let i = 0; i < keyArray.length - 3; i++) {
+                let index = keyArray[i];
+                if (routePath[index]["distance-in-meter"] != null) {
+                  totalKM += parseFloat(routePath[index]["distance-in-meter"]);
+                }
+              }
+
+              let startTime = keyArray[0];
+              let endTime = keyArray[0];
+              if (keyArray.length > 1) {
+                if (monthDate != this.toDayDate) {
+                  endTime = keyArray[keyArray.length - 4];
+                }
+                else {
+                  endTime = keyArray[keyArray.length - 3];
+                }
+              }
+              let sTime = monthDate + " " + startTime;
+              let eTime = monthDate + " " + endTime;
+              let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
+              let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
+              if (monthDetails != undefined) {
+                monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
+                if (!isNaN(totalMinutes)) {
+                  monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
+                }
+                else {
+                  monthDetails.hour = "0 hr 0 min";
+                }
+
+                let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
+                let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
+                  driverData => {
+                    driverTracking.unsubscribe();
+                    if (driverData != null) {
+                      monthDetails.driver = driverData;
+                    }
+                    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
+                    let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      data => {
+                        workPersentageInstance.unsubscribe();
+                        if (data != null) {
+                          monthDetails.percentage = data["workPercentage"].toString();
+
+                          if (localStorage.getItem("userType") == "External User") {
+                            if (data["updatedWorkPercentage"] != null) {
+                              monthDetails.percentage = data["updatedWorkPercentage"].toString();
+                            }
+                          }
+                        }
+                        let monthDetailData = JSON.parse(localStorage.getItem("routeMonthDetail"));
+                        if (monthDetailData == null) {
+                          monthDetailData = [];
+                        }
+                        monthDetailData.push({ wardNo: this.selectedZone, day: day, driver: monthDetails.driver, km: monthDetails.km, hour: monthDetails.hour, percentage: monthDetails.percentage, monthDate: monthDate });
+
+                      }
+                    );
+                  });
+              }
+            }
+            vehicleTracking.unsubscribe();
+          }
+        );
+
+      }
+      else {
+        let routePath = response["data"];
+        let routeKeyArray = Object.keys(routePath);
+        let keyArray = [];
+        if (routeKeyArray.length > 0) {
+          if (this.isActualData == 0) {
+            keyArray = routeKeyArray;
+          }
+          else {
+            for (let i = 0; i < routeKeyArray.length; i++) {
+              if (!routeKeyArray[i].toString().includes('-')) {
+                keyArray.push(routeKeyArray[i]);
               }
             }
           }
+        }
 
-          for (let i = 0; i < keyArray.length - 3; i++) {
-            let index = keyArray[i];
-            if (routePath[index]["distance-in-meter"] != null) {
-              totalKM += parseFloat(routePath[index]["distance-in-meter"]);
-            }
-          }
-
-          let startTime = keyArray[0];
-          let endTime = keyArray[0];
-          if (keyArray.length > 1) {
-            endTime = keyArray[keyArray.length - 3];
-          }
-          let sTime = monthDate + " " + startTime;
-          let eTime = monthDate + " " + endTime;
-          let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-          let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
-          if (monthDetails != undefined) {
-            monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
-            if (!isNaN(totalMinutes)) {
-              monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
-            }
-            else {
-              monthDetails.hour = "0 hr 0 min";
-            }
-
-            let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
-            let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
-              driverData => {
-                driverTracking.unsubscribe();
-                if (driverData != null) {
-                  monthDetails.driver = driverData;
-                }
-                let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
-                let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
-                  data => {
-                    workPersentageInstance.unsubscribe();
-                    if (data != null) {
-                      monthDetails.percentage = data["workPercentage"].toString();
-
-                      if (localStorage.getItem("userType") == "External User") {
-                        if (data["updatedWorkPercentage"] != null) {
-                          monthDetails.percentage = data["updatedWorkPercentage"].toString();
-                        }
-                      }
-                    }
-                    let monthDetailData = JSON.parse(localStorage.getItem("routeMonthDetail"));
-                    if (monthDetailData == null) {
-                      monthDetailData = [];
-                    }
-                    monthDetailData.push({ wardNo: this.selectedZone, day: day, driver: monthDetails.driver, km: monthDetails.km, hour: monthDetails.hour, percentage: monthDetails.percentage, monthDate: monthDate });
-                    if (monthDate != this.toDayDate) {
-                      localStorage.setItem('routeMonthDetail', JSON.stringify(monthDetailData));
-                    }
-                  }
-                );
-              });
+        for (let i = 0; i < keyArray.length - 3; i++) {
+          let index = keyArray[i];
+          if (routePath[index]["distance-in-meter"] != null) {
+            totalKM += parseFloat(routePath[index]["distance-in-meter"]);
           }
         }
-        vehicleTracking.unsubscribe();
+
+        let startTime = keyArray[0];
+        let endTime = keyArray[0];
+        if (keyArray.length > 1) {
+          if (monthDate != this.toDayDate) {
+            endTime = keyArray[keyArray.length - 4];
+          }
+          else {
+            endTime = keyArray[keyArray.length - 3];
+          }
+        }
+        let sTime = monthDate + " " + startTime;
+        let eTime = monthDate + " " + endTime;
+        let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
+        let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
+        if (monthDetails != undefined) {
+          monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
+          if (!isNaN(totalMinutes)) {
+            monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
+          }
+          else {
+            monthDetails.hour = "0 hr 0 min";
+          }
+
+          let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
+          let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
+            driverData => {
+              driverTracking.unsubscribe();
+              if (driverData != null) {
+                monthDetails.driver = driverData;
+              }
+              let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
+              let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
+                data => {
+                  workPersentageInstance.unsubscribe();
+                  if (data != null) {
+                    monthDetails.percentage = data["workPercentage"].toString();
+
+                    if (localStorage.getItem("userType") == "External User") {
+                      if (data["updatedWorkPercentage"] != null) {
+                        monthDetails.percentage = data["updatedWorkPercentage"].toString();
+                      }
+                    }
+                  }
+                  let monthDetailData = JSON.parse(localStorage.getItem("routeMonthDetail"));
+                  if (monthDetailData == null) {
+                    monthDetailData = [];
+                  }
+                  monthDetailData.push({ wardNo: this.selectedZone, day: day, driver: monthDetails.driver, km: monthDetails.km, hour: monthDetails.hour, percentage: monthDetails.percentage, monthDate: monthDate });
+
+                }
+              );
+            });
+        }
       }
-    );
+    })
   }
 
 

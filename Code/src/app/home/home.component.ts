@@ -100,7 +100,7 @@ export class HomeComponent implements OnInit {
               }
             }
             else if (userAccessList[i]["url"].includes("/cms/21")) {
-              if (this.cityName == "jaipur-greater") {
+              if (this.cityName == "jaipur-greater"  || this.cityName=="dehradun" || this.cityName=="test") {
                 this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
               }
             } else {

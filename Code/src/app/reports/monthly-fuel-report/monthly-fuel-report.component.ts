@@ -25,7 +25,7 @@ export class MonthlyFuelReportComponent implements OnInit {
   ddlYear = "#ddlYear";
   ddlMonth = "#ddlMonth";
   divLoader = "#divLoader";
-  isFileSaved: any;  
+  isFileSaved: any;
   totalQtyJSON: any;
   totalAmountJSON: any;
   serviceName = "monthly-fuel-report";
@@ -40,7 +40,7 @@ export class MonthlyFuelReportComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("General-Reports","Monthly-Fuel-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("General-Reports", "Monthly-Fuel-Report", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -100,6 +100,7 @@ export class MonthlyFuelReportComponent implements OnInit {
         for (let i = 0; i < this.vehicleList.length; i++) {
           let vehicle = this.vehicleList[i]["vehicle"];
           this.getVehicleKM(vehicle);
+          this.getVehicleGPSKM(vehicle);
           let vehicleFuelList = list.filter(item => item.vehicle == vehicle);
           if (vehicleFuelList.length > 0) {
             let sumQty: number = vehicleFuelList.map(a => Number(a.quantity)).reduce(function (a, b) {
@@ -123,7 +124,7 @@ export class MonthlyFuelReportComponent implements OnInit {
         this.fuelDetail.totalFuel = totalQuantity.toFixed(2);
       }
       $(this.divLoader).hide();
-    },error=>{
+    }, error => {
       $(this.divLoader).hide();
 
     });
@@ -154,7 +155,25 @@ export class MonthlyFuelReportComponent implements OnInit {
       }
     });
   }
-  
+
+  getVehicleGPSKM(vehicle: any) {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVehicleFuelJSONData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2FVehicleGPSKM%2F" + vehicle + ".json?alt=media";
+    let gpsKMInstance = this.httpService.get(path).subscribe(gpsData => {
+      gpsKMInstance.unsubscribe();
+      if (gpsData != null) {
+        let list = JSON.parse(JSON.stringify(gpsData));
+        let distance = 0;
+        for (let i = 0; i < list.length; i++) {
+          distance += Number(list[i]["distance"]);
+        }
+        let detail = this.vehicleList.find(item => item.vehicle == vehicle);
+        if (detail != undefined) {
+          detail.gpsKM = (distance).toFixed(3);
+        }
+      }
+    });
+  }
+
   exportToExcel() {
     if (this.vehicleList.length > 0) {
       let htmlString = "";
@@ -169,6 +188,9 @@ export class MonthlyFuelReportComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "KM Running";
       htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "GPS KM Running";
+      htmlString += "</td>";
       htmlString += "</tr>";
 
       for (let i = 0; i < this.vehicleList.length; i++) {
@@ -181,6 +203,9 @@ export class MonthlyFuelReportComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.vehicleList[i]["km"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.vehicleList[i]["gpsKM"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
@@ -211,7 +236,7 @@ export class MonthlyFuelReportComponent implements OnInit {
 
 
   /* ---------- Update JSON Code --------*/
-  
+
   updateJSONData() {
     this.selectedYear = $(this.ddlYear).val();
     this.selectedMonth = $(this.ddlMonth).val();
@@ -229,10 +254,51 @@ export class MonthlyFuelReportComponent implements OnInit {
     if (Number(this.toDayDate.split("-")[1]) == Number(this.selectedMonth)) {
       days = this.toDayDate.split("-")[2];
     }
+    for (let i = 0; i < this.vehicleList.length; i++) {
+      let vehicle = this.vehicleList[i]["vehicle"];
+      this.updateVehicleGPSKMJSON(1, days, vehicle, []);
+    }
     this.updateJSONForDieselEntry();
     let workDetailList = [];
     this.getDailyWorkDetail(1, days, workDetailList);
   }
+
+  updateVehicleGPSKMJSON(index: any, days: any, vehicle: any, list: any) {
+    if (index == days) {
+      let filePath = "/VehicleFuelJSONData/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+      this.commonService.saveJsonFile(list, vehicle + ".json", filePath + "VehicleGPSKM/");
+    }
+    else {
+      let date = this.selectedYear + '-' + this.selectedMonth + '-' + (index < 10 ? '0' : '') + index;
+      let path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicle + "/" + date + ".json";
+      this.httpService.get(path).subscribe(data => {
+        let distance = 0;
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let j = 0; j < keyArray.length - 2; j++) {
+            let time = keyArray[j];
+            let nextTime = keyArray[j + 1];
+            let lat = data[time].split(',')[0];
+            let lng = data[time].split(',')[1];
+            let nextLat = data[nextTime].split(',')[0];
+            let nextLng = data[nextTime].split(',')[1];
+            distance = distance + Number(this.commonService.getDistanceFromLatLonInKm(lat, lng, nextLat, nextLng));
+
+          }
+        }
+        if (distance > 0) {
+          list.push({ date: date, distance: (distance / 1000).toFixed(3) });
+        }
+        index++
+        this.updateVehicleGPSKMJSON(index, days, vehicle, list);
+      });
+
+
+
+    }
+  }
+
+
 
   updateJSONForDieselEntry() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateJSONForDieselEntry");
@@ -282,7 +348,7 @@ export class MonthlyFuelReportComponent implements OnInit {
         }
       });
   }
-  
+
   getDailyWorkDetail(startDays: any, days: any, workDetailList: any) {
     if (startDays > days) {
       let vehicleLengthList = [];
@@ -380,6 +446,7 @@ export class MonthlyFuelReportComponent implements OnInit {
     }
   }
 
+
   getWardRunningDistance(listIndex: any, index: any, vehicleWorkList: any, workDetailList: any, vehicleLengthList: any) {
     if (listIndex == vehicleWorkList.length) {
       let vehicle = vehicleLengthList[index]["vehicle"];
@@ -420,13 +487,13 @@ export class MonthlyFuelReportComponent implements OnInit {
             totalKM = totalKM + Number(vehicleLengthList[i]["km"]);
           }
           this.fuelDetail.totalKm = totalKM.toFixed(3);
-          this.fuelDetail.totalAmount=this.totalAmountJSON.toFixed(2);
-          this.fuelDetail.totalFuel=this.totalQtyJSON.toFixed(2);
+          this.fuelDetail.totalAmount = this.totalAmountJSON.toFixed(2);
+          this.fuelDetail.totalFuel = this.totalQtyJSON.toFixed(2);
           let lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
           this.fuelDetail.lastUpdateDate = lastUpdateDate;
           const obj = { "totalKM": totalKM.toFixed(3), "qty": this.totalQtyJSON.toFixed(2), "amount": this.totalAmountJSON.toFixed(2), "lastUpdateDate": lastUpdateDate };
           this.commonService.saveJsonFile(obj, "MonthSummary.json", filePath);
-          this.commonService.setAlertMessage("success","Data updated successfully !!!");
+          this.commonService.setAlertMessage("success", "Data updated successfully !!!");
           this.getMonthDays();
         }, 6000);
 

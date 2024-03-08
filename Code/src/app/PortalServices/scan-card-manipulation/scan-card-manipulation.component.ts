@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
+import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 
@@ -11,7 +12,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 })
 export class ScanCardManipulationComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
 
   db: any;
   cityName: any;
@@ -24,11 +25,12 @@ export class ScanCardManipulationComponent implements OnInit {
   public processLine: any;
   divLoader = "#divLoader";
   serviceName = "portal-service-scan-card-manipulation";
+  nokhaAvailableWards: any[] = [];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Portal-Services","Scan-Card-Modification",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Portal-Services", "Scan-Card-Modification", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -39,6 +41,27 @@ export class ScanCardManipulationComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
     this.getZones();
+    if (this.cityName == "nokha") {
+      this.getAvailableWards();
+    }
+  }
+
+  getAvailableWards() {
+    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
+    let availableWardInstance = this.httpService.get(path).subscribe(data => {
+      availableWardInstance.unsubscribe();
+      let list = JSON.parse(JSON.stringify(data));
+      if (list.length > 0) {
+        for (let index = 0; index < list.length; index++) {
+          if (list[index] != null) {
+            if (!list[index].toString().includes("Test") && list[index] != "OfficeWork" && list[index] != "FixedWages" && list[index] != "BinLifting" && list[index] != "GarageWork" && list[index] != "Compactor" && list[index] != "SegregationWork" && list[index] != "GeelaKachra" && list[index] != "SecondHelper" && list[index] != "ThirdHelper") {
+              this.nokhaAvailableWards.push({ zoneNo: list[index], zoneName: "Market " + list[index].toString().replace("mkt", ""), });
+            }
+          }
+        }
+      }
+    }, error => {
+    });
   }
 
 
@@ -76,40 +99,58 @@ export class ScanCardManipulationComponent implements OnInit {
     }
     this.percentage = $("#ddlPercentage").val();
     this.selectedZone = $("#ddlZone").val();
-    $(this.divLoader).show();
-    let dbPath = "Houses/" + this.selectedZone;
-    let housesInstance = this.db.object(dbPath).valueChanges().subscribe(
-      houseData => {
-        housesInstance.unsubscribe();
-        let wardHouses = [];
-        let wardTotalLines = 0;
-        if (houseData != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", houseData);
-          let lineArray = Object.keys(houseData);
-          if (lineArray.length > 0) {
-            wardTotalLines = Number(lineArray[lineArray.length - 1]);
-            for (let i = 0; i < lineArray.length; i++) {
-              let lineNo = lineArray[i];
-              let cardData = houseData[lineNo];
-              let cardArray = Object.keys(cardData);
-              if (cardArray.length > 0) {
-                for (let j = 0; j < cardArray.length; j++) {
-                  let cardNumber = cardArray[j];
-                  let latlng = cardData[cardNumber]["latLng"].toString().replace('(', '').replace(')', '');
-                  wardHouses.push({ lineNo: lineNo, cardNumber: cardNumber, latlng: latlng });
+    let detail = this.nokhaAvailableWards.find(item => item.zoneNo == this.selectedZone);
+    if (detail != undefined) {
+      $(this.divLoader).show();
+      let dbPath = "Houses/" + this.selectedZone;
+      let housesInstance = this.db.object(dbPath).valueChanges().subscribe(
+        houseData => {
+          housesInstance.unsubscribe();
+          let wardHouses = [];
+          let wardTotalLines = 0;
+          if (houseData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", houseData);
+            let lineArray = Object.keys(houseData);
+            if (lineArray.length > 0) {
+              wardTotalLines = Number(lineArray[lineArray.length - 1]);
+              for (let i = 0; i < lineArray.length; i++) {
+                let lineNo = lineArray[i];
+                let cardData = houseData[lineNo];
+                let cardArray = Object.keys(cardData);
+                if (cardArray.length > 0) {
+                  for (let j = 0; j < cardArray.length; j++) {
+                    let cardNumber = cardArray[j];
+                    let latlng = cardData[cardNumber]["latLng"].toString().replace('(', '').replace(')', '');
+                    wardHouses.push({ lineNo: lineNo, cardNumber: cardNumber, latlng: latlng });
+                  }
                 }
               }
             }
           }
+          if (wardHouses.length > 0) {
+            this.saveScanCardManipulation(dateFrom, dateTo, wardHouses, wardTotalLines);
+          }
+          else {
+            $(this.divLoader).hide();
+          }
         }
-        if (wardHouses.length > 0) {
-          this.saveScanCardManipulation(dateFrom, dateTo, wardHouses, wardTotalLines);
-        }
-        else {
-          $(this.divLoader).hide();
-        }
-      }
-    );
+      );
+    }
+    else {
+      this.commonService.getWardLine(this.selectedZone, dateFrom).then((linesData: any) => {
+        let wardLinesDataObj = JSON.parse(linesData);
+        let totalHouses = Number(wardLinesDataObj["totalHouseCount"]);
+        let scanCounts = ((totalHouses * Number(this.percentage)) / 100).toFixed(0);
+        let year = dateFrom.toString().split('-')[0];
+        let monthName = this.commonService.getCurrentMonthName(Number(dateFrom.toString().split("-")[1]) - 1);
+        let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + dateFrom + "/";
+        
+        this.db.object(dbPath).update({ totalScanned: scanCounts });
+        $(this.divLoader).hide();
+
+      });
+
+    }
   }
 
   saveScanCardManipulation(date: any, endDate: any, wardHouses: any, wardTotalLines: any) {

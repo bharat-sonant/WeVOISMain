@@ -330,6 +330,9 @@ export class EmployeeAttendanceComponent implements OnInit {
 
               }
               if (outTime != "") {
+                if(inTime=="12:00"){
+                  inTime="10:59";
+                }
                 let currentTime = new Date(this.selectedDate + " " + outTime);
                 let inTimes = new Date(this.selectedDate + " " + inTime);
                 let diff = (currentTime.getTime() - inTimes.getTime());

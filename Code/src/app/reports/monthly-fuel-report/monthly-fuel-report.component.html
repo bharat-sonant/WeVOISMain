@@ -3,7 +3,7 @@
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers no-gutters-iner">
             Monthly Fuel Report
         </div>
-        
+
         <div class="field-box">
             <div class="refresh" (click)="updateJSONData();" style="text-align: right!important; padding-right: 10px;">
                 <h1><i class="fas fa-sync-alt" style="color:#57e663;font-size: 24px;"></i>
@@ -25,12 +25,14 @@
                         <div class="col-md-5 text-left align-iner">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20 select-div">
-                                    <select class="caret-select year-select" id="ddlYear" (change)="changeYearSelection($event.target.value)" [(ngModel)]="selectedYear">
+                                    <select class="caret-select year-select" id="ddlYear"
+                                        (change)="changeYearSelection($event.target.value)" [(ngModel)]="selectedYear">
                                         <option value="0">Year</option>
                                         <option value={{yer.year}} *ngFor="let yer of yearList"
                                             ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
                                     </select>
-                                    <select class="caret-select month-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)">
+                                    <select class="caret-select month-select" id="ddlMonth"
+                                        (change)="changeMonthSelection($event.target.value)">
                                         <option value="0">Month</option>
                                         <option value="01">January</option>
                                         <option value="02">February</option>
@@ -50,122 +52,127 @@
                         </div>
                         <div class="col-md-7 detail-box">
                             <div class="row">
-                        <div class="col-md-3 text-center total-fuel-main">
-                            <div class="row">
-                                <div class="col-md-12 text-center total-fuel-outer">
-                                    <b> {{fuelDetail.totalFuel}}</b>
-                                    <br /><span class="fuel-span"> Diesel</span>
+                                <div class="col-md-3 text-center total-fuel-main">
+                                    <div class="row">
+                                        <div class="col-md-12 text-center total-fuel-outer">
+                                            <b> {{fuelDetail.totalFuel}}</b>
+                                            <br /><span class="fuel-span"> Diesel</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center total-km-main">
+                                    <div class="row">
+                                        <div class="col-md-12 text-center total-km-outer">
+                                            <b> {{fuelDetail.totalAmount}}</b> <br /><span class="total-ammount-span">
+                                                Amount</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center total-ammount-main">
+                                    <div class="row">
+                                        <div class="col-md-12 text-center  total-ammount-outer">
+                                            <b> {{fuelDetail.totalKm}}</b> <br /><span class="tatal-km-span"> Km
+                                                Running</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-left export-main">
+                                    <span class="export-span">
+                                        <i class="fa-solid fa-file-export export-icon"
+                                            (click)="exportToExcel();"></i><br />
+                                        Export to Excel
+                                    </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-3 text-center total-km-main">
-                            <div class="row">
-                                <div class="col-md-12 text-center total-km-outer">
-                                    <b> {{fuelDetail.totalAmount}}</b> <br /><span class="total-ammount-span">
-                                        Amount</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 text-center total-ammount-main">
-                            <div class="row">
-                                <div class="col-md-12 text-center  total-ammount-outer">
-                                    <b> {{fuelDetail.totalKm}}</b> <br /><span class="tatal-km-span"> Km
-                                        Running</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 text-left export-main">
-                            <span class="export-span">
-                                <i class="fa-solid fa-file-export export-icon"
-                                    
-                                    (click)="exportToExcel();"></i><br />
-                                Export to Excel
-                            </span>
                         </div>
                     </div>
-                    </div>
-                 </div>
-                <div class="card-body">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-12 pr-1">
-                                <div id="divList" class="table-wrapper table-one">
-                                    <table class="table table-line">
-                                        <thead>
-                                            <th class="text-left br-1 border-none">
-                                                Sr. No.</th>
-                                            <th class="text-left br-1 border-none">
-                                                Vehicle Number</th>
-                                            <th class="text-right br-1 border-none">
-                                                Diesel Qty
-                                            </th>
-                                            <th class="text-right br-1 border-none">
-                                                Amount
-                                            </th>
-                                            <th class="text-right br-1 border-none">
-                                                KM
-                                            </th>
-                                            <th class="text-right br-1 border-none">
-                                                Avg.
-                                            </th>
-                                        </thead>
-                                        <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of vehicleList; let i=index">
-                                                <td class="text-left br-1">
-                                                    {{i+1}}
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    {{data.vehicle}}
-                                                </td>
-                                                <td class="text-right br-1">
-                                                    {{data.qty}}
-                                                </td>
-                                                <td class="text-right br-1">
-                                                    {{data.amount}}
-                                                </td>
-                                                <td class="text-right br-1">
-                                                    {{data.km}}
-                                                </td>
-                                                <td class="text-right br-1">
-                                                    {{data.avg}}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
+                    <div class="card-body">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-12 pr-1">
+                                    <div id="divList" class="table-wrapper table-one">
+                                        <table class="table table-line">
+                                            <thead>
+                                                <th class="text-left br-1 border-none">
+                                                    Sr. No.</th>
+                                                <th class="text-left br-1 border-none">
+                                                    Vehicle Number</th>
+                                                <th class="text-right br-1 border-none">
+                                                    Diesel Qty
+                                                </th>
+                                                <th class="text-right br-1 border-none">
+                                                    Amount
+                                                </th>
+                                                <th class="text-right br-1 border-none">
+                                                    KM
+                                                </th>
+                                                <th class="text-right br-1 border-none">
+                                                    GPS KM
+                                                </th>
+                                                <th class="text-right br-1 border-none">
+                                                    Avg.
+                                                </th>
+                                            </thead>
+                                            <tbody>
+                                                <tr id="tr{{i}}" *ngFor="let data of vehicleList; let i=index">
+                                                    <td class="text-left br-1">
+                                                        {{i+1}}
+                                                    </td>
+                                                    <td class="text-left br-1">
+                                                        {{data.vehicle}}
+                                                    </td>
+                                                    <td class="text-right br-1">
+                                                        {{data.qty}}
+                                                    </td>
+                                                    <td class="text-right br-1">
+                                                        {{data.amount}}
+                                                    </td>
+                                                    <td class="text-right br-1">
+                                                        {{data.km}}
+                                                    </td>
+                                                    <td class="text-right br-1">
+                                                        {{data.gpsKM}}
+                                                    </td>
+                                                    <td class="text-right br-1">
+                                                        {{data.avg}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer">
+                                            <div class="form-group">
+                                                <h5>No data available</h5>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6 card-outer">
-            <div class="card card-body-outer">
-                <div id="content" #content class="card-body card-iner">
-                    <div class="row">
+            <div class="col-md-6 card-outer">
+                <div class="card card-body-outer">
+                    <div id="content" #content class="card-body card-iner">
+                        <div class="row">
 
-                        <div class="col-md-12">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-12 pr-1">
+                            <div class="col-md-12">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-12 pr-1">
 
-                                    </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer2">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
+                                        </div>
+                                        <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer2">
+                                            <div class="form-group">
+                                                <h5>No data available</h5>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>

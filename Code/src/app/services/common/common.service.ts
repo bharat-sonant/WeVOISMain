@@ -167,6 +167,9 @@ export class CommonService {
     else if (cityName == "sikar") {
       latLng.push({ lat: 27.616270, lng: 75.152443 });
     }
+    else if (cityName == "sikar-survey") {
+      latLng.push({ lat: 27.616270, lng: 75.152443 });
+    }
     else if (cityName == "reengus") {
       latLng.push({ lat: 27.369301, lng: 75.566200 });
     }
@@ -262,6 +265,9 @@ export class CommonService {
     }
     else if (cityName == "sujangarh") {
       latLng.push({ lat: 27.7066465, lng: 74.4631898 });
+    }
+    else if (cityName == "noida") {
+      latLng.push({ lat: 28.5433155, lng: 77.3640599 });
     }
     return latLng;
   }
@@ -666,7 +672,6 @@ export class CommonService {
   getDiffrernceHrMin(dt2: Date, dt1: Date) {
 
     let diff = (dt2.getTime() - dt1.getTime());
-
     let minutes = Math.floor((diff / (1000 * 60)) % 60);
     let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
 
@@ -1079,10 +1084,14 @@ export class CommonService {
                 markingWards.push({ zoneNo: list[index], zoneName: "Wet 5" });
               } else if (list[index].toString() == "WetWaste6") {
                 markingWards.push({ zoneNo: list[index], zoneName: "Wet 6" });
+              } else if (list[index].toString() == "WetWaste7") {
+                markingWards.push({ zoneNo: list[index], zoneName: "Wet 7" });
               } else if (list[index].toString() == "CompactorTracking1") {
                 markingWards.push({ zoneNo: list[index], zoneName: "CompactorTracking1", });
               } else if (list[index].toString() == "CompactorTracking2") {
                 markingWards.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
+              } else if (list[index].toString().includes("Commercial") || list[index].toString().includes("Market")) {
+                markingWards.push({ zoneNo: list[index], zoneName: data[index], });
               } else {
                 if (cityName == 'kishangarh' && data[index].toString() == "60") {
                   markingWards.push({ zoneNo: data[index], zoneName: "Zone 58_60" });
@@ -1129,12 +1138,14 @@ export class CommonService {
     let cityName = localStorage.getItem("cityName");
     letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
 
-    const path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-    
+    let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
+    if (cityName == "nokha") {
+      path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FWards.json?alt=media";
+    }
     let availableWardInstance = this.httpService.get(path).subscribe(data => {
       availableWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
-      
+
       if (list.length > 0) {
         for (let index = 0; index < list.length; index++) {
           if (list[index] != null) {
@@ -1157,10 +1168,14 @@ export class CommonService {
                 letestZone.push({ zoneNo: list[index], zoneName: "Wet 5" });
               } else if (list[index].toString() == "WetWaste6") {
                 letestZone.push({ zoneNo: list[index], zoneName: "Wet 6" });
+              } else if (list[index].toString() == "WetWaste7") {
+                letestZone.push({ zoneNo: list[index], zoneName: "Wet 7" });
               } else if (list[index].toString() == "CompactorTracking1") {
                 letestZone.push({ zoneNo: list[index], zoneName: "CompactorTracking1", });
               } else if (list[index].toString() == "CompactorTracking2") {
                 letestZone.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
+              } else if (list[index].toString().includes("Commercial") || list[index].toString().includes("Market")) {
+                letestZone.push({ zoneNo: list[index], zoneName: data[index], });
               } else {
                 if (cityName == 'kishangarh' && data[index].toString() == "60") {
                   letestZone.push({ zoneNo: data[index], zoneName: "Zone 58_60" });
@@ -1169,6 +1184,7 @@ export class CommonService {
                   letestZone.push({ zoneNo: data[index], zoneName: "Zone " + data[index], });
                 }
               }
+              this.saveLocationHistory(data[index]);
             }
           }
         }
@@ -1176,6 +1192,23 @@ export class CommonService {
       }
     }, error => {
       localStorage.setItem("latest-zones", JSON.stringify(letestZone));
+    });
+  }
+
+  saveLocationHistory(zone: any) {
+    let preDate = this.getPreviousDate(this.setTodayDate(), 1);
+    let path = "LocationHistory/" + zone + "/" + preDate.split("-")[0] + "/" + this.getCurrentMonthName(Number(preDate.split("-")[1]) - 1) + "/" + preDate;
+    this.getStorageLocationHistory(path).then(response => {
+      if (response["status"] == "Fail") {
+        this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+        let locationInstance = this.fsDb.object(path).valueChanges().subscribe(
+          locationData => {
+            locationInstance.unsubscribe();
+            if (locationData != null) {
+              this.saveJsonFile(locationData, "route.json", "/" + path + "/");
+            }
+          });
+      }
     });
   }
 
@@ -1540,6 +1573,7 @@ export class CommonService {
 
   getBVGUserById(userId: string) {
     return new Promise((resolve) => {
+      console.log(userId);
       let userList = JSON.parse(localStorage.getItem("bvgUserList"));
       if (userList == undefined) {
         userList = [];
@@ -1883,17 +1917,43 @@ export class CommonService {
     let date = this.setTodayDate();
     let year = date.split("-")[0];
     let monthName = this.getCurrentMonthName(Number(date.split('-')[1]) - 1);
-    let dbPath = "PageLoadHistory/" + year + "/" + monthName + "/" + mainPage + "/" + pageName + "/" + date + "/"+userId;
+    let dbPath = "PageLoadHistory/" + year + "/" + monthName + "/" + mainPage + "/" + pageName + "/" + date + "/" + userId;
     let pageHistoryInstance = this.fsDb.object(dbPath).valueChanges().subscribe((response) => {
       pageHistoryInstance.unsubscribe();
       let count = response === null ? 1 : (Number(response) + 1);
-      this.fsDb.object(dbPath).set(count );
-      dbPath = "PageLoadHistory/Summary/"+pageName;
+      this.fsDb.object(dbPath).set(count);
+      dbPath = "PageLoadHistory/Summary/" + pageName;
       let summaryInstance = this.fsDb.object(dbPath).valueChanges().subscribe((respSummary) => {
         summaryInstance.unsubscribe();
         let summaryCount = respSummary === null ? 1 : (Number(respSummary) + 1);
         this.fsDb.object(dbPath).set(summaryCount);
       })
     });
+  }
+
+  getStorageLocationHistory(path: any) {
+    return new Promise((resolve) => {
+      path = this.fireStoragePath + this.getFireStoreCity() + "%2F" + path.toString().replaceAll("/", "%2F") + "%2Froute.json?alt=media";
+      let Instance = this.httpService.get(path).subscribe(routeData => {
+        Instance.unsubscribe();
+        resolve({ status: "Success", data: routeData });
+      }, error => {
+        resolve({ status: "Fail", data: {} })
+      });
+    });
+
+  }
+
+  getStorageDailyWorkDetail(path: any) {
+    return new Promise((resolve) => {
+      path = this.fireStoragePath + this.getFireStoreCity() + "%2F" + path.toString().replaceAll("/", "%2F") + ".json?alt=media";
+      let Instance = this.httpService.get(path).subscribe(workData => {
+        Instance.unsubscribe();
+        resolve({ status: "Success", data: workData });
+      }, error => {
+        resolve({ status: "Fail", data: {} })
+      });
+    });
+
   }
 }

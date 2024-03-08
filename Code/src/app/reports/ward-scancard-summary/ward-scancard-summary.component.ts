@@ -132,7 +132,7 @@ export class WardScancardSummaryComponent implements OnInit {
                               let keyArray = Object.keys(scannedData);
                               for (let j = 0; j < keyArray.length; j++) {
                                 let index = keyArray[j];
-                                if (index != "recentScanned" && index != "totalScanned" && index != "ImagesData") {
+                                if (index != "recentScanned" && index != "totalScanned" && index != "ImagesData" && index != "totalActualScanned") {
                                   if (scannedData[index]["scanBy"] != "-1") {
                                     scanned = scanned + 1;
                                   }

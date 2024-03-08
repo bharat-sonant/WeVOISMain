@@ -39,16 +39,12 @@ export class DailyWorkDetailComponent implements OnInit {
         this.isShowActual = true;
       }
     }
-    this.selectedDate = this.commonService.setTodayDate();
-    $(this.txtDate).val(this.selectedDate);
-    this.getSelectedYearMonthName();
     this.getZones();
   }
 
   getZones() {
     this.zoneList = [];
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-    this.getDailyWorkDetail();
   }
 
   getSelectedYearMonthName() {
@@ -62,6 +58,7 @@ export class DailyWorkDetailComponent implements OnInit {
       $(this.txtDate).val(newDate);
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
+        $("#spMessage").hide();
         this.getSelectedYearMonthName();
         this.getDailyWorkDetail();
       }
@@ -78,7 +75,6 @@ export class DailyWorkDetailComponent implements OnInit {
       for (let i = 1; i < this.zoneList.length; i++) {
         let zoneNo = this.zoneList[i]["zoneNo"];
         this.dailyWorkList.push({ zoneNo: zoneNo, zoneName: this.zoneList[i]["zoneName"] });
-        this.getHaltTime(zoneNo);
         this.getWorkerDetail(zoneNo);
         this.getSummaryDetail(zoneNo);
         let dbPath = "LocationHistory/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
@@ -86,29 +82,10 @@ export class DailyWorkDetailComponent implements OnInit {
 
       }
     }
-     this.getPickedDustbin();
+    this.getPickedDustbin();
   }
 
-  getPickedDustbin() {
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPickedDustbin");
-    let dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-    let pickedDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
-      pickedDustbinInstance.unsubscribe();
-      if (data != null) {
-        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPickedDustbin", data);
-        let keyArray = Object.keys(data);
-        for (let i = 0; i < keyArray.length; i++) {
-          this.pickedDustbinList.push({ dustbin: keyArray[i] });
-        }
-      }
-      if (this.selectedDate == this.commonService.setTodayDate()) {
-        this.getBinLiftingDetail("DustbinData/DustbinPickingPlans/" + this.selectedDate);
-      }
-      dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-      this.getBinLiftingDetail(dbPath);
-    })
-  }
-
+  
   getTotalRunning(zoneNo: any, dbPath: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTotalRunning");
     let distanceInstance = this.db.object(dbPath + "/calculatedDistance").valueChanges().subscribe(calDiatance => {
@@ -149,6 +126,27 @@ export class DailyWorkDetailComponent implements OnInit {
     });
   }
 
+  getPickedDustbin() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPickedDustbin");
+    let dbPath = "DustbinData/DustbinPickHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+    let pickedDustbinInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      pickedDustbinInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPickedDustbin", data);
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          this.pickedDustbinList.push({ dustbin: keyArray[i] });
+        }
+      }
+      if (this.selectedDate == this.commonService.setTodayDate()) {
+        this.getBinLiftingDetail("DustbinData/DustbinPickingPlans/" + this.selectedDate);
+      }
+      dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+      this.getBinLiftingDetail(dbPath);
+    })
+  }
+
+
   getBinLiftingDetail(dbPath: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getBinLiftingDetail");
     let dustbinPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -177,6 +175,7 @@ export class DailyWorkDetailComponent implements OnInit {
                     }
                   }
                   let bins = pickedDustbin + "/" + assignedDustbin;
+
                   let percentage = ((pickedDustbin * 100) / assignedDustbin).toFixed(0) + "%";
                   this.dailyWorkList.push({ zoneNo: planKey, zoneName: "BinLifting(" + planData[planKey]["planName"] + ")", trips: bins, workPercentage: percentage });
                   this.getPlanAssignment(planKey);
@@ -301,12 +300,16 @@ export class DailyWorkDetailComponent implements OnInit {
             let actualWorkPercentage = "0%";
             let wardRunKm = "0.000";
             let wardReachedOn = "";
+            let haltTime = "";
             if (summaryData["dutyOutTime"] != null) {
               endTime = summaryData["dutyOutTime"].split(',')[summaryData["dutyOutTime"].split(',').length - 1];
             }
-            if (summaryData["trip"] != null) {
-              trips = summaryData["trip"];
-            }
+           // if (summaryData["calculatedTrip"] != null) {
+          //    trips = summaryData["calculatedTrip"];
+          //  }
+          //  else {
+              this.getTrips(zoneNo);
+          //  }
             if (summaryData["workPercentage"] != null) {
               workPercentage = summaryData["workPercentage"] + "%";
               actualWorkPercentage = summaryData["workPercentage"] + "%";
@@ -320,12 +323,19 @@ export class DailyWorkDetailComponent implements OnInit {
             if (summaryData["wardReachedOn"] != null) {
               wardReachedOn = summaryData["wardReachedOn"];
             }
+           // if (summaryData["haltTime"] != null) {
+           //   haltTime = summaryData["haltTime"];
+           // }
+           // else {
+              this.getHaltTime(zoneNo);
+          //  }
 
             let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
             if (detail != undefined) {
               detail.startTime = startTime;
               detail.endTime = endTime;
-              //detail.trips = trips;
+              detail.haltTime = haltTime;
+              detail.trips = trips;
               detail.wardRunKm = wardRunKm;
               detail.workPercentage = workPercentage;
               detail.actualWorkPercentage = actualWorkPercentage;
@@ -337,7 +347,7 @@ export class DailyWorkDetailComponent implements OnInit {
               let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
               detail.workTime = this.commonService.getHrsFull(totalMinutes);
               detail.wardReachedOn = wardReachedOn;
-              this.getTrips(zoneNo);
+
             }
           }
         }
@@ -350,12 +360,15 @@ export class DailyWorkDetailComponent implements OnInit {
     let tripInstance = this.db.list(dbPath).valueChanges().subscribe(tripData => {
       tripInstance.unsubscribe();
       if (tripData != null) {
-
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTrips", tripData);
       }
       let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
       if (detail != undefined) {
         detail.trips = tripData.length;
+        if (this.selectedDate != this.commonService.setTodayDate()) {
+          let path = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
+          this.db.object(path).update({ calculatedTrip: tripData.length });
+        }
       }
     });
   }
@@ -466,6 +479,10 @@ export class DailyWorkDetailComponent implements OnInit {
                 let zoneDetails = this.dailyWorkList.find((item) => item.zoneNo == zoneNo);
                 if (zoneDetails != undefined) {
                   zoneDetails.haltTime = this.commonService.getHrs(totalBreak) + " hr";
+                  if (this.selectedDate != this.commonService.setTodayDate()) {
+                    let path = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
+                    this.db.object(path).update({ haltTime: this.commonService.getHrs(totalBreak) + " hr" });
+                  }
                 }
               }
             }

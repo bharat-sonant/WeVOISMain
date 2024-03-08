@@ -146,9 +146,33 @@ export class WardTripAnalysisComponent implements OnInit {
                 if (data[tripID]["imageName"] != null) {
                   imageName = data[tripID]["imageName"];
                 }
+                this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
+                  driverName =
+                    employee["name"] != null
+                      ? employee["name"].toUpperCase()
+                      : "---";
+                  driverMobile =
+                    employee["mobile"] != null ? employee["mobile"] : "---";
+                  tripList.push({
+                    tripId: tripID,
+                    tripName: "trip " + tripID,
+                    driverName: driverName,
+                    driverMobile: driverMobile,
+                    time: time,
+                    filledStatus: filledStatus,
+                    analysisAt: analysisAt,
+                    analysisBy: analysisBy,
+                    remark: remark,
+                    imageName: imageName,
+                    vehicleType: vehicleType,
+                    manualRemarks: manualRemarks,
+                    overLoad: overLoad
+                  });
+                });
+                /*
                 if (data[tripID]["driverName"] != null) {
                   driverName = data[tripID]["driverName"];
-                  driverMobile=data[tripID]["driverMobile"];
+                  driverMobile = data[tripID]["driverMobile"];
                   tripList.push({
                     tripId: tripID,
                     tripName: "trip " + tripID,
@@ -166,6 +190,7 @@ export class WardTripAnalysisComponent implements OnInit {
                   });
                 }
                 else {
+                  //this.saveTripDriverDetail(zoneNo,tripID,driverId);
                   this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
                     driverName =
                       employee["name"] != null
@@ -188,11 +213,11 @@ export class WardTripAnalysisComponent implements OnInit {
                       manualRemarks: manualRemarks,
                       overLoad: overLoad
                     });
-                    let path="WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + zoneNo+"/"+tripID;
-                    this.db.object(path).update({driverName:driverName,driverMobile:driverMobile});
                   });
 
                 }
+
+                */
 
               }
               if (tripAnalysisCount == tripCount) {
@@ -235,6 +260,15 @@ export class WardTripAnalysisComponent implements OnInit {
         });
       }
     }
+  }
+
+  saveTripDriverDetail(zoneNo: any, tripId: any, driverId: any) {
+    this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
+      let driverName = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+      let driverMobile = employee["mobile"] != null ? employee["mobile"] : "---";
+      let path = "WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + zoneNo + "/" + tripId;
+      this.db.object(path).update({ driverName: driverName, driverMobile: driverMobile });
+    });
   }
 
   setDate(filterVal: any, type: string) {

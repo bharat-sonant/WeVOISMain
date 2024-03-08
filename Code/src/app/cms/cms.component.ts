@@ -25,6 +25,8 @@ export class CmsComponent implements OnInit {
 
   isShow = false;
   userid: any;
+  userType: any;
+  isActual: any;
   cityName: any;
   db: any;
   isDehradun: boolean;
@@ -33,14 +35,21 @@ export class CmsComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.cityName = localStorage.getItem("cityName");
     this.userid = localStorage.getItem("userID");
+    if (localStorage.getItem("userType") == "External User") {
+      this.userType="1";
+    }
+    else{
+      this.userType="2";
+    }
+    this.isActual = localStorage.getItem("isActual");
     const id = this.actRoute.snapshot.paramMap.get("id");
     let pageList = id.split("-");
     this.getPages(pageList[pageList.length - 1]);
+
     // this.setDesign();
   }
 
   getPages(pageId: any) {
-    console.log(pageId)
     this.clearAll();
     this.accessList = [];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
@@ -143,10 +152,10 @@ export class CmsComponent implements OnInit {
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
     if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + newUrl;
+      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
     }
     else {
-      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
+      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
     }
     window.open(url, "_blank");
   }

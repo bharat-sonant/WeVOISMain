@@ -17,6 +17,7 @@
                         <div class="col-md-5 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <span id="spMessage" style="color:red; margin-left: 10px; position: absolute; z-index: 999; margin-top: -15px; ">Please select date for analysis data</span>
                                     <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                         << </button>
                                             <input id="txtDate" class="filter-select filter-input" type="date"
@@ -76,6 +77,9 @@
                                                 KM
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
+                                                GPS KM
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
                                                 Driver Name
                                             </th>
                                         </thead>
@@ -120,6 +124,9 @@
                                                         {{dt.km}}
                                                     </div>
 
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.gpsKM}}
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <div style="width:100% " *ngFor="let dt of data.wardList "
