@@ -518,12 +518,50 @@ export class MonthlyFuelReportComponent implements OnInit {
       else {
         dbLocationPath = "LocationHistory/" + zone + "/" + year + "/" + monthName + "/" + date;
       }
-      let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
-        locationData => {
-          locationInstance.unsubscribe();
+      this.commonService.getStorageLocationHistory(dbLocationPath).then((response)=>{
+        if (response["status"] == "Fail") {
+          let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
+            locationData => {
+              locationInstance.unsubscribe();
+              let distance = "0";
+              if (locationData != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRunningDistance", locationData);
+                let keyArray = Object.keys(locationData);
+                if (keyArray.length > 0) {
+                  let startDate = new Date(date + " " + startTime);
+                  let endDate = new Date(date + " " + endTime);
+                  let diffMs = endDate.getTime() - startDate.getTime(); // milliseconds between now & Christmas
+                  if (diffMs < 0) {
+                    endDate = new Date(this.commonService.getNextDate(date, 1) + " " + endTime);
+                    diffMs = endDate.getTime() - startDate.getTime();
+                  }
+                  let diffMins = Math.round(diffMs / 60000); // minutes
+                  for (let i = 0; i <= diffMins; i++) {
+                    let locationList = keyArray.filter(item => item.includes(startTime));
+                    if (locationList.length > 0) {
+                      for (let j = 0; j < locationList.length; j++) {
+                        if (locationData[locationList[j]]["distance-in-meter"] != null) {
+                          let coveredDistance = locationData[locationList[j]]["distance-in-meter"];
+                          distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
+                        }
+                      }
+                    }
+                    startDate = new Date(startDate.setMinutes(startDate.getMinutes() + 1));
+                    startTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
+                  }
+                  if (distance != "0") {
+                    vehicleWorkList[listIndex]["distance"] = (Number(distance) / 1000).toFixed(3);
+                  }
+                }
+              }
+              listIndex++;
+              this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
+            });
+        }
+        else{
           let distance = "0";
+          let locationData=response["data"];
           if (locationData != null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRunningDistance", locationData);
             let keyArray = Object.keys(locationData);
             if (keyArray.length > 0) {
               let startDate = new Date(date + " " + startTime);
@@ -554,7 +592,10 @@ export class MonthlyFuelReportComponent implements OnInit {
           }
           listIndex++;
           this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
-        });
+
+        }
+      });
+      
     }
   }
 }

@@ -589,11 +589,47 @@ export class WardWorkTrackingComponent {
 
   getRoute() {
     let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-    let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
-      routeData => {
-        routeInstance.unsubscribe();
-        if (routeData != null) {
-          let lineData = [];
+    this.commonService.getStorageLocationHistory(dbPath).then((response)=>{
+      if (response["status"] == "Fail") {
+        let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
+          routeData => {
+            routeInstance.unsubscribe();
+            if (routeData != null) {
+              let lineData = [];
+              let keyArray = Object.keys(routeData);
+              if (keyArray.length > 0) {
+                for (let i = 0; i < keyArray.length; i++) {
+                  let index = keyArray[i];
+                  if (routeData[index]["lat-lng"] != null) {
+                    let routeDateList = [];
+                    let latLong: string = routeData[index]["lat-lng"];
+                    routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+                    for (let j = 0; j < routeDateList.length; j++) {
+                      let routePart = routeDateList[j].split(',');
+                      if (routePart.length == 2) {
+                        lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
+                      }
+                    }
+                  }
+                }
+                if (lineData.length > 0) {
+                  let line = new google.maps.Polyline({
+                    path: lineData,
+                    strokeColor: "blue",
+                    strokeWeight: 2
+                  });
+    
+                  this.routePolyline = line;
+                  this.routePolyline.setMap(this.map);
+                }
+              }
+            }
+          }
+        );
+      }
+      else{
+        let lineData = [];
+        let routeData=response["data"];
           let keyArray = Object.keys(routeData);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -621,9 +657,8 @@ export class WardWorkTrackingComponent {
               this.routePolyline.setMap(this.map);
             }
           }
-        }
       }
-    );
+    })
   }
 
   setDate(filterVal: any, type: string) {
