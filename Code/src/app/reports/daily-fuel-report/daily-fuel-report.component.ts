@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
@@ -11,7 +12,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 })
 export class DailyFuelReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private modalService: NgbModal, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
   db: any;
   vehicleList: any[] = [];
@@ -24,6 +25,7 @@ export class DailyFuelReportComponent implements OnInit {
   divLoader = "#divLoader";
   workDetailList: any[] = [];
   zoneDetailList: any[] = [];
+  dieselHistoryList: any[] = [];
   serviceName = "daily-fuel-report";
 
   fuelDetail: fuelDetail = {
@@ -91,6 +93,47 @@ export class DailyFuelReportComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
   }
 
+  showHistory(content: any, key: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
+    let height = 400;
+    let width = 600;
+    let mapHeight = height - 40 + "px";
+    let divHeight = height - 40 + "px";
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $("#haltMap").css("height", mapHeight);
+    $("#divSequence").css("height", divHeight);
+    this.getDiselEntryHistory(key);
+  }
+
+
+  closeMapModelHalt() {
+    this.modalService.dismissAll();
+  }
+
+  getDiselEntryHistory(key: any) {
+    this.dieselHistoryList = [];
+    let instance = this.db.object("DieselEntriesData/History/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + key).valueChanges().subscribe(data => {
+      instance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          if (keyArray[i] != "lastEntry") {
+            let meterImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2FHistory%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2F" + keyArray[i] + "%2FmeterReadingImage?alt=media";
+            let slipImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2FHistory%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2F" + keyArray[i] + "%2FamountSlipImage?alt=media";
+
+            this.dieselHistoryList.push({ amount: data[keyArray[i]]["amount"], meterReading: data[keyArray[i]]["meterReading"], quantity: data[keyArray[i]]["quantity"], vehicle: data[keyArray[i]]["vehicle"], createdBy: data[keyArray[i]]["createdBy"], creationDate: data[keyArray[i]]["creationDate"], meterImageUrl: meterImageUrl, slipImageUrl: slipImageUrl });
+          }
+        }
+      }
+    })
+  }
+
   getDieselQty() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDieselQty");
     $('#divLoader').show();
@@ -110,9 +153,13 @@ export class DailyFuelReportComponent implements OnInit {
               if (detail != undefined) {
                 let qty = "";
                 let amount = "";
+                let isUpdate = 0;
                 if (dieselData[key]["quantity"] != null) {
                   qty = dieselData[key]["quantity"];
                   totalFuel += Number(dieselData[key]["quantity"]);
+                }
+                if (dieselData[key]["isUpdate"] != null) {
+                  isUpdate = 1;
                 }
                 if (dieselData[key]["amount"] != null) {
                   amount = dieselData[key]["amount"];
@@ -120,7 +167,7 @@ export class DailyFuelReportComponent implements OnInit {
                 }
                 let meterImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FmeterReadingImage?alt=media";
                 let slipImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FamountSlipImage?alt=media";
-                detail.diesel.push({ qty: qty, amount: amount, meterImageUrl: meterImageUrl, slipImageUrl: slipImageUrl });
+                detail.diesel.push({ key: key, qty: qty, amount: amount, meterImageUrl: meterImageUrl, slipImageUrl: slipImageUrl, isUpdate: isUpdate });
               }
             }
           }

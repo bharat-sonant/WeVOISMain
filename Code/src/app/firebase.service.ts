@@ -14,7 +14,7 @@ export class FirebaseService {
   getDatabaseByCity(city: any) {
     let databaseName = "";
     let databaseURL = "";
-    let storageBucket="";
+    let storageBucket = "";
 
     if (city == 'sikar') {
       this.fireBase = {
@@ -54,16 +54,20 @@ export class FirebaseService {
       databaseName = "dtdnavigatortesting";
       databaseURL = "https://dtdnavigatortesting.firebaseio.com";
       /*
-            this.fireBase = {
-              apiKey: "AIzaSyAXeDgQu4b7pNzCbFf0GmYm-0xYmZ6LEbw",
-              authDomain: "wevoiscomplaints.firebaseapp.com",
-              databaseURL: "https://wevoiscomplaints-default-rtdb.firebaseio.com",
-              projectId: "wevoiscomplaints",
-              storageBucket: "wevoiscomplaints.appspot.com",
-              messagingSenderId: "501093550605"
-            };
-            databaseName = "wevoiscomplaints-default-rtdb";
-            databaseURL = "https://wevoiscomplaints-default-rtdb.firebaseio.com";*/
+     this.fireBase = {
+       apiKey: "AIzaSyCajQzNe9gN3DrINuPm4kBGEnW-ZnP1zj8",
+       authDomain: "wevois-dev.firebaseapp.com",
+       databaseURL: "https://wevois-tm.firebaseio.com",
+       projectId: "wevois-dev",
+       storageBucket: "wevois-dev.appspot.com",
+       messagingSenderId: "255015005490",
+       appId: "1:255015005490:web:d5ae79aea93ffe6c37bb2b",
+       measurementId: "G-FC4JRSRMZB"
+     };
+     databaseName = "wevois-tm";
+     databaseURL = "https://wevois-tm.firebaseio.com";
+     */
+
     }
     else if (city == 'jaipur-office') {
       this.fireBase = {
@@ -513,6 +517,18 @@ export class FirebaseService {
       };
       databaseName = "dtdsikar-survey";
       databaseURL = "https://dtdsikar-survey.firebaseio.com";
+    }
+    else if (city == 'jodhpur') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdnjodhpur.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdnjodhpur";
+      databaseURL = "https://dtdnjodhpur.firebaseio.com";
     }
 
     return new AngularFireDatabase(

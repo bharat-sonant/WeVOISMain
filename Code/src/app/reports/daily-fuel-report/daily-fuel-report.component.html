@@ -17,7 +17,9 @@
                         <div class="col-md-5 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <span id="spMessage" style="color:red; margin-left: 10px; position: absolute; z-index: 999; margin-top: -15px; ">Please select date for analysis data</span>
+                                    <span id="spMessage"
+                                        style="color:red; margin-left: 10px; position: absolute; z-index: 999; margin-top: -15px; ">Please
+                                        select date for analysis data</span>
                                     <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                         << </button>
                                             <input id="txtDate" class="filter-select filter-input" type="date"
@@ -43,11 +45,11 @@
                                         Running</span>
 
                                 </div>
-                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">                                    
-                                        <i class="fa-solid fa-file-export"
-                                            style="cursor:pointer; color:green;  font-size: 24px; "
-                                            (click)="exportToExcel();"></i><br />
-                                            <span style="font-size: 10px;"> Export to Excel   </span>                                
+                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                    <i class="fa-solid fa-file-export"
+                                        style="cursor:pointer; color:green;  font-size: 24px; "
+                                        (click)="exportToExcel();"></i><br />
+                                    <span style="font-size: 10px;"> Export to Excel </span>
                                 </div>
                             </div>
                         </div>
@@ -93,12 +95,14 @@
                                                 </td>
                                                 <td class="text-right br-1">
                                                     <div style="width:100% " *ngFor="let diesel of data.diesel ">
-                                                        {{diesel.qty}}
+                                                        {{diesel.qty}} <i class="far fa-eye eye-icon"
+                                                            [hidden]="diesel.isUpdate==0"
+                                                            (click)="showHistory(contentHistory,diesel.key)"
+                                                            style="color: red; cursor: pointer;"></i>
                                                     </div>
                                                 </td>
                                                 <td class="text-right br-1">
                                                     <div style="width:100% " *ngFor="let diesel of data.diesel ">
-                                                        
                                                         <span style="float:left;">
                                                             <a href="{{diesel.slipImageUrl}}" target="_blank"
                                                                 style="color:#000">
@@ -112,6 +116,7 @@
                                                                     style="font-size: 20px;"></i></a>
                                                         </span>
                                                         {{diesel.amount}}
+
                                                     </div>
                                                 </td>
                                                 <td class="text-left br-1">
@@ -177,31 +182,48 @@
     </div>
 </div>
 
-
-<ng-template #contentDesignation>
+<ng-template #contentHistory>
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Update Designation</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="exampleModalLongTitle">History :
+                </h5>
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
             </div>
-            <div class="modal-body" style="text-align:center;">
-                <input id="empID" type="hidden" value="0" />
-                <div class="wrap-input-effects" required>
-                    <select id="ddlDesignationUpdate" class="input-green">
-                        <option *ngFor="let dt of designationList" value={{dt.designation}}>
-                            {{dt.designation}}
-                        </option>
-                    </select>
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
-                    </span>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="dth">
+                            <div >
+                                <div class="table-wrapper table-two">
+                                    <table class="table table-line">
+                                        <tbody style="border: 1px solid lightgray!important;">
+                                            <tr *ngFor="let data of dieselHistoryList, let i=index">
+                                                <td class="text-left"
+                                                    style="width:210px; vertical-align: top; font-weight: normal!important;">
+                                                    <a href="{{data.meterImageUrl}}" target="_blank">
+                                                        <img [src]="data.meterImageUrl"
+                                                            style="max-width: 100px;max-height: 100px;" /></a>
+                                                    <a href="{{data.slipImageUrl}}" target="_blank">
+                                                        <img [src]="data.slipImageUrl"
+                                                            style="max-width: 100px;max-height: 100px; float: right;" /></a>
+                                                </td>
+                                                <td class="text-left"
+                                                    style="vertical-align: top;  font-weight: normal!important;">
+                                                    <b>Vehicle :</b> {{data.vehicle}}<br />
+                                                    <b> Quantity :</b> {{data.quantity}}<br />
+                                                    <b> Amount :</b> {{data.amount}}<br />
+                                                    <b> Meter Reading :</b> {{data.meterReading}}<br />
+                                                    <b> By {{data.createdBy}}</b> <b>on </b>{{data.creationDate}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <input type="button" class="btn btn-success submit-btn" value="SUBMIT" (click)="updateDesignation();" />
-                <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
             </div>
         </div>
     </div>

@@ -387,6 +387,16 @@ export class HouseMarkingComponent {
               let imageName = data[index]["image"];
               let userId = data[index]["userId"];
               let date = "";
+              let ownerName = "";
+              let persons = "";
+
+              if (data[index]["ownerName"] != null) {
+                ownerName = data[index]["ownerName"].toUpperCase();
+              }
+
+              if (data[index]["totalPerson"] != null) {
+                persons = data[index]["totalPerson"];
+              }
 
               if (data[index]["date"] != null) {
                 date = data[index]["date"].split(" ")[0];
@@ -464,7 +474,7 @@ export class HouseMarkingComponent {
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId });
+              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId,ownerName:ownerName,persons:persons });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
@@ -567,6 +577,13 @@ export class HouseMarkingComponent {
               let imageName = data[index]["image"];
               let userId = data[index]["userId"];
               let date = "";
+              let ownerName="";
+              let persons="";
+              if (data[index]["ownerName"] != null) {
+                ownerName = data[index]["ownerName"].toUpperCase();
+              }if (data[index]["totalPerson"] != null) {
+                persons = data[index]["totalPerson"];
+              }
 
               if (data[index]["date"] != null) {
                 date = data[index]["date"].split(" ")[0];
@@ -641,7 +658,7 @@ export class HouseMarkingComponent {
                 houseType = houseTypeDetail.houseType;
               }
 
-              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId });
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId,ownerName:ownerName,persons:persons });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
@@ -1839,7 +1856,7 @@ export class HouseMarkingComponent {
     $("#divModifiedEntities").show();
     let dbPath = "EntityMarkingData/ModifiedHouseTypeHistory/" + modificationId;
     let modificationInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      if(data!=null){
+      if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getModifiedMarkersList", data);
       }
       modificationInstance.unsubscribe();

@@ -98,6 +98,7 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "sujangarh", name: "Sujangarh", storagePath: "Sujangarh" });
     this.cityList.push({ city: "noida", name: "Noida", storagePath: "Noida" });
     this.cityList.push({ city: "sikar-survey", name: "Sikar Survey", storagePath: "Sikar-Survey" });
+    this.cityList.push({ city: "jodhpur", name: "Jodhpur", storagePath: "Jodhpur" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 

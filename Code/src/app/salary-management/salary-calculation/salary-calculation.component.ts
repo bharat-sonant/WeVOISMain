@@ -73,7 +73,7 @@ export class SalaryCalculationComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Salary-Management-Driver","Salary-Calculation",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Salary-Management-Driver", "Salary-Calculation", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -81,10 +81,10 @@ export class SalaryCalculationComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.fireStoragePath = this.commonService.fireStoragePath;
     this.todayDate = this.commonService.setTodayDate();
+    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
     this.getYear();
     this.getWardWagesList();
     //this.getEmployee();
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
   }
 
   getWardWagesList() {
@@ -114,7 +114,7 @@ export class SalaryCalculationComponent implements OnInit {
         this.wardWagesList = this.commonService.transformNumeric(this.wardWagesList, "-timestamp");
       }
       this.getEmployee();
-    },error=>{
+    }, error => {
       this.getEmployee();
     });
   }
@@ -125,16 +125,19 @@ export class SalaryCalculationComponent implements OnInit {
     for (let i = year - 2; i <= year; i++) {
       this.yearList.push({ year: i });
     }
-    this.selectedMonth = Number(this.todayDate.split('-')[1]);
+    //this.selectedMonth = Number(this.todayDate.split('-')[1]);
     this.selectedYear = this.todayDate.split('-')[0];
-    $(this.ddlMonth).val(this.todayDate.split('-')[1]);
+    // $(this.ddlMonth).val(this.todayDate.split('-')[1]);
     $(this.ddlYear).val(this.selectedYear);
-    this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
+    // this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
   }
 
   getEmployee() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEmployee");
     $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 2000);
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let employeeInstance = this.httpService.get(path).subscribe(data => {
       employeeInstance.unsubscribe();
@@ -162,15 +165,11 @@ export class SalaryCalculationComponent implements OnInit {
               this.employeeList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"] });
               this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
             }
-            if (i == list.length - 1) {
-              setTimeout(() => {
-                this.salaryList = this.employeeList;
-                this.getSalary();
-              }, 6000);
-            }
+            this.salaryList = this.employeeList;
           });
         }
       }
+
     });
   }
 
@@ -187,19 +186,44 @@ export class SalaryCalculationComponent implements OnInit {
 
   getSalary() {
     $(this.divLoader).show();
+
     this.clearSalary();
-    setTimeout(() => {
-      this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
-      if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
-        this.monthDays = this.todayDate.split("-")[2];
+    // setTimeout(() => {
+    this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+    if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
+      this.monthDays = this.todayDate.split("-")[2];
+    }
+    if (this.salaryList.length > 0) {
+      let loaderTime = 6000;
+      if (this.monthDays < 5) {
+        loaderTime = 6000;
       }
-      if (this.salaryList.length > 0) {
-        for (let i = 1; i <= this.monthDays; i++) {
-          let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
-          this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
-        }
+      else if (this.monthDays < 10) {
+        loaderTime = 12000;
       }
-    }, 2000);
+      else if (this.monthDays < 15) {
+        loaderTime = 18000;
+      }
+      else if (this.monthDays < 20) {
+        loaderTime = 24000;
+      }
+      else if (this.monthDays < 25) {
+        loaderTime = 30000;
+      }
+      else if (this.monthDays < 32) {
+        loaderTime = 360000;
+      }
+      console.log(loaderTime);
+      setTimeout(() => {
+        $(this.divLoader).hide();
+      }, loaderTime);
+      for (let i = 1; i <= this.monthDays; i++) {
+
+        let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
+        this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
+      }
+    }
+    // }, 2000);
   }
 
   getSalaryFromDailyWork(monthDate: any, index: any, days: any) {
@@ -225,11 +249,30 @@ export class SalaryCalculationComponent implements OnInit {
                   if (dailyWorkData[empId]["task" + j] != null) {
                     let ward = dailyWorkData[empId]["task" + j]["task"];
                     let wages = 0;
+                    let inTime = "";
+                    let outTime = "";
                     if (dailyWorkData[empId]["task" + j]["task-wages"] != null) {
                       wages = dailyWorkData[empId]["task" + j]["task-wages"];
                     }
+                    if (!ward.includes("BinLifting")) {
+                      if (dailyWorkData[empId]["task" + j]["in-out"] != null) {
+                        let inOutObj = dailyWorkData[empId]["task" + j]["in-out"];
+                        let inOutKeyArray = Object.keys(inOutObj);
+                        for (let i = 0; i < inOutKeyArray.length; i++) {
+                          if (inOutObj[inOutKeyArray[i]] == "In") {
+                            inTime = inOutKeyArray[i];
+                            i = inOutKeyArray.length;
+                          }
+                        }
+                        for (let i = inOutKeyArray.length - 1; i >= 0; i--) {
+                          if (inOutObj[inOutKeyArray[i]] == "Out") {
+                            outTime = inOutKeyArray[i];
+                            i = -1;
+                          }
+                        }
+                      }
+                    }
                     if (new Date(monthDate) >= new Date(this.getDate())) {
-
                       if (this.wardWagesList.length > 0) {
                         for (let k = 0; k < this.wardWagesList.length; k++) {
                           let wageDate = this.wardWagesList[k]["date"];
@@ -257,11 +300,33 @@ export class SalaryCalculationComponent implements OnInit {
                         }
                       }
                     }
-                    workDetail.push({ ward: ward, wages: wages, percentage: 0 });
+                    let detail = workDetail.find(item => item.ward == ward);
+                    if (detail == undefined) {
+                      workDetail.push({ ward: ward, wages: wages, inTime: inTime, outTime: outTime, percentage: 0 });
+                    }
+
                     let zoneDetail = this.zoneList.find(item => item.zoneNo == ward);
                     if (zoneDetail != undefined) {
-                      this.getWorkPercentage(empId, ward, monthDate, index, days);
+                      let workPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/WorkerDetails/driver";
+                      let workInstance = this.db.object(workPath).valueChanges().subscribe(driverData => {
+                        workInstance.unsubscribe();
+                        if (driverData != null) {
+                          console.log(workPath);
+                          console.log(driverData);
+                          let driverList = driverData.split(",");
+                          if (driverList.length > 1) {
+                            this.getWorkPercentageByLines(empId, ward, monthDate, inTime, outTime, index, days);
+                          }
+                          else {
+                            this.getWorkPercentage(empId, ward, monthDate, index, days);
+                          }
+                        }
+                        else {
+                          this.getWorkPercentage(empId, ward, monthDate, index, days);
+                        }
+                      });
                     }
+
                   }
                 }
                 for (let k = 0; k < workDetail.length; k++) {
@@ -277,11 +342,12 @@ export class SalaryCalculationComponent implements OnInit {
           }
         }
         if (index == days) {
-          $(this.divLoader).hide();
+          // $(this.divLoader).hide();
         }
       }
     );
   }
+
 
   getWorkPercentage(empId: any, ward: any, monthDate: any, index: any, days: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkPercentage");
@@ -304,11 +370,90 @@ export class SalaryCalculationComponent implements OnInit {
             }
           }
         }
-        if (index == days) {
-          // $(this.divLoader).hide();
-        }
+        // if (index == days) {
+        //   $(this.divLoader).hide();
+        // }
       }
     );
+  }
+
+  getWorkPercentageByLines(empId: any, ward: any, monthDate: any, inTime: any, outTime: any, index: any, days: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkPercentageByLines");
+    this.commonService.getWardLine(ward, monthDate).then((linesData: any) => {
+      let wardLinesDataObj = JSON.parse(linesData);
+      let totalLines = Number(wardLinesDataObj["totalLines"]);
+      let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/LineStatus";
+      let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        lineStatusInstance.unsubscribe();
+        let inTimeDate = new Date(monthDate + " " + inTime);
+        let outTimeDate = new Date();
+        if (outTime != "") {
+          outTimeDate = new Date(monthDate + " " + outTime);
+        }
+        let workLines = 0;
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkPercentageByLines", data);
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            if (data[lineNo]["start-time"] != null) {
+              let startTime = data[lineNo]["start-time"];
+              let hour = Number(startTime.split(":")[0]);
+              if (hour >= 1 && hour <= 6) {
+                startTime = (hour + 12) + ":" + startTime.split(":")[1] + ":" + startTime.split(":")[2];
+              }
+              if (new Date(monthDate + " " + startTime) >= inTimeDate && new Date(monthDate + " " + startTime) <= outTimeDate) {
+                workLines++;
+              }
+            }
+          }
+          let workPercentage = Number(((workLines / totalLines) * 100).toFixed(0));
+          let salaryDetail = this.salaryList.find(item => item.empId == empId);
+          if (salaryDetail != undefined) {
+            let day = "day" + Number(monthDate.split('-')[2]);
+            let workDetailList = salaryDetail[day];
+            if (workDetailList.length > 0) {
+              for (let i = 0; i < workDetailList.length; i++) {
+                if (workDetailList[i]["ward"] == ward) {
+                  workDetailList[i]["percentage"] = Number(workDetailList[i]["percentage"]) + workPercentage;
+                }
+              }
+            }
+          }
+        }
+        // if (index == days) {
+        //   $(this.divLoader).hide();
+        //  }
+      })
+    })
+
+
+    /*
+        let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/workPercentage";
+        let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
+          workPercentageData => {
+            workPercentageInstance.unsubscribe();
+            if (workPercentageData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkPercentage", workPercentageData);
+              let salaryDetail = this.salaryList.find(item => item.empId == empId);
+              if (salaryDetail != undefined) {
+                let day = "day" + Number(monthDate.split('-')[2]);
+                let workDetailList = salaryDetail[day];
+                if (workDetailList.length > 0) {
+                  for (let i = 0; i < workDetailList.length; i++) {
+                    if (workDetailList[i]["ward"] == ward) {
+                      workDetailList[i]["percentage"] = Number(workPercentageData);
+                    }
+                  }
+                }
+              }
+            }
+            if (index == days) {
+              // $(this.divLoader).hide();
+            }
+          }
+        );
+        */
   }
 
 

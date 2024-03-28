@@ -201,6 +201,17 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "Type";
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "Entity Counts";
+      htmlString += "</td>";
+      if(this.cityName=="jodhpur"){
+      htmlString += "<td>";
+      htmlString += "Owner Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "No. of Persons";
+      htmlString += "</td>";
+      }
+      htmlString += "<td>";
       htmlString += "</tr>";
       for (let i = 0; i < this.markerExportList.length; i++) {
         htmlString += "<tr>";
@@ -222,6 +233,17 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["Type"];
         htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["entityCounts"];
+        htmlString += "</td>";
+        if(this.cityName=="jodhpur"){
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["ownerName"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["persons"];
+        htmlString += "</td>";
+        }
         htmlString += "</tr>";
       }
       htmlString += "<table>";
@@ -266,6 +288,24 @@ export class WardMarkingSummaryComponent implements OnInit {
                     if (lineData[markerNo]["cardNumber"] != null) {
                       cardNumber = lineData[markerNo]["cardNumber"];
                     }
+                    let ownerName="";
+                    let persons="";
+                    if (lineData[markerNo]["ownerName"] != null) {
+                      ownerName = lineData[markerNo]["ownerName"].toUpperCase();
+                    }
+                    if (lineData[markerNo]["totalPerson"] != null) {
+                      persons = lineData[markerNo]["totalPerson"];
+                    }
+                    let entityCounts = 1;
+                    if (lineData[markerNo]["houseType"] == "19" || lineData[markerNo]["houseType"] == "20") {
+                      if (lineData[markerNo]["totalHouses"] != null) {
+                        let servingCount = parseInt(lineData[markerNo]["totalHouses"]);
+                        if (isNaN(servingCount)) {
+                          servingCount = 1;
+                        }
+                        entityCounts = servingCount;
+                      }
+                    }
                     if (address == "") {
                       if (cardNumber != "") {
                         let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNumber + "/address";
@@ -278,7 +318,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                               dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                               this.db.object(dbPath).update({ address: address });
                             }
-                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
+                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber,entityCounts:entityCounts,ownerName:ownerName,persons:persons });
                           }
                         );
                       }
@@ -286,11 +326,11 @@ export class WardMarkingSummaryComponent implements OnInit {
                         address = this.markerCityName;
                         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                         this.db.object(dbPath).update({ address: address });
-                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
+                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber,entityCounts:entityCounts,ownerName:ownerName,persons:persons });
                       }
                     }
                     else {
-                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber });
+                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber,entityCounts:entityCounts,ownerName:ownerName,persons:persons });
                     }
                   }
                 }

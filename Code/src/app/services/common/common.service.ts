@@ -269,6 +269,9 @@ export class CommonService {
     else if (cityName == "noida") {
       latLng.push({ lat: 28.5433155, lng: 77.3640599 });
     }
+    else if (cityName == "jodhpur") {
+      latLng.push({ lat: 26.2405459, lng: 73.0197328 });
+    }
     return latLng;
   }
 
@@ -1139,7 +1142,7 @@ export class CommonService {
     letestZone.push({ zoneNo: "0", zoneName: "-- Select --" });
 
     let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-    if (cityName == "nokha") {
+    if (cityName == "Nokha") {
       path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FWards.json?alt=media";
     }
     let availableWardInstance = this.httpService.get(path).subscribe(data => {
@@ -1184,7 +1187,7 @@ export class CommonService {
                   letestZone.push({ zoneNo: data[index], zoneName: "Zone " + data[index], });
                 }
               }
-              this.saveLocationHistory(data[index]);
+              //this.saveLocationHistory(data[index]);
             }
           }
         }

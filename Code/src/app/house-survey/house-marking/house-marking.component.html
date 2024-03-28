@@ -418,8 +418,16 @@
                             </span>
                             <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
                                Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                
-                            </span><br/>
+                                <br/>
+                            </span>
+                            <span style="font-size:11px" [hidden]="dt.ownerName==''">
+                                Owner Name : {{dt.ownerName}}
+                                 <br/>
+                             </span>
+                             <span style="font-size:11px" [hidden]="dt.persons==''">
+                                No. of Persons : {{dt.persons}}
+                                 <br/>
+                             </span>
                             <span style="font-size:11px">
                                 Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                 <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
@@ -467,8 +475,16 @@
                                 </span>
                                 <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
                                Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                
-                            </span><br/>
+                                <br/>
+                            </span>
+                            <span style="font-size:11px" [hidden]="dt.ownerName==''">
+                                Owner Name : {{dt.ownerName}}
+                                 <br/>
+                             </span>
+                             <span style="font-size:11px" [hidden]="dt.persons==''">
+                                No. of Persons : {{dt.persons}}
+                                 <br/>
+                             </span>
                                 <span style="font-size:11px">
                                 Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                 <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
@@ -514,9 +530,17 @@
                                             [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                                 </span>
                                 <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
-                               Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                
-                            </span><br/>
+                                    Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
+                                     <br/>
+                                 </span>
+                                 <span style="font-size:11px" [hidden]="dt.ownerName==''">
+                                     Owner Name : {{dt.ownerName}}
+                                      <br/>
+                                  </span>
+                                  <span style="font-size:11px" [hidden]="dt.persons==''">
+                                     No. of Persons : {{dt.persons}}
+                                      <br/>
+                                  </span>
                                 <span style="font-size:11px">
                                 Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                 <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved

@@ -786,6 +786,12 @@ textarea:focus-visible {
     overflow-y: scroll;
 }
 
+.table-two {
+    height: 300px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
 .table-scroll {
     padding: 0px;
     height: 74vh;
@@ -1871,3 +1877,4 @@ input {
     font-weight: bolder;
     font-size: 17px;
 }
+

@@ -30,11 +30,16 @@ export class HomeComponent implements OnInit {
     this.isDehradun = false;
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    console.log(this.db);
     this.userid = localStorage.getItem("userID");
     this.userType = localStorage.getItem("userType");
     this.userDetail.name = localStorage.getItem("userName");
     this.portalAccessList = [];
     this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
+   let instance= this.db.object("AuthorizationData").valueChanges().subscribe(data=>{
+    instance.unsubscribe();
+    console.log(data);
+    })
     if (localStorage.getItem("isCityChange") == "yes") {
       localStorage.setItem("isCityChange", "no");
       setTimeout(() => {
