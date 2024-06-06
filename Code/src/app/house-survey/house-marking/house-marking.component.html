@@ -307,12 +307,23 @@
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <div class="col-md-12">
-                    <select id="ddlHouseType" class="caret-select-vehicle">
+                    <select id="ddlHouseType" class="caret-select-vehicle" (change)="setEntitiesCounts($event.target.value);">
                         <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
                             {{dt.houseType}}
                         </option>
                     </select>
-
+                </div>
+                <div class="col-md-12">
+                    Owner Name
+                    <input id="txtOwnerName" type="text" class="caret-select-vehicle" value=""/>
+                </div>
+                <div id="divNoOfPersons" class="col-md-12">
+                    No. of Person
+                    <input id="txtNoOfPerson" type="text" class="caret-select-vehicle" value=""/>
+                </div>
+                <div id="divEntityCount" class="col-md-12">
+                    No. of Entities
+                    <input id="txtNoOfEntities" type="text" class="caret-select-vehicle" value=""/>
                 </div>
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
                     <button class="btn btn-success " (click)="updateHouseType();" style="width: 100px;">

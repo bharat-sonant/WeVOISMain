@@ -2246,7 +2246,7 @@ export class RealtimeMonitoringComponent implements OnInit {
                       empDetails.mobile = employee["mobile"];
                       if (employee["designation"] == "Transportation Executive") {
                         empDetails.designation = "driver";
-                      } else if (employee["designation"].toString().trim() == "Service Excecutive") {
+                      } else if (employee["designation"].toString().trim() == "Service Executive") {
                         empDetails.designation = "helper";
                       }
                     }

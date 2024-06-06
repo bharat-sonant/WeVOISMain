@@ -66,6 +66,7 @@ export class AccountDetailComponent implements OnInit {
     $(this.ddlUser).val("active");
     $(this.ddlDesignation).val("all");
     this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
+    
     this.getAccountDetail();
   }
 
@@ -74,6 +75,8 @@ export class AccountDetailComponent implements OnInit {
     this.allAccountList = [];
     this.designationList = [];
     this.accountList = [];
+    this.checkForNewEmployee();
+/*
     const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let accountInstance = this.httpService.get(path).subscribe(data => {
       accountInstance.unsubscribe();
@@ -85,6 +88,7 @@ export class AccountDetailComponent implements OnInit {
     }, error => {
       this.checkForNewEmployee();
     });
+    */
   }
 
   checkForNewEmployee() {
@@ -439,19 +443,35 @@ export class AccountDetailComponent implements OnInit {
 
   updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateJsonForNewEmployee");
-    if (jsonLastEmpId > lastEmpId) {
+    const promises=[];
+    for (let i = 1; i < lastEmpId; i++) {
+      promises.push(Promise.resolve(this.getEmployeeDetail(i)));
+    }
+
+    Promise.all(promises).then((results) => {
+      let merged = [];
+      for (let i = 0; i < results.length; i++) {
+        if(results[i]["status"]=="success"){
+        merged = merged.concat(results[i]["data"]);
+        }
+      }
+      this.allAccountList=merged;
       this.getRoles();
       this.filterData();
       this.saveJSONData();
-    }
-    else {
-      jsonLastEmpId++;
-      let dbPath = "Employees/" + jsonLastEmpId;
+    });
+    
+  }
+
+  
+  getEmployeeDetail(empId: any) {
+    return new Promise((resolve) => {
+      let employeeData = {};
+      let dbPath = "Employees/" + empId;
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
           if (employeeDetail != null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateJsonForNewEmployee", employeeDetail);
             if (employeeDetail["GeneralDetails"] != null) {
               let status = employeeDetail["GeneralDetails"]["status"];
               let name = employeeDetail["GeneralDetails"]["name"];
@@ -497,7 +517,7 @@ export class AccountDetailComponent implements OnInit {
                     designation = "Driver";
                     empType = 2;
                   }
-                  else if (detail.designation == "Service Excecutive ") {
+                  else if (detail.designation == "Service Executive") {
                     designation = "Helper";
                     empType = 2;
                   }
@@ -506,13 +526,20 @@ export class AccountDetailComponent implements OnInit {
                   }
                 }
               }
-              this.allAccountList.push({ empId: jsonLastEmpId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType });
+              employeeData={ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType };
+              resolve({ status: "success", data: employeeData });
+            }
+            else {
+              resolve({ status: "fail", data: employeeData });
             }
           }
-          this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
+          else {
+            resolve({ status: "fail", data: employeeData });
+          }
         }
       );
-    }
+
+    });
   }
 }
 

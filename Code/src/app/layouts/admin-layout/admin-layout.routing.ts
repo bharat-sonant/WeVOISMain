@@ -142,6 +142,8 @@ import { SecondaryCollectionAnalysisComponent } from '../../secondary-collection
 import { SecondaryCollectionPlaningComponent } from '../../secondary-collection-planing/secondary-collection-planing.component';
 import { SecondaryCollectionServiceComponent } from '../../secondary-collection-service/secondary-collection-service.component';
 import { SecondaryCollectionManageComponent } from '../../secondary-collection-manage/secondary-collection-manage.component';
+import { EntityModificationComponent } from '../../entity-modification/entity-modification.component';
+import { PaymentCollectorTrackingComponent } from '../../reports/payment-collector-tracking/payment-collector-tracking.component';
 
 
 
@@ -420,6 +422,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'sikar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'sikar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'sikar/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'sikar/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
@@ -664,6 +668,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-greater/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-greater/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-greater/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-greater/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -931,7 +937,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reengus/:id/secondary-collection-analysis', component: SecondaryCollectionAnalysisComponent },
     { path: 'reengus/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'reengus/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
-    { path: 'reengusr/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'reengus/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'reengus/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'reengus/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Shahpura
     { path: 'shahpura/home', component: HomeComponent },
@@ -1180,6 +1188,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'shahpura/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'shahpura/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'shahpura/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'shahpura/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'shahpura/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //test
     { path: 'test/home', component: HomeComponent },
     { path: 'test/dashboard', component: DashboardComponent },
@@ -1428,6 +1438,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'test/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'test/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'test/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'test/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'test/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
 
 
@@ -1678,6 +1690,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-office/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-office/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-office/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-office/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-office/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
@@ -1924,6 +1938,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kishangarh/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'kishangarh/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'kishangarh/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'kishangarh/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'kishangarh/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Nawai
     { path: 'niwai/home', component: HomeComponent },
@@ -2170,6 +2186,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'niwai/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'niwai/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'niwai/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'niwai/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
     { path: 'jaisalmer/dashboard', component: DashboardComponent },
@@ -2415,6 +2433,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaisalmer/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaisalmer/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaisalmer/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaisalmer/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaisalmer/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
@@ -2661,6 +2681,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'salasar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'salasar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'salasar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'salasar/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'salasar/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Behror
     { path: 'behror/home', component: HomeComponent },
@@ -2907,6 +2929,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'behror/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'behror/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'behror/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'behror/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
     { path: 'jaipur/account-detail', component: AccountDetailComponent },
@@ -3151,6 +3175,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //jaipur-jhotwara
     { path: 'jaipur-jhotwara/home', component: HomeComponent },
     { path: 'jaipur-jhotwara/account-detail', component: AccountDetailComponent },
@@ -3395,6 +3421,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jhotwara/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-jhotwara/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-jhotwara/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-jhotwara/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-jhotwara/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //jaipur-jagatpura
     { path: 'jaipur-jagatpura/home', component: HomeComponent },
@@ -3640,6 +3668,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-jagatpura/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-jagatpura/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-jagatpura/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-jagatpura/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-jagatpura/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
 
     //jaipur-malviyanagar
@@ -3887,6 +3917,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-malviyanagar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-malviyanagar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-malviyanagar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-malviyanagar/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-malviyanagar/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //jaipur-mansarovar
     { path: 'jaipur-mansarovar/home', component: HomeComponent },
     { path: 'jaipur-mansarovar/account-detail', component: AccountDetailComponent },
@@ -4131,6 +4163,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-mansarovar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-mansarovar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-mansarovar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-mansarovar/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-mansarovar/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
     { path: 'jaipur-murlipura/account-detail', component: AccountDetailComponent },
@@ -4377,6 +4411,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-murlipura/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-murlipura/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-murlipura/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-murlipura/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-murlipura/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //jaipur-sanganer
     { path: 'jaipur-sanganer/home', component: HomeComponent },
     { path: 'jaipur-sanganer/account-detail', component: AccountDetailComponent },
@@ -4621,6 +4657,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-sanganer/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-sanganer/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-sanganer/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-sanganer/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-sanganer/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //jaipur-vidhyadhar
     { path: 'jaipur-vidhyadhar/home', component: HomeComponent },
@@ -4866,6 +4904,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-vidhyadhar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-vidhyadhar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-vidhyadhar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-vidhyadhar/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-vidhyadhar/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
@@ -5111,6 +5151,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bhiwadi/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'bhiwadi/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'bhiwadi/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'bhiwadi/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'bhiwadi/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
@@ -5356,6 +5398,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'chhapar/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'chhapar/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'chhapar/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'chhapar/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'chhapar/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
@@ -5601,6 +5645,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'churu/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'churu/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'churu/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'churu/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'churu/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
@@ -5847,6 +5893,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'wevois-other/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'wevois-other/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'wevois-other/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'wevois-other/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'wevois-other/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //gwalior
     { path: 'gwalior/home', component: HomeComponent },
@@ -6093,6 +6141,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'gwalior/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'gwalior/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'gwalior/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'gwalior/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'gwalior/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
 
 
@@ -6340,6 +6390,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'tonk/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'tonk/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'tonk/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'tonk/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'tonk/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
 
     //Ratangarh
@@ -6586,6 +6638,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'ratangarh/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'ratangarh/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'ratangarh/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'ratangarh/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'ratangarh/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
@@ -6831,6 +6885,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'nokha/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'nokha/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'nokha/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'nokha/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'nokha/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
@@ -7076,6 +7132,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'losal/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'losal/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'losal/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'losal/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'losal/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
 
     //Jaipur Test
@@ -7323,6 +7381,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-test/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jaipur-test/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jaipur-test/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jaipur-test/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jaipur-test/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     
 
     //MNZ-Test
@@ -7569,6 +7629,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mnz-test/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'mnz-test/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'mnz-test/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'mnz-test/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'mnz-test/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
 
     
@@ -7816,6 +7878,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'mpz-test/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'mpz-test/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'mpz-test/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'mpz-test/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'mpz-test/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     
 
     
@@ -8063,6 +8127,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jammu-survey/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jammu-survey/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jammu-survey/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jammu-survey/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jammu-survey/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     
     //Khandela
     { path: 'khandela/home', component: HomeComponent },
@@ -8308,6 +8374,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'khandela/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'khandela/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'khandela/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'khandela/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'khandela/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     
     //watteye-office
     { path: 'watteye-office/home', component: HomeComponent },
@@ -8553,6 +8621,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'watteye-office/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'watteye-office/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'watteye-office/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'watteye-office/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'watteye-office/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     
     //dehradun
@@ -8800,6 +8870,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'dehradun/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'dehradun/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'dehradun/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'dehradun/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'dehradun/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     
 
 
@@ -9048,6 +9120,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'pali/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'pali/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'pali/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'pali/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'pali/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     
     
@@ -9295,6 +9369,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'phulwari-sharif/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'phulwari-sharif/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'phulwari-sharif/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'phulwari-sharif/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'phulwari-sharif/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     
     //sujangarh
@@ -9541,6 +9617,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sujangarh/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'sujangarh/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'sujangarh/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'sujangarh/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'sujangarh/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     
     //noida
@@ -9787,6 +9865,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'noida/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'noida/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'noida/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'noida/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'noida/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     
     //sikar-survey
@@ -10033,6 +10113,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'sikar-survey/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'sikar-survey/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'sikar-survey/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'sikar-survey/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'sikar-survey/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
     
     //jodhpur
@@ -10279,5 +10361,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jodhpur/:id/secondary-collection-planing', component: SecondaryCollectionPlaningComponent },
     { path: 'jodhpur/:id/secondary-collection-service', component: SecondaryCollectionServiceComponent },
     { path: 'jodhpur/:id/secondary-collection-manage', component: SecondaryCollectionManageComponent },
+    { path: 'jodhpur/:id/entity-modification', component: EntityModificationComponent },
+    { path: 'jodhpur/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
 
 ]; 

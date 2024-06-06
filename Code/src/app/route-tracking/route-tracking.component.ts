@@ -81,6 +81,7 @@ export class RouteTrackingComponent {
   vtsVehicleName: any;
   vtsVehicleList: any[] = [];
   routePolyline: any[] = [];
+  lblVTS="#lblVTS";
   trackData: trackDetail =
     {
       totalKM: 0,
@@ -100,17 +101,12 @@ export class RouteTrackingComponent {
     $('#btnReset').hide();
     this.getMinmumMaximumDistance();
     this.toDayDate = this.commonService.setTodayDate();
-    localStorage.setItem("routeMonthDetail", null);
-    if (this.toDayDate.split('-')[2] == "01") {
-      localStorage.setItem("routeMonthDetail", null);
-      localStorage.setItem("savedRouteData", null);
-    }
     this.selectedDate = this.toDayDate;
-    $('#txtDate').val(this.toDayDate);
-    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.toDayDate).getMonth());
+    $('#txtDate').val(this.selectedDate);
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = new Date().getFullYear();
-    this.preSelectedMonth = this.toDayDate.split('-')[1];
-    this.preSelectedYear = this.toDayDate.split('-')[0];
+    this.preSelectedMonth = this.selectedDate.split('-')[1];
+    this.preSelectedYear = this.selectedDate.split('-')[0];
     this.timeInterval = 0;
     this.selectedZone = "0";
     this.vtsRouteKM = "0.00";
@@ -206,6 +202,7 @@ export class RouteTrackingComponent {
   getVTSRoute() {
     if ((<HTMLInputElement>document.getElementById("chkVTS")).checked == false) {
       $("#divVTSRoute").hide();
+      $(this.lblVTS).html("Show VTS Routes");
       if (this.routePolyline.length > 0) {
         for (let i = 0; i < this.routePolyline.length; i++) {
           this.routePolyline[i].setMap(null);
@@ -213,6 +210,7 @@ export class RouteTrackingComponent {
       }
     }
     else {
+      $(this.lblVTS).html("Hide VTS Routes");
       $("#divVTSRoute").show();
       if (this.vtsVehicleList.length == 0) {
         this.vtsVehicleName = "";
@@ -430,11 +428,13 @@ export class RouteTrackingComponent {
     this.isTiming = false;
     this.isPreviousTime = false;
     this.totalTiminingKM = 0;
-    (<HTMLInputElement>document.getElementById("chkVTS")).checked = false;
+    (<HTMLInputElement>document.getElementById("chkVTS")).checked = true;
+    $(this.lblVTS).html("Hide VTS Routes");
+
     this.vtsRouteKM = "0.00";
     this.vtsRouteList = [];
     this.vtsVehicleList = [];
-    $("#divVTSRoute").hide();
+    $("#divVTSRoute").show();
     if (this.routePolyline.length > 0) {
       for (let i = 0; i < this.routePolyline.length; i++) {
         this.routePolyline[i].setMap(null);
@@ -443,12 +443,6 @@ export class RouteTrackingComponent {
     this.selectedDate = $('#txtDate').val();
     let selectedMonth = this.selectedDate.split('-')[1];
     let selectedYear = this.selectedDate.split('-')[0];
-    //if (this.preSelectedMonth != selectedMonth || this.preSelectedYear != selectedYear) {
-    //   localStorage.setItem("routeMonthDetail", null);
-    //  localStorage.setItem("savedRouteData", null);
-    //   this.preSelectedYear = selectedYear;
-    //   this.preSelectedMonth = selectedMonth;
-    //  }
     this.selectedZoneNo = this.selectedZone;
     this.routePolyline = [];
     this.polylines = [];
@@ -463,6 +457,7 @@ export class RouteTrackingComponent {
     this.getSavedData();
     this.getMonthDetail();
     this.getFixedGeoLocation();
+    this.getVTSRoute();
   }
 
 
@@ -649,157 +644,7 @@ export class RouteTrackingComponent {
   }
 
   getSavedData() {
-    if (this.selectedDate != this.toDayDate) {
-      this.routePath = JSON.parse(localStorage.getItem("savedRouteData"));
-      let previousDate = this.commonService.getPreviousDate(this.commonService.setTodayDate(), 4);
-
-      let localroutePath = [];
-      if (this.routePath != null) {
-
-        for (let i = 0; i < this.routePath.length; i++) {
-          if (new Date(this.routePath[i]["date"]) >= new Date(previousDate)) {
-            localroutePath.push({ wardNo: this.routePath[i]["wardNo"], date: this.routePath[i]["date"], routePath: this.routePath[i]["routePath"] });
-          }
-        }
-        localStorage.setItem('savedRouteData', JSON.stringify(localroutePath));
-        let zoneDetails = localroutePath.find(item => item.wardNo == this.selectedZone && item.date == this.selectedDate);
-        if (zoneDetails != undefined) {
-          this.routePath = zoneDetails.routePath;
-
-          this.routePathStore = [];
-          let lineData = [];
-          let totalKM: number = 0;
-          var keyArray = Object.keys(this.routePath);
-          for (let i = 0; i < keyArray.length - 2; i++) {
-            let index = keyArray[i];
-            let totalDistance = 0;
-            this.routePathStore.push({ distanceinmeter: this.routePath[index]["distance-in-meter"], latlng: this.routePath[index]["lat-lng"], time: index });
-
-            let myTotalKM: number = 0;
-            totalKM += parseFloat(parseFloat(this.routePath[index]["distance-in-meter"]).toFixed(8));
-
-            if (lineData.length > 0) {
-              let lat = lineData[lineData.length - 1]["lat"];
-              let lng = lineData[lineData.length - 1]["lng"];
-              lineData = [];
-              lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
-            }
-            let routeDateList = [];
-            let latLong: string = this.routePath[index]["lat-lng"];
-            routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
-            for (let j = 0; j < routeDateList.length; j++) {
-              let routePart = routeDateList[j].split(',');
-              if (routePart.length == 2) {
-                if (lineData.length > 0) {
-                  let lat = lineData[lineData.length - 1]["lat"];
-                  let lng = lineData[lineData.length - 1]["lng"];
-                  let distance = this.getDistanceFromLatLonInKm(lat, lng, parseFloat(routePart[0]), parseFloat(routePart[1]));
-
-                  let distanceInMeter = distance * 1000;
-                  totalDistance += distanceInMeter;
-                  lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: distance });
-                }
-                else {
-                  lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: 0 });
-                }
-              }
-            }
-            if (lineData != undefined) {
-              let status = "LineCompleted";
-              let line = new google.maps.Polyline({
-                path: lineData,
-                strokeColor: this.commonService.getLineColor(status),
-                strokeWeight: 2
-              });
-
-              if (i == 0) {
-                let lat = lineData[0]["lat"];
-                let lng = lineData[0]["lng"];
-                let markerURL = this.getIcon("start");
-                var markerLabel = "";
-                let contentString = 'Start time: ' + index;
-                this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-              }
-
-              if (this.selectedDate != this.toDayDate) {
-                if (i == this.routePath.length - 2) {
-                  let lat = lineData[lineData.length - 1]["lat"];
-                  let lng = lineData[lineData.length - 1]["lng"];
-                  let markerURL = this.getIcon("stop");
-                  var markerLabel = "";
-                  let contentString = 'End time: ' + index;
-                  this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-                }
-              }
-              else {
-                if (i == this.routePath.length - 2) {
-                  let dbPath = "RealTimeDetails/WardDetails/" + this.selectedZoneNo;
-                  let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
-                    dutyData => {
-                      vehicleDutyData.unsubscribe();
-                      if (dutyData != null) {
-                        if (dutyData["isOnDuty"] != "yes") {
-                          let lat = lineData[lineData.length - 1]["lat"];
-                          let lng = lineData[lineData.length - 1]["lng"];
-                          let markerURL = this.getIcon("stop");
-                          var markerLabel = "";
-                          let contentString = 'End time: ' + index;
-                          this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-                        }
-                      }
-                    });
-                }
-              }
-              this.polylines[i] = line;
-              this.polylines[i].setMap(this.map);
-              this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(2));
-              this.trackData.time = index;
-            }
-            myTotalKM = parseFloat((parseFloat((totalDistance).toFixed(8)) / 1000).toFixed(8));
-          }
-          if (this.routePathStore.length > 0) {
-            let startTime = this.routePathStore[0]["time"];
-            let endTime = this.routePathStore[0]["time"];
-            if (this.routePathStore.length > 1) {
-              endTime = this.routePathStore[this.routePathStore.length - 1]["time"];
-            }
-            let sTime = this.selectedDate + " " + startTime;
-
-            let eTime = this.selectedDate + " " + endTime;
-            let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-            this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
-          }
-
-          if (this.isStart == true) {
-            this.lineDataList = [];
-            for (let i = 0; i < this.polylines.length; i++) {
-              let routeDateList = [];
-              let latLong: string = this.routePathStore[i]["latlng"];
-              routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
-              for (let j = 0; j < routeDateList.length; j++) {
-                let routePart = routeDateList[j].split(',');
-                if (routePart.length == 2) {
-                  this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
-                }
-              }
-            }
-            if (this.lineIndex == 0) {
-              this.createMarker();
-            }
-            this.animate(this.lineIndex);
-          }
-        }
-        else {
-          this.getVehicleRoute();
-        }
-      }
-      else {
-        this.getVehicleRoute();
-      }
-    }
-    else {
-      this.getVehicleRoute();
-    }
+    this.getVehicleRoute();
   }
 
   getVehicleRoute() {
@@ -809,15 +654,56 @@ export class RouteTrackingComponent {
     this.isPreviousTime = false;
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
-    let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
-    this.commonService.getStorageLocationHistory(dbPath).then(response => {
-      this.routePathStore = [];
-      let lineData = [];
-      let totalKM: number = 0;
-      if (response["status"] == "Fail") {
-        let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-          routePath => {
-            vehicleTracking.unsubscribe();
+    this.getDutyInOutTime(this.selectedZone, year, monthName, this.selectedDate).then((response) => {
+      let dutyOnOffList = JSON.parse(JSON.stringify(response));
+      if (dutyOnOffList.length > 0) {
+        let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
+        this.commonService.getStorageLocationHistory(dbPath).then(response => {
+          this.routePathStore = [];
+          if (response["status"] == "Fail") {
+            let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
+              routePath => {
+                vehicleTracking.unsubscribe();
+                if (routePath != null) {
+                  let routeKeyArray = Object.keys(routePath);
+                  let keyArray = [];
+                  if (routeKeyArray.length > 0) {
+                    if (this.isActualData == 0) {
+                      keyArray = routeKeyArray;
+                    }
+                    else {
+                      for (let i = 0; i < routeKeyArray.length; i++) {
+                        if (!routeKeyArray[i].toString().includes('-')) {
+                          keyArray.push(routeKeyArray[i]);
+                        }
+                      }
+                    }
+                  }
+
+                  let arrayLength = keyArray.length - 2;
+                  if (this.selectedDate != this.toDayDate) {
+                    arrayLength = keyArray.length - 3;
+                  }
+
+                  let dutyInTime = dutyOnOffList[0]["inTime"];
+                  let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
+                  let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
+                  let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
+                  for (let i = 0; i < arrayLength; i++) {
+                    let index = keyArray[i];
+                    let time = index.toString().split('-')[0];
+                    let routeDateTime = new Date(this.selectedDate + " " + time);
+                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                      this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                    }
+                  }
+                  this.showDataOnMap();
+                }
+              });
+
+          }
+          else {
+            let routePath = response["data"];
             if (routePath != null) {
               let routeKeyArray = Object.keys(routePath);
               let keyArray = [];
@@ -839,272 +725,183 @@ export class RouteTrackingComponent {
                 arrayLength = keyArray.length - 3;
               }
 
+              let dutyInTime = dutyOnOffList[0]["inTime"];
+              let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
+              let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
+              let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
               for (let i = 0; i < arrayLength; i++) {
                 let index = keyArray[i];
                 let time = index.toString().split('-')[0];
-                let totalDistance = 0;
-                this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
-
-                let myTotalKM: number = 0;
-                totalKM += parseFloat(parseFloat(routePath[index]["distance-in-meter"]).toFixed(8));
-                if (lineData.length > 0) {
-                  let lat = lineData[lineData.length - 1]["lat"];
-                  let lng = lineData[lineData.length - 1]["lng"];
-                  lineData = [];
-                  lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+                let routeDateTime = new Date(this.selectedDate + " " + time);
+                if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                  this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
                 }
-                let routeDateList = [];
-                let latLong: string = routePath[index]["lat-lng"];
-                routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
-                for (let j = 0; j < routeDateList.length; j++) {
-                  let routePart = routeDateList[j].split(',');
-                  if (routePart.length == 2) {
-                    if (lineData.length > 0) {
-                      let lat = lineData[lineData.length - 1]["lat"];
-                      let lng = lineData[lineData.length - 1]["lng"];
-                      let distance = this.getDistanceFromLatLonInKm(lat, lng, parseFloat(routePart[0]), parseFloat(routePart[1]));
-                      let distanceInMeter = distance * 1000;
-                      totalDistance += distanceInMeter;
-                      lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: distance });
-                    }
-                    else {
-                      lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: 0 });
-                    }
-                  }
-                }
-                if (lineData != undefined) {
-                  let status = "LineCompleted";
-                  let line = new google.maps.Polyline({
-                    path: lineData,
-                    strokeColor: this.commonService.getLineColor(status),
-                    strokeWeight: 2
-                  });
-
-                  if (i == 0) {
-                    let lat = lineData[0]["lat"];
-                    let lng = lineData[0]["lng"];
-                    let markerURL = this.getIcon("start");
-                    var markerLabel = "";
-                    let contentString = '<br/>Start time: ' + index;
-                    this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-                  }
-
-                  if (this.selectedDate != this.toDayDate) {
-                    if (i == keyArray.length - 3) {
-                      let lat = lineData[lineData.length - 1]["lat"];
-                      let lng = lineData[lineData.length - 1]["lng"];
-                      let markerURL = this.getIcon("stop");
-                      var markerLabel = "";
-                      let contentString = '<br/>End time: ' + index;
-                      this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-                    }
-                  }
-                  else {
-                    if (i == keyArray.length - 3) {
-                      dbPath = "RealTimeDetails/WardDetails/" + this.selectedZoneNo;
-                      let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
-                        dutyData => {
-                          vehicleDutyData.unsubscribe();
-                          if (dutyData != null) {
-                            if (dutyData["isOnDuty"] != "yes") {
-                              let lat = lineData[lineData.length - 1]["lat"];
-                              let lng = lineData[lineData.length - 1]["lng"];
-                              let markerURL = this.getIcon("stop");
-                              var markerLabel = "";
-                              let contentString = '<br/>End time: ' + index;
-                              this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-                            }
-                          }
-                        });
-                    }
-                  }
-                  this.polylines[i] = line;
-                  this.polylines[i].setMap(this.map);
-                  this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(2));
-                  this.trackData.time = index;
-                }
-                myTotalKM = parseFloat((parseFloat((totalDistance).toFixed(8)) / 1000).toFixed(8));
               }
-              if (this.routePathStore.length > 0) {
-                let startTime = this.routePathStore[0]["time"];
-                let endTime = this.routePathStore[0]["time"];
-                if (this.routePathStore.length > 1) {
-                  endTime = this.routePathStore[this.routePathStore.length - 1]["time"];
-                }
-                let sTime = this.selectedDate + " " + startTime;
+              this.showDataOnMap();
 
-                let eTime = this.selectedDate + " " + endTime;
-                let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-                this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
-              }
-              if (this.isStart == true) {
-                this.lineDataList = [];
-                for (let i = 0; i < this.polylines.length; i++) {
-                  let routeDateList = [];
-                  let latLong: string = this.routePathStore[i]["latlng"];
-                  routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
-                  for (let j = 0; j < routeDateList.length; j++) {
-                    let routePart = routeDateList[j].split(',');
-                    if (routePart.length == 2) {
-                      this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
-                    }
-                  }
-                }
-                if (this.lineIndex == 0) {
-                  this.createMarker();
-                }
-                this.animate(this.lineIndex);
-              }
-              this.savedDataList.push({ wardNo: this.selectedZone, date: this.selectedDate, routePath: routePath });
-              localStorage.setItem('savedRouteData', JSON.stringify(this.savedDataList));
             }
-          });
-
+          }
+        });
       }
-      else{
-        let routePath=response["data"];
-        if (routePath != null) {
-          let routeKeyArray = Object.keys(routePath);
-          let keyArray = [];
-          if (routeKeyArray.length > 0) {
-            if (this.isActualData == 0) {
-              keyArray = routeKeyArray;
-            }
-            else {
-              for (let i = 0; i < routeKeyArray.length; i++) {
-                if (!routeKeyArray[i].toString().includes('-')) {
-                  keyArray.push(routeKeyArray[i]);
-                }
-              }
-            }
+    });
+
+  }
+
+
+  showDataOnMap() {
+    let totalKM = 0;
+    let lineData = [];
+    for (let i = 0; i < this.routePathStore.length; i++) {
+      let totalDistance = 0;
+      let myTotalKM: number = 0;
+      totalKM += parseFloat(parseFloat(this.routePathStore[i]["distanceinmeter"]).toFixed(8));
+      if (lineData.length > 0) {
+        let lat = lineData[lineData.length - 1]["lat"];
+        let lng = lineData[lineData.length - 1]["lng"];
+        lineData = [];
+        lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+      }
+      let routeDateList = [];
+      let latLong: string = this.routePathStore[i]["latlng"];
+      routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+      for (let j = 0; j < routeDateList.length; j++) {
+        let routePart = routeDateList[j].split(',');
+        if (routePart.length == 2) {
+          if (lineData.length > 0) {
+            let lat = lineData[lineData.length - 1]["lat"];
+            let lng = lineData[lineData.length - 1]["lng"];
+            let distance = this.getDistanceFromLatLonInKm(lat, lng, parseFloat(routePart[0]), parseFloat(routePart[1]));
+            let distanceInMeter = distance * 1000;
+            totalDistance += distanceInMeter;
+            lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: distance });
           }
-
-          let arrayLength = keyArray.length - 2;
-          if (this.selectedDate != this.toDayDate) {
-            arrayLength = keyArray.length - 3;
+          else {
+            lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: 0 });
           }
-
-          for (let i = 0; i < arrayLength; i++) {
-            let index = keyArray[i];
-            let time = index.toString().split('-')[0];
-            let totalDistance = 0;
-            this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
-
-            let myTotalKM: number = 0;
-            totalKM += parseFloat(parseFloat(routePath[index]["distance-in-meter"]).toFixed(8));
-            if (lineData.length > 0) {
-              let lat = lineData[lineData.length - 1]["lat"];
-              let lng = lineData[lineData.length - 1]["lng"];
-              lineData = [];
-              lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
-            }
-            let routeDateList = [];
-            let latLong: string = routePath[index]["lat-lng"];
-            routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
-            for (let j = 0; j < routeDateList.length; j++) {
-              let routePart = routeDateList[j].split(',');
-              if (routePart.length == 2) {
-                if (lineData.length > 0) {
-                  let lat = lineData[lineData.length - 1]["lat"];
-                  let lng = lineData[lineData.length - 1]["lng"];
-                  let distance = this.getDistanceFromLatLonInKm(lat, lng, parseFloat(routePart[0]), parseFloat(routePart[1]));
-                  let distanceInMeter = distance * 1000;
-                  totalDistance += distanceInMeter;
-                  lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: distance });
-                }
-                else {
-                  lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: 0 });
-                }
-              }
-            }
-            if (lineData != undefined) {
-              let status = "LineCompleted";
-              let line = new google.maps.Polyline({
-                path: lineData,
-                strokeColor: this.commonService.getLineColor(status),
-                strokeWeight: 2
-              });
-
-              if (i == 0) {
-                let lat = lineData[0]["lat"];
-                let lng = lineData[0]["lng"];
-                let markerURL = this.getIcon("start");
-                var markerLabel = "";
-                let contentString = '<br/>Start time: ' + index;
-                this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-              }
-
-              if (this.selectedDate != this.toDayDate) {
-                if (i == keyArray.length - 3) {
-                  let lat = lineData[lineData.length - 1]["lat"];
-                  let lng = lineData[lineData.length - 1]["lng"];
-                  let markerURL = this.getIcon("stop");
-                  var markerLabel = "";
-                  let contentString = '<br/>End time: ' + index;
-                  this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-                }
-              }
-              else {
-                if (i == keyArray.length - 3) {
-                  dbPath = "RealTimeDetails/WardDetails/" + this.selectedZoneNo;
-                  let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
-                    dutyData => {
-                      vehicleDutyData.unsubscribe();
-                      if (dutyData != null) {
-                        if (dutyData["isOnDuty"] != "yes") {
-                          let lat = lineData[lineData.length - 1]["lat"];
-                          let lng = lineData[lineData.length - 1]["lng"];
-                          let markerURL = this.getIcon("stop");
-                          var markerLabel = "";
-                          let contentString = '<br/>End time: ' + index;
-                          this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
-                        }
-                      }
-                    });
-                }
-              }
-              this.polylines[i] = line;
-              this.polylines[i].setMap(this.map);
-              this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(2));
-              this.trackData.time = index;
-            }
-            myTotalKM = parseFloat((parseFloat((totalDistance).toFixed(8)) / 1000).toFixed(8));
-          }
-          if (this.routePathStore.length > 0) {
-            let startTime = this.routePathStore[0]["time"];
-            let endTime = this.routePathStore[0]["time"];
-            if (this.routePathStore.length > 1) {
-              endTime = this.routePathStore[this.routePathStore.length - 1]["time"];
-            }
-            let sTime = this.selectedDate + " " + startTime;
-
-            let eTime = this.selectedDate + " " + endTime;
-            let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-            this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
-          }
-          if (this.isStart == true) {
-            this.lineDataList = [];
-            for (let i = 0; i < this.polylines.length; i++) {
-              let routeDateList = [];
-              let latLong: string = this.routePathStore[i]["latlng"];
-              routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
-              for (let j = 0; j < routeDateList.length; j++) {
-                let routePart = routeDateList[j].split(',');
-                if (routePart.length == 2) {
-                  this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
-                }
-              }
-            }
-            if (this.lineIndex == 0) {
-              this.createMarker();
-            }
-            this.animate(this.lineIndex);
-          }
-          this.savedDataList.push({ wardNo: this.selectedZone, date: this.selectedDate, routePath: routePath });
-          localStorage.setItem('savedRouteData', JSON.stringify(this.savedDataList));
         }
       }
-    })
+
+      if (lineData != undefined) {
+        let status = "LineCompleted";
+        let line = new google.maps.Polyline({
+          path: lineData,
+          strokeColor: this.commonService.getLineColor(status),
+          strokeWeight: 2
+        });
+
+        if (i == 0) {
+          let lat = lineData[0]["lat"];
+          let lng = lineData[0]["lng"];
+          let markerURL = this.getIcon("start");
+          var markerLabel = "";
+          let contentString = '<br/>Start time: ' + this.routePathStore[i]["time"];
+          this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+        }
+
+        if (this.selectedDate != this.toDayDate) {
+          if (i == this.routePathStore.length - 1) {
+            let lat = lineData[lineData.length - 1]["lat"];
+            let lng = lineData[lineData.length - 1]["lng"];
+            let markerURL = this.getIcon("stop");
+            var markerLabel = "";
+            let contentString = '<br/>End time: ' + this.routePathStore[i]["time"];
+            this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+          }
+        }
+        else {
+          if (i == this.routePathStore.length - 1) {
+            let dbPath = "RealTimeDetails/WardDetails/" + this.selectedZoneNo;
+            let vehicleDutyData = this.db.object(dbPath).valueChanges().subscribe(
+              dutyData => {
+                vehicleDutyData.unsubscribe();
+                if (dutyData != null) {
+                  if (dutyData["isOnDuty"] != "yes") {
+                    let lat = lineData[lineData.length - 1]["lat"];
+                    let lng = lineData[lineData.length - 1]["lng"];
+                    let markerURL = this.getIcon("stop");
+                    var markerLabel = "";
+                    let contentString = '<br/>End time: ' + this.routePathStore[i]["time"];
+                    this.setMarker(lat, lng, markerLabel, markerURL, contentString, "all");
+                  }
+                }
+              });
+          }
+        }
+        this.polylines[i] = line;
+        this.polylines[i].setMap(this.map);
+        this.trackData.totalKM = parseFloat((totalKM / 1000).toFixed(2));
+        this.trackData.time = this.routePathStore[i]["time"];
+      }
+      myTotalKM = parseFloat((parseFloat((totalDistance).toFixed(8)) / 1000).toFixed(8));
+    }
+
+    if (this.routePathStore.length > 0) {
+      let startTime = this.routePathStore[0]["time"];
+      let endTime = this.routePathStore[0]["time"];
+      if (this.routePathStore.length > 1) {
+        endTime = this.routePathStore[this.routePathStore.length - 1]["time"];
+      }
+      let sTime = this.selectedDate + " " + startTime;
+
+      let eTime = this.selectedDate + " " + endTime;
+      let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
+      this.trackData.totalTime = this.commonService.getHrsFull(totalMinutes);
+    }
+
+    if (this.isStart == true) {
+      this.lineDataList = [];
+      for (let i = 0; i < this.polylines.length; i++) {
+        let routeDateList = [];
+        let latLong: string = this.routePathStore[i]["latlng"];
+        routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+        for (let j = 0; j < routeDateList.length; j++) {
+          let routePart = routeDateList[j].split(',');
+          if (routePart.length == 2) {
+            this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
+          }
+        }
+      }
+      if (this.lineIndex == 0) {
+        this.createMarker();
+      }
+      this.animate(this.lineIndex);
+    }
+  }
+
+
+  getDutyInOutTime(zone: any, year: any, monthName: any, date: any) {
+    return new Promise((resolve) => {
+      let dutyInOutList = [];
+      let dbPath = "WasteCollectionInfo/" + zone + "/" + year + "/" + monthName + "/" + date + "/Summary";
+      let dutyInOutInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        dutyInOutInstance.unsubscribe();
+        if (data != null) {
+          if (data["dutyInTime"] != null) {
+            let dutyInList = data["dutyInTime"].split(",");
+            for (let i = 0; i < dutyInList.length; i++) {
+              dutyInOutList.push({ inTime: dutyInList[i].toString().trim(), outTime: "" });
+            }
+            if (data["dutyOutTime"] != null) {
+              let dutyOutList = data["dutyOutTime"].split(",");
+              for (let i = 0; i < dutyInList.length; i++) {
+                dutyInOutList[i]["outTime"] = dutyOutList[i].toString().trim();
+              }
+            }
+            for (let i = 0; i < dutyInOutList.length; i++) {
+              if (dutyInOutList[i]["outTime"] == "") {
+                if (date == this.toDayDate) {
+                  dutyInOutList[i]["outTime"] = this.commonService.getCurrentTime();
+                }
+                else{
+                  dutyInOutList[i]["outTime"]="23:59:00";
+                }
+              }
+            }
+          }
+        }
+        resolve(dutyInOutList);
+      });
+    });
 
   }
 
@@ -1168,7 +965,6 @@ export class RouteTrackingComponent {
   }
 
   getMonthDetail() {
-    //localStorage.setItem("routeMonthDetail", null);
     this.monthDetail = [];
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
@@ -1187,215 +983,180 @@ export class RouteTrackingComponent {
         this.getMonthDetailData(i, year, month, monthName);
       }
       else {
-        let monthDetailData = JSON.parse(localStorage.getItem("routeMonthDetail"));
-        if (monthDetailData == null) {
-          this.getMonthDetailData(i, year, month, monthName);
-        }
-        else {
-          let monthDetails = monthDetailData.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
-          if (monthDetails != undefined) {
-            let monthDetail = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
-            if (monthDetail != undefined) {
-              monthDetail.km = monthDetails.km;
-              monthDetail.hour = monthDetails.hour;
-              if (monthDetails.driver != "") {
-                monthDetail.driver = monthDetails.driver;
-              }
-              else {
-                this.getDriverName(year, monthName, monthDate);
-              }
-              if (monthDetails.percentage != "0") {
-                monthDetail.percentage = monthDetails.percentage;
-              }
-              else {
-                this.getWorkPercentage(year, monthName, monthDate);
-              }
+        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FRouteTrackingData%2F" + this.selectedZone + "%2F" + year + "%2F" + monthName + "%2F" + monthDate + ".json?alt=media";
+        let routeInstance = this.httpService.get(path).subscribe(routeData => {
+          routeInstance.unsubscribe();
+          if (routeData != null) {
+            let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
+            if (monthDetails != undefined) {
+              monthDetails.km = routeData["km"];
+              monthDetails.driver = routeData["driver"];
+              monthDetails.hour = routeData["hour"];
+              monthDetails.percentage = routeData["percentage"];
             }
           }
-          else {
-            this.getMonthDetailData(i, year, month, monthName);
-          }
-        }
+        }, error => {
+          routeInstance.unsubscribe();
+          this.getMonthDetailData(i, year, month, monthName);
+        });
       }
     }
   }
 
   getMonthDetailData(days: any, year: any, month: any, monthName: any) {
     let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
-    let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate;
-    this.commonService.getStorageLocationHistory(dbPath).then(response => {
-      let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
-      let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
-      let day = monthDate.split("-")[2] + " " + monthShortName;
-      let totalKM: number = 0;
-      if (response["status"] == "Fail") {
-        let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-          routePath => {
-            if (routePath != null) {
+    this.getDutyInOutTime(this.selectedZone, year, monthName, monthDate).then((response) => {
+      let dutyOnOffList = JSON.parse(JSON.stringify(response));
+      if (dutyOnOffList.length > 0) {
+        let monthList = [];
+        let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate;
+        this.commonService.getStorageLocationHistory(dbPath).then(response => {
+          let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
+          let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
+          let day = monthDate.split("-")[2] + " " + monthShortName;
+          if (response["status"] == "Fail") {
+            let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
+              routePath => {
+                vehicleTracking.unsubscribe();
+                if (routePath != null) {
+                  if (monthDate != this.toDayDate) {
+                    this.commonService.saveJsonFile(routePath, "route.json", "/" + dbPath + "/");
+                  }
+                  let routeKeyArray = Object.keys(routePath);
+                  let keyArray = [];
+                  if (routeKeyArray.length > 0) {
+                    if (this.isActualData == 0) {
+                      keyArray = routeKeyArray;
+                    }
+                    else {
+                      for (let i = 0; i < routeKeyArray.length; i++) {
+                        if (!routeKeyArray[i].toString().includes('-')) {
+                          keyArray.push(routeKeyArray[i]);
+                        }
+                      }
+                    }
+                  }
+
+                  let dutyInTime = dutyOnOffList[0]["inTime"];
+                  let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
+                  let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
+                  let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
+
+                  for (let i = 0; i < keyArray.length - 3; i++) {
+                    let index = keyArray[i];
+                    let time = index.toString().split('-')[0];
+                    let routeDateTime = new Date(this.selectedDate + " " + time);
+                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                      monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                    }
+                  }
+                  this.getMonthDetailList(monthList, year, monthName, monthDate);
+                }
+              }
+            );
+
+          }
+          else {
+            let routePath = response["data"];
+            let routeKeyArray = Object.keys(routePath);
+            let keyArray = [];
+            if (routeKeyArray.length > 0) {
+              if (this.isActualData == 0) {
+                keyArray = routeKeyArray;
+              }
+              else {
+                for (let i = 0; i < routeKeyArray.length; i++) {
+                  if (!routeKeyArray[i].toString().includes('-')) {
+                    keyArray.push(routeKeyArray[i]);
+                  }
+                }
+              }
+            }
+
+            let dutyInTime = dutyOnOffList[0]["inTime"];
+            let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
+            let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
+            let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
+
+            for (let i = 0; i < keyArray.length - 3; i++) {
+              let index = keyArray[i];
+              let time = index.toString().split('-')[0];
+              let routeDateTime = new Date(this.selectedDate + " " + time);
+              if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+              }
+            }
+            this.getMonthDetailList(monthList, year, monthName, monthDate);
+
+          }
+        })
+      }
+    });
+  }
+
+  getMonthDetailList(monthList: any, year: any, monthName, monthDate: any) {
+    let totalKM: number = 0;
+    let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
+    if (monthDetails != undefined) {
+      let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
+      let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
+        driverData => {
+          driverTracking.unsubscribe();
+          if (driverData != null) {
+            monthDetails.driver = driverData;
+          }
+          let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
+          let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
+            data => {
+              workPersentageInstance.unsubscribe();
+              if (data != null) {
+                if(data["workPercentage"]!=null){
+                  monthDetails.percentage = data["workPercentage"].toString();
+                }
+                if (localStorage.getItem("userType") == "External User") {
+                  if (data["updatedWorkPercentage"] != null) {
+                    monthDetails.percentage = data["updatedWorkPercentage"].toString();
+                  }
+                }
+              }
+              for (let i = 0; i < monthList.length; i++) {
+                if (monthList[i]["distanceinmeter"] != null) {
+                  totalKM += parseFloat(monthList[i]["distanceinmeter"]);
+                }
+                let startTime = monthList[0]["time"];
+                let endTime = monthList[0]["time"];
+                if (monthList.length > 1) {
+                  endTime = monthList[monthList.length - 1]["time"];
+                }
+                let sTime = monthDate + " " + startTime;
+                let eTime = monthDate + " " + endTime;
+                let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
+                let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
+                if (monthDetails != undefined) {
+                  monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
+                  if (!isNaN(totalMinutes)) {
+                    monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
+                  }
+                  else {
+                    monthDetails.hour = "0 hr 0 min";
+                  }
+                }
+              }
               if (monthDate != this.toDayDate) {
-                this.commonService.saveJsonFile(routePath, "route.json", "/" + dbPath + "/");
-              }
+                let obj = {
+                  km: monthDetails.km,
+                  hour: monthDetails.hour,
+                  driver: monthDetails.driver,
+                  percentage: monthDetails.percentage
 
-              let routeKeyArray = Object.keys(routePath);
-              let keyArray = [];
-              if (routeKeyArray.length > 0) {
-                if (this.isActualData == 0) {
-                  keyArray = routeKeyArray;
                 }
-                else {
-                  for (let i = 0; i < routeKeyArray.length; i++) {
-                    if (!routeKeyArray[i].toString().includes('-')) {
-                      keyArray.push(routeKeyArray[i]);
-                    }
-                  }
-                }
-              }
-
-              for (let i = 0; i < keyArray.length - 3; i++) {
-                let index = keyArray[i];
-                if (routePath[index]["distance-in-meter"] != null) {
-                  totalKM += parseFloat(routePath[index]["distance-in-meter"]);
-                }
-              }
-
-              let startTime = keyArray[0];
-              let endTime = keyArray[0];
-              if (keyArray.length > 1) {
-                if (monthDate != this.toDayDate) {
-                  endTime = keyArray[keyArray.length - 4];
-                }
-                else {
-                  endTime = keyArray[keyArray.length - 3];
-                }
-              }
-              let sTime = monthDate + " " + startTime;
-              let eTime = monthDate + " " + endTime;
-              let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-              let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
-              if (monthDetails != undefined) {
-                monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
-                if (!isNaN(totalMinutes)) {
-                  monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
-                }
-                else {
-                  monthDetails.hour = "0 hr 0 min";
-                }
-
-                let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
-                let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
-                  driverData => {
-                    driverTracking.unsubscribe();
-                    if (driverData != null) {
-                      monthDetails.driver = driverData;
-                    }
-                    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
-                    let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
-                      data => {
-                        workPersentageInstance.unsubscribe();
-                        if (data != null) {
-                          monthDetails.percentage = data["workPercentage"].toString();
-
-                          if (localStorage.getItem("userType") == "External User") {
-                            if (data["updatedWorkPercentage"] != null) {
-                              monthDetails.percentage = data["updatedWorkPercentage"].toString();
-                            }
-                          }
-                        }
-                        let monthDetailData = JSON.parse(localStorage.getItem("routeMonthDetail"));
-                        if (monthDetailData == null) {
-                          monthDetailData = [];
-                        }
-                        monthDetailData.push({ wardNo: this.selectedZone, day: day, driver: monthDetails.driver, km: monthDetails.km, hour: monthDetails.hour, percentage: monthDetails.percentage, monthDate: monthDate });
-
-                      }
-                    );
-                  });
+                let filePath = "/RouteTrackingData/" + this.selectedZone + "/" + year + "/" + monthName + "/";
+                this.commonService.saveJsonFile(obj, monthDate + ".json", filePath);
               }
             }
-            vehicleTracking.unsubscribe();
-          }
-        );
-
-      }
-      else {
-        let routePath = response["data"];
-        let routeKeyArray = Object.keys(routePath);
-        let keyArray = [];
-        if (routeKeyArray.length > 0) {
-          if (this.isActualData == 0) {
-            keyArray = routeKeyArray;
-          }
-          else {
-            for (let i = 0; i < routeKeyArray.length; i++) {
-              if (!routeKeyArray[i].toString().includes('-')) {
-                keyArray.push(routeKeyArray[i]);
-              }
-            }
-          }
-        }
-
-        for (let i = 0; i < keyArray.length - 3; i++) {
-          let index = keyArray[i];
-          if (routePath[index]["distance-in-meter"] != null) {
-            totalKM += parseFloat(routePath[index]["distance-in-meter"]);
-          }
-        }
-
-        let startTime = keyArray[0];
-        let endTime = keyArray[0];
-        if (keyArray.length > 1) {
-          if (monthDate != this.toDayDate) {
-            endTime = keyArray[keyArray.length - 4];
-          }
-          else {
-            endTime = keyArray[keyArray.length - 3];
-          }
-        }
-        let sTime = monthDate + " " + startTime;
-        let eTime = monthDate + " " + endTime;
-        let totalMinutes = this.commonService.timeDifferenceMin(new Date(eTime), new Date(sTime));
-        let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
-        if (monthDetails != undefined) {
-          monthDetails.km = parseFloat((totalKM / 1000).toFixed(1));
-          if (!isNaN(totalMinutes)) {
-            monthDetails.hour = this.commonService.getHrsFull(totalMinutes);
-          }
-          else {
-            monthDetails.hour = "0 hr 0 min";
-          }
-
-          let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
-          let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
-            driverData => {
-              driverTracking.unsubscribe();
-              if (driverData != null) {
-                monthDetails.driver = driverData;
-              }
-              let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
-              let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
-                data => {
-                  workPersentageInstance.unsubscribe();
-                  if (data != null) {
-                    monthDetails.percentage = data["workPercentage"].toString();
-
-                    if (localStorage.getItem("userType") == "External User") {
-                      if (data["updatedWorkPercentage"] != null) {
-                        monthDetails.percentage = data["updatedWorkPercentage"].toString();
-                      }
-                    }
-                  }
-                  let monthDetailData = JSON.parse(localStorage.getItem("routeMonthDetail"));
-                  if (monthDetailData == null) {
-                    monthDetailData = [];
-                  }
-                  monthDetailData.push({ wardNo: this.selectedZone, day: day, driver: monthDetails.driver, km: monthDetails.km, hour: monthDetails.hour, percentage: monthDetails.percentage, monthDate: monthDate });
-
-                }
-              );
-            });
-        }
-      }
-    })
+          );
+        });
+    }
   }
 
 

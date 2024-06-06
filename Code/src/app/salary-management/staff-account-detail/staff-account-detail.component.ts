@@ -509,7 +509,7 @@ export class StaffAccountDetailComponent implements OnInit {
                     designation = "Driver";
                     empType = 2;
                   }
-                  else if (detail.designation == "Service Excecutive ") {
+                  else if (detail.designation == "Service Executive") {
                     designation = "Helper";
                     empType = 2;
                   }
@@ -519,7 +519,6 @@ export class StaffAccountDetailComponent implements OnInit {
                 }
               }
               employeeData={ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType };
-              //console.log(employeeData);
               resolve({ status: "success", data: employeeData });
             }
             else {

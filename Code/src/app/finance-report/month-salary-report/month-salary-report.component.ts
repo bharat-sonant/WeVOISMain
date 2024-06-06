@@ -524,7 +524,7 @@ export class MonthSalaryReportComponent implements OnInit {
                 if (designation.trim() == "Transportation Executive") {
                   designation = "Driver";
                 }
-                else if (designation.trim() == "Service Excecutive") {
+                else if (designation.trim() == "Service Executive") {
                   designation = "Helper";
                 }
 

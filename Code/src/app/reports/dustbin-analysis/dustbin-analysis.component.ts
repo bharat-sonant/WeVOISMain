@@ -49,6 +49,8 @@ export class DustbinAnalysisComponent implements OnInit {
     analysisRemarks: "",
     analysisDetail: "",
     manualRemarks: "",
+    imageCaptureAddress: "",
+    latLng: ""
   };
 
   planDetail: planDetails = {
@@ -75,9 +77,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Dustbin-Management", "Dustbin-Analysis", localStorage.getItem("userID"));
 
-    let element = <HTMLAnchorElement>(
-      document.getElementById("dustbinReportLink")
-    );
+    let element = <HTMLAnchorElement>(document.getElementById("dustbinReportLink"));
     element.href = this.cityName + "/3B/dustbin-planing";
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
@@ -121,33 +121,31 @@ export class DustbinAnalysisComponent implements OnInit {
   getAssignedPlans() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedPlans");
     this.planList = [];
-    let assignedPlanPath = this.db.list("DustbinData/DustbinAssignment/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate).valueChanges()
-      .subscribe((assignedPlans) => {
-        if (assignedPlans.length > 0) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedPlans", assignedPlans);
-          for (let index = 0; index < assignedPlans.length; index++) {
-            const element = assignedPlans[index];
-            if (element["planName"] != "") {
-              this.planList.push({
-                planId: element["planId"],
-                planName: element["planName"],
-                driver: element["driver"],
-                helper: element["helper"],
-                secondHelper: element["secondHelper"],
-                thirdHelper: element["thirdHelper"],
-                vehicle: element["vehicle"],
-              });
-            }
+    let assignedPlanPath = this.db.list("DustbinData/DustbinAssignment/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate).valueChanges().subscribe((assignedPlans) => {
+      if (assignedPlans.length > 0) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedPlans", assignedPlans);
+        for (let index = 0; index < assignedPlans.length; index++) {
+          const element = assignedPlans[index];
+          if (element["planName"] != "") {
+            this.planList.push({
+              planId: element["planId"],
+              planName: element["planName"],
+              driver: element["driver"],
+              helper: element["helper"],
+              secondHelper: element["secondHelper"],
+              thirdHelper: element["thirdHelper"],
+              vehicle: element["vehicle"],
+            });
           }
-
-          this.getBinsForSelectedPlan(this.planList[0]["planId"]);
-        } else {
-          this.resetData();
-          this.commonService.setAlertMessage("error", "No plan created for the selected date.");
         }
+        this.getBinsForSelectedPlan(this.planList[0]["planId"]);
+      } else {
+        this.resetData();
+        this.commonService.setAlertMessage("error", "No plan created for the selected date.");
+      }
 
-        assignedPlanPath.unsubscribe();
-      });
+      assignedPlanPath.unsubscribe();
+    });
   }
 
   resetData() {
@@ -172,6 +170,8 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.manualRemarks = "";
     this.binDetail.analysisDetail = "";
     this.binDetail.canDoAnalysis = "no";
+    this.binDetail.latLng = "";
+    this.binDetail.imageCaptureAddress = "";
 
     // now reset plan data
     this.planDetail.driverName = "--";
@@ -211,7 +211,6 @@ export class DustbinAnalysisComponent implements OnInit {
         let bins = pickingPlanData["bins"];
         this.getBinsDetail(bins, planId);
       }
-
       pickingPlanPath.unsubscribe();
     });
   }
@@ -225,47 +224,27 @@ export class DustbinAnalysisComponent implements OnInit {
       let binId = binsArray[index].replace(" ", "");
       let binsDetailsPath = this.db.object("DustbinData/DustbinDetails/" + binId + "/address").valueChanges().subscribe((dustbinAddress) => {
         let dustbinPickHistoryPath = this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + binId + "/" + planId).valueChanges().subscribe((dustbinHistoryData) => {
-          if(dustbinHistoryData!=null){
+          
+          if (dustbinHistoryData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsDetail", dustbinHistoryData);
           }
+          console.log(dustbinHistoryData);
           this.dustbinList.push({
             dustbinId: binId,
             address: dustbinAddress,
             iconClass: this.setIconClass(dustbinHistoryData),
             divClass: this.setBackgroudClasss(dustbinHistoryData),
             duration: this.setDuration(dustbinHistoryData),
-            dustbinRemark: this.checkNullValue(
-              dustbinHistoryData,
-              "remarks"
-            ),
-            filledTopViewImage: this.setImageUrl(
-              dustbinHistoryData,
-              "filled-top"
-            ),
-            filledFarFromImage: this.setImageUrl(
-              dustbinHistoryData,
-              "filled-far"
-            ),
-            emptyTopViewImage: this.setImageUrl(
-              dustbinHistoryData,
-              "empty-top"
-            ),
-            emptyFarFromImage: this.setImageUrl(
-              dustbinHistoryData,
-              "empty-far"
-            ),
-            emptyDustbinTopViewImage: this.setImageUrl(
-              dustbinHistoryData,
-              "empty-dustbin-top"
-            ),
-            emptyDustbinFarFromImage: this.setImageUrl(
-              dustbinHistoryData,
-              "empty-dustbin-far"
-            ),
-            dustbinNotFoundImage: this.setImageUrl(
-              dustbinHistoryData,
-              "not-at-location"
-            ),
+            dustbinRemark: this.checkNullValue(dustbinHistoryData, "remarks"),
+            filledTopViewImage: this.setImageUrl(dustbinHistoryData, "filled-top"),
+            filledFarFromImage: this.setImageUrl(dustbinHistoryData, "filled-far"),
+            emptyTopViewImage: this.setImageUrl(dustbinHistoryData, "empty-top"),
+            emptyFarFromImage: this.setImageUrl(dustbinHistoryData, "empty-far"),
+            emptyDustbinTopViewImage: this.setImageUrl(dustbinHistoryData, "empty-dustbin-top"),
+            emptyDustbinFarFromImage: this.setImageUrl(dustbinHistoryData, "empty-dustbin-far"),
+            dustbinNotFoundImage: this.setImageUrl(dustbinHistoryData, "not-at-location"),
+            imageCaptureAddress:this.checkNullValue(dustbinHistoryData, "imageCaptureAddress"),
+            latLng:this.checkNullValue(dustbinHistoryData, "latLng"),
             startTime: this.checkNullValue(dustbinHistoryData, "startTime"),
             endTime: this.checkNullValue(dustbinHistoryData, "endTime"),
             analysisBy: this.checkAnalysisValues(dustbinHistoryData, "analysisBy"),
@@ -288,13 +267,10 @@ export class DustbinAnalysisComponent implements OnInit {
             } else {
               this.binDetail.filledTopViewImageUrl = this.imageNotAvailablePath;
             }
-
             this.showPlanDetails(planId);
           }
-
           dustbinPickHistoryPath.unsubscribe();
         });
-
         binsDetailsPath.unsubscribe();
       });
     }
@@ -329,10 +305,8 @@ export class DustbinAnalysisComponent implements OnInit {
 
   showPlanDetails(planId: any) {
     let plan = this.planList.find((item) => item.planId == planId);
-    this.commonService.getEmplyeeDetailByEmployeeId(plan.driver).then((employee) => (this.planDetail.driverName = employee["name"] + " [D]")
-    );
-    this.commonService.getEmplyeeDetailByEmployeeId(plan.helper).then((employee) => (this.planDetail.helper = employee["name"] + " [H1]")
-    );
+    this.commonService.getEmplyeeDetailByEmployeeId(plan.driver).then((employee) => (this.planDetail.driverName = employee["name"] + " [D]"));
+    this.commonService.getEmplyeeDetailByEmployeeId(plan.helper).then((employee) => (this.planDetail.helper = employee["name"] + " [H1]"));
     if (plan.secondHelper != undefined) {
       this.commonService.getEmplyeeDetailByEmployeeId(plan.secondHelper).then((employee) =>
         (this.planDetail.secondHelper = employee["name"] + " [H2]")
@@ -454,8 +428,7 @@ export class DustbinAnalysisComponent implements OnInit {
           let emptyDustbinTopViewImage = binData["Image"]["Urls"]["emptyDustbinTopViewImageUrl"];
           let emptyDustbinFarFromImage = binData["Image"]["Urls"]["emptyDustbinFarFromImageUrl"];
 
-          if (emptyDustbinTopViewImage != undefined && emptyDustbinFarFromImage != undefined
-          ) {
+          if (emptyDustbinTopViewImage != undefined && emptyDustbinFarFromImage != undefined) {
             iconClass = "fas fa-check-double";
           } else if (filledTopViewImageUrl == undefined || emptyFarFromImageUrl == undefined || emptyTopViewImageUrl == undefined || filledFarFromImageUrl == undefined) {
             // icon for "If any one is missing"
@@ -537,6 +510,8 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.emptyDustbinTopViewImageUrl = this.dustbinList[index]["emptyDustbinTopViewImage"];
     this.binDetail.emptyDustbinFarViewImageUrl = this.dustbinList[index]["emptyDustbinFarFromImage"];
     this.binDetail.dustbinNotFoundImageUrl = this.dustbinList[index]["dustbinNotFoundImage"];
+    this.binDetail.latLng=this.dustbinList[index]["latLng"];
+    this.binDetail.imageCaptureAddress=this.dustbinList[index]["imageCaptureAddress"];
 
     this.binDetail.analysisBy = this.dustbinList[index]["analysisBy"];
     this.binDetail.analysisAt = this.dustbinList[index]["analysisAt"];
@@ -592,19 +567,14 @@ export class DustbinAnalysisComponent implements OnInit {
 
     // Need to get isBroken data from dustbinDetail
     if (chkRemark2.checked == false) {
-      let isBrokenPath = this.db
-        .object(
-          "DustbinData/DustbinDetails/" + this.binDetail.binId + "/isBroken"
-        )
-        .valueChanges()
-        .subscribe((isBroken) => {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setRemark", isBroken);
-          let chkRemark2 = <HTMLInputElement>(
-            document.getElementById("chkRemark2")
-          );
-          chkRemark2.checked = Boolean(isBroken);
-          isBrokenPath.unsubscribe();
-        });
+      let isBrokenPath = this.db.object("DustbinData/DustbinDetails/" + this.binDetail.binId + "/isBroken").valueChanges().subscribe((isBroken) => {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "setRemark", isBroken);
+        let chkRemark2 = <HTMLInputElement>(
+          document.getElementById("chkRemark2")
+        );
+        chkRemark2.checked = Boolean(isBroken);
+        isBrokenPath.unsubscribe();
+      });
     }
   }
 
@@ -646,18 +616,15 @@ export class DustbinAnalysisComponent implements OnInit {
       $("#box2").show();
       $("#hText1").html("ऊपर से खाली");
       $("#hText2").html("खाली दूर से");
-      this.binDetail.filledTopViewImageUrl =
-        this.binDetail.emptyDustbinTopViewImageUrl;
-      this.binDetail.filledFarFromImageUrl =
-        this.binDetail.emptyDustbinFarViewImageUrl;
+      this.binDetail.filledTopViewImageUrl = this.binDetail.emptyDustbinTopViewImageUrl;
+      this.binDetail.filledFarFromImageUrl = this.binDetail.emptyDustbinFarViewImageUrl;
       this.maxSlideCount = 2;
     } else if (this.binDetail.dustbinRemark == "डस्टबिन लोकेशन पर नहीं है") {
       $("#box1").show();
       $("#preLink").hide();
       $("#nextLink").hide();
       $("#hText1").html("लोकेशन पर नहीं है");
-      this.binDetail.filledTopViewImageUrl =
-        this.binDetail.dustbinNotFoundImageUrl;
+      this.binDetail.filledTopViewImageUrl = this.binDetail.dustbinNotFoundImageUrl;
     } else {
       $("#box1").show();
       $("#box2").show();
@@ -667,8 +634,7 @@ export class DustbinAnalysisComponent implements OnInit {
       $("#nextLink").show();
       $("#hText1").html("ऊपर से भरा ");
       $("#hText2").html("भरा दूर से");
-      this.binDetail.filledTopViewImageUrl =
-        this.binDetail.filledTopViewImageUrl;
+      this.binDetail.filledTopViewImageUrl = this.binDetail.filledTopViewImageUrl;
       this.maxSlideCount = 4;
     }
   }
@@ -683,9 +649,7 @@ export class DustbinAnalysisComponent implements OnInit {
 
   updateBinListAndDetails() {
     // set update values into the list
-    let data = this.dustbinList.find(
-      (item) => item.dustbinId == this.binDetail.binId
-    );
+    let data = this.dustbinList.find((item) => item.dustbinId == this.binDetail.binId);
     data.analysisAt = this.commonService.getTodayDateTime();
     data.analysisBy = this.userId;
     data.analysisRemark = this.getRemarks();
@@ -703,18 +667,15 @@ export class DustbinAnalysisComponent implements OnInit {
   updatePendingAnalysis() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updatePendingAnalysis");
     if (this.binDetail.analysisAt == "") {
-      let pendingCountPath = this.db
-        .object("DustbinData/TotalDustbinAnalysisPending")
-        .valueChanges()
-        .subscribe((pedingCount) => {
-          pendingCountPath.unsubscribe();
-          if(pedingCount!=null){            
+      let pendingCountPath = this.db.object("DustbinData/TotalDustbinAnalysisPending").valueChanges().subscribe((pedingCount) => {
+        pendingCountPath.unsubscribe();
+        if (pedingCount != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updatePendingAnalysis", pedingCount);
-          }
-          this.db.object("DustbinData").update({
-            TotalDustbinAnalysisPending: Number(pedingCount) - 1,
-          });
+        }
+        this.db.object("DustbinData").update({
+          TotalDustbinAnalysisPending: Number(pedingCount) - 1,
         });
+      });
     }
   }
 
@@ -764,9 +725,7 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   getRemark(remarkNo: any) {
-    let element = <HTMLInputElement>(
-      document.getElementById("remark" + remarkNo)
-    );
+    let element = <HTMLInputElement>(document.getElementById("remark" + remarkNo));
     if (element.checked == true) {
       this.remark = "कचरा बाहर फैला हुआ है।";
     } else {
@@ -839,6 +798,8 @@ export class dustbinDetails {
   analysisRemarks: string;
   analysisDetail: string;
   manualRemarks: string;
+  imageCaptureAddress: string;
+  latLng: string;
 }
 
 export class planDetails {

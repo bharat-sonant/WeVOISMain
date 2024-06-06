@@ -939,7 +939,7 @@ border: none
   
 .line-details-box{
 width: 270px;
-top: 215px;
+top: 270px;
 }
 .display{
 display:none;
@@ -1308,6 +1308,33 @@ i.eye{
   width: 45px;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
+
+
+.div-nearByWards {
+  position: absolute;
+  right: 15px;
+  top: 346px;
+  width: 225px;
+  height: 135px;
+  // max-height:15.7px;
+  overflow-y: scroll;
+  border-radius: 5px;
+  background-color: rgb(255, 255, 255);
+  // animation:dropDown 2s ease-in-out linear;
+}
+
+
+.nearbyward-details-box{  
+  width: 280px;
+  min-height: 180px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px 2px #dedede;
+  position: absolute;
+  right: 15px;
+  top: 380px;
+  /* border-radius: 5px; */
+  border: 1px solid lightgray;
+  }
 
 
 

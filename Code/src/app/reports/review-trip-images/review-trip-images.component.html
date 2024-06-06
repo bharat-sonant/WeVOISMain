@@ -25,7 +25,8 @@
             Ward Trip Images
         </div>
         <div class="col-md-3 text-right" style="position: absolute;right: 30px;">
-            <i class="fas fa-redo-alt" style="color: #2dbd23; font-size: 24px; cursor: pointer;" (click)="syncData();"></i>
+            <i class="fas fa-redo-alt" style="color: #2dbd23; font-size: 24px; cursor: pointer;"
+                (click)="syncData();"></i>
         </div>
     </div>
 </section>
@@ -56,15 +57,28 @@
                                                 <td class="table-data-3">
                                                     <div style="width: 100%; display: flex;">
                                                         <div *ngFor="let dtImage of dt.tripImageList;"
-                                                            style="width:200px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
-                                                            <a href="{{dtImage.imageUrl}}" target="_blank">
-                                                                <img [src]="dtImage.imageUrl"
-                                                                    style="max-width: 180px;max-height: 180px;" /></a>
-                                                            <br />
+                                                            style="width:400px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                                                            <div class="row" style="display: flex;">
+                                                                <div class="col-md-6">
+                                                                    बिना तिरपाल के ऊपर से<br/>
+                                                                    <a href="{{dtImage.imageUrl}}" target="_blank">
+                                                                        <img [src]="dtImage.imageUrl"
+                                                                            style="max-width: 200px;max-height: 200px;" /></a>
+
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    तिरपाल के साथ<br />
+                                                                    <a href="{{dtImage.imageUrl2}}" target="_blank">
+                                                                        <img [src]="dtImage.imageUrl2"
+                                                                            style="max-width: 200px;max-height: 200px;" /></a>
+                                                                   
+                                                                </div>
+                                                            </div>
                                                             <div class="row" style="text-align: left;">
                                                                 <div class="col-md-12" style="text-align: left;">
                                                                     <b>Driver : </b>
-                                                                    {{dtImage.driver}}</div>
+                                                                    {{dtImage.driver}}
+                                                                </div>
                                                                 <div class="col-md-12"><b>Vehicle : </b>
                                                                     {{dtImage.vehicle}}</div>
                                                                 <div class="col-md-12"><b>Trip Time : </b>

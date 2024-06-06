@@ -139,6 +139,11 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("isManager"))).checked = true;
         }
       }
+      if (data["isAttendanceApprover"] != undefined) {
+        if (data["isAttendanceApprover"] == 1) {
+          (<HTMLInputElement>(document.getElementById("isAttendanceApprover"))).checked = true;
+        }
+      }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -233,6 +238,7 @@ export class UserAddComponent implements OnInit {
     let isLock: any = 0;
     let isAdmin: any = 0;
     let isManager: any = 0;
+    let isAttendanceApprover:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -276,6 +282,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isAdmin = 1;
     element = <HTMLInputElement>document.getElementById("isActualWorkPercentage");
     if (element.checked == true) isActualWorkPercentage = 1;
+    element = <HTMLInputElement>document.getElementById("isAttendanceApprover");
+    if (element.checked == true) isAttendanceApprover = 1;
     element = <HTMLInputElement>document.getElementById("isManager");
     if (element.checked == true) isManager = 1;
     if (this.userid == null) {
@@ -307,7 +315,8 @@ export class UserAddComponent implements OnInit {
       isAdmin: isAdmin,
       isManager: isManager,
       roleId: roleId,
-      accessCities: accessCities
+      accessCities: accessCities,
+      isAttendanceApprover:isAttendanceApprover
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

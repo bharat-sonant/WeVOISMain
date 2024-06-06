@@ -83,7 +83,6 @@ export class EmployeesComponent implements OnInit {
             this.allEmployeeList.push({ empId: empId.toString(), status: data[empId]["GeneralDetails"]["status"], empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], empType: data[empId]["GeneralDetails"]["empType"], salaryType: salaryType });
           }
         }
-        console.log(this.allEmployeeList)
         this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
         $(this.spStatus).html("Active");
         this.checkForNewEmployee();
@@ -143,7 +142,7 @@ export class EmployeesComponent implements OnInit {
                   designation = "Driver";
                   empType = 2;
                 }
-                else if (detail.designation == "Service Excecutive ") {
+                else if (detail.designation == "Service Executive") {
                   designation = "Helper";
                   empType = 2;
                 }

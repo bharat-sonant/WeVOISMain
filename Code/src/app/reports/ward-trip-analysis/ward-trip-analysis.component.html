@@ -136,17 +136,20 @@
                                         </div>
                                     </div>
                                     <div class="col-md-9 mob-res mob-res3">
-                                        <div class="row">
-                                            <div class="col-12 main-carousel">
-                                                <div id="carouselExampleControls" class="carousel slide"
-                                                    data-ride="carousel" data-interval="false">
-                                                    <div class="carousel-inner">
-                                                        <div id="slide1" class="carousel-item active">
-                                                            <img id="slideImg1" class="rotate0 d-block img-fluid"
-                                                                src="{{tripData.imageUrl}}">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        <div class="row" >
+                                            <div class="col-md-6" >
+                                                <div style="background-color: #fff; padding: 10px; font-weight: bold;">
+                                                <div style="text-align: center;">बिना तिरपाल के ऊपर से <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(1)"></i></div>
+                                                <a href="{{tripData.imageUrl}}" target="_blank">
+                                                <img id="slideImg1" class="rotate0"
+                                                src="{{tripData.imageUrl}}"></a> </div>                                               
+                                            </div>                                            
+                                            <div class="col-md-6" >
+                                                <div style="background-color: #fff; padding: 10px; font-weight: bold;">
+                                                <div style="text-align: center;">तिरपाल के साथ <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;"  (click)="rotateImage(2)"></i></div>
+                                                <a href="{{tripData.imageUrl1}}" target="_blank">
+                                                <img id="slideImg2" class="rotate1 d-block img-fluid"
+                                                src="{{tripData.imageUrl1}}"></a></div>
                                             </div>
                                         </div>
                                         <div class="row">

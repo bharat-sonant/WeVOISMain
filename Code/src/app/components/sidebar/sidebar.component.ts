@@ -64,6 +64,7 @@ export class SidebarComponent implements OnInit {
   isConnected = true;
   noInternetConnection: boolean;
   isDehradun: boolean;
+  isActual: any;
 
   ngOnInit() {
     this.checkLoginDate();
@@ -74,6 +75,7 @@ export class SidebarComponent implements OnInit {
     this.isDehradun = false;
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fb.getDatabaseByCity(this.cityName);
+    this.isActual = localStorage.getItem("isActual");
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     if (this.accessCity.length > 1) {
       $("#liCity").show();
@@ -672,6 +674,10 @@ export class SidebarComponent implements OnInit {
               k = k + 1;
               this.setLink(k, userAccessList, i);*/
             }
+            else {
+              k = k + 1;
+              this.setLink(k, userAccessList, i);
+            }
           }
           else {
             k = k + 1;
@@ -724,16 +730,16 @@ export class SidebarComponent implements OnInit {
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
     if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.userid + "/" + newUrl;
+      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
     }
     else {
-      url = "https://main-wevois.firebaseapp.com/" + this.userid + "/" + newUrl;
+      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
     }
     window.open(url, "_blank");
   }
 
   clearAll() {
-    for (let k = 1; k <= 18; k++) {
+    for (let k = 1; k <= 19; k++) {
       $("#div" + k).hide();
       $("#divMob" + k).hide();
     }

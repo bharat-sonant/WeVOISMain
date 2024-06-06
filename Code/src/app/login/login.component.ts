@@ -194,6 +194,11 @@ export class LoginComponent implements OnInit {
       } else {
         localStorage.setItem("isActualWorkPercentage", "0");
       }
+      if (userDetails.isAttendanceApprover != 0) {
+        localStorage.setItem("isAttendanceApprover", userDetails.isAttendanceApprover);
+      } else {
+        localStorage.setItem("isAttendanceApprover", "0");
+      }
       if (userDetails.isManager != null) {
         localStorage.setItem("isManager", userDetails.isManager);
       }

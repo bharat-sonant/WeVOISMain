@@ -205,12 +205,21 @@ export class WardScancardReportComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCoveredLength");
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
-    let dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/Summary/wardCoveredDistance";
+    let dbPath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/LineStatus";
     let instance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       instance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCoveredLength", data);
-        let wardCoveredLength = (parseFloat(data.toString()) / 1000).toFixed(2);
+        let length=0;
+        let keyArray=Object.keys(data);
+        for(let i=0;i<keyArray.length;i++){
+          if(data[keyArray[i]]["Status"]=="LineCompleted"){
+            if(data[keyArray[i]]["line-distance"]!=null){
+              length+=Number(data[keyArray[i]]["line-distance"]);
+            }
+          }
+        }
+        let wardCoveredLength = (parseFloat(length.toString()) / 1000).toFixed(2);
         this.wardDataList[index]["wardCoveredLength"] =
           Number(wardCoveredLength);
         let wardLength = this.wardDataList[index]["wardLength"];

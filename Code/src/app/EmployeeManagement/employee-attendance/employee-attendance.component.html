@@ -7,7 +7,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-7 card-outer">
+        <div class="col-md-12 card-outer">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
@@ -61,6 +61,9 @@
 
                                     <input type="checkbox" id="chkFieldExecutive" (change)="filterData()"
                                         style="margin-left: 10px;"> &nbsp;Field Executive
+
+                                        <input id="chkNotApproved" type="checkbox" (change)="filterData()"
+                                        style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b> ({{notApprovedCount}})</b>
                         </div>
                     </div>
                     <div id="divByEmployee" class="row" [hidden]="filterType=='byDate'">
@@ -79,6 +82,11 @@
                                 style="width: 100px; margin-left: 10px;">
                             <button class="btn btn-success" style="margin-top:10px ;"
                                 (click)="getAttendanceByEmployee();">Search</button>
+                                <input id="chkNotApprovedEmployee" type="checkbox" (change)="filterDataEmployee()"
+                                style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b>({{notApprovedCount}})</b>
+                                <span (click)="openLocation(contentLocation,0,'All')" style="cursor: pointer; margin-left: 20px; "> <i class="fa-solid fa-map-location-dot"
+                                    style="font-size: 14px; color: #2dbd23;"
+                                    ></i> Show All Location</span>
                         </div>
 
                     </div>
@@ -96,53 +104,66 @@
                                             <th class="text-left br-1 table-heading1 " [hidden]="filterType=='byDate'">
                                                 Date</th>
                                             <th class="text-left br-1 table-heading1 ">
-                                                In Time</th>
+                                                In</th>
                                             <th class="text-left br-1 table-heading1 ">
-                                                Out Time
+                                                Out
                                             </th>
                                             <th class="text-left br-1 table-heading1 ">
-                                                Working Hrs
+                                                Hrs
                                             </th>
-                                            <th class="text-left br-1 table-heading1" [hidden]="showStatus==false">
-                                                Status
-                                            </th>
+
                                             <th class="text-left br-1 table-heading1 col-w">
                                                 In Location
                                             </th>
                                             <th class="text-left br-1 table-heading1 col-w">
                                                 Out Location
                                             </th>
+                                            <th class="text-left br-1 table-heading1">
+                                                Status
+                                            </th>
+                                            <th class="text-left br-1 table-heading1 col-w"
+                                                [hidden]="isAttendanceApprover=='0'">
+                                                Approver
+                                            </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index"
-                                                (click)="setMarkerOnMap(data.inLatLng,data.outLatLng)"
-                                                style="cursor: pointer;">
+                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index" >
                                                 <td class="text-left br-1" [hidden]="filterType=='byEmployee'"
-                                                    style="cursor: pointer;"
+                                                    style="cursor: pointer; width:20%!important"
                                                     (click)="setFilterType('byEmployee',data.empId)">
                                                     {{data.name}} <b>[{{data.empCode}}]</b>
                                                 </td>
-                                                <td class="text-left br-1" [hidden]="filterType=='byDate'">
+                                                <td class="text-left br-1" [hidden]="filterType=='byDate'" style=" width:10%!important;">
                                                     {{data.name}}
                                                 </td>
-                                                <td class="text-left br-1" class="{{data.cssClass}}">
+                                                <td class="text-left br-1" class="{{data.cssClass}}" style=" width:5%!important;">
                                                     {{data.inTime}}
                                                 </td>
-                                                <td class="text-left br-1">
+                                                <td class="text-left br-1" style=" width:5%!important;">
                                                     {{data.outTime}}
                                                 </td>
-                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}">
+                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}" style=" width:10%!important;">
                                                     {{data.workingHour}}
                                                 </td>
-                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}"
-                                                    [hidden]="showStatus==false">
-                                                    {{data.status}}
+                                                <td class="text-left br-1" style=" width:20%!important;">
+                                                   <span> {{data.inLocation}}</span>
+                                                   <i class="fa-solid fa-map-location-dot"
+                                                   style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
+                                                   (click)="openLocation(contentLocation,i,'single')"></i>
                                                 </td>
-                                                <td class="text-left br-1">
-                                                    {{data.inLocation}}
-                                                </td>
-                                                <td class="text-left br-1">
+                                                <td class="text-left br-1" style=" width:20%!important;">
                                                     {{data.outLocation}}
+                                                </td>
+                                                <td class="text-left br-1"
+                                                style=" width:10%!important;">
+                                                    <span> {{data.status}}</span>
+                                                    <i class="fa-solid fa-person-circle-check"
+                                                        style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
+                                                        [hidden]="isAttendanceApprover=='0'"
+                                                        (click)="openApprovePopup(contentApprove,i,data.approverStatus);"></i>
+                                                </td>
+                                                <td class="text-left br-1" [hidden]="isAttendanceApprover=='0'" style=" width:12%!important">
+                                                    {{data.approveBy}}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -154,32 +175,69 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-5 card-outer">
-            <div #gmap class="gmap" id="divMap" style="border: solid 1px white;"></div>
-        </div>
-        <div class="col-md-6 card-main">
-            <div class="card card-body-outer">
-                <div id="content" #content class="card-body card-body2">
-                    <div class="row">
+    </div>
+</div>
 
-                        <div class="col-md-12">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-12 pr-1">
+<ng-template #contentApprove>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <input type="hidden" id="hddEmpId" value="0">
+            <input type="hidden" id="hddDate" value="">
+            <input type="hidden" id="hddIndex" value="0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Approve Attendance</h5>
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="cancelApprove();">
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <select id="ddlStatus" class="filter-select filter-input">
+                        <option value="0">Not Approved</option>
+                        <option value="1">Full Day</option>
+                        <option value="2">Pre Lunch</option>
+                        <option value="3">Post Lunch</option>
+                        <option value="4">Absent</option>
+                    </select>
 
-                                    </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6" style="text-align: center;margin-top: 15px;">
+                        <button class="btn btn-success" (click)="approveAttendance()"
+                            style="text-transform: uppercase;">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                        <button class="btn btn-danger " (click)="cancelApprove()" style="text-transform: uppercase;">
+                            Cancel</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div #gmap class="gmap" id="divMap"></div>
     </div>
-</div>
+</ng-template>
+
+
+<ng-template #contentLocation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lblName"></h5>
+                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="cancelApprove();">
+            </div>
+            <div class="modal-body">
+                <div id="divLocation" class="row" style="border-bottom: 1px solid lightgray;">
+                    <div class="col-md-12" >
+                       <b> In Location : </b> <label id="lblInLocation"></label>
+                    </div>
+                    <div class="col-md-12" >
+                       <b> Out Location : </b> <label id="lblOutLocation"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="margin-top: 10px;" >
+                        <div id="locationtMap" style="width:100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

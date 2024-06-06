@@ -40,6 +40,8 @@ export class WardWorkTrackingComponent {
   skipLineList: any[] = [];
   lineWeightageList: any[] = [];
   wardForWeightageList: any[] = [];
+  nearByWardsList: any[] = [];
+  nearByWardsPolygon: any[] = [];
   strokeWeight: any = 3;
   parhadhouseMarker: any;
   wardStartMarker: any;
@@ -79,12 +81,14 @@ export class WardWorkTrackingComponent {
   chkIsShowAllDustbin = "chkIsShowAllDustbin";
   chkIsShowHouse = "chkIsShowHouse";
   chkIsTrackRoute = "chkIsTrackRoute";
+  chkIsNearByWard = "chkIsNearByWard";
   isParshadShow: any;
   divDustbinDetail = "#divDustbinDetail";
   divTotalHouse = "#divTotalHouse";
   divNotSacnned = "#divNotSacnned";
   divScannedHouses = "#divScannedHouses";
   chkIsTimerEnable = "chkIsTimerEnable";
+  divNearByWard = "#divNearByWard";
   wardLinesDataObj: any;
   isShowAllHouse = false;
   isShowHouses: any;
@@ -113,7 +117,7 @@ export class WardWorkTrackingComponent {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.savePageLoadHistory("Monitoring","Ward-Work-Tracking",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Monitoring", "Ward-Work-Tracking", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -136,6 +140,148 @@ export class WardWorkTrackingComponent {
     this.setHeight();
     this.setDefaultMap();
     this.getWardForLineWeitage();
+  }
+
+  getNearByWards() {
+    this.nearByWardsList = [];
+    for (let i = 0; i < this.nearByWardsPolygon.length; i++) {
+      this.nearByWardsPolygon[i].polygon.setMap(null);
+    }
+    this.nearByWardsPolygon = [];
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FNearByWards%2FNearByWards.json?alt=media";
+    let nearByWardsInstance = this.httpService.get(path).subscribe(data => {
+      nearByWardsInstance.unsubscribe();
+      if (this.selectedZone == "0") {
+        // $("#btnNearBy").html("Show Near By Wards");
+        this.commonService.setAlertMessage("error", "Please select zone !!!");
+        return;
+      }
+      if (data != undefined) {
+        let jsonKeyArray = Object.keys(data);
+        let detail = jsonKeyArray.find(item => item == this.selectedZone)
+        if (detail != undefined) {
+          this.nearByWardsList = data[detail];
+          // setTimeout(() => {
+          for (let i = 0; i < this.nearByWardsList.length; i++) {
+            let color = this.getColor(i);
+            $("#tr" + i).css("color", color);
+          }
+          // }, 0);
+        }
+        else {
+          this.commonService.setAlertMessage("error", "No Near By Zone Data Found !!!");
+          // $("#btnNearBy").html("Show Near By Wards");
+        }
+      }
+    }, error => {
+      this.commonService.setAlertMessage("error", "No Near By Wards Data Found !!!");
+      // $("#btnNearBy").html("Show Near By Wards");
+    });
+  }
+
+
+  getColor(index: number) {
+    // var randomColor = Math.floor(Math.random()*16777215).toString(16);
+    // return "#"+randomColor;
+    switch (index) {
+      case 0:
+        return "#7400FF";
+      case 1:
+        return "#6A2D42";
+      case 2:
+        return "#8AF123";
+      case 3:
+        return "#23F1EE";
+      case 4:
+        return "#6A0976";
+      case 5:
+        return "#EF0C46";
+      case 6:
+        return "#0651A4";
+      case 7:
+        return "#6E7B32";
+      case 8:
+        return "#F7C600";
+      case 9:
+        return "#6DD8F5";
+      case 10:
+        return "#F14723";
+    }
+  }
+
+  showHideNearByWard() {
+    localStorage.setItem("wardWorkTrackingNearByWardShow", (<HTMLInputElement>document.getElementById("chkIsNearByWard")).checked.toString());
+    for (let i = 0; i < this.nearByWardsPolygon.length; i++) {
+      this.nearByWardsPolygon[i].polygon.setMap(null);
+    }
+    this.nearByWardsPolygon = [];
+    for (let i = 0; i < this.nearByWardsList.length; i++) {
+      (<HTMLInputElement>document.getElementById("checkBox" + i)).checked = false;
+    }
+    if ((<HTMLInputElement>document.getElementById(this.chkIsNearByWard)).checked == false) {
+      $(this.divNearByWard).hide();
+    }
+    else {
+      $(this.divNearByWard).show();
+    }
+    this.setDetailShowHideSetting();
+    this.hideSetting();
+  }
+
+
+  showNearByWards(index: any, zone: any) {
+    if (this.nearByWardsList.length != 0) {
+      let element = <HTMLInputElement>document.getElementById("checkBox" + index);
+      if (element.checked == true) {
+        let zoneKML: any;
+        this.commonService.getWardBoundary(zone, zoneKML, 4).then((data: any) => {
+          zoneKML = data;
+          let aa = [];
+          for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
+            aa.push({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) })
+          }
+
+          const polygon = new google.maps.Polygon({
+            paths: aa,
+            geodesic: true,
+            strokeColor: this.getColor(index),
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+          });
+          polygon.setOptions({
+            fillColor: polygon["strokeColor"],
+            fillOpacity: 0.35
+          });
+
+
+
+          // element.style.accentColor=polygon["strokeColor"] ;
+          $("#tr" + index).css("accentColor", polygon["strokeColor"]);
+
+
+
+          this.nearByWardsPolygon.push({ polygon: polygon, zone: zone });
+          let statusString = '<div style="width: 100px;background-color: white;float: left;">';
+          statusString += '<div style="float: left;width: 100px;text-align:center;font-size:12px;"> ' + zone + '';
+          statusString += '</div></div>';
+          var infowindow = new google.maps.InfoWindow({
+            content: statusString,
+          });
+
+          infowindow.open(this.map, polygon);
+          polygon.setMap(this.map);
+
+        });
+
+      }
+      else {
+        let detail = this.nearByWardsPolygon.find(item => item.zone == zone);
+        if (detail != undefined) {
+          detail.polygon.setMap(null)
+          this.nearByWardsPolygon = this.nearByWardsPolygon.filter(item => item != detail);
+        }
+      }
+    }
   }
 
 
@@ -162,24 +308,38 @@ export class WardWorkTrackingComponent {
   }
 
   setDetailShowHideSetting() {
-    if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == false && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == false) {
+    let isWorkerDetailShow = (<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked;
+    let isWorkDetailShow = (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked;
+    let isNearByWardDetailShow = (<HTMLInputElement>document.getElementById(this.chkIsNearByWard)).checked;
+
+    if (isWorkerDetailShow == false && isWorkDetailShow == false && isNearByWardDetailShow == false) {
       $(this.divDustbinDetail).css("right", "15px");
     }
-    else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == false && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == true) {
+    else if (isWorkerDetailShow == true && isWorkDetailShow == true && isNearByWardDetailShow == true) {
+      $(this.divWorkDetail).css("top", "270px");
+      $(this.divNearByWard).css("top", "380px");
       $(this.divDustbinDetail).css("right", "305px");
+    }
+    else if (isWorkerDetailShow == false && isWorkDetailShow == true && isNearByWardDetailShow == true) {
       $(this.divWorkDetail).css("top", "80px");
-    }
-    else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == true && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == false) {
+      $(this.divNearByWard).css("top", "200px");
       $(this.divDustbinDetail).css("right", "305px");
     }
-    else if ((<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked == true && (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked == true) {
+    else if (isWorkerDetailShow == true && isWorkDetailShow == false && isNearByWardDetailShow == true) {
+      $(this.divNearByWard).css("top", "270px");
       $(this.divDustbinDetail).css("right", "305px");
-      if (this.isParshadShow == false) {
-        $(this.divWorkDetail).css("top", "215px");
-      }
-      else {
-        $(this.divWorkDetail).css("top", "270px");
-      }
+    }
+    else if (isWorkerDetailShow == false && isWorkDetailShow == false && isNearByWardDetailShow == true) {
+      $(this.divNearByWard).css("top", "80px");
+      $(this.divDustbinDetail).css("right", "305px");
+    }
+    else if (isWorkerDetailShow == false && isWorkDetailShow == true && isNearByWardDetailShow == false) {
+      $(this.divWorkDetail).css("top", "80px");
+      $(this.divDustbinDetail).css("right", "305px");
+    }
+    else if (isWorkerDetailShow == true && isWorkDetailShow == true && isNearByWardDetailShow == false) {
+      $(this.divWorkDetail).css("top", "270px");
+      $(this.divDustbinDetail).css("right", "305px");
     }
   }
 
@@ -563,10 +723,13 @@ export class WardWorkTrackingComponent {
     (<HTMLInputElement>document.getElementById(this.chkIsWorkerDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkerDetailShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsWorkDetail)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingWorkShow"));
     (<HTMLInputElement>document.getElementById(this.chkIsTrackRoute)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingTrackRouteShow"));
+    (<HTMLInputElement>document.getElementById(this.chkIsNearByWard)).checked = JSON.parse(localStorage.getItem("wardWorkTrackingNearByWardShow"));
+
 
     this.showHideWorkDetail();
     this.showHideWorkerDetail();
     this.showHideAllDustbin();
+    this.showHideNearByWard();
   }
 
   showHideTrackRoute() {
@@ -589,7 +752,7 @@ export class WardWorkTrackingComponent {
 
   getRoute() {
     let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-    this.commonService.getStorageLocationHistory(dbPath).then((response)=>{
+    this.commonService.getStorageLocationHistory(dbPath).then((response) => {
       if (response["status"] == "Fail") {
         let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
           routeData => {
@@ -618,7 +781,7 @@ export class WardWorkTrackingComponent {
                     strokeColor: "blue",
                     strokeWeight: 2
                   });
-    
+
                   this.routePolyline = line;
                   this.routePolyline.setMap(this.map);
                 }
@@ -627,36 +790,36 @@ export class WardWorkTrackingComponent {
           }
         );
       }
-      else{
+      else {
         let lineData = [];
-        let routeData=response["data"];
-          let keyArray = Object.keys(routeData);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let index = keyArray[i];
-              if (routeData[index]["lat-lng"] != null) {
-                let routeDateList = [];
-                let latLong: string = routeData[index]["lat-lng"];
-                routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
-                for (let j = 0; j < routeDateList.length; j++) {
-                  let routePart = routeDateList[j].split(',');
-                  if (routePart.length == 2) {
-                    lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
-                  }
+        let routeData = response["data"];
+        let keyArray = Object.keys(routeData);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if (routeData[index]["lat-lng"] != null) {
+              let routeDateList = [];
+              let latLong: string = routeData[index]["lat-lng"];
+              routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+              for (let j = 0; j < routeDateList.length; j++) {
+                let routePart = routeDateList[j].split(',');
+                if (routePart.length == 2) {
+                  lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
                 }
               }
             }
-            if (lineData.length > 0) {
-              let line = new google.maps.Polyline({
-                path: lineData,
-                strokeColor: "blue",
-                strokeWeight: 2
-              });
-
-              this.routePolyline = line;
-              this.routePolyline.setMap(this.map);
-            }
           }
+          if (lineData.length > 0) {
+            let line = new google.maps.Polyline({
+              path: lineData,
+              strokeColor: "blue",
+              strokeWeight: 2
+            });
+
+            this.routePolyline = line;
+            this.routePolyline.setMap(this.map);
+          }
+        }
       }
     })
   }
@@ -688,6 +851,7 @@ export class WardWorkTrackingComponent {
     this.getEmployeeData();
     this.setWardBoundary();
     this.getAllLinesFromJson();
+    this.getNearByWards();
     if (this.lineWeightageList.length == 0) {
       this.getWardCoveredLengthAndCompletedLinesFromSummary();
     }
@@ -806,7 +970,7 @@ export class WardWorkTrackingComponent {
     if (isLineStopFeatureEnabled == "yes") {
       this.commonService.setAlertMessage("success", "Time feature Enabled !!!");
     }
-    else{
+    else {
       this.commonService.setAlertMessage("success", "Time feature Disabled !!!");
     }
   }

@@ -44,10 +44,15 @@ export class HouseMarkingComponent {
   isShowWardAndLine: any;
   houseTypeList: any[] = [];
   divHouseType = "#divHouseType";
+  divEntityCount = "#divEntityCount";
   houseWardNo = "#houseWardNo";
   houseLineNo = "#houseLineNo";
   houseIndex = "#houseIndex";
   ddlHouseType = "#ddlHouseType";
+  txtOwnerName = "#txtOwnerName";
+  txtNoOfEntities = "#txtNoOfEntities";
+  divNoOfPersons="#divNoOfPersons";
+  txtNoOfPerson="#txtNoOfPerson";
   divLoader = "#divLoader";
   deleteMarkerId = "#deleteMarkerId";
   deleteAlreadyCard = "#deleteAlreadyCard";
@@ -390,6 +395,7 @@ export class HouseMarkingComponent {
               let ownerName = "";
               let persons = "";
 
+
               if (data[index]["ownerName"] != null) {
                 ownerName = data[index]["ownerName"].toUpperCase();
               }
@@ -474,7 +480,7 @@ export class HouseMarkingComponent {
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId,ownerName:ownerName,persons:persons });
+              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
@@ -577,11 +583,11 @@ export class HouseMarkingComponent {
               let imageName = data[index]["image"];
               let userId = data[index]["userId"];
               let date = "";
-              let ownerName="";
-              let persons="";
+              let ownerName = "";
+              let persons = "";
               if (data[index]["ownerName"] != null) {
                 ownerName = data[index]["ownerName"].toUpperCase();
-              }if (data[index]["totalPerson"] != null) {
+              } if (data[index]["totalPerson"] != null) {
                 persons = data[index]["totalPerson"];
               }
 
@@ -658,7 +664,7 @@ export class HouseMarkingComponent {
                 houseType = houseTypeDetail.houseType;
               }
 
-              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId,ownerName:ownerName,persons:persons });
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
@@ -685,6 +691,7 @@ export class HouseMarkingComponent {
     });
   }
 
+
   setHouseType(index: any, zoneNo: any, lineNo: any, type: any) {
     $(this.divHouseType).show();
     $(this.houseIndex).val(index);
@@ -701,7 +708,45 @@ export class HouseMarkingComponent {
 
     if (detail != undefined) {
       let houseTypeId = detail.houseTypeId;
+      let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
+      if (houseTypeDetail != undefined) {
+        if (houseTypeDetail.entityType == "residential") {
+          $(this.divNoOfPersons).show();
+        }
+        else {
+          $(this.divNoOfPersons).hide();
+        }
+      }
+      if (houseTypeId == "19" || houseTypeId == "20") {
+        $(this.divEntityCount).show();
+      }
+      else {
+        $(this.divEntityCount).hide();
+      }
       $(this.ddlHouseType).val(houseTypeId);
+      $(this.txtOwnerName).val(detail.ownerName);
+      $(this.txtNoOfEntities).val(detail.servingCount);
+      $(this.txtNoOfPerson).val(detail.persons);
+    }
+  }
+
+  setEntitiesCounts(entityType: any) {
+    if (entityType == "19" || entityType == "20") {
+      let index = $(this.houseIndex).val();
+      let type = $("#type").val();
+      let detail;
+      if (type == "marker") {
+        detail = this.markerList.find(item => item.index == index);
+      }
+      else if (type == "includedMarker") {
+        detail = this.markerListIncluded.find(item => item.index==index);
+      }
+      $(this.txtNoOfEntities).val(detail.servingCount);
+      $(this.divEntityCount).show();
+    }
+    else {
+      $(this.txtNoOfEntities).val("0");
+      $(this.divEntityCount).hide();
     }
   }
 
@@ -710,6 +755,10 @@ export class HouseMarkingComponent {
     let zoneNo = $(this.houseWardNo).val();
     let lineNo = $(this.houseLineNo).val();
     let houseTypeId = $(this.ddlHouseType).val();
+    let ownerName=$(this.txtOwnerName).val();
+    let servingCount=$(this.txtNoOfEntities).val().toString();
+    let totalPerson = $(this.txtNoOfPerson).val();
+
     let type = $("#type").val();
     let detail;
     if (type == "marker") {
@@ -725,6 +774,9 @@ export class HouseMarkingComponent {
       let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
       if (houseTypeDetail != undefined) {
         detail.type = houseTypeDetail.houseType;
+        detail.ownerName=ownerName;
+        detail.servingCount=servingCount;
+        detail.persons = totalPerson;
         let zoneNo = detail.zoneNo;
         let lineNo = detail.lineNo;
         if (detail.cardNumber != "") {
@@ -736,10 +788,14 @@ export class HouseMarkingComponent {
             cardType = "व्यावसायिक";
           }
           let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + detail.cardNumber;
-          this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType });
+          let houseServingCount="";
+          if(servingCount!="0"){
+            houseServingCount=servingCount;
+          }
+          this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType,ownerName:ownerName,servingCount:houseServingCount,totalPerson:totalPerson });
         }
         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-        this.db.object(dbPath).update({ houseType: houseTypeId });
+        this.db.object(dbPath).update({ houseType: houseTypeId,ownerName:ownerName,totalHouses:servingCount,totalPerson:totalPerson });
         this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId, type);
       }
 

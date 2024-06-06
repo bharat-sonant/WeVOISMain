@@ -82,7 +82,7 @@
                                                 GPS KM
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                Driver Name
+                                                Driver Name 
                                             </th>
                                         </thead>
                                         <tbody>
@@ -136,6 +136,9 @@
                                                 <td class="text-left br-1">
                                                     <div style="width:100% " *ngFor="let dt of data.wardList "
                                                         [innerHTML]="dt.driver">
+                                                    </div>
+                                                    <div style="width:100% " *ngFor="let dt of data.wardList "
+                                                        [innerHTML]="dt.empId">
                                                     </div>
                                                 </td>
                                             </tr>
@@ -214,7 +217,7 @@
                                                     <b> Quantity :</b> {{data.quantity}}<br />
                                                     <b> Amount :</b> {{data.amount}}<br />
                                                     <b> Meter Reading :</b> {{data.meterReading}}<br />
-                                                    <b> By {{data.createdBy}}</b> <b>on </b>{{data.creationDate}}
+                                                    <b> By </b> {{data.createdBy}}  <b>on </b> {{data.creationDate}} {{data.time}}
                                                 </td>
                                             </tr>
                                         </tbody>

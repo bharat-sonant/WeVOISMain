@@ -594,7 +594,7 @@ export class CollectedAmountReportComponent implements OnInit {
         htmlString += "</tr>";
       }
       htmlString += "</table>";
-      let fileName = this.commonService.getFireStoreCity() + "-CollectedAmountReport.xlsx";
+      let fileName = this.commonService.getFireStoreCity() +"-"+this.selectedZone+"-"+this.selectedYear+ "-CollectedAmountReport.xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
   }

@@ -1489,17 +1489,20 @@ export class CommonService {
             }
           }
         }
-        this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/" + jsonDate + ".json").subscribe(data => {
-          resolve(JSON.stringify(data));
-        }, error => {
-          const pathDate = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+        const pathDate = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
           let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
             wardLineInstance.unsubscribe();
             if (data != null) {
               resolve(JSON.stringify(data));
             }
           });
+/*
+        this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/" + jsonDate + ".json").subscribe(data => {
+          resolve(JSON.stringify(data));
+        }, error => {
+          
         });
+        */
       });
     });
   }

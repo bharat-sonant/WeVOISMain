@@ -150,6 +150,8 @@ import { SecondaryCollectionAnalysisComponent } from '../../secondary-collection
 import { SecondaryCollectionPlaningComponent } from '../../secondary-collection-planing/secondary-collection-planing.component';
 import { SecondaryCollectionServiceComponent } from '../../secondary-collection-service/secondary-collection-service.component';
 import { SecondaryCollectionManageComponent } from '../../secondary-collection-manage/secondary-collection-manage.component';
+import { EntityModificationComponent } from '../../entity-modification/entity-modification.component';
+import { PaymentCollectorTrackingComponent } from '../../reports/payment-collector-tracking/payment-collector-tracking.component';
 
 // Jaipur-Greater
 
@@ -343,6 +345,8 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     SecondaryCollectionPlaningComponent,
     SecondaryCollectionServiceComponent,
     SecondaryCollectionManageComponent,
+    EntityModificationComponent,
+    PaymentCollectorTrackingComponent
   ]
 })
 

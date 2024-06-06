@@ -92,12 +92,17 @@ export class ReviewTripImagesComponent implements OnInit {
               let keyArray = Object.keys(tripData);
               for (let i = 0; i < keyArray.length; i++) {
                 let key = keyArray[i];
-                let time = tripData[key]["time"].split(':')[0] + ":" + tripData[key]["time"].split(':')[1];
+                let time = "";
+                if(tripData[key]["time"]!=null){
+                  time=tripData[key]["time"].split(':')[0] + ":" + tripData[key]["time"].split(':')[1];
+                }
                 let vehicle = tripData[key]["vehicle"];
                 let imageName = tripData[key]["imageName"];
+                let imageName2 = tripData[key]["imageName2"];
                 let driverId = tripData[key]["driverId"];
                 let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zone + "%2F" + key + "%2F" + imageName + "?alt=media";
-                detail.tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl });
+                let imageUrl2 = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zone + "%2F" + key + "%2F" + imageName2 + "?alt=media";
+                detail.tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl,imageUrl2:imageUrl2 });
               }
               this.getEmployeeNamebyId(zone);
             }
