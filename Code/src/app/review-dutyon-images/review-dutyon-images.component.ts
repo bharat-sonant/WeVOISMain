@@ -29,7 +29,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Monitoring","Review-Duty-On-Images",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Monitoring", "Review-Duty-On-Images", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -116,14 +116,21 @@ export class ReviewDutyonImagesComponent implements OnInit {
           }, 3000);
         }
       });
-  }  
+  }
 
-  syncData(){
+  syncData() {
     $(this.divMainLoader).show();
-    for(let i=0;i<this.zoneDutyOnList.length;i++){
-      this.zoneDutyOnList[i]["dutyOnImages"]=[];
+    this.zoneList = [];
+    this.zoneDutyOnList = [];
+    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    for (let i = 1; i < this.zoneList.length; i++) {
+      this.zoneDutyOnList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], dutyOnImages: [] });
     }
     this.getDutyOnImages(0);
+    // for (let i = 0; i < this.zoneDutyOnList.length; i++) {
+    //   this.zoneDutyOnList[i]["dutyOnImages"] = [];
+    // }
+    // this.getDutyOnImages(0);
   }
 
   getDutyOnTime(zone: any) {
@@ -328,8 +335,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
     }
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-
-    this.getZones();
+    this.syncData();
+    // this.getZones();
   }
 
 }

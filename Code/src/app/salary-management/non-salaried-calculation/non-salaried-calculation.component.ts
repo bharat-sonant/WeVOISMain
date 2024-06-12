@@ -84,7 +84,6 @@ export class NonSalariedCalculationComponent implements OnInit {
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
     this.getYear();
     this.getWardWagesList();
-    //this.getEmployee();
   }
 
   getWardWagesList() {
@@ -125,11 +124,8 @@ export class NonSalariedCalculationComponent implements OnInit {
     for (let i = year - 2; i <= year; i++) {
       this.yearList.push({ year: i });
     }
-    //this.selectedMonth = Number(this.todayDate.split('-')[1]);
     this.selectedYear = this.todayDate.split('-')[0];
-    // $(this.ddlMonth).val(this.todayDate.split('-')[1]);
     $(this.ddlYear).val(this.selectedYear);
-    // this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
   }
 
   getEmployee() {
@@ -166,6 +162,9 @@ export class NonSalariedCalculationComponent implements OnInit {
           });
         }
       }
+      setTimeout(() => {
+        $(this.divLoader).hide();
+      }, 12000);
 
     });
   }
@@ -181,23 +180,47 @@ export class NonSalariedCalculationComponent implements OnInit {
     this.getSalary();
   }
 
-  getSalary() {
-    //$(this.divLoader).show();
-    this.clearSalary();
-    setTimeout(() => {
-      this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
-      if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
-        this.monthDays = this.todayDate.split("-")[2];
-      }
-      if (this.salaryList.length > 0) {
-        for (let i = 1; i <= this.monthDays; i++) {
-          let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
-          this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
-        }
-      }
-    }, 2000);
-  }
+  
+  async getSalary() {
+    $(this.divLoader).show();
 
+   this.clearSalary();
+   this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+   if (Number(this.selectedMonth) == Number(this.todayDate.split('-')[1]) && this.selectedYear == this.todayDate.split('-')[0]) {
+     this.monthDays = this.todayDate.split("-")[2];
+   }
+   if (this.salaryList.length > 0) {
+
+     let loaderTime = 12000;
+     if (this.monthDays < 5) {
+       loaderTime = 24000;
+     }
+     else if (this.monthDays < 10) {
+       loaderTime = 36000;
+     }
+     else if (this.monthDays < 15) {
+       loaderTime = 48000;
+     }
+     else if (this.monthDays < 20) {
+       loaderTime = 60000;
+     }
+     else if (this.monthDays < 25) {
+       loaderTime = 72000;
+     }
+     else if (this.monthDays < 32) {
+       loaderTime = 84000;
+     }
+
+     for (let i = 1; i <= this.monthDays; i++) {
+       let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
+       this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
+     }
+     setTimeout(() => {
+       $(this.divLoader).hide();
+     }, loaderTime);
+   }
+ }
+  
   getSalaryFromDailyWork(monthDate: any, index: any, days: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSalaryFromDailyWork");
     let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
@@ -273,7 +296,6 @@ export class NonSalariedCalculationComponent implements OnInit {
                       }
                     }
 
-                    
                     if (new Date(this.commonService.setTodayDate() + " " + inTime) > new Date(this.commonService.setTodayDate() + " " + outTime)) {
                       let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/lastLineCompletedOn";
                       let lastLineCompletedOnInstance = this.db.object(dbPath).valueChanges().subscribe(lastData => {
@@ -320,24 +342,16 @@ export class NonSalariedCalculationComponent implements OnInit {
                       this.salarySummary.salary = (Number(this.salarySummary.salary) + totalWeges).toFixed(2);
                       this.getTotalSalaryFooter(index, totalWeges);
                     }
-
-
-
                   }
-
                 }
-                
               }
             }
           }
         }
-        if (index == days) {
-          // $(this.divLoader).hide();
-        }
       }
     );
   }
-
+  
   getWorkPercentage(empId: any, ward: any, monthDate: any, index: any, days: any, inTime: any, outTime: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkPercentage");
     this.commonService.getWardLine(ward, monthDate).then((linesData: any) => {
@@ -346,6 +360,7 @@ export class NonSalariedCalculationComponent implements OnInit {
       let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/LineStatus";
       let lineStatusInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
         lineStatusInstance.unsubscribe();
+
         let inTimeDate = new Date(monthDate + " " + inTime);
         let outTimeDate = new Date();
         if (outTime != "") {
@@ -356,18 +371,22 @@ export class NonSalariedCalculationComponent implements OnInit {
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = keyArray[i];
-            if (data[lineNo]["start-time"] != null) {
-              let startTime = data[lineNo]["start-time"];
-              let hour = Number(startTime.split(":")[0]);
-              if (hour >= 1 && hour <= 6) {
-                startTime = (hour + 12) + ":" + startTime.split(":")[1] + ":" + startTime.split(":")[2];
-              }
-              if (new Date(monthDate + " " + startTime) >= inTimeDate && new Date(monthDate + " " + startTime) <= outTimeDate) {
-                workLines++;
+            if (data[lineNo]["Status"] == "LineCompleted") {
+              if (data[lineNo]["reason"] == "-NA-") {
+                if (data[lineNo]["start-time"] != null) {
+                  let startTime = data[lineNo]["start-time"];
+                  let hour = Number(startTime.split(":")[0]);
+                  if (hour >= 1 && hour <= 4) {
+                    startTime = (hour + 12) + ":" + startTime.split(":")[1] + ":" + startTime.split(":")[2];
+                  }
+                  if (new Date(monthDate + " " + startTime) >= inTimeDate && new Date(monthDate + " " + startTime) <= outTimeDate) {
+                    workLines++;
+                  }
+                }
               }
             }
           }
-          let workPercentage = Number(((workLines / totalLines) * 100).toFixed(0));
+          let workPercentage = Number(((workLines / totalLines) * 100).toFixed(2).split(".")[0]);
           let salaryDetail = this.salaryList.find(item => item.empId == empId);
           if (salaryDetail != undefined) {
             let day = "day" + Number(monthDate.split('-')[2]);

@@ -1,0 +1,172 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
+            Entity Modification Requests
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-12" style="padding-left: 0px;padding-right:7px;">
+            <div id="divLoader" class="loaderClass">
+                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+            </div>
+            <div class="card" style="margin-top:-6px;  height: 88vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-9 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlZone" (change)="getFilter()">
+                                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
+                                            {{zone.zoneName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-right p-r ml-20" style="padding-right: 20px!important;">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Sr. No.</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Card Number</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Ward No
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Pre Entity Type
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Requested Entity Type
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Request Date
+                                            </th>
+                                            <th class="text-center br-1" style="border:none!important;">
+                                                Action
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}"
+                                                *ngFor="let data of entityModificationFilterList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{i+1}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.cardNo}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.zone}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.preEntityType}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.reqEntityType}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.reqDate}}
+                                                </td>
+                                                <td class="text-center br-1">
+                                                    <i class="fa-solid fa-file-circle-exclamation"
+                                                        style="cursor: pointer;font-size: 18px;"
+                                                        (click)="openModel(contentDetail,data.cardNo)"></i>
+
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
+            <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
+                <div id="content" #content class="card-body"
+                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+
+                                    </div>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #contentDetail>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modify Entity Type</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <input id="hddCardNo" type="hidden" value="" />
+                <div style="text-align:left;">
+                    <label>Current Entity Type</label>
+                    <select class="filter-select filter-input" id="ddlCurrentEntityType" style="width:100%; margin-top: 0px; margin-left: 0px;" disabled>
+                        <option *ngFor="let dt of entityTypeList" value={{dt.entityTypeId}}>
+                            {{dt.name}}
+                        </option>
+                    </select>
+                </div>
+                <div style="text-align:left;">
+                    <label>Requested Entity Type</label>
+                    <select class="filter-select filter-input" id="ddlRequestedEntityType" style="width:100%; margin-top: 0px; margin-left: 0px;" disabled>
+                        <option *ngFor="let dt of entityTypeList" value={{dt.entityTypeId}}>
+                            {{dt.name}}
+                        </option>
+                    </select>
+                </div>
+                <div id="divServingCount" style="text-align:left;">
+                    <label>Serving Count</label>
+                    <input id="txtServingCount" type="text" class="filter-input" style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                </div>
+                <div style="text-align:left; color:green;padding-top: 20px;">
+                    <input id="chkConfirm" type="checkbox" /> I have checked and above information is correct.
+                </div>
+                <div style="padding-top: 20px;">
+                    <input type="button" class="btn btn-success submit-btn" value="SUBMIT"
+                        (click)="updateEntityType();" />&nbsp;
+                    <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

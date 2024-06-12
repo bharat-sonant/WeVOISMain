@@ -444,7 +444,7 @@ export class AccountDetailComponent implements OnInit {
   updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateJsonForNewEmployee");
     const promises=[];
-    for (let i = 1; i < lastEmpId; i++) {
+    for (let i = 1; i <= lastEmpId; i++) {
       promises.push(Promise.resolve(this.getEmployeeDetail(i)));
     }
 
@@ -456,6 +456,7 @@ export class AccountDetailComponent implements OnInit {
         }
       }
       this.allAccountList=merged;
+      console.log(this.allAccountList);
       this.getRoles();
       this.filterData();
       this.saveJSONData();
@@ -466,11 +467,14 @@ export class AccountDetailComponent implements OnInit {
   
   getEmployeeDetail(empId: any) {
     return new Promise((resolve) => {
+     
       let employeeData = {};
       let dbPath = "Employees/" + empId;
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
+          console.log(empId)
+          console.log(employeeDetail)
           if (employeeDetail != null) {
             if (employeeDetail["GeneralDetails"] != null) {
               let status = employeeDetail["GeneralDetails"]["status"];

@@ -438,7 +438,7 @@ export class StaffAccountDetailComponent implements OnInit {
   updateJSONForNewEmployees(lastEmpId: any) {
 
     const promises=[];
-    for (let i = 1; i < lastEmpId; i++) {
+    for (let i = 1; i <= lastEmpId; i++) {
       promises.push(Promise.resolve(this.getEmployeeDetail(i)));
     }
 
