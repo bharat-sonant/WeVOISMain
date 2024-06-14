@@ -870,6 +870,7 @@ export class CommonService {
     this.setDustbin(newDb);
     this.setMarkerZone();
     this.setMarkingWards();
+    this.setAllDepartments();
   }
 
   setDesignation() {
@@ -881,12 +882,31 @@ export class CommonService {
       for (let i = 1; i < list.length; i++) {
         if (list[i] != null) {
           let designationId = i;
+          let deptId=list[i]["deptId"];
           let designation = list[i]["name"];
-          designationList.push({ designationId: designationId, designation: designation });
+          designationList.push({ designationId: designationId, designation: designation, departmentId:deptId });
           designationList = this.transformNumeric(designationList, "designation");
         }
       }
       localStorage.setItem("designation", JSON.stringify(designationList));
+    });
+  }
+  setAllDepartments=async()=>{
+    
+    const path =  this.fireStoragePath+ "Common%2FDepartments.json?alt=media";
+    let departmentInstance = this.httpService.get(path).subscribe(data => {
+      departmentInstance.unsubscribe();
+      let departmentList = [];
+      let list=JSON.parse(JSON.stringify(data))
+      for (let i = 1; i < list.length; i++) {
+        if (list[i] != null) {
+          let id = list[i]["id"];
+          let name=list[i]["name"];
+          departmentList.push({ id: id, name: name,});
+          departmentList = this.transformNumeric(departmentList, "name");
+        }
+      }
+      localStorage.setItem("department", JSON.stringify(departmentList));
     });
   }
 

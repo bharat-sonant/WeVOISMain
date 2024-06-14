@@ -10,14 +10,25 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-6 card-outer">
+        <div class="col-md-12 card-outer">
             <div class="card custom-header-outer">
                 <div class="card-header custom-header">
                     <div class="row">
-                        <div class="col-md-3 text-left roles-input">
+                        <div class="col-md-2 text-left roles-input">
+                            <select class="filter-select filter-input" id="ddlDepartment" (change)="getDesignations()">
+                                <option value="all">
+                                    All Depatments
+                                </option>
+                                <option *ngFor="let dt of departmentList" value={{dt.department}}>
+                                    {{dt.department}}
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-2 text-left roles-input">
                             <select class="filter-select filter-input" id="ddlDesignation" (change)="filterData()">
                                 <option value="all">
-                                    All Roles
+                                    All Designations
                                 </option>
                                 <option *ngFor="let dt of designationList" value={{dt.designation}}>
                                     {{dt.designation}}
@@ -25,7 +36,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-2 text-left employ-input">
+                        <div class="col-md-2 text-left employ-input ps-0">
 
                             <select class="filter-select filter-input" id="ddlUser" (change)="filterData()">
                                 <option value="all">
@@ -43,11 +54,11 @@
 
                             <input id="txtName" class="filter-select text-input" type="text" (keyup)="filterData();" placeholder="Search by name, code">
                         </div>
-                        <div class="col-md-2 text-center text-input-iner active-input">
+                        <div class="col-md-1 text-center text-input-iner active-input" >
                             {{employeeCountSummary.active}}<br/><span id="spStatus" class="text-input-iner-span">Active</span>
                         </div>
-                        <div class="col-md-1 text-center" style="font-size: 12px;padding-top:8px;">
-                            <i class="fa-solid fa-file-export" style="font-size: 25px; color:green; cursor: pointer;" (click)="exportEmployee()"></i><br/> Export
+                        <div class="col-md-1 text-center" style="font-size: 12px;padding-top:14px;">
+                            <i class="fa-solid fa-file-export" style="font-size: 25px; color:green; cursor: pointer;" (click)="exportEmployee()" title="export excel"></i><br/> Export
                         </div>
 
                     </div>
@@ -62,11 +73,13 @@
                                             <th class="text-left br-1 border-none">
                                                 Name</th>
                                             <th class="text-left br-1 border-none">
-                                                Role</th>
+                                                Department</th>
+                                            <th class="text-left br-1 border-none">
+                                                Designation</th>
                                             <th class="text-left br-1 border-none">
                                                 Status
                                             </th>
-                                            <th class="text-left br-1 border-none">
+                                            <th class="text-right br-1 border-none" style="width: 100px;">
                                                 Action
                                             </th>
                                         </thead>
@@ -76,13 +89,16 @@
                                                     {{data.name}} <b>[{{data.empCode}}]</b>
                                                 </td>
                                                 <td class="text-left br-1">
+                                                    {{data.department}}
+                                                </td>
+                                                <td class="text-left br-1">
                                                     {{data.designation}}
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <span [hidden]="data.status!=1" class="green-span" (click)="openModel(contentConfirmation,data.empId,'active')">Active</span>
                                                     <span [hidden]="data.status==1" class="red-span" (click)="openModel(contentConfirmation,data.empId,'in-active')">In-active</span>
                                                 </td>
-                                                <td class="text-left br-1">
+                                                <td class="text-center br-1">
                                                     <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId,'designation');" title="Edit Entry"></i>
                                                 </td>
                                             </tr>
@@ -134,8 +150,19 @@
             <div class="modal-body empID-outer">
                 <input id="empID" type="hidden" value="0" />
                 <div class="wrap-input-effects" required>
+                    <select id="ddlDepartmentUpdate" class="input-green" [(ngModel)]="ddlDepartmentUpdate" (change)='resetDesignationField()'>
+                        <option *ngFor="let dt of departmentUpdateList" value={{dt.id}}>
+                            {{dt.name}}
+                        </option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <div class="wrap-input-effects" required>
                     <select id="ddlDesignationUpdate" class="input-green">
-                        <option *ngFor="let dt of designationUpdateList" value={{dt.designationId}}>
+                        <option *ngFor="let dt of designationUpdateList" value={{dt.designationId}} [hidden]="dt.departmentId!=ddlDepartmentUpdate">
                             {{dt.designation}}
                         </option>
                     </select>

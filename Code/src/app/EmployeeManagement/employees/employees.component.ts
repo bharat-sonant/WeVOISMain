@@ -34,6 +34,12 @@ export class EmployeesComponent implements OnInit {
   accountList: any[] = [];
   serviceName = "employees";
 
+  departmentList:any[]=[];
+  departmentUpdateList:any[]=[];
+  ddlDepartment = "#ddlDepartment";
+  ddlDepartmentUpdate:any;
+  // designationUpdateFilteredList:any[]=[];
+
   employeeCountSummary: employeeCountSummary = {
     active: 0
   };
@@ -44,12 +50,13 @@ export class EmployeesComponent implements OnInit {
     this.setDefault();
   }
 
-  setDefault() {
+  setDefault=async()=>{
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.fireStorePath = this.commonService.fireStoragePath;
     $(this.ddlDesignation).val("all");
     $(this.ddlUser).val("active");
     this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
+    this.departmentUpdateList = JSON.parse(localStorage.getItem("department"));
     this.getEmployeeAccountDetail();
     this.getEmployees();
   }
@@ -63,7 +70,7 @@ export class EmployeesComponent implements OnInit {
     });
   }
 
-  getEmployees() {
+  getEmployees=async()=> {
     $(this.divLoader).show();
     this.allEmployeeList = [];
     this.designationList = [];
@@ -80,7 +87,20 @@ export class EmployeesComponent implements OnInit {
             if (data[empId]["GeneralDetails"]["salaryType"] != null) {
               salaryType = data[empId]["GeneralDetails"]["salaryType"];
             }
-            this.allEmployeeList.push({ empId: empId.toString(), status: data[empId]["GeneralDetails"]["status"], empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], empType: data[empId]["GeneralDetails"]["empType"], salaryType: salaryType });
+
+            let departmentId:any='';
+            let department:any='';
+            if(data[empId]["GeneralDetails"]["designationId"]){
+               let detail=this.designationUpdateList.find(item=>Number(item.designationId)===Number(data[empId]["GeneralDetails"]["designationId"]));
+               if(detail){
+                  departmentId=detail.departmentId;
+                  let departmentDetail=this.departmentUpdateList.find(item=>item && Number(item.id)===Number(departmentId));
+                  if(departmentDetail){
+                    department=departmentDetail.name;
+                  }
+               }
+            }
+            this.allEmployeeList.push({ empId: empId.toString(), status: data[empId]["GeneralDetails"]["status"], empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], empType: data[empId]["GeneralDetails"]["empType"], salaryType: salaryType ,departmentId: departmentId.toString(),department: department,mobile:data[empId]["GeneralDetails"]["mobile"]});
           }
         }
         this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
@@ -109,7 +129,7 @@ export class EmployeesComponent implements OnInit {
         }
         else {
           this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
-          this.getRoles();
+          this.getDepartments();
           this.filterData();
         }
       }
@@ -119,7 +139,7 @@ export class EmployeesComponent implements OnInit {
   updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
     if (jsonLastEmpId > lastEmpId) {
       this.employeeCountSummary.active = this.allEmployeeList.filter(item => item.status == "1").length;
-      this.getRoles();
+      this.getDepartments();
       this.filterData();
       this.saveJSONData();
     }
@@ -130,7 +150,7 @@ export class EmployeesComponent implements OnInit {
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
-          if (employeeDetail != null) {
+          if (employeeDetail) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateJsonForNewEmployee", employeeDetail);
             let designation = "";
             let empType = 1;
@@ -159,7 +179,15 @@ export class EmployeesComponent implements OnInit {
             if(employeeDetail["salaryType"]!=null){
               salaryType=employeeDetail["salaryType"];
             }
-            this.allEmployeeList.push({ empId: jsonLastEmpId.toString(), empCode: employeeDetail["empCode"], name: employeeDetail["name"], designationId: employeeDetail["designationId"], designation: designation, status: employeeDetail["status"], empType: empType, mobile: mobile,salaryType:salaryType });
+            let department="";
+            if (this.departmentUpdateList.length > 0) {
+              let detail = this.departmentUpdateList.find(item => item.id == employeeDetail["departmentId"]);
+              if (detail != undefined) {
+                department = detail.name;
+              }
+            }
+
+            this.allEmployeeList.push({ empId: jsonLastEmpId.toString(), empCode: employeeDetail["empCode"], name: employeeDetail["name"], designationId: employeeDetail["designationId"], designation: designation, status: employeeDetail["status"], empType: empType, mobile: mobile,salaryType:salaryType, departmentId: employeeDetail['departmentId'].toString(),department: department});
           }
           this.updateJsonForNewEmployee(jsonLastEmpId, lastEmpId);
         }
@@ -179,7 +207,10 @@ export class EmployeesComponent implements OnInit {
         status: this.allEmployeeList[i]["status"],
         empType: this.allEmployeeList[i]["empType"],
         salaryType: this.allEmployeeList[i]["salaryType"],
-        mobile: this.allEmployeeList[i]["mobile"]
+        mobile: this.allEmployeeList[i]["mobile"],
+        department:this.allEmployeeList[i]["department"],
+        departmentId:this.allEmployeeList[i]["departmentId"]
+        
       }
       obj[this.allEmployeeList[i]["empId"]] = { GeneralDetails: data };
     }
@@ -187,13 +218,32 @@ export class EmployeesComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  getRoles() {
+  getDepartments() {
     this.designationList = [];
-    let list = this.allEmployeeList.map(item => item.designation).filter((value, index, self) => self.indexOf(value) === index);
+    this.departmentList = []
+    $(this.ddlDepartment).val('all');
+
+    let list = this.allEmployeeList.map(item => item.department ).filter((value, index, self) => self.indexOf(value) === index);
+    for (let i = 0; i < list.length; i++) {
+      this.departmentList.push({ department: list[i] });
+      
+      this.departmentList = this.commonService.transformNumeric(this.departmentList, "department");
+    }
+  }
+  getDesignations(){
+    let selectedDepartment=$(this.ddlDepartment).val();
+    this.designationList = [];
+    $(this.ddlDesignation).val('all');
+    
+    // let list = this.allEmployeeList.map(item => ({designationId:item.designationId,designation: item.designation,department: item.department})).filter((value, index, self) => self.indexOf(value) === index);
+    let list = this.allEmployeeList.filter(item => item.department === selectedDepartment).filter((value, index, self) => 
+      index === self.findIndex((t) => (t.designation === value.designation && t.department === value.department ))).map(item => item.designation);
+    
     for (let i = 0; i < list.length; i++) {
       this.designationList.push({ designation: list[i] });
       this.designationList = this.commonService.transformNumeric(this.designationList, "designation");
     }
+    this.filterData() 
   }
 
   filterData() {
@@ -205,24 +255,29 @@ export class EmployeesComponent implements OnInit {
   }
 
   showAccountDetail(status: any, designation: any, name: any) {
+    this.employeeList = this.allEmployeeList;
     if (status == "all") {
-      this.employeeList = this.allEmployeeList;
-      this.employeeCountSummary.active = this.employeeList.length;
+      this.employeeList = this.allEmployeeList.filter(item => item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name));
+      // this.employeeCountSummary.active = this.employeeList.length;
       $(this.spStatus).html("All");
     }
     else if (status == "active") {
       this.employeeList = this.allEmployeeList.filter(item => item.status == "1" && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
       $(this.spStatus).html("Active");
-      this.employeeCountSummary.active = this.employeeList.length;
+      // this.employeeCountSummary.active = this.employeeList.length;
     }
     else {
       this.employeeList = this.allEmployeeList.filter(item => item.status != "1" && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
       $(this.spStatus).html("In-Active");
-      this.employeeCountSummary.active = this.employeeList.length;
+      // this.employeeCountSummary.active = this.employeeList.length;
+    }
+    if($(this.ddlDepartment).val()!=='all'){
+      this.employeeList = this.employeeList.filter(item => item.department == $(this.ddlDepartment).val() && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
     }
     if (designation != "all") {
       this.employeeList = this.employeeList.filter(item => item.designation == designation && (item.name.toString().toUpperCase().includes(name) || item.empCode.includes(name)));
     }
+    this.employeeCountSummary.active = this.employeeList.length;
     $(this.divLoader).hide();
   }
 
@@ -268,6 +323,11 @@ export class EmployeesComponent implements OnInit {
     }, 3000);
     let empId = $(this.empID).val();
     let designationId = $(this.ddlDesignationUpdate).val();
+    if(!designationId){
+      this.commonService.setAlertMessage("error", "Please select a designation !!!");
+      $(this.divLoader).hide();
+      return ;
+    }
     let salaryType = $(this.ddlSalaryTypeUpdate).val();
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
@@ -291,16 +351,22 @@ export class EmployeesComponent implements OnInit {
           empDetail.empType = 1;
         }
       }
+      empDetail.departmentId=this.ddlDepartmentUpdate;
+      let departmentDeatil=this.departmentUpdateList.find(item=>item.id==this.ddlDepartmentUpdate);
+      if(departmentDeatil){
+        empDetail.department=departmentDeatil.name;
+      }
       let accountDetail = this.accountList.find(item => item.empId == empId);
       if (accountDetail != undefined) {
         accountDetail.designation = empDetail.designation;
         accountDetail.salaryType = empDetail.salaryType;
         accountDetail.empType = empType;
+        accountDetail.department = empDetail.department;
         this.saveAccountJSONData();
       }
       this.updateDesignationInDatabase(empId, designationId, salaryType);
     }
-    this.getRoles();
+    this.getDepartments();
     this.filterData();
     this.saveJSONData();
     this.closeModel();
@@ -309,7 +375,7 @@ export class EmployeesComponent implements OnInit {
 
   updateDesignationInDatabase(empId: any, designationId: any, salaryType: any) {
     let dbPath = "Employees/" + empId + "/GeneralDetails/";
-    this.db.object(dbPath).update({ designationId: designationId.toString(), salaryType: salaryType });
+    this.db.object(dbPath).update({ designationId: designationId.toString(), salaryType: salaryType,departmentId:this.ddlDepartmentUpdate});
     this.closeModel();
   }
 
@@ -320,7 +386,7 @@ export class EmployeesComponent implements OnInit {
     let height = 190;
     let width = 420;
     if (type == "designation") {
-      height = 250;
+      height = 300;
     }
     else {
       height = 160;
@@ -336,6 +402,8 @@ export class EmployeesComponent implements OnInit {
           setTimeout(() => {
             $(this.ddlDesignationUpdate).val(userDetail.designationId);
             $(this.ddlSalaryTypeUpdate).val(userDetail.salaryType);
+            this.ddlDepartmentUpdate=userDetail.departmentId
+            
           }, 100);
         }
       }
@@ -373,6 +441,9 @@ export class EmployeesComponent implements OnInit {
       htmlString += "Mobile";
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "Department";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "Designation";
       htmlString += "</td>";
       htmlString += "<td>";
@@ -389,6 +460,9 @@ export class EmployeesComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += this.employeeList[i]["mobile"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.employeeList[i]["department"];
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.employeeList[i]["designation"];
@@ -409,6 +483,11 @@ export class EmployeesComponent implements OnInit {
       $(this.divLoader).hide();
     }
   }
+
+  resetDesignationField=()=>{
+    $(this.ddlDesignationUpdate).val('');
+  }
+  
 }
 
 
