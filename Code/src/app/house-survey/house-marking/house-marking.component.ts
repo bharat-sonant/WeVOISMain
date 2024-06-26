@@ -51,8 +51,8 @@ export class HouseMarkingComponent {
   ddlHouseType = "#ddlHouseType";
   txtOwnerName = "#txtOwnerName";
   txtNoOfEntities = "#txtNoOfEntities";
-  divNoOfPersons="#divNoOfPersons";
-  txtNoOfPerson="#txtNoOfPerson";
+  divNoOfPersons = "#divNoOfPersons";
+  txtNoOfPerson = "#txtNoOfPerson";
   divLoader = "#divLoader";
   deleteMarkerId = "#deleteMarkerId";
   deleteAlreadyCard = "#deleteAlreadyCard";
@@ -739,7 +739,7 @@ export class HouseMarkingComponent {
         detail = this.markerList.find(item => item.index == index);
       }
       else if (type == "includedMarker") {
-        detail = this.markerListIncluded.find(item => item.index==index);
+        detail = this.markerListIncluded.find(item => item.index == index);
       }
       $(this.txtNoOfEntities).val(detail.servingCount);
       $(this.divEntityCount).show();
@@ -755,8 +755,8 @@ export class HouseMarkingComponent {
     let zoneNo = $(this.houseWardNo).val();
     let lineNo = $(this.houseLineNo).val();
     let houseTypeId = $(this.ddlHouseType).val();
-    let ownerName=$(this.txtOwnerName).val();
-    let servingCount=$(this.txtNoOfEntities).val().toString();
+    let ownerName = $(this.txtOwnerName).val();
+    let servingCount = $(this.txtNoOfEntities).val().toString();
     let totalPerson = $(this.txtNoOfPerson).val();
 
     let type = $("#type").val();
@@ -773,34 +773,38 @@ export class HouseMarkingComponent {
       detail.houseTypeId = houseTypeId;
       let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
       if (houseTypeDetail != undefined) {
+        let cardType = "";
         detail.type = houseTypeDetail.houseType;
-        detail.ownerName=ownerName;
-        detail.servingCount=servingCount;
+        detail.ownerName = ownerName;
+        detail.servingCount = servingCount;
         detail.persons = totalPerson;
         let zoneNo = detail.zoneNo;
         let lineNo = detail.lineNo;
         if (detail.cardNumber != "") {
-          let cardType = "";
           if (houseTypeDetail.entityType == "residential") {
             cardType = "आवासीय"
           }
           else {
             cardType = "व्यावसायिक";
           }
-          let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + detail.cardNumber;
-          let houseServingCount="";
-          if(servingCount!="0"){
-            houseServingCount=servingCount;
+          let houseServingCount = "";
+          if (servingCount != "0") {
+            houseServingCount = servingCount;
           }
-          this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType,ownerName:ownerName,servingCount:houseServingCount,totalPerson:totalPerson });
+          let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + detail.cardNumber;
+          let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+            houseInstance.unsubscribe();
+            if(data!=null){   
+              this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, ownerName: ownerName, servingCount: houseServingCount, totalPerson: totalPerson });
+            }
+          });
+
         }
         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-        this.db.object(dbPath).update({ houseType: houseTypeId,ownerName:ownerName,totalHouses:servingCount,totalPerson:totalPerson });
+        this.db.object(dbPath).update({ houseType: houseTypeId, ownerName: ownerName, totalHouses: servingCount, totalPerson: totalPerson });
         this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId, type);
       }
-
     }
-
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
     this.commonService.setAlertMessage("success", "House Type updated successfully !!!");
@@ -829,7 +833,6 @@ export class HouseMarkingComponent {
       }
       else if (type == "includedMarker") {
         detail = this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
-
       }
       if (detail != undefined) {
         detail.modifiedHouseTypeHistoryId = modifiedHouseTypeHistoryId;
@@ -848,16 +851,12 @@ export class HouseMarkingComponent {
         else {
           this.db.object("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo).update({ totalHouseTypeModifiedCount: count });
         }
-
       });
-
     }
-
     else {
       let dbPath = "EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId;
       this.db.list(dbPath).push(data);
     }
-
   }
 
   cancelHouseType() {
