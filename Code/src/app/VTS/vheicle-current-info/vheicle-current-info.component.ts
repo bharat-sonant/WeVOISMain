@@ -36,7 +36,6 @@ export class VheicleCurrentInfoComponent {
     
     this.httpService.get(path).subscribe((res) => {
       let data = res;
-      console.log(res);
       if (res != null) {
       }
     });
@@ -47,10 +46,8 @@ export class VheicleCurrentInfoComponent {
     const dbPath = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVTS.json?alt=media";
     let vtsInstance = this.httpService.get(dbPath).subscribe(VTSData => {
       vtsInstance.unsubscribe();
-      console.log(VTSData["data"]);
       if (VTSData["data"] != null) {
         let vehicleList = JSON.parse(JSON.stringify(VTSData["data"]["list"]));
-        console.log(vehicleList);
         for (let i = 0; i < vehicleList.length; i++) {
           let vehicle = vehicleList[i]["vehicleNumber"];
           let lat = vehicleList[i]["latitude"];

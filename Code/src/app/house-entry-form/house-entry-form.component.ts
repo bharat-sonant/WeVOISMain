@@ -62,7 +62,6 @@ export class HouseEntryFormComponent implements OnInit {
 
         let wardLines = this.db.list('CardExcelRawData').valueChanges().subscribe(
           totalRecord => {
-           console.log('TotalRecords :'  +totalRecord.length);
           });
 
         //console.log("CardExcelRawData.length :" + cardExcelRawData.length);

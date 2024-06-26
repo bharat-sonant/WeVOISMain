@@ -456,7 +456,6 @@ export class AccountDetailComponent implements OnInit {
         }
       }
       this.allAccountList=merged;
-      console.log(this.allAccountList);
       this.getRoles();
       this.filterData();
       this.saveJSONData();
@@ -473,8 +472,6 @@ export class AccountDetailComponent implements OnInit {
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
-          console.log(empId)
-          console.log(employeeDetail)
           if (employeeDetail != null) {
             if (employeeDetail["GeneralDetails"] != null) {
               let status = employeeDetail["GeneralDetails"]["status"];

@@ -49,7 +49,6 @@ export class RemoveDeletedScancardsComponent implements OnInit {
           for (let i = 0; i < keyArray.length; i++) {
             let cardNo = keyArray[i];
             let date = removeCardData[cardNo];
-            console.log(cardNo + "=>" + date);
             removedCardList.push({ cardNo: cardNo, date: date });
           }
           this.getScanedCards(checkDate);

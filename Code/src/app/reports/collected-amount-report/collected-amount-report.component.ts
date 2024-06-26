@@ -158,7 +158,6 @@ export class CollectedAmountReportComponent implements OnInit {
       if (data != null) {
         this.lastUpdateDate = data["lastUpdateDate"];
         this.wardCardList = JSON.parse(JSON.stringify(data["cards"]));
-        console.log(this.wardCardList);
         this.wardCardFinalList = this.wardCardList.slice(0, this.rowDataList);
         this.setTotalInFooter();
       }

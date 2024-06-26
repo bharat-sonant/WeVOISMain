@@ -514,6 +514,7 @@ textarea:focus-visible {
     height: 88vh;
     overflow: hidden;
     overflow-y: scroll;
+    overflow-x: scroll;
 }
 
 .table-scroll {
@@ -588,17 +589,16 @@ table tr:hover {
 
 .table-head1 {
     border-right: 1px solid #dee2e6;
-    width: 10%;
+    width: 50px;
 }
 
 .table-head2 {
     border-right: 1px solid #dee2e6;
-    width: 20%;
+    width: 200px;
 }
 
 .table-head3 {
     border-right: 1px solid #dee2e6;
-    width: 70%;
 }
 
 .table-head4 {

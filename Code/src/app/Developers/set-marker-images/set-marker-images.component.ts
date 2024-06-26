@@ -81,7 +81,7 @@ export class SetMarkerImagesComponent implements OnInit {
             }
             else {
               $(this.divLoaderLineMove).hide();
-              console.log("No Markers");
+              this.commonService.setAlertMessage("error","No marker data found");
             }
           }
         );
@@ -112,8 +112,6 @@ export class SetMarkerImagesComponent implements OnInit {
               // ref.delete();
               index++;
               this.setImages(index);
-              console.log(newImageName);
-
             }).catch((error) => {
               index++;
               this.setImages(index);

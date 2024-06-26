@@ -238,56 +238,6 @@ export class WardTripAnalysisComponent implements OnInit {
                     overLoad: overLoad
                   });
                 });
-                /*
-                if (data[tripID]["driverName"] != null) {
-                  driverName = data[tripID]["driverName"];
-                  driverMobile = data[tripID]["driverMobile"];
-                  tripList.push({
-                    tripId: tripID,
-                    tripName: "trip " + tripID,
-                    driverName: driverName,
-                    driverMobile: driverMobile,
-                    time: time,
-                    filledStatus: filledStatus,
-                    analysisAt: analysisAt,
-                    analysisBy: analysisBy,
-                    remark: remark,
-                    imageName: imageName,
-                    vehicleType: vehicleType,
-                    manualRemarks: manualRemarks,
-                    overLoad: overLoad
-                  });
-                }
-                else {
-                  //this.saveTripDriverDetail(zoneNo,tripID,driverId);
-                  this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
-                    driverName =
-                      employee["name"] != null
-                        ? employee["name"].toUpperCase()
-                        : "---";
-                    driverMobile =
-                      employee["mobile"] != null ? employee["mobile"] : "---";
-                    tripList.push({
-                      tripId: tripID,
-                      tripName: "trip " + tripID,
-                      driverName: driverName,
-                      driverMobile: driverMobile,
-                      time: time,
-                      filledStatus: filledStatus,
-                      analysisAt: analysisAt,
-                      analysisBy: analysisBy,
-                      remark: remark,
-                      imageName: imageName,
-                      vehicleType: vehicleType,
-                      manualRemarks: manualRemarks,
-                      overLoad: overLoad
-                    });
-                  });
-
-                }
-
-                */
-
               }
               if (tripAnalysisCount == tripCount) {
                 iconClass = "fas fa-diagnoses";
@@ -372,7 +322,7 @@ export class WardTripAnalysisComponent implements OnInit {
     (<HTMLElement>document.getElementById("slideImg2")).style.height = "";
     (<HTMLElement>document.getElementById("slideImg2")).style.width = "";
     
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 8; i++) {
       $('#tripDiv' + i).hide();
     }
     this.selectedZone = zoneNo;
@@ -411,9 +361,9 @@ export class WardTripAnalysisComponent implements OnInit {
   getTripData(index: any) {
     this.selectedTrip = index;
     let tripCountForWard = this.tripData.tripCount;
-    if (this.tripData.tripCount > 4) {
-      tripCountForWard = 4;
-    }
+   // if (this.tripData.tripCount > 4) {
+   //   tripCountForWard = 4;
+   // }
     for (let i = 1; i <= tripCountForWard; i++) {
       let element = <HTMLDivElement>document.getElementById("tripDiv" + i);
       let className = element.className;

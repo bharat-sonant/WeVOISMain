@@ -516,10 +516,11 @@ export class DailyFuelReportComponent implements OnInit {
       for (let i = 0; i < this.vehicleList.length; i++) {
         let list = [];
         let vehicle = this.vehicleList[i]["vehicle"];
+        let gpsKM = this.vehicleList[i]["gpsKM"];
         let diesel = this.vehicleList[i]["diesel"];
         if (diesel.length > 0) {
           for (let j = 0; j < diesel.length; j++) {
-            list.push({ vehicle: vehicle, dieselQty: diesel[j]["qty"], amount: diesel[j]["amount"], zone: "", km: "", driver: "" });
+            list.push({ vehicle: vehicle, gpsKM: "", dieselQty: diesel[j]["qty"], amount: diesel[j]["amount"], zone: "", km: "", driver: "" });
           }
         }
         let wardDetailList = this.vehicleList[i]["wardList"];
@@ -531,16 +532,25 @@ export class DailyFuelReportComponent implements OnInit {
               list[j]["driver"] = wardDetailList[j]["driver"];
             }
             else {
-              list.push({ vehicle: vehicle, dieselQty: "", amount: "", zone: wardDetailList[j]["zone"], km: wardDetailList[j]["km"], driver: wardDetailList[j]["driver"] });
+              list.push({ vehicle: vehicle, gpsKM: "", dieselQty: "", amount: "", zone: wardDetailList[j]["zone"], km: wardDetailList[j]["km"], driver: wardDetailList[j]["driver"] });
             }
+          }
+        }
+        if (gpsKM != "") {
+          if (list.length > 0) {
+            list[0]["gpsKM"] = gpsKM;
+          }
+          else {
+            list.push({ vehicle: vehicle, gpsKM: gpsKM, dieselQty: "", amount: "", zone: "", km: "", driver: "" });
           }
         }
         if (list.length > 0) {
           for (let j = 0; j < list.length; j++) {
-            exportList.push({ vehicle: vehicle, dieselQty: list[j]["dieselQty"], amount: list[j]["amount"], zone: list[j]["zone"], km: list[j]["km"], driver: list[j]["driver"] })
+            exportList.push({ vehicle: vehicle, gpsKM: list[j]["gpsKM"], dieselQty: list[j]["dieselQty"], amount: list[j]["amount"], zone: list[j]["zone"], km: list[j]["km"], driver: list[j]["driver"] })
           }
         }
       }
+
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
@@ -558,6 +568,9 @@ export class DailyFuelReportComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "KM";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "GPS KM";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Driver Name";
@@ -580,6 +593,9 @@ export class DailyFuelReportComponent implements OnInit {
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["km"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["gpsKM"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["driver"];

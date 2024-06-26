@@ -126,7 +126,6 @@ export class DueAmountReportComponent implements OnInit {
             let entityTypeId = keyArray[i];
             this.entityTypeList.push({ entityTypeId: entityTypeId, entityType: data[entityTypeId]["name"], amount: data[entityTypeId]["amount"] });
           }
-          console.log(this.entityTypeList);
         }
       }
     )

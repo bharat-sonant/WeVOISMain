@@ -47,78 +47,62 @@ export class ReviewTripImagesComponent implements OnInit {
 
   getZones() {
     $(this.divMainLoader).show();
-    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTripJSON%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + ".json?alt=media";
-    let tripInstance = this.httpService.get(path).subscribe(data => {
-      tripInstance.unsubscribe();
-      if (data != null) {
-        this.zoneTripList=JSON.parse(JSON.stringify(data));
-      }
-      $(this.divMainLoader).hide();
-    }, error => {
-      this.zoneList = [];
-      this.zoneTripList = [];
-      this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-      for (let i = 1; i < this.zoneList.length; i++) {
-        this.zoneTripList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], tripImageList: [] });
-      }
-      this.getTripImages(0);
-    });
-  }
-
-  getTripImages(index: any) {
-    if (index == this.zoneTripList.length) {
-      if (this.selectedDate != this.todayDate) {
-        setTimeout(() => {
-          $(this.divMainLoader).hide();
-          let filePath = "/WardTripJSON/" + this.selectedYear + "/" + this.selectedMonthName + "/";
-          this.commonService.saveJsonFile(this.zoneTripList, this.selectedDate + ".json", filePath);
-        }, 3000);
-      }
-      else {
-        $(this.divMainLoader).hide();
-      }
+    this.zoneList = [];
+    this.zoneTripList = [];
+    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    for (let i = 1; i < this.zoneList.length; i++) {
+      this.zoneTripList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], tripImageList: [] });
     }
-    else {
-      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTripImages");
-      let zone = this.zoneTripList[index]["zoneNo"];
-      let detail = this.zoneTripList.find(item => item.zoneNo == zone);
-      if (detail != undefined) {
-        let dbPath = "WardTrips/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + zone;
-        let tripInstance = this.db.object(dbPath).valueChanges().subscribe(
-          tripData => {
-            tripInstance.unsubscribe();
-            if (tripData != null) {
-              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTripImages", tripData);
-              let keyArray = Object.keys(tripData);
-              for (let i = 0; i < keyArray.length; i++) {
-                let key = keyArray[i];
-                let time = "";
-                if(tripData[key]["time"]!=null){
-                  time=tripData[key]["time"].split(':')[0] + ":" + tripData[key]["time"].split(':')[1];
-                }
-                let vehicle = tripData[key]["vehicle"];
-                let imageName = tripData[key]["imageName"];
-                let imageName2 = tripData[key]["imageName2"];
-                let driverId = tripData[key]["driverId"];
-                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zone + "%2F" + key + "%2F" + imageName + "?alt=media";
-                let imageUrl2 = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zone + "%2F" + key + "%2F" + imageName2 + "?alt=media";
-                detail.tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl,imageUrl2:imageUrl2 });
+    const promises = [];
+        for (let i = 0; i < this.zoneTripList.length; i++) {
+          promises.push(Promise.resolve(this.getTripImages(this.zoneTripList[i].zoneNo)));
+        }
+        Promise.all(promises).then((results) => {
+          for (let i = 0; i < results.length; i++) {
+            if (results[i]["status"] == "success") {
+              let detail=this.zoneTripList.find(item=>item.zoneNo==results[i]["data"].zoneNo);
+              if(detail!=undefined){
+                detail.tripImageList=results[i]["data"].tripImageList;
+                this.getEmployeeNamebyId(results[i]["data"].zoneNo);
               }
-              this.getEmployeeNamebyId(zone);
             }
-            index++;
-            this.getTripImages(index);
-          });
-      }
-    }
+          }          
+         $(this.divMainLoader).hide();
+        });
   }
 
-  syncData(){
-    $(this.divMainLoader).show();
-    for(let i=0;i<this.zoneTripList.length;i++){
-      this.zoneTripList[i]["tripImageList"]=[];
-    }
-    this.getTripImages(0);
+  getTripImages(zoneNo:any){
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTripImages");
+    return new Promise((resolve) => {
+      let dbPath = "WardTrips/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + zoneNo;
+      let tripInstance = this.db.object(dbPath).valueChanges().subscribe(
+        tripData => {
+          tripInstance.unsubscribe();
+          if (tripData != null) {
+            let tripImageList=[];
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTripImages", tripData);
+            let keyArray = Object.keys(tripData);
+            for (let i = 0; i < keyArray.length; i++) {
+              let key = keyArray[i];
+              let time = "";
+              if(tripData[key]["time"]!=null){
+                time=tripData[key]["time"].split(':')[0] + ":" + tripData[key]["time"].split(':')[1];
+              }
+              let vehicle = tripData[key]["vehicle"];
+              let imageName = tripData[key]["imageName"];
+              let imageName2 = tripData[key]["imageName2"];
+              let driverId = tripData[key]["driverId"];
+              let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName + "?alt=media";
+              let imageUrl2 = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName2 + "?alt=media";
+              tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl,imageUrl2:imageUrl2 });
+            }
+            resolve({ status: "success", data: {zoneNo:zoneNo,tripImageList:tripImageList} });
+          }
+          else{
+            resolve({ status: "fail", data: {} });
+          } 
+        });
+    });    
   }
 
   getEmployeeNamebyId(zone: any) {

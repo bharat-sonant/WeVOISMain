@@ -80,7 +80,6 @@ export class CardTransectionDetailComponent implements OnInit {
           if (cardData != null) {
             this.name = cardData["name"];
             let houseType = cardData["houseType"];
-            console.log(houseType)
             let detail = this.houseTypeList.find(item => item.id == houseType);
             if (detail != undefined) {
               this.entityType = detail.houseType;
@@ -107,7 +106,6 @@ export class CardTransectionDetailComponent implements OnInit {
     let instance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         instance.unsubscribe();
-        console.log(data);
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTransaction", data);
           let yearArray = Object.keys(data);

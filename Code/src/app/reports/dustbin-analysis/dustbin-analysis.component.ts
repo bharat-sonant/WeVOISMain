@@ -228,7 +228,6 @@ export class DustbinAnalysisComponent implements OnInit {
           if (dustbinHistoryData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsDetail", dustbinHistoryData);
           }
-          console.log(dustbinHistoryData);
           this.dustbinList.push({
             dustbinId: binId,
             address: dustbinAddress,

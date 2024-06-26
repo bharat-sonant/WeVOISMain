@@ -340,11 +340,9 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
     );
     dbPath = "WastebinMonitor/Summary/DateWise/" + this.selectedDate + "/totalResolvedCount";
-    console.log(dbPath)
     let resolvedInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         resolvedInstance.unsubscribe();
-        console.log(data)
         if (data != null) {
           this.progressData.totalResolved = Number(data);
         }
@@ -602,7 +600,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       element.src = imageURL;
       let imageId = this.progressList[index]["imageId"];
       let dataDetail = this.progressList.find(item => item.imageId == imageId);
-      console.log(dataDetail)
       if (dataDetail != undefined) {
         if (dataDetail.BvgAction != null) {
           this.getResolvedData(imageId, this.progressData.latLng);
@@ -613,7 +610,6 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
             data => {
               resolvedInstance.unsubscribe();
               if (data != null) {
-                console.log(data);
                 const bvgData = {
                   user: data["user"],
                   imageRef: data["imageRef"],

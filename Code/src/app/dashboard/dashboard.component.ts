@@ -173,7 +173,6 @@ export class DashboardComponent implements OnInit {
           }
         }
         this.dashboardData.peopleAtWork = counts;
-        console.log("Vehicle => " + vehicleList.length);
       }
     });
   }

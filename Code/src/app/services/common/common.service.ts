@@ -272,6 +272,9 @@ export class CommonService {
     else if (cityName == "jodhpur") {
       latLng.push({ lat: 26.2405459, lng: 73.0197328 });
     }
+    else if (cityName == "kuchaman") {
+      latLng.push({ lat: 27.150367, lng: 74.85469 });
+    }
     return latLng;
   }
 
@@ -1599,7 +1602,6 @@ export class CommonService {
 
   getBVGUserById(userId: string) {
     return new Promise((resolve) => {
-      console.log(userId);
       let userList = JSON.parse(localStorage.getItem("bvgUserList"));
       if (userList == undefined) {
         userList = [];
@@ -1980,6 +1982,17 @@ export class CommonService {
         resolve({ status: "Fail", data: {} })
       });
     });
+
+  }
+
+  checkSelectedCity(city:any){
+    if(city!=localStorage.getItem("cityName")){
+      this.setAlertMessage("error","Your Current City is "+localStorage.getItem("cityName")+" and selected city is "+city+". Please refersh page !!!");
+      return "no";
+    }
+    else{
+      return "yes";
+    }
 
   }
 }

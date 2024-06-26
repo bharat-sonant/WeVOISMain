@@ -152,7 +152,6 @@ export class EntityModificationComponent implements OnInit {
     setTimeout(() => {
       $("#hddCardNo").val(cardNo);
       let detail = this.entityModificationFilterList.find(item => item.cardNo == cardNo);
-      console.log(detail);
       if (detail != undefined) {
         $(this.ddlCurrentEntityType).val(detail.preEntityId);
         $(this.ddlRequestedEntityType).val(detail.reqEntityId);

@@ -43,21 +43,30 @@ export class ReviewDutyonImagesComponent implements OnInit {
 
   getZones() {
     $(this.divMainLoader).show();
-    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardDutyOnImageJSON%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + ".json?alt=media";
-    let tripInstance = this.httpService.get(path).subscribe(data => {
-      tripInstance.unsubscribe();
-      if (data != null) {
-        this.zoneDutyOnList = JSON.parse(JSON.stringify(data));
-      }
-      $(this.divMainLoader).hide();
-    }, error => {
-      this.zoneList = [];
-      this.zoneDutyOnList = [];
-      this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-      for (let i = 1; i < this.zoneList.length; i++) {
-        this.zoneDutyOnList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], dutyOnImages: [] });
-      }
-      this.getDutyOnImages(0);
+    this.zoneList = [];
+    this.zoneDutyOnList = [];
+    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    for (let i = 1; i < this.zoneList.length; i++) {
+      this.zoneDutyOnList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], dutyOnImages: [] });
+    }
+    const promises = [];
+    for (let i = 0; i < this.zoneDutyOnList.length; i++) {
+      promises.push(Promise.resolve(this.getDutyOnImages(this.zoneDutyOnList[i].zoneNo)));
+    }
+    Promise.all(promises).then((results) => {
+      console.log(results)
+      for (let i = 0; i < results.length; i++) {
+        if (results[i]["status"] == "success") {
+          let detail=this.zoneDutyOnList.find(item=>item.zoneNo==results[i]["data"].zoneNo);
+          if(detail!=undefined){
+            detail.dutyOnImages=results[i]["data"].dutyOnImages;
+            if(results[i]["data"].dutyOnImages.length>0){
+              this.getDriverHelper(results[i]["data"].zoneNo);
+            }
+          }
+        }
+      }   
+      this.getDustbinDutyOnImages();       
     });
   }
 
@@ -72,10 +81,15 @@ export class ReviewDutyonImagesComponent implements OnInit {
           for (let i = 0; i < dataList.length; i++) {
             let dutyOnImages = [];
             let planName = dataList[i]["planName"];
+            let binPlanId = dataList[i]["planId"];
             let zoneName = "BinLifting(" + planName + ")";
             let planId = dataList[i]["planId"];
             if (dataList[i]["dutyOnImage"] != null) {
               let imageList = dataList[i]["dutyOnImage"].split(',');
+              let imageOffList = [];
+              if (dataList[i]["dutyOutImage"] != null) {
+                imageOffList = dataList[i]["dutyOutImage"].split(',');
+              }
               if (imageList.length > 0) {
                 let driverList = dataList[i]["driver"].split(',');
                 let helperList = dataList[i]["helper"].split(',');
@@ -95,14 +109,21 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   if (vehicleList[j] != null) {
                     vehicle = vehicleList[j];
                   }
+                  let dutyOffImageName = "";
+                  let dutyOffImageUrl = "";
+                  if (imageOffList[j] != undefined) {
+                    dutyOffImageName = imageOffList[j].toString().trim();
+                    dutyOffImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
+                  }
+
                   let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
-                  dutyOnImages.push({ imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, driver: "---", helper: "---", vehicle: vehicle });
+                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, driver: "---", helper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl });
                 }
               }
             }
             this.zoneDutyOnList.push({ zoneNo: planName, zoneName: zoneName, dutyOnImages: dutyOnImages });
             this.getEmployeeNamebyId(planName);
-            this.getDutyOnTime(planName);
+            this.getDutyOnTime(planName, planId);
           }
         }
         if (this.selectedDate == this.todayDate) {
@@ -118,26 +139,13 @@ export class ReviewDutyonImagesComponent implements OnInit {
       });
   }
 
-  syncData() {
-    $(this.divMainLoader).show();
-    this.zoneList = [];
-    this.zoneDutyOnList = [];
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
-    for (let i = 1; i < this.zoneList.length; i++) {
-      this.zoneDutyOnList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], dutyOnImages: [] });
-    }
-    this.getDutyOnImages(0);
-    // for (let i = 0; i < this.zoneDutyOnList.length; i++) {
-    //   this.zoneDutyOnList[i]["dutyOnImages"] = [];
-    // }
-    // this.getDutyOnImages(0);
-  }
 
-  getDutyOnTime(zone: any) {
+  getDutyOnTime(zone: any, planId: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDutyOnTime");
     let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
     if (detail != undefined) {
       let list = detail.dutyOnImages;
+      console.log(detail)
       for (let i = 0; i < list.length; i++) {
         let driverId = list[i]["driverId"];
         let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + driverId;
@@ -146,20 +154,42 @@ export class ReviewDutyonImagesComponent implements OnInit {
             instance.unsubscribe();
             if (data != null) {
               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnTime", data);
-              for (let j = 0; j <= 5; j++) {
-                if (data["task" + j] != null) {
-                  if (data["task" + j]["task"].includes("BinLifting")) {
-                    if (data["task" + j]["in-out"] != null) {
-                      let keyArray = Object.keys(data["task" + j]["in-out"]);
-                      for (let k = 0; k < keyArray.length; k++) {
-                        let time = keyArray[i];
-                        if (data["task" + j]["in-out"][time] == "In") {
-                          time = time.toString().split(':')[0] + ":" + time.toString().split(':')[1];
-                          k = keyArray.length;
-                          j = 6;
-                          let dutyOnDetail = detail.dutyOnImages.find(item => item.driverId == driverId);
-                          if (dutyOnDetail != undefined) {
-                            dutyOnDetail.time = time;
+              let dutyOnDetail = detail.dutyOnImages.find(item => item.planId == planId);
+              if (dutyOnDetail != undefined) {
+                for (let j = 0; j <= 5; j++) {
+                  if (data["task" + j] != null) {
+                    if (data["task" + j]["task"].includes("BinLifting")) {
+                      if (data["task" + j]["binLiftingPlanId"] == planId) {
+                        if (data["task" + j]["in-out"] != null) {
+                          let keyArray = Object.keys(data["task" + j]["in-out"]);
+                          for (let k = 0; k < keyArray.length; k++) {
+                            let time = keyArray[k];
+                            if (data["task" + j]["in-out"][time] == "In") {
+                              time = time.toString().split(':')[0] + ":" + time.toString().split(':')[1];
+                              k = keyArray.length;
+                              j = 6;
+                              dutyOnDetail.time = time;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                for (let j = 0; j <= 5; j++) {
+                  if (data["task" + j] != null) {
+                    if (data["task" + j]["task"].includes("BinLifting")) {
+                      if (data["task" + j]["binLiftingPlanId"] == planId) {
+                        if (data["task" + j]["in-out"] != null) {
+                          let keyArray = Object.keys(data["task" + j]["in-out"]);
+                          for (let k = keyArray.length - 1; k >= 0; k--) {
+                            let time = keyArray[k];
+                            if (data["task" + j]["in-out"][time] == "Out") {
+                              time = time.toString().split(':')[0] + ":" + time.toString().split(':')[1];
+                              k = -1;
+                              j = 6;
+                              dutyOnDetail.timeDutyOff = time;
+                            }
                           }
                         }
                       }
@@ -189,101 +219,84 @@ export class ReviewDutyonImagesComponent implements OnInit {
     }
   }
 
-  getDutyOnImages(index: any) {
+  getDutyOnImages(zoneNo:any){
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDutyOnImages");
-    if (index == this.zoneDutyOnList.length) {
-      this.getDustbinDutyOnImages();
-    }
-    else {
-      let zone = this.zoneDutyOnList[index]["zoneNo"];
-      let dbPath = "WasteCollectionInfo/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
+    return new Promise((resolve) => {
+      let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
       let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
         summaryData => {
           summaryInstance.unsubscribe();
+          let dutyOnImages=[];
           if (summaryData != null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnImages", summaryData);
-
-            if (summaryData["dutyOnImage"] != null) {
-              let list = summaryData["dutyOnImage"].split(',');
-              let timeList = summaryData["dutyInTime"].split(',');
-              let listDutyOff = [];
-              let timeDutyOffList = [];
-              if (summaryData["dutyOutImage"] != null) {
-                listDutyOff = summaryData["dutyOutImage"].split(',');
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnImages", summaryData);
+              if (summaryData["dutyInTime"] != null) {
+                let timeList = summaryData["dutyInTime"].split(',');
+                let outTimeList = [];
+                if(summaryData["dutyOutTime"]!=null){
+                  outTimeList=summaryData["dutyOutTime"].split(',');
+                }
+                for (let i = 0; i < timeList.length; i++) {
+                  let time = timeList[i];
+                  let offTime = "";
+                  if (outTimeList[i] != undefined) {
+                    offTime = outTimeList[i];
+                  }
+                  dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "" });
+                }
               }
-              if (summaryData["dutyOutTime"] != null) {
-                timeDutyOffList = summaryData["dutyOutTime"].split(',');
-              }
-              let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
-              if (detail != undefined) {
+              if (summaryData["dutyOnImage"] != null) {
+                let list = summaryData["dutyOnImage"].split(',');
                 for (let i = 0; i < list.length; i++) {
-                  let imageName = list[i];
-                  let time = timeList[i];
-                  let imageNameDutyOff = "";
-                  let timeDutyOff = "";
-                  if (listDutyOff[i] != null) {
-                    imageNameDutyOff = listDutyOff[i].trim();
+                  let imageName=list[i].toString().trim();
+                  let imageUrl=this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+                  if(imageName.includes("1")){
+                    dutyOnImages[0]["imageUrl"]=imageUrl;
                   }
-                  if (timeDutyOffList[i] != null) {
-                    timeDutyOff = timeDutyOffList[i].trim();
+                  else if(imageName.includes("2")){
+                    dutyOnImages[1]["imageUrl"]=imageUrl;
                   }
-                  if (imageName != "") {
-                    let imageDutyOffUrl = "";
-                    let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
-                    if (imageNameDutyOff != "") {
-                      imageDutyOffUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageNameDutyOff + "?alt=media";
-                    }
-                    detail.dutyOnImages.push({ imageUrl: imageUrl, time: time, driver: "---", helper: "---", vehicle: "---", timeDutyOff: timeDutyOff, imageDutyOffUrl: imageDutyOffUrl });
+                  else if(imageName.includes("3")){
+                    dutyOnImages[2]["imageUrl"]=imageUrl;
+                  }
+                  else if(imageName.includes("4")){
+                    dutyOnImages[3]["imageUrl"]=imageUrl;
+                  }
+                  else if(imageName.includes("5")){
+                    dutyOnImages[4]["imageUrl"]=imageUrl;
                   }
                 }
               }
-              if (detail.dutyOnImages.length > 0) {
-                this.getDriverHelper(zone);
-              }
-            }
-            else if (summaryData["dutyOutImage"] != null) {
-              let timeList = summaryData["dutyInTime"].split(',');
-              let listDutyOff = [];
-              let timeDutyOffList = [];
               if (summaryData["dutyOutImage"] != null) {
-                listDutyOff = summaryData["dutyOutImage"].split(',');
-              }
-              if (summaryData["dutyOutTime"] != null) {
-                timeDutyOffList = summaryData["dutyOutTime"].split(',');
-              }
-              let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
-              if (detail != undefined) {
-                for (let i = 0; i < timeDutyOffList.length; i++) {
-                  let imageName = timeDutyOffList[i];
-                  let time = timeList[i];
-                  let imageNameDutyOff = "";
-                  let timeDutyOff = "";
-                  if (listDutyOff[i] != null) {
-                    imageNameDutyOff = listDutyOff[i].trim();
+                let list = summaryData["dutyOutImage"].split(',');
+                for (let i = 0; i < list.length; i++) {
+                  let imageName=list[i].toString().trim();
+                  let imageUrl=this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+                  if(imageName.includes("1")){
+                    dutyOnImages[0]["imageDutyOffUrl"]=imageUrl;
                   }
-                  if (timeDutyOffList[i] != null) {
-                    timeDutyOff = timeDutyOffList[i].trim();
+                  else if(imageName.includes("2")){
+                    dutyOnImages[1]["imageDutyOffUrl"]=imageUrl;
                   }
-                  if (imageName != "") {
-                    let imageDutyOffUrl = "";
-                    let imageUrl = "";
-                    if (imageNameDutyOff != "") {
-                      imageDutyOffUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageNameDutyOff + "?alt=media";
-                    }
-                    detail.dutyOnImages.push({ imageUrl: imageUrl, time: time, driver: "---", helper: "---", vehicle: "---", timeDutyOff: timeDutyOff, imageDutyOffUrl: imageDutyOffUrl });
+                  else if(imageName.includes("3")){
+                    dutyOnImages[2]["imageDutyOffUrl"]=imageUrl;
+                  }
+                  else if(imageName.includes("4")){
+                    dutyOnImages[3]["imageDutyOffUrl"]=imageUrl;
+                  }
+                  else if(imageName.includes("5")){
+                    dutyOnImages[4]["imageDutyOffUrl"]=imageUrl;
                   }
                 }
-              }
-              if (detail.dutyOnImages.length > 0) {
-                this.getDriverHelper(zone);
-              }
-            }
+              }  
+              resolve({ status: "success", data: {zoneNo:zoneNo,dutyOnImages:dutyOnImages} });          
           }
-          index++;
-          this.getDutyOnImages(index);
+          else{
+            resolve({ status: "fail", data: {} });
+          }
         }
       );
-    }
+
+    });
   }
 
   getDriverHelper(zone: any) {
@@ -335,8 +348,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
     }
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-    this.syncData();
-    // this.getZones();
+    this.getZones();
   }
 
 }

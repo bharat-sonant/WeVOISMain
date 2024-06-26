@@ -168,7 +168,6 @@ export class WardwiseScanCardComponent implements OnInit {
   getNotScanedCard(cardData: any) {
     let keyArray = Object.keys(cardData);
     if (cardData["lastKey"] != null) {
-      console.log(keyArray.length)
       for (let i = 0; i < keyArray.length; i++) {
         let key = parseInt(keyArray[i]);
         let imageURL = "";
@@ -183,7 +182,6 @@ export class WardwiseScanCardComponent implements OnInit {
     }
     else {
       for (let i = 0; i < keyArray.length; i++) {
-        console.log(keyArray.length)
         let lineNo = parseInt(keyArray[i]);
         if (!isNaN(lineNo)) {
           let lineData = cardData[lineNo];
