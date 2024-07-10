@@ -64,6 +64,7 @@ export class WardTripAnalysisComponent implements OnInit {
     this.setDefaultValues();
     this.getPendingAnalysis();
     this.getWardTrips();
+    this.getDustbinPlans();
   }
 
   rotateImage(type: any) {
@@ -134,23 +135,21 @@ export class WardTripAnalysisComponent implements OnInit {
     this.allZoneList = JSON.parse(localStorage.getItem("latest-zones"));
     this.imageCurrentRotation1 = "rotate0";
     this.imageCurrentRotation2 = "rotate0";
+    for (let i = 1; i <= 8; i++) {
+      $('#tripDiv' + i).hide();
+    }
   }
 
   getPendingAnalysis() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getPendingAnalysis");
     this.dbPath = "WardTrips/TotalTripAnalysisPending";
-    let pendingInstance = this.db
-      .object(this.dbPath)
-      .valueChanges()
-      .subscribe((data) => {
-        if (data != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPendingAnalysis", data);
-          this.tripData.pendingAnalysis = data.toString();
-        }
-      });
+    let pendingInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPendingAnalysis", data);
+        this.tripData.pendingAnalysis = data.toString();
+      }
+    });
   }
-
-
 
   getWardTrips() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardTrips");
@@ -249,7 +248,8 @@ export class WardTripAnalysisComponent implements OnInit {
                 iconClass: iconClass,
                 tripList: tripList,
                 tripCount: tripCount,
-                tripAnalysisCount: tripAnalysisCount
+                tripAnalysisCount: tripAnalysisCount,
+                isDustbin:0
               });
             }
           } else {
@@ -260,7 +260,8 @@ export class WardTripAnalysisComponent implements OnInit {
               iconClass: iconClass,
               tripList: tripList,
               tripCount: tripCount,
-              tripAnalysisCount: 0
+              tripAnalysisCount: 0,
+              isDustbin:0
 
             });
           }
@@ -300,9 +301,152 @@ export class WardTripAnalysisComponent implements OnInit {
         this.tripList = [];
         this.clearAll();
         this.getWardTrips();
+        this.getDustbinPlans();
       }
       else {
         this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+      }
+    });
+  }
+
+  getDustbinPlans() {
+    let dbPath = "DustbinData/DustbinPickingPlans/" + this.selectedDate;
+    let planInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      planInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let iconClass = "fas fa-ellipsis-h";
+          let divClass = "address md-background";
+          let planId = keyArray[i];
+          console.log(planId);
+          let planName = data[planId]["planName"];
+          this.zoneList.push({ zoneNo: planId, zoneName: planName, divClass: divClass, iconClass: iconClass, tripList: [], tripCount: 0, tripAnalysisCount: 0, isDustbin:1 });
+          this.getDustbinTrips(planId);
+        }
+      }
+      dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
+      let planHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        planHistoryInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let iconClass = "fas fa-ellipsis-h";
+            let divClass = "address md-background";
+            let planId = keyArray[i];
+            console.log(planId);
+            let planName = data[planId]["planName"];
+            this.zoneList.push({ zoneNo: planId, zoneName: planName, divClass: divClass, iconClass: iconClass, tripList: [], tripCount: 0, tripAnalysisCount: 0, isDustbin:1 });
+            this.getDustbinTrips(planId);
+          }
+        }
+      })
+    })
+
+  }
+
+  getDustbinTrips(planId: any) {
+    this.dbPath = "WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId;
+    let tripInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
+      tripInstance.unsubscribe();
+      let iconClass = "fas fa-ellipsis-h";
+      let divClass = "address md-background";
+      let tripList = [];
+      let tripCount = 0;
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinTrips", data);
+        iconClass = "fas fa-check-double";
+        divClass = "address";
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          tripCount = keyArray.length;
+          let tripAnalysisCount = 0;
+          for (let j = 0; j < keyArray.length; j++) {
+            let tripID = keyArray[j];
+            let driverId = data[tripID]["driverId"];
+            let driverName = "";
+            let driverMobile = "";
+            let time = data[tripID]["time"];
+            let filledStatus = "";
+            let analysisAt = "";
+            let analysisBy = "";
+            let remark = "";
+            let imageName = "";
+            let imageName2 = "";
+            let manualRemarks = "";
+            let overLoad = "";
+            let vehicleType = data[tripID]["vehicle"].split('-')[0];
+            if (data[tripID]["filledStatus"] != null) {
+              filledStatus = data[tripID]["filledStatus"];
+            }
+            if (data[tripID]["analysisAt"] != null) {
+              analysisAt = data[tripID]["analysisAt"];
+            }
+            if (data[tripID]["analysisBy"] != null) {
+              analysisBy = data[tripID]["analysisBy"];
+              tripAnalysisCount++;
+            }
+            if (data[tripID]["remark"] != null) {
+              remark = data[tripID]["remark"];
+            }
+            if (data[tripID]["manualRemarks"] != null) {
+              manualRemarks = data[tripID]["manualRemarks"];
+            }
+            if (data[tripID]["overLoad"] != null) {
+              overLoad = data[tripID]["overLoad"];
+            }
+            if (data[tripID]["imageName"] != null) {
+              imageName = data[tripID]["imageName"];
+            }
+            if (data[tripID]["imageName2"] != null) {
+              imageName2 = data[tripID]["imageName2"];
+            }
+            this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
+              driverName =
+                employee["name"] != null
+                  ? employee["name"].toUpperCase()
+                  : "---";
+              driverMobile =
+                employee["mobile"] != null ? employee["mobile"] : "---";
+              tripList.push({
+                tripId: tripID,
+                tripName: "trip " + tripID,
+                driverName: driverName,
+                driverMobile: driverMobile,
+                time: time,
+                filledStatus: filledStatus,
+                analysisAt: analysisAt,
+                analysisBy: analysisBy,
+                remark: remark,
+                imageName: imageName,
+                imageName2: imageName2,
+                vehicleType: vehicleType,
+                manualRemarks: manualRemarks,
+                overLoad: overLoad
+              });
+            });
+          }
+          if (tripAnalysisCount == tripCount) {
+            iconClass = "fas fa-diagnoses";
+          }
+          let detail = this.zoneList.find(item => item.zoneNo == planId);
+          if (detail != undefined) {
+            detail.iconClass = iconClass;
+            detail.divClass = divClass;
+            detail.tripAnalysisCount = tripCount;
+            detail.tripCount = tripCount;
+            detail.tripList = tripList;
+          }
+        }
+      } else {
+        let detail = this.zoneList.find(item => item.zoneNo == planId);
+        if (detail != undefined) {
+          detail.iconClass = iconClass;
+          detail.divClass = divClass;
+          detail.tripAnalysisCount = tripCount;
+          detail.tripCount = tripCount;
+          detail.tripList = tripList;
+        }
       }
     });
   }
@@ -316,12 +460,12 @@ export class WardTripAnalysisComponent implements OnInit {
     $("#slideImg1").addClass(this.imageCurrentRotation1);
     $("#slideImg2").removeClass((<HTMLElement>document.getElementById("slideImg2")).className);
     $("#slideImg2").addClass(this.imageCurrentRotation2);
-    
+
     (<HTMLElement>document.getElementById("slideImg1")).style.height = "";
     (<HTMLElement>document.getElementById("slideImg1")).style.width = "";
     (<HTMLElement>document.getElementById("slideImg2")).style.height = "";
     (<HTMLElement>document.getElementById("slideImg2")).style.width = "";
-    
+
     for (let i = 1; i <= 8; i++) {
       $('#tripDiv' + i).hide();
     }
@@ -361,9 +505,9 @@ export class WardTripAnalysisComponent implements OnInit {
   getTripData(index: any) {
     this.selectedTrip = index;
     let tripCountForWard = this.tripData.tripCount;
-   // if (this.tripData.tripCount > 4) {
-   //   tripCountForWard = 4;
-   // }
+     if (this.tripData.tripCount > 8) {
+       tripCountForWard = 8;
+     }
     for (let i = 1; i <= tripCountForWard; i++) {
       let element = <HTMLDivElement>document.getElementById("tripDiv" + i);
       let className = element.className;
@@ -587,6 +731,9 @@ export class WardTripAnalysisComponent implements OnInit {
     element.checked = false;
     element = <HTMLInputElement>document.getElementById("chkOverLoad");
     element.checked = false;
+    for (let i = 1; i <= 8; i++) {
+      $('#tripDiv' + i).hide();
+    }
   }
 }
 

@@ -71,6 +71,8 @@ export class DustbinMonitoringComponent {
   dehradunSunlightDustbinUrl: any;
   dehradunEconDustbinUrl: any;
   cityName: any;
+  userType: any;
+  isShowData:any;
   db: any;
   instancesList: any[] = [];
   // route tracking
@@ -97,6 +99,7 @@ export class DustbinMonitoringComponent {
     };
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Monitoring", "Dustbin-Monitoring", localStorage.getItem("userID"));
@@ -130,7 +133,13 @@ export class DustbinMonitoringComponent {
         this.setMarkerNew();
       }, 5000);
     }
+    if (this.userType == "External User" && this.cityName == "jodhpur") {
+      this.isShowData=false;
+    }
+    else {
+      this.isShowData=true;
     this.getDustbins();
+    }
   }
 
   getDefaultImageUrl() {
@@ -186,7 +195,9 @@ export class DustbinMonitoringComponent {
         }
         this.currentYear = this.selectedDate.split('-')[0];
         this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+        if(this.isShowData==false){
         this.findDustbins();
+        }
       }
       else {
         this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");

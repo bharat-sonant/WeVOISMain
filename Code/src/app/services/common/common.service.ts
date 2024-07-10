@@ -885,27 +885,27 @@ export class CommonService {
       for (let i = 1; i < list.length; i++) {
         if (list[i] != null) {
           let designationId = i;
-          let deptId=list[i]["deptId"];
+          let deptId = list[i]["deptId"];
           let designation = list[i]["name"];
-          designationList.push({ designationId: designationId, designation: designation, departmentId:deptId });
+          designationList.push({ designationId: designationId, designation: designation, departmentId: deptId });
           designationList = this.transformNumeric(designationList, "designation");
         }
       }
       localStorage.setItem("designation", JSON.stringify(designationList));
     });
   }
-  setAllDepartments=async()=>{
-    
-    const path =  this.fireStoragePath+ "Common%2FDepartments.json?alt=media";
+  setAllDepartments = async () => {
+
+    const path = this.fireStoragePath + "Common%2FDepartments.json?alt=media";
     let departmentInstance = this.httpService.get(path).subscribe(data => {
       departmentInstance.unsubscribe();
       let departmentList = [];
-      let list=JSON.parse(JSON.stringify(data))
+      let list = JSON.parse(JSON.stringify(data))
       for (let i = 1; i < list.length; i++) {
         if (list[i] != null) {
           let id = list[i]["id"];
-          let name=list[i]["name"];
-          departmentList.push({ id: id, name: name,});
+          let name = list[i]["name"];
+          departmentList.push({ id: id, name: name, });
           departmentList = this.transformNumeric(departmentList, "name");
         }
       }
@@ -1036,37 +1036,42 @@ export class CommonService {
         if (keyArrray.length > 0) {
           for (let i = 0; i < keyArrray.length; i++) {
             let index = keyArrray[i];
-            let pickFrequency = 0;
-            let isDisabled = "no";
-            let disabledBy = "";
-            let isBroken = false;
-            if (dustbin[index]["pickFrequency"] != null) {
-              pickFrequency = Number(dustbin[index]["pickFrequency"]);
+            if (dustbin[index]["lat"] != null) {
+              let pickFrequency = 0;
+              let isDisabled = "no";
+              let disabledBy = "";
+              let isBroken = false;
+              if (dustbin[index]["pickFrequency"] != null) {
+                pickFrequency = Number(dustbin[index]["pickFrequency"]);
+              }
+              if (dustbin[index]["isDisabled"] != null) {
+                isDisabled = dustbin[index]["isDisabled"];
+              }
+              if (dustbin[index]["isBroken"] != null) {
+                isBroken = dustbin[index]["isBroken"];
+              }
+              if (dustbin[index]["disabledBy"] != null) {
+                disabledBy = dustbin[index]["disabledBy"];
+              }
+              dustbinList.push({
+                zone: dustbin[index]["zone"],
+                dustbin: keyArrray[i],
+                address: dustbin[index]["address"],
+                type: dustbin[index]["type"],
+                pickFrequency: pickFrequency,
+                lat: dustbin[index]["lat"],
+                lng: dustbin[index]["lng"],
+                isAssigned: dustbin[index]["isAssigned"],
+                spelledRight: dustbin[index]["spelledRight"],
+                ward: dustbin[index]["ward"],
+                isDisabled: isDisabled,
+                isBroken: isBroken,
+                disabledBy: disabledBy
+              });
             }
-            if (dustbin[index]["isDisabled"] != null) {
-              isDisabled = dustbin[index]["isDisabled"];
+            else {
+              newDb.object(dbPath + "/" + index).remove();
             }
-            if (dustbin[index]["isBroken"] != null) {
-              isBroken = dustbin[index]["isBroken"];
-            }
-            if (dustbin[index]["disabledBy"] != null) {
-              disabledBy = dustbin[index]["disabledBy"];
-            }
-            dustbinList.push({
-              zone: dustbin[index]["zone"],
-              dustbin: keyArrray[i],
-              address: dustbin[index]["address"],
-              type: dustbin[index]["type"],
-              pickFrequency: pickFrequency,
-              lat: dustbin[index]["lat"],
-              lng: dustbin[index]["lng"],
-              isAssigned: dustbin[index]["isAssigned"],
-              spelledRight: dustbin[index]["spelledRight"],
-              ward: dustbin[index]["ward"],
-              isDisabled: isDisabled,
-              isBroken: isBroken,
-              disabledBy: disabledBy
-            });
           }
         }
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
@@ -1513,19 +1518,19 @@ export class CommonService {
           }
         }
         const pathDate = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
-          let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
-            wardLineInstance.unsubscribe();
-            if (data != null) {
-              resolve(JSON.stringify(data));
-            }
-          });
-/*
-        this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/" + jsonDate + ".json").subscribe(data => {
-          resolve(JSON.stringify(data));
-        }, error => {
-          
+        let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+          wardLineInstance.unsubscribe();
+          if (data != null) {
+            resolve(JSON.stringify(data));
+          }
         });
-        */
+        /*
+                this.httpService.get("../../assets/jsons/WardLines/" + localStorage.getItem("cityName") + "/" + zoneNo + "/" + jsonDate + ".json").subscribe(data => {
+                  resolve(JSON.stringify(data));
+                }, error => {
+                  
+                });
+                */
       });
     });
   }
@@ -1985,12 +1990,12 @@ export class CommonService {
 
   }
 
-  checkSelectedCity(city:any){
-    if(city!=localStorage.getItem("cityName")){
-      this.setAlertMessage("error","Your Current City is "+localStorage.getItem("cityName")+" and selected city is "+city+". Please refersh page !!!");
+  checkSelectedCity(city: any) {
+    if (city != localStorage.getItem("cityName")) {
+      this.setAlertMessage("error", "Your Current City is " + localStorage.getItem("cityName") + " and selected city is " + city + ". Please refersh page !!!");
       return "no";
     }
-    else{
+    else {
       return "yes";
     }
 

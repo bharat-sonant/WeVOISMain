@@ -24,12 +24,12 @@
                     <h6>Houses</h6>
                 </div>
 
-                <div class="float-first fix-home-iner" style="padding-top: 5px;">
+                <div class="float-first fix-home-iner" style="padding-top: 5px;" [hidden]="isShowEntityExport==false">
                     <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i><br>
                     <h6>Export Entity Types</h6>
                 </div>
 
-                <div class="float-first fix-home-iner" style="padding-top: 5px;">
+                <div class="float-first fix-home-iner" style="padding-top: 5px;" [hidden]="isShowEntityExport==false">
                     <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="openExportMarkerData(contentExportMarkers);"></i><br>
                     <h6>Export Markers</h6>
                 </div>

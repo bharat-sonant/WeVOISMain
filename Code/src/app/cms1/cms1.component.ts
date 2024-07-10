@@ -918,7 +918,7 @@ export class Cms1Component implements OnInit {
       this.first_sheet_name = workbook.SheetNames[0];
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
-      let key = 116;
+      let key = 1;
       const jsonObj = {};
       for (let i = 0; i < fileList.length; i++) {
         let wardNo = fileList[i]["Ward No"];
@@ -934,7 +934,7 @@ export class Cms1Component implements OnInit {
           type: "Rectangular",
           ward: wardNo,
           zone: "A",
-          createdDate: "2023-11-16"
+          createdDate: "2024-07-07"
         }
         this.db.object("DustbinData/DustbinDetails/" + key.toString()).update(data);
         jsonObj[key] = data;

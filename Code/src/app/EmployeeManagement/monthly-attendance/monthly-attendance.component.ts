@@ -12,12 +12,12 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
   styleUrls: ['./monthly-attendance.component.scss']
 })
 export class MonthlyAttendanceComponent implements OnInit {
-  arraylength=0;
+  arraylength = 0;
   db: any;
   cityName: any;
   allEmployeeList: any[] = [];
-  filterEmployeeList :any[]=[];
-  completeList :any[]=[];
+  filterEmployeeList: any[] = [];
+  completeList: any[] = [];
   yearList: any[] = [];
   selectedEmployee: any;
   selectedYear: any;
@@ -32,16 +32,16 @@ export class MonthlyAttendanceComponent implements OnInit {
   ddlYear = "#ddlYear";
   chkIncludeInactive = "chkIncludeInactive";
   lastSyncData: any;
-  employeeName :any;
-  currentDate:any;
+  employeeName: any;
+  currentDate: any;
   serviceName = "monthly-attendance-report";
   constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient) { }
 
   ngOnInit() {
 
     this.todayDate = this.commonService.setTodayDate();
-   this.currentDate=this.commonService.setTodayDate()
-   
+    this.currentDate = this.commonService.setTodayDate()
+
     this.getEmployees()
     this.getYear();
     this.cityName = localStorage.getItem("cityName");
@@ -96,22 +96,22 @@ export class MonthlyAttendanceComponent implements OnInit {
       if (this.selectedEmployee == '0') {
         this.getJsonData()
       }
-      else{
+      else {
         this.changeSelection()
       }
-      
+
     }
     else {
       this.filterEmployeeList = this.allEmployeeList.filter(item => item.status == "1");
       if (this.selectedEmployee == '0') {
         this.getJsonData()
       }
-      else{
+      else {
         this.changeSelection()
       }
-      
+
     }
-   
+
   }
 
 
@@ -172,8 +172,8 @@ export class MonthlyAttendanceComponent implements OnInit {
         if (value != null) {
 
           this.reportList = value.Data.filter(item => item.empId === this.selectedEmployee);
-           this.employeeName = this.reportList[0].name
-        
+          this.employeeName = this.reportList[0].name
+
           const inputDate = new Date(value.lastUpdated)
           this.lastSyncData = `${inputDate.getDate()} ${this.getMonthAbbreviation(inputDate.getMonth())} ${inputDate.getFullYear()} ${this.formatTime(inputDate)}`;
 
@@ -182,7 +182,7 @@ export class MonthlyAttendanceComponent implements OnInit {
 
       }, error => {
         $(this.divLoader).hide();
-        this.lastSyncData='---'
+        this.lastSyncData = '---'
         this.commonService.setAlertMessage("error", "Attendance data is not available. Please synchronize data.!!!");
 
       });
@@ -232,6 +232,9 @@ export class MonthlyAttendanceComponent implements OnInit {
                     } else if (status == '1') {
                       Attendance = 1;
                     }
+                    else if(status=='4'){
+                      Attendance = 0;
+                    }
                   } else {
                     // Handle the case where 'inDetails' or 'status' is undefined
                     Attendance = 0;
@@ -239,7 +242,7 @@ export class MonthlyAttendanceComponent implements OnInit {
                 }
 
                 totalAttendance += Attendance;
-             
+
                 dateList.push({
                   date: this.dates[j],
                   day: 'day-' + (j + 1),
@@ -250,14 +253,14 @@ export class MonthlyAttendanceComponent implements OnInit {
               for (let j = 0; j < this.dates.length; j++) {
                 dateList.push({
                   day: 'day-' + (j + 1),
-                  date:this.dates[j],
+                  date: this.dates[j],
                   attendanceType: this.dates[j] <= this.currentDate ? 0 : '--',
                 });
               }
             }
 
             resolve({
-              status:employee.status,
+              status: employee.status,
               empId: employee.empId,
               name: employee.name,
               list: dateList,
@@ -275,25 +278,25 @@ export class MonthlyAttendanceComponent implements OnInit {
 
 
     Promise.all(promises).then((results: any) => {
-     
+
       this.saveAttendaceInStorage(results)
       if (this.selectedEmployee != '0') {
         this.reportList = results.filter(item => item.empId === this.selectedEmployee);
       }
-      else  if ((<HTMLInputElement>document.getElementById(this.chkIncludeInactive)).checked == true) {
+      else if ((<HTMLInputElement>document.getElementById(this.chkIncludeInactive)).checked == true) {
         if (this.selectedEmployee != '0') {
           this.reportList = results.filter(item => item.empId === this.selectedEmployee);
         }
-        else{
+        else {
           this.reportList = results
         }
-       
+
       } else {
-        let list =[]
+        let list = []
         list = results.filter(item => item.status == "1");
-       this.reportList = list;
+        this.reportList = list;
       }
-  
+
       $(this.divLoader).hide();
     });
   }
@@ -319,28 +322,28 @@ export class MonthlyAttendanceComponent implements OnInit {
 
     let accountInstance = this.httpService.get(path).subscribe((value: any) => {
       accountInstance.unsubscribe();
-   
+
       if (value != null) {
         if ((<HTMLInputElement>document.getElementById(this.chkIncludeInactive)).checked == true) {
           this.reportList = value.Data
         }
-        else{
-          let list =[]
-          list =value.Data.filter(item => item.status == "1");
-          
-         this.reportList = list;
-        
-     
-        }      
+        else {
+          let list = []
+          list = value.Data.filter(item => item.status == "1");
+
+          this.reportList = list;
+
+
+        }
       }
       const inputDate = new Date(value.lastUpdated);
       this.lastSyncData = `${inputDate.getDate()} ${this.getMonthAbbreviation(inputDate.getMonth())} ${inputDate.getFullYear()} ${this.formatTime(inputDate)}`;
       $(this.divLoader).hide();
 
     }, error => {
-     
+
       $(this.divLoader).hide();
-      this.lastSyncData='---'
+      this.lastSyncData = '---'
       this.commonService.setAlertMessage("error", "Attendance data is not available. Please synchronize data!!!");
 
     });
@@ -359,23 +362,23 @@ export class MonthlyAttendanceComponent implements OnInit {
   }
 
   exportToExcel() {
-    
+
     if (this.reportList.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
-   
-        htmlString += "<td>";
-        htmlString += "Name";
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += "Total";
-        htmlString += "</td>";
-     
-        htmlString += "<td>";
-        htmlString += "Day-01";
-        htmlString += "</td>";
-      
+
+      htmlString += "<td>";
+      htmlString += "Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Total";
+      htmlString += "</td>";
+
+      htmlString += "<td>";
+      htmlString += "Day-01";
+      htmlString += "</td>";
+
       htmlString += "<td>";
       htmlString += "Day-02";
       htmlString += "</td>";
@@ -388,103 +391,103 @@ export class MonthlyAttendanceComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Day-05"
       htmlString += "</td>";
-    
-    htmlString += "<td>";
-    htmlString += "Day-06";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-07";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-08";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-09";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-10";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-11";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-12";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-13";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-14";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-15";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-16";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-17";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-18";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-19";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-20";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-21";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-22";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-23";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-24";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-25";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-26";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-27";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Day-28";
-    htmlString += "</td>";
-    if(this.arraylength>28){
+
       htmlString += "<td>";
-      htmlString += "Day-29";
+      htmlString += "Day-06";
       htmlString += "</td>";
-    }
-   
-    if(this.arraylength>29){
       htmlString += "<td>";
-    htmlString += "Day-30";
-    htmlString += "</td>";
-    }
-   
-    if(this.arraylength>30){
+      htmlString += "Day-07";
+      htmlString += "</td>";
       htmlString += "<td>";
-    htmlString += "Day-31";
-    htmlString += "</td>";
-    }
-    
-    htmlString += "</tr>";
-    
+      htmlString += "Day-08";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-09";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-10";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-11";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-12";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-13";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-14";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-15";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-16";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-17";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-18";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-19";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-20";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-21";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-22";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-23";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-24";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-25";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-26";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-27";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Day-28";
+      htmlString += "</td>";
+      if (this.arraylength > 28) {
+        htmlString += "<td>";
+        htmlString += "Day-29";
+        htmlString += "</td>";
+      }
+
+      if (this.arraylength > 29) {
+        htmlString += "<td>";
+        htmlString += "Day-30";
+        htmlString += "</td>";
+      }
+
+      if (this.arraylength > 30) {
+        htmlString += "<td>";
+        htmlString += "Day-31";
+        htmlString += "</td>";
+      }
+
+      htmlString += "</tr>";
+
       for (let i = 0; i < this.reportList.length; i++) {
         htmlString += "<tr>";
-        
-          htmlString += "<td>";
-          htmlString += this.reportList[i]["name"];
-          htmlString += "</td>";
-        
+
+        htmlString += "<td>";
+        htmlString += this.reportList[i]["name"];
+        htmlString += "</td>";
+
         htmlString += "<td t='s'>";
         htmlString += this.reportList[i]["total"];
         htmlString += "</td>";
@@ -575,32 +578,32 @@ export class MonthlyAttendanceComponent implements OnInit {
         htmlString += "<td>";
         if (this.arraylength > 28) {
           htmlString += this.reportList[i].list[28]["attendanceType"];
-      } 
-      htmlString += "</td>";
+        }
+        htmlString += "</td>";
         htmlString += "<td>";
         if (this.arraylength > 29) {
           htmlString += this.reportList[i].list[29]["attendanceType"];
-      }
+        }
         htmlString += "</td>";
         htmlString += "<td>";
         if (this.arraylength > 30) {
           htmlString += this.reportList[i].list[30]["attendanceType"];
-      } 
-      
+        }
+
         htmlString += "</td>";
         htmlString += "</tr>";
-       
+
 
       }
       htmlString += "</table>";
       let fileName = "";
-      if(this.selectedEmployee!=0){
-        fileName =this.employeeName  +'-'+ this.selectedMonthName+'-'+this.selectedYear+"-attendanceReport.xlsx";
+      if (this.selectedEmployee != 0) {
+        fileName = this.employeeName + '-' + this.selectedMonthName + '-' + this.selectedYear + "-attendanceReport.xlsx";
       }
-      else{
-        fileName = this.selectedMonthName+'-'+this.selectedYear+'-attendanceReport.xlsx'
+      else {
+        fileName = this.selectedMonthName + '-' + this.selectedYear + '-attendanceReport.xlsx'
       }
-    
+
       this.commonService.exportExcel(htmlString, fileName);
     }
   }

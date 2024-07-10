@@ -27,6 +27,8 @@ export class DustbinAnalysisComponent implements OnInit {
   imageNotAvailablePath = "../assets/img/img-not-available.png";
   maxSlideCount: any;
   cityName: any;
+  userType: any;
+  isShowData:any; 
   db: any;
   serviceName = "dustbin-analysis";
   binDetail: dustbinDetails = {
@@ -73,6 +75,7 @@ export class DustbinAnalysisComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Dustbin-Management", "Dustbin-Analysis", localStorage.getItem("userID"));
@@ -81,8 +84,14 @@ export class DustbinAnalysisComponent implements OnInit {
     element.href = this.cityName + "/3B/dustbin-planing";
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
-    this.getPandingAnalysis();
-    this.getAssignedPlans();
+    if (this.userType == "External User" && this.cityName == "jodhpur") {
+      this.isShowData=false;
+    }
+    else {
+      this.isShowData=true;
+      this.getPandingAnalysis();
+      this.getAssignedPlans();
+    }
   }
 
   setDate(filterVal: any, type: string) {
@@ -93,7 +102,9 @@ export class DustbinAnalysisComponent implements OnInit {
         this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
         this.currentYear = this.selectedDate.split("-")[0];
         $(this.txtManualRemark).val("");
-        this.getAssignedPlans();
+        if (this.isShowData == true) {
+          this.getAssignedPlans();
+        }
       }
       else {
         this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
@@ -224,7 +235,7 @@ export class DustbinAnalysisComponent implements OnInit {
       let binId = binsArray[index].replace(" ", "");
       let binsDetailsPath = this.db.object("DustbinData/DustbinDetails/" + binId + "/address").valueChanges().subscribe((dustbinAddress) => {
         let dustbinPickHistoryPath = this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + binId + "/" + planId).valueChanges().subscribe((dustbinHistoryData) => {
-          
+
           if (dustbinHistoryData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsDetail", dustbinHistoryData);
           }
@@ -242,8 +253,8 @@ export class DustbinAnalysisComponent implements OnInit {
             emptyDustbinTopViewImage: this.setImageUrl(dustbinHistoryData, "empty-dustbin-top"),
             emptyDustbinFarFromImage: this.setImageUrl(dustbinHistoryData, "empty-dustbin-far"),
             dustbinNotFoundImage: this.setImageUrl(dustbinHistoryData, "not-at-location"),
-            imageCaptureAddress:this.checkNullValue(dustbinHistoryData, "imageCaptureAddress"),
-            latLng:this.checkNullValue(dustbinHistoryData, "latLng"),
+            imageCaptureAddress: this.checkNullValue(dustbinHistoryData, "imageCaptureAddress"),
+            latLng: this.checkNullValue(dustbinHistoryData, "latLng"),
             startTime: this.checkNullValue(dustbinHistoryData, "startTime"),
             endTime: this.checkNullValue(dustbinHistoryData, "endTime"),
             analysisBy: this.checkAnalysisValues(dustbinHistoryData, "analysisBy"),
@@ -509,8 +520,8 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.emptyDustbinTopViewImageUrl = this.dustbinList[index]["emptyDustbinTopViewImage"];
     this.binDetail.emptyDustbinFarViewImageUrl = this.dustbinList[index]["emptyDustbinFarFromImage"];
     this.binDetail.dustbinNotFoundImageUrl = this.dustbinList[index]["dustbinNotFoundImage"];
-    this.binDetail.latLng=this.dustbinList[index]["latLng"];
-    this.binDetail.imageCaptureAddress=this.dustbinList[index]["imageCaptureAddress"];
+    this.binDetail.latLng = this.dustbinList[index]["latLng"];
+    this.binDetail.imageCaptureAddress = this.dustbinList[index]["imageCaptureAddress"];
 
     this.binDetail.analysisBy = this.dustbinList[index]["analysisBy"];
     this.binDetail.analysisAt = this.dustbinList[index]["analysisAt"];

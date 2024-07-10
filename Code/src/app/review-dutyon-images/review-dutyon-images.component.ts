@@ -54,7 +54,6 @@ export class ReviewDutyonImagesComponent implements OnInit {
       promises.push(Promise.resolve(this.getDutyOnImages(this.zoneDutyOnList[i].zoneNo)));
     }
     Promise.all(promises).then((results) => {
-      console.log(results)
       for (let i = 0; i < results.length; i++) {
         if (results[i]["status"] == "success") {
           let detail=this.zoneDutyOnList.find(item=>item.zoneNo==results[i]["data"].zoneNo);
@@ -145,7 +144,6 @@ export class ReviewDutyonImagesComponent implements OnInit {
     let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
     if (detail != undefined) {
       let list = detail.dutyOnImages;
-      console.log(detail)
       for (let i = 0; i < list.length; i++) {
         let driverId = list[i]["driverId"];
         let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + driverId;

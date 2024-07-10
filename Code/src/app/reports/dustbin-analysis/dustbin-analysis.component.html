@@ -12,7 +12,7 @@
                 <div class="header">
                     <h3 class="header-text">
                         <span class="dustin-span">Dustbin Analysis</span>
-                        <div class="refresh">
+                        <div class="refresh" [hidden]="isShowData==false">
                             <span class="header-span"
                                 >last
                                 Update<br />
@@ -221,7 +221,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mt-10 pl-0 pr-0 dustbin-history">
+                                <div class="col-md-12 mt-10 pl-0 pr-0 dustbin-history"  [hidden]="isShowData==false">
                                     <a id="dustbinReportLink" href="#" target="_blank">
                                         <button class="button"><span>View Dustbin
                                                 History </span></button>
@@ -239,7 +239,7 @@
                                 <div class="header">
                                     <h3 class="header-text">
                                         <span class="dustin-span">Dustbin Analysis</span>
-                                        <div class="refresh">
+                                        <div class="refresh"  [hidden]="isShowData==false">
                                             <span class="header-span"
                                                 >last
                                                 Update<br />

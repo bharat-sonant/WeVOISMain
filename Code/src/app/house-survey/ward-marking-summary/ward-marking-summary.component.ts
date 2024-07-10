@@ -69,11 +69,16 @@ export class WardMarkingSummaryComponent implements OnInit {
   userId: any
   inProgressWards: any[] = [];
   serviceName = "marking-summary";
+  isShowEntityExport: any;
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.savePageLoadHistory("Survey-Management", "Marking-Summary", localStorage.getItem("userID"));
     this.isActionShow = true;
+    this.isShowEntityExport = true;
+    if (localStorage.getItem("userType") == "External User" && this.cityName == "jodhpur") {
+      this.isShowEntityExport = false;
+    }
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       this.isActionShow = false;
     }
@@ -203,13 +208,13 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Entity Counts";
       htmlString += "</td>";
-      if(this.cityName=="jodhpur"){
-      htmlString += "<td>";
-      htmlString += "Owner Name";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "No. of Persons";
-      htmlString += "</td>";
+      if (this.cityName == "jodhpur") {
+        htmlString += "<td>";
+        htmlString += "Owner Name";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "No. of Persons";
+        htmlString += "</td>";
       }
       htmlString += "<td>";
       htmlString += "</tr>";
@@ -236,13 +241,13 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["entityCounts"];
         htmlString += "</td>";
-        if(this.cityName=="jodhpur"){
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["ownerName"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["persons"];
-        htmlString += "</td>";
+        if (this.cityName == "jodhpur") {
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["ownerName"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["persons"];
+          htmlString += "</td>";
         }
         htmlString += "</tr>";
       }
@@ -288,8 +293,8 @@ export class WardMarkingSummaryComponent implements OnInit {
                     if (lineData[markerNo]["cardNumber"] != null) {
                       cardNumber = lineData[markerNo]["cardNumber"];
                     }
-                    let ownerName="";
-                    let persons="";
+                    let ownerName = "";
+                    let persons = "";
                     if (lineData[markerNo]["ownerName"] != null) {
                       ownerName = lineData[markerNo]["ownerName"].toUpperCase();
                     }
@@ -318,7 +323,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                               dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                               this.db.object(dbPath).update({ address: address });
                             }
-                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber,entityCounts:entityCounts,ownerName:ownerName,persons:persons });
+                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons });
                           }
                         );
                       }
@@ -326,11 +331,11 @@ export class WardMarkingSummaryComponent implements OnInit {
                         address = this.markerCityName;
                         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                         this.db.object(dbPath).update({ address: address });
-                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber,entityCounts:entityCounts,ownerName:ownerName,persons:persons });
+                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons });
                       }
                     }
                     else {
-                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber,entityCounts:entityCounts,ownerName:ownerName,persons:persons });
+                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons });
                     }
                   }
                 }
@@ -739,20 +744,29 @@ export class WardMarkingSummaryComponent implements OnInit {
               if (lineData[markerNo]["houseType"] != null) {
                 houseTypeCount++;
                 let houseTypeId = lineData[markerNo]["houseType"];
+                let servingCount = 1;
+                if (houseTypeId == "19" || houseTypeId == "20") {
+                  let totalHouses = parseInt(lineData[markerNo]["totalHouses"]);
+                  if (isNaN(totalHouses) || totalHouses == 0) {
+                    totalHouses = 1;
+                  }
+                  servingCount = totalHouses;
+                }
                 this.totalTypeCount++;
                 let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                 if (detail != undefined) {
                   let houseType = detail.houseType;
                   if (this.zoneHouseTypeList.length == 0) {
-                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1 });
+                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
                   }
                   else {
                     let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
                     if (listDetail != undefined) {
                       listDetail.counts = listDetail.counts + 1;
+                      listDetail.servingCounts = listDetail.servingCounts + servingCount;
                     }
                     else {
-                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1 });
+                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
                     }
                   }
                 }
@@ -796,6 +810,9 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Counts";
       htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Serving Counts";
+      htmlString += "</td>";
       htmlString += "</tr>";
       for (let i = 0; i < this.zoneHouseTypeList.length; i++) {
         htmlString += "<tr>";
@@ -804,6 +821,9 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.zoneHouseTypeList[i]["counts"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.zoneHouseTypeList[i]["servingCounts"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
@@ -857,19 +877,28 @@ export class WardMarkingSummaryComponent implements OnInit {
                 let markerNo = markerKeyArray[j];
                 if (lineData[markerNo]["houseType"] != null) {
                   let houseTypeId = lineData[markerNo]["houseType"];
+                  let servingCount = 1;
+                  if (houseTypeId == "19" || houseTypeId == "20") {
+                    let totalHouses = parseInt(lineData[markerNo]["totalHouses"]);
+                    if (isNaN(totalHouses) || totalHouses == 0) {
+                      totalHouses = 1;
+                    }
+                    servingCount = totalHouses;
+                  }
                   let detail = this.houseTypeList.find(item => item.id == houseTypeId);
                   if (detail != undefined) {
                     let houseType = detail.houseType;
                     if (this.zoneHouseTypeList.length == 0) {
-                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1 });
+                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
                     }
                     else {
                       let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
                       if (listDetail != undefined) {
                         listDetail.counts = listDetail.counts + 1;
+                        listDetail.servingCounts = listDetail.servingCounts + servingCount;
                       }
                       else {
-                        this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1 });
+                        this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
                       }
                     }
                   }
@@ -959,21 +988,23 @@ export class WardMarkingSummaryComponent implements OnInit {
                 for (let j = 0; j < markerKeyArray.length; j++) {
                   let markerNo = markerKeyArray[j];
                   if (parseInt(markerNo)) {
-                    markerCount = markerCount + 1;
-                    if (lineData[markerNo]["houseType"] == "19" || lineData[markerNo]["houseType"] == "20") {
-                      complexCount = complexCount + 1;
-                      let totalHouses = parseInt(lineData[markerNo]["totalHouses"]);
-                      if (isNaN(totalHouses)) {
-                        totalHouses = 1;
+                    if (lineData[markerNo]["houseType"] != null) {
+                      markerCount = markerCount + 1;
+                      if (lineData[markerNo]["houseType"] == "19" || lineData[markerNo]["houseType"] == "20") {
+                        complexCount = complexCount + 1;
+                        let totalHouses = parseInt(lineData[markerNo]["totalHouses"]);
+                        if (isNaN(totalHouses)) {
+                          totalHouses = 1;
+                        }
+                        houseInComplexCount = houseInComplexCount + totalHouses;
+                        houseCount = houseCount + totalHouses;
                       }
-                      houseInComplexCount = houseInComplexCount + totalHouses;
-                      houseCount = houseCount + totalHouses;
-                    }
-                    else {
-                      houseCount = houseCount + 1;
-                    }
-                    if (lineData[markerNo]["modifiedHouseTypeHistoryId"] != null) {
-                      totalModifiedHouseTypeCount = totalModifiedHouseTypeCount + 1;
+                      else {
+                        houseCount = houseCount + 1;
+                      }
+                      if (lineData[markerNo]["modifiedHouseTypeHistoryId"] != null) {
+                        totalModifiedHouseTypeCount = totalModifiedHouseTypeCount + 1;
+                      }
                     }
                   }
                 }
@@ -1042,8 +1073,6 @@ export class WardMarkingSummaryComponent implements OnInit {
     })
   }
 
-
-
   getAssignedWard() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedWard");
     let path = "EntityMarkingData/MarkerAppAccess";
@@ -1063,7 +1092,6 @@ export class WardMarkingSummaryComponent implements OnInit {
         this.getWards();
       });
   }
-
 }
 
 export class markerDatail {
