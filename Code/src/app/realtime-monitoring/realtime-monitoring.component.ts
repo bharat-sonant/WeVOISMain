@@ -89,6 +89,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   allMarkers: any[] = [];
   cityName: any;
   selectedZoneName: any;
+  hiddenWardList: any[] = [];
 
   workerDetails: WorkderDetails = {
     speed: "0",
@@ -207,7 +208,10 @@ export class RealtimeMonitoringComponent implements OnInit {
       localStorage.setItem("wardLineStorage", null);
       localStorage.setItem("employeeDetail", null);
     }
-
+    if (this.cityName == "jodhpur") {
+      this.hiddenWardList = [{ zone: "31-R1" }, { zone: "31-R2" }, { zone: "34-R1" }, { zone: "34-R2" }, { zone: "36-R1" }, { zone: "36-R2" }, { zone: "37-R1" }, { zone: "37-R2" }, { zone: "33-R1" }, { zone: "33-R2" }, { zone: "39" }];
+    }
+    console.log(this.hiddenWardList);
     this.zoneList = [];
     this.firstData = false;
     this.userId = localStorage.getItem("userID");
@@ -316,100 +320,103 @@ export class RealtimeMonitoringComponent implements OnInit {
       let totalWard = this.allZones.length - 1;
       for (let index = 1; index < this.allZones.length; index++) {
         let zoneNo = this.allZones[index]["zoneNo"];
-        let zoneName = this.allZones[index]["zoneName"].replace("Zone ", "");
-        let status = data[zoneNo]["activityStatus"];
-        let isMic = "notActive";
-        if (data[zoneNo]["micStatus"] != null) {
-          if (data[zoneNo]["micStatus"] == "disabled") {
-            isMic = "disabled";
+        let detail = this.hiddenWardList.find(item => item.zone == zoneNo);
+        if (detail == undefined) {
+          let zoneName = this.allZones[index]["zoneName"].replace("Zone ", "");
+          let status = data[zoneNo]["activityStatus"];
+          let isMic = "notActive";
+          if (data[zoneNo]["micStatus"] != null) {
+            if (data[zoneNo]["micStatus"] == "disabled") {
+              isMic = "disabled";
+            }
           }
-        }
-        if (this.firstData == false) {
-          if (status == "active") {
-            activeWard++;
-            this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "active", shortIndex: index, displayOrder: 2, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "white", iconName: "fas fa-caret-right active-ward", progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
-          } else if (status == "stopped") {
-            stoppedWard++;
-            this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "stopped", shortIndex: index, displayOrder: 1, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "white", iconName: "fas fa-caret-right stop-indication", progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
-          } else if (status == "completed") {
-            completedWard++;
-            this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "completed", shortIndex: index, displayOrder: 3, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "#95e495", iconName: "fas fa-caret-right active-ward", progressClass: "progress progress-float-completed", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
-          } else if ((status = "workNotStarted")) {
-            inActiveWard++;
-            this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "notStarted", shortIndex: index, displayOrder: 4, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "rgb(221 225 221)", iconName: "fas fa-caret-right inactive-ward", progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
-          }
-        } else {
-          let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
-          if (zoneDetails != undefined) {
-            zoneDetails.zoneNo = zoneNo;
-            zoneDetails.zoneName = zoneName;
-            zoneDetails.isMic = isMic;
-
+          if (this.firstData == false) {
             if (status == "active") {
               activeWard++;
-              zoneDetails.status = "active";
-              zoneDetails.displayOrder = 2;
-              zoneDetails.bgColor = "white";
-              zoneDetails.iconName = "fas fa-caret-right active-ward";
-              zoneDetails.borderClass = "progress-bar  progress-success";
-              zoneDetails.progressClass = "progress progress-float";
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "active", shortIndex: index, displayOrder: 2, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "white", iconName: "fas fa-caret-right active-ward", progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
             } else if (status == "stopped") {
               stoppedWard++;
-              zoneDetails.status = "stopped";
-              zoneDetails.displayOrder = 1;
-              zoneDetails.bgColor = "white";
-              zoneDetails.iconName = "fas fa-caret-right stop-indication";
-              zoneDetails.borderClass = "progress-bar  progress-success";
-              zoneDetails.progressClass = "progress progress-float";
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "stopped", shortIndex: index, displayOrder: 1, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "white", iconName: "fas fa-caret-right stop-indication", progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
             } else if (status == "completed") {
               completedWard++;
-              zoneDetails.status = "completed";
-              zoneDetails.displayOrder = 3;
-              zoneDetails.bgColor = "#95e495";
-              zoneDetails.iconName = "fas fa-caret-right active-ward";
-              zoneDetails.borderClass = "completed-ward";
-              zoneDetails.progressClass = "progress progress-float-completed";
-            } else if (status == "workNotStarted") {
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "completed", shortIndex: index, displayOrder: 3, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "#95e495", iconName: "fas fa-caret-right active-ward", progressClass: "progress progress-float-completed", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
+            } else if ((status = "workNotStarted")) {
               inActiveWard++;
-              zoneDetails.status = "notStarted";
-              zoneDetails.displayOrder = 4;
-              zoneDetails.bgColor = "rgb(221 225 221)";
-              zoneDetails.iconName = "fas fa-caret-right inactive-ward";
-              zoneDetails.borderClass = "progress-bar  progress-success";
-              zoneDetails.progressClass = "progress progress-float";
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "notStarted", shortIndex: index, displayOrder: 4, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "rgb(221 225 221)", iconName: "fas fa-caret-right inactive-ward", progressClass: "progress progress-float", wardKM: "0.00", wardTime: "0.00", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
             }
-            if (this.selectedZone == zoneNo) {
-              if (zoneDetails.status != "stopped") {
-                this.workerDetails.currentHaltTime = "0:00";
-              } else {
-                if (this.todayHaltList.length > 0) {
-                  this.workerDetails.currentHaltTime = this.commonService.getHrs(this.todayHaltList[this.todayHaltList.length - 1]["duration"]);
+          } else {
+            let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
+            if (zoneDetails != undefined) {
+              zoneDetails.zoneNo = zoneNo;
+              zoneDetails.zoneName = zoneName;
+              zoneDetails.isMic = isMic;
+
+              if (status == "active") {
+                activeWard++;
+                zoneDetails.status = "active";
+                zoneDetails.displayOrder = 2;
+                zoneDetails.bgColor = "white";
+                zoneDetails.iconName = "fas fa-caret-right active-ward";
+                zoneDetails.borderClass = "progress-bar  progress-success";
+                zoneDetails.progressClass = "progress progress-float";
+              } else if (status == "stopped") {
+                stoppedWard++;
+                zoneDetails.status = "stopped";
+                zoneDetails.displayOrder = 1;
+                zoneDetails.bgColor = "white";
+                zoneDetails.iconName = "fas fa-caret-right stop-indication";
+                zoneDetails.borderClass = "progress-bar  progress-success";
+                zoneDetails.progressClass = "progress progress-float";
+              } else if (status == "completed") {
+                completedWard++;
+                zoneDetails.status = "completed";
+                zoneDetails.displayOrder = 3;
+                zoneDetails.bgColor = "#95e495";
+                zoneDetails.iconName = "fas fa-caret-right active-ward";
+                zoneDetails.borderClass = "completed-ward";
+                zoneDetails.progressClass = "progress progress-float-completed";
+              } else if (status == "workNotStarted") {
+                inActiveWard++;
+                zoneDetails.status = "notStarted";
+                zoneDetails.displayOrder = 4;
+                zoneDetails.bgColor = "rgb(221 225 221)";
+                zoneDetails.iconName = "fas fa-caret-right inactive-ward";
+                zoneDetails.borderClass = "progress-bar  progress-success";
+                zoneDetails.progressClass = "progress progress-float";
+              }
+              if (this.selectedZone == zoneNo) {
+                if (zoneDetails.status != "stopped") {
+                  this.workerDetails.currentHaltTime = "0:00";
+                } else {
+                  if (this.todayHaltList.length > 0) {
+                    this.workerDetails.currentHaltTime = this.commonService.getHrs(this.todayHaltList[this.todayHaltList.length - 1]["duration"]);
+                  }
                 }
               }
             }
           }
-        }
-        this.workerDetails.inActiveWard = inActiveWard.toString();
-        this.workerDetails.stopWard = stoppedWard.toString();
-        this.workerDetails.activeWard = activeWard.toString();
-        this.workerDetails.completedWard = completedWard.toString();
-        this.workerDetails.totalWard = totalWard.toString();
-        if (this.firstData == false) {
-          let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == zoneNo);
-          if (wardDetail != undefined) {
-            this.commonService.getWardLineWeightage(zoneNo, this.toDayDate).then((lineList: any) => {
-              let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
-              if (zoneDetails != undefined) {
-                zoneDetails.totalLines = Number(lineList[lineList.length - 1]["totalLines"]);
-                for (let i = 0; i < lineList.length - 1; i++) {
-                  zoneDetails.lineWeight.push({ lineNo: lineList[i]["lineNo"], weightage: lineList[i]["weightage"], lineLength: lineList[i]["lineLength"], lineStatus: "", endTime: 0 });
+          this.workerDetails.inActiveWard = inActiveWard.toString();
+          this.workerDetails.stopWard = stoppedWard.toString();
+          this.workerDetails.activeWard = activeWard.toString();
+          this.workerDetails.completedWard = completedWard.toString();
+          this.workerDetails.totalWard = totalWard.toString();
+          if (this.firstData == false) {
+            let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == zoneNo);
+            if (wardDetail != undefined) {
+              this.commonService.getWardLineWeightage(zoneNo, this.toDayDate).then((lineList: any) => {
+                let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
+                if (zoneDetails != undefined) {
+                  zoneDetails.totalLines = Number(lineList[lineList.length - 1]["totalLines"]);
+                  for (let i = 0; i < lineList.length - 1; i++) {
+                    zoneDetails.lineWeight.push({ lineNo: lineList[i]["lineNo"], weightage: lineList[i]["weightage"], lineLength: lineList[i]["lineLength"], lineStatus: "", endTime: 0 });
+                  }
                 }
-              }
+                this.getWardDetail(zoneNo);
+              });
+            }
+            else {
               this.getWardDetail(zoneNo);
-            });
-          }
-          else {
-            this.getWardDetail(zoneNo);
+            }
           }
         }
       }

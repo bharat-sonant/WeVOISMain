@@ -153,7 +153,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
         }
       }
       htmlString += "</table>";
-      let fileName = this.commonService.getFireStoreCity() + "-Secondary-Collection.xlsx";
+      let fileName = this.commonService.getFireStoreCity() + "-Open-Depot.xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
@@ -198,7 +198,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
     this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone });
     localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
     this.getDustbins();
-    this.commonService.setAlertMessage("success", "Sec. Collection detail added successfully !!!");
+    this.commonService.setAlertMessage("success", "Open depot detail added successfully !!!");
     this.closeModel();
   }
 
@@ -207,7 +207,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
     this.dustbinService.updateDustbinDetail(dustbin, data, 'update');
     this.updateLocalStorageDustbin(dustbin, data);
     this.getDustbins();
-    this.commonService.setAlertMessage("success", "Sec. Collection detail updated successfully !!!");
+    this.commonService.setAlertMessage("success", "Open depot detail updated successfully !!!");
   }
 
   updateDustbinStatus(dustbin: any, status: any) {
@@ -224,7 +224,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
     }
     localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
     this.getDustbins();
-    this.commonService.setAlertMessage("susscee", "Sec. Collection status updated !!!");
+    this.commonService.setAlertMessage("susscee", "Open depot status updated !!!");
   }
 
   isValidate() {
@@ -282,7 +282,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", "26px");
     $(this.dustbinId).val(id);
     if (type == "update") {
-      $("#exampleModalLongTitle").html("Manage Sec. Collection");
+      $("#exampleModalLongTitle").html("Manage Open depot");
       let dustbinDetail = this.dustbinList.find((item) => item.dustbin == id);
       if (dustbinDetail != undefined) {
         setTimeout(() => {
@@ -297,7 +297,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
       }
     }
     else {
-      $("#exampleModalLongTitle").html("Add  Sec. Collection");
+      $("#exampleModalLongTitle").html("Add Open depot");
       setTimeout(() => {
         document.getElementById('txtaddress').removeAttribute('readonly');
       }, 100);

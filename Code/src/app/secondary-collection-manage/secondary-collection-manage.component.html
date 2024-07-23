@@ -5,7 +5,7 @@
                 (click)="openModel(contentDustbin,'0','add');" />
         </div>
         <div class="col-md-4 Ward-Marking-heading">
-            Manage Sec. Collection
+            Manage Open Depot
 
         </div>
         <div class="col-md-4 Ward-Marking-heading">
@@ -49,7 +49,7 @@
                                 <select class="caret-select zone-select" id="ddlStatus"
                                     (change)="changeStatusSelection($event.target.value)">
                                     <option value="all">
-                                        All Dustbin
+                                        All
                                     </option>
                                     <option selected value="enabled">
                                         Enabled
@@ -82,7 +82,7 @@
                                             <table class="table table-outer-iner">
                                                 <thead>
                                                     <th class="table-data-line2">Address</th>
-                                                    <th class="table-data-Markers2">Type</th>
+                                                    <th class="table-data-Markers2" style="display: none;">Type</th>
                                                     <th class="table-data-line2">Lat-Lng</th>
                                                     <th class="table-data-Markers2">Frequency</th>
                                                     <th class="table-data-line2" [hidden]="isShowDisabledBy=='0'">
@@ -93,7 +93,7 @@
                                                     <tr *ngFor="let data of dustbinList; let i=index">
                                                         <td class="table-data2">
                                                             {{data.address}}</td>
-                                                        <td class="table-data2">
+                                                        <td class="table-data2" style="display: none;">
                                                             {{data.type}}
                                                         </td>
                                                         <td class="table-data2">
@@ -143,7 +143,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Manage Dustbin</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Manage Open Depot</h5>
                 <button type="button" class="close" (click)="closeModel();">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -175,11 +175,11 @@
                         <label class="flot">Longitude</label>
                         <input id="txtLng" type="text" class="input-green" />
                     </div>
-                    <div class="col-md-6 wrap-input-effects" required>
+                    <div class="col-md-12 wrap-input-effects" required>
                         <label class="flot">Pick Frequency</label>
                         <input id="txtFreq" type="number" class="input-green" />
                     </div>
-                    <div class="col-md-6 wrap-input-effects" required>
+                    <div class="col-md-6 wrap-input-effects" style="display: none;">
                         <label class="flot">Type</label>
                         <select id="ddlDustbinType" class="input-green">
                             <option value="Rectangular">

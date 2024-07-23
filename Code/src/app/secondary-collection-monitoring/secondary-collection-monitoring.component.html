@@ -18,13 +18,13 @@
                 >> </button>
   
               <button type="submit" (click)="showImageDetail();" class="btn mob-hide">
-                View Secondary Collection Analysis</button>
+                View Open Depot Analysis</button>
               </div>
         </div>
   
         <div class="col-md-7">
           <div class="mob-hide" style="margin-top:15px; font-size: 20px;letter-spacing: 1px; ">
-            <b> SEC. COLLECTION MONITORING </b>
+            <b>OPEN DEPOT MONITORING </b>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@
         </label>
         <label class="checkbox-inline" for="dustbin">
           <input class="mr-8" type="checkbox" type="checkbox" id="dustbin" name="halt" value="00"
-            (change)="showAll();">All Sec. Collection
+            (change)="showAll();">All Open Depot
         </label>
       </div>
     </div>
@@ -179,7 +179,7 @@
                   <img src="../../assets/img/dustbin.svg" style="margin-top:5px">
                 </div>
                 <h1>{{pd.picked}}/{{pd.assigned}}<br />
-                  <p>Sec. Collection Picked</p>
+                  <p>Open Depot Picked</p>
                 </h1>
               </div>
             </div>

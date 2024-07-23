@@ -133,7 +133,7 @@ export class SecondaryCollectionServiceComponent implements OnInit {
 
 
     if (dustbinId == "0") {
-      this.commonService.setAlertMessage("error", "Please select sec. collection");
+      this.commonService.setAlertMessage("error", "Please select open depot");
       return;
     }
     if (percentage == "") {
@@ -221,7 +221,7 @@ export class SecondaryCollectionServiceComponent implements OnInit {
       return;
     }
     if (dustbinId == "0") {
-      this.commonService.setAlertMessage("error", "Please select sec. collection ");
+      this.commonService.setAlertMessage("error", "Please select open depot ");
       return;
     }
     if (percentage == "") {

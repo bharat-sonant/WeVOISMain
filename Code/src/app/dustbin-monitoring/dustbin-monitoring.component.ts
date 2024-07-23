@@ -72,7 +72,7 @@ export class DustbinMonitoringComponent {
   dehradunEconDustbinUrl: any;
   cityName: any;
   userType: any;
-  isShowData:any;
+  isShowData: any;
   db: any;
   instancesList: any[] = [];
   // route tracking
@@ -134,11 +134,11 @@ export class DustbinMonitoringComponent {
       }, 5000);
     }
     if (this.userType == "External User" && this.cityName == "jodhpur") {
-      this.isShowData=false;
+      this.isShowData = false;
     }
     else {
-      this.isShowData=true;
-    this.getDustbins();
+      this.isShowData = true;
+      this.getDustbins();
     }
   }
 
@@ -180,23 +180,25 @@ export class DustbinMonitoringComponent {
       $('#txtDate').val(newDate.toString());
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
-        this.dustbinShow = [];
-        if (this.vehicleMarkers.length > 0) {
-          for (let i = 0; i < this.vehicleMarkers.length; i++) {
-            this.vehicleMarkers[i]["marker"].setMap(null);
-          }
-          this.vehicleMarkers = [];
-        }
-        if (this.vehicleMarkers1.length > 0) {
-          for (let i = 0; i < this.vehicleMarkers1.length; i++) {
-            this.vehicleMarkers1[i]["marker"].setMap(null);
-          }
-          this.vehicleMarkers1 = [];
-        }
+
         this.currentYear = this.selectedDate.split('-')[0];
         this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-        if(this.isShowData==false){
-        this.findDustbins();
+
+        this.dustbinShow = [];
+        if (this.isShowData == true) {
+          if (this.vehicleMarkers.length > 0) {
+            for (let i = 0; i < this.vehicleMarkers.length; i++) {
+              this.vehicleMarkers[i]["marker"].setMap(null);
+            }
+            this.vehicleMarkers = [];
+          }
+          if (this.vehicleMarkers1.length > 0) {
+            for (let i = 0; i < this.vehicleMarkers1.length; i++) {
+              this.vehicleMarkers1[i]["marker"].setMap(null);
+            }
+            this.vehicleMarkers1 = [];
+          }
+          this.findDustbins();
         }
       }
       else {

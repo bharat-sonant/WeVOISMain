@@ -427,7 +427,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       return;
     }
     if (maxDustbinCapacity == "") {
-      this.commonService.setAlertMessage("error", "Please fill max. sec. collection capacity !!!");
+      this.commonService.setAlertMessage("error", "Please fill max. open depot capacity !!!");
       return;
     }
     if (new Date(planDate.toString()) < new Date(this.todayDate)) {
@@ -468,7 +468,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       let planDetails = this.planList.find(item => item.key == $Key);
       if (planDetails != undefined) {
         if (Number(maxDustbinCapacity) < Number(planDetails.dustbinAssigned)) {
-          this.commonService.setAlertMessage("error", "Max sec. collection capacity can not be less than " + planDetails.dustbinAssigned + " !!!");
+          this.commonService.setAlertMessage("error", "Max open depot capacity can not be less than " + planDetails.dustbinAssigned + " !!!");
           $('#txtDustbinCapacity').val(planDetails.maxDustbin);
           return;
         }
@@ -879,7 +879,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
           let dustbinPickingPosition = planDustbinData["dustbinPickingPosition"];
           let zone = planDustbinData["zone"];
           if ((dustbinAssigned + 1) > maxDustbin) {
-            this.commonService.setAlertMessage("error", "You can not assign sec. collection more than " + maxDustbin + " !!!");
+            this.commonService.setAlertMessage("error", "You can not assign open depot more than " + maxDustbin + " !!!");
             return;
           }
           let bins = planDustbinData["bins"];
@@ -909,7 +909,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       for (let i = 0; i < binArray.length; i++) {
         if (binArray[i] == dustbinId) {
           isDustbinAssined = true;
-          this.commonService.setAlertMessage("error", "You have already added this sec. collection in selected plan !!!");
+          this.commonService.setAlertMessage("error", "You have already added this open depot in selected plan !!!");
           return;
         }
       }
@@ -1011,7 +1011,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
     $(this.assignedDustbin).html(planDetails.dustbinAssigned);
     this.modalService.dismissAll();
     this.setAssignedPlan(dustbinId, date, planDetails.planName);
-    this.commonService.setAlertMessage("success", "Sec. Collection Assigned Successfully !!!");
+    this.commonService.setAlertMessage("success", "Open Depot Assigned Successfully !!!");
   }
 
   setAssignedPlan(dustbinId: any, date: any, planName: any) {
@@ -1109,7 +1109,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       sequence = planDetails.sequence;
     }
     this.dustbinService.updateDustbinPlans(bins, zone, this.dustbinMapList.length, date, planId, sequence, highPriority);
-    this.commonService.setAlertMessage("success", "Sec. collection sequence updated successfully !!!");
+    this.commonService.setAlertMessage("success", "Open depot sequence updated successfully !!!");
     this.modalService.dismissAll();
   }
 
@@ -1234,7 +1234,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
           for (let i = 0; i < pickedDustbinArray.length; i++) {
             if (pickedDustbinArray[i].trim() == dustbin) {
               isDelete = false;
-              this.commonService.setAlertMessage("error", "this Sec. Collection has picked !!!");
+              this.commonService.setAlertMessage("error", "this open depot has picked !!!");
               break;
             }
           }
@@ -1247,7 +1247,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
             $(this.divDustbin).show();
           }
           else {
-            this.commonService.setAlertMessage("error", "this Sec. Collection is on work !!!");
+            this.commonService.setAlertMessage("error", "this open depot is on work !!!");
           }
         });
       }
@@ -1366,7 +1366,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
             }
             this.openMapModel(planDetails.date, planDetails.key);
             this.removeAssignedPlan();
-            this.commonService.setAlertMessage("success", "Sec. Collection deleted successfully !!!");
+            this.commonService.setAlertMessage("success", "Open depot deleted successfully !!!");
             $(this.divDustbin).hide();
           }
         }

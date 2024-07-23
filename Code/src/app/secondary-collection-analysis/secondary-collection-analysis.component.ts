@@ -20,7 +20,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   currentSlide: any;
   dbPath: any;
   fillPercentage: any;
-  txtManualRemark="#txtManualRemark";
+  txtManualRemark = "#txtManualRemark";
   userId: any;
   remark: any;
   planId: any;
@@ -47,7 +47,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     filledPercentage: "",
     analysisRemarks: "",
     analysisDetail: "",
-    manualRemarks:"",
+    manualRemarks: "",
   };
 
   planDetail: planDetails = {
@@ -72,7 +72,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Secondary-Collection-Management","Secondary-Collection-Analysis",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Secondary-Collection-Analysis", localStorage.getItem("userID"));
 
     let element = <HTMLAnchorElement>(
       document.getElementById("dustbinReportLink")
@@ -166,7 +166,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.analysisBy = "";
     this.binDetail.filledPercentage = "";
     this.binDetail.analysisRemarks = "";
-    this.binDetail.manualRemarks="";
+    this.binDetail.manualRemarks = "";
     this.binDetail.analysisDetail = "";
     this.binDetail.canDoAnalysis = "no";
 
@@ -259,8 +259,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
             analysisAt: this.checkAnalysisValues(dustbinHistoryData, "analysisAt"),
             filledPercentage: this.checkAnalysisValues(dustbinHistoryData, "filledPercentage"),
             analysisRemark: this.checkAnalysisValues(dustbinHistoryData, "remark"),
-            manualRemarks:this.checkAnalysisValues(dustbinHistoryData,"manualRemark"),
-            isPicked:"0"
+            manualRemarks: this.checkAnalysisValues(dustbinHistoryData, "manualRemark"),
+            isPicked: "0"
           });
           this.setPickedBins(index);
 
@@ -289,28 +289,28 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     // this.totalDustbins = binsArray.length;
   }
 
-  setPickedBins(index:any){    
-    let isPicked=false;
-    if(this.dustbinList[index]["emptyFarFromImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+  setPickedBins(index: any) {
+    let isPicked = false;
+    if (this.dustbinList[index]["emptyFarFromImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["emptyTopViewImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["emptyTopViewImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["filledFarFromImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["filledFarFromImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["filledTopViewImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["filledTopViewImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["emptyDustbinFarFromImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["emptyDustbinFarFromImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(this.dustbinList[index]["emptyDustbinTopViewImage"]!=this.imageNotAvailablePath){
-      isPicked=true;
+    if (this.dustbinList[index]["emptyDustbinTopViewImage"] != this.imageNotAvailablePath) {
+      isPicked = true;
     }
-    if(isPicked==true){
-      this.dustbinList[index]["isPicked"]="1";
+    if (isPicked == true) {
+      this.dustbinList[index]["isPicked"] = "1";
     }
   }
 
@@ -528,7 +528,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.filledPercentage = this.dustbinList[index]["filledPercentage"];
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
-    this.binDetail.manualRemarks=this.dustbinList[index]["manualRemarks"];
+    this.binDetail.manualRemarks = this.dustbinList[index]["manualRemarks"];
 
     setTimeout(function () {
       $("#ImageLoader").hide();
@@ -648,11 +648,10 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       $("#box4").show();
       $("#preLink").show();
       $("#nextLink").show();
-      $("#hText1").html("ऊपर से भरा ");
-      $("#hText2").html("भरा दूर से");
-      this.binDetail.filledTopViewImageUrl =
-        this.binDetail.filledTopViewImageUrl;
-      this.maxSlideCount = 4;
+      $("#hText1").html("कचरा उठाने से पहले ");
+      $("#hText2").html("कचरा उठाने के बाद");
+      this.binDetail.filledTopViewImageUrl = this.binDetail.filledTopViewImageUrl;
+      this.maxSlideCount = 2;
     }
   }
 
@@ -672,7 +671,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     data.analysisAt = this.commonService.getTodayDateTime();
     data.analysisBy = this.userId;
     data.analysisRemark = this.getRemarks();
-    data.manualRemarks=$(this.txtManualRemark).val().toString();
+    data.manualRemarks = $(this.txtManualRemark).val().toString();
     data.filledPercentage = this.fillPercentage;
     data.iconClass = "fas fa-diagnoses";
 
@@ -680,7 +679,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.analysisAt = this.commonService.getTodayDateTime();
     this.binDetail.filledPercentage = this.fillPercentage;
     this.binDetail.analysisRemarks = this.getRemarks();
-    this.binDetail.manualRemarks=$(this.txtManualRemark).val().toString();
+    this.binDetail.manualRemarks = $(this.txtManualRemark).val().toString();
   }
 
   updatePendingAnalysis() {
@@ -700,14 +699,14 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   saveDustbinAnalysis() {
 
     if (this.binDetail.canDoAnalysis == "yes") {
-      this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(),manualRemark:$(this.txtManualRemark).val() });
+      this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(), manualRemark: $(this.txtManualRemark).val() });
       this.updatePendingAnalysis();
       this.updateBinListAndDetails();
       this.setAnalysisDetails();
       this.updateIsDustbinBroken();
       this.commonService.setAlertMessage("success", "Data has been added successfully.");
     } else {
-      this.commonService.setAlertMessage("error", "Can not do analysis for this sec. collection.");
+      this.commonService.setAlertMessage("error", "Can not do analysis for this open depot.");
     }
   }
 
@@ -768,7 +767,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       this.currentSlide = this.currentSlide + 1;
     }
 
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 2; i++) {
       let slideImage = <HTMLImageElement>document.getElementById("img" + i);
       this.removeOldClasses(i);
       if (i == this.currentSlide) {
@@ -817,7 +816,7 @@ export class dustbinDetails {
   filledPercentage: string;
   analysisRemarks: string;
   analysisDetail: string;
-  manualRemarks:string;
+  manualRemarks: string;
 }
 
 export class planDetails {
