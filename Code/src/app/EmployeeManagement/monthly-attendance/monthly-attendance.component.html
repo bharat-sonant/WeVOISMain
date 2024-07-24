@@ -74,6 +74,9 @@
                                         </th>
                                         <th scope="col" class="text-left thFixed2 " style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
                                             Total</th>
+                                        <th scope="col" class="text-left thFixed2 " style="z-index: 11; padding-top: 10px!important; padding-bottom: 10px!important;">
+                                            Leave Balance</th>
+
                                         <th scope="col" class="text-center">01</th>
                                         <th scope="col" class="text-center">02</th>
                                         <th scope="col" class="text-center">03</th>
@@ -113,6 +116,7 @@
                                             <b> {{i+1}}.</b>&nbsp; {{dt.name}}<br />
                                         </td>
                                         <td class="text-center thFixed2" style="vertical-align: top; font-weight: bold; ">{{dt.total}}</td>
+                                        <td class="text-center thFixed2" style="vertical-align: top; font-weight: bold; ">{{dt.leaveBalance || 0}}</td>
                                         <td class="tdStyle">
                                             <div style="width:100%">
                                                 {{dt.list[0].attendanceType}}

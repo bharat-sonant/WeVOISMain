@@ -195,11 +195,15 @@ export class MonthlyAttendanceComponent implements OnInit {
 
     $(this.divLoader).show();
     this.attendanceReportList = [];
+    let leaveBalanceObject:any={};
 
-    const promises = this.allEmployeeList.map(employee => {
+    const promises = this.allEmployeeList.map(async(employee) => {
       let totalAttendance = 0;
       let dateList = [];
 
+      const balanceLeave=await this.calculateLeaveBalance(employee);
+      leaveBalanceObject[employee.empId] = balanceLeave;
+      
       let dbPath = `Attendance/${employee.empId}/${this.selectedYear}/${this.selectedMonthName}`;
 
       return new Promise(resolve => {
@@ -278,7 +282,8 @@ export class MonthlyAttendanceComponent implements OnInit {
 
 
     Promise.all(promises).then((results: any) => {
-
+      
+      this.maintainPreMonthLeaveBalance(leaveBalanceObject)
       this.saveAttendaceInStorage(results)
       if (this.selectedEmployee != '0') {
         this.reportList = results.filter(item => item.empId === this.selectedEmployee);
@@ -300,7 +305,6 @@ export class MonthlyAttendanceComponent implements OnInit {
       $(this.divLoader).hide();
     });
   }
-
 
   saveAttendaceInStorage(list: any) {
     let reportObject = {
@@ -373,6 +377,10 @@ export class MonthlyAttendanceComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Total";
+      htmlString += "</td>";
+
+      htmlString += "<td>";
+      htmlString += "Leave Balance";
       htmlString += "</td>";
 
       htmlString += "<td>";
@@ -491,6 +499,9 @@ export class MonthlyAttendanceComponent implements OnInit {
         htmlString += "<td t='s'>";
         htmlString += this.reportList[i]["total"];
         htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.reportList[i]["leaveBalance"] || 0;
+        htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.reportList[i].list[0]["attendanceType"];
         htmlString += "</td>";
@@ -608,6 +619,59 @@ export class MonthlyAttendanceComponent implements OnInit {
     }
   }
 
+  calculateLeaveBalance = async (employee:any) => {
+    return new Promise((resolve, reject) => {
+      const pathYear=this.selectedMonth - 1 > 0 ?this.selectedYear:this.selectedYear-1;
+      const pathMonth=this.selectedMonth -1 > 0 ?this.selectedMonth:13;
+      const previousLeaveExistance = this.db.object(`EmployeeLeaveBalanceData/YearWiseBalance/${employee.empId}/${pathYear}`).valueChanges().subscribe(
+        (yearResp) => {
+          previousLeaveExistance.unsubscribe();
+          if (yearResp) {
+            let balanceLeave = Number(yearResp.previousLeave || 0);
+            for (let i = 1; i < Number(pathMonth); i++) {
+              let monthName = this.commonService.getCurrentMonthName(i - 1);
+              if (yearResp[monthName]) {
+                balanceLeave += Number(yearResp[monthName].leaveAdded || 0) - Number(yearResp[monthName].leaveTaken || 0);
+              }
+            }
+            resolve(balanceLeave);
+          } else {
+            resolve(0);
+          }
+        },
+        (error) => {
+          console.error('Error fetching leave balance data:', error);
+          reject(error);
+        }
+      );
+    });
+  }
+  maintainPreMonthLeaveBalance=(leaveBalanceObject:any)=>{
 
+    this.fireStorePath = this.commonService.fireStoragePath;
+     const pathYear=this.selectedMonth - 2 >=0 ?this.selectedYear:this.selectedYear-1;
+      const pathMonthName=this.selectedMonth - 2 >=0 ? this.commonService.getCurrentMonthName(this.selectedMonth - 2):this.commonService.getCurrentMonthName(11);
 
+      const path = this.fireStorePath + this.commonService.getFireStoreCity() + '%2FEmployeeAttendance%2F' + pathMonthName + '-' + pathYear + '.json?alt=media';
+
+      let accountInstance = this.httpService.get(path).subscribe(async(value: any) => {
+      accountInstance.unsubscribe();
+      if(value){
+        let p1=await value.Data.map((item:any)=>{
+          return {...item,leaveBalance:leaveBalanceObject[item.empId] || 0};
+        });
+        Promise.all(p1).then(resp=>{
+          let reportObject = {
+            Data: resp,
+            lastUpdated: this.commonService.getTodayDateTime()
+          }
+          let fileName = `${pathMonthName}-${pathYear}.json`;
+          let path = "/EmployeeAttendance/";
+          this.commonService.saveJsonFile(reportObject, fileName, path);
+        })
+      }
+      }, error => {
+        this.commonService.setAlertMessage("error",`Error fetching ${pathMonthName}-${pathYear} data. Please synchronize data!!!`);
+    });
+  }
 } 
