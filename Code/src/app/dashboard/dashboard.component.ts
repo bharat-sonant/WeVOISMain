@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit {
   currentMonthName: any;
   currentYear: any;
   instancesList: any[] = [];
+  vehicleCapacityObject:any={};
 
   public lineBigDashboardChartType;
   public gradientStroke;
@@ -53,6 +54,7 @@ export class DashboardComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Dashboard", "Dashboard", localStorage.getItem("userID"));
     this.setDefault();
+    this.getVehicleTypeCapacity()
   }
 
   setDefault() {
@@ -87,12 +89,26 @@ export class DashboardComponent implements OnInit {
 
   getWardCollection() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardCollection");
-    let collectionInstance = this.db.object("WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.todayDate + "/totalWasteCollection").valueChanges().subscribe(
-      data => {
+    let collectionInstance = this.db.object(`WardTrips/${this.currentYear}/${this.currentMonthName}/${this.todayDate}`).valueChanges().subscribe(data => {
         this.instancesList.push({ instances: collectionInstance });
-        if (data != null) {
+        if (data !== null) {
+          let totalWasteCollected=0;
+
+          Object.keys(data).forEach(ward=>{
+            if(ward!=='totalWasteCollection'){
+              Object.keys(data[ward]).forEach(trip=>{
+                let vehicleKeys = data[ward][trip].vehicle ? data[ward][trip].vehicle.split('-'):[];
+                vehicleKeys.forEach(key=>{
+                  if(this.vehicleCapacityObject[key]){
+                    totalWasteCollected += Number(this.vehicleCapacityObject[key]); 
+                    return ;
+                  }
+                })
+              })
+            }
+          });
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardCollection", data);
-          this.dashboardData.wasteCollected = data.toString();
+          this.dashboardData.wasteCollected = totalWasteCollected;
         }
       }
     );
@@ -502,6 +518,15 @@ export class DashboardComponent implements OnInit {
         this.instancesList[i]["instances"].unsubscribe();
       }
     }
+  }
+  getVehicleTypeCapacity=()=>{
+    this.vehicleCapacityObject={};
+    let vehicleCapacityInstance=this.db.object(`Settings/WasteCollectionVehicleCapacity`).valueChanges().subscribe(data=>{
+      vehicleCapacityInstance.unsubscribe();
+      if(data){
+        this.vehicleCapacityObject=data;
+      }
+    });
   }
 }
 
