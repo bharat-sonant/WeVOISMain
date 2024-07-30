@@ -24,8 +24,16 @@
             style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
             Ward Trip Images
         </div>
-        <div class="col-md-3 text-right" style="position: absolute;right: 30px;">
+        <div class=" col-md-3 text-right total-house total-house fix-home-outer" >
+                <div class="fix-home">
+                    <i class="far fa-trash-alt"></i> <span class="house">
+                        {{totalWasteCollected}} Kg</span><br>
+                    <h6>Waste Collected</h6>
+                </div>
         </div>
+
+
+
     </div>
 </section>
 <div class="main-content">
@@ -44,6 +52,7 @@
                                         <thead>
                                             <th class="table-head1">S.No.</th>
                                             <th class="table-head2">Zone</th>
+                                            <th class="table-head2">Collected Waste</th>
                                             <th class="table-head3">Trip Images</th>
                                         </thead>
                                         <tbody>
@@ -51,6 +60,9 @@
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-2">
                                                     {{dt.zoneName}}
+                                                </td>
+                                                <td class="table-data-2">
+                                                    <span *ngIf="dt.collectedZoneWaste">{{dt.collectedZoneWaste}} Kg.</span>
                                                 </td>
                                                 <td class="table-data-3">
                                                     <div style="width: 100%; display: flex;">
@@ -81,6 +93,8 @@
                                                                     {{dtImage.vehicle}}</div>
                                                                 <div class="col-md-12"><b>Trip Time : </b>
                                                                     {{dtImage.time}}</div>
+                                                                    <div class="col-md-12"><b>Collected Waste : </b>
+                                                                        {{dtImage.wasteCollection}} Kg.</div>
                                                             </div>
                                                         </div>
 
