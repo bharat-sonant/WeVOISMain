@@ -5,6 +5,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { AngularFireStorage } from "@angular/fire/storage";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { promise } from 'protractor';
 
 @Component({
   selector: 'app-review-trip-images',
@@ -24,6 +25,8 @@ export class ReviewTripImagesComponent implements OnInit {
   selectedMonthName: any;
   divMainLoader = "#divMainLoader";
   serviceName = "review-trip-images";
+  vehicleCapacityObject:any={};
+  totalWasteCollected:number=0;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -37,7 +40,9 @@ export class ReviewTripImagesComponent implements OnInit {
     this.selectedDate = this.todayDate;
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+    this.getVehicleTypeCapacity();
     this.getZones();
+    
   }
 
   getSelectedYearMonthName() {
@@ -45,14 +50,19 @@ export class ReviewTripImagesComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
   }
 
-  getZones() {
+  getZones=async()=>{
     $(this.divMainLoader).show();
     this.zoneList = [];
     this.zoneTripList = [];
+    this.totalWasteCollected=0;
+    let dustbinPlans=await this.getDustbinPickingPlans();
+    
+
     this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
     for (let i = 1; i < this.zoneList.length; i++) {
       this.zoneTripList.push({ zoneNo: this.zoneList[i]["zoneNo"], zoneName: this.zoneList[i]["zoneName"], tripImageList: [] });
     }
+    this.zoneTripList = this.zoneTripList.concat(dustbinPlans);
     const promises = [];
         for (let i = 0; i < this.zoneTripList.length; i++) {
           promises.push(Promise.resolve(this.getTripImages(this.zoneTripList[i].zoneNo)));
@@ -63,7 +73,9 @@ export class ReviewTripImagesComponent implements OnInit {
               let detail=this.zoneTripList.find(item=>item.zoneNo==results[i]["data"].zoneNo);
               if(detail!=undefined){
                 detail.tripImageList=results[i]["data"].tripImageList;
+                detail.collectedZoneWaste=results[i]["data"].collectedZoneWaste;
                 this.getEmployeeNamebyId(results[i]["data"].zoneNo);
+
               }
             }
           }          
@@ -80,6 +92,7 @@ export class ReviewTripImagesComponent implements OnInit {
           tripInstance.unsubscribe();
           if (tripData != null) {
             let tripImageList=[];
+            let collectedZoneWaste=0;
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTripImages", tripData);
             let keyArray = Object.keys(tripData);
             for (let i = 0; i < keyArray.length; i++) {
@@ -89,14 +102,18 @@ export class ReviewTripImagesComponent implements OnInit {
                 time=tripData[key]["time"].split(':')[0] + ":" + tripData[key]["time"].split(':')[1];
               }
               let vehicle = tripData[key]["vehicle"];
+              let wasteCollection=this.getWasteCollectionByVehicle(vehicle);
+              collectedZoneWaste+= Number(wasteCollection);
+              
               let imageName = tripData[key]["imageName"];
               let imageName2 = tripData[key]["imageName2"];
               let driverId = tripData[key]["driverId"];
               let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName + "?alt=media";
               let imageUrl2 = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName2 + "?alt=media";
-              tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl,imageUrl2:imageUrl2 });
+              tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl,imageUrl2:imageUrl2,wasteCollection });
             }
-            resolve({ status: "success", data: {zoneNo:zoneNo,tripImageList:tripImageList} });
+            this.totalWasteCollected += Number(collectedZoneWaste)
+            resolve({ status: "success", data: {zoneNo:zoneNo,tripImageList:tripImageList,collectedZoneWaste} });
           }
           else{
             resolve({ status: "fail", data: {} });
@@ -130,5 +147,61 @@ export class ReviewTripImagesComponent implements OnInit {
     }
     this.getSelectedYearMonthName();
     this.getZones();
+  }
+  getDustbinPickingPlans=async()=>{
+    const pickingPlanPromise = new Promise((resolve, reject) => {
+      const pickingPlanInstance = this.db.object(`DustbinData/DustbinPickingPlans/${this.selectedDate}`).valueChanges().subscribe(
+        planData => {
+          resolve(planData || {});
+          pickingPlanInstance.unsubscribe();
+        },
+        error => resolve({})
+      );
+    });
+  
+    const pickingPlanHistoryPromise = new Promise((resolve, reject) => {
+      const pickingPlanHistoryInstance = this.db.object(`DustbinData/DustbinPickingPlanHistory/${this.selectedYear}/${this.selectedMonthName}/${this.selectedDate}`).valueChanges().subscribe(
+        historyData => {
+          resolve(historyData || {});
+          pickingPlanHistoryInstance.unsubscribe();
+        },
+        error => resolve({})
+      );
+    });
+      
+    return Promise.all([pickingPlanPromise, pickingPlanHistoryPromise])
+    .then(responses => {
+      const [planData, historyData]:any = responses;
+      let mergedObj={...planData,...historyData};
+      let binLiftingArray=Object.keys(mergedObj).map(key=>({ zoneNo:key, zoneName: mergedObj[key]["planName"], tripImageList: [] }));
+      return binLiftingArray; // Return the combined data
+    })
+    .catch(error => {
+      console.error("Error fetching data:", error);
+    });
+  }
+  getVehicleTypeCapacity=()=>{
+    this.vehicleCapacityObject={};
+    let vehicleCapacityInstance=this.db.object(`Settings/WasteCollectionVehicleCapacity`).valueChanges().subscribe(data=>{
+      vehicleCapacityInstance.unsubscribe();
+      if(data){
+        this.vehicleCapacityObject=data;
+      }
+    });
+  }
+  getWasteCollectionByVehicle=(vehicle:any)=>{
+    if(vehicle){
+      let vehicleKeys = vehicle.split('-');
+      let collectionWeight=0;
+      vehicleKeys.forEach(key=>{
+        if(this.vehicleCapacityObject[key]){
+          collectionWeight= Number(this.vehicleCapacityObject[key]);
+        }
+      });
+      return collectionWeight;
+    }
+    else{
+      return 0;
+    }
   }
 }
