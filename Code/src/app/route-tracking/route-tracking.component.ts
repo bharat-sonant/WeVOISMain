@@ -1151,7 +1151,7 @@ export class RouteTrackingComponent {
 
                 }
                 let filePath = "/RouteTrackingData/" + this.selectedZone + "/" + year + "/" + monthName + "/";
-                this.commonService.saveJsonFile(obj, monthDate + ".json", filePath);
+               // this.commonService.saveJsonFile(obj, monthDate + ".json", filePath);
               }
             }
           );
