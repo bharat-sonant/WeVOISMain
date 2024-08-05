@@ -70,7 +70,27 @@ export class UsersService {
     this.commonService.saveCommonJsonFile(portalUsersJSONData, "PortalUsers.json", "/Common/");
   }
 
+  getUserLastLogin(userId:any){
+    return new Promise((resolve) => {
+      let lastLogin="---";
+      const path = this.commonService.fireStoragePath + "Common%2FEmployeeLastLogin%2F"+userId+".json?alt=media";
+      let lastLoginJSONInstance = this.httpService.get(path).subscribe(lastLoginJsonData => {
+        lastLoginJSONInstance.unsubscribe();        
+        if(lastLoginJsonData["lastLogin"]!=null){
+          let days=this.commonService.getDaysBetweenDates(lastLoginJsonData["lastLogin"].split(" ")[0],this.commonService.setTodayDate());
+          lastLogin=days === 0 ? 'Today' : days === 1 ? 'Yesterday' : `${days} Days Ago`;
+        }
+        resolve(lastLogin);
+      }, error => {
+        lastLoginJSONInstance.unsubscribe();
+        resolve(lastLogin);
+      });
+    });
+
+  }
+
   setWebPortalUsers() {
+    
     let userList = [];
     this.getPortalUsers().then((data: any) => {
       if (data != null) {

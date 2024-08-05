@@ -28,7 +28,8 @@
                                             <th style="width: 80px;">User ID</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th class="text-right">Mobile</th>
+                                            <th>Mobile</th>
+                                            <th>Last Login</th>
                                             <th class="text-right" style="width: 120px;">Action</th>
                                         </thead>
                                         <tbody>
@@ -38,7 +39,8 @@
                                                 <td class="border-right"><img src="../../../assets/img/{{usr.imgUrl}}" width="20" title="{{usr.utitle}}" /> {{usr.name}}
                                                 </td>
                                                 <td class="border-right">{{usr.email}}</td>
-                                                <td class="border-right text-right">{{usr.mobile}}</td>
+                                                <td class="border-right">{{usr.mobile}}</td>
+                                                <td class="border-right">{{usr.lastLogin}}</td>
                                                 <td class="text-right">
                                                     <i class="far fa-edit" routerLink="/{{usr.cityName}}/useradd/{{usr.userId}}" title="Edit User" style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
                                                     <i class="far fa-trash-alt" (click)="deleteUsers(usr.userId)" title="Remove User" style="cursor:pointer !important; font-size: 15px;color: red;"></i>

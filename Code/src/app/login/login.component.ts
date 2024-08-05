@@ -218,6 +218,7 @@ export class LoginComponent implements OnInit {
         if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem("loginStatus", "Success");
           $(this.divLoader).show();
+          this.setLastLoginTime(userDetails.userId);
           this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
         } else {
           localStorage.setItem("loginStatus", "Fail");
@@ -227,6 +228,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("expiryDate", null);
         localStorage.setItem("loginStatus", "Success");
         $(this.divLoader).show();
+        this.setLastLoginTime(userDetails.userId);
         this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
       }
     } else {
@@ -248,6 +250,13 @@ export class LoginComponent implements OnInit {
       this.commonService.setAlertMessage("error", "No access given to you, Please contact to admin, Thanks for you patience !!!");
     }
     $(this.divLoader).hide();
+  }
+
+  setLastLoginTime(userId:any){
+    let obj={
+      lastLogin:this.commonService.getTodayDateTime()
+    }
+    this.commonService.saveCommonJsonFile(obj, userId+".json", "/Common/EmployeeLastLogin/");
   }
 
   setUserCityAccess(userId: any, accessCities: any, roleId: any) {

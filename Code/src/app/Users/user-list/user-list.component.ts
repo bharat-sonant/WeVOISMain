@@ -47,13 +47,23 @@ export class UserListComponent implements OnInit {
               utitle = "External User";
             }
             if (data[userId]["isDelete"] == "0") {
-              this.userRecord.push({ uid: data[userId]["uid"], userId: data[userId]["userId"], name: data[userId]["name"], email: data[userId]["email"], mobile: data[userId]["mobile"], userType: data[userId]["userType"], password: data[userId]["password"], $Key: data[userId], imgUrl: imgUrl, utitle: utitle, cityName: this.cityName });
+              this.userRecord.push({ uid: data[userId]["uid"], userId: data[userId]["userId"], name: data[userId]["name"], email: data[userId]["email"], mobile: data[userId]["mobile"], userType: data[userId]["userType"], password: data[userId]["password"], $Key: data[userId], imgUrl: imgUrl, utitle: utitle, cityName: this.cityName,lastLogin:"---" });
+              this.getUserLastLogin(userId);
             }
           }
           this.userRecord = this.commonService.transformNumeric(this.userRecord, "name");
         }
       }
       $(this.divLoader).hide();
+    });
+  }
+
+  getUserLastLogin(userId:any){
+    this.userService.getUserLastLogin(userId).then(lastLogin=>{
+      let detail=this.userRecord.find(item=>item.userId==userId);
+      if(detail!=undefined){
+        detail.lastLogin=lastLogin;
+      }
     });
   }
 
