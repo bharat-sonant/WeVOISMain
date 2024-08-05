@@ -142,23 +142,23 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(57, 0);
+    this.addDevices(12, 0);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice = lastDevice + 1;
-    if (index <= 24) {
+    if (index <= 18) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
-        lastActive: "03/06/2024 09:10",
-        name: "JOD-" + lastDevice,
-        readerAppVersion: "1.0.3.1",
+        lastActive: "01/08/2024 08:10",
+        name: "KUC-" + lastDevice,
+        readerAppVersion: "1.0.3.6",
         status: "1"
       }
-      console.log("JOD-" + lastDevice);
-      let dbPath = "Devices/Jodhpur/" + key;
+      console.log("KUC-" + lastDevice);
+      let dbPath = "Devices/Kuchaman/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }

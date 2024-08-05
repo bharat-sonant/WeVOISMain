@@ -542,6 +542,18 @@ export class FirebaseService {
       databaseName = "dtdkuchaman";
       databaseURL = "https://dtdkuchaman.firebaseio.com";
     }
+    else if (city == 'manesar') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdmanesar.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdmanesar";
+      databaseURL = "https://dtdmanesar.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),

@@ -275,6 +275,9 @@ export class CommonService {
     else if (cityName == "kuchaman") {
       latLng.push({ lat: 27.150367, lng: 74.85469 });
     }
+    else if (cityName == "manesar") {
+      latLng.push({ lat: 28.3503731, lng: 76.9379959 });
+    }
     return latLng;
   }
 
