@@ -16,9 +16,22 @@
           <button type="button" class="user-button" style="cursor: cell;" routerLink="/useradd">
             <span class="icon-bg"><i class="fas fa-user-plus"></i></span>
             <span class="text-bg">ADD USER</span></button>
+
+           
         </div> -->
                 <div class="card-body">
                     <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1" >
+                                <span style="float: right; margin-right: 20px;">
+                                <label class="switch">
+                                    <input id="chkFilter" type="checkbox" (click)="getFilterUsers()">
+                                    <span class="slider round"></span>
+                                  </label><br/>
+                                  <label id="lblStatus">Active</label>
+                                </span>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-12 pr-1">
                                 <div class="tableFixHead">
@@ -30,20 +43,26 @@
                                             <th>Email</th>
                                             <th>Mobile</th>
                                             <th>Last Login</th>
-                                            <th class="text-right" style="width: 120px;">Action</th>
+                                            <th class="text-right" style="width: 120px;" [hidden]="isShowAction==false">Action</th>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let usr of userRecord ; let i=index">
                                                 <td class="border-right border-left" style="width: 65px;">{{i+1}}</td>
                                                 <td class="border-right text-center">{{usr.userId}}</td>
-                                                <td class="border-right"><img src="../../../assets/img/{{usr.imgUrl}}" width="20" title="{{usr.utitle}}" /> {{usr.name}}
+                                                <td class="border-right"><img src="../../../assets/img/{{usr.imgUrl}}"
+                                                        width="20" title="{{usr.utitle}}" /> {{usr.name}}
                                                 </td>
                                                 <td class="border-right">{{usr.email}}</td>
                                                 <td class="border-right">{{usr.mobile}}</td>
                                                 <td class="border-right">{{usr.lastLogin}}</td>
-                                                <td class="text-right">
-                                                    <i class="far fa-edit" routerLink="/{{usr.cityName}}/useradd/{{usr.userId}}" title="Edit User" style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <i class="far fa-trash-alt" (click)="deleteUsers(usr.userId)" title="Remove User" style="cursor:pointer !important; font-size: 15px;color: red;"></i>
+                                                <td class="text-right" [hidden]="isShowAction==false">
+                                                    <i class="far fa-edit"
+                                                        routerLink="/{{usr.cityName}}/useradd/{{usr.userId}}"
+                                                        title="Edit User"
+                                                        style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <i class="far fa-trash-alt" (click)="deleteUsers(usr.userId)"
+                                                        title="Remove User"
+                                                        style="cursor:pointer !important; font-size: 15px;color: red;"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -62,7 +81,8 @@
 
         <div class="col-md-12" style="display: flex; justify-content: center;">
             <div class="add-user">
-                <button type="button" class="btn btn-success" (click)="addNew()"><i class="fas fa-user-plus" style="margin-right: 5px;" ></i> Add User</button>
+                <button type="button" class="btn btn-success" (click)="addNew()"><i class="fas fa-user-plus"
+                        style="margin-right: 5px;"></i> Add User</button>
             </div>
         </div>
     </div>

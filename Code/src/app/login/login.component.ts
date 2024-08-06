@@ -218,7 +218,10 @@ export class LoginComponent implements OnInit {
         if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem("loginStatus", "Success");
           $(this.divLoader).show();
-          this.setLastLoginTime(userDetails.userId);
+          let obj={
+            lastLogin:this.commonService.getTodayDateTime()
+          }
+          this.commonService.saveCommonJsonFile(obj, userDetails.userId+".json", "/Common/EmployeeLastLogin/");
           this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
         } else {
           localStorage.setItem("loginStatus", "Fail");
@@ -228,7 +231,10 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("expiryDate", null);
         localStorage.setItem("loginStatus", "Success");
         $(this.divLoader).show();
-        this.setLastLoginTime(userDetails.userId);
+        let obj={
+          lastLogin:this.commonService.getTodayDateTime()
+        }
+        this.commonService.saveCommonJsonFile(obj, userDetails.userId+".json", "/Common/EmployeeLastLogin/");
         this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
       }
     } else {

@@ -22,11 +22,14 @@ export class UserListComponent implements OnInit {
   cityName: any;
   userJsonData: any;
   divLoader = "#divLoader";
+  isShowAction:any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem('cityName');
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Users","Users",localStorage.getItem("userID"));
+    (<HTMLInputElement>document.getElementById("chkFilter")).checked = true;
+    this.isShowAction=true;
     this.getUserList();
   }
 
@@ -36,26 +39,57 @@ export class UserListComponent implements OnInit {
     this.userService.getPortalUsers().then((data: any) => {
       if (data != null) {
         this.userJsonData = data;
-        let keyArray = Object.keys(data);
+        this.getFilterUsers();
+      }
+      $(this.divLoader).hide();
+    });
+  }
+
+  getFilterUsers(){
+    this.userRecord = [];
+    if ((<HTMLInputElement>document.getElementById("chkFilter")).checked == false) {
+      this.isShowAction=false;
+      $("#lblStatus").html("In-Active")
+      let keyArray = Object.keys(this.userJsonData);
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let userId = keyArray[i];
             let imgUrl = "internal-user.png";
             let utitle = "Internal User";
-            if (data[userId]["userType"] == "External User") {
+            if (this.userJsonData[userId]["userType"] == "External User") {
               imgUrl = "external-user.png";
               utitle = "External User";
             }
-            if (data[userId]["isDelete"] == "0") {
-              this.userRecord.push({ uid: data[userId]["uid"], userId: data[userId]["userId"], name: data[userId]["name"], email: data[userId]["email"], mobile: data[userId]["mobile"], userType: data[userId]["userType"], password: data[userId]["password"], $Key: data[userId], imgUrl: imgUrl, utitle: utitle, cityName: this.cityName,lastLogin:"---" });
+            if (this.userJsonData[userId]["isDelete"] == "1") {
+              this.userRecord.push({ uid: this.userJsonData[userId]["uid"], userId: this.userJsonData[userId]["userId"], name: this.userJsonData[userId]["name"], email: this.userJsonData[userId]["email"], mobile: this.userJsonData[userId]["mobile"], userType: this.userJsonData[userId]["userType"], password: this.userJsonData[userId]["password"], $Key: this.userJsonData[userId], imgUrl: imgUrl, utitle: utitle, cityName: this.cityName,lastLogin:"---" });
               this.getUserLastLogin(userId);
             }
           }
           this.userRecord = this.commonService.transformNumeric(this.userRecord, "name");
         }
+    }
+    else{
+      $("#lblStatus").html("Active");
+      this.isShowAction=true;
+      let keyArray = Object.keys(this.userJsonData);
+      if (keyArray.length > 0) {
+        for (let i = 0; i < keyArray.length; i++) {
+          let userId = keyArray[i];
+          let imgUrl = "internal-user.png";
+          let utitle = "Internal User";
+          if (this.userJsonData[userId]["userType"] == "External User") {
+            imgUrl = "external-user.png";
+            utitle = "External User";
+          }
+          if (this.userJsonData[userId]["isDelete"] == "0") {
+            this.userRecord.push({ uid: this.userJsonData[userId]["uid"], userId: this.userJsonData[userId]["userId"], name: this.userJsonData[userId]["name"], email: this.userJsonData[userId]["email"], mobile: this.userJsonData[userId]["mobile"], userType: this.userJsonData[userId]["userType"], password: this.userJsonData[userId]["password"], $Key: this.userJsonData[userId], imgUrl: imgUrl, utitle: utitle, cityName: this.cityName,lastLogin:"---" });
+            this.getUserLastLogin(userId);
+          }
+        }
+        this.userRecord = this.commonService.transformNumeric(this.userRecord, "name");
       }
-      $(this.divLoader).hide();
-    });
+    }
+
   }
 
   getUserLastLogin(userId:any){
@@ -71,6 +105,7 @@ export class UserListComponent implements OnInit {
     if (window.confirm('Are sure you want to delete this user ?')) { // Asking from user before Deleting student data.
       this.userJsonData[userId.toString()]["isDelete"] = 1;
       this.userService.savePortalUsers(this.userJsonData);
+      this.getFilterUsers();
       this.toastr.error("Deleted Successfully !!!", '', {
         timeOut: 6000,
         enableHtml: true,
@@ -80,9 +115,9 @@ export class UserListComponent implements OnInit {
 
       }); // Alert message will show up when student successfully deleted.
 
-      setTimeout(() => {
-        this.getUserList();
-      }, 200);
+      //setTimeout(() => {
+     //   this.getUserList();
+      //}, 300);
     }
   }
 
