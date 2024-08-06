@@ -25,7 +25,7 @@
                                 <div class="col-8"></div>
                                 <div class="col-3">
                                     <div class="wrap-input-effects" required>
-                                        <select *ngIf="isShowAction==true" #roleSelect id="userRole" class="input-green"  (change)="filterUserList(roleSelect)">
+                                        <select *ngIf="isShowAction==true" #roleSelect id="userRole" class="input-green"  (change)="filterUserList(roleSelect.value)">
                                             <option value="0">Select Role</option>
                                             <option  *ngFor="let dt of rolesList" value="{{dt.roleId}}">{{dt.roleName}} - {{dt.active}}</option>
                                         </select>
