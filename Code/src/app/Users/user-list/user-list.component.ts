@@ -6,7 +6,6 @@ import { Users } from '../../Users/users';  // Users data type interface class
 import * as $ from 'jquery';
 import { Router } from '@angular/router';
 import { UsersService } from '../../services/users/users.service';
-
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
@@ -32,11 +31,12 @@ export class UserListComponent implements OnInit {
     this.commonService.savePageLoadHistory("Users","Users",localStorage.getItem("userID"));
     (<HTMLInputElement>document.getElementById("chkFilter")).checked = true;
     this.isShowAction=true;
-    this.getRolesList();
+    // this.getRolesList();
     this.getUserList();
   }
 
-  getUserList() {
+  getUserList=async()=> {
+    await this.getRolesList();
     this.userRecord = [];
     this.filteredUserRecord  = [];
     $(this.divLoader).show();
@@ -49,7 +49,7 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  getFilterUsers(){
+  getFilterUsers=async()=>{
     this.userRecord = [];
     let promise=null;
     if ((<HTMLInputElement>document.getElementById("chkFilter")).checked == false) {
@@ -95,15 +95,9 @@ export class UserListComponent implements OnInit {
         // this.userRecord = this.commonService.transformNumeric(this.userRecord, "name");
       }
     }
-    Promise.all(promise).then(resp=>{
+    await Promise.all(promise).then(resp=>{
       this.userRecord = this.commonService.transformNumeric(this.userRecord, "name");
-      // this.filteredUserRecord = this.userRecord;
-    
       
-      this.rolesList.map(role=>{
-        let activeRoleEmployees=this.userRecord.filter(item=>Number(item.$Key.roleId)===Number(role.roleId)).length;
-        role.active = activeRoleEmployees;
-      })
       this.filterUserList(this.isShowAction?$('#userRole').val():0);
     })
 
@@ -136,17 +130,26 @@ export class UserListComponent implements OnInit {
   addNew() {
     this.router.navigate(['/' + this.cityName + '/useradd']);
   }
-  getRolesList=()=>{
+  getRolesList=async()=>{
+    let list=[];
     this.rolesList=[];
-    this.userService.getRoles().then(rolesResp=>{
-      if(rolesResp){
-        Object.keys(rolesResp).forEach(roleId=>{
-          if(rolesResp[roleId].roleName){
-            this.rolesList.push({roleId,roleName:rolesResp[roleId].roleName,active:0});
-          }
-        });
-      }
-    });
+    new Promise(async(Resolve)=>{
+      await this.userService.getRoles().then(rolesResp=>{
+        if(rolesResp){
+          Object.keys(rolesResp).map(roleId=>{
+            if(rolesResp[roleId].roleName){
+              list.push({roleId,roleName:rolesResp[roleId].roleName,active:0});
+            }
+          });
+          this.rolesList=list;  
+          Resolve(list);
+        }
+        else{
+          Resolve(list);
+        }
+      });
+    })
+    
   }
   filterUserList=(roleSelect:any)=>{
     if(Number(roleSelect)){
@@ -154,6 +157,22 @@ export class UserListComponent implements OnInit {
     }
     else{
       this.filteredUserRecord = this.userRecord;
+    }
+    if(this.rolesList.length>0){
+      this.rolesList.map(role=>{
+        let activeRoleEmployees=this.userRecord.filter(item=>Number(item.$Key.roleId)===Number(role.roleId)).length;
+        role.active=activeRoleEmployees;
+        return {...role}
+      });
+    }
+    else{
+      this.getRolesList().then((list:any)=>{
+        this.rolesList=list.map(role=>{
+          let activeRoleEmployees=this.userRecord.filter(item=>Number(item.$Key.roleId)===Number(role.roleId)).length;
+          role.active=activeRoleEmployees;
+          return {...role}
+        });
+      })
     }
   }
 }
