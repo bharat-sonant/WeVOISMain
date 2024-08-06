@@ -101,19 +101,14 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  deleteUsers(userId: any) {
-    if (window.confirm('Are sure you want to delete this user ?')) { // Asking from user before Deleting student data.
-      this.userJsonData[userId.toString()]["isDelete"] = 1;
+  changeUserStatus(userId: any,status:string) {
+    if (window.confirm(`Are sure you want to ${status} this user ?`)) { // Asking from user before changing employee status.
+      this.userJsonData[userId.toString()]["isDelete"] = status==='deactive'? 1 : 0;
       this.userService.savePortalUsers(this.userJsonData);
       this.getFilterUsers();
-      this.toastr.error("Deleted Successfully !!!", '', {
-        timeOut: 6000,
-        enableHtml: true,
-        closeButton: true,
-        toastClass: "alert alert-info alert-with-icon",
-        positionClass: 'toast-bottom-right',
-
-      }); // Alert message will show up when student successfully deleted.
+      this.toastr.error(`User ${status==='deactive'?'Deactivated':'Activated'} Successfully !!!`, '', {
+        timeOut: 6000,enableHtml: true,closeButton: true,toastClass: "alert alert-info alert-with-icon",positionClass:'toast-bottom-right'});
+        // Alert message will show up when user status changed successfully.
 
       //setTimeout(() => {
      //   this.getUserList();

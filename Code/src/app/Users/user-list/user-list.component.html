@@ -43,7 +43,7 @@
                                             <th>Email</th>
                                             <th>Mobile</th>
                                             <th>Last Login</th>
-                                            <th class="text-right" style="width: 120px;" [hidden]="isShowAction==false">Action</th>
+                                            <th class="text-right" style="width: 120px;">Action</th>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let usr of userRecord ; let i=index">
@@ -55,14 +55,19 @@
                                                 <td class="border-right">{{usr.email}}</td>
                                                 <td class="border-right">{{usr.mobile}}</td>
                                                 <td class="border-right">{{usr.lastLogin}}</td>
-                                                <td class="text-right" [hidden]="isShowAction==false">
+                                                <td class="text-right" *ngIf="isShowAction==true">
                                                     <i class="far fa-edit"
                                                         routerLink="/{{usr.cityName}}/useradd/{{usr.userId}}"
                                                         title="Edit User"
                                                         style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <i class="far fa-trash-alt" (click)="deleteUsers(usr.userId)"
-                                                        title="Remove User"
+                                                    <i class="fa-solid fa-user-xmark" (click)="changeUserStatus(usr.userId,'deactive')"
+                                                        title="Deactivate User"
                                                         style="cursor:pointer !important; font-size: 15px;color: red;"></i>
+                                                </td>
+                                                <td class="text-right" *ngIf="isShowAction==false">
+                                                    <i class="fa-solid fa-user-check" (click)="changeUserStatus(usr.userId,'active')"
+                                                        title="Activate User"
+                                                        style="cursor:pointer !important; font-size: 15px;color: green;"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
