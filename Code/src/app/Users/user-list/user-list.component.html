@@ -22,15 +22,22 @@
                 <div class="card-body">
                     <form>
                         <div class="row">
-                            <div class="col-md-12 pr-1" >
-                                <span style="float: right; margin-right: 20px;">
-                                <label class="switch">
+                                <div class="col-8"></div>
+                                <div class="col-3">
+                                    <div class="wrap-input-effects" required>
+                                        <select *ngIf="isShowAction==true" #roleSelect id="userRole" class="input-green"  (change)="filterUserList(roleSelect)">
+                                            <option value="0">Select Role</option>
+                                            <option  *ngFor="let dt of rolesList" value="{{dt.roleId}}">{{dt.roleName}} - {{dt.active}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-1 text-end">
+                                  <label class="switch">
                                     <input id="chkFilter" type="checkbox" (click)="getFilterUsers()">
                                     <span class="slider round"></span>
                                   </label><br/>
                                   <label id="lblStatus">Active</label>
-                                </span>
-                            </div>
+                                </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 pr-1">
@@ -46,7 +53,7 @@
                                             <th class="text-right" style="width: 120px;">Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let usr of userRecord ; let i=index">
+                                            <tr *ngFor="let usr of filteredUserRecord ; let i=index">
                                                 <td class="border-right border-left" style="width: 65px;">{{i+1}}</td>
                                                 <td class="border-right text-center">{{usr.userId}}</td>
                                                 <td class="border-right"><img src="../../../assets/img/{{usr.imgUrl}}"

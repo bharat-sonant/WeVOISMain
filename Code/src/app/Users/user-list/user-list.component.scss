@@ -277,3 +277,51 @@ table td {
 
 
 /******************************Custom Scrollbar End*********************************/
+
+// .caret-select{    
+//     margin-top: 3px !important;
+//    margin-left: 8px !important;
+//    margin-right: 2px;
+//    border-radius: 5px;
+//    padding: 10px;
+//    border: none !important;
+//    width: 140px!important;
+//    height: 40px;
+//    font-size: 12px;
+// }
+.input-green {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #666666;
+    display: block;
+    width: 100%;
+    background: #fff;
+    height: 40px;
+    border-radius: 2px;
+    padding: 0 5px 0 10px;
+    border: 1px solid lightgray;
+}
+
+.input-green::before {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #666666;
+    display: block;
+    width: 100%;
+    background: #fff;
+    height: 40px;
+    border-radius: 2px;
+    // padding: 0 25px 0 25px;
+    border: 1px solid lightgray;
+}
+
+.input-green:focus {
+    outline: none;
+}
+
+.input-green:focus+.focus-input+.symbol-input {
+    color: #0ba118;
+    padding-left: 7px;
+    border: 1px solid #0ba118;
+    //  border-radius: 15px;
+}
