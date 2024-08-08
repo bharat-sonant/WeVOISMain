@@ -44,6 +44,7 @@ export class LineCardMappingComponent {
   previousLine: any;
   db: any;
   cityName: any;
+  wardBoundary:any;
   serviceName = "line-card-mapping";
   cardDetails: CardDetails = {
     mobile: "",
@@ -95,6 +96,10 @@ export class LineCardMappingComponent {
   changeZoneSelection(filterVal: any) {
     this.activeZone = filterVal;
     $("#txtLineNo").val("1");
+    $("#chk_wardLine").prop('checked',false);
+    if (this.wardBoundary) {
+      this.wardBoundary[0]["line"].setMap(null);
+    }
     this.loadData();
   }
 
@@ -104,6 +109,7 @@ export class LineCardMappingComponent {
     this.cardDetails.totalCardOnLine = 0;
     this.selectedZone = this.activeZone;
     if (this.selectedZone == undefined || this.selectedZone == "0") {
+      this.resetMap();
       this.commonService.setAlertMessage("error", "Please select ward !!!");
       return;
     }
@@ -113,6 +119,7 @@ export class LineCardMappingComponent {
     this.getAllLinesFromJson();
     this.cardDetails.selectedHouseCount = 0;
     this.cardDetails.totalCardOnLine = 0;
+
   }
 
   nextPrevious(type: any) {
@@ -486,6 +493,42 @@ export class LineCardMappingComponent {
       $(".gm-style-iw-c").css("border-radius", "3px").css("padding", "0px");
       $(".gm-style-iw-d").css("overflow", "unset");
     }, 1000);
+  }
+  showWardLine(checkBox:any){
+    if(checkBox.checked && this.selectedZone){
+      this.commonService.getWardBoundary(this.selectedZone, this.wardBoundary, 5).then((boundaryData: any) => {
+        if (this.wardBoundary != undefined) {
+          this.wardBoundary[0]["line"].setMap(null);
+        }
+        this.wardBoundary = boundaryData;
+        this.wardBoundary[0]["line"].setMap(this.map);
+        const bounds = new google.maps.LatLngBounds();
+        for (let i = 0; i < this.wardBoundary[0]["latLng"].length; i = (i + 5)) {
+          bounds.extend({ lat: Number(this.wardBoundary[0]["latLng"][i]["lat"]), lng: Number(this.wardBoundary[0]["latLng"][i]["lng"]) });
+        }
+        this.map.fitBounds(bounds);
+      });
+    }
+    else{
+      checkBox.checked=false;
+      if(!this.selectedZone){
+        this.commonService.setAlertMessage("error", "Please select ward !!!");
+      }
+      if (this.wardBoundary) {
+        this.wardBoundary[0]["line"].setMap(null);
+      }
+    }
+  }
+  resetMap=()=>{
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        if (this.polylines[i] != undefined) {
+          this.polylines[i].setMap(null);
+        }
+      }
+    }
+    this.wardBoundary[0]["line"].setMap(null);
+    this.polylines = [];
   }
 }
 
