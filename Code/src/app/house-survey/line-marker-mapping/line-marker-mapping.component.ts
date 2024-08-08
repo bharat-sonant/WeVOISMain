@@ -45,6 +45,7 @@ export class LineMarkerMappingComponent {
   allMarkers: any[];
   selectedCardDetails: any[];
   toDayDate: any;
+  wardBoundary:any;
   public movedMarkerCount: any;
   public totalMoveMarkerCount: any;
 
@@ -103,6 +104,11 @@ export class LineMarkerMappingComponent {
     this.lineNo = 1;
     this.previousLine = 1;
     $("#txtLineNo").val(this.lineNo);
+    $("#chk_wardLine").prop('checked',false);
+    if (this.wardBoundary) {
+      this.wardBoundary[0]["line"].setMap(null);
+      this.wardBoundary=undefined;
+    }
     this.loadData();
   }
 
@@ -133,7 +139,11 @@ export class LineMarkerMappingComponent {
         this.polylines[i].setMap(null);
       }
     }
+    if (this.wardBoundary) {
+      this.wardBoundary[0]["line"].setMap(null);
+    }
     this.polylines = [];
+    this.wardBoundary=undefined;
   }
 
   getAllLinesFromJson() {
@@ -610,6 +620,33 @@ export class LineMarkerMappingComponent {
           this.totalMoveMarkerCount = 0;
         }
       });
+  }
+  showWardLine(checkBox:any){
+    if(checkBox.checked && this.selectedZone && this.selectedZone!=='0'){
+      this.wardBoundary=undefined;
+      this.commonService.getWardBoundary(this.selectedZone, this.wardBoundary, 5).then((boundaryData: any) => {
+        if (this.wardBoundary != undefined) {
+          this.wardBoundary[0]["line"].setMap(null);
+        }
+        this.wardBoundary = boundaryData;
+        this.wardBoundary[0]["line"].setMap(this.map);
+        const bounds = new google.maps.LatLngBounds();
+        for (let i = 0; i < this.wardBoundary[0]["latLng"].length; i = (i + 5)) {
+          bounds.extend({ lat: Number(this.wardBoundary[0]["latLng"][i]["lat"]), lng: Number(this.wardBoundary[0]["latLng"][i]["lng"]) });
+        }
+        this.map.fitBounds(bounds);
+      });
+    }
+    else{
+      checkBox.checked=false;
+      if(!this.selectedZone){
+        this.commonService.setAlertMessage("error", "Please select ward !!!");
+      }
+      if (this.wardBoundary) {
+        this.wardBoundary[0]["line"].setMap(null);
+      }
+      this.wardBoundary=undefined;
+    }
   }
 }
 
