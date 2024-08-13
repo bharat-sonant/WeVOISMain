@@ -144,6 +144,11 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("isAttendanceApprover"))).checked = true;
         }
       }
+      if (data["canUpdateEmployeeDetail"] != undefined) {
+        if (data["canUpdateEmployeeDetail"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canUpdateEmployeeDetail"))).checked = true;
+        }
+      }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -239,6 +244,7 @@ export class UserAddComponent implements OnInit {
     let isAdmin: any = 0;
     let isManager: any = 0;
     let isAttendanceApprover:any=0;
+    let canUpdateEmployeeDetail:any=0
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -286,6 +292,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isAttendanceApprover = 1;
     element = <HTMLInputElement>document.getElementById("isManager");
     if (element.checked == true) isManager = 1;
+    element = <HTMLInputElement>document.getElementById("canUpdateEmployeeDetail");
+    if (element.checked == true) canUpdateEmployeeDetail = 1;
     if (this.userid == null) {
       let lastKey = Number(this.userJsonData["lastKey"]) + 1;
       this.userid = lastKey;
@@ -316,7 +324,8 @@ export class UserAddComponent implements OnInit {
       isManager: isManager,
       roleId: roleId,
       accessCities: accessCities,
-      isAttendanceApprover:isAttendanceApprover
+      isAttendanceApprover:isAttendanceApprover,
+      canUpdateEmployeeDetail:canUpdateEmployeeDetail
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {
