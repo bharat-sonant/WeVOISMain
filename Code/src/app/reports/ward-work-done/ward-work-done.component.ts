@@ -18,13 +18,15 @@ export class WardWorkDoneComponent implements OnInit {
   zoneList: any[] = [];
   workDateList: any[] = [];
   workDoneList: any[] = [];
-  wardForWeightageList:any[]=[];
+  wardForWeightageList: any[] = [];
   serviceName = "7-days-work-done-report";
+  userType: any;
 
   ngOnInit() {
+    this.userType = localStorage.getItem("userType");
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("General-Reports","7-Days-Work-Done-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("General-Reports", "7-Days-Work-Done-Report", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -33,7 +35,7 @@ export class WardWorkDoneComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.toDayDate = this.commonService.setTodayDate();
   }
-  
+
   getWardForLineWeitage() {
     this.commonService.getWardForLineWeitage().then((wardForWeightageList: any) => {
       this.wardForWeightageList = wardForWeightageList;
@@ -64,9 +66,9 @@ export class WardWorkDoneComponent implements OnInit {
       if (wardDetail != undefined) {
         this.getWardLineWeightage(list[i]["wardNo"]);
       }
-      else{
+      else {
         this.getWorkDone(list[i]["wardNo"]);
-      }      
+      }
     }
   }
 
@@ -88,7 +90,7 @@ export class WardWorkDoneComponent implements OnInit {
         let date = this.workDateList[i]["date"];
         let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
         let year = date.split('-')[0];
-        let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + date + "/Summary/workPercentage";
+        let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + year + "/" + monthName + "/" + date + "/Summary/";
         let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
           workPercentage => {
             workPercentageInstance.unsubscribe();
@@ -98,9 +100,22 @@ export class WardWorkDoneComponent implements OnInit {
               if (dateDetail != undefined) {
                 if (workPercentage != null) {
                   this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkDone", workPercentage);
-                  detail[dateDetail.day] = workPercentage;
-                  if (Number(workPercentage) < 85) {
-                    detail[dateDetail.class] = "lessWork";
+                  if (workPercentage.workPercentage != null) {
+                    detail[dateDetail.day] = workPercentage.workPercentage;
+                    if (Number(workPercentage.workPercentage) < 85) {
+                      detail[dateDetail.class] = "lessWork";
+                    }
+                  }
+                  if (this.userType == "External User") {
+                    if (workPercentage["updatedWorkPercentage"] != null) {
+                      detail[dateDetail.day] = Math.round(workPercentage["updatedWorkPercentage"]);
+                      if (Number(Math.round(workPercentage["updatedWorkPercentage"])) < 85) {
+                        detail[dateDetail.class] = "lessWork";
+                      }
+                      else{
+                        detail[dateDetail.class] = "";
+                      }
+                    }
                   }
                 }
                 else {

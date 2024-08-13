@@ -31,10 +31,10 @@
         <div class="div-values" style="width: 59%; border-bottom: none;"> <input type="number" id="txtNewLine" class="txt-newLine" />
             <img (click)="moveToNewLine();" src="../../assets/img/save1.png" style="width: 32px; margin-left: 15px;margin-top: 0px;cursor: pointer;">
         </div>
-        <div class="div-values" style="border-top: solid 1px #DCDCDC; text-align: center;   height: 50px;    padding: 0px;">
-            <span style="font-weight: bold;font-size: 30px; padding-right: 5px;">{{cardDetails.selectedHouseCount}}</span> Card Selected
+        <div class="div-values" style="border-top: solid 1px #DCDCDC; height: 50px;  padding: 0px;">
+            <span style="font-weight: bold;font-size: 30px; padding-right: 5px; margin-left: 8px;">{{cardDetails.selectedHouseCount}}</span> Card Selected
         </div>
-        <div class="div-values d-flex justify-content-center align-item-center p-3 mb-3 gap-2" style="border-top: solid 1px #DCDCDC;height: 30px;"><input #chk_wardLine type="checkbox" class="cursor-pointer" id="chk_wardLine" style="height:15px; width:15px;" (click)="showWardLine(chk_wardLine)"> <label class="cursor-pointer" for="chk_wardLine" style="width: 150px;">{{chk_wardLine.checked?'Hide':'Show'}} ward boundary</label>
+        <div class="div-values" style="border-top: solid 1px #DCDCDC;height: 50px;"><input #chk_wardLine type="checkbox" class="cursor-pointer" id="chk_wardLine" style="height:15px; width:15px;" (click)="showWardLine(chk_wardLine)">&nbsp;&nbsp; <label class="cursor-pointer" for="chk_wardLine" style="width: 150px;">{{chk_wardLine.checked?'Hide':'Show'}} ward boundary</label>
         </div>
     </div>
 

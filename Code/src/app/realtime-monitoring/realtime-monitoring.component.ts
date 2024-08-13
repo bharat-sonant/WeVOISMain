@@ -173,6 +173,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   dutyOnImageList: any[];
   dutyOffImageList: any[];
   instancesList: any[];
+  userType: any;
 
   divRemark = "#divRemark";
   dutyDetail = "#dutyDetail";
@@ -190,6 +191,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
     this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
+    this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     let element = <HTMLAnchorElement>(document.getElementById("wardProgressLink"));
@@ -454,11 +456,26 @@ export class RealtimeMonitoringComponent implements OnInit {
         if (zoneDetails != undefined) {
           if (summaryData["workPercentage"] != null) {
             if (zoneDetails.lineWeight.length > 0) {
-              this.getWorkPercentage(zoneNo);
+              if (this.userType == "External User") {
+                if (summaryData["updatedWorkPercentage"] != null) {
+                  zoneDetails.workPer =Math.round(summaryData["updatedWorkPercentage"]) + "%";
+                  zoneDetails.workPerShow = Math.round(summaryData["updatedWorkPercentage"]) + " %";
+                }
+              }
+              else {
+                this.getWorkPercentage(zoneNo);
+              }
             }
             else {
               zoneDetails.workPer = summaryData["workPercentage"] + "%";
               zoneDetails.workPerShow = summaryData["workPercentage"] + " %";
+              if (this.userType == "External User") {
+                if (summaryData["updatedWorkPercentage"] != null) {
+                  zoneDetails.workPer = Math.round(summaryData["updatedWorkPercentage"]) + "%";
+                  zoneDetails.workPerShow = Math.round(summaryData["updatedWorkPercentage"]) + " %";
+                }
+
+              }
               if (summaryData["completedLines"] != null) {
                 zoneDetails.completedLines = summaryData["completedLines"];
               }
