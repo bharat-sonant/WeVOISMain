@@ -81,7 +81,8 @@ export class RouteTrackingComponent {
   vtsVehicleName: any;
   vtsVehicleList: any[] = [];
   routePolyline: any[] = [];
-  lblVTS="#lblVTS";
+  lblVTS = "#lblVTS";
+  userType: any;
   trackData: trackDetail =
     {
       totalKM: 0,
@@ -96,6 +97,7 @@ export class RouteTrackingComponent {
     this.commonService.savePageLoadHistory("Monitoring", "Route-Tracking", localStorage.getItem("userID"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.isActualData = localStorage.getItem("isActual");
+    this.userType = localStorage.getItem("userType");
     this.setSpeed(Number($('#ddlSpeed').val()));
     $('#btnPre').show();
     $('#btnReset').hide();
@@ -428,13 +430,19 @@ export class RouteTrackingComponent {
     this.isTiming = false;
     this.isPreviousTime = false;
     this.totalTiminingKM = 0;
-    (<HTMLInputElement>document.getElementById("chkVTS")).checked = true;
-    $(this.lblVTS).html("Hide VTS Routes");
+    if (this.userType != "External User") {
+      (<HTMLInputElement>document.getElementById("chkVTS")).checked = true;
+      $("#divVTSCheck").show();
+      $(this.lblVTS).html("Hide VTS Routes");
+      $("#divVTSRoute").show();
+    }
+    else{
+      $("#divVTSCheck").hide();
+    }
 
     this.vtsRouteKM = "0.00";
     this.vtsRouteList = [];
     this.vtsVehicleList = [];
-    $("#divVTSRoute").show();
     if (this.routePolyline.length > 0) {
       for (let i = 0; i < this.routePolyline.length; i++) {
         this.routePolyline[i].setMap(null);
@@ -892,8 +900,8 @@ export class RouteTrackingComponent {
                 if (date == this.toDayDate) {
                   dutyInOutList[i]["outTime"] = this.commonService.getCurrentTime();
                 }
-                else{
-                  dutyInOutList[i]["outTime"]="23:59:00";
+                else {
+                  dutyInOutList[i]["outTime"] = "23:59:00";
                 }
               }
             }
@@ -1110,7 +1118,7 @@ export class RouteTrackingComponent {
             data => {
               workPersentageInstance.unsubscribe();
               if (data != null) {
-                if(data["workPercentage"]!=null){
+                if (data["workPercentage"] != null) {
                   monthDetails.percentage = data["workPercentage"].toString();
                 }
                 if (localStorage.getItem("userType") == "External User") {
@@ -1151,7 +1159,7 @@ export class RouteTrackingComponent {
 
                 }
                 let filePath = "/RouteTrackingData/" + this.selectedZone + "/" + year + "/" + monthName + "/";
-               // this.commonService.saveJsonFile(obj, monthDate + ".json", filePath);
+                // this.commonService.saveJsonFile(obj, monthDate + ".json", filePath);
               }
             }
           );

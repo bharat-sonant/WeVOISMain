@@ -142,7 +142,7 @@ export class UserListComponent implements OnInit {
               list.push({roleId,roleName:rolesResp[roleId].roleName,active:0});
             }
           });
-          this.rolesList=list;  
+          this.rolesList=list.sort((a, b) =>a.roleName.toLowerCase() > b.roleName.toLowerCase() ? 1 : -1);
           Resolve(list);
         }
         else{

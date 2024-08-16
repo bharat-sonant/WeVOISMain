@@ -32,10 +32,10 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-3" >
+                                <div class="col-2" >
                                     <div  class="wrap-input-effects"  required>
                                         <select id="select-role" class="input-green"  (change)="filterUserList()">
-                                            <option value="0">Select Role</option>
+                                            <option value="0">All Role</option>
                                             <option  *ngFor="let dt of rolesList" value="{{dt.roleId}}">{{dt.roleName}} - {{dt.active}}</option>
                                         </select>
                                     </div>

@@ -279,11 +279,12 @@ export class HouseMarkingComponent {
               let lat = data[index]["latLng"].split(",")[0];
               let lng = data[index]["latLng"].split(",")[1];
               let type = data[index]["houseType"];
+              let imageName = data[index]["image"];
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
                 let houseType = houseTypeDetail.houseType;
                 let markerURL = this.getMarkerIcon(type);
-                this.setMarker(lat, lng, markerURL, houseType, "", "marker", lineNo, "", index);
+                this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, "", index);
               }
             }
           }
