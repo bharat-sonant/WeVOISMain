@@ -97,8 +97,9 @@ export class UserListComponent implements OnInit {
     }
     await Promise.all(promise).then(resp=>{
       this.userRecord = this.commonService.transformNumeric(this.userRecord, "name");
-      
-      this.filterUserList(this.isShowAction?$('#userRole').val():0);
+       $('#select-role').val('0');
+       $('#select-userType').val('0');
+      this.filterUserList();
     })
 
   }
@@ -151,12 +152,17 @@ export class UserListComponent implements OnInit {
     })
     
   }
-  filterUserList=(roleSelect:any)=>{
+  filterUserList=()=>{
+    let roleSelect = $('#select-role').val();
+    let userType =  ( $('#select-userType').val());
     if(Number(roleSelect)){
       this.filteredUserRecord = this.userRecord.filter(item=>Number(item.$Key.roleId)===Number(roleSelect));
     }
     else{
       this.filteredUserRecord = this.userRecord;
+    }
+    if(userType!=='0'){
+      this.filteredUserRecord = this.filteredUserRecord.filter(item=>item.userType===userType);
     }
     if(this.rolesList.length>0){
       this.rolesList.map(role=>{
