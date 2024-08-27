@@ -436,7 +436,7 @@ export class RouteTrackingComponent {
       $(this.lblVTS).html("Hide VTS Routes");
       $("#divVTSRoute").show();
     }
-    else{
+    else {
       $("#divVTSCheck").hide();
     }
 
@@ -701,9 +701,16 @@ export class RouteTrackingComponent {
                     let index = keyArray[i];
                     let time = index.toString().split('-')[0];
                     let routeDateTime = new Date(this.selectedDate + " " + time);
+                    if(this.userType=="External User"){
+                     
+                        this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                     
+                    }
+                    else{
                     if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
                       this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
                     }
+                  }
                   }
                   this.showDataOnMap();
                 }
@@ -741,9 +748,14 @@ export class RouteTrackingComponent {
                 let index = keyArray[i];
                 let time = index.toString().split('-')[0];
                 let routeDateTime = new Date(this.selectedDate + " " + time);
+                if(this.userType=="External User"){
+                  this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                }
+                else{
                 if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
                   this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
                 }
+              }
               }
               this.showDataOnMap();
 
@@ -1028,7 +1040,7 @@ export class RouteTrackingComponent {
                 vehicleTracking.unsubscribe();
                 if (routePath != null) {
                   if (monthDate != this.toDayDate) {
-                    this.commonService.saveJsonFile(routePath, "route.json", "/" + dbPath + "/");
+                    //this.commonService.saveJsonFile(routePath, "route.json", "/" + dbPath + "/");
                   }
                   let routeKeyArray = Object.keys(routePath);
                   let keyArray = [];
@@ -1053,10 +1065,15 @@ export class RouteTrackingComponent {
                   for (let i = 0; i < keyArray.length - 3; i++) {
                     let index = keyArray[i];
                     let time = index.toString().split('-')[0];
+                    if (this.userType == "External User") {
+                      monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                    }
+                    else{
                     let routeDateTime = new Date(this.selectedDate + " " + time);
                     if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
                       monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
                     }
+                  }
                   }
                   this.getMonthDetailList(monthList, year, monthName, monthDate);
                 }
@@ -1089,9 +1106,14 @@ export class RouteTrackingComponent {
             for (let i = 0; i < keyArray.length - 3; i++) {
               let index = keyArray[i];
               let time = index.toString().split('-')[0];
-              let routeDateTime = new Date(this.selectedDate + " " + time);
-              if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+              if (this.userType == "External User") {
+                  monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+              }
+              else {
+                let routeDateTime = new Date(this.selectedDate + " " + time);
+                if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                  monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                }
               }
             }
             this.getMonthDetailList(monthList, year, monthName, monthDate);
@@ -1121,9 +1143,9 @@ export class RouteTrackingComponent {
                 if (data["workPercentage"] != null) {
                   monthDetails.percentage = data["workPercentage"].toString();
                 }
-                if (localStorage.getItem("userType") == "External User") {
+                if (this.userType == "External User") {
                   if (data["updatedWorkPercentage"] != null) {
-                    monthDetails.percentage = data["updatedWorkPercentage"].toString();
+                    monthDetails.percentage = Math.round(Number(data["updatedWorkPercentage"].toString())).toString();
                   }
                 }
               }

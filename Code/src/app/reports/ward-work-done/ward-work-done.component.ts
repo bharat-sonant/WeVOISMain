@@ -106,6 +106,9 @@ export class WardWorkDoneComponent implements OnInit {
                       detail[dateDetail.class] = "lessWork";
                     }
                   }
+                  else{
+                    detail[dateDetail.class] = "inactive";
+                  }
                   if (this.userType == "External User") {
                     if (workPercentage["updatedWorkPercentage"] != null) {
                       detail[dateDetail.day] = Math.round(workPercentage["updatedWorkPercentage"]);

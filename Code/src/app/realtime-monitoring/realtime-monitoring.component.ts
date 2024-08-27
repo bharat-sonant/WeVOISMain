@@ -213,7 +213,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (this.cityName == "jodhpur") {
       this.hiddenWardList = [{ zone: "31-R1" }, { zone: "31-R2" }, { zone: "34-R1" }, { zone: "34-R2" }, { zone: "36-R1" }, { zone: "36-R2" }, { zone: "37-R1" }, { zone: "37-R2" }, { zone: "33-R1" }, { zone: "33-R2" }, { zone: "39" }];
     }
-    console.log(this.hiddenWardList);
     this.zoneList = [];
     this.firstData = false;
     this.userId = localStorage.getItem("userID");
@@ -460,6 +459,9 @@ export class RealtimeMonitoringComponent implements OnInit {
                 if (summaryData["updatedWorkPercentage"] != null) {
                   zoneDetails.workPer =Math.round(summaryData["updatedWorkPercentage"]) + "%";
                   zoneDetails.workPerShow = Math.round(summaryData["updatedWorkPercentage"]) + " %";
+                }
+                else {
+                  this.getWorkPercentage(zoneNo);
                 }
               }
               else {
