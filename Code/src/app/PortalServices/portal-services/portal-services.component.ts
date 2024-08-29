@@ -16,11 +16,20 @@ export class PortalServicesComponent implements OnInit {
   userId: any;
   cityName: any;
   db: any;
+  userType: any;
+  isActual: any;
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
+    if (localStorage.getItem("userType") == "External User") {
+      this.userType="1";
+    }
+    else{
+      this.userType="2";
+    }
+    this.isActual = localStorage.getItem("isActual");
     this.getUserAccess();
   }
 
@@ -78,6 +87,9 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8A2" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divPortalReview").show();
         }
+        if (userAccessList[i]["pageId"] == "8A3" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divManageWardWorkTime").show();
+        }
       }
     }
   }
@@ -94,6 +106,17 @@ export class PortalServicesComponent implements OnInit {
     }
     else {
       url = "https://main-wevois.firebaseapp.com/" + localStorage.getItem("userID") + "/" + newUrl;
+    }
+    window.open(url, "_blank");
+  }
+
+  goToOuterURL(url: any) {
+    let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
+    if (this.cityName == "test") {
+      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userId + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
+    }
+    else {
+      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userId + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
     }
     window.open(url, "_blank");
   }
