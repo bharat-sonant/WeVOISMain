@@ -324,24 +324,26 @@
                         <div class="scroll-list">
                             <div id="filter{{i}}" class="{{data.divClass}}"
                                 *ngFor="let data of dustbinList ; let i=index"
-                                (click)="data.iconClass!='fas fa-ellipsis-h' && showDustbinData(i);">
-                                <i class="{{data.iconClass}}"></i>
+                                (click)="data.iconClass!='fas fa-ellipsis-h' && showDustbinData(i,'picked');">
+                                <i class="{{data.iconClass}}"></i>                                
                                 <div class="address-text-outer">
                                     <div class="address-text">
-                                        <h6>
+                                        <h6>                                            
                                             {{data.address}}
                                         </h6>
                                     </div>
                                 </div>
                                 <div class="address-main" [hidden]="data.iconClass=='fas fa-ellipsis-h'">
-                                    <div class="address-text">
-                                        <h6 [innerHTML]="data.duration">
+                                    <div class="address-text">                                        
+                                        <h6>
+                                            <i class="fa-solid fa-circle" style="color:red; font-size: 10px;" [hidden]="data.isOffline==0 || userType=='External User'" ></i>
+                                           &nbsp;<span  [innerHTML]="data.duration"></span>
                                         </h6>
                                     </div>
                                 </div>
                                 <div class="address-main" [hidden]="data.iconClass!='fas fa-ellipsis-h' || canUpdateOpendepotPickDetail=='0'">
                                     <div class="address-text">
-                                        <i class="far fa-edit" (click)="showDustbinData(i)" title="Update Pick Detail"
+                                        <i class="far fa-edit" (click)="showDustbinData(i,'edit')" title="Update Pick Detail"
                                             style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>
                                     </div>
                                 </div>

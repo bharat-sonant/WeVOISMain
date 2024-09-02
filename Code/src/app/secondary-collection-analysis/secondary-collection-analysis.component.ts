@@ -31,6 +31,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   db: any;
   canUpdateOpendepotPickDetail: any;
   dustbinStorageList: any[] = [];
+  userType: any;
   binDetail: dustbinDetails = {
     binId: "",
     filledTopViewImageUrl: "",
@@ -51,6 +52,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     analysisRemarks: "",
     analysisDetail: "",
     manualRemarks: "",
+    isOffline: 0
   };
 
   planDetail: planDetails = {
@@ -73,6 +75,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Secondary-Collection-Analysis", localStorage.getItem("userID"));
@@ -111,6 +114,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
   setDefaultValues() {
     this.selectedDate = this.commonService.setTodayDate();
+    this.selectedDate = "2024-07-10";
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );
@@ -173,6 +177,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.manualRemarks = "";
     this.binDetail.analysisDetail = "";
     this.binDetail.canDoAnalysis = "no";
+    this.binDetail.isOffline = 0;
 
     // now reset plan data
     this.planDetail.driverName = "--";
@@ -180,6 +185,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.planDetail.pickedCount = "";
     this.planDetail.assignedCount = " -- ";
     this.planDetail.notAtLocationCount = " -- ";
+
+    $("#divUpdatePickDetail").hide();
   }
 
   getBinsForSelectedPlan(planId: string) {
@@ -225,6 +232,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
             iconClass: this.setIconClass(dustbinHistoryData),
             divClass: this.setBackgroudClasss(dustbinHistoryData),
             duration: this.setDuration(dustbinHistoryData),
+            isOffline: this.setIsOffline(dustbinHistoryData),
             dustbinRemark: this.checkNullValue(
               dustbinHistoryData,
               "remarks"
@@ -275,7 +283,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
           if (index == binsArray.length - 1) {
             $("#divLoader").hide();
             if (firstIndexNeedtobeSelected != -1) {
-              this.showDustbinData(firstIndexNeedtobeSelected);
+              this.showDustbinData(firstIndexNeedtobeSelected, 'picked');
             } else {
               this.binDetail.filledTopViewImageUrl = this.imageNotAvailablePath;
             }
@@ -291,6 +299,16 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     }
 
     // this.totalDustbins = binsArray.length;
+  }
+
+  setIsOffline(dustbinHistoryData) {
+    let isOffline = 0;
+    if (dustbinHistoryData != null) {
+      if (dustbinHistoryData.isOffline != null) {
+        isOffline = dustbinHistoryData.isOffline;
+      }
+    }
+    return isOffline;
   }
 
   setPickedBins(index: any) {
@@ -490,9 +508,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   }
 
   setPageAccessAndPermissions() {
-    let userType = localStorage.getItem("userType");
     this.userId = localStorage.getItem("userID");
-    if (userType == "External User") {
+    if (this.userType == "External User") {
       $("#divAccess").hide();
     }
   }
@@ -510,7 +527,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     });
   }
 
-  showDustbinData(index: any) {
+  showDustbinData(index: any, type: any) {
     if (this.dustbinList[index]["filledTopViewImage"] != this.imageNotAvailablePath) {
       $("#ImageLoader").show();
     }
@@ -526,6 +543,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.emptyDustbinTopViewImageUrl = this.dustbinList[index]["emptyDustbinTopViewImage"];
     this.binDetail.emptyDustbinFarViewImageUrl = this.dustbinList[index]["emptyDustbinFarFromImage"];
     this.binDetail.dustbinNotFoundImageUrl = this.dustbinList[index]["dustbinNotFoundImage"];
+    this.binDetail.isOffline = this.dustbinList[index]["isOffline"] ? this.dustbinList[index]["isOffline"] : 0;
 
     this.binDetail.analysisBy = this.dustbinList[index]["analysisBy"];
     this.binDetail.analysisAt = this.dustbinList[index]["analysisAt"];
@@ -533,11 +551,27 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
     this.binDetail.manualRemarks = this.dustbinList[index]["manualRemarks"];
-    if (this.dustbinList[index]["isPicked"] != "1") {
-      $("#divUpdatePickDetail").show();
+
+    if (type == "edit") {
+      if (this.canUpdateOpendepotPickDetail == 1) {
+        $("#divUpdatePickDetail").show();
+      }
+      else {
+        $("#divUpdatePickDetail").hide();
+      }
     }
     else {
-      $("#divUpdatePickDetail").hide();
+      if (this.binDetail.isOffline == 1) {
+        if (this.canUpdateOpendepotPickDetail == 1) {
+          $("#divUpdatePickDetail").show();
+        }
+        else {
+          $("#divUpdatePickDetail").hide();
+        }
+      }
+      else {
+        $("#divUpdatePickDetail").hide();
+      }
     }
 
     setTimeout(function () {
@@ -749,9 +783,10 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     let emptyFarFromImageUrl = "";
     let imageObj;
     let urlObj = {};
+    let token = new Date().getTime();
 
     if (file != null) {
-      filledFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FfilledFarFromImage.jpg?alt=media";
+      filledFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FfilledFarFromImage.jpg?alt=media&token=" + token + "";
       urlObj["filledFarFromImageUrl"] = filledFarFromImageUrl;
       let filePath = "/" + storageCityName + "/DustbinImages/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/filledFarFromImage.jpg";
       const fileRef = this.storage.ref(filePath);
@@ -760,7 +795,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
 
     if (file1 != null) {
-      emptyFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FemptyFarFromImage.jpg?alt=media";
+      emptyFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FemptyFarFromImage.jpg?alt=media&token=" + token + "";
       urlObj["emptyFarFromImageUrl"] = emptyFarFromImageUrl;
       let filePath = "/" + storageCityName + "/DustbinImages/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/emptyFarFromImage.jpg";
       const fileRef = this.storage.ref(filePath);
@@ -796,16 +831,19 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       latLng: latLng,
       zone: zone,
       endTime: this.selectedDate + " " + pickTime,
-      startTime: this.selectedDate + " " + pickTime
+      startTime: this.selectedDate + " " + pickTime,
+      isOffline: 1
     }
 
     let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId;
     this.db.object(dbPath).update(data);
+    this.updatePickedOpenDepotInPlan(this.planDetail.planId,this.binDetail.binId);
     setTimeout(() => {
       this.binDetail.startTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + pickTime);
       this.binDetail.endTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + pickTime);
       this.binDetail.filledFarFromImageUrl = filledFarFromImageUrl;
       this.binDetail.emptyFarFromImageUrl = emptyFarFromImageUrl;
+      this.binDetail.isOffline = 1;
 
       let data = this.dustbinList.find((item) => item.dustbinId == this.binDetail.binId);
       data.startTime = this.selectedDate + " " + pickTime;
@@ -813,16 +851,45 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       data.filledFarFromImage = this.binDetail.filledFarFromImageUrl;
       data.emptyFarFromImage = this.binDetail.emptyFarFromImageUrl;
       data.iconClass = "fas warning";
-      data.isPicked="1";
-      data.divClass="address";
+      data.isPicked = "1";
+      data.isOffline = 1;
+      data.divClass = "address";
       data.duration = "0" + "  min <img src='../../../assets/img/clock-icon.png'>";
       $("#txtPickTime").val("");
       $("#fileUploadBefore").val("");
       $("#fileUploadAfter").val("");
-      $("#divUpdatePickDetail").hide();
       this.commonService.setAlertMessage("success", "Open depot pick detail updated successfully.");
       $("#divLoader").hide();
     }, 2000);
+  }
+
+  updatePickedOpenDepotInPlan(planId: any, dustbinId:any) {
+    let dbPath = "DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId;
+    let planInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      planInstance.unsubscribe();
+      if (data != null) {
+        if (data.pickedDustbin == "") {
+          this.db.object(dbPath).update({ pickedDustbin: dustbinId.toString() });
+        }
+        else {
+          this.db.object(dbPath).update({ pickedDustbin: data.pickedDustbin + "," + dustbinId.toString() });
+        }
+      }
+      else {
+        dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId;
+        let planHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+          planHistoryInstance.unsubscribe();
+          if (data != null) {
+            if (data.pickedDustbin == "") {
+              this.db.object(dbPath).update({ pickedDustbin: dustbinId.toString() });
+            }
+            else {
+              this.db.object(dbPath).update({ pickedDustbin: data.pickedDustbin + "," + dustbinId.toString() });
+            }
+          }
+        });
+      }
+    });
   }
 
   updateIsDustbinBroken() {
@@ -932,6 +999,7 @@ export class dustbinDetails {
   analysisRemarks: string;
   analysisDetail: string;
   manualRemarks: string;
+  isOffline: number
 }
 
 export class planDetails {
