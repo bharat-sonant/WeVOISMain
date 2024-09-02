@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
+import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: 'app-secondary-collection-analysis',
@@ -10,7 +11,7 @@ import { NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
 })
 export class SecondaryCollectionAnalysisComponent implements OnInit {
 
-  constructor(private commonService: CommonService, public fs: FirebaseService) { }
+  constructor(private storage: AngularFireStorage, private commonService: CommonService, public fs: FirebaseService) { }
 
   planList: any[];
   dustbinList: any[];
@@ -28,6 +29,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   maxSlideCount: any;
   cityName: any;
   db: any;
+  canUpdateOpendepotPickDetail: any;
+  dustbinStorageList: any[] = [];
   binDetail: dustbinDetails = {
     binId: "",
     filledTopViewImageUrl: "",
@@ -73,11 +76,12 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Secondary-Collection-Analysis", localStorage.getItem("userID"));
-
+    this.canUpdateOpendepotPickDetail = localStorage.getItem("canUpdateOpendepotPickDetail");
     let element = <HTMLAnchorElement>(
       document.getElementById("dustbinReportLink")
     );
     element.href = this.cityName + "/25B/secondary-collection-planing";
+    this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
     this.getPandingAnalysis();
@@ -529,6 +533,12 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
     this.binDetail.manualRemarks = this.dustbinList[index]["manualRemarks"];
+    if (this.dustbinList[index]["isPicked"] != "1") {
+      $("#divUpdatePickDetail").show();
+    }
+    else {
+      $("#divUpdatePickDetail").hide();
+    }
 
     setTimeout(function () {
       $("#ImageLoader").hide();
@@ -553,6 +563,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     let element = <HTMLInputElement>(document.getElementById("radio" + this.binDetail.filledPercentage + ""));
     element.checked = true;
   }
+
+
 
   setRemark() {
     let chkRemark1 = <HTMLInputElement>document.getElementById("chkRemark1");
@@ -609,11 +621,13 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
   canAnalysisTheBin() {
     let canDo = "yes";
-    if (this.binDetail.filledTopViewImageUrl == this.imageNotAvailablePath) {
+    /*
+    if (this.binDetail.filledFarFromImageUrl == this.imageNotAvailablePath) {
       canDo = "no";
-    } else if (this.binDetail.dustbinNotFoundImageUrl != this.imageNotAvailablePath) {
+    } else if (this.binDetail.emptyDustbinFarViewImageUrl != this.imageNotAvailablePath) {
       canDo = "no";
     }
+      */
 
     return canDo;
   }
@@ -708,6 +722,107 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     } else {
       this.commonService.setAlertMessage("error", "Can not do analysis for this open depot.");
     }
+  }
+
+  saveOfflineDustbinDetail() {
+    let pickTime = $("#txtPickTime").val();
+    let fileUploadBefore = <HTMLInputElement>document.getElementById("fileUploadBefore");
+    let file = fileUploadBefore.files[0];
+    let fileUploadAfter = <HTMLInputElement>document.getElementById("fileUploadAfter");
+    let file1 = fileUploadAfter.files[0];
+    if (pickTime == "") {
+      this.commonService.setAlertMessage("error", "Please enter pick time.");
+      return;
+    }
+    if (file == null) {
+      this.commonService.setAlertMessage("error", "Please upload before pick image.");
+      return;
+    }
+    if (file1 == null) {
+      this.commonService.setAlertMessage("error", "Please upload after pick image.");
+      return;
+    }
+
+    $("#divLoader").show();
+    let storageCityName = this.commonService.getFireStoreCity();
+    let filledFarFromImageUrl = "";
+    let emptyFarFromImageUrl = "";
+    let imageObj;
+    let urlObj = {};
+
+    if (file != null) {
+      filledFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FfilledFarFromImage.jpg?alt=media";
+      urlObj["filledFarFromImageUrl"] = filledFarFromImageUrl;
+      let filePath = "/" + storageCityName + "/DustbinImages/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/filledFarFromImage.jpg";
+      const fileRef = this.storage.ref(filePath);
+      const task = this.storage.upload(filePath, file);
+    }
+
+
+    if (file1 != null) {
+      emptyFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FemptyFarFromImage.jpg?alt=media";
+      urlObj["emptyFarFromImageUrl"] = emptyFarFromImageUrl;
+      let filePath = "/" + storageCityName + "/DustbinImages/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/emptyFarFromImage.jpg";
+      const fileRef = this.storage.ref(filePath);
+      const task = this.storage.upload(filePath, file1);
+    }
+
+    let keyArray = Object.keys(urlObj);
+    if (keyArray.length > 0) {
+      imageObj = {};
+      imageObj["Urls"] = urlObj;
+    }
+
+    let zone = "";
+    let latLng = "";
+    let pickedBy = "";
+    let detail = this.dustbinStorageList.find(item => item.dustbin == this.binDetail.binId);
+    if (detail != undefined) {
+      zone = detail.zone;
+      latLng = detail.lat + "," + detail.lng;
+    }
+
+    let driverDetail = this.planList.find(item => item.planId == this.planDetail.planId);
+    if (driverDetail != undefined) {
+      pickedBy = driverDetail.driver;
+    }
+
+    const data = {
+      Image: imageObj ? imageObj : null,
+      address: this.binDetail.address,
+      pickDateTime: this.selectedDate + " " + pickTime,
+      duration: 0,
+      pickedBy: pickedBy,
+      latLng: latLng,
+      zone: zone,
+      endTime: this.selectedDate + " " + pickTime,
+      startTime: this.selectedDate + " " + pickTime
+    }
+
+    let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId;
+    this.db.object(dbPath).update(data);
+    setTimeout(() => {
+      this.binDetail.startTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + pickTime);
+      this.binDetail.endTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + pickTime);
+      this.binDetail.filledFarFromImageUrl = filledFarFromImageUrl;
+      this.binDetail.emptyFarFromImageUrl = emptyFarFromImageUrl;
+
+      let data = this.dustbinList.find((item) => item.dustbinId == this.binDetail.binId);
+      data.startTime = this.selectedDate + " " + pickTime;
+      data.endTime = this.selectedDate + " " + pickTime;
+      data.filledFarFromImage = this.binDetail.filledFarFromImageUrl;
+      data.emptyFarFromImage = this.binDetail.emptyFarFromImageUrl;
+      data.iconClass = "fas warning";
+      data.isPicked="1";
+      data.divClass="address";
+      data.duration = "0" + "  min <img src='../../../assets/img/clock-icon.png'>";
+      $("#txtPickTime").val("");
+      $("#fileUploadBefore").val("");
+      $("#fileUploadAfter").val("");
+      $("#divUpdatePickDetail").hide();
+      this.commonService.setAlertMessage("success", "Open depot pick detail updated successfully.");
+      $("#divLoader").hide();
+    }, 2000);
   }
 
   updateIsDustbinBroken() {

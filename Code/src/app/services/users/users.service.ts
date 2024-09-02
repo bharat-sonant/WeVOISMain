@@ -114,6 +114,7 @@ export class UsersService {
               let isManager = 0;
               let roleId = 0;
               let accessCities = "";
+              let canUpdateOpendepotPickDetail=0;
               if (data[key]["haltDisableAccess"] != undefined) {
                 haltDisableAccess = data[key]["haltDisableAccess"];
               }
@@ -141,6 +142,9 @@ export class UsersService {
               if (data[key]["accessCities"] != undefined) {
                 accessCities = data[key]["accessCities"];
               }
+              if (data[key]["canUpdateOpendepotPickDetail"] != undefined) {
+                canUpdateOpendepotPickDetail = data[key]["canUpdateOpendepotPickDetail"];
+              }
               if (data[key]["isDelete"] == "0") {
                 userList.push({
                   userKey: data[key]["userId"],
@@ -167,7 +171,8 @@ export class UsersService {
                   roleId: roleId,
                   accessCities: accessCities,
                   imgUrl:imgUrl,
-                  utitle:utitle
+                  utitle:utitle,
+                  canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail
                 });
               }
             }

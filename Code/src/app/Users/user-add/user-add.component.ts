@@ -37,7 +37,7 @@ export class UserAddComponent implements OnInit {
   setDefaults() {
     $(this.divLoader).show();
     this.cityName = localStorage.getItem("cityName");
-    this.commonService.savePageLoadHistory("Users","Add-Users",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Users", "Add-Users", localStorage.getItem("userID"));
     this.cityList = JSON.parse(localStorage.getItem("cityList"));
     this.toDayDate = this.commonService.setTodayDate();
     this.userid = this.actRoute.snapshot.paramMap.get("id");
@@ -149,6 +149,16 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canUpdateEmployeeDetail"))).checked = true;
         }
       }
+      if (data["canUpdateOpendepotPickDetail"] != undefined) {
+        if (data["canUpdateOpendepotPickDetail"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canUpdateOpendepotPickDetail"))).checked = true;
+        }
+      }
+      if (data["canUpdateLeaveBalance"] != undefined) {
+        if (data["canUpdateLeaveBalance"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canUpdateLeaveBalance"))).checked = true;
+        }
+      }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -239,12 +249,14 @@ export class UserAddComponent implements OnInit {
     let officeAppUserId: any = $("#officeAppUserId").val();
     let isTaskManager: any = 0;
     let isActual: any = 0;
-    let isActualWorkPercentage:any=0;
+    let isActualWorkPercentage: any = 0;
     let isLock: any = 0;
     let isAdmin: any = 0;
     let isManager: any = 0;
-    let isAttendanceApprover:any=0;
-    let canUpdateEmployeeDetail:any=0
+    let isAttendanceApprover: any = 0;
+    let canUpdateEmployeeDetail: any = 0;
+    let canUpdateOpendepotPickDetail: any = 0;
+    let canUpdateLeaveBalance:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -294,6 +306,10 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isManager = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateEmployeeDetail");
     if (element.checked == true) canUpdateEmployeeDetail = 1;
+    element = <HTMLInputElement>document.getElementById("canUpdateOpendepotPickDetail");
+    if (element.checked == true) canUpdateOpendepotPickDetail = 1;
+    element = <HTMLInputElement>document.getElementById("canUpdateLeaveBalance");
+    if (element.checked == true) canUpdateLeaveBalance = 1;
     if (this.userid == null) {
       let lastKey = Number(this.userJsonData["lastKey"]) + 1;
       this.userid = lastKey;
@@ -318,14 +334,16 @@ export class UserAddComponent implements OnInit {
       isTaskManager: isTaskManager,
       haltDisableAccess: haltDisableAccess,
       isActual: isActual,
-      isActualWorkPercentage:isActualWorkPercentage,
+      isActualWorkPercentage: isActualWorkPercentage,
       isLock: isLock,
       isAdmin: isAdmin,
       isManager: isManager,
       roleId: roleId,
       accessCities: accessCities,
-      isAttendanceApprover:isAttendanceApprover,
-      canUpdateEmployeeDetail:canUpdateEmployeeDetail
+      isAttendanceApprover: isAttendanceApprover,
+      canUpdateEmployeeDetail: canUpdateEmployeeDetail,
+      canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
+      canUpdateLeaveBalance:canUpdateLeaveBalance
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

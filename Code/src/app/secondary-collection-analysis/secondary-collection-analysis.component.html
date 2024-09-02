@@ -7,20 +7,17 @@
     </div>
     <div class="container-fluid no-gutters">
         <div class="row">
-            
+
             <div class="col-md-12 desk-hide">
                 <div class="header">
                     <h3 class="header-text">
                         <span class="dustin-span">Open Depot Analysis</span>
                         <div class="refresh">
-                            <span class="header-span"
-                                >last
+                            <span class="header-span">last
                                 Update<br />
-                                <span class="header-span-inner"
-                                    >{{dustbinData.refreshTime}}
+                                <span class="header-span-inner">{{dustbinData.refreshTime}}
                                 </span></span>
-                            <button class="refresh-button" (click)="refreshData();"
-                                title="Refresh Data">
+                            <button class="refresh-button" (click)="refreshData();" title="Refresh Data">
                                 <i class="fas fa-redo-alt"></i></button>
                         </div>
                     </h3>
@@ -63,7 +60,7 @@
                                                 </div>
                                                 <div class="fright">
                                                     <p>{{planDetail.vehicle}}
-                                                      
+
                                                     </p>
                                                 </div>
                                             </div>
@@ -75,12 +72,11 @@
                                                         &nbsp;{{planDetail.helper}} </h6>
                                                 </div>
                                                 <div class="fright">
-                                                    <p class="fright-iner"
-                                                        >
+                                                    <p class="fright-iner">
                                                         {{binDetail.startTime}}
                                                         <br> <span>Start Time</span>
                                                     </p>
-                                                   
+
                                                 </div>
                                             </div>
                                         </div>
@@ -91,12 +87,11 @@
                                                         &nbsp;{{planDetail.secondHelper}} </h6>
                                                 </div>
                                                 <div class="fright end-time-outer">
-                                                    <p
-                                                        >
+                                                    <p>
                                                         {{binDetail.endTime}}
                                                         <br><span>End Time</span>
                                                     </p>
-                                                   
+
                                                 </div>
                                             </div>
                                         </div>
@@ -107,18 +102,19 @@
                                 <div class="col-md-12 pl-0 pr-0 mt-10">
                                     <div class="all-data ">
                                         <div class="data-1 pen-analysis-outer">
-                                           
+
                                             <p class="pen-analysis">
                                                 {{dustbinData.pendingAnalysis}}</p>
                                             <h5>Pending Analysis</h5>
                                         </div>
                                         <div class="data-2 summ-text-outer">
-                                           
-                                            <p class="summ-text"> {{planDetail.pickedCount}}{{planDetail.assignedCount}} </p>
+
+                                            <p class="summ-text"> {{planDetail.pickedCount}}{{planDetail.assignedCount}}
+                                            </p>
                                             <h5>Summary</h5>
                                         </div>
                                         <div class="data-3">
-                                           
+
                                             <p class="pen-analysis">
                                                 {{planDetail.notAtLocationCount}}</p>
                                             <h5>Not at Location</h5>
@@ -128,9 +124,9 @@
 
                                 <div id="divAccess" class="col-md-12 mt-10 pl-0 pr-0">
                                     <div class="progress-card">
-                                        <div class="row"  style="display: none;">
-                                            <div class="col-3 radio-text"> <input type="radio" id="radio0"
-                                                    name="gender" value="0" checked (click)="getFillPercentage('0');">
+                                        <div class="row" style="display: none;">
+                                            <div class="col-3 radio-text"> <input type="radio" id="radio0" name="gender"
+                                                    value="0" checked (click)="getFillPercentage('0');">
                                                 <label for="radio0">&nbsp;0%</label>
                                             </div>
                                             <div class="col-3 radio-text"> <input type="radio" id="radio10"
@@ -192,11 +188,12 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <textarea id="txtManualRemark" style="width:100%" placeholder="Remark" value="{{binDetail.manualRemarks}}" >{{binDetail.manualRemarks}}</textarea>
+                                            <textarea id="txtManualRemark" style="width:100%" placeholder="Remark"
+                                                value="{{binDetail.manualRemarks}}">{{binDetail.manualRemarks}}</textarea>
                                         </div>
                                         <div class="dustbin-progress align-self-center-outer">
-                                            <p class="align-self-center"><b
-                                                    [innerHTML]="binDetail.analysisDetail"></b> </p>
+                                            <p class="align-self-center"><b [innerHTML]="binDetail.analysisDetail"></b>
+                                            </p>
                                             <button type="button" class="btn btn-success"
                                                 (click)="saveDustbinAnalysis();">Save <i
                                                     class="fas fa-save"></i></button>
@@ -210,9 +207,31 @@
                                                 History </span></button>
                                     </a>
                                 </div>
+                                <div id="divUpdatePickDetail" class="col-md-12 mt-10 pl-0 pr-0" style="display: none;">
+                                    <div class="progress-card d-flax">
+                                        <div class="col-md-12" style="padding-bottom: 10px; ">
+                                          <label>  Before Pick Image </label>
+                                            <input id="fileUploadBefore" type="file" accept="image/*" />
+                                        </div>
+                                        <div class="col-md-12" style="padding-bottom: 10px; ">
+                                           <label> After Pick Image</label>
+                                            <input id="fileUploadAfter" type="file" accept="image/*" />
+                                        </div>
+                                        <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
+                                          <label>  Pick Time </label> <br/> <input id="txtPickTime" class="caret-select"
+                                                type="time" style="width:120px" />
+                                        </div>
+                                        <div class="dustbin-progress align-self-center-outer">
+                                            <p class="align-self-center"><b [innerHTML]="binDetail.analysisDetail"></b>
+                                            </p>
+                                            <button type="button" class="btn btn-success" style="width:150px"
+                                                (click)="saveOfflineDustbinDetail();">Update Pick Detail <i
+                                                    class="fas fa-save"></i></button>
 
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                     <div class="col-md-6 mob-mid mob-hide-outer">
@@ -222,11 +241,9 @@
                                     <h3 class="header-text">
                                         <span class="dustin-span">Open Depot Analysis</span>
                                         <div class="refresh">
-                                            <span class="header-span"
-                                                >last
+                                            <span class="header-span">last
                                                 Update<br />
-                                                <span class="header-span-iner"
-                                                    >{{dustbinData.refreshTime}}
+                                                <span class="header-span-iner">{{dustbinData.refreshTime}}
                                                 </span></span>
                                             <button class="refresh-button" (click)="refreshData();"
                                                 title="Refresh Data">
@@ -286,12 +303,12 @@
                                     <i id="i3" class="fas fa-caret-up" style="display: none;"></i>
                                     <div class="text-field">
                                         <img id="img3" src="../../../assets/img/dustbin.png" class="img-fluid">
-                                        <h6 id="hText3" class="mt-15 full" >ऊपर से खाली
+                                        <h6 id="hText3" class="mt-15 full">ऊपर से खाली
                                         </h6>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 mt-10 pl-5"  style="display: none;">
+                            <div class="col-md-3 mt-10 pl-5" style="display: none;">
                                 <div id="box4" class="icon-box text-center" (click)="setSlideImage(4,'selected');">
                                     <i id="i4" class="fas fa-caret-up" style="display: none;"></i>
                                     <div class="text-field">
@@ -316,10 +333,16 @@
                                         </h6>
                                     </div>
                                 </div>
-                                <div class="address-main">
+                                <div class="address-main" [hidden]="data.iconClass=='fas fa-ellipsis-h'">
                                     <div class="address-text">
                                         <h6 [innerHTML]="data.duration">
                                         </h6>
+                                    </div>
+                                </div>
+                                <div class="address-main" [hidden]="data.iconClass!='fas fa-ellipsis-h' || canUpdateOpendepotPickDetail=='0'">
+                                    <div class="address-text">
+                                        <i class="far fa-edit" (click)="showDustbinData(i)" title="Update Pick Detail"
+                                            style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>
                                     </div>
                                 </div>
                             </div>
