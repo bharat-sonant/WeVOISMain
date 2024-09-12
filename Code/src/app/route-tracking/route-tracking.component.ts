@@ -21,7 +21,7 @@ export class RouteTrackingComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  constructor(public fs: FirebaseService,public router: Router, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -92,12 +92,15 @@ export class RouteTrackingComponent {
     };
 
   ngOnInit() {
+    this.userType = localStorage.getItem("userType");
+    if(this.userType=="External User"){
+      this.router.navigate(["/" + localStorage.getItem("cityName") + "/something-wrong"]);
+    }
     this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.savePageLoadHistory("Monitoring", "Route-Tracking", localStorage.getItem("userID"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.isActualData = localStorage.getItem("isActual");
-    this.userType = localStorage.getItem("userType");
     this.setSpeed(Number($('#ddlSpeed').val()));
     $('#btnPre').show();
     $('#btnReset').hide();
