@@ -220,7 +220,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "</tr>";
       for (let i = 0; i < this.markerExportList.length; i++) {
         htmlString += "<tr>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += this.markerExportList[i]["Zone"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";

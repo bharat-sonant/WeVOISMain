@@ -645,7 +645,7 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "</tr>";
         for (let i = 0; i < this.cardHousesList.length; i++) {
           htmlString += "<tr>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["zoneNo"];
           htmlString += "</td>";
           htmlString += "<td>";
