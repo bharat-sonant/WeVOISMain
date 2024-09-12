@@ -144,6 +144,7 @@ import { SecondaryCollectionServiceComponent } from '../../secondary-collection-
 import { SecondaryCollectionManageComponent } from '../../secondary-collection-manage/secondary-collection-manage.component';
 import { EntityModificationComponent } from '../../entity-modification/entity-modification.component';
 import { PaymentCollectorTrackingComponent } from '../../reports/payment-collector-tracking/payment-collector-tracking.component';
+import { ErrorPageComponent } from '../../error-page/error-page.component';
 
 
 
@@ -181,6 +182,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Sikar
     { path: 'sikar/home', component: HomeComponent },
+    { path: 'sikar/something-wrong', component: ErrorPageComponent },
     { path: 'sikar/account-detail', component: AccountDetailComponent },
     { path: 'sikar/change-password', component: ChangePasswordComponent },
     { path: 'sikar/dashboard', component: DashboardComponent },
@@ -410,6 +412,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //jaipur-greater
     { path: 'jaipur-greater/home', component: HomeComponent },
+    { path: 'jaipur-greater/something-wrong', component: ErrorPageComponent },
     { path: 'jaipur-greater/dashboard', component: DashboardComponent },
     { path: 'jaipur-greater/notifications', component: NotificationsComponent },
     { path: 'jaipur-greater/ward-report', component: WardMonitoringComponent },
@@ -674,6 +677,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //reengus
     { path: 'reengus/home', component: HomeComponent },
+    { path: 'reengus/something-wrong', component: ErrorPageComponent },
     { path: 'reengus/dashboard', component: DashboardComponent },
     { path: 'reengus/notifications', component: NotificationsComponent },
     { path: 'reengus/ward-report', component: WardMonitoringComponent },
@@ -927,6 +931,7 @@ export const AdminLayoutRoutes: Routes = [
     //Shahpura
     //test
     { path: 'test/home', component: HomeComponent },
+    { path: 'test/something-wrong', component: ErrorPageComponent },
     { path: 'test/dashboard', component: DashboardComponent },
     { path: 'test/notifications', component: NotificationsComponent },
     { path: 'test/ward-report', component: WardMonitoringComponent },
@@ -1180,6 +1185,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //jaipur-office
     { path: 'jaipur-office/home', component: HomeComponent },
+    { path: 'jaipur-office/something-wrong', component: ErrorPageComponent },
     { path: 'jaipur-office/dashboard', component: DashboardComponent },
     { path: 'jaipur-office/notifications', component: NotificationsComponent },
     { path: 'jaipur-office/ward-report', component: WardMonitoringComponent },
@@ -1430,6 +1436,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //kishangarh
     { path: 'kishangarh/home', component: HomeComponent },
+    { path: 'kishangarh/something-wrong', component: ErrorPageComponent },
     { path: 'kishangarh/dashboard', component: DashboardComponent },
     { path: 'kishangarh/notifications', component: NotificationsComponent },
     { path: 'kishangarh/ward-report', component: WardMonitoringComponent },
@@ -1678,6 +1685,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Nawai
     { path: 'niwai/home', component: HomeComponent },
+    { path: 'niwai/something-wrong', component: ErrorPageComponent },
     { path: 'niwai/dashboard', component: DashboardComponent },
     { path: 'niwai/notifications', component: NotificationsComponent },
     { path: 'niwai/ward-report', component: WardMonitoringComponent },
@@ -1925,6 +1933,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'niwai/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //Jaisalmer
     { path: 'jaisalmer/home', component: HomeComponent },
+    { path: 'jaisalmer/something-wrong', component: ErrorPageComponent },
     { path: 'jaisalmer/dashboard', component: DashboardComponent },
     { path: 'jaisalmer/notifications', component: NotificationsComponent },
     { path: 'jaisalmer/ward-report', component: WardMonitoringComponent },
@@ -2173,6 +2182,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Salasar
     { path: 'salasar/home', component: HomeComponent },
+    { path: 'salasar/something-wrong', component: ErrorPageComponent },
     { path: 'salasar/dashboard', component: DashboardComponent },
     { path: 'salasar/notifications', component: NotificationsComponent },
     { path: 'salasar/ward-report', component: WardMonitoringComponent },
@@ -2421,6 +2431,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Behror
     { path: 'behror/home', component: HomeComponent },
+    { path: 'behror/something-wrong', component: ErrorPageComponent },
     { path: 'behror/dashboard', component: DashboardComponent },
     { path: 'behror/notifications', component: NotificationsComponent },
     { path: 'behror/ward-report', component: WardMonitoringComponent },
@@ -2668,6 +2679,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'behror/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     //jaipur
     { path: 'jaipur/home', component: HomeComponent },
+    { path: 'jaipur/something-wrong', component: ErrorPageComponent },
     { path: 'jaipur/account-detail', component: AccountDetailComponent },
     { path: 'jaipur/change-password', component: ChangePasswordComponent },
     { path: 'jaipur/dashboard', component: DashboardComponent },
@@ -3411,6 +3423,7 @@ export const AdminLayoutRoutes: Routes = [
 */
     //jaipur-malviyanagar
     { path: 'jaipur-malviyanagar/home', component: HomeComponent },
+    { path: 'jaipur-malviyanagar/something-wrong', component: ErrorPageComponent },
     { path: 'jaipur-malviyanagar/account-detail', component: AccountDetailComponent },
     { path: 'jaipur-malviyanagar/change-password', component: ChangePasswordComponent },
     { path: 'jaipur-malviyanagar/dashboard', component: DashboardComponent },
@@ -3907,6 +3920,7 @@ export const AdminLayoutRoutes: Routes = [
      */
     //jaipur-murlipura
     { path: 'jaipur-murlipura/home', component: HomeComponent },
+    { path: 'jaipur-murlipura/something-wrong', component: ErrorPageComponent },
     { path: 'jaipur-murlipura/account-detail', component: AccountDetailComponent },
     { path: 'jaipur-murlipura/change-password', component: ChangePasswordComponent },
     { path: 'jaipur-murlipura/dashboard', component: DashboardComponent },
@@ -4651,6 +4665,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Bhiwadi
     { path: 'bhiwadi/home', component: HomeComponent },
+    { path: 'bhiwadi/something-wrong', component: ErrorPageComponent },
     { path: 'bhiwadi/account-detail', component: AccountDetailComponent },
     { path: 'bhiwadi/change-password', component: ChangePasswordComponent },
     { path: 'bhiwadi/dashboard', component: DashboardComponent },
@@ -4898,6 +4913,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Chhapar
     { path: 'chhapar/home', component: HomeComponent },
+    { path: 'chhapar/something-wrong', component: ErrorPageComponent },
     { path: 'chhapar/account-detail', component: AccountDetailComponent },
     { path: 'chhapar/change-password', component: ChangePasswordComponent },
     { path: 'chhapar/dashboard', component: DashboardComponent },
@@ -5145,6 +5161,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Churu
     { path: 'churu/home', component: HomeComponent },
+    { path: 'churu/something-wrong', component: ErrorPageComponent },
     { path: 'churu/account-detail', component: AccountDetailComponent },
     { path: 'churu/change-password', component: ChangePasswordComponent },
     { path: 'churu/dashboard', component: DashboardComponent },
@@ -5392,6 +5409,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //wevois-others
     { path: 'wevois-others/home', component: HomeComponent },
+    { path: 'wevois-others/something-wrong', component: ErrorPageComponent },
     { path: 'wevois-others/dashboard', component: DashboardComponent },
     { path: 'wevois-others/notifications', component: NotificationsComponent },
     { path: 'wevois-others/ward-report', component: WardMonitoringComponent },
@@ -5640,6 +5658,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //gwalior
     { path: 'gwalior/home', component: HomeComponent },
+    { path: 'gwalior/something-wrong', component: ErrorPageComponent },
     { path: 'gwalior/dashboard', component: DashboardComponent },
     { path: 'gwalior/notifications', component: NotificationsComponent },
     { path: 'gwalior/ward-report', component: WardMonitoringComponent },
@@ -5890,6 +5909,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Tonk
     { path: 'tonk/home', component: HomeComponent },
+    { path: 'tonk/something-wrong', component: ErrorPageComponent },
     { path: 'tonk/account-detail', component: AccountDetailComponent },
     { path: 'tonk/change-password', component: ChangePasswordComponent },
     { path: 'tonk/dashboard', component: DashboardComponent },
@@ -6138,6 +6158,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Ratangarh
     { path: 'ratangarh/home', component: HomeComponent },
+    { path: 'ratangarh/something-wrong', component: ErrorPageComponent },
     { path: 'ratangarh/account-detail', component: AccountDetailComponent },
     { path: 'ratangarh/change-password', component: ChangePasswordComponent },
     { path: 'ratangarh/dashboard', component: DashboardComponent },
@@ -6385,6 +6406,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Nokha
     { path: 'nokha/home', component: HomeComponent },
+    { path: 'nokha/something-wrong', component: ErrorPageComponent },
     { path: 'nokha/account-detail', component: AccountDetailComponent },
     { path: 'nokha/change-password', component: ChangePasswordComponent },
     { path: 'nokha/dashboard', component: DashboardComponent },
@@ -6632,6 +6654,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Losal
     { path: 'losal/home', component: HomeComponent },
+    { path: 'losal/something-wrong', component: ErrorPageComponent },
     { path: 'losal/account-detail', component: AccountDetailComponent },
     { path: 'losal/change-password', component: ChangePasswordComponent },
     { path: 'losal/dashboard', component: DashboardComponent },
@@ -6880,6 +6903,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //Jaipur Test
     { path: 'jaipur-test/home', component: HomeComponent },
+    { path: 'jaipur-test/something-wrong', component: ErrorPageComponent },
     { path: 'jaipur-test/account-detail', component: AccountDetailComponent },
     { path: 'jaipur-test/change-password', component: ChangePasswordComponent },
     { path: 'jaipur-test/dashboard', component: DashboardComponent },
@@ -7129,6 +7153,7 @@ export const AdminLayoutRoutes: Routes = [
 
     //MNZ-Test
     { path: 'mnz-test/home', component: HomeComponent },
+    { path: 'mnz-test/something-wrong', component: ErrorPageComponent },
     { path: 'mnz-test/account-detail', component: AccountDetailComponent },
     { path: 'mnz-test/change-password', component: ChangePasswordComponent },
     { path: 'mnz-test/dashboard', component: DashboardComponent },
@@ -7378,6 +7403,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //MPZ-Test
     { path: 'mpz-test/home', component: HomeComponent },
+    { path: 'mpz-test/something-wrong', component: ErrorPageComponent },
     { path: 'mpz-test/account-detail', component: AccountDetailComponent },
     { path: 'mpz-test/change-password', component: ChangePasswordComponent },
     { path: 'mpz-test/dashboard', component: DashboardComponent },
@@ -7627,6 +7653,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //Jammu-Survey
     { path: 'jammu-survey/home', component: HomeComponent },
+    { path: 'jammu-survey/something-wrong', component: ErrorPageComponent },
     { path: 'jammu-survey/account-detail', component: AccountDetailComponent },
     { path: 'jammu-survey/change-password', component: ChangePasswordComponent },
     { path: 'jammu-survey/dashboard', component: DashboardComponent },
@@ -7874,6 +7901,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //Khandela
     { path: 'khandela/home', component: HomeComponent },
+    { path: 'khandela/something-wrong', component: ErrorPageComponent },
     { path: 'khandela/account-detail', component: AccountDetailComponent },
     { path: 'khandela/change-password', component: ChangePasswordComponent },
     { path: 'khandela/dashboard', component: DashboardComponent },
@@ -8121,6 +8149,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //watteye-office
     { path: 'watteye-office/home', component: HomeComponent },
+    { path: 'watteye-office/something-wrong', component: ErrorPageComponent },
     { path: 'watteye-office/account-detail', component: AccountDetailComponent },
     { path: 'watteye-office/change-password', component: ChangePasswordComponent },
     { path: 'watteye-office/dashboard', component: DashboardComponent },
@@ -8369,6 +8398,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //dehradun
     { path: 'dehradun/home', component: HomeComponent },
+    { path: 'dehradun/something-wrong', component: ErrorPageComponent },
     { path: 'dehradun/account-detail', component: AccountDetailComponent },
     { path: 'dehradun/change-password', component: ChangePasswordComponent },
     { path: 'dehradun/dashboard', component: DashboardComponent },
@@ -8620,6 +8650,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //pali
     { path: 'pali/home', component: HomeComponent },
+    { path: 'pali/something-wrong', component: ErrorPageComponent },
     { path: 'pali/account-detail', component: AccountDetailComponent },
     { path: 'pali/change-password', component: ChangePasswordComponent },
     { path: 'pali/dashboard', component: DashboardComponent },
@@ -8869,6 +8900,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //phulwari-sharif
     { path: 'phulwari-sharif/home', component: HomeComponent },
+    { path: 'phulwari-sharif/something-wrong', component: ErrorPageComponent },
     { path: 'phulwari-sharif/account-detail', component: AccountDetailComponent },
     { path: 'phulwari-sharif/change-password', component: ChangePasswordComponent },
     { path: 'phulwari-sharif/dashboard', component: DashboardComponent },
@@ -9117,6 +9149,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //sujangarh
     { path: 'sujangarh/home', component: HomeComponent },
+    { path: 'sujangarh/something-wrong', component: ErrorPageComponent },
     { path: 'sujangarh/account-detail', component: AccountDetailComponent },
     { path: 'sujangarh/change-password', component: ChangePasswordComponent },
     { path: 'sujangarh/dashboard', component: DashboardComponent },
@@ -9365,6 +9398,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //noida
     { path: 'noida/home', component: HomeComponent },
+    { path: 'noida/something-wrong', component: ErrorPageComponent },
     { path: 'noida/account-detail', component: AccountDetailComponent },
     { path: 'noida/change-password', component: ChangePasswordComponent },
     { path: 'noida/dashboard', component: DashboardComponent },
@@ -9613,6 +9647,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //sikar-survey
     { path: 'sikar-survey/home', component: HomeComponent },
+    { path: 'sikar-survey/something-wrong', component: ErrorPageComponent },
     { path: 'sikar-survey/account-detail', component: AccountDetailComponent },
     { path: 'sikar-survey/change-password', component: ChangePasswordComponent },
     { path: 'sikar-survey/dashboard', component: DashboardComponent },
@@ -9861,6 +9896,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //jodhpur
     { path: 'jodhpur/home', component: HomeComponent },
+    { path: 'jodhpur/something-wrong', component: ErrorPageComponent },
     { path: 'jodhpur/account-detail', component: AccountDetailComponent },
     { path: 'jodhpur/change-password', component: ChangePasswordComponent },
     { path: 'jodhpur/dashboard', component: DashboardComponent },
@@ -10110,6 +10146,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //kuchaman
     { path: 'kuchaman/home', component: HomeComponent },
+    { path: 'kuchaman/something-wrong', component: ErrorPageComponent },
     { path: 'kuchaman/account-detail', component: AccountDetailComponent },
     { path: 'kuchaman/change-password', component: ChangePasswordComponent },
     { path: 'kuchaman/dashboard', component: DashboardComponent },
@@ -10358,6 +10395,7 @@ export const AdminLayoutRoutes: Routes = [
     
     //Manesar
     { path: 'manesar/home', component: HomeComponent },
+    { path: 'manesar/something-wrong', component: ErrorPageComponent },
     { path: 'manesar/account-detail', component: AccountDetailComponent },
     { path: 'manesar/change-password', component: ChangePasswordComponent },
     { path: 'manesar/dashboard', component: DashboardComponent },
