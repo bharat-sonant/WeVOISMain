@@ -1057,16 +1057,16 @@ export class CommonService {
                 disabledBy = dustbin[index]["disabledBy"];
               }
               dustbinList.push({
-                zone: dustbin[index]["zone"],
+                zone: dustbin[index]["zone"].toString().trim(),
                 dustbin: keyArrray[i],
-                address: dustbin[index]["address"],
-                type: dustbin[index]["type"],
+                address: dustbin[index]["address"].toString().trim(),
+                type: dustbin[index]["type"].toString().trim(),
                 pickFrequency: pickFrequency,
-                lat: dustbin[index]["lat"],
-                lng: dustbin[index]["lng"],
+                lat: dustbin[index]["lat"].toString().trim(),
+                lng: dustbin[index]["lng"].toString().trim(),
                 isAssigned: dustbin[index]["isAssigned"],
                 spelledRight: dustbin[index]["spelledRight"],
-                ward: dustbin[index]["ward"],
+                ward: dustbin[index]["ward"].toString().trim(),
                 isDisabled: isDisabled,
                 isBroken: isBroken,
                 disabledBy: disabledBy

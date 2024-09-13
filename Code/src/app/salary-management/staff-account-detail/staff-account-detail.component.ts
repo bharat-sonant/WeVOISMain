@@ -437,7 +437,7 @@ export class StaffAccountDetailComponent implements OnInit {
 
   updateJSONForNewEmployees(lastEmpId: any) {
 
-    const promises=[];
+    const promises = [];
     for (let i = 1; i <= lastEmpId; i++) {
       promises.push(Promise.resolve(this.getEmployeeDetail(i)));
     }
@@ -445,11 +445,11 @@ export class StaffAccountDetailComponent implements OnInit {
     Promise.all(promises).then((results) => {
       let merged = [];
       for (let i = 0; i < results.length; i++) {
-        if(results[i]["status"]=="success"){
-        merged = merged.concat(results[i]["data"]);
+        if (results[i]["status"] == "success") {
+          merged = merged.concat(results[i]["data"]);
         }
       }
-      this.allAccountList=merged;
+      this.allAccountList = merged;
       this.getRoles();
       this.filterData();
       this.saveJSONData();
@@ -518,7 +518,7 @@ export class StaffAccountDetailComponent implements OnInit {
                   }
                 }
               }
-              employeeData={ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType };
+              employeeData = { empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType };
               resolve({ status: "success", data: employeeData });
             }
             else {
@@ -532,6 +532,73 @@ export class StaffAccountDetailComponent implements OnInit {
       );
 
     });
+  }
+
+  exportToExcel() {
+    if (this.accountList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Emp Code";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Role";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Account Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "IFSC";
+      htmlString += "</td>";
+      /*
+      htmlString += "<td>";
+      htmlString += "Last Modified Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Modified By";
+      htmlString += "</td>";
+      */
+      htmlString += "</tr>";
+      if (this.accountList.length > 0) {
+        for (let i = 0; i < this.accountList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td>";
+          htmlString += this.accountList[i]["empCode"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.accountList[i]["name"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.accountList[i]["designation"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.accountList[i]["accountNo"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.accountList[i]["ifsc"];
+          htmlString += "</td>";
+          /*
+          htmlString += "<td>";
+          htmlString += this.accountList[i]["modifyDate"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.accountList[i]["modifyBy"];
+          htmlString += "</td>";
+          */
+          htmlString += "</tr>";
+        }
+      }
+      htmlString += "</table>";
+      let fileName = this.commonService.getFireStoreCity() + "-Staff-Account-Detail.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+
+
+    }
+
   }
 }
 

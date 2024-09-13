@@ -114,7 +114,6 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
   setDefaultValues() {
     this.selectedDate = this.commonService.setTodayDate();
-    this.selectedDate = "2024-07-10";
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );

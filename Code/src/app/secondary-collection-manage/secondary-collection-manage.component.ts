@@ -46,7 +46,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
       if (zones != null) {
         let list = zones.toString().split(',');
         for (let i = 0; i < list.length; i++) {
-          this.zoneList.push({ zoneNo: list[i], zone: "Zone " + list[i] });
+          this.zoneList.push({ zoneNo: list[i].toString().trim(), zone: "Zone " + list[i].toString().trim() });
         }
         this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
         this.selectedZone = this.zoneList[0]["zoneNo"];
