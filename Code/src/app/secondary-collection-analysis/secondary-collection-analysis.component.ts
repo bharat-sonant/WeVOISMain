@@ -758,15 +758,13 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   }
 
   saveOfflineDustbinDetail() {
-    let pickTime = $("#txtPickTime").val();
+    let startTime = $("#txtPickTime").val();
+    let endTime=$("#txtPickTimeEnd").val();
     let fileUploadBefore = <HTMLInputElement>document.getElementById("fileUploadBefore");
     let file = fileUploadBefore.files[0];
     let fileUploadAfter = <HTMLInputElement>document.getElementById("fileUploadAfter");
     let file1 = fileUploadAfter.files[0];
-    if (pickTime == "") {
-      this.commonService.setAlertMessage("error", "Please enter pick time.");
-      return;
-    }
+    
     if (file == null) {
       this.commonService.setAlertMessage("error", "Please upload before pick image.");
       return;
@@ -775,15 +773,29 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please upload after pick image.");
       return;
     }
+    if (startTime == "") {
+      this.commonService.setAlertMessage("error", "Please enter start time.");
+      return;
+    }
+    if (endTime == "") {
+      this.commonService.setAlertMessage("error", "Please enter end time.");
+      return;
+    }
+
+    if(new Date(this.selectedDate+" "+endTime)<new Date(this.selectedDate+" "+startTime)){
+      this.commonService.setAlertMessage("error", "End time must be greater then start time.");
+      return;
+    }
 
     $("#divLoader").show();
-    let storageCityName = this.commonService.getFireStoreCity();
+     let storageCityName = this.commonService.getFireStoreCity();
     let filledFarFromImageUrl = "";
     let emptyFarFromImageUrl = "";
     let imageObj;
     let urlObj = {};
     let token = new Date().getTime();
-
+    let duration =(new Date(this.selectedDate+" "+endTime).getTime()-new Date(this.selectedDate+" "+startTime).getTime())/60000;
+   
     if (file != null) {
       filledFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FfilledFarFromImage.jpg?alt=media&token=" + token + "";
       urlObj["filledFarFromImageUrl"] = filledFarFromImageUrl;
@@ -824,13 +836,13 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     const data = {
       Image: imageObj ? imageObj : null,
       address: this.binDetail.address,
-      pickDateTime: this.selectedDate + " " + pickTime,
-      duration: 0,
+      pickDateTime: this.selectedDate + " " + endTime,
+      duration: duration,
       pickedBy: pickedBy,
       latLng: latLng,
       zone: zone,
-      endTime: this.selectedDate + " " + pickTime,
-      startTime: this.selectedDate + " " + pickTime,
+      endTime: this.selectedDate + " " + endTime,
+      startTime: this.selectedDate + " " + startTime,
       isOffline: 1
     }
 
@@ -838,23 +850,24 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.db.object(dbPath).update(data);
     this.updatePickedOpenDepotInPlan(this.planDetail.planId,this.binDetail.binId);
     setTimeout(() => {
-      this.binDetail.startTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + pickTime);
-      this.binDetail.endTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + pickTime);
+      this.binDetail.startTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + startTime);
+      this.binDetail.endTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + endTime);
       this.binDetail.filledFarFromImageUrl = filledFarFromImageUrl;
       this.binDetail.emptyFarFromImageUrl = emptyFarFromImageUrl;
       this.binDetail.isOffline = 1;
 
       let data = this.dustbinList.find((item) => item.dustbinId == this.binDetail.binId);
-      data.startTime = this.selectedDate + " " + pickTime;
-      data.endTime = this.selectedDate + " " + pickTime;
+      data.startTime = this.selectedDate + " " + startTime;
+      data.endTime = this.selectedDate + " " + endTime;
       data.filledFarFromImage = this.binDetail.filledFarFromImageUrl;
       data.emptyFarFromImage = this.binDetail.emptyFarFromImageUrl;
       data.iconClass = "fas warning";
       data.isPicked = "1";
       data.isOffline = 1;
       data.divClass = "address";
-      data.duration = "0" + "  min <img src='../../../assets/img/clock-icon.png'>";
+      data.duration = duration + "  min <img src='../../../assets/img/clock-icon.png'>";
       $("#txtPickTime").val("");
+      $("#txtPickTimeEnd").val("");
       $("#fileUploadBefore").val("");
       $("#fileUploadAfter").val("");
       this.commonService.setAlertMessage("success", "Open depot pick detail updated successfully.");
