@@ -137,19 +137,30 @@ export class ScanCardManipulationComponent implements OnInit {
       );
     }
     else {
-      this.commonService.getWardLine(this.selectedZone, dateFrom).then((linesData: any) => {
+      this.saveTotalScanCounts(dateFrom,dateTo);
+    }
+  }
+
+  saveTotalScanCounts(date:any,endDate:any,){
+    if (new Date(date) > new Date(endDate)) {
+      setTimeout(() => {
+        this.commonService.setAlertMessage("success", "Scan card manipulation done successfully!!!");
+      }, 2000);
+    }
+    else{
+      this.commonService.getWardLine(this.selectedZone, date).then((linesData: any) => {
         let wardLinesDataObj = JSON.parse(linesData);
         let totalHouses = Number(wardLinesDataObj["totalHouseCount"]);
         let scanCounts = ((totalHouses * Number(this.percentage)) / 100).toFixed(0);
-        let year = dateFrom.toString().split('-')[0];
-        let monthName = this.commonService.getCurrentMonthName(Number(dateFrom.toString().split("-")[1]) - 1);
-        let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + dateFrom + "/";
+        let year = date.toString().split('-')[0];
+        let monthName = this.commonService.getCurrentMonthName(Number(date.toString().split("-")[1]) - 1);
+        let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date + "/";
         
         this.db.object(dbPath).update({ totalScanned: scanCounts });
-        $(this.divLoader).hide();
+        date = this.commonService.getNextDate(date, 1);
+        this.saveTotalScanCounts(date,endDate);
 
       });
-
     }
   }
 
