@@ -129,8 +129,8 @@ export class CardTransectionDetailComponent implements OnInit {
                     if(dateData[key]["retrievalReferenceNo"]!=null){
                       referId=dateData[key]["retrievalReferenceNo"];
                     }
-                    else if (dateData[key]["TransactionLogId"]!=null){
-                      referId=dateData[key]["TransactionLogId"];
+                    else if (dateData[key]["RRN"]!=null){
+                      referId=dateData[key]["RRN"];
                     }
                     if(dateData[key]["payMethod"]!=null){
                       payMethod=dateData[key]["payMethod"];
@@ -191,8 +191,8 @@ export class CardTransectionDetailComponent implements OnInit {
                     if(dateData[key]["retrievalReferenceNo"]!=null){
                       referId=dateData[key]["retrievalReferenceNo"];
                     }
-                    else if (dateData[key]["TransactionLogId"]!=null){
-                      referId=dateData[key]["TransactionLogId"];
+                    else if (dateData[key]["RRN"]!=null){
+                      referId=dateData[key]["RRN"];
                     }
                     if(dateData[key]["payMethod"]!=null){
                       payMethod=dateData[key]["payMethod"];
