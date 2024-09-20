@@ -124,9 +124,23 @@ export class CardTransectionDetailComponent implements OnInit {
                   let keyArray = Object.keys(dateData);
                   for (let l = 0; l < keyArray.length; l++) {
                     let key = keyArray[l];
+                    let referId="";
+                    let payMethod="";
+                    if(dateData[key]["retrievalReferenceNo"]!=null){
+                      referId=dateData[key]["retrievalReferenceNo"];
+                    }
+                    else if (dateData[key]["TransactionLogId"]!=null){
+                      referId=dateData[key]["TransactionLogId"];
+                    }
+                    if(dateData[key]["payMethod"]!=null){
+                      payMethod=dateData[key]["payMethod"];
+                    }
+                    else if (dateData[key]["PaymentMode"]!=null){
+                      payMethod=dateData[key]["PaymentMode"];
+                    }
                     amount = amount + Number(dateData[key]["transactionAmount"]);
                     let timestemp = new Date(date).getTime();
-                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: dateData[key]["retrievalReferenceNo"], payMethod: dateData[key]["payMethod"], collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
+                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
                     this.transactionList = this.transactionList.sort((a, b) =>
                       b.timestemp < a.timestemp ? 1 : -1
                     );
@@ -172,9 +186,24 @@ export class CardTransectionDetailComponent implements OnInit {
                   let keyArray = Object.keys(dateData);
                   for (let l = 0; l < keyArray.length; l++) {
                     let key = keyArray[l];
+                    let referId="";
+                    let payMethod="";
+                    if(dateData[key]["retrievalReferenceNo"]!=null){
+                      referId=dateData[key]["retrievalReferenceNo"];
+                    }
+                    else if (dateData[key]["TransactionLogId"]!=null){
+                      referId=dateData[key]["TransactionLogId"];
+                    }
+                    if(dateData[key]["payMethod"]!=null){
+                      payMethod=dateData[key]["payMethod"];
+                    }
+                    else if (dateData[key]["PaymentMode"]!=null){
+                      payMethod=dateData[key]["PaymentMode"];
+                    }
                     amount = amount + Number(dateData[key]["transactionAmount"]);
+
                     let timestemp = new Date(date).getTime();
-                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: dateData[key]["retrievalReferenceNo"], payMethod: dateData[key]["payMethod"], collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
+                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
                     this.transactionList = this.transactionList.sort((a, b) =>
                       b.timestemp < a.timestemp ? 1 : -1
                     );
