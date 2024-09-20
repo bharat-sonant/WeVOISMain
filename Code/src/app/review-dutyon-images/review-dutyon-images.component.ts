@@ -266,9 +266,6 @@ export class ReviewDutyonImagesComponent implements OnInit {
               }
               if (summaryData["dutyOutImage"] != null) {
                 let list = summaryData["dutyOutImage"].split(',');
-                console.log(zoneNo);
-                console.log(dutyOnImages);
-                console.log(list)
                 for (let i = 0; i < list.length; i++) {
                   let imageName=list[i].toString().trim();
                   let imageUrl=this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
