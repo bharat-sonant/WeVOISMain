@@ -119,28 +119,102 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
   }
 
+  getEmployeeDetail(empId: any) {
+    return new Promise((resolve) => {
+      let employeeData = {};
+      let dbPath = "Employees/" + empId + "/GeneralDetails";
+      let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+        employeeDetail => {
+          employeeDetailInstance.unsubscribe();
+          if (employeeDetail) {
+            if (employeeDetail.designationId == "5" || employeeDetail.designationId == "6") {
+              resolve({ status: "fail", data: employeeData });
+            }
+            else {
+              if (localStorage.getItem("roleId") == "10" || localStorage.getItem("roleId") == "17") {
+                employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status };
+                resolve({ status: "success", data: employeeData });
+              }
+              else {
+                if (employeeDetail.attendanceApprover) {
+                  if (employeeDetail.attendanceApprover == localStorage.getItem("userID")) {
+                    employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status };
+                    resolve({ status: "success", data: employeeData });
+                  }
+                  else {
+                    resolve({ status: "fail", data: employeeData });
+                  }
+                }
+                else {
+                  resolve({ status: "fail", data: employeeData });
+                }
+
+              }
+            }
+          }
+          else {
+            resolve({ status: "fail", data: employeeData });
+          }
+        });
+    });
+  }
+
   getEmployees() {
     $(this.divLoader).show();
     this.allEmployeeList = [];
     this.employeeList = [];
-    const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployees.json?alt=media";
-    let accountInstance = this.httpService.get(path).subscribe(data => {
-      accountInstance.unsubscribe();
-      if (data != null) {
-        let keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let empId = keyArray[i];
-            if (data[empId]["GeneralDetails"]["empType"] == 1) {
-              this.allEmployeeList.push({ empId: empId.toString(), empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], status: data[empId]["GeneralDetails"]["status"], empType: data[empId]["GeneralDetails"]["empType"] });
+
+    let lastEmpIdInstance = this.db.object("Employees/lastEmpId").valueChanges().subscribe(lastKeyData => {
+      lastEmpIdInstance.unsubscribe();
+      if (lastKeyData != null) {
+        let lastEmpId = Number(lastKeyData);
+        const promises = [];
+        for (let i = 1; i <= lastEmpId; i++) {
+          promises.push(Promise.resolve(this.getEmployeeDetail(i)));
+        }
+        Promise.all(promises).then((results) => {
+          let merged = [];
+          for (let i = 0; i < results.length; i++) {
+            if (results[i]["status"] == "success") {
+              merged = merged.concat(results[i]["data"]);
             }
           }
-        }
-        this.allEmployeeList = this.commonService.transformNumeric(this.allEmployeeList, "name"); this.getFilterEmployee();
-        this.getAttendance();
+          if (merged.length > 0) {
+            this.allEmployeeList = merged;
+            this.allEmployeeList = this.commonService.transformNumeric(this.allEmployeeList, "name");
+            this.getFilterEmployee();
+            this.getAttendance();
+          }
+          else {
+            $(this.divLoader).hide();
+          }
+        });
       }
-    }, error => {
-    });
+    })
+
+
+
+
+    /*
+        const path = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FEmployees.json?alt=media";
+        let accountInstance = this.httpService.get(path).subscribe(data => {
+          accountInstance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let empId = keyArray[i];
+                if (data[empId]["GeneralDetails"]["empType"] == 1) {
+                  this.allEmployeeList.push({ empId: empId.toString(), empCode: data[empId]["GeneralDetails"]["empCode"], name: data[empId]["GeneralDetails"]["name"], designationId: data[empId]["GeneralDetails"]["designationId"], designation: data[empId]["GeneralDetails"]["designation"], status: data[empId]["GeneralDetails"]["status"], empType: data[empId]["GeneralDetails"]["empType"] });
+                }
+              }
+            }
+            this.allEmployeeList = this.commonService.transformNumeric(this.allEmployeeList, "name"); this.getFilterEmployee();
+            this.getAttendance();
+          }
+        }, error => {
+        });
+        */
   }
 
   getFilterEmployee() {
