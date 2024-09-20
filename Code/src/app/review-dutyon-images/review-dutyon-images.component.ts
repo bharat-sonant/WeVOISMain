@@ -268,23 +268,34 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 let list = summaryData["dutyOutImage"].split(',');
                 console.log(zoneNo);
                 console.log(dutyOnImages);
+                console.log(list)
                 for (let i = 0; i < list.length; i++) {
                   let imageName=list[i].toString().trim();
                   let imageUrl=this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
                   if(imageName.includes("1")){
+                    if(dutyOnImages.length>0){
                     dutyOnImages[0]["imageDutyOffUrl"]=imageUrl;
+                    }
                   }
                   else if(imageName.includes("2")){
+                    if(dutyOnImages.length>1){
                     dutyOnImages[1]["imageDutyOffUrl"]=imageUrl;
+                    }
                   }
                   else if(imageName.includes("3")){
+                    if(dutyOnImages.length>2){
                     dutyOnImages[2]["imageDutyOffUrl"]=imageUrl;
+                    }
                   }
                   else if(imageName.includes("4")){
+                    if(dutyOnImages.length>3){
                     dutyOnImages[3]["imageDutyOffUrl"]=imageUrl;
+                    }
                   }
                   else if(imageName.includes("5")){
+                    if(dutyOnImages.length>4){
                     dutyOnImages[4]["imageDutyOffUrl"]=imageUrl;
+                    }
                   }
                 }
               }  
