@@ -141,8 +141,8 @@ export class ScanCardManipulationComponent implements OnInit {
     }
   }
 
-  saveTotalScanCounts(date:any,endDate:any,){
-    if (new Date(date) > new Date(endDate)) {
+  saveTotalScanCounts(date:any,endDate:any){
+    if (new Date(date) > new Date(endDate) || new Date(date) > new Date(this.commonService.setTodayDate())) {
       setTimeout(() => {
         this.commonService.setAlertMessage("success", "Scan card manipulation done successfully!!!");
       }, 2000);
