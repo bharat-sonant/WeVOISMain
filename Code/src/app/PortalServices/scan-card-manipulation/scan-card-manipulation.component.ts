@@ -165,7 +165,7 @@ export class ScanCardManipulationComponent implements OnInit {
   }
 
   saveScanCardManipulation(date: any, endDate: any, wardHouses: any, wardTotalLines: any) {
-    if (new Date(date) > new Date(endDate)) {
+    if (new Date(date) > new Date(endDate) || new Date(date) > new Date(this.commonService.setTodayDate())) {
       setTimeout(() => {
         this.updateTotalScaned($("#txtDateFrom").val(), $("#txtDateTo").val(), wardHouses);
       }, 2000);
