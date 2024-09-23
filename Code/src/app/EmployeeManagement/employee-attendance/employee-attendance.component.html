@@ -49,18 +49,25 @@
                                         <option value="0">
                                             All
                                         </option>
-                                        <option value="08:10">
-                                            After 8:10
-                                        </option>
                                         <option value="08:30">
                                             After 8:30
                                         </option>
-
-
+                                        <option value="09:00">
+                                            After 9:00
+                                        </option>
                                     </select>
 
-                                    <input type="checkbox" id="chkFieldExecutive" (change)="filterData()"
-                                        style="margin-left: 10px;"> &nbsp;Field Executive
+                                    <select id="ddlAttendanceManager" class="filter-select filter-input" (change)="filterData()"
+                                        style="width:200px ; display:none">
+                                        <option value="0">
+                                            --All Manager--
+                                        </option>
+                                        <option value="{{dt.userId}}" *ngFor="let dt of attendanceManagerList;">
+                                            {{dt.name}}
+                                        </option>
+                                    </select>
+
+
 
                                         <input id="chkNotApproved" type="checkbox" (change)="filterData()"
                                         style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b> ({{notApprovedCount}})</b>
@@ -112,11 +119,11 @@
                                                 Hrs
                                             </th>
 
-                                            <th class="text-left br-1 table-heading1 col-w">
-                                                In Location
+                                            <th class="text-left br-1 table-heading1 ">
+                                                In-Out Location
                                             </th>
-                                            <th class="text-left br-1 table-heading1 col-w">
-                                                Out Location
+                                            <th class="text-left br-1 table-heading1 " [hidden]="filterType=='byEmployee'">
+                                               Attendance Manager
                                             </th>
                                             <th class="text-left br-1 table-heading1">
                                                 Status
@@ -145,21 +152,22 @@
                                                 <td class="text-left br-1" class="{{data.cssWorkingClass}}" style=" width:10%!important;">
                                                     {{data.workingHour}}
                                                 </td>
-                                                <td class="text-left br-1" style=" width:20%!important;">
-                                                   <span> {{data.inLocation}}</span>
+                                                <td class="text-left br-1" style=" width:25%!important;">
+                                                   <span><b>In : </b> {{data.inLocation}} </span><br/>
+                                                   <span><b>Out : </b> {{data.outLocation}}</span>
                                                    <i class="fa-solid fa-map-location-dot"
                                                    style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                    (click)="openLocation(contentLocation,i,'single')"></i>
                                                 </td>
-                                                <td class="text-left br-1" style=" width:20%!important;">
-                                                    {{data.outLocation}}
+                                                <td class="text-left br-1" style=" width:15%!important;"  [hidden]="filterType=='byEmployee'">
+                                                   {{data.attendanceManager}}
                                                 </td>
                                                 <td class="text-left br-1"
                                                 style=" width:10%!important;">
                                                     <span> {{data.status}}</span>
                                                     <i class="fa-solid fa-person-circle-check"
                                                         style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
-                                                        [hidden]="isAttendanceApprover=='0'"
+                                                        [hidden]="data.isAttendanceApprover=='0'"
                                                         (click)="openApprovePopup(contentApprove,i,data.approverStatus);"></i>
                                                 </td>
                                                 <td class="text-left br-1" [hidden]="isAttendanceApprover=='0'" style=" width:12%!important">
