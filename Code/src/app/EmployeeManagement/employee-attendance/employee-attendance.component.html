@@ -154,7 +154,7 @@
                                                 </td>
                                                 <td class="text-left br-1" style=" width:25%!important;">
                                                    <span><b>In : </b> {{data.inLocation}} </span><br/>
-                                                   <span><b>Out : </b> {{data.outLocation}}</span>
+                                                   <span [hidden]="data.outLocation==''"><b>Out : </b> {{data.outLocation}}</span>
                                                    <i class="fa-solid fa-map-location-dot"
                                                    style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                    (click)="openLocation(contentLocation,i,'single')"></i>
