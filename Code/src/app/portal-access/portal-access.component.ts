@@ -30,7 +30,7 @@ export class PortalAccessComponent implements OnInit {
         $("#reengusBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "shahpura") {
-        // $("#shahpuraBox").show();
+         $("#shahpuraBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-office") {
         $("#jaipurOfficeBox").show();
@@ -48,7 +48,7 @@ export class PortalAccessComponent implements OnInit {
         $("#jaisalmerBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "salasar") {
-        // $("#salasarBox").show();
+         $("#salasarBox").show();
         //isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
