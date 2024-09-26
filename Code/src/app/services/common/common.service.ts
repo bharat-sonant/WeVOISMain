@@ -278,6 +278,9 @@ export class CommonService {
     else if (cityName == "manesar") {
       latLng.push({ lat: 28.3503731, lng: 76.9379959 });
     }
+    else if (cityName == "jodhpur-bwg") {
+      latLng.push({ lat: 26.2405459, lng: 73.0197328 });
+    }
     return latLng;
   }
 
