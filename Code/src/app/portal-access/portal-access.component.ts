@@ -30,7 +30,7 @@ export class PortalAccessComponent implements OnInit {
         $("#reengusBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "shahpura") {
-       // $("#shahpuraBox").show();
+        // $("#shahpuraBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-office") {
         $("#jaipurOfficeBox").show();
@@ -103,23 +103,26 @@ export class PortalAccessComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "phulwari-sharif") {
         $("#phulwariBox").show();
         isBaseCity = true;
-      }  else if (this.accessCity[i]["city"] == "sujangarh") {
+      } else if (this.accessCity[i]["city"] == "sujangarh") {
         $("#sujangarhBox").show();
         isBaseCity = true;
-      }  else if (this.accessCity[i]["city"] == "noida") {
+      } else if (this.accessCity[i]["city"] == "noida") {
         $("#noidaBox").show();
         isBaseCity = true;
-      }  else if (this.accessCity[i]["city"] == "sikar-survey") {
+      } else if (this.accessCity[i]["city"] == "sikar-survey") {
         $("#sikarSurveyBox").show();
         isBaseCity = true;
-      }  else if (this.accessCity[i]["city"] == "jodhpur") {
+      } else if (this.accessCity[i]["city"] == "jodhpur") {
         $("#jodhpurBox").show();
         isBaseCity = true;
-      }  else if (this.accessCity[i]["city"] == "kuchaman") {
+      } else if (this.accessCity[i]["city"] == "kuchaman") {
         $("#kuchamanBox").show();
         isBaseCity = true;
-      }  else if (this.accessCity[i]["city"] == "manesar") {
+      } else if (this.accessCity[i]["city"] == "manesar") {
         $("#manesarBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "jodhpur-bwg") {
+        $("#jodhpurBwgBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         $("#jaipurBox").show();
