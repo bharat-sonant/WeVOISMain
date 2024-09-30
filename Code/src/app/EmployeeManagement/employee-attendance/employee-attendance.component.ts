@@ -33,7 +33,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   toDayDate: any;
   txtDate = "#txtDate";
   ddlTime = "#ddlTime";
-  ddlAttendanceManager="#ddlAttendanceManager";
+  ddlAttendanceManager = "#ddlAttendanceManager";
   chkIncludeInactive = "chkIncludeInactive";
   chkNotApproved = "chkNotApproved";
   chkNotApprovedEmployee = "chkNotApprovedEmployee";
@@ -57,8 +57,9 @@ export class EmployeeAttendanceComponent implements OnInit {
   public filterType: any;
   serviceName = "employee-attendance";
   isAttendanceApprover: any;
+  canViewAttendance: any;
   userList: any[] = [];
-  attendanceManagerList:any[]=[];
+  attendanceManagerList: any[] = [];
   public notApprovedCount: any;
 
   public mapLocation: google.maps.Map;
@@ -66,16 +67,18 @@ export class EmployeeAttendanceComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.isAttendanceApprover = localStorage.getItem("isAttendanceApprover");
+    this.canViewAttendance = localStorage.getItem("canViewAttendance");
+    console.log(this.canViewAttendance);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
   }
 
   setDefault() {
     this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-    if(this.userList.length>0){
-      this.attendanceManagerList=this.userList.filter(item=>item.isAttendanceApprover==1);
+    if (this.userList.length > 0) {
+      this.attendanceManagerList = this.userList.filter(item => item.isAttendanceApprover == 1);
     }
-    if(localStorage.getItem("roleId")=="17" || localStorage.getItem("roleId")=="10"){
+    if (localStorage.getItem("roleId") == "17" || localStorage.getItem("roleId") == "10") {
       $(this.ddlAttendanceManager).show();
     }
     //this.setHeight()
@@ -129,16 +132,17 @@ export class EmployeeAttendanceComponent implements OnInit {
   getEmployeeDetail(empId: any) {
     return new Promise((resolve) => {
       let employeeData = {};
+      console.log(this.canViewAttendance);
       let dbPath = "Employees/" + empId + "/GeneralDetails";
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
           if (employeeDetail) {
-            let attendanceManager="";
-            if(employeeDetail.attendanceApprover){
-              let detail=this.attendanceManagerList.find(item=>item.userId==employeeDetail.attendanceApprover);
-              if(detail!=undefined){
-                attendanceManager=detail.name;
+            let attendanceManager = "";
+            if (employeeDetail.attendanceApprover) {
+              let detail = this.attendanceManagerList.find(item => item.userId == employeeDetail.attendanceApprover);
+              if (detail != undefined) {
+                attendanceManager = detail.name;
               }
             }
             if (employeeDetail.designationId == "5" || employeeDetail.designationId == "6") {
@@ -146,34 +150,42 @@ export class EmployeeAttendanceComponent implements OnInit {
             }
             else {
               if (localStorage.getItem("roleId") == "17") {
-                employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "1",attendanceApprover:employeeDetail.attendanceApprover||0,attendanceManager:attendanceManager };
+                employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "1", attendanceApprover: employeeDetail.attendanceApprover || 0, attendanceManager: attendanceManager };
                 resolve({ status: "success", data: employeeData });
               }
               else if (localStorage.getItem("roleId") == "10") {
                 if (employeeDetail.attendanceApprover) {
                   if (employeeDetail.attendanceApprover == localStorage.getItem("userID")) {
-                    employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "1",attendanceApprover:employeeDetail.attendanceApprover||0,attendanceManager:attendanceManager };
+                    employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "1", attendanceApprover: employeeDetail.attendanceApprover || 0, attendanceManager: attendanceManager };
                     resolve({ status: "success", data: employeeData });
                   }
                   else {
-                    employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "0",attendanceApprover:employeeDetail.attendanceApprover||0,attendanceManager:attendanceManager };
+                    employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "0", attendanceApprover: employeeDetail.attendanceApprover || 0, attendanceManager: attendanceManager };
                     resolve({ status: "success", data: employeeData });
                   }
                 }
                 else {
-                  employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "0",attendanceApprover:employeeDetail.attendanceApprover||0,attendanceManager:attendanceManager };
+                  employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "0", attendanceApprover: employeeDetail.attendanceApprover || 0, attendanceManager: attendanceManager };
                   resolve({ status: "success", data: employeeData });
                 }
               }
               else {
                 if (employeeDetail.attendanceApprover) {
                   if (employeeDetail.attendanceApprover == localStorage.getItem("userID")) {
-                    employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status,isAttendanceApprover:"1" };
+                    employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "1",attendanceManager:attendanceManager };
+                    resolve({ status: "success", data: employeeData });
+                  }
+                  else if (this.canViewAttendance == "1") {
+                    employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "0",attendanceManager:attendanceManager };
                     resolve({ status: "success", data: employeeData });
                   }
                   else {
                     resolve({ status: "fail", data: employeeData });
                   }
+                }
+                else if (this.canViewAttendance == "1") {
+                  employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "0",attendanceManager:attendanceManager };
+                  resolve({ status: "success", data: employeeData });
                 }
                 else {
                   resolve({ status: "fail", data: employeeData });
@@ -245,9 +257,9 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.notApprovedCount = 0;
     for (let i = 0; i < this.allEmployeeList.length; i++) {
       let empId = this.allEmployeeList[i]["empId"];
-      let isAttendanceApprover=this.allEmployeeList[i]["isAttendanceApprover"];
-      let attendanceApprover=this.allEmployeeList[i]["attendanceApprover"];
-      let attendanceManager=this.allEmployeeList[i]["attendanceManager"];
+      let isAttendanceApprover = this.allEmployeeList[i]["isAttendanceApprover"];
+      let attendanceApprover = this.allEmployeeList[i]["attendanceApprover"];
+      let attendanceManager = this.allEmployeeList[i]["attendanceManager"];
       let designationId = this.allEmployeeList[i]["designationId"];
       let dbPath = "Attendance/" + empId + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
 
@@ -369,7 +381,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               this.employeeList.push({
                 empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
                 inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, inLocation: inLocation,
-                outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull,isAttendanceApprover:isAttendanceApprover,attendanceApprover:attendanceApprover,attendanceManager:attendanceManager
+                outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager
               });
             }
 
@@ -409,12 +421,12 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.showStatus = true;
     if (new Date(date) <= new Date(dateTo)) {
       let year = date.split('-')[0];
-      let isAttendanceApprover="0";
-      let attendanceManager="";
-      let detail=this.allEmployeeList.find(item=>item.empId==empId);
-      if(detail!=undefined){
-        isAttendanceApprover=detail.isAttendanceApprover;
-        attendanceManager=detail.attendanceManager;
+      let isAttendanceApprover = "0";
+      let attendanceManager = "";
+      let detail = this.allEmployeeList.find(item => item.empId == empId);
+      if (detail != undefined) {
+        isAttendanceApprover = detail.isAttendanceApprover;
+        attendanceManager = detail.attendanceManager;
       }
       let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
       let dbPath = "Attendance/" + empId + "/" + year + "/" + monthName + "/" + date;
@@ -539,7 +551,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull,isAttendanceApprover:isAttendanceApprover,attendanceManager:attendanceManager });
+              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -557,7 +569,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
 
   getNotApprovedAttendanceCount() {
-    this.notApprovedCount = Number(this.attendanceList.filter(item => item.status == "Not Approved"  && item.isAttendanceApprover=="1").length);
+    this.notApprovedCount = Number(this.attendanceList.filter(item => item.status == "Not Approved" && item.isAttendanceApprover == "1").length);
   }
 
   setDate(filterVal: any, type: string) {
@@ -587,12 +599,12 @@ export class EmployeeAttendanceComponent implements OnInit {
       let filterTimestemp = new Date(this.selectedDate + " " + filterVal).getTime();
       this.attendanceList = this.employeeList.filter(item => item.inTimestemp > filterTimestemp);
     }
-    if($(this.ddlAttendanceManager).val()!=="0"){
-      this.attendanceList=this.employeeList.filter(item=>item.attendanceApprover==$(this.ddlAttendanceManager).val());
+    if ($(this.ddlAttendanceManager).val() !== "0") {
+      this.attendanceList = this.employeeList.filter(item => item.attendanceApprover == $(this.ddlAttendanceManager).val());
     }
-    
+
     if ((<HTMLInputElement>document.getElementById(this.chkNotApproved)).checked == true) {
-      this.attendanceList = this.attendanceList.filter(item => item.status == "Not Approved" && item.isAttendanceApprover=="1");
+      this.attendanceList = this.attendanceList.filter(item => item.status == "Not Approved" && item.isAttendanceApprover == "1");
     }
     if (filterVal == "0") {
       this.getNotApprovedAttendanceCount();
@@ -604,7 +616,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.attendanceList = [];
     this.attendanceList = this.employeeList;
     if ((<HTMLInputElement>document.getElementById(this.chkNotApprovedEmployee)).checked == true) {
-      this.attendanceList = this.attendanceList.filter(item => item.status == "Not Approved" && item.isAttendanceApprover=="1");
+      this.attendanceList = this.attendanceList.filter(item => item.status == "Not Approved" && item.isAttendanceApprover == "1");
     }
   }
 
