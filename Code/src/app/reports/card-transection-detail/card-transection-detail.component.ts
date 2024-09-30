@@ -31,15 +31,7 @@ export class CardTransectionDetailComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.totalAmount = "0.00";
-    if (this.cityName == "jaipur-malviyanagar") {
-      this.cardPrefix = "MNZ";
-    }
-    else if (this.cityName == "jaipur-murlipura"){
-      this.cardPrefix = "MPZ";
-    }
-    else {
-      this.cardPrefix = "PAL";
-    }
+    this.cardPrefix = this.commonService.getDefaultCardPrefix();
     this.ward = "---";
     this.name = "---";
     this.entityType = "---";
@@ -124,19 +116,19 @@ export class CardTransectionDetailComponent implements OnInit {
                   let keyArray = Object.keys(dateData);
                   for (let l = 0; l < keyArray.length; l++) {
                     let key = keyArray[l];
-                    let referId="";
-                    let payMethod="";
-                    if(dateData[key]["retrievalReferenceNo"]!=null){
-                      referId=dateData[key]["retrievalReferenceNo"];
+                    let referId = "";
+                    let payMethod = "";
+                    if (dateData[key]["retrievalReferenceNo"] != null) {
+                      referId = dateData[key]["retrievalReferenceNo"];
                     }
-                    else if (dateData[key]["RRN"]!=null){
-                      referId=dateData[key]["RRN"];
+                    else if (dateData[key]["RRN"] != null) {
+                      referId = dateData[key]["RRN"];
                     }
-                    if(dateData[key]["payMethod"]!=null){
-                      payMethod=dateData[key]["payMethod"];
+                    if (dateData[key]["payMethod"] != null) {
+                      payMethod = dateData[key]["payMethod"];
                     }
-                    else if (dateData[key]["PaymentMode"]!=null){
-                      payMethod=dateData[key]["PaymentMode"];
+                    else if (dateData[key]["PaymentMode"] != null) {
+                      payMethod = dateData[key]["PaymentMode"];
                     }
                     amount = amount + Number(dateData[key]["transactionAmount"]);
                     let timestemp = new Date(date).getTime();
@@ -151,7 +143,7 @@ export class CardTransectionDetailComponent implements OnInit {
             }
             else {
               let entityData = data["Entities"];
-              this.getEntityPayment(entityData,amount);
+              this.getEntityPayment(entityData, amount);
             }
           }
           this.totalAmount = amount.toFixed(2);
@@ -165,55 +157,55 @@ export class CardTransectionDetailComponent implements OnInit {
     );
   }
 
-  getEntityPayment(entityData: any,amount:any) {
+  getEntityPayment(entityData: any, amount: any) {
     let entityKeyArray = Object.keys(entityData);
-    for(let i=0;i<entityKeyArray.length;i++){
-      let entityKey=entityKeyArray[i];
-      let data=entityData[entityKey];
+    for (let i = 0; i < entityKeyArray.length; i++) {
+      let entityKey = entityKeyArray[i];
+      let data = entityData[entityKey];
       let yearArray = Object.keys(data);
-          for (let i = 0; i < yearArray.length; i++) {
-            let year = yearArray[i];
-            if (year != "Entities") {
-              let yearData = data[year];
-              let monthArray = Object.keys(yearData);
-              for (let j = 0; j < monthArray.length; j++) {
-                let month = monthArray[j];
-                let monthData = yearData[month];
-                let dateyArray = Object.keys(monthData);
-                for (let k = 0; k < dateyArray.length; k++) {
-                  let date = dateyArray[k];
-                  let dateData = monthData[date];
-                  let keyArray = Object.keys(dateData);
-                  for (let l = 0; l < keyArray.length; l++) {
-                    let key = keyArray[l];
-                    let referId="";
-                    let payMethod="";
-                    if(dateData[key]["retrievalReferenceNo"]!=null){
-                      referId=dateData[key]["retrievalReferenceNo"];
-                    }
-                    else if (dateData[key]["RRN"]!=null){
-                      referId=dateData[key]["RRN"];
-                    }
-                    if(dateData[key]["payMethod"]!=null){
-                      payMethod=dateData[key]["payMethod"];
-                    }
-                    else if (dateData[key]["PaymentMode"]!=null){
-                      payMethod=dateData[key]["PaymentMode"];
-                    }
-                    amount = amount + Number(dateData[key]["transactionAmount"]);
-
-                    let timestemp = new Date(date).getTime();
-                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
-                    this.transactionList = this.transactionList.sort((a, b) =>
-                      b.timestemp < a.timestemp ? 1 : -1
-                    );
-                    this.getDateTimeFormat(key, dateData[key]["transactionDateTime"], date, year, month);
-                  }
+      for (let i = 0; i < yearArray.length; i++) {
+        let year = yearArray[i];
+        if (year != "Entities") {
+          let yearData = data[year];
+          let monthArray = Object.keys(yearData);
+          for (let j = 0; j < monthArray.length; j++) {
+            let month = monthArray[j];
+            let monthData = yearData[month];
+            let dateyArray = Object.keys(monthData);
+            for (let k = 0; k < dateyArray.length; k++) {
+              let date = dateyArray[k];
+              let dateData = monthData[date];
+              let keyArray = Object.keys(dateData);
+              for (let l = 0; l < keyArray.length; l++) {
+                let key = keyArray[l];
+                let referId = "";
+                let payMethod = "";
+                if (dateData[key]["retrievalReferenceNo"] != null) {
+                  referId = dateData[key]["retrievalReferenceNo"];
                 }
+                else if (dateData[key]["RRN"] != null) {
+                  referId = dateData[key]["RRN"];
+                }
+                if (dateData[key]["payMethod"] != null) {
+                  payMethod = dateData[key]["payMethod"];
+                }
+                else if (dateData[key]["PaymentMode"] != null) {
+                  payMethod = dateData[key]["PaymentMode"];
+                }
+                amount = amount + Number(dateData[key]["transactionAmount"]);
+
+                let timestemp = new Date(date).getTime();
+                this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
+                this.transactionList = this.transactionList.sort((a, b) =>
+                  b.timestemp < a.timestemp ? 1 : -1
+                );
+                this.getDateTimeFormat(key, dateData[key]["transactionDateTime"], date, year, month);
               }
             }
           }
-          this.totalAmount = amount.toFixed(2);
+        }
+      }
+      this.totalAmount = amount.toFixed(2);
     }
   }
 
