@@ -68,7 +68,6 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.isAttendanceApprover = localStorage.getItem("isAttendanceApprover");
     this.canViewAttendance = localStorage.getItem("canViewAttendance");
-    console.log(this.canViewAttendance);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.setDefault();
   }
@@ -132,7 +131,6 @@ export class EmployeeAttendanceComponent implements OnInit {
   getEmployeeDetail(empId: any) {
     return new Promise((resolve) => {
       let employeeData = {};
-      console.log(this.canViewAttendance);
       let dbPath = "Employees/" + empId + "/GeneralDetails";
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
