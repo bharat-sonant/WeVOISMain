@@ -159,6 +159,11 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canUpdateLeaveBalance"))).checked = true;
         }
       }
+      if (data["canViewAttendance"] != undefined) {
+        if (data["canViewAttendance"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canViewAttendance"))).checked = true;
+        }
+      }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -257,6 +262,7 @@ export class UserAddComponent implements OnInit {
     let canUpdateEmployeeDetail: any = 0;
     let canUpdateOpendepotPickDetail: any = 0;
     let canUpdateLeaveBalance:any=0;
+    let canViewAttendance:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -310,6 +316,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canUpdateOpendepotPickDetail = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateLeaveBalance");
     if (element.checked == true) canUpdateLeaveBalance = 1;
+    element = <HTMLInputElement>document.getElementById("canViewAttendance");
+    if (element.checked == true) canViewAttendance = 1;
     if (this.userid == null) {
       let lastKey = Number(this.userJsonData["lastKey"]) + 1;
       this.userid = lastKey;
@@ -343,7 +351,8 @@ export class UserAddComponent implements OnInit {
       isAttendanceApprover: isAttendanceApprover,
       canUpdateEmployeeDetail: canUpdateEmployeeDetail,
       canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
-      canUpdateLeaveBalance:canUpdateLeaveBalance
+      canUpdateLeaveBalance:canUpdateLeaveBalance,
+      canViewAttendance:canViewAttendance
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {
