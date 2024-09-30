@@ -594,7 +594,7 @@ export class WardTripAnalysisComponent implements OnInit {
     }
     if (id == "chkRemark") {
       if (element.checked == true) {
-        this.remarkStatus = "वाहन पर तिरपाल है";
+        this.remarkStatus = "कचरा तिरपाल / ढक्कन से कवर है";
       } else {
         this.remarkStatus = "";
       }
