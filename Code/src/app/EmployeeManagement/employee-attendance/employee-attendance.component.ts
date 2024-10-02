@@ -75,7 +75,9 @@ export class EmployeeAttendanceComponent implements OnInit {
   setDefault() {
     this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     if (this.userList.length > 0) {
-      this.attendanceManagerList = this.userList.filter(item => item.isAttendanceApprover == 1);
+      this.attendanceManagerList = this.userList.filter(item => item.isAttendanceApprover == 1).sort((a, b) =>
+        b.name < a.name ? 1 : -1
+      );
     }
     if (localStorage.getItem("roleId") == "17" || localStorage.getItem("roleId") == "10") {
       $(this.ddlAttendanceManager).show();
