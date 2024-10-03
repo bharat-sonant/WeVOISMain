@@ -209,7 +209,7 @@ export class RouteTrackingComponent {
       if (data != null) {
         let lat = data["lat"];
         let lng = data["lng"];
-        let markerURL = "../../../assets/img/SILocation-blue.png";
+        let markerURL = "../../../assets/img/SI-Location.png";
         var markerLabel = "";
         let contentString = '<b>' + data["name"] + '</b>: ' + data["address"];
         this.setMarker(lat, lng, markerLabel, markerURL, contentString, "fixed");
