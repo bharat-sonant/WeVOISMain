@@ -21,7 +21,7 @@ export class RouteTrackingComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService,public router: Router, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  constructor(public fs: FirebaseService, public router: Router, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -93,7 +93,7 @@ export class RouteTrackingComponent {
 
   ngOnInit() {
     this.userType = localStorage.getItem("userType");
-    if(this.userType=="External User"){
+    if (this.userType == "External User") {
       this.router.navigate(["/" + localStorage.getItem("cityName") + "/something-wrong"]);
     }
     this.instancesList = [];
@@ -200,6 +200,33 @@ export class RouteTrackingComponent {
         return "#6DD8F5";
       case 10:
         return "#F14723";
+    }
+  }
+
+  getSILocation() {
+    let siLocationInstance = this.db.object("Defaults/GeoLocations/FixedLocations/SILocations/" + this.selectedZone).valueChanges().subscribe(data => {
+      siLocationInstance.unsubscribe();
+      if (data != null) {
+        let lat = data["lat"];
+        let lng = data["lng"];
+        let markerURL = "../../../assets/img/SILocation-blue.png";
+        var markerLabel = "";
+        let contentString = '<b>' + data["name"] + '</b>: ' + data["address"];
+        this.setMarker(lat, lng, markerLabel, markerURL, contentString, "fixed");
+      }
+    })
+    this.fixdGeoLocations = JSON.parse(localStorage.getItem("fixedLocation"));;
+    if (this.fixdGeoLocations != null) {
+      if (this.fixdGeoLocations.length > 0) {
+        for (let i = 0; i < this.fixdGeoLocations.length; i++) {
+          let lat = this.fixdGeoLocations[i]["lat"];
+          let lng = this.fixdGeoLocations[i]["lng"];
+          let markerURL = "../../../assets/img/" + this.fixdGeoLocations[i]["img"];
+          var markerLabel = "";
+          let contentString = '<b>' + this.fixdGeoLocations[i]["name"] + '</b>: ' + this.fixdGeoLocations[i]["address"];
+          this.setMarker(lat, lng, markerLabel, markerURL, contentString, "fixed");
+        }
+      }
     }
   }
 
@@ -468,6 +495,7 @@ export class RouteTrackingComponent {
     this.getSavedData();
     this.getMonthDetail();
     this.getFixedGeoLocation();
+    this.getSILocation();
     this.getVTSRoute();
   }
 
@@ -704,16 +732,16 @@ export class RouteTrackingComponent {
                     let index = keyArray[i];
                     let time = index.toString().split('-')[0];
                     let routeDateTime = new Date(this.selectedDate + " " + time);
-                    if(this.userType=="External User"){
-                     
-                        this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
-                     
-                    }
-                    else{
-                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                    if (this.userType == "External User") {
+
                       this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+
                     }
-                  }
+                    else {
+                      if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                        this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                      }
+                    }
                   }
                   this.showDataOnMap();
                 }
@@ -751,14 +779,14 @@ export class RouteTrackingComponent {
                 let index = keyArray[i];
                 let time = index.toString().split('-')[0];
                 let routeDateTime = new Date(this.selectedDate + " " + time);
-                if(this.userType=="External User"){
+                if (this.userType == "External User") {
                   this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
                 }
-                else{
-                if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                  this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                else {
+                  if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                    this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                  }
                 }
-              }
               }
               this.showDataOnMap();
 
@@ -1071,12 +1099,12 @@ export class RouteTrackingComponent {
                     if (this.userType == "External User") {
                       monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
                     }
-                    else{
-                    let routeDateTime = new Date(this.selectedDate + " " + time);
-                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                      monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                    else {
+                      let routeDateTime = new Date(this.selectedDate + " " + time);
+                      if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                        monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                      }
                     }
-                  }
                   }
                   this.getMonthDetailList(monthList, year, monthName, monthDate);
                 }
@@ -1110,7 +1138,7 @@ export class RouteTrackingComponent {
               let index = keyArray[i];
               let time = index.toString().split('-')[0];
               if (this.userType == "External User") {
-                  monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
               }
               else {
                 let routeDateTime = new Date(this.selectedDate + " " + time);
