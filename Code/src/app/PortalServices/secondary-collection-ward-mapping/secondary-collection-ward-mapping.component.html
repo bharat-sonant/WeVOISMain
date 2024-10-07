@@ -1,0 +1,40 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-8">
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                    {{zone.zoneName}}
+                </option>
+            </select>&nbsp;&nbsp;
+
+
+        </div>
+        <div class="col-md-4 text-right total-house">
+
+            <div class="float-second float-second2">
+                <span class="house">{{dustbinSummary.assignedDustbin}} </span>
+                <img src="../assets/img/Green-Rectangle-dustbin.png"> <br>
+                <h6>Assigned Dustbins</h6>
+            </div>
+            <div class="float-first float-first2">
+                <span class="house">{{dustbinSummary.totalDustbin}} <span>
+                        <img src="../assets/img/dark gray without tick rectangle.png">
+
+                    </span></span><br>
+                <h6>Total Dustbins</h6>
+            </div>
+
+
+        </div>
+
+    </div>
+    <button class="btn btn-primary button" (click)="mapDustbinToWard();" style="z-index: 999;position: absolute;right: 20px;top: 75px;height: 41px;background-color: #49ac41!important;">
+        Save Mapping
+    </button>
+</section>
+
+<div #gmap class="gmap" id="divMap"></div>
