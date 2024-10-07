@@ -146,6 +146,127 @@ export class CommonService {
     return year + "-" + month + "-" + nextday;
   }
 
+  
+  getDefaultCardPrefix() {
+    let cardPrefix = "";
+    let cityName = localStorage.getItem("cityName");
+    if (cityName == "test") {
+      cardPrefix="TEST";
+    }
+    else if (cityName == "jaipur-test") {
+      cardPrefix="JPT";
+    }
+    else if (cityName == "jaipur-office") {
+      cardPrefix="TEST";
+    }
+    else if (cityName == "jaipur") {
+      cardPrefix="TEST";
+    }
+    else if (cityName == "sikar") {
+      cardPrefix="SIKA";
+    }
+    else if (cityName == "sikar-survey") {
+      cardPrefix="SIKA";
+    }
+    else if (cityName == "reengus") {
+      cardPrefix="RENA";
+    }
+    else if (cityName == "shahpura") {
+      cardPrefix="SHAH";
+    }
+    else if (cityName == "kishangarh") {
+      cardPrefix="KNGH";
+    }
+    else if (cityName == "niwai") {
+      cardPrefix="NWI";
+    }
+    else if (cityName == "jaisalmer") {
+      cardPrefix="JAIS";
+    }
+    else if (cityName == "salasar") {
+      cardPrefix="SALA";
+    }
+    else if (cityName == "behror") {
+      cardPrefix="BEHR";
+    }
+    else if (cityName == "jaipur-malviyanagar") {
+      cardPrefix="MNZ";
+    }
+    else if (cityName == "mnz-test") {
+      cardPrefix="MNZ";
+    }
+    else if (cityName == "jaipur-murlipura") {
+      cardPrefix="MPZ";
+    }
+    else if (cityName == "mpz-test") {
+      cardPrefix="MPZ";
+    }
+    else if (cityName == "bhiwadi") {
+      cardPrefix="BHIW";
+    }
+    else if (cityName == "chhapar") {
+      cardPrefix="CHPR";
+    }
+    else if (cityName == "churu") {
+      cardPrefix="CHUR";
+    }
+    else if (cityName == "gwalior") {
+      cardPrefix="GWR";
+    }
+    else if (cityName == "wevois-others") {
+      cardPrefix="WEVO";
+    }
+    else if (cityName == "tonk") {
+      cardPrefix="TONK";
+    }
+    else if (cityName == "ratangarh") {
+      cardPrefix="RATG";
+    }
+    else if (cityName == "nokha") {
+      cardPrefix="NKH";
+    }
+    else if (cityName == "losal") {
+      cardPrefix="LSA";
+    }
+    else if (cityName == "jammu-survey") {
+      cardPrefix="JAM";
+    }
+    else if (cityName == "khandela") {
+      cardPrefix="KHL";
+    }
+    else if (cityName == "watteye-office") {
+      cardPrefix="WEY";
+    }
+    else if (cityName == "dehradun") {
+      cardPrefix="DEH";
+    }
+    else if (cityName == "pali") {
+      cardPrefix="PAL";
+    }
+    else if (cityName == "phulwari-sharif") {
+      cardPrefix="PWS";
+    }
+    else if (cityName == "sujangarh") {
+      cardPrefix="SUG";
+    }
+    else if (cityName == "noida") {
+      cardPrefix="NOI";
+    }
+    else if (cityName == "jodhpur") {
+      cardPrefix="JODH";
+    }
+    else if (cityName == "kuchaman") {
+      cardPrefix="KUMN";
+    }
+    else if (cityName == "manesar") {
+      cardPrefix="MAN";
+    }
+    else if (cityName == "jodhpur-bwg") {
+      cardPrefix="JODBWG";
+    }
+    return cardPrefix;
+  }
+
   getDefaultCityLatLng() {
     let latLng = [];
     let cityName = localStorage.getItem("cityName");
@@ -1030,10 +1151,11 @@ export class CommonService {
         localStorage.setItem("vehicle", JSON.stringify(vehicleList));
       }
     });
-  }
+  }  
 
   setDustbin(newDb: any) {
     let dustbinList = [];
+    let openDepotList = [];
     let dbPath = "DustbinData/DustbinDetails";
     let dustbinInstance = newDb.object(dbPath).valueChanges().subscribe((dustbin) => {
       dustbinInstance.unsubscribe();
@@ -1059,21 +1181,60 @@ export class CommonService {
               if (dustbin[index]["disabledBy"] != null) {
                 disabledBy = dustbin[index]["disabledBy"];
               }
-              dustbinList.push({
-                zone: dustbin[index]["zone"].toString().trim(),
-                dustbin: keyArrray[i],
-                address: dustbin[index]["address"].toString().trim(),
-                type: dustbin[index]["type"].toString().trim(),
-                pickFrequency: pickFrequency,
-                lat: dustbin[index]["lat"].toString().trim(),
-                lng: dustbin[index]["lng"].toString().trim(),
-                isAssigned: dustbin[index]["isAssigned"],
-                spelledRight: dustbin[index]["spelledRight"],
-                ward: dustbin[index]["ward"].toString().trim(),
-                isDisabled: isDisabled,
-                isBroken: isBroken,
-                disabledBy: disabledBy
-              });
+              if (dustbin[index]["dustbinType"] != null) {
+                if(dustbin[index]["dustbinType"]=="Open Depot"){
+                  openDepotList.push({
+                    zone: dustbin[index]["zone"],
+                    dustbin: keyArrray[i],
+                    address: dustbin[index]["address"],
+                    type: dustbin[index]["type"],
+                    pickFrequency: pickFrequency,
+                    lat: dustbin[index]["lat"],
+                    lng: dustbin[index]["lng"],
+                    isAssigned: dustbin[index]["isAssigned"],
+                    spelledRight: dustbin[index]["spelledRight"],
+                    ward: dustbin[index]["ward"],
+                    isDisabled: isDisabled,
+                    isBroken: isBroken,
+                    disabledBy: disabledBy
+                  });
+                }
+                else{
+                  dustbinList.push({
+                    zone: dustbin[index]["zone"],
+                    dustbin: keyArrray[i],
+                    address: dustbin[index]["address"],
+                    type: dustbin[index]["type"],
+                    pickFrequency: pickFrequency,
+                    lat: dustbin[index]["lat"],
+                    lng: dustbin[index]["lng"],
+                    isAssigned: dustbin[index]["isAssigned"],
+                    spelledRight: dustbin[index]["spelledRight"],
+                    ward: dustbin[index]["ward"],
+                    isDisabled: isDisabled,
+                    isBroken: isBroken,
+                    disabledBy: disabledBy
+                  });
+                }
+
+              }
+              else {
+                dustbinList.push({
+                  zone: dustbin[index]["zone"],
+                  dustbin: keyArrray[i],
+                  address: dustbin[index]["address"],
+                  type: dustbin[index]["type"],
+                  pickFrequency: pickFrequency,
+                  lat: dustbin[index]["lat"],
+                  lng: dustbin[index]["lng"],
+                  isAssigned: dustbin[index]["isAssigned"],
+                  spelledRight: dustbin[index]["spelledRight"],
+                  ward: dustbin[index]["ward"],
+                  isDisabled: isDisabled,
+                  isBroken: isBroken,
+                  disabledBy: disabledBy
+                });
+              }
             }
             else {
               newDb.object(dbPath + "/" + index).remove();
@@ -1081,9 +1242,11 @@ export class CommonService {
           }
         }
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
+        localStorage.setItem("openDepot", JSON.stringify(openDepotList));
       }
       else {
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
+        localStorage.setItem("openDepot", JSON.stringify(openDepotList));
       }
     });
   }
