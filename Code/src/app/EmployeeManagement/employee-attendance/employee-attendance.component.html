@@ -110,9 +110,9 @@
                                                 Name</th>
                                             <th class="text-left br-1 table-heading1 " [hidden]="filterType=='byDate'">
                                                 Date</th>
-                                            <th class="text-left br-1 table-heading1 ">
+                                            <th class="text-center br-1 table-heading1 ">
                                                 In</th>
-                                            <th class="text-left br-1 table-heading1 ">
+                                            <th class="text-center br-1 table-heading1 ">
                                                 Out
                                             </th>
                                             <th class="text-left br-1 table-heading1 ">
@@ -143,11 +143,28 @@
                                                 <td class="text-left br-1" [hidden]="filterType=='byDate'" style=" width:10%!important;">
                                                     {{data.name}}
                                                 </td>
-                                                <td class="text-left br-1" class="{{data.cssClass}}" style=" width:5%!important;">
-                                                    {{data.inTime}}
+                                                <td class="text-center br-1" class="{{data.cssClass}}" style=" width:5%!important;">
+                                                    <div class="text-center" style="height: 100px;width:100px;">
+                                                        <a href="{{data.inImageUrl}}" target="_blank" title="click to view fullscreen">
+                                                            <img src="{{data.inImageUrl}}" alt="" style="height: 100%;width:auto;">
+                                                        </a>
+                                                    </div>
+                                                    <div class="text-center mt-1 fw-bold" *ngIf="data.inTime">
+                                                        <label for="">Time :</label>
+                                                        {{data.inTime}}
+                                                    </div>
                                                 </td>
-                                                <td class="text-left br-1" style=" width:5%!important;">
-                                                    {{data.outTime}}
+                                                <td class="text-center br-1" style=" width:5%!important;">
+                                                    <div class="text-center" style="height: 100px;width:100px;">
+                                                        <a href="{{data.outImageUrl}}" target="_blank" title="click to view fullscreen">
+                                                            <img src="{{data.outImageUrl}}" alt="" style="height: 100%;width: auto;">
+                                                        </a>
+                                                        
+                                                    </div>
+                                                    <div  class="text-center mt-1 fw-bold" *ngIf="data.outTime">
+                                                        <label for="">Time :</label>
+                                                        {{data.outTime}}
+                                                    </div>
                                                 </td>
                                                 <td class="text-left br-1" class="{{data.cssWorkingClass}}" style=" width:10%!important;">
                                                     {{data.workingHour}}

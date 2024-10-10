@@ -325,6 +325,17 @@ export class DustbinService {
     let dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + key + "";
     this.db.object(dbPath).remove();
   }
+  getOpenDepotWardMappingJson() {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FmappingOpenDepotWard.json?alt=media";
+      let dutbinWardJSONInstance = this.httpService.get(path).subscribe(DustbinWardJsonData => {
+        dutbinWardJSONInstance.unsubscribe();
+        resolve(DustbinWardJsonData);
+      }, error => {
+        resolve(null);
+      });
+    });
+  }
 }
 
 
