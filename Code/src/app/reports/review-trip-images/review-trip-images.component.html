@@ -67,19 +67,33 @@
                                                 <td class="table-data-3">
                                                     <div style="width: 100%; display: flex;">
                                                         <div *ngFor="let dtImage of dt.tripImageList;"
-                                                            style="width:400px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                                                            style="width:800px; text-align: center; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
                                                             <div class="row" style="display: flex;">
-                                                                <div class="col-md-6">
-                                                                    बिना तिरपाल के ऊपर से<br/>
+                                                                <div class="col-md-3">
+                                                                    बिना तिरपाल / ढक्कन के ऊपर से<br/>
                                                                     <a href="{{dtImage.imageUrl}}" target="_blank">
                                                                         <img [src]="dtImage.imageUrl"
                                                                             style="max-width: 200px;max-height: 200px;" /></a>
 
                                                                 </div>
-                                                                <div class="col-md-6">
-                                                                    तिरपाल के साथ<br />
+                                                                <div class="col-md-3">
+                                                                    तिरपाल / ढक्कन के साथ<br />
                                                                     <a href="{{dtImage.imageUrl2}}" target="_blank">
                                                                         <img [src]="dtImage.imageUrl2"
+                                                                            style="max-width: 200px;max-height: 200px;" /></a>
+                                                                   
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    डंपिंग यार्ड मे भरा हुआ<br/>
+                                                                    <a href="{{dtImage.imageUrl3}}" target="_blank">
+                                                                        <img [src]="dtImage.imageUrl3"
+                                                                            style="max-width: 200px;max-height: 200px;" /></a>
+
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    डंपिंग यार्ड मे खाली हुआ<br />
+                                                                    <a href="{{dtImage.imageUrl4}}" target="_blank">
+                                                                        <img [src]="dtImage.imageUrl4"
                                                                             style="max-width: 200px;max-height: 200px;" /></a>
                                                                    
                                                                 </div>

@@ -153,6 +153,7 @@ import { SecondaryCollectionManageComponent } from '../../secondary-collection-m
 import { EntityModificationComponent } from '../../entity-modification/entity-modification.component';
 import { PaymentCollectorTrackingComponent } from '../../reports/payment-collector-tracking/payment-collector-tracking.component';
 import { ErrorPageComponent } from '../../error-page/error-page.component';
+import { SecondaryCollectionWardMappingComponent } from '../../PortalServices/secondary-collection-ward-mapping/secondary-collection-ward-mapping.component';
 
 // Jaipur-Greater
 
@@ -348,7 +349,8 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     SecondaryCollectionManageComponent,
     EntityModificationComponent,
     PaymentCollectorTrackingComponent,
-    ErrorPageComponent
+    ErrorPageComponent,
+    SecondaryCollectionWardMappingComponent
   ]
 })
 

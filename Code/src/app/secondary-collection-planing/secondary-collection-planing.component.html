@@ -31,7 +31,7 @@
             Open Depot Details
         </div>
         <div class="col-md-3 text-right" style="margin-top: -16px;position: absolute;right: 92px;">
-            <button id="btnSave" class="btn btn-success add-btn btn-xs" style="font-weight: normal; letter-spacing: 0px;" (click)="openModel(contentPlan,'addPlan','','0','00');">Add
+            <button id="btnSave" class="btn btn-success add-btn btn-xs" [hidden]="userType=='External User'" style="font-weight: normal; letter-spacing: 0px;" (click)="openModel(contentPlan,'addPlan','','0','00');">Add
                 Plan <span><i class="fas fa-plus"></i></span></button>
         </div>
         <div class="col-md-1">
@@ -479,7 +479,7 @@
 
 
 <!---------Add Plan Accordion Start-------->
-<a role="button" class="plan-btn" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+<a role="button" class="plan-btn" [hidden]="userType=='External User'" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
     PLANS <i class="fas fa-angle-down" style="padding-left: 5px;"></i>
 </a>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="border-radius: 5px;">
@@ -496,9 +496,9 @@
                         <td><span style="color:green">{{plan.dustbinPicked}}</span></td>
                         <td style="width: 90px!important;">{{plan.date}}</td>
                         <td style="width: 30px!important;"><span style="color:blue">{{plan.dustbinAssigned}}</span>/{{plan.maxDustbin}}</td>
-                        <td style="width: 90px!important;">
-                            <i class="fas fa-map-marked-alt" style="cursor: pointer;" [hidden]="plan.dustbinAssigned==0" (click)="openModel(contentDustbinPlanSequence,'openMapModel',plan,'','','');"></i>&nbsp;&nbsp;
-                            <i class="far fa-edit" (click)="openModel(contentPlan,'updatePlan',plan,'','','');" title="Edit Plan" style="cursor:pointer !important; font-size: 10px;color: royalblue;"></i>&nbsp;&nbsp;
+                        <td style="width: 90px!important; display: flex;">
+                            <i class="fas fa-map-marked-alt" style="cursor: pointer;" [hidden]="plan.dustbinAssigned==0" (click)="openModel(contentDustbinPlanSequence,'openMapModel',plan,'','','');"></i>
+                            <i class="far fa-edit" (click)="openModel(contentPlan,'updatePlan',plan,'','','');" title="Edit Plan" style="cursor:pointer !important; font-size: 10px;color: royalblue;"></i>
                             <i class="far fa-trash-alt" (click)="openModel(contentPlanConfirm,'deletePlanConfirmation',plan,'','','');" title="Remove Plan" [hidden]="plan.isAssigned!='false'" style="cursor:pointer !important; font-size: 10px;color: red;"></i>
                         </td>
                     </tr>

@@ -80,15 +80,17 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
   preSelectedMarker: any;
   public bounds: any;
   selectedDustbin: any;
+  userType: any;
 
   ngOnInit() {
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
-    this.commonService.savePageLoadHistory("Secondary-Collection-Management","Secondary-Collection-Planing",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Secondary-Collection-Planing", localStorage.getItem("userID"));
     this.setDefault();
   }
 
   setDefault() {
     this.userId = localStorage.getItem("userID");
+    this.userType = localStorage.getItem("userType");
     this.todayDate = this.commonService.setTodayDate();
     this.getYear();
     this.getZoneList();
@@ -111,7 +113,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
   getZoneList() {
     this.zoneList = [];
     this.dustbinStorageList = [];
-    this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+    this.dustbinStorageList = JSON.parse(localStorage.getItem("openDepot"));
     if (this.dustbinStorageList != null) {
       let list = this.dustbinStorageList.map(item => item.zone).filter((value, index, self) => self.indexOf(value) === index);
       for (let i = 0; i < list.length; i++) {
@@ -124,6 +126,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
   }
 
   //#region report
+
 
   getDustbins() {
     this.dustbinList = [];
@@ -316,7 +319,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       }
     }
 
-    let pickStatus = icon + filledPercentage + " at " + pickTime + "";
+    let pickStatus = icon + " At " + pickTime + "";
 
     this.getEmployeeDetail(empId, binDetail, day, pickStatus, remark, filledPercentage, planDate, planId, pickTime, planType);
   }
@@ -365,25 +368,29 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
         let planObject = planData[date];
         let planArray = Object.keys(planObject);
         for (let j = 0; j < planArray.length; j++) {
-          let dustbinAssigned = 0;
-          let bins = "";
-          let dustbinPicked = 0;
-          let highPriority = "";
-          if (planObject[planArray[j]]["bins"] != undefined) {
-            bins = planObject[planArray[j]]["bins"];
-            if (bins != "") {
-              dustbinAssigned = bins.toString().split(',').length;
-            }
-            if (planObject[planArray[j]]["pickedDustbin"] != undefined) {
-              if (planObject[planArray[j]]["pickedDustbin"] != "") {
-                dustbinPicked = planObject[planArray[j]]["pickedDustbin"].toString().split(',').length;
+          if (planObject[planArray[j]]["planType"] == "Open Depot") {
+            if (planObject[planArray[j]]["isWardPlan"] == undefined) {
+              let dustbinAssigned = 0;
+              let bins = "";
+              let dustbinPicked = 0;
+              let highPriority = "";
+              if (planObject[planArray[j]]["bins"] != undefined) {
+                bins = planObject[planArray[j]]["bins"];
+                if (bins != "") {
+                  dustbinAssigned = bins.toString().split(',').length;
+                }
+                if (planObject[planArray[j]]["pickedDustbin"] != undefined) {
+                  if (planObject[planArray[j]]["pickedDustbin"] != "") {
+                    dustbinPicked = planObject[planArray[j]]["pickedDustbin"].toString().split(',').length;
+                  }
+                }
+                if (planObject[planArray[j]]["highPriority"] != null) {
+                  highPriority = planObject[planArray[j]]["highPriority"];
+                }
               }
-            }
-            if (planObject[planArray[j]]["highPriority"] != null) {
-              highPriority = planObject[planArray[j]]["highPriority"];
+              this.planList.push({ date: date, key: planArray[j], planName: planObject[planArray[j]]["planName"], maxDustbin: planObject[planArray[j]]["maxDustbinCapacity"], dustbinAssigned: dustbinAssigned, isAssigned: planObject[planArray[j]]["isAssigned"], bins: bins, zone: planObject[planArray[j]]["zone"], pickedDustbin: planObject[planArray[j]]["pickedDustbin"], dustbinPicked: dustbinPicked, sequence: planObject[planArray[j]]["pickingSequence"], highPriority: highPriority, dustbinPickingPosition: planObject[planArray[j]]["dustbinPickingPosition"] });
             }
           }
-          this.planList.push({ date: date, key: planArray[j], planName: planObject[planArray[j]]["planName"], maxDustbin: planObject[planArray[j]]["maxDustbinCapacity"], dustbinAssigned: dustbinAssigned, isAssigned: planObject[planArray[j]]["isAssigned"], bins: bins, zone: planObject[planArray[j]]["zone"], pickedDustbin: planObject[planArray[j]]["pickedDustbin"], dustbinPicked: dustbinPicked, sequence: planObject[planArray[j]]["pickingSequence"], highPriority: highPriority, dustbinPickingPosition: planObject[planArray[j]]["dustbinPickingPosition"] });
         }
       }
       this.removeAssignedPlan();
@@ -417,6 +424,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
     let planName = $(this.txtPlanName).val();
     let planDate = $(this.txtPlanDate).val();
     let maxDustbinCapacity = $(this.txtDustbinCapacity).val();
+    let planType = "Open Depot";
 
     if (planName == "") {
       this.commonService.setAlertMessage("error", "Please fill plan name !!!");
@@ -437,6 +445,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       this.commonService.setAlertMessage("error", "plan date can not be less than today date !!!");
       return;
     }
+
     let dbPath = "DustbinData/DustbinPickingPlans/" + planDate;
     const plan = {
       $Key: $Key,
@@ -447,6 +456,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       isAssigned: this.isAssigned,
       pickingSequence: this.pickingSequence,
       planName: planName.toString(),
+      planType: planType,
       totalDustbin: this.totalDustbin,
       updatedAt: this.commonService.getTodayDateTime(),
       updatedBy: this.userId,
@@ -664,6 +674,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
     let detail = this.previousPlanList.find(item => item.planId == planId.replace("chk", ""));
     if (detail != undefined) {
       let planData = detail.planData;
+      
       let planDate = planDateFrom;
       if (planDateTo == "") {
         this.savePreviousPlanData(1, planData, planDate, 1);
@@ -685,6 +696,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
 
     }
     else {
+      console.log(planData)
       let planDetail = this.planList.find(item => item.planName == planData.planName && item.date == planDate);
       if (planDetail != undefined) {
         this.commonService.setAlertMessage("error", "Plan Name " + planData.planName + " already exist on date " + planDate + " !!!");
@@ -700,6 +712,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
           isAssigned: this.isAssigned,
           pickingSequence: planData.pickingSequence,
           planName: planData.planName,
+          planType: planData.planType,
           totalDustbin: planData.totalDustbin,
           updatedAt: this.commonService.getTodayDateTime(),
           updatedBy: this.userId,
@@ -726,22 +739,10 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       return;
     }
     this.previousPlanList = [];
-    this.dustbinService.getDustbinPickingPlansByDate(date).then((planListData: any) => {
-      if (planListData != null) {
-        let keyArray = Object.keys(planListData);
-        if (keyArray.length > 0) {
-          $(this.chkAllPlans).show();
-          for (let i = 0; i < keyArray.length; i++) {
-            let planId = keyArray[i];
-            let palnData = planListData[planId];
-            let planName = planListData[planId]["planName"];
-            if (planName != "") {
-              this.previousPlanList.push({ planId: planId, planName: planName, planData: palnData });
-            }
-          }
-        }
-      }
+    this.dustbinService.getOpenDepotPreviousPlanByDate(date).then((planList: any) => {
+      this.previousPlanList=planList;
     });
+    
   }
 
   deleteConfirmPlan() {
@@ -1204,7 +1205,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       let point2 = 25;
       let fontSize = "10px";
       let sequence = (i + 1);
-      let contentString = 'Dustbin : ' + this.dustbinMapList[i]["address"];
+      let contentString = 'Open Depot : ' + this.dustbinMapList[i]["address"];
       this.setSelectedMarker(i, this.dustbinMapList[i]["lat"], this.dustbinMapList[i]["lng"], sequence, imgPath, contentString, scaledheight, scaledWidth, point1, point2, fontSize, "preSelected", this.dustbinMapList[i]["isPicked"]);
 
       i = index;
@@ -1217,7 +1218,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
       point2 = 15;
       fontSize = "14px";
       sequence = (i + 1);
-      contentString = 'Dustbin : ' + this.dustbinMapList[i]["address"];
+      contentString = 'Open Depot : ' + this.dustbinMapList[i]["address"];
       this.setSelectedMarker(i, this.dustbinMapList[i]["lat"], this.dustbinMapList[i]["lng"], sequence, imgPath, contentString, scaledheight, scaledWidth, point1, point2, fontSize, "selected", this.dustbinMapList[i]["isPicked"]);
     }
   }
@@ -1458,7 +1459,7 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
           }
         });
         this.bounds.extend({ lat: Number(this.dustbinMapList[i]["lat"]), lng: Number(this.dustbinMapList[i]["lng"]) });
-        let contentString = 'Dustbin : ' + this.dustbinMapList[i]["address"];
+        let contentString = 'Open Depot : ' + this.dustbinMapList[i]["address"];
         let infowindow = new google.maps.InfoWindow({
           content: contentString
         });

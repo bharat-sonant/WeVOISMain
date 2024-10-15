@@ -16,6 +16,7 @@ export class DustbinManageComponent implements OnInit {
   selectedStatus: any;
   zoneList: any[] = [];
   dustbinStorageList: any[] = [];
+  dustbinAllStorageList: any[] = [];
   dustbinList: any[] = [];
   ddlZone = "#ddlZone";
   dustbinId = "#dustbinId";
@@ -26,7 +27,7 @@ export class DustbinManageComponent implements OnInit {
   txtLng = "#txtLng";
   txtFreq = "#txtFreq";
   ddlDustbinType = "#ddlDustbinType";
-  isShowDisabledBy:any;
+  isShowDisabledBy: any;
 
   dustbinSummary: dustbinSummary = {
     totalDustbin: 0,
@@ -37,23 +38,25 @@ export class DustbinManageComponent implements OnInit {
 
   ngOnInit() {
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
-    this.commonService.savePageLoadHistory("Dustbin-Management","Manage-Dustbin",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Dustbin-Management", "Manage-Dustbin", localStorage.getItem("userID"));
     this.getZoneList();
   }
 
   getZoneList() {
     this.zoneList = [];
-    this.isShowDisabledBy="0";
+    this.isShowDisabledBy = "0";
     this.dustbinService.getDustbinZone().then((zones: any) => {
       if (zones != null) {
         let list = zones.toString().split(',');
         for (let i = 0; i < list.length; i++) {
-          this.zoneList.push({ zoneNo: list[i].toString().trim(), zone: "Zone " + list[i].toString().trim() });
+          this.zoneList.push({ zoneNo: list[i], zone: "Zone " + list[i] });
         }
         this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
         this.selectedZone = this.zoneList[0]["zoneNo"];
         this.dustbinStorageList = [];
         this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+        this.dustbinAllStorageList = [];
+        this.dustbinAllStorageList = JSON.parse(localStorage.getItem("allDustbin"));
         if (this.dustbinStorageList != null) {
           this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
           this.selectedStatus = "enabled";
@@ -78,32 +81,32 @@ export class DustbinManageComponent implements OnInit {
   getDustbins() {
     this.dustbinList = [];
     let list = [];
-    let userList=JSON.parse(localStorage.getItem("webPortalUserList"));
+    let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     if (this.dustbinStorageList.length > 0) {
       list = this.dustbinStorageList.filter(item => item.zone.toString().trim() == this.selectedZone.toString().trim());
       this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
       if (this.selectedStatus == "enabled") {
         list = list.filter(item => item.isDisabled != "yes");
-        this.isShowDisabledBy="0";
+        this.isShowDisabledBy = "0";
       }
       else if (this.selectedStatus == "disabled") {
         list = list.filter(item => item.isDisabled == "yes");
-        this.isShowDisabledBy="1";
+        this.isShowDisabledBy = "1";
       }
       else {
-        this.isShowDisabledBy="1";
+        this.isShowDisabledBy = "1";
 
       }
       for (let i = 0; i < list.length; i++) {
-        let disabledByName="";        
-        if(list[i]["disabledBy"]!=""){
-          let detail=userList.find(item=>item.userId==list[i]["disabledBy"]);
-          if(detail!=undefined){
-            disabledByName=detail.name;
+        let disabledByName = "";
+        if (list[i]["disabledBy"] != "") {
+          let detail = userList.find(item => item.userId == list[i]["disabledBy"]);
+          if (detail != undefined) {
+            disabledByName = detail.name;
           }
 
         }
-        this.dustbinList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"], disabledBy: list[i]["disabledBy"],disabledByName:disabledByName });
+        this.dustbinList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"], disabledBy: list[i]["disabledBy"], disabledByName: disabledByName });
       }
     }
   }
@@ -180,7 +183,8 @@ export class DustbinManageComponent implements OnInit {
       lng: lng,
       type: type,
       pickFrequency: pickFrequency,
-      createdDate: this.commonService.setTodayDate()
+      createdDate: this.commonService.setTodayDate(),
+      dustbinType: "dustbin"
     }
     if (dustbinId == "0") {
       this.addDustbin(data);
@@ -191,20 +195,26 @@ export class DustbinManageComponent implements OnInit {
   }
 
   addDustbin(data: any) {
-    let dustbin = Number(this.dustbinStorageList[this.dustbinStorageList.length - 1]["dustbin"]) + 1;
-    if (isNaN(dustbin)) {
-      this.commonService.setAlertMessage("error", "Please try again !!!");
-      return;
+    let dustbin = 1;
+    if (this.dustbinAllStorageList.length > 0) {
+      dustbin = Number(this.dustbinAllStorageList[this.dustbinAllStorageList.length - 1]["dustbin"]) + 1;
+      if (isNaN(dustbin)) {
+        this.commonService.setAlertMessage("error", "Please try again !!!");
+        return;
+      }
     }
     this.dustbinService.updateDustbinDetail(dustbin, data, 'add');
-    this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone });
+    this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone,dustbinType:"dustbin" });
     localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
+    this.dustbinAllStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone,dustbinType:"dustbin" });
+    localStorage.setItem("allDustbin", JSON.stringify(this.dustbinAllStorageList));
     this.getDustbins();
     this.commonService.setAlertMessage("success", "Dustbin detail added successfully !!!");
     this.closeModel();
   }
 
   updateDustbin(dustbin: any, data: any) {
+
     this.dustbinService.updateDustbinDetail(dustbin, data, 'update');
     this.updateLocalStorageDustbin(dustbin, data);
     this.getDustbins();

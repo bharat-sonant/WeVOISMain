@@ -62,10 +62,6 @@ let databaseURL = "https://dtdnavigator.firebaseio.com";
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    
-   
- 
-  
    
   ],
   providers: [{ provide: FirestoreSettingsToken, useValue: {} }],

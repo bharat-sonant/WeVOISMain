@@ -278,6 +278,7 @@ export class DustbinServiceComponent implements OnInit {
       planName: planName,
       totalDustbin: 1,
       createdBy: "-1",
+      planType:"Dustbin"
     }
 
     let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + key;

@@ -8,6 +8,7 @@ import { MapService } from '../services/map/map.service';
 import * as $ from "jquery";
 import { Router } from '@angular/router';
 import { FirebaseService } from "../firebase.service";
+import { DustbinService } from "../services/dustbin/dustbin.service";
 import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
@@ -20,7 +21,7 @@ export class DustbinMonitoringComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(private router: Router, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public toastr: ToastrService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
+  constructor(private router: Router,private dustbinService: DustbinService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public toastr: ToastrService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService) { }
 
   public selectedZone: any;
   selectedDate: any;
@@ -131,6 +132,7 @@ export class DustbinMonitoringComponent {
       this.instancesList = [];
       setTimeout(() => {
         this.setMarkerNew();
+        this.getFixedGeoLocation();
       }, 5000);
     }
     if (this.userType == "External User" && this.cityName == "jodhpur") {
@@ -327,7 +329,7 @@ export class DustbinMonitoringComponent {
     this.planDetail = [];
     this.pickkingPlanList = [];
     this.dustbinShow = [];
-    this.pickkingPlanList.push({ planId: 0, planName: "Select Dustbin Pick Plan" });
+    this.pickkingPlanList.push({ planId: 0, planName: "Select Pick Plan" });
     this.setMapOnAll();
     $('#ddlZone').val("0");
     $('#ddlPickPlans').val("0");
@@ -338,90 +340,43 @@ export class DustbinMonitoringComponent {
     $("#divTrack").hide();
     this.isHalt = false;
     this.isRoute = false;
-    let dbPath = "";
     this.bounds = new google.maps.LatLngBounds();
     if (this.allDustbin != null) {
+      let year = this.selectedDate.split('-')[0];
       let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-      let year = this.selectedDate.split("-")[0];
-      dbPath = "DustbinData/DustbinAssignment/" + year + "/" + monthName + "/" + this.selectedDate + "";
-      let assignedPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
-        data => {
-          assignedPlanInstance.unsubscribe();
-          if (data != null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", data);
-            let keyArray = Object.keys(data);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length; i++) {
-                let index = keyArray[i];
-                let planName = data[index]["planName"];
-                let driver = data[index]["driver"];
-                let vehicle = data[index]["vehicle"];
-                this.pickkingPlanList.push({ planId: index, vehicle: vehicle, planName: planName + " [" + vehicle + "]" });
-                let classes = "collapse";
-                if (i == 0) {
-                  classes = "collapse show";
-                }
-                this.planDetail.push({ id: index, planName: planName, vehicle: vehicle, driver: driver, totDistance: 0, totTime: 0, driverName: "", mobileNo: "", totHalt: 0, assigned: 0, picked: 0, classes: classes, startTime: "00:00", endTime: "00:00" });
-                this.getHalt(vehicle);
-                this.getRoute(vehicle);
-                this.getDriverDetail(driver);
-                this.getStartTime(driver, index);
-                this.getDistanceCovered(vehicle, index, year, monthName);
-
-                if (this.selectedDate == this.todayDate) {
-                  let vehicleLocation = this.db.object('CurrentLocationInfo/BinLifting/' + vehicle + '/CurrentLoc').valueChanges().subscribe(
-                    vehicleLocationData => {
-                      if (vehicleLocationData != null) {
-                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", vehicleLocationData);
-                        if (this.selectedDate == this.todayDate) {
-                          let lat = vehicleLocationData["lat"];
-                          let lng = vehicleLocationData["lng"];
-                          let contentString = 'Vehicle: ' + vehicle;
-                          this.setMarker(lat, lng, null, this.vehicleUrl, 60, 60, contentString, "vehicle", 0, 15, 25);
-                        }
-                      }
-                      vehicleLocation.unsubscribe();
-                    });
-                }
-
-                dbPath = "DustbinData/DustbinPickingPlans/" + index + "";
-                let planInstance = this.db.object(dbPath).valueChanges().subscribe(
-                  planData => {
-                    planInstance.unsubscribe();
-                    if (planData != null) {
-                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", planData);
-                      this.getPickedDustbin(planData, i, index, planName, year, monthName, vehicle, driver);
-                    }
-                    else {
-                      dbPath = "DustbinData/DustbinPickingPlans/" + this.todayDate + "/" + index + "";
-                      let planInstance = this.db.object(dbPath).valueChanges().subscribe(
-                        planData => {
-                          planInstance.unsubscribe();
-                          if (planData != null) {
-                            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", planData);
-                            this.getPickedDustbin(planData, i, index, planName, year, monthName, vehicle, driver);
-                          }
-                          else {
-                            dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + this.selectedDate + "/" + index + "";
-                            let planInstance = this.db.object(dbPath).valueChanges().subscribe(
-                              planData => {
-                                planInstance.unsubscribe();
-                                if (planData != null) {
-                                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", planData);
-                                  this.getPickedDustbin(planData, i, index, planName, year, monthName, vehicle, driver);
-                                }
-                              }
-                            );
-                          }
-                        });
+      this.dustbinService.getAssignedDustbinByDate(this.selectedDate).then(response => {
+        if (response["status"] == "success") {
+          let list = response["data"];
+          for (let i = 0; i < list.length; i++) {
+            let classes = "collapse";
+            if (i == 0) {
+              classes = "collapse show";
+            }
+            this.pickkingPlanList.push({ planId: list[i]["id"], vehicle: list[i]["vehicle"], planName: list[i]["planName"] + " [" + list[i]["vehicle"] + "]" });
+            this.planDetail.push({ id: list[i]["id"], planName: list[i]["planName"], vehicle: list[i]["vehicle"], driver: list[i]["driver"], totDistance: 0, totTime: 0, driverName: "", mobileNo: "", totHalt: 0, assigned: 0, picked: 0, classes: classes, startTime: "00:00", endTime: "00:00" });
+            this.getHalt(list[i]["vehicle"], list[i]["id"]);
+            this.getDriverDetail(list[i]["driver"], list[i]["id"]);
+            this.getStartTime(list[i]["driver"], list[i]["id"]);
+            this.getDistanceCovered(list[i]["vehicle"], list[i]["id"], year, monthName);
+            if (this.selectedDate == this.todayDate) {
+              let vehicleLocation = this.db.object('CurrentLocationInfo/BinLifting/' + list[i]["vehicle"] + '/CurrentLoc').valueChanges().subscribe(
+                vehicleLocationData => {
+                  if (vehicleLocationData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getData", vehicleLocationData);
+                    if (this.selectedDate == this.todayDate) {
+                      let lat = vehicleLocationData["lat"];
+                      let lng = vehicleLocationData["lng"];
+                      let contentString = 'Vehicle: ' + list[i]["vehicle"];
+                      this.setMarker(lat, lng, null, this.vehicleUrl, 60, 60, contentString, "vehicle", 0, 15, 25);
                     }
                   }
-                );
-              }
+                  vehicleLocation.unsubscribe();
+                });
             }
+            this.getPickedDustbin(list[i]["planData"], i, list[i]["id"], list[i]["planName"], year, monthName, list[i]["vehicle"], list[i]["driver"]);
           }
         }
-      );
+      });
     }
   }
 
@@ -558,17 +513,19 @@ export class DustbinMonitoringComponent {
     this.fixdGeoLocations = JSON.parse(localStorage.getItem("fixedLocation"));;
     if (this.fixdGeoLocations.length > 0) {
       for (let i = 0; i < this.fixdGeoLocations.length; i++) {
+        if(this.fixdGeoLocations[i]["lat"]!=null){
         let Lat = this.fixdGeoLocations[i]["lat"];
         let Lng = this.fixdGeoLocations[i]["lng"];
         let markerURL = "../../../assets/img/" + this.fixdGeoLocations[i]["img"];
         var markerLabel = null;
         let contentString = '<b>' + this.fixdGeoLocations[i]["name"] + '</b>: ' + this.fixdGeoLocations[i]["address"];
         this.setMarker(Lat, Lng, markerLabel, markerURL, 50, 50, contentString, "route", 0, 25, 31);
+        }
       }
     }
   }
 
-  getHalt(vehicle: any) {
+  getHalt(vehicle: any,index:any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHalt");
     let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let year = this.selectedDate.split("-")[0];
@@ -596,20 +553,17 @@ export class DustbinMonitoringComponent {
               }
             }
           }
-          if (this.planDetail.length > 0) {
-            for (let i = 0; i < this.planDetail.length; i++) {
-              if (this.planDetail[i]["vehicle"] == vehicle) {
-                this.planDetail[i]["totHalt"] = totalBreak;
-              }
-            }
+          let detail = this.planDetail.find(item => item.id == index);
+          if (detail != undefined) {
+            detail.totHalt = totalBreak;
           }
         }
       });
   }
 
-  getDriverDetail(driver: any) {
+  getDriverDetail(driver: any,index:any) {
     this.commonService.getEmplyeeDetailByEmployeeId(driver).then((employee) => {
-      let planDetails = this.planDetail.find(item => item.driver == driver);
+      let planDetails = this.planDetail.find(item => item.id == index);
       if (planDetails != undefined) {
         planDetails.driverName = employee["name"] != null ? (employee["name"]).toUpperCase() : "Not Assigned";
         planDetails.mobileNo = employee["mobile"] != null ? (employee["mobile"]) : "---";
@@ -678,11 +632,11 @@ export class DustbinMonitoringComponent {
     if (this.planDetail.length > 0) {
       for (let i = 0; i < this.planDetail.length; i++) {
         if (this.activePlan == null || this.activePlan == "0") {
-          this.getHalt(this.planDetail[i]["vehicle"]);
+          this.getHalt(this.planDetail[i]["vehicle"], "0");
         }
         else {
           if (this.activePlan == this.planDetail[i]["id"]) {
-            this.getHalt(this.planDetail[i]["vehicle"]);
+            this.getHalt(this.planDetail[i]["vehicle"], this.planDetail[i]["id"]);
           }
         }
       }
@@ -746,7 +700,7 @@ export class DustbinMonitoringComponent {
               let lng = this.dustbinShow[i]["lng"];
               let markerLabel = null;
               let markerURL = this.dustbinShow[i]["img"];
-              let contentString = 'Dustbin: ' + this.dustbinShow[i]["dustbin"] + '<br/> Address : ' + this.dustbinShow[i]["address"];
+              let contentString = 'Dustbin : ' + this.dustbinShow[i]["dustbin"] + '<br/> Address : ' + this.dustbinShow[i]["address"];
               this.setMarker(lat, lng, markerLabel, markerURL, 25, 31, contentString, "allDustbin", 0, 15, 25);
             }
           }
@@ -757,7 +711,7 @@ export class DustbinMonitoringComponent {
             let lng = this.allDustbin[i]["lng"];
             let markerLabel = null;
             let markerURL = this.defaultDustbinUrl;
-            let contentString = 'Dustbin: ' + this.allDustbin[i]["dustbin"] + '<br/> Address : ' + this.allDustbin[i]["address"];
+            let contentString = 'Dustbin : ' + this.allDustbin[i]["dustbin"] + '<br/> Address : ' + this.allDustbin[i]["address"];
             this.setMarker(lat, lng, markerLabel, markerURL, 25, 31, contentString, "allDustbin", 0, 15, 25);
           }
         }
@@ -917,7 +871,7 @@ export class DustbinMonitoringComponent {
               markerLabel = this.dustbinShow[j]["sequence"];
             }
             let markerURL = this.dustbinShow[j]["img"];
-            let contentString = 'Dustbin: ' + this.allDustbin[i]["dustbin"] + '<br/> Address : ' + this.allDustbin[i]["address"];
+            let contentString = 'Dustbin : ' + this.allDustbin[i]["dustbin"] + '<br/> Address : ' + this.allDustbin[i]["address"];
             this.setMarker(lat, lng, markerLabel, markerURL, 30, 35, contentString, "assignedDustbin", 1, 15, 25);
             this.bounds.extend({ lat: Number(this.allDustbin[i]["lat"]), lng: Number(this.allDustbin[i]["lng"]) });
           }

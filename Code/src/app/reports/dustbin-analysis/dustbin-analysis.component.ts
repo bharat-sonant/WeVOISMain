@@ -28,7 +28,7 @@ export class DustbinAnalysisComponent implements OnInit {
   maxSlideCount: any;
   cityName: any;
   userType: any;
-  isShowData:any; 
+  isShowData: any;
   db: any;
   serviceName = "dustbin-analysis";
   binDetail: dustbinDetails = {
@@ -85,10 +85,10 @@ export class DustbinAnalysisComponent implements OnInit {
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
     if (this.userType == "External User" && this.cityName == "jodhpur") {
-      this.isShowData=false;
+      this.isShowData = false;
     }
     else {
-      this.isShowData=true;
+      this.isShowData = true;
       this.getPandingAnalysis();
       this.getAssignedPlans();
     }
@@ -132,30 +132,151 @@ export class DustbinAnalysisComponent implements OnInit {
   getAssignedPlans() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedPlans");
     this.planList = [];
-    let assignedPlanPath = this.db.list("DustbinData/DustbinAssignment/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate).valueChanges().subscribe((assignedPlans) => {
-      if (assignedPlans.length > 0) {
-        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedPlans", assignedPlans);
-        for (let index = 0; index < assignedPlans.length; index++) {
-          const element = assignedPlans[index];
-          if (element["planName"] != "") {
-            this.planList.push({
-              planId: element["planId"],
-              planName: element["planName"],
-              driver: element["driver"],
-              helper: element["helper"],
-              secondHelper: element["secondHelper"],
-              thirdHelper: element["thirdHelper"],
-              vehicle: element["vehicle"],
-            });
-          }
+    let assignedPlanPath = this.db.object("DustbinData/DustbinAssignment/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate).valueChanges().subscribe((assignedPlans) => {
+      assignedPlanPath.unsubscribe();
+      if (assignedPlans != null) {
+        const promises = [];
+        let keyArray = Object.keys(assignedPlans);
+        for (let index = 0; index < keyArray.length; index++) {
+          const planId = keyArray[index];
+          promises.push(Promise.resolve(this.getDustbinAssignedPlans(planId, assignedPlans)));
         }
-        this.getBinsForSelectedPlan(this.planList[0]["planId"]);
+
+        Promise.all(promises).then((results) => {
+          let merged = [];
+          for (let i = 0; i < results.length; i++) {
+            if (results[i]["status"] == "success") {
+              merged = merged.concat(results[i]["data"]);
+            }
+          }
+          this.planList = merged;
+          if (this.planList.length > 0) {
+            this.getBinsForSelectedPlan(this.planList[0]["planId"]);
+          } else {
+            this.resetData();
+            this.commonService.setAlertMessage("error", "No plan created for the selected date.");
+          }
+        });
       } else {
         this.resetData();
         this.commonService.setAlertMessage("error", "No plan created for the selected date.");
       }
 
-      assignedPlanPath.unsubscribe();
+    });
+  }
+
+  getDustbinAssignedPlans(planId: any, assignedPlans: any) {
+    return new Promise((resolve) => {
+      let obj = {};
+      let pickingPlanPathInstance = this.db.object("DustbinData/DustbinPickingPlans/" + planId).valueChanges().subscribe(pickingPlanData => {
+        pickingPlanPathInstance.unsubscribe();
+        console.log(pickingPlanData)
+        
+        if (pickingPlanData == null) {
+          let pickingPlanWithDatePath = this.db.object("DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId).valueChanges().subscribe((pickingPlanWithDateData) => {
+            pickingPlanWithDatePath.unsubscribe();
+            console.log(pickingPlanWithDateData)
+            if (pickingPlanWithDateData == null) {
+              let pickingPlanHistory = this.db.object("DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId).valueChanges().subscribe((dustbinPlanHistoryData) => {
+                pickingPlanHistory.unsubscribe();
+                console.log(dustbinPlanHistoryData)
+                if (dustbinPlanHistoryData == null) {
+                  resolve({ status: "fail", data: obj });
+                }
+                else {
+                  if (dustbinPlanHistoryData["planType"] == null) {
+                    obj = {
+                      planId: assignedPlans[planId]["planId"],
+                      planName: assignedPlans[planId]["planName"],
+                      driver: assignedPlans[planId]["driver"],
+                      helper: assignedPlans[planId]["helper"],
+                      secondHelper: assignedPlans[planId]["secondHelper"],
+                      thirdHelper: assignedPlans[planId]["thirdHelper"],
+                      vehicle: assignedPlans[planId]["vehicle"]
+                    }
+                    resolve({ status: "success", data: obj });
+                  }
+                  else if (dustbinPlanHistoryData["planType"] == "Dustbin") {
+                    obj = {
+                      planId: assignedPlans[planId]["planId"],
+                      planName: assignedPlans[planId]["planName"],
+                      driver: assignedPlans[planId]["driver"],
+                      helper: assignedPlans[planId]["helper"],
+                      secondHelper: assignedPlans[planId]["secondHelper"],
+                      thirdHelper: assignedPlans[planId]["thirdHelper"],
+                      vehicle: assignedPlans[planId]["vehicle"]
+                    }
+                    resolve({ status: "success", data: obj });
+                  }
+                  else {
+                    resolve({ status: "fail", data: obj });
+                  }
+                }
+              });
+            }
+            else {
+              if (pickingPlanWithDateData["planType"] == null) {
+                obj = {
+                  planId: assignedPlans[planId]["planId"],
+                  planName: assignedPlans[planId]["planName"],
+                  driver: assignedPlans[planId]["driver"],
+                  helper: assignedPlans[planId]["helper"],
+                  secondHelper: assignedPlans[planId]["secondHelper"],
+                  thirdHelper: assignedPlans[planId]["thirdHelper"],
+                  vehicle: assignedPlans[planId]["vehicle"]
+                }
+                resolve({ status: "success", data: obj });
+              }
+              else if (pickingPlanWithDateData["planType"] == "Dustbin") {
+                obj = {
+                  planId: assignedPlans[planId]["planId"],
+                  planName: assignedPlans[planId]["planName"],
+                  driver: assignedPlans[planId]["driver"],
+                  helper: assignedPlans[planId]["helper"],
+                  secondHelper: assignedPlans[planId]["secondHelper"],
+                  thirdHelper: assignedPlans[planId]["thirdHelper"],
+                  vehicle: assignedPlans[planId]["vehicle"]
+                }
+                resolve({ status: "success", data: obj });
+              }
+              else {
+                resolve({ status: "fail", data: obj });
+              }
+            }
+
+          });
+        }
+        else {
+          if (pickingPlanData["planType"] == null) {
+            obj = {
+              planId: assignedPlans[planId]["planId"],
+              planName: assignedPlans[planId]["planName"],
+              driver: assignedPlans[planId]["driver"],
+              helper: assignedPlans[planId]["helper"],
+              secondHelper: assignedPlans[planId]["secondHelper"],
+              thirdHelper: assignedPlans[planId]["thirdHelper"],
+              vehicle: assignedPlans[planId]["vehicle"]
+            }
+            resolve({ status: "success", data: obj });
+          }
+          else if (pickingPlanData["planType"] == "Dustbin") {
+            obj = {
+              planId: assignedPlans[planId]["planId"],
+              planName: assignedPlans[planId]["planName"],
+              driver: assignedPlans[planId]["driver"],
+              helper: assignedPlans[planId]["helper"],
+              secondHelper: assignedPlans[planId]["secondHelper"],
+              thirdHelper: assignedPlans[planId]["thirdHelper"],
+              vehicle: assignedPlans[planId]["vehicle"]
+            }
+            resolve({ status: "success", data: obj });
+          }
+          else {
+            resolve({ status: "fail", data: obj });
+          }
+        }
+      })
+
     });
   }
 

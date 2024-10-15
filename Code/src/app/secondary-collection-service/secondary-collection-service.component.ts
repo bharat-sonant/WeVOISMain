@@ -96,7 +96,7 @@ export class SecondaryCollectionServiceComponent implements OnInit {
   getZoneList() {
     this.zoneList = [];
     this.dustbinStorageList = [];
-    this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+    this.dustbinStorageList = JSON.parse(localStorage.getItem("openDepot"));
     if (this.dustbinStorageList != null) {
       this.dustbinStorageList = this.commonService.transform(this.dustbinStorageList, "zone");
       for (let i = 0; i < this.dustbinStorageList.length; i++) {
@@ -224,10 +224,6 @@ export class SecondaryCollectionServiceComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please select open depot ");
       return;
     }
-    if (percentage == "") {
-      this.commonService.setAlertMessage("error", "Please enter percentage");
-      return;
-    }
     if (pickTime == "") {
       this.commonService.setAlertMessage("error", "Please select pick time");
       return;
@@ -279,6 +275,7 @@ export class SecondaryCollectionServiceComponent implements OnInit {
       planName: planName,
       totalDustbin: 1,
       createdBy: "-1",
+      planType:"Open Depot"
     }
 
     let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date + "/" + key;
@@ -321,7 +318,7 @@ export class SecondaryCollectionServiceComponent implements OnInit {
       const analysisData = {
         analysisAt: date + " " + analysisTime,
         analysisBy: 21,
-        filledPercentage: percentage
+        filledPercentage: 0
       }
 
       const data2 = {

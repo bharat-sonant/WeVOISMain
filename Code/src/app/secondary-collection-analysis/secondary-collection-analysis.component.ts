@@ -126,25 +126,31 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
   getAssignedPlans() {
     this.planList = [];
-    let assignedPlanPath = this.db.list("DustbinData/DustbinAssignment/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate).valueChanges()
+    let assignedPlanPath = this.db.object("DustbinData/DustbinAssignment/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate).valueChanges()
       .subscribe((assignedPlans) => {
-        if (assignedPlans.length > 0) {
-          for (let index = 0; index < assignedPlans.length; index++) {
-            const element = assignedPlans[index];
-            if (element["planName"] != "") {
-              this.planList.push({
-                planId: element["planId"],
-                planName: element["planName"],
-                driver: element["driver"],
-                helper: element["helper"],
-                secondHelper: element["secondHelper"],
-                thirdHelper: element["thirdHelper"],
-                vehicle: element["vehicle"],
-              });
-            }
+        if (assignedPlans != null) {
+          const promises = [];
+          let keyArray = Object.keys(assignedPlans);
+          for (let index = 0; index < keyArray.length; index++) {
+            const planId = keyArray[index];
+            promises.push(Promise.resolve(this.getOpenDepotAssignedPlans(planId, assignedPlans)));
           }
 
-          this.getBinsForSelectedPlan(this.planList[0]["planId"]);
+          Promise.all(promises).then((results) => {
+            let merged = [];
+            for (let i = 0; i < results.length; i++) {
+              if (results[i]["status"] == "success") {
+                merged = merged.concat(results[i]["data"]);
+              }
+            }
+            this.planList = merged;
+            if (this.planList.length > 0) {
+              this.getBinsForSelectedPlan(this.planList[0]["planId"]);
+            } else {
+              this.resetData();
+              this.commonService.setAlertMessage("error", "No plan created for the selected date.");
+            }
+          });
         } else {
           this.resetData();
           this.commonService.setAlertMessage("error", "No plan created for the selected date.");
@@ -153,6 +159,91 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
         assignedPlanPath.unsubscribe();
       });
   }
+
+  getOpenDepotAssignedPlans(planId: any, assignedPlans: any) {
+    return new Promise((resolve) => {
+      let obj = {};
+      console.log(planId)
+      let pickingPlanPath = this.db.object("DustbinData/DustbinPickingPlans/" + planId + "/planType").valueChanges().subscribe((pickingPlanData) => {
+        if (pickingPlanData == null) {
+          pickingPlanPath.unsubscribe();
+          // now need to find with date
+          let pickingPlanWithDatePath = this.db.object("DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId + "/planType").valueChanges().subscribe((pickingPlanWithDateData) => {
+            pickingPlanWithDatePath.unsubscribe();
+            if (pickingPlanWithDateData == null) {
+              let pickingPlanHistory = this.db.object("DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId + "/planType").valueChanges().subscribe((dustbinPlanHistoryData) => {
+                pickingPlanHistory.unsubscribe();
+                if (dustbinPlanHistoryData != null) {
+                  if (dustbinPlanHistoryData == "Open Depot") {
+                    obj = {
+                      planId: assignedPlans[planId]["planId"],
+                      planName: assignedPlans[planId]["planName"],
+                      driver: assignedPlans[planId]["driver"],
+                      helper: assignedPlans[planId]["helper"],
+                      secondHelper: assignedPlans[planId]["secondHelper"],
+                      thirdHelper: assignedPlans[planId]["thirdHelper"],
+                      vehicle: assignedPlans[planId]["vehicle"]
+                    }
+                    resolve({ status: "success", data: obj });
+                  }
+                  else {
+                    resolve({ status: "fail", data: obj });
+                  }
+                }
+                else {
+                  resolve({ status: "fail", data: obj });
+                }
+              });
+            } else {
+              if (pickingPlanWithDateData != null) {
+                if (pickingPlanWithDateData == "Open Depot") {
+                  obj = {
+                    planId: assignedPlans[planId]["planId"],
+                    planName: assignedPlans[planId]["planName"],
+                    driver: assignedPlans[planId]["driver"],
+                    helper: assignedPlans[planId]["helper"],
+                    secondHelper: assignedPlans[planId]["secondHelper"],
+                    thirdHelper: assignedPlans[planId]["thirdHelper"],
+                    vehicle: assignedPlans[planId]["vehicle"]
+                  }
+                  resolve({ status: "success", data: obj });
+                }
+                else {
+                  resolve({ status: "fail", data: obj });
+                }
+              }
+              else {
+                resolve({ status: "fail", data: obj });
+              }
+            }
+          });
+        } else {
+          if (pickingPlanData != null) {
+            if (pickingPlanData == "Open Depot") {
+              obj = {
+                planId: assignedPlans[planId]["planId"],
+                planName: assignedPlans[planId]["planName"],
+                driver: assignedPlans[planId]["driver"],
+                helper: assignedPlans[planId]["helper"],
+                secondHelper: assignedPlans[planId]["secondHelper"],
+                thirdHelper: assignedPlans[planId]["thirdHelper"],
+                vehicle: assignedPlans[planId]["vehicle"]
+              }
+              resolve({ status: "success", data: obj });
+            }
+            else {
+              resolve({ status: "fail", data: obj });
+            }
+          }
+          else {
+            resolve({ status: "fail", data: obj });
+          }
+        }
+      });
+    });
+  }
+
+
 
   resetData() {
     this.dustbinList = [];
@@ -759,12 +850,12 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
   saveOfflineDustbinDetail() {
     let startTime = $("#txtPickTime").val();
-    let endTime=$("#txtPickTimeEnd").val();
+    let endTime = $("#txtPickTimeEnd").val();
     let fileUploadBefore = <HTMLInputElement>document.getElementById("fileUploadBefore");
     let file = fileUploadBefore.files[0];
     let fileUploadAfter = <HTMLInputElement>document.getElementById("fileUploadAfter");
     let file1 = fileUploadAfter.files[0];
-    
+
     if (file == null) {
       this.commonService.setAlertMessage("error", "Please upload before pick image.");
       return;
@@ -782,20 +873,20 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       return;
     }
 
-    if(new Date(this.selectedDate+" "+endTime)<new Date(this.selectedDate+" "+startTime)){
+    if (new Date(this.selectedDate + " " + endTime) < new Date(this.selectedDate + " " + startTime)) {
       this.commonService.setAlertMessage("error", "End time must be greater then start time.");
       return;
     }
 
     $("#divLoader").show();
-     let storageCityName = this.commonService.getFireStoreCity();
+    let storageCityName = this.commonService.getFireStoreCity();
     let filledFarFromImageUrl = "";
     let emptyFarFromImageUrl = "";
     let imageObj;
     let urlObj = {};
     let token = new Date().getTime();
-    let duration =(new Date(this.selectedDate+" "+endTime).getTime()-new Date(this.selectedDate+" "+startTime).getTime())/60000;
-   
+    let duration = (new Date(this.selectedDate + " " + endTime).getTime() - new Date(this.selectedDate + " " + startTime).getTime()) / 60000;
+
     if (file != null) {
       filledFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FfilledFarFromImage.jpg?alt=media&token=" + token + "";
       urlObj["filledFarFromImageUrl"] = filledFarFromImageUrl;
@@ -848,7 +939,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
     let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId;
     this.db.object(dbPath).update(data);
-    this.updatePickedOpenDepotInPlan(this.planDetail.planId,this.binDetail.binId);
+    this.updatePickedOpenDepotInPlan(this.planDetail.planId, this.binDetail.binId);
     setTimeout(() => {
       this.binDetail.startTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + startTime);
       this.binDetail.endTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + endTime);
@@ -875,7 +966,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     }, 2000);
   }
 
-  updatePickedOpenDepotInPlan(planId: any, dustbinId:any) {
+  updatePickedOpenDepotInPlan(planId: any, dustbinId: any) {
     let dbPath = "DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId;
     let planInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       planInstance.unsubscribe();

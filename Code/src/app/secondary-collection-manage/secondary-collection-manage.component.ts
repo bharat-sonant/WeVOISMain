@@ -14,6 +14,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
   selectedStatus: any;
   zoneList: any[] = [];
   dustbinStorageList: any[] = [];
+  dustbinAllStorageList: any[] = [];
   dustbinList: any[] = [];
   ddlZone = "#ddlZone";
   dustbinId = "#dustbinId";
@@ -46,12 +47,14 @@ export class SecondaryCollectionManageComponent implements OnInit {
       if (zones != null) {
         let list = zones.toString().split(',');
         for (let i = 0; i < list.length; i++) {
-          this.zoneList.push({ zoneNo: list[i].toString().trim(), zone: "Zone " + list[i].toString().trim() });
+          this.zoneList.push({ zoneNo: list[i], zone: "Zone " + list[i] });
         }
         this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
         this.selectedZone = this.zoneList[0]["zoneNo"];
         this.dustbinStorageList = [];
-        this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+        this.dustbinStorageList = JSON.parse(localStorage.getItem("openDepot"));
+        this.dustbinAllStorageList = [];
+        this.dustbinAllStorageList = JSON.parse(localStorage.getItem("allDustbin"));
         if (this.dustbinStorageList != null) {
           this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
           this.selectedStatus = "enabled";
@@ -178,7 +181,8 @@ export class SecondaryCollectionManageComponent implements OnInit {
       lng: lng,
       type: type,
       pickFrequency: pickFrequency,
-      createdDate: this.commonService.setTodayDate()
+      createdDate: this.commonService.setTodayDate(),
+      dustbinType:"Open Depot"
     }
     if (dustbinId == "0") {
       this.addDustbin(data);
@@ -189,14 +193,19 @@ export class SecondaryCollectionManageComponent implements OnInit {
   }
 
   addDustbin(data: any) {
-    let dustbin = Number(this.dustbinStorageList[this.dustbinStorageList.length - 1]["dustbin"]) + 1;
-    if (isNaN(dustbin)) {
-      this.commonService.setAlertMessage("error", "Please try again !!!");
-      return;
+    let dustbin = 1;
+    if (this.dustbinAllStorageList.length > 0) {
+      dustbin = Number(this.dustbinAllStorageList[this.dustbinAllStorageList.length - 1]["dustbin"]) + 1;
+      if (isNaN(dustbin)) {
+        this.commonService.setAlertMessage("error", "Please try again !!!");
+        return;
+      }
     }
     this.dustbinService.updateDustbinDetail(dustbin, data, 'add');
-    this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone });
-    localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
+    this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone,dustbinType:"Open Depot" });
+    localStorage.setItem("openDepot", JSON.stringify(this.dustbinStorageList));
+    this.dustbinAllStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone,dustbinType:"Open Depot" });
+    localStorage.setItem("allDustbin", JSON.stringify(this.dustbinAllStorageList));
     this.getDustbins();
     this.commonService.setAlertMessage("success", "Open depot detail added successfully !!!");
     this.closeModel();
@@ -222,7 +231,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
         detail.disabledBy = "";
       }
     }
-    localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
+    localStorage.setItem("openDepot", JSON.stringify(this.dustbinStorageList));
     this.getDustbins();
     this.commonService.setAlertMessage("susscee", "Open depot status updated !!!");
   }
@@ -267,7 +276,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
       dustbinStorageDetail.address = data.address;
       dustbinStorageDetail.pickFrequency = data.pickFrequency;
     }
-    localStorage.setItem("dustbin", JSON.stringify(this.dustbinStorageList));
+    localStorage.setItem("openDepot", JSON.stringify(this.dustbinStorageList));
     this.closeModel();
   }
 

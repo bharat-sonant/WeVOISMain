@@ -145,6 +145,7 @@ import { SecondaryCollectionManageComponent } from '../../secondary-collection-m
 import { EntityModificationComponent } from '../../entity-modification/entity-modification.component';
 import { PaymentCollectorTrackingComponent } from '../../reports/payment-collector-tracking/payment-collector-tracking.component';
 import { ErrorPageComponent } from '../../error-page/error-page.component';
+import { SecondaryCollectionWardMappingComponent } from '../../PortalServices/secondary-collection-ward-mapping/secondary-collection-ward-mapping.component';
 
 
 
@@ -9907,6 +9908,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/open-depot-manage', component: SecondaryCollectionManageComponent },
     { path: ':cityId/:id/entity-modification', component: EntityModificationComponent },
     { path: ':cityId/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
+    { path: ':cityId/:id/open-depot-ward-mapping', component: SecondaryCollectionWardMappingComponent },
     
 
 ]; 

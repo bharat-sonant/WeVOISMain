@@ -36,6 +36,8 @@ export class WardTripAnalysisComponent implements OnInit {
     analysisDetail: "",
     imageUrl: "",
     imageUrl1: "",
+    imageUrl2: "",
+    imageUrl3: "",
     remark: "",
     filledStatus: "",
     tripCount: 0,
@@ -49,12 +51,20 @@ export class WardTripAnalysisComponent implements OnInit {
   serviceName = "trip-analysis";
   imageCurrentRotation1: any;
   imageCurrentRotation2: any;
+  imageCurrentRotation3: any;
+  imageCurrentRotation4: any;
   imageHeight1: any;
   imageWidth1: any;
-  isFirstClick1: any;
   imageHeight2: any;
   imageWidth2: any;
+  imageHeight3: any;
+  imageWidth3: any;
+  imageHeight4: any;
+  imageWidth4: any;
+  isFirstClick1: any;
   isFirstClick2: any;
+  isFirstClick3: any;
+  isFirstClick4: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -91,7 +101,7 @@ export class WardTripAnalysisComponent implements OnInit {
       $("#slideImg1").removeClass((<HTMLElement>document.getElementById("slideImg1")).className);
       $("#slideImg1").addClass(this.imageCurrentRotation1);
     }
-    else {
+    else if(type==2) {
       const currentIndex = rotations.indexOf(this.imageCurrentRotation2);
       const nextIndex = (currentIndex + 1) % rotations.length;
       this.imageCurrentRotation2 = rotations[nextIndex];
@@ -113,6 +123,50 @@ export class WardTripAnalysisComponent implements OnInit {
       $("#slideImg2").removeClass((<HTMLElement>document.getElementById("slideImg2")).className);
       $("#slideImg2").addClass(this.imageCurrentRotation2);
     }
+    else if(type==3) {
+      const currentIndex = rotations.indexOf(this.imageCurrentRotation3);
+      const nextIndex = (currentIndex + 1) % rotations.length;
+      this.imageCurrentRotation3 = rotations[nextIndex];
+      if (this.isFirstClick3 == "yes") {
+        var img = (<HTMLElement>document.getElementById("slideImg3"));
+        var rect = img.getBoundingClientRect();
+        this.imageHeight3 = rect.height;
+        this.imageWidth3 = rect.width;
+        this.isFirstClick3 = "no";
+      }
+      if (this.imageCurrentRotation3 == "rotate90" || this.imageCurrentRotation3 == "rotate270") {
+        (<HTMLElement>document.getElementById("slideImg3")).style.height = this.imageWidth3 + "px";
+        (<HTMLElement>document.getElementById("slideImg3")).style.width = this.imageHeight3 + "px";
+      }
+      else {
+        (<HTMLElement>document.getElementById("slideImg3")).style.height = this.imageHeight3 + "px";
+        (<HTMLElement>document.getElementById("slideImg3")).style.width = this.imageWidth3 + "px";
+      }
+      $("#slideImg3").removeClass((<HTMLElement>document.getElementById("slideImg3")).className);
+      $("#slideImg3").addClass(this.imageCurrentRotation3);
+    }
+    else{
+      const currentIndex = rotations.indexOf(this.imageCurrentRotation4);
+      const nextIndex = (currentIndex + 1) % rotations.length;
+      this.imageCurrentRotation4 = rotations[nextIndex];
+      if (this.isFirstClick4 == "yes") {
+        var img = (<HTMLElement>document.getElementById("slideImg4"));
+        var rect = img.getBoundingClientRect();
+        this.imageHeight4 = rect.height;
+        this.imageWidth4 = rect.width;
+        this.isFirstClick4 = "no";
+      }
+      if (this.imageCurrentRotation4 == "rotate90" || this.imageCurrentRotation4 == "rotate270") {
+        (<HTMLElement>document.getElementById("slideImg4")).style.height = this.imageWidth4 + "px";
+        (<HTMLElement>document.getElementById("slideImg4")).style.width = this.imageHeight4 + "px";
+      }
+      else {
+        (<HTMLElement>document.getElementById("slideImg4")).style.height = this.imageHeight4 + "px";
+        (<HTMLElement>document.getElementById("slideImg4")).style.width = this.imageWidth4 + "px";
+      }
+      $("#slideImg4").removeClass((<HTMLElement>document.getElementById("slideImg4")).className);
+      $("#slideImg4").addClass(this.imageCurrentRotation4);
+    }
   }
 
   setDefaultValues() {
@@ -122,6 +176,8 @@ export class WardTripAnalysisComponent implements OnInit {
     this.zoneList = [];
     this.tripData.imageUrl = this.imageNotAvailablePath;
     this.tripData.imageUrl1 = this.imageNotAvailablePath;
+    this.tripData.imageUrl2 = this.imageNotAvailablePath;
+    this.tripData.imageUrl3 = this.imageNotAvailablePath;
     this.selectedDate = this.commonService.setTodayDate();
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
@@ -185,6 +241,8 @@ export class WardTripAnalysisComponent implements OnInit {
                 let remark = "";
                 let imageName = "";
                 let imageName2 = "";
+                let yardImageName = "";
+                let yardImageName2 = "";
                 let manualRemarks = "";
                 let overLoad = "";
                 let vehicleType = data[tripID]["vehicle"].split('-')[0];
@@ -213,6 +271,12 @@ export class WardTripAnalysisComponent implements OnInit {
                 if (data[tripID]["imageName2"] != null) {
                   imageName2 = data[tripID]["imageName2"];
                 }
+                if (data[tripID]["yardImageName1"] != null) {
+                  yardImageName = data[tripID]["yardImageName1"];
+                }
+                if (data[tripID]["yardImageName2"] != null) {
+                  yardImageName2 = data[tripID]["yardImageName2"];
+                }
                 this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
                   driverName =
                     employee["name"] != null
@@ -232,6 +296,8 @@ export class WardTripAnalysisComponent implements OnInit {
                     remark: remark,
                     imageName: imageName,
                     imageName2: imageName2,
+                    yardImageName: yardImageName,
+                    yardImageName2: yardImageName2,
                     vehicleType: vehicleType,
                     manualRemarks: manualRemarks,
                     overLoad: overLoad
@@ -249,7 +315,7 @@ export class WardTripAnalysisComponent implements OnInit {
                 tripList: tripList,
                 tripCount: tripCount,
                 tripAnalysisCount: tripAnalysisCount,
-                isDustbin:0
+                isDustbin: 0
               });
             }
           } else {
@@ -261,7 +327,7 @@ export class WardTripAnalysisComponent implements OnInit {
               tripList: tripList,
               tripCount: tripCount,
               tripAnalysisCount: 0,
-              isDustbin:0
+              isDustbin: 0
 
             });
           }
@@ -319,9 +385,8 @@ export class WardTripAnalysisComponent implements OnInit {
           let iconClass = "fas fa-ellipsis-h";
           let divClass = "address md-background";
           let planId = keyArray[i];
-          console.log(planId);
           let planName = data[planId]["planName"];
-          this.zoneList.push({ zoneNo: planId, zoneName: planName, divClass: divClass, iconClass: iconClass, tripList: [], tripCount: 0, tripAnalysisCount: 0, isDustbin:1 });
+          this.zoneList.push({ zoneNo: planId, zoneName: planName, divClass: divClass, iconClass: iconClass, tripList: [], tripCount: 0, tripAnalysisCount: 0, isDustbin: 1 });
           this.getDustbinTrips(planId);
         }
       }
@@ -334,9 +399,8 @@ export class WardTripAnalysisComponent implements OnInit {
             let iconClass = "fas fa-ellipsis-h";
             let divClass = "address md-background";
             let planId = keyArray[i];
-            console.log(planId);
             let planName = data[planId]["planName"];
-            this.zoneList.push({ zoneNo: planId, zoneName: planName, divClass: divClass, iconClass: iconClass, tripList: [], tripCount: 0, tripAnalysisCount: 0, isDustbin:1 });
+            this.zoneList.push({ zoneNo: planId, zoneName: planName, divClass: divClass, iconClass: iconClass, tripList: [], tripCount: 0, tripAnalysisCount: 0, isDustbin: 1 });
             this.getDustbinTrips(planId);
           }
         }
@@ -373,6 +437,8 @@ export class WardTripAnalysisComponent implements OnInit {
             let remark = "";
             let imageName = "";
             let imageName2 = "";
+            let yardImageName = "";
+            let yardImageName2 = "";
             let manualRemarks = "";
             let overLoad = "";
             let vehicleType = data[tripID]["vehicle"].split('-')[0];
@@ -401,6 +467,12 @@ export class WardTripAnalysisComponent implements OnInit {
             if (data[tripID]["imageName2"] != null) {
               imageName2 = data[tripID]["imageName2"];
             }
+            if (data[tripID]["yardImageName1"] != null) {
+              yardImageName = data[tripID]["yardImageName1"];
+            }
+            if (data[tripID]["yardImageName2"] != null) {
+              yardImageName2 = data[tripID]["yardImageName2"];
+            }
             this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
               driverName =
                 employee["name"] != null
@@ -420,6 +492,8 @@ export class WardTripAnalysisComponent implements OnInit {
                 remark: remark,
                 imageName: imageName,
                 imageName2: imageName2,
+                yardImageName: yardImageName,
+                yardImageName2: yardImageName2,
                 vehicleType: vehicleType,
                 manualRemarks: manualRemarks,
                 overLoad: overLoad
@@ -454,17 +528,30 @@ export class WardTripAnalysisComponent implements OnInit {
   getTripZoneData(zoneNo: any) {
     this.imageCurrentRotation1 = "rotate0";
     this.imageCurrentRotation2 = "rotate0";
+    this.imageCurrentRotation3 = "rotate0";
+    this.imageCurrentRotation4 = "rotate0";
+
     this.isFirstClick1 = "yes";
     this.isFirstClick2 = "yes";
+    this.isFirstClick3 = "yes";
+    this.isFirstClick4 = "yes";
     $("#slideImg1").removeClass((<HTMLElement>document.getElementById("slideImg1")).className);
     $("#slideImg1").addClass(this.imageCurrentRotation1);
     $("#slideImg2").removeClass((<HTMLElement>document.getElementById("slideImg2")).className);
     $("#slideImg2").addClass(this.imageCurrentRotation2);
+    $("#slideImg3").removeClass((<HTMLElement>document.getElementById("slideImg3")).className);
+    $("#slideImg3").addClass(this.imageCurrentRotation3);
+    $("#slideImg4").removeClass((<HTMLElement>document.getElementById("slideImg4")).className);
+    $("#slideImg4").addClass(this.imageCurrentRotation4);
 
     (<HTMLElement>document.getElementById("slideImg1")).style.height = "";
     (<HTMLElement>document.getElementById("slideImg1")).style.width = "";
     (<HTMLElement>document.getElementById("slideImg2")).style.height = "";
     (<HTMLElement>document.getElementById("slideImg2")).style.width = "";
+    (<HTMLElement>document.getElementById("slideImg3")).style.height = "";
+    (<HTMLElement>document.getElementById("slideImg3")).style.width = "";
+    (<HTMLElement>document.getElementById("slideImg4")).style.height = "";
+    (<HTMLElement>document.getElementById("slideImg4")).style.width = "";
 
     for (let i = 1; i <= 8; i++) {
       $('#tripDiv' + i).hide();
@@ -505,9 +592,9 @@ export class WardTripAnalysisComponent implements OnInit {
   getTripData(index: any) {
     this.selectedTrip = index;
     let tripCountForWard = this.tripData.tripCount;
-     if (this.tripData.tripCount > 8) {
-       tripCountForWard = 8;
-     }
+    if (this.tripData.tripCount > 8) {
+      tripCountForWard = 8;
+    }
     for (let i = 1; i <= tripCountForWard; i++) {
       let element = <HTMLDivElement>document.getElementById("tripDiv" + i);
       let className = element.className;
@@ -536,8 +623,10 @@ export class WardTripAnalysisComponent implements OnInit {
       this.filledStatus = tripDetails.filledStatus;
       this.remarkStatus = tripDetails.remark;
       this.overLoad = tripDetails.overLoad;
-      this.tripData.imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName + "?alt=media";
-      this.tripData.imageUrl1 = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName2 + "?alt=media";
+      this.tripData.imageUrl = tripDetails.imageName != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName + "?alt=media" : this.imageNotAvailablePath;
+      this.tripData.imageUrl1 = tripDetails.imageName2 != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName2 + "?alt=media" : this.imageNotAvailablePath;
+      this.tripData.imageUrl2 = tripDetails.yardImageName != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.yardImageName + "?alt=media" : this.imageNotAvailablePath;
+      this.tripData.imageUrl3 = tripDetails.yardImageName2 != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.yardImageName2 + "?alt=media" : this.imageNotAvailablePath;
       this.setOverload();
       this.setFilledStatus();
       this.setTripAnalysis();
@@ -708,6 +797,8 @@ export class WardTripAnalysisComponent implements OnInit {
     $(this.txtManualRemark).val("");
     this.tripData.imageUrl = this.imageNotAvailablePath;
     this.tripData.imageUrl1 = this.imageNotAvailablePath;
+    this.tripData.imageUrl2 = this.imageNotAvailablePath;
+    this.tripData.imageUrl3 = this.imageNotAvailablePath;
     this.tripData.remark = "";
     this.tripData.startTime = "00:00:00";
     this.tripData.wasteCollection = 0;
@@ -721,10 +812,18 @@ export class WardTripAnalysisComponent implements OnInit {
     $("#slideImg1").addClass(this.imageCurrentRotation1);
     $("#slideImg2").removeClass((<HTMLElement>document.getElementById("slideImg2")).className);
     $("#slideImg2").addClass(this.imageCurrentRotation2);
+    $("#slideImg3").removeClass((<HTMLElement>document.getElementById("slideImg3")).className);
+    $("#slideImg3").addClass(this.imageCurrentRotation3);
+    $("#slideImg4").removeClass((<HTMLElement>document.getElementById("slideImg4")).className);
+    $("#slideImg4").addClass(this.imageCurrentRotation4);
     (<HTMLElement>document.getElementById("slideImg1")).style.height = "";
     (<HTMLElement>document.getElementById("slideImg1")).style.width = "";
     (<HTMLElement>document.getElementById("slideImg2")).style.height = "";
     (<HTMLElement>document.getElementById("slideImg2")).style.width = "";
+    (<HTMLElement>document.getElementById("slideImg3")).style.height = "";
+    (<HTMLElement>document.getElementById("slideImg3")).style.width = "";
+    (<HTMLElement>document.getElementById("slideImg4")).style.height = "";
+    (<HTMLElement>document.getElementById("slideImg4")).style.width = "";
     let element = <HTMLInputElement>document.getElementById("chkFilledStatus");
     element.checked = false;
     element = <HTMLInputElement>document.getElementById("chkRemark");
@@ -746,6 +845,8 @@ export class tripDetail {
   analysisDetail: string;
   imageUrl: string;
   imageUrl1: string;
+  imageUrl2: string;
+  imageUrl3: string;
   remark: string;
   filledStatus: string;
   overLoad: string;

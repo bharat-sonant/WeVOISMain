@@ -156,8 +156,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
               if (dutyOnDetail != undefined) {
                 for (let j = 0; j <= 5; j++) {
                   if (data["task" + j] != null) {
-                    if (data["task" + j]["task"].includes("BinLifting")) {
-                      if (data["task" + j]["binLiftingPlanId"] == planId) {
+                    if (data["task" + j]["task"].includes("BinLifting") || data["task" + j]["openDepotPlanId"]!=null) {
+                      if (data["task" + j]["binLiftingPlanId"] == planId || data["task" + j]["openDepotPlanId"]==planId) {
                         if (data["task" + j]["in-out"] != null) {
                           let keyArray = Object.keys(data["task" + j]["in-out"]);
                           for (let k = 0; k < keyArray.length; k++) {
@@ -172,12 +172,15 @@ export class ReviewDutyonImagesComponent implements OnInit {
                         }
                       }
                     }
+                    else{
+                      
+                    }
                   }
                 }
                 for (let j = 0; j <= 5; j++) {
                   if (data["task" + j] != null) {
-                    if (data["task" + j]["task"].includes("BinLifting")) {
-                      if (data["task" + j]["binLiftingPlanId"] == planId) {
+                    if (data["task" + j]["task"].includes("BinLifting") || data["task" + j]["openDepotPlanId"]!=null) {
+                      if (data["task" + j]["binLiftingPlanId"] == planId || data["task" + j]["openDepotPlanId"]==planId) {
                         if (data["task" + j]["in-out"] != null) {
                           let keyArray = Object.keys(data["task" + j]["in-out"]);
                           for (let k = keyArray.length - 1; k >= 0; k--) {

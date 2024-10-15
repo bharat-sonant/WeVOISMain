@@ -27,6 +27,7 @@ export class ReviewTripImagesComponent implements OnInit {
   serviceName = "review-trip-images";
   vehicleCapacityObject:any={};
   totalWasteCollected:number=0;
+  imageNotAvailablePath = "../assets/img/img-not-available-01.jpg";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -105,12 +106,18 @@ export class ReviewTripImagesComponent implements OnInit {
               let wasteCollection=this.getWasteCollectionByVehicle(vehicle);
               collectedZoneWaste+= Number(wasteCollection);
               
-              let imageName = tripData[key]["imageName"];
-              let imageName2 = tripData[key]["imageName2"];
+              let imageName =tripData[key]["imageName"]? tripData[key]["imageName"]:"";
+              let imageName2 =tripData[key]["imageName2"]?tripData[key]["imageName2"]:"";
+              
+              let yardImageName =tripData[key]["yardImageName1"]? tripData[key]["yardImageName1"]:"";
+              let yardImageName2 =tripData[key]["yardImageName2"]?tripData[key]["yardImageName2"]:"";
+
               let driverId = tripData[key]["driverId"];
-              let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName + "?alt=media";
-              let imageUrl2 = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName2 + "?alt=media";
-              tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl,imageUrl2:imageUrl2,wasteCollection });
+              let imageUrl =imageName!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName + "?alt=media":this.imageNotAvailablePath;
+              let imageUrl2 =imageName2!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName2 + "?alt=media":this.imageNotAvailablePath;
+              let imageUrl3 =yardImageName!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + yardImageName + "?alt=media":this.imageNotAvailablePath;
+              let imageUrl4 =yardImageName2!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + yardImageName2 + "?alt=media":this.imageNotAvailablePath;
+              tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl,imageUrl2:imageUrl2,imageUrl3:imageUrl3,imageUrl4:imageUrl4,wasteCollection });
             }
             this.totalWasteCollected += Number(collectedZoneWaste)
             resolve({ status: "success", data: {zoneNo:zoneNo,tripImageList:tripImageList,collectedZoneWaste} });

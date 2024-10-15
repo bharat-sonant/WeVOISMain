@@ -1156,6 +1156,7 @@ export class CommonService {
   setDustbin(newDb: any) {
     let dustbinList = [];
     let openDepotList = [];
+    let allDustbinList=[];
     let dbPath = "DustbinData/DustbinDetails";
     let dustbinInstance = newDb.object(dbPath).valueChanges().subscribe((dustbin) => {
       dustbinInstance.unsubscribe();
@@ -1182,6 +1183,21 @@ export class CommonService {
                 disabledBy = dustbin[index]["disabledBy"];
               }
               if (dustbin[index]["dustbinType"] != null) {
+                allDustbinList.push({
+                  zone: dustbin[index]["zone"],
+                  dustbin: keyArrray[i],
+                  address: dustbin[index]["address"],
+                  type: dustbin[index]["type"],
+                  pickFrequency: pickFrequency,
+                  lat: dustbin[index]["lat"],
+                  lng: dustbin[index]["lng"],
+                  isAssigned: dustbin[index]["isAssigned"],
+                  spelledRight: dustbin[index]["spelledRight"],
+                  ward: dustbin[index]["ward"],
+                  isDisabled: isDisabled,
+                  isBroken: isBroken,
+                  disabledBy: disabledBy
+                });
                 if(dustbin[index]["dustbinType"]=="Open Depot"){
                   openDepotList.push({
                     zone: dustbin[index]["zone"],
@@ -1243,10 +1259,12 @@ export class CommonService {
         }
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
         localStorage.setItem("openDepot", JSON.stringify(openDepotList));
+        localStorage.setItem("allDustbin",JSON.stringify(allDustbinList));
       }
       else {
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
         localStorage.setItem("openDepot", JSON.stringify(openDepotList));
+        localStorage.setItem("allDustbin",JSON.stringify(allDustbinList));
       }
     });
   }
