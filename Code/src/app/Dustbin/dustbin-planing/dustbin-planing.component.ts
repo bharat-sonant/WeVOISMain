@@ -322,7 +322,6 @@ export class DustbinPlaningComponent implements OnInit {
     }
 
     let pickStatus = icon + filledPercentage + " at " + pickTime + "";
-    console.log(pickStatus)
 
     this.getEmployeeDetail(empId, binDetail, day, pickStatus, remark, filledPercentage, planDate, planId, pickTime, planType,dustbinNotLocationUrl);
   }
