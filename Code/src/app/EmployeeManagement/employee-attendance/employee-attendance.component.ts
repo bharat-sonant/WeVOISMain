@@ -286,6 +286,8 @@ export class EmployeeAttendanceComponent implements OnInit {
               let status = "";
               let approverStatus = "0";
               let approveBy = "";
+              let inImageUrl = '';
+              let outImageUrl = '';
 
               let cssClass = "text-left br-1";
               let cssWorkingClass = "text-left br-1";
@@ -293,6 +295,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
                   inLocationFull = attendanceData["inDetails"]["address"];
+                  inImageUrl = attendanceData["inDetails"]['imageURL'] || '';
                   if (attendanceData["inDetails"]["address"].toString().length > 30) {
                     inLocation = attendanceData["inDetails"]["address"].toString().substring(0, 30) + "......";
                   }
@@ -347,7 +350,8 @@ export class EmployeeAttendanceComponent implements OnInit {
               }
               if (attendanceData["outDetails"] != null) {
                 if (attendanceData["outDetails"]["time"] != null) {
-                  outTime = attendanceData["outDetails"]["time"];
+                  outTime = attendanceData["outDetails"]["time"]; 
+                  outImageUrl = attendanceData["outDetails"]['imageURL'] || '';
                   if (attendanceData["outDetails"]["address"] != null) {
                     outLocationFull = attendanceData["outDetails"]["address"];
                     if (attendanceData["outDetails"]["address"].toString().length > 30) {
@@ -381,7 +385,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               this.employeeList.push({
                 empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
                 inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, inLocation: inLocation,
-                outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager
+                outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl
               });
             }
 
@@ -454,7 +458,12 @@ export class EmployeeAttendanceComponent implements OnInit {
               let approveBy = "";
               let cssClass = "text-left br-1";
               let cssWorkingClass = "text-left br-1";
+              let inImageUrl = '';
+              let outImageUrl = '';
+
               if (attendanceData["inDetails"] != null) {
+                inImageUrl = attendanceData["inDetails"]['imageURL'] || '';
+
                 if (attendanceData["inDetails"]["status"] != null) {
                   status = attendanceData["inDetails"]["status"];
                   approverStatus = status;
@@ -516,6 +525,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
               }
               if (attendanceData["outDetails"] != null) {
+                outImageUrl = attendanceData["outDetails"]['imageURL'] || '';
                 if (attendanceData["outDetails"]["time"] != null) {
                   outTime = attendanceData["outDetails"]["time"];
                   if (attendanceData["outDetails"]["address"] != null) {
@@ -551,7 +561,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager });
+              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
