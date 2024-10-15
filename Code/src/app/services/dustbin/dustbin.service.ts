@@ -39,7 +39,7 @@ export class DustbinService {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     let dbPath = "DustbinData/DustbinDetails/" + dustbinId;
     if (type == "add") {
-      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, pickFrequency: data.pickFrequency, createdDate: data.createdDate });
+      this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, pickFrequency: data.pickFrequency, createdDate: data.createdDate, dustbinType: data.dustbinType });
     }
     else {
       this.db.object(dbPath).update({ address: data.address, zone: data.zone, ward: data.ward, lat: data.lat, lng: data.lng, type: data.type, pickFrequency: data.pickFrequency });
@@ -59,6 +59,18 @@ export class DustbinService {
   getDustbinWardMappingJson() {
     return new Promise((resolve) => {
       const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FmappingDustbinWard.json?alt=media";
+      let dutbinWardJSONInstance = this.httpService.get(path).subscribe(DustbinWardJsonData => {
+        dutbinWardJSONInstance.unsubscribe();
+        resolve(DustbinWardJsonData);
+      }, error => {
+        resolve(null);
+      });
+    });
+  }
+
+  getOpenDepotWardMappingJson() {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FmappingOpenDepotWard.json?alt=media";
       let dutbinWardJSONInstance = this.httpService.get(path).subscribe(DustbinWardJsonData => {
         dutbinWardJSONInstance.unsubscribe();
         resolve(DustbinWardJsonData);
@@ -147,6 +159,361 @@ export class DustbinService {
       );
     });
   }
+
+  getAssignedDustbinByDate(date: any) {
+    return new Promise((resolve) => {
+      let planList = [];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      let year = date.split("-")[0];
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinAssignment/" + year + "/" + monthName + "/" + date;
+      let assignedPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          assignedPlanInstance.unsubscribe();
+          if (data != null) {
+            const promises = [];
+            let keyArray = Object.keys(data);
+            for (let i = 0; i < keyArray.length; i++) {
+              const planId = keyArray[i];
+              promises.push(Promise.resolve(this.getAssignedDustbinPlanByPlanId(planId, date, data)));
+            }
+
+            Promise.all(promises).then((results) => {
+              let merged = [];
+              for (let i = 0; i < results.length; i++) {
+                if (results[i]["status"] == "success") {
+                  merged = merged.concat(results[i]["data"]);
+                }
+              }
+              planList = merged;
+              if (planList.length > 0) {
+                resolve({ status: "success", data: planList });
+              }
+              else {
+                resolve({ status: "fail", data: planList });
+              }
+            });
+          }
+          else {
+            resolve({ status: "fail", data: planList });
+          }
+        });
+
+
+    });
+  }
+
+
+  getAssignedDustbinPlanByPlanId(planId: any, date: any, assignedData: any) {
+    return new Promise((resolve) => {
+      let list = [];
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedOpenDepotPlanByPlanId");
+      let year = date.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date + "/" + planId;
+      let preDateInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        preDateInstance.unsubscribe();
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedOpenDepotPlanByPlanId", data);
+          if (data["planName"] != "") {
+            if (data["planType"] == null || data["planType"] == "Dustbin") {
+              if (data["isWardPlan"] == null) {
+                list.push({ id: planId, planName: assignedData[planId]["planName"], vehicle: assignedData[planId]["vehicle"], driver: assignedData[planId]["driver"], planData: data });
+              }
+            }
+          }
+
+          dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + planId;
+          let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+            planInstance.unsubscribe();
+            if (planData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedOpenDepotPlanByPlanId", planData);
+              if (planData["planName"] != "") {
+                if (planData["planType"] == null || planData["planType"] == "Dustbin") {
+                  if (planData["isWardPlan"] == null) {
+                    list.push({ id: planId, planName: assignedData[planId]["planName"], vehicle: assignedData[planId]["vehicle"], driver: assignedData[planId]["driver"], planData: planData });
+                  }
+                }
+              }
+            }
+            resolve({ status: "success", data: list });
+          });
+        }
+        else {
+          dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + planId;
+          let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+            planInstance.unsubscribe();
+            if (planData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedOpenDepotPlanByPlanId", planData);
+              if (planData["planName"] != "") {
+                if (planData["planType"] == null || planData["planType"] == "Dustbin") {
+                  if (planData["isWardPlan"] == null) {
+                    list.push({ id: planId, planName: assignedData[planId]["planName"], vehicle: assignedData[planId]["vehicle"], driver: assignedData[planId]["driver"], planData: planData });
+                  }
+                }
+              }
+            }
+            resolve({ status: "success", data: list });
+          });
+
+        }
+      });
+    });
+  }
+
+  getAssignedOpenDepotByDate(date: any) {
+    return new Promise((resolve) => {
+      let planList = [];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      let year = date.split("-")[0];
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinAssignment/" + year + "/" + monthName + "/" + date;
+      let assignedPlanInstance = this.db.object(dbPath).valueChanges().subscribe(
+        data => {
+          assignedPlanInstance.unsubscribe();
+          if (data != null) {
+            const promises = [];
+            let keyArray = Object.keys(data);
+            for (let i = 0; i < keyArray.length; i++) {
+              const planId = keyArray[i];
+              promises.push(Promise.resolve(this.getAssignedOpenDepotPlanByPlanId(planId, date, data)));
+            }
+
+            Promise.all(promises).then((results) => {
+              let merged = [];
+              for (let i = 0; i < results.length; i++) {
+                if (results[i]["status"] == "success") {
+                  merged = merged.concat(results[i]["data"]);
+                }
+              }
+              planList = merged;
+              if (planList.length > 0) {
+                resolve({ status: "success", data: planList });
+              }
+              else {
+                resolve({ status: "fail", data: planList });
+              }
+            });
+          }
+          else {
+            resolve({ status: "fail", data: planList });
+          }
+        });
+
+
+    });
+  }
+
+
+
+  getAssignedOpenDepotPlanByPlanId(planId: any, date: any, assignedData: any) {
+    return new Promise((resolve) => {
+      let list = [];
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedOpenDepotPlanByPlanId");
+      let year = date.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date + "/" + planId;
+      let preDateInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        preDateInstance.unsubscribe();
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedOpenDepotPlanByPlanId", data);
+          if (data["planName"] != "") {
+            if (data["planType"] == "Open Depot") {
+              let isWardPlan = "0"
+              if (data["isWardPlan"] != null) {
+                isWardPlan = data["isWardPlan"];
+              }
+              // if (data["isWardPlan"] == null) {
+              list.push({ id: planId, planName: assignedData[planId]["planName"], vehicle: assignedData[planId]["vehicle"], driver: assignedData[planId]["driver"], planData: data, isWardPlan: isWardPlan });
+              // }
+            }
+          }
+
+          dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + planId;
+          let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+            planInstance.unsubscribe();
+            if (planData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedOpenDepotPlanByPlanId", planData);
+              if (planData["planName"] != "") {
+                if (planData["planType"] == "Open Depot") {
+                  let isWardPlan = "0"
+                  if (planData["isWardPlan"] != null) {
+                    isWardPlan = planData["isWardPlan"];
+                  }
+                  //  if (planData["isWardPlan"] == null) {
+                  list.push({ id: planId, planName: assignedData[planId]["planName"], vehicle: assignedData[planId]["vehicle"], driver: assignedData[planId]["driver"], planData: planData, isWardPlan: isWardPlan });
+                  //  }
+                }
+              }
+            }
+            resolve({ status: "success", data: list });
+          });
+        }
+        else {
+          dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + planId;
+          let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+            planInstance.unsubscribe();
+            if (planData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedOpenDepotPlanByPlanId", planData);
+              if (planData["planName"] != "") {
+                if (planData["planType"] == "Open Depot") {
+                  let isWardPlan = "0"
+                  if (planData["isWardPlan"] != null) {
+                    isWardPlan = planData["isWardPlan"];
+                  }
+                  // if (planData["isWardPlan"] == null) {
+                  list.push({ id: planId, planName: assignedData[planId]["planName"], vehicle: assignedData[planId]["vehicle"], driver: assignedData[planId]["driver"], planData: planData,isWardPlan:isWardPlan });
+                  // }
+                }
+              }
+            }
+            resolve({ status: "success", data: list });
+          });
+
+        }
+      });
+    });
+  }
+
+
+  getOpenDepotPreviousPlanByDate(date: any) {
+    return new Promise((resolve) => {
+      let list = [];
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getOpenDepotPreviousPlanByDate");
+      let year = date.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date;
+      let preDateInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        preDateInstance.unsubscribe();
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOpenDepotPreviousPlanByDate", data);
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let planId = keyArray[i];
+            if (data[planId]["planName"] != null) {
+              if (data[planId]["planType"] == "Open Depot") {
+                if (data[planId]["isWardPlan"] == null) {
+                  list.push({ planId: planId, planName: data[planId]["planName"], planData: data[planId] });
+                }
+              }
+            }
+          }
+          dbPath = "DustbinData/DustbinPickingPlans/" + date;
+          let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+            planInstance.unsubscribe();
+            if (planData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOpenDepotPreviousPlanByDate", planData);
+              let keyArray = Object.keys(planData);
+              for (let i = 0; i < keyArray.length; i++) {
+                let planId = keyArray[i];
+                if (planData[planId]["planName"] != null) {
+                  if (planData[planId]["planType"] == "Open Depot") {
+                    if (planData[planId]["isWardPlan"] == null) {
+                      list.push({ planId: planId, planName: planData[planId]["planName"], planData: planData[planId] });
+                    }
+                  }
+                }
+              }
+
+            }
+            resolve(list);
+          });
+        }
+        else {
+          dbPath = "DustbinData/DustbinPickingPlans/" + date;
+          let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+            planInstance.unsubscribe();
+            if (planData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOpenDepotPreviousPlanByDate", planData);
+              let keyArray = Object.keys(planData);
+              for (let i = 0; i < keyArray.length; i++) {
+                let planId = keyArray[i];
+                if (planData[planId]["planName"] != null) {
+                  if (planData[planId]["planType"] == "Open Depot") {
+                    if (planData[planId]["isWardPlan"] == null) {
+                      list.push({ planId: planId, planName: planData[planId]["planName"], planData: planData[planId] });
+                    }
+                  }
+                }
+              }
+
+            }
+            resolve(list);
+          });
+
+        }
+      });
+    });
+  }
+
+  getDustbinPreviousPlanByDate(date: any) {
+    return new Promise((resolve) => {
+      let list = [];
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDustbinPreviousPlanByDate");
+      let year = date.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date;
+      let preDateInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        preDateInstance.unsubscribe();
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPreviousPlanByDate", data);
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let planId = keyArray[i];
+            if (data[planId]["planName"] != null) {
+              if (data[planId]["planType"] == null || data[planId]["planType"] == "Dustbin") {
+                list.push({ planId: planId, planName: data[planId]["planName"], planData: data[planId] });
+              }
+            }
+          }
+          dbPath = "DustbinData/DustbinPickingPlans/" + date;
+          let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+            planInstance.unsubscribe();
+            if (planData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPreviousPlanByDate", planData);
+              let keyArray = Object.keys(planData);
+              for (let i = 0; i < keyArray.length; i++) {
+                let planId = keyArray[i];
+                if (planData[planId]["planName"] != null) {
+                  if (planData[planId]["planType"] == null || planData[planId]["planType"] == "Dustbin") {
+                    list.push({ planId: planId, planName: planData[planId]["planName"], planData: planData[planId] });
+                  }
+                }
+              }
+
+            }
+            resolve(list);
+          });
+        }
+        else {
+          dbPath = "DustbinData/DustbinPickingPlans/" + date;
+          let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+            planInstance.unsubscribe();
+            if (planData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinPreviousPlanByDate", planData);
+              let keyArray = Object.keys(planData);
+              for (let i = 0; i < keyArray.length; i++) {
+                let planId = keyArray[i];
+                if (planData[planId]["planName"] != null) {
+                  if (planData[planId]["planType"] == null || planData[planId]["planType"] == "Dustbin") {
+                    list.push({ planId: planId, planName: planData[planId]["planName"], planData: planData[planId] });
+                  }
+                }
+              }
+
+            }
+            resolve(list);
+          });
+
+        }
+      });
+    });
+  }
+
 
   getWardAssignedDustbin(year: any, monthName: any) {
     return new Promise((resolve) => {
@@ -288,6 +655,7 @@ export class DustbinService {
       isAssigned: plan.isAssigned,
       pickingSequence: plan.pickingSequence,
       planName: plan.planName,
+      planType: plan.planType,
       totalDustbin: plan.totalDustbin,
       updatedAt: plan.updatedAt,
       updatedBy: plan.updatedBy,
@@ -310,6 +678,7 @@ export class DustbinService {
       isAssigned: plan.isAssigned,
       pickingSequence: plan.pickingSequence,
       planName: plan.planName,
+      planType: plan.planType,
       totalDustbin: plan.totalDustbin,
       updatedAt: plan.updatedAt,
       updatedBy: plan.updatedBy,
@@ -325,17 +694,6 @@ export class DustbinService {
     let dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + key + "";
     this.db.object(dbPath).remove();
   }
-  getOpenDepotWardMappingJson() {
-    return new Promise((resolve) => {
-      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FmappingOpenDepotWard.json?alt=media";
-      let dutbinWardJSONInstance = this.httpService.get(path).subscribe(DustbinWardJsonData => {
-        dutbinWardJSONInstance.unsubscribe();
-        resolve(DustbinWardJsonData);
-      }, error => {
-        resolve(null);
-      });
-    });
-  }
 }
 
 
@@ -348,6 +706,7 @@ export interface DustbinPlans {
   isAssigned: string;
   pickingSequence: string;
   planName: string;
+  planType: string;
   totalDustbin: number;
   updatedAt: string;
   updatedBy: string;
