@@ -20,7 +20,21 @@
         <h3 class="header-txt"> <b> Payment Collector Tracking </b> </h3>
       </div>
 
-      <div class="col-md-3 txt-right">
+      <div class="col-md-3 txt-right">     
+        <div style="float: right; margin-right: -50px;">
+          <button id="btnPre" class="btn-hvr" (click)="getRouteDataPreNext('pre');"><span style="color: #fff; ">
+            << </span></button>
+      <select class="caret-select" id="ddlTime" (change)="getRouteData($event.target.value)" style="margin-right: 8px;">
+      <option value="0">All Time Route</option>
+      <option value="5">5 Minutes</option>
+      <option value="10">10 Minutes</option>
+      <option value="15">15 Minutes</option>
+    </select>
+      <button class="btn btn-primary" (click)="getRouteDataPreNext('next');"> 
+        >>
+      </button>
+        </div> 
+    
       </div>
       <div class="display" id="popup">
         <div class="field-box">
@@ -78,7 +92,8 @@
       <div style="font-size: 18px;">{{paymentCollectorDetail.totalHr}}</div>
       <div style="font-size: 12px;font-weight: normal;">Working Hr. <i class="fa-regular fa-clock"></i></div>
     </div>
-    <div style=" padding: 6px;text-align: right; cursor: pointer;" (click)="openCollectionDetail(contentCollectionDetail);">
+    <div style=" padding: 6px;text-align: right; cursor: pointer;"
+      (click)="openCollectionDetail(contentCollectionDetail);">
       <div style="font-size: 18px;">{{paymentCollectorDetail.cardCount}}</div>
       <div style="font-size: 12px;font-weight: normal; color: green;">Card Processed <i
           class="fa-regular fa-credit-card"></i></div>
@@ -90,49 +105,53 @@
 <!--Collection Detail  Start-->
 <ng-template #contentCollectionDetail>
   <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Collection Detail</h5>
-              <button type="button" class="close" (click)="closeModel();" style="float: right;margin-top: -35px;">
-                  <span aria-hidden="true" style="float: right;margin-top: -35px;">&times;</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              <div class="col-md-12">
-                  <div class="table-wrapper table-scroll-popup table-scroll-2">
-                      <table class="table table-scroll-iner">
-                          <thead>
-                              <th>Card No</th>
-                              <th>
-                                  Payment Method</th>
-                              <th>
-                                  Merchant Transaction Id</th>
-                              <th>
-                                  Reference No</th>
-                              <th class="text-right">
-                                  Amount</th>
-                          </thead>
-                          <tbody>
-                              <tr *ngFor="let data of cardList; let i=index">
-                                  <td class="date-details">
-                                      {{data.cardNo}}</td>
-                                  <td class="markers-details">
-                                      {{data.payMethod}}</td>
-                                  <td class="markers-details">
-                                      {{data.merchantTransactionId}}</td>
-                                  <td class="markers-details">
-                                      {{data.retrievalReferenceNo}}</td>
-                                  <td class="text-right markers-details">
-                                      {{data.transactionAmount}}</td>
-                              </tr>
-
-
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-          </div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Collection Detail</h5>
+        <button type="button" class="close" (click)="closeModel();" style="float: right;margin-top: -35px;">
+          <span aria-hidden="true" style="float: right;margin-top: -35px;">&times;</span>
+        </button>
       </div>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <div class="table-wrapper table-scroll-popup table-scroll-2">
+            <table class="table table-scroll-iner">
+              <thead>
+                <th>Card No</th>
+                <th>
+                  Payment Method</th>
+                <th>
+                  Merchant Transaction Id</th>
+                <th>
+                  Reference No</th>
+                <th>
+                  Time</th>
+                <th class="text-right">
+                  Amount</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of cardList; let i=index">
+                  <td class="date-details">
+                    {{data.cardNo}}</td>
+                  <td class="markers-details">
+                    {{data.payMethod}}</td>
+                  <td class="markers-details">
+                    {{data.merchantTransactionId}}</td>
+                  <td class="markers-details">
+                    {{data.retrievalReferenceNo}}</td>
+                  <td class="text-right markers-details">
+                    {{data.time}}</td>
+                  <td class="text-right markers-details">
+                    {{data.transactionAmount}}</td>
+                </tr>
+
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-template>
 <!--Collection Detail End-->

@@ -25,11 +25,19 @@ export class PaymentCollectorTrackingComponent {
   selectedDate: any;
   selectedYear: any;
   selectMonthName: any;
+
   paymentCollectorList: any[];
   cardList: any[] = [];
   polylines = [];
+  routePathStore: any[] = [];
   paymentCollectorId: any;
   public bounds: any;
+  vehicleMarker: any;
+  timeInterval: any;
+  public startTime: any;
+  endTime: any;
+  isPreviousTime: any;
+  isLast = false;
   paymentCollectorDetail: paymentCollectorDetail =
     {
       totalKM: "0",
@@ -101,18 +109,18 @@ export class PaymentCollectorTrackingComponent {
         const list = await Promise.all(promises);
         for (let i = 0; i < list.length; i++) {
           let empId = list[i]["empId"];
-          let detail=this.paymentCollectorList.find(item=>item.paymentCollectorId==empId);
-          if(detail!=undefined){
-            detail.cssClass=list[i]["cssClass"];
-            detail.isRoute=list[i]["status"];
+          let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == empId);
+          if (detail != undefined) {
+            detail.cssClass = list[i]["cssClass"];
+            detail.isRoute = list[i]["status"];
           }
         }
-        const array=[];
-        const notRouteList=this.paymentCollectorList.filter(item=>item.isRoute==0);
-        const routeList=this.paymentCollectorList.filter(item=>item.isRoute==1);
+        const array = [];
+        const notRouteList = this.paymentCollectorList.filter(item => item.isRoute == 0);
+        const routeList = this.paymentCollectorList.filter(item => item.isRoute == 1);
         const concatenatedArray = array.concat(routeList, notRouteList);
         this.paymentCollectorList = [];
-        this.paymentCollectorList=concatenatedArray;
+        this.paymentCollectorList = concatenatedArray;
       }
     }, error => {
     });
@@ -134,12 +142,12 @@ export class PaymentCollectorTrackingComponent {
       let routeInstance = this.db.object("PaymentCollectionInfo/PaymentCollectorLocationHistory/" + empId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate + "/last-update-time").valueChanges().subscribe(data => {
         routeInstance.unsubscribe();
         let status = 0;
-        let cssClass="not-active";
+        let cssClass = "not-active";
         if (data != null) {
           status = 1;
-          cssClass="normal";
+          cssClass = "normal";
         }
-        resolve({ empId: empId, status: status,cssClass:cssClass });
+        resolve({ empId: empId, status: status, cssClass: cssClass });
       });
     });
   }
@@ -157,6 +165,7 @@ export class PaymentCollectorTrackingComponent {
         this.paymentCollectorList[i].cssClass = "normal";
       }
     }
+    $('#ddlTime').val("0");
   }
 
   resetPaymentCollectorList() {
@@ -173,8 +182,11 @@ export class PaymentCollectorTrackingComponent {
         let preLat = "";
         let preLat1 = 0;
         let preLng1 = 0;
+        let routePath = [];
         for (let i = 0; i < keyArray.length - 2; i++) {
           let index = keyArray[i];
+          routePath.push({ distanceinmeter: data[index]["distance-in-meter"], latlng: data[index]["lat-lng"], time: index });
+
           let startTime = new Date(this.commonService.setTodayDate() + " " + "08:00");
           let endTime = new Date(this.commonService.setTodayDate() + " " + "21:00");
           let routeTime = new Date(this.commonService.setTodayDate() + " " + index);
@@ -211,6 +223,7 @@ export class PaymentCollectorTrackingComponent {
           if (detail != undefined) {
             if (latLng.length > 0) {
               detail.latLng = latLng;
+              detail.routePath = routePath;
               detail.km = totalKM;
               detail.startTime = latLng[0]["time"] ? latLng[0]["time"] : "---";
               detail.endTime = latLng[latLng.length - 1]["time"] ? latLng[latLng.length - 1]["time"] : "---";
@@ -219,6 +232,9 @@ export class PaymentCollectorTrackingComponent {
           }
         }
         this.getPaymentCardDetail(paymentCollectorId);
+      }
+      else {
+        $(this.divLoader).hide();
       }
     });
   }
@@ -238,14 +254,127 @@ export class PaymentCollectorTrackingComponent {
             }
           }
         }
+        if (this.cardList.length > 0) {
+          const promises = [];
+          for (let i = 0; i < this.cardList.length; i++) {
+            promises.push(Promise.resolve(this.getCardLatLng(this.cardList[i].cardNo)));
+          }
+          Promise.all(promises).then((results) => {
+            for (let i = 0; i < results.length; i++) {
+              if (results[i]["status"] == "success") {
+                let cardDetail = this.cardList.find(item => item.cardNo == results[i].data.cardNo);
+                if (cardDetail != undefined) {
+                  cardDetail.lat = results[i].data.lat;
+                  cardDetail.lng = results[i].data.lng;
+                }
+              }
+            }
 
-        let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
-        if (detail != undefined) {
-          detail.cardCount = keyArray.length;
-          detail.cardList = this.cardList;
+
+            const promises1 = [];
+            for (let i = 0; i < this.cardList.length; i++) {
+              promises1.push(Promise.resolve(this.getCardPaymentTime(this.cardList[i].cardNo)));
+            }
+            Promise.all(promises1).then((results) => {
+              for (let i = 0; i < results.length; i++) {
+                if (results[i]["status"] == "success") {
+                  let cardDetail = this.cardList.find(item => item.cardNo == results[i].data.cardNo);
+                  if (cardDetail != undefined) {
+                    cardDetail.time = results[i].data.time;
+                  }
+                }
+              }
+              let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
+              if (detail != undefined) {
+                detail.cardCount = keyArray.length;
+                detail.cardList = this.cardList;
+              }
+              this.getPaymentCollectorRoute(paymentCollectorId);
+            });
+          });
+        }
+        else {
+          let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
+          if (detail != undefined) {
+            detail.cardCount = keyArray.length;
+            detail.cardList = this.cardList;
+          }
+          this.getPaymentCollectorRoute(paymentCollectorId);
         }
       }
-      this.getPaymentCollectorRoute(paymentCollectorId);
+      else {
+        this.getPaymentCollectorRoute(paymentCollectorId);
+      }
+    });
+  }
+
+  getCardPaymentTime(cardNo: any) {
+    return new Promise((resolve) => {
+      let obj = {};
+      let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate;
+      let timeInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        timeInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            let time = data[keyArray[0]]["transactionDateTime"].toString().split(" ")[1];
+            let paymentTime = time.split(":")[0] + ":" + time.split(":")[1]
+            obj = {
+              cardNo: cardNo,
+              time: paymentTime
+            }
+            resolve({ status: "success", data: obj });
+          }
+          else {
+            resolve({ status: "fail", data: obj });
+          }
+
+        }
+        else {
+          resolve({ status: "fail", data: obj });
+        }
+      })
+
+
+    });
+  }
+
+  getCardLatLng(cardNo: any) {
+    return new Promise((resolve) => {
+      let obj = {};
+      let dbPath = "CardWardMapping/" + cardNo;
+      let cardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        cardInstance.unsubscribe();
+        if (data != null) {
+          let lineNo = data["line"];
+          let ward = data["ward"];
+          dbPath = "Houses/" + ward + "/" + lineNo + "/" + cardNo + "/latLng";
+          let latLngInstance = this.db.object(dbPath).valueChanges().subscribe(latLngData => {
+            latLngInstance.unsubscribe();
+            if (latLngData != null) {
+              if (latLngData != "") {
+                let lat = latLngData.toString().replace("(", "").replace(")", "").split(",")[0];
+                let lng = latLngData.toString().replace("(", "").replace(")", "").split(",")[1];
+                obj = {
+                  cardNo: cardNo,
+                  lat: lat,
+                  lng: lng
+                }
+                resolve({ status: "success", data: obj });
+              }
+              else {
+                resolve({ status: "fail", data: obj });
+              }
+            }
+            else {
+              resolve({ status: "fail", data: obj });
+            }
+          });
+        }
+        else {
+          resolve({ status: "fail", data: obj });
+        }
+      })
     });
   }
 
@@ -289,6 +418,7 @@ export class PaymentCollectorTrackingComponent {
     $(this.divLoader).show();
     this.resetDetail();
     this.cardList = [];
+    this.paymentCollectorId = paymentCollectorId;
     let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
     if (detail != undefined) {
       detail.cssClass = "active";
@@ -305,9 +435,9 @@ export class PaymentCollectorTrackingComponent {
           if (detail.cardList.length > 0) {
             this.cardList = detail.cardList;
             for (let i = 0; i < this.cardList.length; i++) {
-              let imageURL = "../../../assets/img/green.svg";
-              let contentString = this.cardList[i].cardNo;
-              this.setMarkers(this.cardList[i].lat, this.cardList[i].lng, imageURL, 35, 40, "", contentString);
+              let imageURL = "../../../assets/img/green-home.png";
+              let contentString = this.cardList[i].cardNo + " - " + this.cardList[i].time;
+              this.setCardMarkers(this.cardList[i].lat, this.cardList[i].lng, imageURL, 25, 30, "", contentString);
             }
           }
           let totalMinutes = this.commonService.timeDifferenceMin(new Date(this.selectedDate + " " + detail.startTime), new Date(this.selectedDate + " " + detail.endTime));
@@ -315,6 +445,7 @@ export class PaymentCollectorTrackingComponent {
           this.paymentCollectorDetail.totalHr = this.commonService.getHrsFull(totalMinutes);
           this.bounds = new google.maps.LatLngBounds();
           this.polylines = [];
+          console.log(detail.routePath);
           for (let i = 0; i < detail.latLng.length; i++) {
             this.bounds.extend({ lat: Number(detail.latLng[i].lat), lng: Number(detail.latLng[i].lng) });
             if (i == 0) {
@@ -326,15 +457,6 @@ export class PaymentCollectorTrackingComponent {
               let contentString = "End Time : " + detail.latLng[i].time;
               this.setMarkers(detail.latLng[i].lat, detail.latLng[i].lng, this.endPointUrl, 35, 40, detail.latLng[i].time, contentString);
             }
-            else {
-              if (time != detail.latLng[i].time.split(":")[0]) {
-                let imageURL = "../../../assets/img/green.svg";
-                let contentString = detail.latLng[i].time;
-                this.setMarkers(detail.latLng[i].lat, detail.latLng[i].lng, imageURL, 35, 40, detail.latLng[i].time, contentString);
-                time = detail.latLng[i].time.split(":")[0];
-              }
-            }
-
           }
           let line = new google.maps.Polyline({
             path: detail.latLng,
@@ -350,6 +472,165 @@ export class PaymentCollectorTrackingComponent {
     }
   }
 
+
+
+
+  getRouteData(timeInt: any) {
+    if(this.polylines.length>0){
+      for(let i=0;i<this.polylines.length;i++){
+        this.polylines[i].setMap(null);
+      }
+    }
+    this.endTime = 0;
+    this.timeInterval = parseInt(timeInt);
+    let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == this.paymentCollectorId);
+    if (detail != undefined) {
+      if (this.timeInterval == 0) {
+        if (this.vehicleMarker != null) {
+          this.vehicleMarker.setMap(null);
+        }
+        this.endTime = null;
+        this.isPreviousTime = false;
+        let line = new google.maps.Polyline({
+          path: detail.latLng,
+          strokeColor: "green",
+          strokeWeight: 2,
+        });
+        this.polylines[0] = line;
+        this.polylines[0].setMap(this.map);
+      }
+      else {
+        if (this.endTime != null) {
+          this.endTime = parseInt(this.endTime) + parseInt(timeInt) - 1;
+          if (this.isPreviousTime == false) {
+            this.isPreviousTime = true;
+          }
+        }
+        else {
+          this.endTime = parseInt(timeInt) - 1;
+          this.isPreviousTime = false;
+        }
+        this.getPaymentCollectorRouteTime();
+      }
+    }
+
+  }
+
+  getPaymentCollectorRouteTime() {
+    let lineData = [];
+    if (this.vehicleMarker != null) {
+      this.vehicleMarker.setMap(null);
+    }
+    if(this.polylines.length>0){
+      for(let i=0;i<this.polylines.length;i++){
+        this.polylines[i].setMap(null);
+      }
+    }
+    let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == this.paymentCollectorId);
+    if (detail != undefined) {
+      if (this.endTime >= (detail.routePath.length - 1)) {
+        this.endTime = detail.routePath.length - 1;
+        this.isLast = true;
+      }
+      else {
+        this.isLast = false;
+      }
+
+      for (let i = 0; i <= this.endTime; i++) {
+        if (lineData.length > 0) {
+          let lat = lineData[lineData.length - 1]["lat"];
+          let lng = lineData[lineData.length - 1]["lng"];
+          lineData = [];
+          lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+        }
+        let routeDateList = [];
+        let latLong: string = detail.routePath[i]["latlng"];
+        routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+        for (let j = 0; j < routeDateList.length; j++) {
+          let routePart = routeDateList[j].split(',');
+          if (routePart.length == 2) {
+            lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
+          }
+        }
+        if (lineData != undefined) {
+          let line = new google.maps.Polyline({
+            path: lineData,
+            strokeColor: "green",
+            strokeWeight: 2
+          });
+
+          if (i == this.endTime) {
+            let flowMarkerURL = '../assets/img/walking.png';;
+            var flowMarkerLabel = "";
+            let lat = lineData[lineData.length - 1]["lat"];
+            let lng = lineData[lineData.length - 1]["lng"];
+            let contentString = '<br/>Time : ' + detail.routePath[i]["time"];
+            this.setMarker(lat, lng, flowMarkerLabel, flowMarkerURL, contentString, "routeMarker");
+          }
+
+          this.polylines[i] = line;
+          this.polylines[i].setMap(this.map);
+        }
+      }
+
+    }
+
+  }
+
+  setMarker(lat: any, lng: any, markerLabel: any, markerURL: any, contentString: any, type: any) {
+    let scaledHeight = 60;
+    let scaledWidth = 40;
+
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      label: { text: ' ' + markerLabel + ' ', color: "white", fontSize: "12px", fontWeight: "bold" },
+      icon: {
+        url: markerURL,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scaledSize: new google.maps.Size(scaledHeight, scaledWidth),
+        origin: new google.maps.Point(0, 0),
+        labelOrigin: new google.maps.Point(25, 31)
+      }
+    });
+
+    let infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+
+    marker.addListener('click', function () {
+      infowindow.open(this.map, marker);
+    });
+    this.vehicleMarker = marker;
+  }
+
+  getRouteDataPreNext(type: any) {
+    if (this.vehicleMarker != null) {
+      this.vehicleMarker.setMap(null);
+    }    
+    if(this.polylines.length>0){
+      for(let i=0;i<this.polylines.length;i++){
+        this.polylines[i].setMap(null);
+      }
+    }
+    if (this.timeInterval != 0) {
+      // this.setMapOnAll();
+      if (type == "pre") {
+        this.endTime = this.endTime - this.timeInterval;
+        if (this.endTime < 0) {
+          this.endTime = 0;
+        }
+        this.getPaymentCollectorRouteTime();
+      }
+      else {
+        this.endTime = this.endTime + this.timeInterval;
+        this.getPaymentCollectorRouteTime();
+      }
+    }
+  }
+
+
   setMarkers(lat: any, lng: any, markerUrl: any, point1: any, point2: any, time: any, contentString: any) {
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
@@ -359,6 +640,26 @@ export class PaymentCollectorTrackingComponent {
         fillOpacity: 1,
         strokeWeight: 0,
         scaledSize: new google.maps.Size(point1, point2),
+        origin: new google.maps.Point(0, 0),
+      },
+    });
+    let infowindowEnd = new google.maps.InfoWindow({
+      content: contentString,
+    });
+
+    marker.addListener("click", function () {
+      infowindowEnd.open(this.map, marker);
+    });
+  }
+
+  setCardMarkers(lat: any, lng: any, markerUrl: any, point1: any, point2: any, time: any, contentString: any) {
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: markerUrl,
+        fillOpacity: 1,
+        strokeWeight: 0,
         origin: new google.maps.Point(0, 0),
       },
     });
@@ -402,6 +703,9 @@ export class PaymentCollectorTrackingComponent {
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
+
+
+
 }
 
 export class paymentCollectorDetail {
