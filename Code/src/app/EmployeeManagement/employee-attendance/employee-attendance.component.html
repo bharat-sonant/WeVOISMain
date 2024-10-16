@@ -119,9 +119,9 @@
                                                 Hrs
                                             </th>
 
-                                            <th class="text-left br-1 table-heading1 ">
+                                            <!-- <th class="text-left br-1 table-heading1 ">
                                                 In-Out Location
-                                            </th>
+                                            </th> -->
                                             <th class="text-left br-1 table-heading1 " [hidden]="filterType=='byEmployee'">
                                                Attendance Manager
                                             </th>
@@ -136,46 +136,61 @@
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index" >
                                                 <td class="text-left br-1" [hidden]="filterType=='byEmployee'"
-                                                    style="cursor: pointer; width:20%!important"
+                                                    style="cursor: pointer; width:18%!important"
                                                     (click)="setFilterType('byEmployee',data.empId)">
                                                     {{data.name}} <b>[{{data.empCode}}]</b>
                                                 </td>
                                                 <td class="text-left br-1" [hidden]="filterType=='byDate'" style=" width:10%!important;">
                                                     {{data.name}}
                                                 </td>
-                                                <td class="text-center br-1" class="{{data.cssClass}}" style=" width:5%!important;">
-                                                    <div class="text-center" style="height: 100px;width:100px;">
-                                                        <a href="{{data.inImageUrl}}" target="_blank" title="click to view fullscreen">
-                                                            <img src="{{data.inImageUrl}}" alt="" style="height: 100%;width:auto;">
-                                                        </a>
-                                                    </div>
-                                                    <div class="text-center mt-1 fw-bold" *ngIf="data.inTime">
-                                                        <label for="">Time :</label>
-                                                        {{data.inTime}}
-                                                    </div>
-                                                </td>
-                                                <td class="text-center br-1" style=" width:5%!important;">
-                                                    <div class="text-center" style="height: 100px;width:100px;">
-                                                        <a href="{{data.outImageUrl}}" target="_blank" title="click to view fullscreen">
-                                                            <img src="{{data.outImageUrl}}" alt="" style="height: 100%;width: auto;">
-                                                        </a>
-                                                        
-                                                    </div>
-                                                    <div  class="text-center mt-1 fw-bold" *ngIf="data.outTime">
-                                                        <label for="">Time :</label>
-                                                        {{data.outTime}}
+                                                <td class="br-1" style="width:23%!important;">
+                                                    <div class="d-flex justify-content-between w-100">
+                                                        <div class="text-center" style="flex: 0.4;">
+                                                            <a href="{{data.inImageUrl}}" target="_blank" title="Click to view fullscreen">
+                                                                <img src="{{data.inImageUrl}}" alt="" style="height: 100px; width: auto;">
+                                                            </a>
+                                                        </div>
+                                                        <div class="ms-2 mt-2" style="flex: 0.6;">
+                                                            <div class="fw-bold {{data.cssClass}}" *ngIf="data.inTime">
+                                                                <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
+                                                                {{data.inTime}}
+                                                            </div>
+                                                            <div class="mt-1 fw-bold" *ngIf="data.inLocation">
+                                                                <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
+                                                                {{data.inLocation}}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </td>
-                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}" style=" width:10%!important;">
+                                                <td class="br-1" style="width:23%!important;">
+                                                    <div class="d-flex justify-content-between w-100">
+                                                        <div class="text-center" style="flex: 0.4;">
+                                                            <a href="{{data.outImageUrl}}" target="_blank" title="Click to view fullscreen">
+                                                                <img src="{{data.outImageUrl}}" alt="" style="height: 100px; width: auto;">
+                                                            </a>
+                                                        </div>
+                                                        <div class="ms-2 mt-2" style="flex: 0.6;">
+                                                            <div class="fw-bold" *ngIf="data.outTime">
+                                                                <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
+                                                                {{data.outTime}}
+                                                            </div>
+                                                            <div class="mt-1 fw-bold" *ngIf="data.outLocation">
+                                                                <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
+                                                                {{data.outLocation}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}" style=" width:8%!important;">
                                                     {{data.workingHour}}
                                                 </td>
-                                                <td class="text-left br-1" style=" width:25%!important;">
+                                                <!-- <td class="text-left br-1" style=" width:25%!important;">
                                                    <span><b>In : </b> {{data.inLocation}} </span><br/>
                                                    <span [hidden]="data.outLocation==''"><b>Out : </b> {{data.outLocation}}</span>
                                                    <i class="fa-solid fa-map-location-dot"
                                                    style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                    (click)="openLocation(contentLocation,i,'single')"></i>
-                                                </td>
+                                                </td> -->
                                                 <td class="text-left br-1" style=" width:15%!important;"  [hidden]="filterType=='byEmployee'">
                                                    {{data.attendanceManager}}
                                                 </td>
