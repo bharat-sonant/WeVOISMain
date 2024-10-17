@@ -38,6 +38,7 @@ export class PaymentCollectorTrackingComponent {
   endTime: any;
   isPreviousTime: any;
   isLast = false;
+  public routeTime:any;
   paymentCollectorDetail: paymentCollectorDetail =
     {
       totalKM: "0",
@@ -50,6 +51,7 @@ export class PaymentCollectorTrackingComponent {
   endPointUrl = "../../assets/img/end-point.svg";
   divLoader = "#divLoader";
   trackDetail = "#trackDetail";
+  timeBox="#timeBox";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -58,7 +60,8 @@ export class PaymentCollectorTrackingComponent {
   }
 
   setDefault() {
-    // $(this.trackDetail).hide();
+     $(this.trackDetail).hide();
+     $(this.timeBox).hide();
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.paymentCollectorList = [];
     this.toDayDate = this.commonService.setTodayDate();
@@ -67,6 +70,8 @@ export class PaymentCollectorTrackingComponent {
     this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     $('#txtDate').val(this.selectedDate);
     this.paymentCollectorId = 0;
+    this.routeTime="00:00";
+    this.timeInterval=0;
     this.setHeight();
     this.setMaps();
     this.getPaymentCollector();
@@ -135,8 +140,6 @@ export class PaymentCollectorTrackingComponent {
     });
   }
 
-
-
   async getPaymentCollectorRouteStatus(empId: any) {
     return new Promise((resolve) => {
       let routeInstance = this.db.object("PaymentCollectionInfo/PaymentCollectorLocationHistory/" + empId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate + "/last-update-time").valueChanges().subscribe(data => {
@@ -146,6 +149,9 @@ export class PaymentCollectorTrackingComponent {
         if (data != null) {
           status = 1;
           cssClass = "normal";
+          if(this.paymentCollectorId==empId){
+            this.getPaymentCollectorRoute(empId);
+          }
         }
         resolve({ empId: empId, status: status, cssClass: cssClass });
       });
@@ -166,6 +172,7 @@ export class PaymentCollectorTrackingComponent {
       }
     }
     $('#ddlTime').val("0");
+    this.timeInterval=0;
   }
 
   resetPaymentCollectorList() {
@@ -185,12 +192,12 @@ export class PaymentCollectorTrackingComponent {
         let routePath = [];
         for (let i = 0; i < keyArray.length - 2; i++) {
           let index = keyArray[i];
-          routePath.push({ distanceinmeter: data[index]["distance-in-meter"], latlng: data[index]["lat-lng"], time: index });
-
+          
           let startTime = new Date(this.commonService.setTodayDate() + " " + "08:00");
           let endTime = new Date(this.commonService.setTodayDate() + " " + "21:00");
           let routeTime = new Date(this.commonService.setTodayDate() + " " + index);
           if (routeTime >= startTime && routeTime <= endTime) {
+            routePath.push({ distanceinmeter: data[index]["distance-in-meter"], latlng: data[index]["lat-lng"], time: index });
 
             if (data[index]["distance-in-meter"] != null) {
               totalKM = totalKM + Number(data[index]["distance-in-meter"]);
@@ -209,11 +216,11 @@ export class PaymentCollectorTrackingComponent {
                   }
                   else {
                     let distance = this.getDistanceFromLatLonInKm(preLat1, preLng1, lat, lng);
-                    if (distance > 15) {
+                    //if (distance > 15) {
                       latLng.push({ lat: lat, lng: lng, time: index });
                       preLat1 = lat;
                       preLng1 = lng;
-                    }
+                   // }
                   }
                 }
               }
@@ -383,7 +390,7 @@ export class PaymentCollectorTrackingComponent {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 600;
-    let width = 800;
+    let width = 500;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
@@ -427,6 +434,7 @@ export class PaymentCollectorTrackingComponent {
       }
       else {
         $(this.trackDetail).show();
+        $(this.timeBox).show();
         if (detail.startTime != "---") {
           this.paymentCollectorDetail.startTime = detail.startTime;
           this.paymentCollectorDetail.endTime = detail.endTime;
@@ -445,7 +453,6 @@ export class PaymentCollectorTrackingComponent {
           this.paymentCollectorDetail.totalHr = this.commonService.getHrsFull(totalMinutes);
           this.bounds = new google.maps.LatLngBounds();
           this.polylines = [];
-          console.log(detail.routePath);
           for (let i = 0; i < detail.latLng.length; i++) {
             this.bounds.extend({ lat: Number(detail.latLng[i].lat), lng: Number(detail.latLng[i].lng) });
             if (i == 0) {
@@ -455,6 +462,7 @@ export class PaymentCollectorTrackingComponent {
             }
             else if (i == detail.latLng.length - 1) {
               let contentString = "End Time : " + detail.latLng[i].time;
+              this.routeTime=detail.latLng[i].time;
               this.setMarkers(detail.latLng[i].lat, detail.latLng[i].lng, this.endPointUrl, 35, 40, detail.latLng[i].time, contentString);
             }
           }
@@ -476,6 +484,12 @@ export class PaymentCollectorTrackingComponent {
 
 
   getRouteData(timeInt: any) {
+    if(this.paymentCollectorId==0){
+      this.timeInterval=0;
+      $("#ddlTime").val("0");
+      this.commonService.setAlertMessage("error","Please select payment collector id.");
+      return;
+    }
     if(this.polylines.length>0){
       for(let i=0;i<this.polylines.length;i++){
         this.polylines[i].setMap(null);
@@ -491,6 +505,7 @@ export class PaymentCollectorTrackingComponent {
         }
         this.endTime = null;
         this.isPreviousTime = false;
+        this.routeTime=this.paymentCollectorDetail.endTime;
         let line = new google.maps.Polyline({
           path: detail.latLng,
           strokeColor: "green",
@@ -518,6 +533,7 @@ export class PaymentCollectorTrackingComponent {
 
   getPaymentCollectorRouteTime() {
     let lineData = [];
+    this.routeTime="00:00";
     if (this.vehicleMarker != null) {
       this.vehicleMarker.setMap(null);
     }
@@ -566,6 +582,8 @@ export class PaymentCollectorTrackingComponent {
             let lng = lineData[lineData.length - 1]["lng"];
             let contentString = '<br/>Time : ' + detail.routePath[i]["time"];
             this.setMarker(lat, lng, flowMarkerLabel, flowMarkerURL, contentString, "routeMarker");
+            this.routeTime=detail.routePath[i]["time"];
+            
           }
 
           this.polylines[i] = line;
@@ -605,17 +623,16 @@ export class PaymentCollectorTrackingComponent {
     this.vehicleMarker = marker;
   }
 
-  getRouteDataPreNext(type: any) {
-    if (this.vehicleMarker != null) {
-      this.vehicleMarker.setMap(null);
-    }    
-    if(this.polylines.length>0){
-      for(let i=0;i<this.polylines.length;i++){
-        this.polylines[i].setMap(null);
-      }
-    }
+  getRouteDataPreNext(type: any) {    
     if (this.timeInterval != 0) {
-      // this.setMapOnAll();
+      if (this.vehicleMarker != null) {
+        this.vehicleMarker.setMap(null);
+      }    
+      if(this.polylines.length>0){
+        for(let i=0;i<this.polylines.length;i++){
+          this.polylines[i].setMap(null);
+        }
+      }
       if (type == "pre") {
         this.endTime = this.endTime - this.timeInterval;
         if (this.endTime < 0) {
@@ -627,6 +644,9 @@ export class PaymentCollectorTrackingComponent {
         this.endTime = this.endTime + this.timeInterval;
         this.getPaymentCollectorRouteTime();
       }
+    }
+    else{
+      this.commonService.setAlertMessage("error","Please select time interval.");
     }
   }
 
@@ -674,13 +694,14 @@ export class PaymentCollectorTrackingComponent {
 
   setDate(filterVal: any, type: string) {
     $(this.trackDetail).hide();
+    $(this.timeBox).hide();
+    this.routeTime="00:00";
     this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
       $("#txtDate").val(newDate);
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
         this.selectedYear = this.selectedDate.split('-')[0];
         this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-        this.paymentCollectorId = 0;
         this.setMaps();
         this.resetDetail();
         this.resetPaymentCollectorList();
@@ -703,8 +724,6 @@ export class PaymentCollectorTrackingComponent {
     let mapProp = this.commonService.initMapProperties();
     this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
   }
-
-
 
 }
 

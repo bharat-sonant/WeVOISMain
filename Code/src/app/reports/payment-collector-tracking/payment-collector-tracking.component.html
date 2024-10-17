@@ -20,9 +20,9 @@
         <h3 class="header-txt"> <b> Payment Collector Tracking </b> </h3>
       </div>
 
-      <div class="col-md-3 txt-right">     
-        <div style="float: right; margin-right: -50px;">
-          <button id="btnPre" class="btn-hvr" (click)="getRouteDataPreNext('pre');"><span style="color: #fff; ">
+      <div class="col-md-3 main1 text-right" style="justify-content: right;">
+       <div style="margin-right: -40px;">
+          <button class="btn btn-primary" (click)="getRouteDataPreNext('pre');"><span style="color: #fff; ">
             << </span></button>
       <select class="caret-select" id="ddlTime" (change)="getRouteData($event.target.value)" style="margin-right: 8px;">
       <option value="0">All Time Route</option>
@@ -32,18 +32,8 @@
     </select>
       <button class="btn btn-primary" (click)="getRouteDataPreNext('next');"> 
         >>
-      </button>
-        </div> 
+      </button></div>
     
-      </div>
-      <div class="display" id="popup">
-        <div class="field-box">
-          <div class="totalKM">
-            <h1> <br>
-              <p></p>
-            </h1>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -73,6 +63,9 @@
   </div>
 </div>
 
+<div id="timeBox">
+  Time : {{routeTime}}
+ </div>
 <div id="trackDetail">
   <div>
     <div style="border-bottom: 1px solid #d6d6d6; padding: 6px;text-align: right;">
@@ -121,10 +114,6 @@
                 <th>
                   Payment Method</th>
                 <th>
-                  Merchant Transaction Id</th>
-                <th>
-                  Reference No</th>
-                <th>
                   Time</th>
                 <th class="text-right">
                   Amount</th>
@@ -135,10 +124,6 @@
                     {{data.cardNo}}</td>
                   <td class="markers-details">
                     {{data.payMethod}}</td>
-                  <td class="markers-details">
-                    {{data.merchantTransactionId}}</td>
-                  <td class="markers-details">
-                    {{data.retrievalReferenceNo}}</td>
                   <td class="text-right markers-details">
                     {{data.time}}</td>
                   <td class="text-right markers-details">
