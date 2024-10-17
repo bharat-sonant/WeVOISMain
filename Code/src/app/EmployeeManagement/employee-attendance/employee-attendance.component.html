@@ -123,34 +123,35 @@
                                                 In-Out Location
                                             </th> -->
                                             <th class="text-left br-1 table-heading1 " [hidden]="filterType=='byEmployee'">
-                                               Attendance Manager
+                                                Manager
                                             </th>
-                                            <th class="text-left br-1 table-heading1">
-                                                Status
-                                            </th>
-                                            <th class="text-left br-1 table-heading1 col-w"
-                                                [hidden]="isAttendanceApprover=='0'">
-                                                Approver
+                                            <th class="text-left br-1 table-heading1"> 
+                                                Approve Status
+                                            <!-- </th>
+                                            <th class="text-left br-1 table-heading1 col-w" -->
+                                                <!-- [hidden]="isAttendanceApprover=='0'"> -->
+                                                <!-- Approver -->
                                             </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index" >
                                                 <td class="text-left br-1" [hidden]="filterType=='byEmployee'"
-                                                    style="cursor: pointer; width:18%!important"
+                                                    style="cursor: pointer; width:15%!important"
                                                     (click)="setFilterType('byEmployee',data.empId)">
-                                                    {{data.name}} <b>[{{data.empCode}}]</b>
+                                                    <div>{{data.name}}</div>
+                                                    <b>[{{data.empCode}}]</b>
                                                 </td>
                                                 <td class="text-left br-1" [hidden]="filterType=='byDate'" style=" width:10%!important;">
                                                     {{data.name}}
                                                 </td>
                                                 <td class="br-1" style="width:23%!important;">
                                                     <div class="d-flex justify-content-between w-100">
-                                                        <div class="text-center" style="flex: 0.4;">
+                                                        <div class="text-center" style="flex: 0.3;">
                                                             <a href="{{data.inImageUrl}}" target="_blank" title="Click to view fullscreen">
-                                                                <img src="{{data.inImageUrl}}" alt="" style="height: 100px; width: auto;">
+                                                                <img src="{{data.inImageUrl}}" alt="" *ngIf="data.inImageUrl"   style="height: 100px; width: 80%;">
                                                             </a>
                                                         </div>
-                                                        <div class="ms-2 mt-2" style="flex: 0.6;">
+                                                        <div class="ms-2 mt-2" style="flex: 0.7;">
                                                             <div class="fw-bold {{data.cssClass}}" *ngIf="data.inTime">
                                                                 <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
                                                                 {{data.inTime}}
@@ -159,7 +160,7 @@
                                                             style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                             (click)="openLocation(contentLocation,i,'single')"></i>
                                                             </div>
-                                                            <div class="mt-1 fw-bold" *ngIf="data.inLocation">
+                                                            <div class="mt-1" *ngIf="data.inLocation">
                                                                 <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
                                                                 {{data.inLocation}}
                                                             </div>
@@ -168,18 +169,18 @@
                                                 </td>
                                                 <td class="br-1" style="width:23%!important;">
                                                     <div class="d-flex justify-content-between w-100">
-                                                        <div class="text-center" style="flex: 0.4;">
+                                                        <div class="text-center" style="flex: 0.3;">
                                                             <a href="{{data.outImageUrl}}" target="_blank" title="Click to view fullscreen">
-                                                                <img src="{{data.outImageUrl}}" alt="" style="height: 100px; width: auto;">
+                                                                <img src="{{data.outImageUrl}}" alt="" *ngIf="data.outImageUrl" style="height: 100px; width: 80%">
                                                             </a>
                                                         </div>
-                                                        <div class="ms-2 mt-2" style="flex: 0.6;">
+                                                        <div class="ms-2 mt-2" style="flex: 0.7;">
                                                             <div class="fw-bold" *ngIf="data.outTime">
                                                                 <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
                                                                 {{data.outTime}}
                                                                
                                                             </div>
-                                                            <div class="mt-1 fw-bold" *ngIf="data.outLocation">
+                                                            <div class="mt-1" *ngIf="data.outLocation">
                                                                 <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
                                                                 {{data.outLocation}}
                                                             </div>
@@ -197,20 +198,28 @@
                                                    style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                    (click)="openLocation(contentLocation,i,'single')"></i>
                                                 </td> -->
-                                                <td class="text-left br-1" style=" width:15%!important;"  [hidden]="filterType=='byEmployee'">
+                                                <td class="text-left br-1" style=" width:10%!important;"  [hidden]="filterType=='byEmployee'">
                                                    {{data.attendanceManager}}
                                                 </td>
-                                                <td class="text-left br-1"
-                                                style=" width:10%!important;">
-                                                    <span> {{data.status}}</span>
-                                                    <i class="fa-solid fa-person-circle-check"
+                                                <td class="text-left br-1" style=" width:15%!important;">
+                                                    <div [ngClass]="data.approveBy && 'mb-4'">
+                                                        <span [ngClass]="data.status!=='Not Approved' && 'fw-bold'" [ngStyle]="{'color': data.status === 'Absent'? 'red' : ''}"> {{data.status}}</span>
+                                                        <i class="fa-solid fa-person-circle-check"
                                                         style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                         [hidden]="data.isAttendanceApprover=='0'"
                                                         (click)="openApprovePopup(contentApprove,i,data.approverStatus);"></i>
+                                                    </div>
+                                                    <div [hidden]="isAttendanceApprover=='0'" >
+                                                        {{data.approveBy}}
+                                                    </div>
+                                                    <div [hidden]="isAttendanceApprover=='0'" >
+                                                        {{data.approveAt}}
+                                                    </div>
+                                                    
                                                 </td>
-                                                <td class="text-left br-1" [hidden]="isAttendanceApprover=='0'" style=" width:12%!important">
+                                                <!-- <td class="text-left br-1" [hidden]="isAttendanceApprover=='0'" style=" width:12%!important">
                                                     {{data.approveBy}}
-                                                </td>
+                                                </td> -->
                                             </tr>
                                         </tbody>
                                     </table>
