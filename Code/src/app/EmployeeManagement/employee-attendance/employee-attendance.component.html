@@ -154,6 +154,10 @@
                                                             <div class="fw-bold {{data.cssClass}}" *ngIf="data.inTime">
                                                                 <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
                                                                 {{data.inTime}}
+                                                                
+                                                            <i class="fa-solid fa-map-location-dot"
+                                                            style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
+                                                            (click)="openLocation(contentLocation,i,'single')"></i>
                                                             </div>
                                                             <div class="mt-1 fw-bold" *ngIf="data.inLocation">
                                                                 <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
@@ -173,11 +177,13 @@
                                                             <div class="fw-bold" *ngIf="data.outTime">
                                                                 <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
                                                                 {{data.outTime}}
+                                                               
                                                             </div>
                                                             <div class="mt-1 fw-bold" *ngIf="data.outLocation">
                                                                 <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
                                                                 {{data.outLocation}}
                                                             </div>
+                                                           
                                                         </div>
                                                     </div>
                                                 </td>
