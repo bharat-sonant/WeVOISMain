@@ -492,4 +492,30 @@ label{
   transform: translate(-50%, -50%); 
   }
 
+  .export-span {
+    position: absolute;
+    z-index: 999;
+    right: 10px;
+    top: 0;
+    font-size: 10px;
+  }
+//   .export-span {
+//     float: unset !important;
+//   }
+  .export-span-iner {
+    // display: none !important;
+  font-weight: normal;
+
+}
+.export-span {
+  text-align: center;
+  float: unset;
+}
+.export-icon {
+  cursor: pointer;
+  color: green;
+  font-size: 20px;
+}
+
+
 

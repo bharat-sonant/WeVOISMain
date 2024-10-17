@@ -142,4 +142,37 @@ export class VehicleAssignedComponent implements OnInit {
       }
     });
   }
+  exportToExcel() {
+    if (this.assignedVehicleList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Vehicle";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Driver";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+
+      for (let i = 0; i < this.assignedVehicleList.length; i++) {
+        const vehicle = this.assignedVehicleList[i];
+        for (let j = 0; j < vehicle.driverDetail.length; j++) {
+          htmlString += "<tr>";
+          if (j === 0) {
+            htmlString += "<td t='s' rowspan='" + vehicle.driverDetail.length + "'>";
+            htmlString += vehicle["vehicle"];
+            htmlString += "</td>";
+          }
+          htmlString += "<td t='s'>";
+          htmlString += vehicle.driverDetail[j]["driver"]+" - "+ vehicle.driverDetail[j]["driverMobile"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+      }
+      htmlString += "</table>";
+      let fileName = "Vehicle Assigned Report - " + this.selectedDate + " .xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+    }
+  }
 }
