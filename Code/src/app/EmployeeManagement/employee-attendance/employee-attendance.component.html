@@ -115,9 +115,9 @@
                                             <th class="text-center br-1 table-heading1 ">
                                                 Out
                                             </th>
-                                            <th class="text-left br-1 table-heading1 ">
+                                            <!-- <th class="text-left br-1 table-heading1 ">
                                                 Hrs
-                                            </th>
+                                            </th> -->
 
                                             <!-- <th class="text-left br-1 table-heading1 ">
                                                 In-Out Location
@@ -138,11 +138,11 @@
                                                 <td class="text-left br-1" [hidden]="filterType=='byEmployee'"
                                                     style="cursor: pointer; width:15%!important"
                                                     (click)="setFilterType('byEmployee',data.empId)">
-                                                    <div>{{data.name}}</div>
+                                                    <div>{{data.displayName}}</div>
                                                     <b>[{{data.empCode}}]</b>
                                                 </td>
                                                 <td class="text-left br-1" [hidden]="filterType=='byDate'" style=" width:10%!important;">
-                                                    {{data.name}}
+                                                    {{data.displayName}}
                                                 </td>
                                                 <td class="br-1" style="width:23%!important;">
                                                     <div class="d-flex justify-content-between w-100">
@@ -150,8 +150,9 @@
                                                             <a href="{{data.inImageUrl}}" target="_blank" title="Click to view fullscreen">
                                                                 <img src="{{data.inImageUrl}}" alt="" *ngIf="data.inImageUrl"   style="height: 100px; width: 80%;">
                                                             </a>
+                                                            <img src="../../../assets/img/avtar-user.png" alt="" *ngIf="!data.inImageUrl" style="height: 100px; width: 80%">
                                                         </div>
-                                                        <div class="ms-2 mt-2" style="flex: 0.7;">
+                                                        <div class="ms-2 mt-2 d-flex flex-column justify-content-start position-relative" style="flex: 0.7;">
                                                             <div class="fw-bold {{data.cssClass}}" *ngIf="data.inTime">
                                                                 <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
                                                                 {{data.inTime}}
@@ -164,6 +165,10 @@
                                                                 <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
                                                                 {{data.inLocation}}
                                                             </div>
+                                                            <div class="position-absolute bottom-0 end-0 workingHrs-badge {{data.cssWorkingClass}} br-0" *ngIf="data.workingHour" title="Working Hours">
+                                                                <img src="../../../assets/img/working-hours-icon.png" alt="" style="height: 18px;">
+                                                                {{data.workingHour}}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -173,6 +178,7 @@
                                                             <a href="{{data.outImageUrl}}" target="_blank" title="Click to view fullscreen">
                                                                 <img src="{{data.outImageUrl}}" alt="" *ngIf="data.outImageUrl" style="height: 100px; width: 80%">
                                                             </a>
+                                                            <img src="../../../assets/img/avtar-user.png" alt="" *ngIf="!data.outImageUrl" style="height: 100px; width: 80%">
                                                         </div>
                                                         <div class="ms-2 mt-2" style="flex: 0.7;">
                                                             <div class="fw-bold" *ngIf="data.outTime">
@@ -188,9 +194,9 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="text-left br-1" class="{{data.cssWorkingClass}}" style=" width:8%!important;">
+                                                <!-- <td class="text-left br-1" class="{{data.cssWorkingClass}}" style=" width:8%!important;">
                                                     {{data.workingHour}}
-                                                </td>
+                                                </td> -->
                                                 <!-- <td class="text-left br-1" style=" width:25%!important;">
                                                    <span><b>In : </b> {{data.inLocation}} </span><br/>
                                                    <span [hidden]="data.outLocation==''"><b>Out : </b> {{data.outLocation}}</span>
@@ -212,8 +218,8 @@
                                                     <div [hidden]="isAttendanceApprover=='0'" >
                                                         {{data.approveBy}}
                                                     </div>
-                                                    <div [hidden]="isAttendanceApprover=='0'" >
-                                                        {{data.approveAt}}
+                                                    <div [hidden]="isAttendanceApprover=='0' || !data.approveAt" style="font-size: 11px;">
+                                                        [ {{data.approveAt}} ]
                                                     </div>
                                                     
                                                 </td>

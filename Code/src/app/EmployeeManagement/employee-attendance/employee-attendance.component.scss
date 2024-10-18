@@ -186,8 +186,7 @@ button:focus {
     // background-color: #f2b7b7;
     color: red;
     font-weight: bold;
-
-
+    background-color:#ff11001f !important;
 }
 
 .card-header {
@@ -2342,4 +2341,10 @@ input {
 
 .col-w{
     width:170px;
+}
+.workingHrs-badge{
+    background-color: #f1f1f1;
+    padding: 2px 5px;
+    border-radius: 5px;
+    // font-weight: bold;
 }

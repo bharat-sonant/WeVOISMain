@@ -346,7 +346,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                   if (attendanceData["inDetails"]["approveAt"] != null) {
                     let approveAtDetail = attendanceData["inDetails"]["approveAt"].split(" ")[0].split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(attendanceData["inDetails"]["approveAt"].split(" ")[0].split('-')[1])) + " " + attendanceData["inDetails"]["approveAt"].split(" ")[0].split('-')[0] + " at " + attendanceData["inDetails"]["approveAt"].split(" ")[1];
                     // approveBy = approveBy + " on " + approveAt;
-                    approveAt = "On " + approveAtDetail //to show approve at time in new line
+                    approveAt = approveAtDetail //to show approve at time in new line
                   }
                 }
               }
@@ -388,7 +388,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               this.employeeList.push({
                 empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
                 inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, inLocation: inLocation,
-                outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl,approveAt
+                outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl,approveAt , displayName:detail.name
               });
             }
 
@@ -499,7 +499,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 if (attendanceData["inDetails"]["approveAt"] != null) {
                   let approveAtDetail = attendanceData["inDetails"]["approveAt"].split(" ")[0].split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(attendanceData["inDetails"]["approveAt"].split(" ")[0].split('-')[1])) + " " + attendanceData["inDetails"]["approveAt"].split(" ")[0].split('-')[0] + " at " + attendanceData["inDetails"]["approveAt"].split(" ")[1];
                   // approveBy = approveBy + " on " + approveAt;
-                  approveAt = "On " + approveAtDetail; //to show approve at time in new line
+                  approveAt = approveAtDetail; //to show approve at time in new line
                 }
               }
               if (attendanceData["inDetails"] != null) {
@@ -566,7 +566,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl,approveAt });
+              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl,approveAt,displayName: this.commonService.convertDateWithMonthName(date) });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -594,9 +594,11 @@ export class EmployeeAttendanceComponent implements OnInit {
       $(this.txtDate).val(newDate);
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
+        if(this.employeeList.length>0){
         $(this.divLoader).show();
         this.getSelectedYearMonthName();
         this.getAttendance();
+        }
       }
       else {
         this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
@@ -756,7 +758,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     if (userDetail != undefined) {
       // this.attendanceList[index]["approveBy"] = userDetail.name + " on " + approveAt
       this.attendanceList[index]["approveBy"] = userDetail.name;
-      this.attendanceList[index]["approveAt"] = "On " + approveAt; //to show approve at time in new line
+      this.attendanceList[index]["approveAt"] = approveAt; //to show approve at time in new line
 
     }
     this.getNotApprovedAttendanceCount();

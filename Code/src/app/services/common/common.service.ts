@@ -2187,4 +2187,15 @@ export class CommonService {
     }
 
   }
+  convertDateWithMonthName=(date:string)=>{
+    if(date){
+      let splittedDateArray = date.split(' ')[0].split('-');
+      let time =date.split(' ')[1];
+      splittedDateArray[1]=this.getCurrentMonthShortName(Number(splittedDateArray[1]))
+      let newDateString = (splittedDateArray.reverse().join(' ')).concat(time ?` ${time}`:'')
+      return newDateString;
+      
+    }
+    return '';
+  }
 }
