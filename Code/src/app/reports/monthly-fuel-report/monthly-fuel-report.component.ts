@@ -186,10 +186,16 @@ export class MonthlyFuelReportComponent implements OnInit {
       htmlString += "Diesel Quantity";
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "Amount";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "KM Running";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "GPS KM Running";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Average";
       htmlString += "</td>";
       htmlString += "</tr>";
 
@@ -202,10 +208,16 @@ export class MonthlyFuelReportComponent implements OnInit {
         htmlString += this.vehicleList[i]["qty"];
         htmlString += "</td>";
         htmlString += "<td>";
+        htmlString += this.vehicleList[i]["amount"];
+        htmlString += "</td>";
+        htmlString += "<td>";
         htmlString += this.vehicleList[i]["km"];
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.vehicleList[i]["gpsKM"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.vehicleList[i]["avg"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
