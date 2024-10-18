@@ -16,12 +16,23 @@
             </div>
 
       </div>
-      <div class="col-md-6 main-header-txt">
+      <div class="col-md-5 main-header-txt">
         <h3 class="header-txt"> <b> Payment Collector Tracking </b> </h3>
       </div>
 
-      <div class="col-md-3 main1 text-right" style="justify-content: right;">
+      <div class="col-md-4 main1 text-right" style="justify-content: right;">
        <div style="margin-right: -40px;">
+        <select class="caret-select" id="ddlSpeed" (change)="setSpeed($event.target.value)" style="width: 80px; margin-right: 8px;">
+          <option value="0">Speed</option>
+          <option value="1" selected>1x</option>
+          <option value="2" >2x</option>
+          <option value="3">3x</option>
+          <option value="4" >4x</option>
+          <option value="5">5x</option>
+          <option value="10" >10x</option>
+        </select>
+        <button class="fa-expand-showgraph" (click)="getPlayStop();" title="Play Route"><i id="playStop" class="fab fa-youtube" style="font-size: 17px;"></i></button>
+        <button id="btnReset" class="fa-expand-showgraph" (click)="getReset();" title="Re-set" style="margin-right: 8px;"><i class="fas fa-sync"  style="font-size: 17px;"></i></button>
           <button class="btn btn-primary" (click)="getRouteDataPreNext('pre');"><span style="color: #fff; ">
             << </span></button>
       <select class="caret-select" id="ddlTime" (change)="getRouteData($event.target.value)" style="margin-right: 8px;">

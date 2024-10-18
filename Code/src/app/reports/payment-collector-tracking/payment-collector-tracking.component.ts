@@ -38,7 +38,7 @@ export class PaymentCollectorTrackingComponent {
   endTime: any;
   isPreviousTime: any;
   isLast = false;
-  public routeTime:any;
+  public routeTime: any;
   paymentCollectorDetail: paymentCollectorDetail =
     {
       totalKM: "0",
@@ -51,7 +51,7 @@ export class PaymentCollectorTrackingComponent {
   endPointUrl = "../../assets/img/end-point.svg";
   divLoader = "#divLoader";
   trackDetail = "#trackDetail";
-  timeBox="#timeBox";
+  timeBox = "#timeBox";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -60,8 +60,9 @@ export class PaymentCollectorTrackingComponent {
   }
 
   setDefault() {
-     $(this.trackDetail).hide();
-     $(this.timeBox).hide();
+    $(this.trackDetail).hide();
+    $(this.timeBox).hide();
+    $('#btnReset').hide();
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.paymentCollectorList = [];
     this.toDayDate = this.commonService.setTodayDate();
@@ -70,12 +71,273 @@ export class PaymentCollectorTrackingComponent {
     this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     $('#txtDate').val(this.selectedDate);
     this.paymentCollectorId = 0;
-    this.routeTime="00:00";
-    this.timeInterval=0;
+    this.routeTime = "00:00";
+    this.timeInterval = 0;
     this.setHeight();
     this.setMaps();
     this.getPaymentCollector();
   }
+
+  // Play Button Functionality Start
+
+  isStart = false;
+  isReset = false;
+  speed: any;
+  skip: any;
+
+  getPlayStop() {
+    if (this.paymentCollectorId == 0) {
+      this.commonService.setAlertMessage("error", "Please select payment collector.");
+      return;
+    }
+    if (this.isStart == false) {
+      let options = {
+        // max zoom
+        zoom: 16,
+      };
+      this.map.setOptions(options);
+      this.isStart = true;
+      $('#playStop').removeClass("fab fa-youtube");
+      $('#playStop').addClass("fas fa-stop-circle");
+
+      $('#btnPre').hide();
+      $('#btnReset').show();
+
+      this.setSpeed(Number($('#ddlSpeed').val()));
+      $('#ddlTime').val("0");
+      this.timeInterval = 0;
+      if (this.timeInterval == 0) {
+        let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == this.paymentCollectorId);
+        if (detail != undefined) {
+          this.endTime = detail.routePath.length - 1;
+        }
+      }
+      else {
+        this.endTime = this.endTime;
+      }
+      this.routeTime = "00:00";
+      if (this.vehicleMarker != null) {
+        this.vehicleMarker.setMap(null);
+      }
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          this.polylines[i].setMap(null);
+        }
+      }
+      this.getPaymentCollectorRoutePlay();
+    }
+    else {
+      $('#playStop').removeClass("fas fa-stop-circle");
+      $('#playStop').addClass("fab fa-youtube");
+      $('#btnPre').show();
+      $('#btnReset').hide();
+      this.isStart = false;
+    }
+  }
+
+
+  setSpeed(speed: any) {
+    if (speed == 1) {
+      this.speed = 20;
+      this.skip = 1;
+    }
+    else if (speed == 2) {
+      this.speed = 15;
+      this.skip = 1;
+    }
+    else if (speed == 3) {
+      this.speed = 10;
+      this.skip = 2;
+    }
+    else if (speed == 4) {
+      this.speed = 20;
+      this.skip = 5;
+    }
+    else if (speed == 5) {
+      this.speed = 15;
+      this.skip = 4;
+    }
+    else if (speed == 10) {
+      this.speed = 15;
+      this.skip = 10;
+    }
+  }
+
+  lineIndex: any = 0;
+  routeMarker: any[] = [];
+  lineDataList: any[] = [];
+  timerHandle: any[] = [];
+
+
+  getPaymentCollectorRoutePlay() {
+    let lineData = [];
+    this.lineDataList=[];
+    this.routeTime = "00:00";
+    if (this.vehicleMarker != null) {
+      this.vehicleMarker.setMap(null);
+    }
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        this.polylines[i].setMap(null);
+      }
+    }
+    let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == this.paymentCollectorId);
+    if (detail != undefined) {
+      if (this.endTime >= (detail.routePath.length - 1)) {
+        this.endTime = detail.routePath.length - 1;
+        this.isLast = true;
+      }
+      else {
+        this.isLast = false;
+      }
+
+      for (let i = 0; i <= this.endTime; i++) {
+        if (lineData.length > 0) {
+          let lat = lineData[lineData.length - 1]["lat"];
+          let lng = lineData[lineData.length - 1]["lng"];
+          lineData = [];
+          lineData.push({ lat: parseFloat(lat), lng: parseFloat(lng) });
+        }
+        let routeDateList = [];
+        let latLong: string = detail.routePath[i]["latlng"];
+        let time=detail.routePath[i]["time"];
+        routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
+        for (let j = 0; j < routeDateList.length; j++) {
+          let routePart = routeDateList[j].split(',');
+          if (routePart.length == 2) {
+            lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
+            this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]),time:time});
+          }
+        }
+        if (lineData != undefined) {
+
+          let line = new google.maps.Polyline({
+            path: lineData,
+            strokeColor: "green",
+            strokeWeight: 2
+          });
+
+          this.polylines[i] = line;
+          this.polylines[i].setMap(this.map);
+        }
+      }
+
+      console.log(this.lineDataList)
+      
+      
+      if (this.isStart == true) {
+        if (this.lineIndex == 0) {
+          if (this.routeMarker.length > 0) {
+            if (this.isReset == true) {
+              this.lineIndex = 0;
+              if (this.routeMarker[0] == null) {
+                this.createMarker();
+              }
+              else {
+                this.routeMarker[0]["marker"].setMap(null);
+                this.routeMarker = [];
+                this.createMarker();
+              }
+            }
+            else {
+              this.routeMarker[0]["marker"] = this.lineDataList[0];
+            }
+          }
+          else {
+            this.createMarker();
+          }
+        }
+        else if (this.isReset == true) {
+          this.isReset = false;
+          this.lineIndex = 0;
+          if (this.routeMarker[0] == null) {
+            this.createMarker();
+          }
+          else {
+            this.routeMarker[0]["marker"].setMap(null);
+            this.routeMarker = [];
+            this.createMarker();
+          }
+        }
+        this.animate(this.lineIndex);
+      }
+    }
+  }
+
+
+  createMarker() {
+    let lat = this.lineDataList[this.lineIndex]["lat"];
+    let lng = this.lineDataList[this.lineIndex]["lng"]
+    let markerURL = "../../../assets/img/red-car.png";
+    var markerLabel = "";
+    let contentString = '';
+    this.setMarker(lat, lng, markerLabel, markerURL, contentString, "route");
+  }
+
+  animate(index: any) {
+    if (this.timerHandle[this.lineIndex - this.skip]) {
+      clearTimeout(this.timerHandle[this.lineIndex - this.skip]);
+    }
+    if (this.routeMarker[0] == null) {
+      this.createMarker();
+    }
+    this.routeMarker[0]["marker"].setPosition(this.lineDataList[this.lineIndex]);
+    this.map.setCenter(this.lineDataList[this.lineIndex]);
+
+    if (this.isStart == true) {
+      if (this.lineIndex < this.lineDataList.length) {
+        console.log(this.lineIndex+"-"+this.skip)
+        this.timerHandle[this.lineIndex] = setTimeout(() => {                 
+          this.lineIndex = this.lineIndex + this.skip;
+          this.animate(this.lineIndex);
+          if (this.lineDataList.length > 0) {
+            if (this.lineDataList[this.lineIndex] != null) {
+              this.routeTime = this.lineDataList[this.lineIndex]["time"];
+            }
+          }
+        }, this.speed);
+      }
+      else {
+        if (this.isLast == false) {
+          this.getRouteDataPreNext("next");
+          this.animate(this.lineIndex);
+        }
+        else {
+          this.routeMarker[0]["marker"].setPosition(this.lineDataList[this.lineIndex - this.skip]);
+          this.map.setCenter(this.lineDataList[this.lineIndex - this.skip]);
+          this.isStart = false;
+          $('#playStop').removeClass("fas fa-stop-circle");
+          $('#playStop').addClass("fab fa-youtube");
+        }
+      }
+    }
+  }
+
+  
+  getReset() {
+    this.isReset = true;
+    this.isStart = false;
+    $('#playStop').removeClass("fas fa-stop-circle");
+    $('#playStop').addClass("fab fa-youtube");
+    $('#btnPre').show();
+    $('#btnReset').hide();
+    this.lineDataList = [];
+    this.lineIndex = 0;
+    this.isPreviousTime = false;
+    this.selectedDate = $('#txtDate').val();
+    $('#ddlTime').val("0");    
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        this.polylines[i].setMap(null);
+      }
+    }
+    this.timeInterval = 0;
+    this.getPaymentCollectorRoute(this.paymentCollectorId);
+  }
+
+
+
+  // Play Button Functionality End 
 
   getPaymentCollector() {
     this.paymentCollectorList = [];
@@ -149,7 +411,7 @@ export class PaymentCollectorTrackingComponent {
         if (data != null) {
           status = 1;
           cssClass = "normal";
-          if(this.paymentCollectorId==empId){
+          if (this.paymentCollectorId == empId) {
             this.getPaymentCollectorRoute(empId);
           }
         }
@@ -172,7 +434,7 @@ export class PaymentCollectorTrackingComponent {
       }
     }
     $('#ddlTime').val("0");
-    this.timeInterval=0;
+    this.timeInterval = 0;
   }
 
   resetPaymentCollectorList() {
@@ -192,7 +454,7 @@ export class PaymentCollectorTrackingComponent {
         let routePath = [];
         for (let i = 0; i < keyArray.length - 2; i++) {
           let index = keyArray[i];
-          
+
           let startTime = new Date(this.commonService.setTodayDate() + " " + "08:00");
           let endTime = new Date(this.commonService.setTodayDate() + " " + "21:00");
           let routeTime = new Date(this.commonService.setTodayDate() + " " + index);
@@ -217,10 +479,10 @@ export class PaymentCollectorTrackingComponent {
                   else {
                     let distance = this.getDistanceFromLatLonInKm(preLat1, preLng1, lat, lng);
                     //if (distance > 15) {
-                      latLng.push({ lat: lat, lng: lng, time: index });
-                      preLat1 = lat;
-                      preLng1 = lng;
-                   // }
+                    latLng.push({ lat: lat, lng: lng, time: index });
+                    preLat1 = lat;
+                    preLng1 = lng;
+                    // }
                   }
                 }
               }
@@ -423,7 +685,15 @@ export class PaymentCollectorTrackingComponent {
 
   getPaymentCollectorRoute(paymentCollectorId: any) {
     $(this.divLoader).show();
-    this.resetDetail();
+    this.resetDetail();    
+    this.isReset = true;
+    this.isStart = false;
+    $('#playStop').removeClass("fas fa-stop-circle");
+    $('#playStop').addClass("fab fa-youtube");
+    $('#btnPre').show();
+    $('#btnReset').hide();
+    this.lineDataList = [];
+    this.lineIndex = 0;
     this.cardList = [];
     this.paymentCollectorId = paymentCollectorId;
     let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
@@ -462,7 +732,7 @@ export class PaymentCollectorTrackingComponent {
             }
             else if (i == detail.latLng.length - 1) {
               let contentString = "End Time : " + detail.latLng[i].time;
-              this.routeTime=detail.latLng[i].time;
+              this.routeTime = detail.latLng[i].time;
               this.setMarkers(detail.latLng[i].lat, detail.latLng[i].lng, this.endPointUrl, 35, 40, detail.latLng[i].time, contentString);
             }
           }
@@ -484,17 +754,33 @@ export class PaymentCollectorTrackingComponent {
 
 
   getRouteData(timeInt: any) {
-    if(this.paymentCollectorId==0){
-      this.timeInterval=0;
+    if (this.paymentCollectorId == 0) {
+      this.timeInterval = 0;
       $("#ddlTime").val("0");
-      this.commonService.setAlertMessage("error","Please select payment collector id.");
+      this.commonService.setAlertMessage("error", "Please select payment collector id.");
       return;
     }
-    if(this.polylines.length>0){
-      for(let i=0;i<this.polylines.length;i++){
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
         this.polylines[i].setMap(null);
       }
     }
+
+    this.isReset = true;
+    this.isStart = false;
+    $('#playStop').removeClass("fas fa-stop-circle");
+    $('#playStop').addClass("fab fa-youtube");
+    $('#btnPre').show();
+    $('#btnReset').hide();
+    this.lineDataList = [];
+    this.lineIndex = 0;
+    this.isPreviousTime = false;
+    this.selectedDate = $('#txtDate').val();
+    this.lineDataList=[];
+
+
+
+
     this.endTime = 0;
     this.timeInterval = parseInt(timeInt);
     let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == this.paymentCollectorId);
@@ -505,7 +791,7 @@ export class PaymentCollectorTrackingComponent {
         }
         this.endTime = null;
         this.isPreviousTime = false;
-        this.routeTime=this.paymentCollectorDetail.endTime;
+        this.routeTime = this.paymentCollectorDetail.endTime;
         let line = new google.maps.Polyline({
           path: detail.latLng,
           strokeColor: "green",
@@ -533,12 +819,12 @@ export class PaymentCollectorTrackingComponent {
 
   getPaymentCollectorRouteTime() {
     let lineData = [];
-    this.routeTime="00:00";
+    this.routeTime = "00:00";
     if (this.vehicleMarker != null) {
       this.vehicleMarker.setMap(null);
     }
-    if(this.polylines.length>0){
-      for(let i=0;i<this.polylines.length;i++){
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
         this.polylines[i].setMap(null);
       }
     }
@@ -582,8 +868,7 @@ export class PaymentCollectorTrackingComponent {
             let lng = lineData[lineData.length - 1]["lng"];
             let contentString = '<br/>Time : ' + detail.routePath[i]["time"];
             this.setMarker(lat, lng, flowMarkerLabel, flowMarkerURL, contentString, "routeMarker");
-            this.routeTime=detail.routePath[i]["time"];
-            
+            this.routeTime = detail.routePath[i]["time"];
           }
 
           this.polylines[i] = line;
@@ -598,6 +883,10 @@ export class PaymentCollectorTrackingComponent {
   setMarker(lat: any, lng: any, markerLabel: any, markerURL: any, contentString: any, type: any) {
     let scaledHeight = 60;
     let scaledWidth = 40;
+    if (type == "route") {
+      scaledHeight = 10;
+      scaledWidth = 20;
+    }
 
     let marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
@@ -620,16 +909,26 @@ export class PaymentCollectorTrackingComponent {
     marker.addListener('click', function () {
       infowindow.open(this.map, marker);
     });
-    this.vehicleMarker = marker;
+    if (type == "route") {
+      if (this.routeMarker.length > 0) {
+        this.routeMarker[0]["matker"] = marker;
+      }
+      else {
+        this.routeMarker.push({ marker });
+      }
+    }
+    else{
+      this.vehicleMarker = marker;
+    }
   }
 
-  getRouteDataPreNext(type: any) {    
+  getRouteDataPreNext(type: any) {
     if (this.timeInterval != 0) {
       if (this.vehicleMarker != null) {
         this.vehicleMarker.setMap(null);
-      }    
-      if(this.polylines.length>0){
-        for(let i=0;i<this.polylines.length;i++){
+      }
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
           this.polylines[i].setMap(null);
         }
       }
@@ -645,8 +944,8 @@ export class PaymentCollectorTrackingComponent {
         this.getPaymentCollectorRouteTime();
       }
     }
-    else{
-      this.commonService.setAlertMessage("error","Please select time interval.");
+    else {
+      this.commonService.setAlertMessage("error", "Please select time interval.");
     }
   }
 
@@ -695,7 +994,18 @@ export class PaymentCollectorTrackingComponent {
   setDate(filterVal: any, type: string) {
     $(this.trackDetail).hide();
     $(this.timeBox).hide();
-    this.routeTime="00:00";
+    this.routeTime = "00:00";
+    this.isReset = true;
+    this.isStart = false;
+    $('#playStop').removeClass("fas fa-stop-circle");
+    $('#playStop').addClass("fab fa-youtube");
+    $('#btnPre').show();
+    $('#btnReset').hide();
+    this.lineDataList = [];
+    this.lineIndex = 0;
+    this.isPreviousTime = false;
+    this.selectedDate = $('#txtDate').val();
+    this.lineDataList=[];
     this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
       $("#txtDate").val(newDate);
       if (newDate != this.selectedDate) {
