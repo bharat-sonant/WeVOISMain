@@ -818,6 +818,12 @@ export class EmployeeAttendanceComponent implements OnInit {
       htmlString += "Status"
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "Approved By"
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Approved At"
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "In location";
       htmlString += "</td>";
       htmlString += "<td>";
@@ -846,6 +852,12 @@ export class EmployeeAttendanceComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.attendanceList[i]["status"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.attendanceList[i]["approveBy"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.attendanceList[i]["approveAt"];
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.attendanceList[i]["inLocationFull"];
