@@ -566,6 +566,18 @@ export class FirebaseService {
       databaseName = "dtdjodhpur-bwg";
       databaseURL = "https://dtdjodhpur-bwg.firebaseio.com";
     }
+    else if (city == 'chirawa') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdchirawa.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdchirawa";
+      databaseURL = "https://dtdchirawa.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),

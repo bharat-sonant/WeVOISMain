@@ -3871,22 +3871,22 @@ export class Cms1Component implements OnInit {
       instance.unsubscribe();
       if (data != null) {
         console.log(data);
-        let keyArray=Object.keys(data);
-        if(keyArray.length>0){
-          for(let i=0;i<keyArray.length;i++){
-            let ward=keyArray[i];
-            let tripArray=Object.keys(data[ward]);
-            for(let j=0;j<tripArray.length;j++){
-              let tripId=tripArray[j];
-              if(data[ward][tripId]!=null){
-               // if(data[ward][tripId]["driverName"]!=null){
-                  let path=dbPath+"/"+ward+"/"+tripId+"/driverName";
-                  let path1=dbPath+"/"+ward+"/"+tripId+"/driverMobile";
-                  console.log(path);
-                  console.log(path1);
-                  this.db.object(path).remove();
-                  this.db.object(path1).remove();
-               // }
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let ward = keyArray[i];
+            let tripArray = Object.keys(data[ward]);
+            for (let j = 0; j < tripArray.length; j++) {
+              let tripId = tripArray[j];
+              if (data[ward][tripId] != null) {
+                // if(data[ward][tripId]["driverName"]!=null){
+                let path = dbPath + "/" + ward + "/" + tripId + "/driverName";
+                let path1 = dbPath + "/" + ward + "/" + tripId + "/driverMobile";
+                console.log(path);
+                console.log(path1);
+                this.db.object(path).remove();
+                this.db.object(path1).remove();
+                // }
               }
             }
           }
@@ -3894,5 +3894,45 @@ export class Cms1Component implements OnInit {
       }
     })
   }
+
+  getPaymentCardAndCardWardMapping() {
+    let dbPath = "CardWardMapping";
+    let cardWardList = [];
+    let cardPaymentList = [];
+    let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
+      cardInstance.unsubscribe();
+      if (cardData != null) {
+        let keyArray = Object.keys(cardData);
+        for (let i = 0; i < keyArray.length; i++) {
+          cardWardList.push({ cardNo: keyArray[i],line:cardData[keyArray[i]]["line"],ward:cardData[keyArray[i]]["ward"] });
+        }
+        dbPath = "PaymentCollectionInfo/PaymentTransactionHistory";
+        let pInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+          pInstance.unsubscribe();
+          if (data != null) {
+            let keyArray1 = Object.keys(data);
+            for (let i = 0; i < keyArray1.length; i++) {
+              cardPaymentList.push({ cardNo: keyArray1[i] });
+            }
+            let list=[];
+            for(let i=0;i<cardWardList.length;i++){
+              let detail=cardPaymentList.find(item=>item.cardNo==cardWardList[i]["cardNo"]);
+              if(detail==undefined){
+                if(cardWardList[i]["cardNo"].includes("PALM")){
+                list.push({cardNo:cardWardList[i]["cardNo"],ward:cardWardList[i]["ward"],line:cardWardList[i]["line"]})
+                }
+              }
+            }
+            console.log(list);
+          }
+        })
+
+      }
+    })
+  }
+
+
+
+
 }
 

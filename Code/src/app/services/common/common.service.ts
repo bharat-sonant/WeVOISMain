@@ -264,6 +264,9 @@ export class CommonService {
     else if (cityName == "jodhpur-bwg") {
       cardPrefix="JODBWG";
     }
+    else if (cityName == "chirawa") {
+      cardPrefix="CHI";
+    }
     return cardPrefix;
   }
 
@@ -401,6 +404,9 @@ export class CommonService {
     }
     else if (cityName == "jodhpur-bwg") {
       latLng.push({ lat: 26.2405459, lng: 73.0197328 });
+    }
+    else if (cityName == "chirawa") {
+      latLng.push({ lat: 28.2421284, lng: 75.6382847 });
     }
     return latLng;
   }
