@@ -83,7 +83,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     let element = <HTMLAnchorElement>(
       document.getElementById("dustbinReportLink")
     );
-    element.href = this.cityName + "/25B/secondary-collection-planing";
+    element.href = this.cityName + "/25B/open-depot-planing";
     this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
