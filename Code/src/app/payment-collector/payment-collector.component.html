@@ -103,6 +103,10 @@
                     <div class="row">
                         <div class="col-md-12 text-left">
                             <h5> <b>{{collectionData.name}}</b></h5>
+                            <span class="export-span">
+                                <i class="fa-solid fa-file-export export-icon" title="Export collection report" (click)="exportToExcel();"></i><br />
+                                <span class="export-span-iner">Export</span>
+                            </span>
                         </div>
                     </div>
 
@@ -143,7 +147,7 @@
                                                 <tbody>
                                                     <tr *ngFor="let data of collectionList; let i=index">
                                                         <td class="date-details">
-                                                            {{data.date}}</td>
+                                                            {{data.displayDate}}</td>
                                                         <td class="text-right markers-details">
                                                             {{data.collection}}</td>
                                                         <td class="text-right markers-details">

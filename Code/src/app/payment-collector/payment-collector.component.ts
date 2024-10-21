@@ -8,6 +8,8 @@ import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "@angular/fire/storage";
 //import * as QRCode from 'qrcode';
 import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
+import { timeStamp } from 'console';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-payment-collector',
@@ -163,8 +165,9 @@ export class PaymentCollectorComponent implements OnInit {
           let totalCollectionAmount = 0;
 
           let dateArray = Object.keys(data);
-          for (let i = 0; i < dateArray.length; i++) {
-            let date = dateArray[i];
+          let promise = dateArray.map(async(date)=>{
+            let timeStamp = new Date(date).getTime();
+            let displayDate = this.commonService.convertDateWithMonthName(date);
             if (date != "Entities") {
               let totalAmount = 0;
               let keyArray = Object.keys(data[date]);
@@ -180,19 +183,13 @@ export class PaymentCollectorComponent implements OnInit {
                     detailArray.push({ cardNo: data[date][key]["cardNo"], merchantTransactionId: data[date][key]["merchantTransactionId"], payMethod: data[date][key]["payMethod"], retrievalReferenceNo: data[date][key]["retrievalReferenceNo"], transactionAmount: data[date][key]["transactionAmount"] });
                   }
                 }
-                collectionList.push({ date: date, collection: totalAmount.toFixed(2), detailArray: detailArray });
+                collectionList.push({ date: date,displayDate:displayDate,collection: totalAmount.toFixed(2), detailArray: detailArray,timeStamp:timeStamp});
               }
             }
-          }
-          /*
-         let detail = this.userList.find(item => item.empId == empId);
-         if (detail != undefined) {
-           detail.collectedAmount = totalCollectionAmount.toFixed(2);
-           detail.collectionList = collectionList;
-           this.collectionData.sumTotalCollection = (Number(this.collectionData.sumTotalCollection) + totalCollectionAmount).toFixed(2);
-         }
-         */
-          this.getEntityCollection(empId, collectionList, totalCollectionAmount);
+          });
+          Promise.all(promise).then(resp=>{
+            this.getEntityCollection(empId, collectionList, totalCollectionAmount);
+          });
         }
       });
   }
@@ -247,7 +244,7 @@ export class PaymentCollectorComponent implements OnInit {
                       detailArray.push({ cardNo: dateData[date][key]["cardNo"], merchantTransactionId: dateData[date][key]["merchantTransactionId"], payMethod: dateData[date][key]["payMethod"], retrievalReferenceNo: dateData[date][key]["retrievalReferenceNo"], transactionAmount: dateData[date][key]["transactionAmount"] });
                     }
                   }
-                  collectionList.push({ date: date, collection: totalAmount.toFixed(2), detailArray: detailArray });
+                  collectionList.push({ date: date,displayDate:this.commonService.convertDateWithMonthName(date),collection: totalAmount.toFixed(2), detailArray: detailArray });
                 }
               }
             }
@@ -275,7 +272,7 @@ export class PaymentCollectorComponent implements OnInit {
       this.collectionData.name = detail.name;
       this.collectionData.totalCollection = Number(detail.collectedAmount).toFixed(2);
       this.collectionData.totalDays = detail.collectionList.length;
-      this.collectionList = detail.collectionList;
+      this.collectionList = detail.collectionList.sort((a,b)=>a.timeStamp>b.timeStamp?1:-1);
     }
   }
 
@@ -649,6 +646,77 @@ export class PaymentCollectorComponent implements OnInit {
         });
       }
     });
+  }
+  exportToExcel() {
+    if (this.collectionList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Collection";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Card No";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment Method";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Merchant Transaction Id";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Reference No";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Amount";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+
+      for (let i = 0; i < this.collectionList.length; i++) {
+        const collection = this.collectionList[i];
+        for (let j = 0; j < collection.detailArray.length; j++) {
+          htmlString += "<tr>";
+          if (j === 0) {
+            htmlString += "<td t='s' rowspan='" + collection.detailArray.length + "'>";
+            htmlString += collection["date"];
+            htmlString += "</td>";
+            htmlString += "<td t='n' rowspan='" + collection.detailArray.length + "'>";
+            htmlString += collection["collection"];
+            htmlString += "</td>";
+          }
+          htmlString += "<td t='s'>";
+          htmlString += collection.detailArray[j]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += collection.detailArray[j]["payMethod"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += collection.detailArray[j]["merchantTransactionId"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += collection.detailArray[j]["retrievalReferenceNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='n'>";
+          htmlString += collection.detailArray[j]["transactionAmount"];
+          htmlString += "</td>";
+          htmlString += "</tr>";
+        }
+      }
+      htmlString += "<tr>";
+      htmlString += "<td colspan='6'>";
+      htmlString += "Total Collection";
+      htmlString += "</td>";
+      htmlString += "<td >";
+      htmlString += this.collectionData.totalCollection;
+      htmlString += "</td>";
+
+      htmlString += "</table>";
+      let fileName = this.collectionData.name + "- Payment Collection Report " + ".xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+    }
   }
 }
 

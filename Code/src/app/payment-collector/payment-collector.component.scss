@@ -787,3 +787,24 @@ table tr:hover {
     border-radius: 2px;
     padding: 10px;
 }
+
+.export-span {
+    position: absolute;
+    z-index: 999;
+    right: 20px;
+    bottom: 3px;
+    font-size: 10px;
+  }
+  .export-span-iner {
+  font-weight: normal;
+
+}
+.export-span {
+  text-align: center;
+  float: unset;
+}
+.export-icon {
+  cursor: pointer;
+  color: green;
+  font-size: 20px;
+}
