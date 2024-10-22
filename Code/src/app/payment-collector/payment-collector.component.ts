@@ -8,8 +8,6 @@ import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "@angular/fire/storage";
 //import * as QRCode from 'qrcode';
 import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
-import { timeStamp } from 'console';
-import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-payment-collector',
@@ -122,7 +120,6 @@ export class PaymentCollectorComponent implements OnInit {
               }, 600);
             }
           }
-
         }
       }
     }, error => {
@@ -197,8 +194,7 @@ export class PaymentCollectorComponent implements OnInit {
   getEntityCollection(empId: any, collectionList: any, totalCollectionAmount: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEntityCollection");
     let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId + "/Entities";
-    let instance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
+    let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
         instance.unsubscribe();
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEntityCollection", data);
