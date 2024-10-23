@@ -175,6 +175,34 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
                 pickingPlanHistory.unsubscribe();
                 if (dustbinPlanHistoryData != null) {
                   if (dustbinPlanHistoryData == "Open Depot") {
+                    if (assignedPlans[planId]["planName"] != "") {
+                      obj = {
+                        planId: assignedPlans[planId]["planId"],
+                        planName: assignedPlans[planId]["planName"],
+                        driver: assignedPlans[planId]["driver"],
+                        helper: assignedPlans[planId]["helper"],
+                        secondHelper: assignedPlans[planId]["secondHelper"],
+                        thirdHelper: assignedPlans[planId]["thirdHelper"],
+                        vehicle: assignedPlans[planId]["vehicle"]
+                      }
+                      resolve({ status: "success", data: obj });
+                    }
+                    else {
+                      resolve({ status: "fail", data: obj });
+                    }
+                  }
+                  else {
+                    resolve({ status: "fail", data: obj });
+                  }
+                }
+                else {
+                  resolve({ status: "fail", data: obj });
+                }
+              });
+            } else {
+              if (pickingPlanWithDateData != null) {
+                if (pickingPlanWithDateData == "Open Depot") {
+                  if (assignedPlans[planId]["planName"] != "") {
                     obj = {
                       planId: assignedPlans[planId]["planId"],
                       planName: assignedPlans[planId]["planName"],
@@ -193,24 +221,6 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
                 else {
                   resolve({ status: "fail", data: obj });
                 }
-              });
-            } else {
-              if (pickingPlanWithDateData != null) {
-                if (pickingPlanWithDateData == "Open Depot") {
-                  obj = {
-                    planId: assignedPlans[planId]["planId"],
-                    planName: assignedPlans[planId]["planName"],
-                    driver: assignedPlans[planId]["driver"],
-                    helper: assignedPlans[planId]["helper"],
-                    secondHelper: assignedPlans[planId]["secondHelper"],
-                    thirdHelper: assignedPlans[planId]["thirdHelper"],
-                    vehicle: assignedPlans[planId]["vehicle"]
-                  }
-                  resolve({ status: "success", data: obj });
-                }
-                else {
-                  resolve({ status: "fail", data: obj });
-                }
               }
               else {
                 resolve({ status: "fail", data: obj });
@@ -220,16 +230,21 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
         } else {
           if (pickingPlanData != null) {
             if (pickingPlanData == "Open Depot") {
-              obj = {
-                planId: assignedPlans[planId]["planId"],
-                planName: assignedPlans[planId]["planName"],
-                driver: assignedPlans[planId]["driver"],
-                helper: assignedPlans[planId]["helper"],
-                secondHelper: assignedPlans[planId]["secondHelper"],
-                thirdHelper: assignedPlans[planId]["thirdHelper"],
-                vehicle: assignedPlans[planId]["vehicle"]
+              if (assignedPlans[planId]["planName"] != "") {
+                obj = {
+                  planId: assignedPlans[planId]["planId"],
+                  planName: assignedPlans[planId]["planName"],
+                  driver: assignedPlans[planId]["driver"],
+                  helper: assignedPlans[planId]["helper"],
+                  secondHelper: assignedPlans[planId]["secondHelper"],
+                  thirdHelper: assignedPlans[planId]["thirdHelper"],
+                  vehicle: assignedPlans[planId]["vehicle"]
+                }
+                resolve({ status: "success", data: obj });
               }
-              resolve({ status: "success", data: obj });
+              else {
+                resolve({ status: "fail", data: obj });
+              }
             }
             else {
               resolve({ status: "fail", data: obj });

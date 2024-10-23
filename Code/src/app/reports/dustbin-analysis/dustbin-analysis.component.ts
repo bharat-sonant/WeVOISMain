@@ -119,6 +119,7 @@ export class DustbinAnalysisComponent implements OnInit {
 
   setDefaultValues() {
     this.selectedDate = this.commonService.setTodayDate();
+    this.selectedDate = "2024-09-19";
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );
@@ -171,7 +172,7 @@ export class DustbinAnalysisComponent implements OnInit {
       let pickingPlanPathInstance = this.db.object("DustbinData/DustbinPickingPlans/" + planId).valueChanges().subscribe(pickingPlanData => {
         pickingPlanPathInstance.unsubscribe();
         console.log(pickingPlanData)
-        
+
         if (pickingPlanData == null) {
           let pickingPlanWithDatePath = this.db.object("DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId).valueChanges().subscribe((pickingPlanWithDateData) => {
             pickingPlanWithDatePath.unsubscribe();
@@ -185,28 +186,37 @@ export class DustbinAnalysisComponent implements OnInit {
                 }
                 else {
                   if (dustbinPlanHistoryData["planType"] == null) {
-                    obj = {
-                      planId: assignedPlans[planId]["planId"],
-                      planName: assignedPlans[planId]["planName"],
-                      driver: assignedPlans[planId]["driver"],
-                      helper: assignedPlans[planId]["helper"],
-                      secondHelper: assignedPlans[planId]["secondHelper"],
-                      thirdHelper: assignedPlans[planId]["thirdHelper"],
-                      vehicle: assignedPlans[planId]["vehicle"]
+                    if (assignedPlans[planId]["planName"] != "") {
+                      obj = {
+                        planId: assignedPlans[planId]["planId"],
+                        planName: assignedPlans[planId]["planName"],
+                        driver: assignedPlans[planId]["driver"],
+                        helper: assignedPlans[planId]["helper"],
+                        secondHelper: assignedPlans[planId]["secondHelper"],
+                        thirdHelper: assignedPlans[planId]["thirdHelper"],
+                        vehicle: assignedPlans[planId]["vehicle"]
+                      }
+                      resolve({ status: "success", data: obj });
+                    } else {
+                      resolve({ status: "fail", data: obj });
                     }
-                    resolve({ status: "success", data: obj });
                   }
                   else if (dustbinPlanHistoryData["planType"] == "Dustbin") {
-                    obj = {
-                      planId: assignedPlans[planId]["planId"],
-                      planName: assignedPlans[planId]["planName"],
-                      driver: assignedPlans[planId]["driver"],
-                      helper: assignedPlans[planId]["helper"],
-                      secondHelper: assignedPlans[planId]["secondHelper"],
-                      thirdHelper: assignedPlans[planId]["thirdHelper"],
-                      vehicle: assignedPlans[planId]["vehicle"]
+                    if (assignedPlans[planId]["planName"] != "") {
+                      obj = {
+                        planId: assignedPlans[planId]["planId"],
+                        planName: assignedPlans[planId]["planName"],
+                        driver: assignedPlans[planId]["driver"],
+                        helper: assignedPlans[planId]["helper"],
+                        secondHelper: assignedPlans[planId]["secondHelper"],
+                        thirdHelper: assignedPlans[planId]["thirdHelper"],
+                        vehicle: assignedPlans[planId]["vehicle"]
+                      }
+                      resolve({ status: "success", data: obj });
                     }
-                    resolve({ status: "success", data: obj });
+                    else {
+                      resolve({ status: "fail", data: obj });
+                    }
                   }
                   else {
                     resolve({ status: "fail", data: obj });
@@ -216,28 +226,40 @@ export class DustbinAnalysisComponent implements OnInit {
             }
             else {
               if (pickingPlanWithDateData["planType"] == null) {
-                obj = {
-                  planId: assignedPlans[planId]["planId"],
-                  planName: assignedPlans[planId]["planName"],
-                  driver: assignedPlans[planId]["driver"],
-                  helper: assignedPlans[planId]["helper"],
-                  secondHelper: assignedPlans[planId]["secondHelper"],
-                  thirdHelper: assignedPlans[planId]["thirdHelper"],
-                  vehicle: assignedPlans[planId]["vehicle"]
+                if (assignedPlans[planId]["planName"] != "") {
+                  obj = {
+                    planId: assignedPlans[planId]["planId"],
+                    planName: assignedPlans[planId]["planName"],
+                    driver: assignedPlans[planId]["driver"],
+                    helper: assignedPlans[planId]["helper"],
+                    secondHelper: assignedPlans[planId]["secondHelper"],
+                    thirdHelper: assignedPlans[planId]["thirdHelper"],
+                    vehicle: assignedPlans[planId]["vehicle"]
+                  }
+                  resolve({ status: "success", data: obj });
                 }
-                resolve({ status: "success", data: obj });
+                else {
+                  resolve({ status: "fail", data: obj });
+                }
               }
               else if (pickingPlanWithDateData["planType"] == "Dustbin") {
-                obj = {
-                  planId: assignedPlans[planId]["planId"],
-                  planName: assignedPlans[planId]["planName"],
-                  driver: assignedPlans[planId]["driver"],
-                  helper: assignedPlans[planId]["helper"],
-                  secondHelper: assignedPlans[planId]["secondHelper"],
-                  thirdHelper: assignedPlans[planId]["thirdHelper"],
-                  vehicle: assignedPlans[planId]["vehicle"]
+
+                if (assignedPlans[planId]["planName"] != "") {
+                  obj = {
+                    planId: assignedPlans[planId]["planId"],
+                    planName: assignedPlans[planId]["planName"],
+                    driver: assignedPlans[planId]["driver"],
+                    helper: assignedPlans[planId]["helper"],
+                    secondHelper: assignedPlans[planId]["secondHelper"],
+                    thirdHelper: assignedPlans[planId]["thirdHelper"],
+                    vehicle: assignedPlans[planId]["vehicle"]
+                  }
+                  resolve({ status: "success", data: obj });
                 }
-                resolve({ status: "success", data: obj });
+                else {
+                  resolve({ status: "fail", data: obj });
+                }
+
               }
               else {
                 resolve({ status: "fail", data: obj });
@@ -248,28 +270,39 @@ export class DustbinAnalysisComponent implements OnInit {
         }
         else {
           if (pickingPlanData["planType"] == null) {
-            obj = {
-              planId: assignedPlans[planId]["planId"],
-              planName: assignedPlans[planId]["planName"],
-              driver: assignedPlans[planId]["driver"],
-              helper: assignedPlans[planId]["helper"],
-              secondHelper: assignedPlans[planId]["secondHelper"],
-              thirdHelper: assignedPlans[planId]["thirdHelper"],
-              vehicle: assignedPlans[planId]["vehicle"]
+
+            if (assignedPlans[planId]["planName"] != "") {
+              obj = {
+                planId: assignedPlans[planId]["planId"],
+                planName: assignedPlans[planId]["planName"],
+                driver: assignedPlans[planId]["driver"],
+                helper: assignedPlans[planId]["helper"],
+                secondHelper: assignedPlans[planId]["secondHelper"],
+                thirdHelper: assignedPlans[planId]["thirdHelper"],
+                vehicle: assignedPlans[planId]["vehicle"]
+              }
+              resolve({ status: "success", data: obj });
             }
-            resolve({ status: "success", data: obj });
+            else {
+              resolve({ status: "fail", data: obj });
+            }
           }
           else if (pickingPlanData["planType"] == "Dustbin") {
-            obj = {
-              planId: assignedPlans[planId]["planId"],
-              planName: assignedPlans[planId]["planName"],
-              driver: assignedPlans[planId]["driver"],
-              helper: assignedPlans[planId]["helper"],
-              secondHelper: assignedPlans[planId]["secondHelper"],
-              thirdHelper: assignedPlans[planId]["thirdHelper"],
-              vehicle: assignedPlans[planId]["vehicle"]
+            if (assignedPlans[planId]["planName"] != "") {
+              obj = {
+                planId: assignedPlans[planId]["planId"],
+                planName: assignedPlans[planId]["planName"],
+                driver: assignedPlans[planId]["driver"],
+                helper: assignedPlans[planId]["helper"],
+                secondHelper: assignedPlans[planId]["secondHelper"],
+                thirdHelper: assignedPlans[planId]["thirdHelper"],
+                vehicle: assignedPlans[planId]["vehicle"]
+              }
+              resolve({ status: "success", data: obj });
             }
-            resolve({ status: "success", data: obj });
+            else {
+              resolve({ status: "fail", data: obj });
+            }
           }
           else {
             resolve({ status: "fail", data: obj });
