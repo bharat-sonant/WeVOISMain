@@ -1,44 +1,155 @@
 <section class="header">
     <div class="row no-gutters">
       <div class="col-md-5" style=" padding-left: 20px; margin-top: -3px;">
-        <button class="btn-hvr" (click)="setPreviousDate();"><span style="color: #fff;">
-            << </span></button>
-        <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5" type="date" (change)="setDate($event.target.value)"
-          style="height: 45px; width: 30%;font-size: 12px; margin-left: 7px; margin-right: 8px;" />
-        <button class="btn-hvr" (click)="setNextDate();"><span style="color: #fff;">>></span></button>
       </div>
-      <div class="col-md-4" style="padding-top: 12px;font-size: 20px;text-transform: uppercase;letter-spacing: 2px; font-weight: bold; text-align: left;">
-        <b> Work Assign Report </b>
+      <div class="col-md-4" style="font-size: 20px;text-transform: uppercase;letter-spacing: 2px; font-weight: bold; text-align: left;">
+        <b> Work Assign Detail </b>
       </div>
       <div class="col-md-2" style="text-align: right; padding-right: 15px;">
       </div>
     </div>
   </section>
 <section class="halts" style="padding-left: 10px;">
-    <div class="container-fluid">
-        <div class="row" style="margin-top: -40px;">
-            <div class="col-md-12" style="padding-left: 5px;">
-                <div>
-                    <div class="table-bg">
-                        <div class="tableFixHead">
-                            <table class="table table-hover" style="margin-bottom: 0px;">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" class="tdBorder">Name</th>
-                                        <th scope="col" class="text-left">Assign Detail</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let dt of workList" >
-                                        <td class="text-left tdBorder"><b class="text-trans">{{dt.name}}</b></td>
-                                        <td class="text-left" ><div [innerHTML]="dt.detail" class="rowWidth"></div></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card" style="margin-top:-40px;  height: 90vh!important">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-8 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <button (click)="setPreviousDate();" class="btn-hvr arrow-btn">
+                                        << </button>
+                                    <input id="txtDate" class="filter-select filter-input" type="date" (change)="setDate($event.target.value);" />
+                                    <button (click)="setNextDate();" class="btn-hvr arrow-btn2">
+                                                >>
+                                            </button>
+        
+                                            <select id="drpDutyOn" class="filter-select filter-input" style="width: 200px;" (change)="getFilteredData($event.target.value,'dutyOn')">
+                                                <option value="0">Select Duty On By</option>
+                                                <option value="{{data.id}}" *ngFor="let data of dutyOnByList">
+                                                    {{data.name}}</option>
+        
+                                            </select>
+        
+                                            <select id="drpDutyOff" class="filter-select filter-input" style="width: 200px;" (change)="getFilteredData($event.target.value,'dutyOff')">
+                                                <option value="0">Select Duty Off By</option>
+                                                <option value="{{data.id}}" *ngFor="let data of dutyOffByList">
+                                                    {{data.name}}</option>
+                                            </select>
+        
+        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-left" style="padding-right:0px!important;">
+                            <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
+                                <i class="fa-solid fa-file-export"
+                                    style="cursor:pointer; color:green;  font-size: 24px; "
+                                    (click)="exportToExcel();"></i><br />
+                                Export to Excel
+                            </span>
                         </div>
                     </div>
                 </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table class="table table-line">
+                                        <thead>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                S No.</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Work</th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Duty On Time
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Duty On By
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Duty Off Time
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Duty Off By
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of workFilterList; let i=index">
+                                                <td class="text-left br-1">
+                                                    {{i+1}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.ward}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.inTime}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.dutyOnByName}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.outTime}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{data.dutyOffByName}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
+                                </div>
+        
+        
+        
+        
+        
+        
+                                <div class="table-bg">
+                                    <div class="tableFixHead">
+                                        <table class="table table-hover" style="margin-bottom: 0px;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="border-right:1px solid #dee2e6; width:10%;">S No.</th>
+                                                    <th scope="col" class="tdBorder">Work </th>
+                                                    <th scope="col" class="text-left">Duty On Time</th>
+                                                    <th scope="col" class="text-left">Duty On By</th>
+                                                    <th scope="col" class="text-left">Duty Off Time</th>
+                                                    <th scope="col" class="text-left"><span>Duty Off By</span> <span class="export-span" >
+                                                        <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel()"></i><br />
+                                                        <span class="export-span-iner">Export</span>
+                                                    </span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let dt of workList; let i=index" >
+                                                    <td style="border-right:1px solid #dee2e6">
+                                                        {{i+1}}</td>
+                                                    <td class="text-left tdBorder">{{dt.ward}}</td>
+                                                    <td class="text-left tdBorder">{{dt.inTime}}</td>
+                                                    <td class="text-left tdBorder">{{dt.dutyOnByName}}</td>
+                                                    <td class="text-left tdBorder">{{dt.outTime}}</td>
+                                                    <td class="text-left tdBorder">{{dt.dutyOffByName}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+
     </div>
+
+
+   
 </section>
