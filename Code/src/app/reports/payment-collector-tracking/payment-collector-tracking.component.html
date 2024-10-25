@@ -62,7 +62,7 @@
                 <tbody>
                   <tr class="{{dt.cssClass}} cursor2" *ngFor="let dt of paymentCollectorList"
                     (click)="dt.cssClass!='not-active' && getPaymentCollectorRoute(dt.paymentCollectorId);">
-                    <td class="text-left">{{dt.name}}</td>
+                    <td class="text-left">{{dt.paymentCollectorId}} - {{dt.name}}</td>
                   </tr>
                 </tbody>
               </table>

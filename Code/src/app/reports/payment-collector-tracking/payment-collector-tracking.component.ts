@@ -67,6 +67,7 @@ export class PaymentCollectorTrackingComponent {
     this.paymentCollectorList = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
+    this.selectedDate = "2024-10-23";
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     $('#txtDate').val(this.selectedDate);
@@ -171,7 +172,7 @@ export class PaymentCollectorTrackingComponent {
 
   getPaymentCollectorRoutePlay() {
     let lineData = [];
-    this.lineDataList=[];
+    this.lineDataList = [];
     this.routeTime = "00:00";
     if (this.vehicleMarker != null) {
       this.vehicleMarker.setMap(null);
@@ -200,13 +201,13 @@ export class PaymentCollectorTrackingComponent {
         }
         let routeDateList = [];
         let latLong: string = detail.routePath[i]["latlng"];
-        let time=detail.routePath[i]["time"];
+        let time = detail.routePath[i]["time"];
         routeDateList = latLong.substring(1, latLong.length - 1).split(')~(');
         for (let j = 0; j < routeDateList.length; j++) {
           let routePart = routeDateList[j].split(',');
           if (routePart.length == 2) {
             lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]) });
-            this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]),time:time});
+            this.lineDataList.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), time: time });
           }
         }
         if (lineData != undefined) {
@@ -221,10 +222,6 @@ export class PaymentCollectorTrackingComponent {
           this.polylines[i].setMap(this.map);
         }
       }
-
-      console.log(this.lineDataList)
-      
-      
       if (this.isStart == true) {
         if (this.lineIndex == 0) {
           if (this.routeMarker.length > 0) {
@@ -286,8 +283,7 @@ export class PaymentCollectorTrackingComponent {
 
     if (this.isStart == true) {
       if (this.lineIndex < this.lineDataList.length) {
-        console.log(this.lineIndex+"-"+this.skip)
-        this.timerHandle[this.lineIndex] = setTimeout(() => {                 
+        this.timerHandle[this.lineIndex] = setTimeout(() => {
           this.lineIndex = this.lineIndex + this.skip;
           this.animate(this.lineIndex);
           if (this.lineDataList.length > 0) {
@@ -313,7 +309,7 @@ export class PaymentCollectorTrackingComponent {
     }
   }
 
-  
+
   getReset() {
     this.isReset = true;
     this.isStart = false;
@@ -325,7 +321,7 @@ export class PaymentCollectorTrackingComponent {
     this.lineIndex = 0;
     this.isPreviousTime = false;
     this.selectedDate = $('#txtDate').val();
-    $('#ddlTime').val("0");    
+    $('#ddlTime').val("0");
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         this.polylines[i].setMap(null);
@@ -519,65 +515,105 @@ export class PaymentCollectorTrackingComponent {
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
             if (data[index]["cardNo"] != null) {
-              this.cardList.push({ cardNo: data[index]["cardNo"], merchantTransactionId: data[index]["merchantTransactionId"] ? data[index]["merchantTransactionId"] : "", payMethod: data[index]["payMethod"] ? data[index]["payMethod"] : "", retrievalReferenceNo: data[index]["retrievalReferenceNo"] ? data[index]["retrievalReferenceNo"] : "", transactionAmount: data[index]["transactionAmount"] ? data[index]["transactionAmount"] : "0" });
+              this.cardList.push({ cardNo: data[index]["cardNo"], payMethod: data[index]["payMethod"] ? data[index]["payMethod"] : "", transactionAmount: data[index]["transactionAmount"] ? data[index]["transactionAmount"] : "0", entityId: 0, merchantTransactionId: data[index]["merchantTransactionId"] ? data[index]["merchantTransactionId"] : "" });
             }
           }
         }
-        if (this.cardList.length > 0) {
-          const promises = [];
-          for (let i = 0; i < this.cardList.length; i++) {
-            promises.push(Promise.resolve(this.getCardLatLng(this.cardList[i].cardNo)));
-          }
-          Promise.all(promises).then((results) => {
-            for (let i = 0; i < results.length; i++) {
-              if (results[i]["status"] == "success") {
-                let cardDetail = this.cardList.find(item => item.cardNo == results[i].data.cardNo);
-                if (cardDetail != undefined) {
-                  cardDetail.lat = results[i].data.lat;
-                  cardDetail.lng = results[i].data.lng;
-                }
-              }
-            }
-
-
-            const promises1 = [];
-            for (let i = 0; i < this.cardList.length; i++) {
-              promises1.push(Promise.resolve(this.getCardPaymentTime(this.cardList[i].cardNo)));
-            }
-            Promise.all(promises1).then((results) => {
-              for (let i = 0; i < results.length; i++) {
-                if (results[i]["status"] == "success") {
-                  let cardDetail = this.cardList.find(item => item.cardNo == results[i].data.cardNo);
-                  if (cardDetail != undefined) {
-                    cardDetail.time = results[i].data.time;
-                  }
-                }
-              }
-              let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
-              if (detail != undefined) {
-                detail.cardCount = keyArray.length;
-                detail.cardList = this.cardList;
-              }
-              this.getPaymentCollectorRoute(paymentCollectorId);
-            });
-          });
-        }
-        else {
-          let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
-          if (detail != undefined) {
-            detail.cardCount = keyArray.length;
-            detail.cardList = this.cardList;
-          }
-          this.getPaymentCollectorRoute(paymentCollectorId);
-        }
+        this.getEntityPaymentCardDetail(paymentCollectorId);
       }
       else {
-        this.getPaymentCollectorRoute(paymentCollectorId);
+        this.getEntityPaymentCardDetail(paymentCollectorId);
       }
     });
   }
 
-  getCardPaymentTime(cardNo: any) {
+  getEntityPaymentCardDetail(paymentCollectorId: any) {
+    let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + paymentCollectorId + "/Entities";
+    let entityInstance = this.db.object(dbPath).valueChanges().subscribe(entityData => {
+      entityInstance.unsubscribe();
+      if (entityData != null) {
+        console.log(entityData);
+        let keyArray = Object.keys(entityData);
+        for (let i = 0; i < keyArray.length; i++) {
+          let key = keyArray[i];
+          let dateData = entityData[key];
+          let dateKeyArray = Object.keys(dateData);
+          for (let j = 0; j < dateKeyArray.length; j++) {
+            let date = dateKeyArray[j];
+            if (date == this.selectedDate) {
+              let list = dateData[date];
+              for (let k = 1; k < list.length; k++) {
+                if (list[k]["cardNo"] != null) {
+                  this.cardList.push({ cardNo: list[k]["cardNo"], payMethod: list[k]["payMethod"] ? list[k]["payMethod"] : "", transactionAmount: list[k]["transactionAmount"] ? list[k]["transactionAmount"] : "0", entityId: key, merchantTransactionId: list[k]["merchantTransactionId"] ? list[k]["merchantTransactionId"] : "" });
+                }
+              }
+            }
+          }
+        }
+        this.getCardDetail(paymentCollectorId);
+      }
+      else {
+        this.getCardDetail(paymentCollectorId);
+      }
+    });
+  }
+
+
+
+  getCardDetail(paymentCollectorId: any) {
+    if (this.cardList.length > 0) {
+      const promises = [];
+      for (let i = 0; i < this.cardList.length; i++) {
+        promises.push(Promise.resolve(this.getCardLatLng(this.cardList[i].cardNo)));
+      }
+      Promise.all(promises).then((results) => {
+        for (let i = 0; i < results.length; i++) {
+          if (results[i]["status"] == "success") {
+            let cardDetail = this.cardList.find(item => item.cardNo == results[i].data.cardNo);
+            if (cardDetail != undefined) {
+              cardDetail.lat = results[i].data.lat;
+              cardDetail.lng = results[i].data.lng;
+            }
+          }
+        }
+
+
+        const promises1 = [];
+        for (let i = 0; i < this.cardList.length; i++) {
+          promises1.push(Promise.resolve(this.getCardPaymentTime(this.cardList[i].cardNo,this.cardList[i].merchantTransactionId)));
+          promises1.push(Promise.resolve(this.getCardEntityPaymentTime(this.cardList[i].cardNo, this.cardList[i].entityId, this.cardList[i].merchantTransactionId)));
+        }
+        Promise.all(promises1).then((results) => {
+          for (let i = 0; i < results.length; i++) {
+            if (results[i]["status"] == "success") {
+              let cardDetail = this.cardList.find(item => item.cardNo == results[i].data.cardNo && item.merchantTransactionId==results[i].data.merchantTransactionId);
+              if (cardDetail != undefined) {
+                cardDetail.time = results[i].data.time;
+              }
+            }
+          }
+
+          let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
+          if (detail != undefined) {
+            detail.cardCount = this.cardList.length;
+            detail.cardList = this.cardList.sort((a,b)=>a.time>b.time?1:-1);
+          }
+          this.getPaymentCollectorRoute(paymentCollectorId);
+        });
+      });
+    }
+    else {
+      let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
+      if (detail != undefined) {
+        detail.cardCount = this.cardList.length;
+        detail.cardList = this.cardList;
+      }
+      this.getPaymentCollectorRoute(paymentCollectorId);
+    }
+  }
+
+
+  getCardPaymentTime(cardNo: any,merchantTransactionId:any) {
     return new Promise((resolve) => {
       let obj = {};
       let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate;
@@ -590,7 +626,8 @@ export class PaymentCollectorTrackingComponent {
             let paymentTime = time.split(":")[0] + ":" + time.split(":")[1]
             obj = {
               cardNo: cardNo,
-              time: paymentTime
+              time: paymentTime,
+              merchantTransactionId:merchantTransactionId
             }
             resolve({ status: "success", data: obj });
           }
@@ -602,9 +639,54 @@ export class PaymentCollectorTrackingComponent {
         else {
           resolve({ status: "fail", data: obj });
         }
-      })
+      });
+    });
+  }
 
-
+  getCardEntityPaymentTime(cardNo: any, entityId: any, merchantTransactionId: any) {
+    return new Promise((resolve) => {
+      let obj = {};
+      if (entityId == 0) {
+        resolve({ status: "fail", data: obj });
+      }
+      else {
+        let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/Entities/" + entityId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate;
+        let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+          instance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              let isData = 0;
+              for (let i = 0; i < keyArray.length; i++) {
+                let key = keyArray[i];
+                if (data[key]["merchantTransactionId"] == merchantTransactionId) {
+                  isData = 1;
+                  let time = data[key]["transactionDateTime"].toString().split(" ")[1];
+                  let paymentTime = time.split(":")[0] + ":" + time.split(":")[1]
+                  obj = {
+                    cardNo: cardNo,
+                    time: paymentTime,
+                    merchantTransactionId:merchantTransactionId
+                  }
+                  i = keyArray.length;
+                }
+              }
+              if (isData == 1) {
+                resolve({ status: "success", data: obj });
+              }
+              else {
+                resolve({ status: "fail", data: obj });
+              }
+            }
+            else {
+              resolve({ status: "fail", data: obj });
+            }
+          }
+          else {
+            resolve({ status: "fail", data: obj });
+          }
+        });
+      }
     });
   }
 
@@ -685,7 +767,7 @@ export class PaymentCollectorTrackingComponent {
 
   getPaymentCollectorRoute(paymentCollectorId: any) {
     $(this.divLoader).show();
-    this.resetDetail();    
+    this.resetDetail();
     this.isReset = true;
     this.isStart = false;
     $('#playStop').removeClass("fas fa-stop-circle");
@@ -776,7 +858,7 @@ export class PaymentCollectorTrackingComponent {
     this.lineIndex = 0;
     this.isPreviousTime = false;
     this.selectedDate = $('#txtDate').val();
-    this.lineDataList=[];
+    this.lineDataList = [];
 
 
 
@@ -917,7 +999,7 @@ export class PaymentCollectorTrackingComponent {
         this.routeMarker.push({ marker });
       }
     }
-    else{
+    else {
       this.vehicleMarker = marker;
     }
   }
@@ -1005,7 +1087,7 @@ export class PaymentCollectorTrackingComponent {
     this.lineIndex = 0;
     this.isPreviousTime = false;
     this.selectedDate = $('#txtDate').val();
-    this.lineDataList=[];
+    this.lineDataList = [];
     this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
       $("#txtDate").val(newDate);
       if (newDate != this.selectedDate) {
