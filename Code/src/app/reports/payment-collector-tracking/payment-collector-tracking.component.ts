@@ -67,7 +67,6 @@ export class PaymentCollectorTrackingComponent {
     this.paymentCollectorList = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
-    this.selectedDate = "2024-10-23";
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     $('#txtDate').val(this.selectedDate);
