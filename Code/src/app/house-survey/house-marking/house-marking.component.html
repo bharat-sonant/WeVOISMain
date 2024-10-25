@@ -439,7 +439,7 @@
                                 No. of Persons : {{dt.persons}}
                                  <br/>
                              </span>
-                             <span style="font-size:11px" [hidden]="dt.totalEntity=='0'">
+                             <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
                                 No. of Entity : {{dt.totalEntity}}
                                  <br/>
                              </span>
@@ -500,7 +500,7 @@
                                 No. of Persons : {{dt.persons}}
                                  <br/>
                              </span>
-                             <span style="font-size:11px" [hidden]="dt.totalEntity=='0'">
+                             <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
                                 No. of Entity : {{dt.totalEntity}}
                                  <br/>
                              </span>
@@ -560,6 +560,10 @@
                                      No. of Persons : {{dt.persons}}
                                       <br/>
                                   </span>
+                                  <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
+                                    No. of Entity : {{dt.totalEntity}}
+                                     <br/>
+                                 </span>
                                 <span style="font-size:11px">
                                 Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                 <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved

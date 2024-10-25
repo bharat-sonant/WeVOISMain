@@ -677,6 +677,7 @@ export class HouseMarkingComponent {
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
+            console.log(this.markerListIncluded);
           }
           if (count == 0) {
             this.commonService.setAlertMessage("error", "No marker found in ward " + zoneNo + " on line " + lineNo + " !!!");
