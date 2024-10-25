@@ -532,7 +532,6 @@ export class PaymentCollectorTrackingComponent {
     let entityInstance = this.db.object(dbPath).valueChanges().subscribe(entityData => {
       entityInstance.unsubscribe();
       if (entityData != null) {
-        console.log(entityData);
         let keyArray = Object.keys(entityData);
         for (let i = 0; i < keyArray.length; i++) {
           let key = keyArray[i];
