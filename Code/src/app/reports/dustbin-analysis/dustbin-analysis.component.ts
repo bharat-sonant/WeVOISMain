@@ -448,8 +448,9 @@ export class DustbinAnalysisComponent implements OnInit {
           if (index == binsArray.length - 1) {
             setTimeout(() => {
               if (this.autoPickedDustbin != "") {
-                this.updatePlanPickedDustbin();
-                this.updateAutoPendingAnalysis();
+                 this.updatePlanPickedDustbin();
+                 this.updateAutoPendingAnalysis();
+               // $("#divLoader").hide();
               }
               else {
                 $("#divLoader").hide();
@@ -539,8 +540,8 @@ export class DustbinAnalysisComponent implements OnInit {
       let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
         instance.unsubscribe();
         if (data != null) {
-          pending = pending+Number(data);
-        }        
+          pending = pending + Number(data);
+        }
         this.db.object("DustbinData/").update({ TotalDustbinAnalysisPending: pending.toString() });
       })
     }
@@ -699,7 +700,7 @@ export class DustbinAnalysisComponent implements OnInit {
         let indexDustbinId = pickSequenceList[i].trim();
         let dustbinDetail = this.dustbinList.find(item => item.dustbinId == indexDustbinId);
         if (dustbinDetail != undefined) {
-          if (dustbinDetail.endTime != undefined) {
+          if (dustbinDetail.endTime != undefined && dustbinDetail.endTime!="") {
             preEndTime = dustbinDetail.endTime;
             i = -1;
           }
@@ -710,7 +711,7 @@ export class DustbinAnalysisComponent implements OnInit {
         let indexDustbinId = pickSequenceList[i].trim();
         let dustbinDetail = this.dustbinList.find(item => item.dustbinId == indexDustbinId);
         if (dustbinDetail != undefined) {
-          if (dustbinDetail.endTime != undefined) {
+          if (dustbinDetail.endTime != undefined && dustbinDetail.endTime!="") {
             lastStartTime = dustbinDetail.startTime;
             i = pickSequenceList.length;
           }
@@ -759,7 +760,7 @@ export class DustbinAnalysisComponent implements OnInit {
         }
       }
       let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + dustbinId + "/" + this.planId;
-      this.db.object(dbPath).update(obj);
+       this.db.object(dbPath).update(obj);
       if (this.autoPickedDustbin == "") {
         this.autoPickedDustbin = dustbinId;
       }
