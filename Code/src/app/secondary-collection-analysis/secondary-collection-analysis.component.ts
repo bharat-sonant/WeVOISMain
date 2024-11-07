@@ -163,7 +163,6 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   getOpenDepotAssignedPlans(planId: any, assignedPlans: any) {
     return new Promise((resolve) => {
       let obj = {};
-      console.log(planId)
       let pickingPlanPath = this.db.object("DustbinData/DustbinPickingPlans/" + planId + "/planType").valueChanges().subscribe((pickingPlanData) => {
         if (pickingPlanData == null) {
           pickingPlanPath.unsubscribe();
@@ -620,7 +619,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   }
 
   getPandingAnalysis() {
-    let dbPath = "DustbinData/TotalDustbinAnalysisPending";
+    let dbPath = "DustbinData/TotalOpenDepotAnalysisPending";
     this.db.object(dbPath).valueChanges().subscribe((data) => {
       if (data != null) {
         let pending = Number(data);
@@ -656,6 +655,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
     this.binDetail.manualRemarks = this.dustbinList[index]["manualRemarks"];
+    console.log(this.binDetail)
 
     if (type == "edit") {
       if (this.canUpdateOpendepotPickDetail == 1) {
@@ -838,19 +838,18 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   updatePendingAnalysis() {
     if (this.binDetail.analysisAt == "") {
       let pendingCountPath = this.db
-        .object("DustbinData/TotalDustbinAnalysisPending")
+        .object("DustbinData/TotalOpenDepotAnalysisPending")
         .valueChanges()
         .subscribe((pedingCount) => {
           pendingCountPath.unsubscribe();
           this.db.object("DustbinData").update({
-            TotalDustbinAnalysisPending: Number(pedingCount) - 1,
+            TotalOpenDepotAnalysisPending: Number(pedingCount) - 1,
           });
         });
     }
   }
 
   saveDustbinAnalysis() {
-
     if (this.binDetail.canDoAnalysis == "yes") {
       this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/Analysis/").update({ filledPercentage: this.fillPercentage, analysisAt: this.commonService.getTodayDateTime(), analysisBy: this.userId, remark: this.getRemarks(), manualRemark: $(this.txtManualRemark).val() });
       this.updatePendingAnalysis();
@@ -990,19 +989,37 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
           this.db.object(dbPath).update({ pickedDustbin: dustbinId.toString() });
         }
         else {
-          this.db.object(dbPath).update({ pickedDustbin: data.pickedDustbin + "," + dustbinId.toString() });
+          let pickedDustbin = data.pickedDustbin.toString();
+          let list = pickedDustbin.split(",");
+          let pickedList = [];
+          for (let i = 0; i < list.length; i++) {
+            pickedList.push({ dustbin: list[i].toString().trim() });
+          }
+          let detail = pickedList.find(item => item.dustbin == dustbinId.toString());
+          if (detail == undefined) {
+            this.db.object(dbPath).update({ pickedDustbin: pickedDustbin + "," + dustbinId.toString() });
+          }
         }
       }
       else {
         dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId;
-        let planHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        let planHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
           planHistoryInstance.unsubscribe();
-          if (data != null) {
-            if (data.pickedDustbin == "") {
+          if (planData != null) {
+            if (planData.pickedDustbin == "") {
               this.db.object(dbPath).update({ pickedDustbin: dustbinId.toString() });
             }
             else {
-              this.db.object(dbPath).update({ pickedDustbin: data.pickedDustbin + "," + dustbinId.toString() });
+              let pickedDustbin = planData.pickedDustbin.toString();
+              let list = pickedDustbin.split(",");
+              let pickedList = [];
+              for (let i = 0; i < list.length; i++) {
+                pickedList.push({ dustbin: list[i].toString().trim() });
+              }
+              let detail = pickedList.find(item => item.dustbin == dustbinId.toString());
+              if (detail == undefined) {
+                this.db.object(dbPath).update({ pickedDustbin: pickedDustbin + "," + dustbinId.toString() });
+              }
             }
           }
         });

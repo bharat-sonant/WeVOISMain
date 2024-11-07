@@ -344,8 +344,10 @@
                                 </div>
                                 <div class="address-main">
                                     <div class="address-text">
-                                        <h6 [innerHTML]="data.duration">
-                                        </h6>
+                                        <i class="fa-solid fa-circle" style="color:red; font-size: 10px; margin-right: 5px;" [hidden]="data.isNotPickedIcon==0" ></i>
+                                        <span [innerHTML]="data.duration" style="font-size: 10px;">
+                                        </span>
+                                        
                                     </div>
                                 </div>
                             </div>

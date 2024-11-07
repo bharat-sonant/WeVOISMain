@@ -31,6 +31,7 @@ export class DustbinAnalysisComponent implements OnInit {
   isShowData: any;
   db: any;
   serviceName = "dustbin-analysis";
+  autoPickedDustbin: any;
   binDetail: dustbinDetails = {
     binId: "",
     filledTopViewImageUrl: "",
@@ -119,6 +120,7 @@ export class DustbinAnalysisComponent implements OnInit {
 
   setDefaultValues() {
     this.selectedDate = this.commonService.setTodayDate();
+    this.selectedDate = "2024-09-19";
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );
@@ -170,16 +172,12 @@ export class DustbinAnalysisComponent implements OnInit {
       let obj = {};
       let pickingPlanPathInstance = this.db.object("DustbinData/DustbinPickingPlans/" + planId).valueChanges().subscribe(pickingPlanData => {
         pickingPlanPathInstance.unsubscribe();
-        console.log(pickingPlanData)
-
         if (pickingPlanData == null) {
           let pickingPlanWithDatePath = this.db.object("DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId).valueChanges().subscribe((pickingPlanWithDateData) => {
             pickingPlanWithDatePath.unsubscribe();
-            console.log(pickingPlanWithDateData)
             if (pickingPlanWithDateData == null) {
               let pickingPlanHistory = this.db.object("DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId).valueChanges().subscribe((dustbinPlanHistoryData) => {
                 pickingPlanHistory.unsubscribe();
-                console.log(dustbinPlanHistoryData)
                 if (dustbinPlanHistoryData == null) {
                   resolve({ status: "fail", data: obj });
                 }
@@ -193,7 +191,11 @@ export class DustbinAnalysisComponent implements OnInit {
                         helper: assignedPlans[planId]["helper"],
                         secondHelper: assignedPlans[planId]["secondHelper"],
                         thirdHelper: assignedPlans[planId]["thirdHelper"],
-                        vehicle: assignedPlans[planId]["vehicle"]
+                        vehicle: assignedPlans[planId]["vehicle"],
+                        bins: dustbinPlanHistoryData["bins"],
+                        pickingSequence: dustbinPlanHistoryData["pickingSequence"]
+
+
                       }
                       resolve({ status: "success", data: obj });
                     } else {
@@ -209,7 +211,9 @@ export class DustbinAnalysisComponent implements OnInit {
                         helper: assignedPlans[planId]["helper"],
                         secondHelper: assignedPlans[planId]["secondHelper"],
                         thirdHelper: assignedPlans[planId]["thirdHelper"],
-                        vehicle: assignedPlans[planId]["vehicle"]
+                        vehicle: assignedPlans[planId]["vehicle"],
+                        bins: dustbinPlanHistoryData["bins"],
+                        pickingSequence: dustbinPlanHistoryData["pickingSequence"]
                       }
                       resolve({ status: "success", data: obj });
                     }
@@ -233,7 +237,9 @@ export class DustbinAnalysisComponent implements OnInit {
                     helper: assignedPlans[planId]["helper"],
                     secondHelper: assignedPlans[planId]["secondHelper"],
                     thirdHelper: assignedPlans[planId]["thirdHelper"],
-                    vehicle: assignedPlans[planId]["vehicle"]
+                    vehicle: assignedPlans[planId]["vehicle"],
+                    bins: pickingPlanWithDateData["bins"],
+                    pickingSequence: pickingPlanWithDateData["pickingSequence"]
                   }
                   resolve({ status: "success", data: obj });
                 }
@@ -251,7 +257,9 @@ export class DustbinAnalysisComponent implements OnInit {
                     helper: assignedPlans[planId]["helper"],
                     secondHelper: assignedPlans[planId]["secondHelper"],
                     thirdHelper: assignedPlans[planId]["thirdHelper"],
-                    vehicle: assignedPlans[planId]["vehicle"]
+                    vehicle: assignedPlans[planId]["vehicle"],
+                    bins: pickingPlanWithDateData["bins"],
+                    pickingSequence: pickingPlanWithDateData["pickingSequence"]
                   }
                   resolve({ status: "success", data: obj });
                 }
@@ -278,7 +286,9 @@ export class DustbinAnalysisComponent implements OnInit {
                 helper: assignedPlans[planId]["helper"],
                 secondHelper: assignedPlans[planId]["secondHelper"],
                 thirdHelper: assignedPlans[planId]["thirdHelper"],
-                vehicle: assignedPlans[planId]["vehicle"]
+                vehicle: assignedPlans[planId]["vehicle"],
+                bins: pickingPlanData["bins"],
+                pickingSequence: pickingPlanData["pickingSequence"]
               }
               resolve({ status: "success", data: obj });
             }
@@ -295,7 +305,10 @@ export class DustbinAnalysisComponent implements OnInit {
                 helper: assignedPlans[planId]["helper"],
                 secondHelper: assignedPlans[planId]["secondHelper"],
                 thirdHelper: assignedPlans[planId]["thirdHelper"],
-                vehicle: assignedPlans[planId]["vehicle"]
+                vehicle: assignedPlans[planId]["vehicle"],
+                bins: pickingPlanData["bins"],
+                pickingSequence: pickingPlanData["pickingSequence"],
+
               }
               resolve({ status: "success", data: obj });
             }
@@ -346,49 +359,58 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   getBinsForSelectedPlan(planId: string) {
+    this.planId = planId;
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getBinsForSelectedPlan");
     $("#divLoader").show();
+
     this.resetData();
 
-    let pickingPlanPath = this.db.object("DustbinData/DustbinPickingPlans/" + planId).valueChanges().subscribe((pickingPlanData) => {
-      if (pickingPlanData == null) {
-        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", pickingPlanData);
-        // now need to find with date
-        let pickingPlanWithDatePath = this.db.object("DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId).valueChanges().subscribe((pickingPlanWithDateData) => {
-          if (pickingPlanWithDateData == null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", pickingPlanWithDateData);
-            let pickingPlanHistory = this.db.object("DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId).valueChanges().subscribe((dustbinPlanHistoryData) => {
-              if (dustbinPlanHistoryData != null) {
-                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", dustbinPlanHistoryData);
+    let detail = this.planList.find(item => item.planId == planId);
+    if (detail != undefined) {
+      let bins = detail.bins;
+      this.getBinsDetail(bins, planId);
+    }
+    /*
+        let pickingPlanPath = this.db.object("DustbinData/DustbinPickingPlans/" + planId).valueChanges().subscribe((pickingPlanData) => {
+          if (pickingPlanData == null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", pickingPlanData);
+            // now need to find with date
+            let pickingPlanWithDatePath = this.db.object("DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId).valueChanges().subscribe((pickingPlanWithDateData) => {
+              if (pickingPlanWithDateData == null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", pickingPlanWithDateData);
+                let pickingPlanHistory = this.db.object("DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId).valueChanges().subscribe((dustbinPlanHistoryData) => {
+                  if (dustbinPlanHistoryData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsForSelectedPlan", dustbinPlanHistoryData);
+                  }
+                  let bins = dustbinPlanHistoryData["bins"];
+                  this.getBinsDetail(bins, planId);
+                  pickingPlanHistory.unsubscribe();
+                });
+              } else {
+                let bins = pickingPlanWithDateData["bins"];
+                this.getBinsDetail(bins, planId);
               }
-              let bins = dustbinPlanHistoryData["bins"];
-              this.getBinsDetail(bins, planId);
-              pickingPlanHistory.unsubscribe();
+              pickingPlanWithDatePath.unsubscribe();
             });
           } else {
-            let bins = pickingPlanWithDateData["bins"];
+            let bins = pickingPlanData["bins"];
             this.getBinsDetail(bins, planId);
           }
-          pickingPlanWithDatePath.unsubscribe();
-        });
-      } else {
-        let bins = pickingPlanData["bins"];
-        this.getBinsDetail(bins, planId);
-      }
-      pickingPlanPath.unsubscribe();
-    });
+          pickingPlanPath.unsubscribe();
+         
+        }); */
   }
 
   getBinsDetail(bins: string, planId: string) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getBinsDetail");
     let firstIndexNeedtobeSelected = -1;
+    this.autoPickedDustbin = "";
     let binsArray = bins.toString().split(",");
     this.dustbinList = [];
     for (let index = 0; index < binsArray.length; index++) {
       let binId = binsArray[index].replace(" ", "");
       let binsDetailsPath = this.db.object("DustbinData/DustbinDetails/" + binId + "/address").valueChanges().subscribe((dustbinAddress) => {
         let dustbinPickHistoryPath = this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + binId + "/" + planId).valueChanges().subscribe((dustbinHistoryData) => {
-
           if (dustbinHistoryData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsDetail", dustbinHistoryData);
           }
@@ -415,7 +437,8 @@ export class DustbinAnalysisComponent implements OnInit {
             filledPercentage: this.checkAnalysisValues(dustbinHistoryData, "filledPercentage"),
             analysisRemark: this.checkAnalysisValues(dustbinHistoryData, "remark"),
             manualRemarks: this.checkAnalysisValues(dustbinHistoryData, "manualRemark"),
-            isPicked: "0"
+            isPicked: "0",
+            isNotPickedIcon: this.checkAutoPickedValue(dustbinHistoryData, "isAutoPicked")
           });
           this.setPickedBins(index);
 
@@ -424,7 +447,17 @@ export class DustbinAnalysisComponent implements OnInit {
           }
 
           if (index == binsArray.length - 1) {
-            $("#divLoader").hide();
+            setTimeout(() => {
+              if (this.autoPickedDustbin != "") {
+                this.updatePlanPickedDustbin();
+                this.updateAutoPendingAnalysis();
+              }
+              else {
+                $("#divLoader").hide();
+              }
+
+            }, 4000);
+
             if (firstIndexNeedtobeSelected != -1) {
               this.showDustbinData(firstIndexNeedtobeSelected);
             } else {
@@ -441,8 +474,82 @@ export class DustbinAnalysisComponent implements OnInit {
     // this.totalDustbins = binsArray.length;
   }
 
+
+  updatePlanPickedDustbin() {
+    let dbPath = "DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + this.planId + "/pickedDustbin";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+      instance.unsubscribe();
+      if (planData == null) {
+        dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.planId + "/pickedDustbin";
+        let planInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+          planInstance.unsubscribe();
+          if (data != null) {
+            let pickedDustbin = data.toString();
+            let list = [];
+            let listAuto = [];
+            let pickedDustbinList = data.toString().split(",");
+            let autoPickedDustbinList = this.autoPickedDustbin.split(",");
+            for (let i = 0; i < pickedDustbinList.length; i++) {
+              list.push({ dustbin: pickedDustbinList[i].toString().trim() });
+            }
+            for (let i = 0; i < autoPickedDustbinList.length; i++) {
+              listAuto.push({ dustbin: autoPickedDustbinList[i].toString().trim() });
+            }
+            for (let i = 0; i < listAuto.length; i++) {
+              let detail = list.find(item => item.dustbin == listAuto[i]["dustbin"]);
+              if (detail == undefined) {
+                pickedDustbin = pickedDustbin + ", " + listAuto[i]["dustbin"];
+              }
+            }
+            dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.planId;
+            this.db.object(dbPath).update({ pickedDustbin: pickedDustbin });
+          }
+          $("#divLoader").hide();
+        })
+      }
+      else {
+        let pickedDustbin = planData.toString();
+        let list = [];
+        let listAuto = [];
+        let pickedDustbinList = planData.toString().split(",");
+        let autoPickedDustbinList = this.autoPickedDustbin.split(",");
+        for (let i = 0; i < pickedDustbinList.length; i++) {
+          list.push({ dustbin: pickedDustbinList[i].toString().trim() });
+        }
+        for (let i = 0; i < autoPickedDustbinList.length; i++) {
+          listAuto.push({ dustbin: autoPickedDustbinList[i].toString().trim() });
+        }
+        for (let i = 0; i < listAuto.length; i++) {
+          let detail = list.find(item => item.dustbin == listAuto[i]["dustbin"]);
+          if (detail == undefined) {
+            pickedDustbin = pickedDustbin + ", " + listAuto[i]["dustbin"];
+          }
+        }
+        dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.planId;
+        this.db.object(dbPath).update({ pickedDustbin: pickedDustbin });
+        $("#divLoader").hide();
+      }
+    })
+  }
+
+  updateAutoPendingAnalysis() {
+    let list = this.autoPickedDustbin.split(",");
+    if (list.length > 0) {
+      let pending = list.length;
+      let dbPath = "DustbinData/TotalDustbinAnalysisPending";
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        if (data != null) {
+          pending = pending+Number(data);
+        }        
+        this.db.object("DustbinData/").update({ TotalDustbinAnalysisPending: pending.toString() });
+      })
+    }
+  }
+
   setPickedBins(index: any) {
     let isPicked = false;
+    let dustbinId = this.dustbinList[index]["dustbinId"];
     if (this.dustbinList[index]["emptyFarFromImage"] != this.imageNotAvailablePath) {
       isPicked = true;
     }
@@ -463,8 +570,209 @@ export class DustbinAnalysisComponent implements OnInit {
     }
     if (isPicked == true) {
       this.dustbinList[index]["isPicked"] = "1";
+      if (this.userType == "External User") {
+        this.dustbinList[index]["isNotPickedIcon"] = "0";
+      }
+    }
+    else {
+      if (this.selectedDate != this.commonService.setTodayDate()) {
+        this.dustbinList[index]["isNotPickedIcon"] = "1";
+        if (this.userType == "External User") {
+          this.dustbinList[index]["isNotPickedIcon"] = "0";
+        }
+        this.getUnpickedDustbinDetail(dustbinId);
+      }
+      else {
+        this.dustbinList[index]["isNotPickedIcon"] = "0";
+        this.dustbinList[index]["divClass"] = "address md-background";
+      }
     }
   }
+
+
+  getUnpickedDustbinDetail(dustbinId: any) {
+    let d = new Date(this.selectedDate);
+    let newDate = new Date(d.setDate(d.getDate() - 60));
+    let month = newDate.getMonth() + 1;
+    let day = newDate.getDate();
+    let date = (newDate.getFullYear() + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day);
+    this.getPreviousDustbinPickedDetail(0, date, 59, dustbinId);
+  }
+
+  getPreviousDustbinPickedDetail(index: any, date: any, lastDay: any, dustbinId: any) {
+    if (index < lastDay) {
+      let year = date.split("-")[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split("-")[1]) - 1);
+      let dbPath = "DustbinData/DustbinPickHistory/" + year + "/" + monthName + "/" + date + "/" + dustbinId;
+      let dustbinPickInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        dustbinPickInstance.unsubscribe();
+        if (data != null) {
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            if (data[keyArray[0]]["Image"] != null) {
+              if (data[keyArray[0]]["Image"]["Urls"] != null) {
+                if (data[keyArray[0]]["Image"]["Urls"]["emptyFarFromImageUrl"] != null) {
+                  let pickedBy = "0";
+                  let detail = this.planList.find(item => item.planId == this.planId);
+                  if (detail != undefined) {
+                    pickedBy = detail.driver;
+                  }
+                  let obj = {
+                    Image: data[keyArray[0]]["Image"],
+                    address: data[keyArray[0]]["address"] ? data[keyArray[0]]["address"] : "",
+                    latLng: data[keyArray[0]]["latLng"] ? data[keyArray[0]]["latLng"] : "",
+                    remarks: data[keyArray[0]]["remarks"] ? data[keyArray[0]]["remarks"] : "",
+                    zone: data[keyArray[0]]["zone"] ? data[keyArray[0]]["zone"] : "",
+                    imageCaptureAddress: data[keyArray[0]]["imageCaptureAddress"] ? data[keyArray[0]]["imageCaptureAddress"] : "",
+                    pickedBy: pickedBy,
+                    duration: data[keyArray[0]]["duration"] ? data[keyArray[0]]["duration"] : 0,
+                    isAutoPicked: 1
+                  }
+                  this.setUnpickDustbinDetail(dustbinId, obj);
+                }
+                else {
+                  date = this.commonService.getNextDate(date, 1);
+                  index++;
+                  this.getPreviousDustbinPickedDetail(index, date, lastDay, dustbinId);
+                }
+              }
+              else {
+                date = this.commonService.getNextDate(date, 1);
+                index++;
+                this.getPreviousDustbinPickedDetail(index, date, lastDay, dustbinId);
+              }
+            }
+            else {
+              date = this.commonService.getNextDate(date, 1);
+              index++;
+              this.getPreviousDustbinPickedDetail(index, date, lastDay, dustbinId);
+            }
+          }
+        }
+        else {
+          date = this.commonService.getNextDate(date, 1);
+          index++;
+          this.getPreviousDustbinPickedDetail(index, date, lastDay, dustbinId);
+        }
+      });
+    }
+  }
+
+  setUnpickDustbinDetail(dustbinId: any, obj: any) {
+    let detail = this.dustbinList.find(item => item.dustbinId == dustbinId);
+    if (detail != null) {
+      detail.address = obj["address"];
+      detail.iconClass = this.setIconClass(obj);
+      detail.divClass = this.setBackgroudClasss(obj);
+      detail.duration = this.setDuration(obj);
+      detail.dustbinRemark = this.checkNullValue(obj, "remarks");
+      detail.filledTopViewImage = this.setImageUrl(obj, "filled-top");
+      detail.filledFarFromImage = this.setImageUrl(obj, "filled-far");
+      detail.emptyTopViewImage = this.setImageUrl(obj, "empty-top");
+      detail.emptyFarFromImage = this.setImageUrl(obj, "empty-far");
+      detail.emptyDustbinTopViewImage = this.setImageUrl(obj, "empty-dustbin-top");
+      detail.emptyDustbinFarFromImage = this.setImageUrl(obj, "empty-dustbin-far");
+      detail.dustbinNotFoundImage = this.setImageUrl(obj, "not-at-location");
+      detail.imageCaptureAddress = this.checkNullValue(obj, "imageCaptureAddress");
+      detail.latLng = this.checkNullValue(obj, "latLng");
+      detail.isPicked = "1";
+      this.setStartAndEndTime(dustbinId, obj);
+    }
+  }
+
+  setStartAndEndTime(dustbinId: any, obj: any) {
+    let preDuration = obj["duration"];
+    let detail = this.planList.find(item => item.planId == this.planId);
+    if (detail != undefined) {
+      let index = 0;
+      let pickSequenceList = detail.pickingSequence.split(",");
+      if (pickSequenceList.length > 0) {
+        for (let i = pickSequenceList.length - 1; i >= 0; i--) {
+          if (pickSequenceList[i].trim() == dustbinId) {
+            index = i;
+            i = -1;
+          }
+        }
+      }
+      let preEndTime = "";
+      let lastStartTime = "";
+      for (let i = index - 1; i >= 0; i--) {
+        let indexDustbinId = pickSequenceList[i].trim();
+        let dustbinDetail = this.dustbinList.find(item => item.dustbinId == indexDustbinId);
+        if (dustbinDetail != undefined) {
+          if (dustbinDetail.endTime != undefined) {
+            preEndTime = dustbinDetail.endTime;
+            i = -1;
+          }
+        }
+      }
+
+      for (let i = index + 1; i < pickSequenceList.length; i++) {
+        let indexDustbinId = pickSequenceList[i].trim();
+        let dustbinDetail = this.dustbinList.find(item => item.dustbinId == indexDustbinId);
+        if (dustbinDetail != undefined) {
+          if (dustbinDetail.endTime != undefined) {
+            lastStartTime = dustbinDetail.startTime;
+            i = pickSequenceList.length;
+          }
+        }
+      }
+
+      if (lastStartTime == "") {
+        let date = new Date(preEndTime);
+        let newStartTime = date.setMinutes(date.getMinutes() + Math.floor(Math.random() * (20 - 10 + 1)) + 10);
+
+        let newStartDate = new Date(newStartTime);
+        let newStartDateTime = this.selectedDate + " " + (newStartDate.getHours() < 10 ? "0" : "") + newStartDate.getHours() + ":" + (newStartDate.getMinutes() < 10 ? "0" : "") + newStartDate.getMinutes() + ":" + (newStartDate.getSeconds() < 10 ? "0" : "") + newStartDate.getSeconds();
+
+        let newEndTime = newStartDate.setMinutes(newStartDate.getMinutes() + Number(preDuration));
+        let newEndDate = new Date(newEndTime);
+
+        let newEndDateTime = this.selectedDate + " " + (newEndDate.getHours() < 10 ? "0" : "") + newEndDate.getHours() + ":" + (newEndDate.getMinutes() < 10 ? "0" : "") + newEndDate.getMinutes() + ":" + (newEndDate.getSeconds() < 10 ? "0" : "") + newEndDate.getSeconds();
+        let dustbinDetail = this.dustbinList.find(item => item.dustbinId == dustbinId);
+        if (dustbinDetail != undefined) {
+          dustbinDetail.startTime = newStartDateTime;
+          dustbinDetail.endTime = newEndDateTime;
+          dustbinDetail.duration = preDuration + "  MIN <img src='../../../assets/img/clock-icon.png'>";
+          obj["startTime"] = newStartDateTime;
+          obj["pickDateTime"] = newEndDateTime;
+          obj["endTime"] = newEndDateTime;
+        }
+      }
+      else {
+        let timeDifference = this.commonService.timeDifferenceMin(new Date(lastStartTime), new Date(preEndTime));
+        let date = new Date(preEndTime);
+        let timeToAdd = Math.round(timeDifference / 2);
+        let newStartTime = date.setMinutes(date.getMinutes() + timeToAdd);
+        let newStartDate = new Date(newStartTime);
+        let newStartDateTime = this.selectedDate + " " + (newStartDate.getHours() < 10 ? "0" : "") + newStartDate.getHours() + ":" + (newStartDate.getMinutes() < 10 ? "0" : "") + newStartDate.getMinutes() + ":" + (newStartDate.getSeconds() < 10 ? "0" : "") + newStartDate.getSeconds();
+        let newEndTime = newStartDate.setMinutes(newStartDate.getMinutes() + preDuration);
+        let newEndDate = new Date(newEndTime);
+        let newEndDateTime = this.selectedDate + " " + (newEndDate.getHours() < 10 ? "0" : "") + newEndDate.getHours() + ":" + (newEndDate.getMinutes() < 10 ? "0" : "") + newEndDate.getMinutes() + ":" + (newEndDate.getSeconds() < 10 ? "0" : "") + newEndDate.getSeconds();
+        let dustbinDetail = this.dustbinList.find(item => item.dustbinId == dustbinId);
+        if (dustbinDetail != undefined) {
+          dustbinDetail.startTime = newStartDateTime;
+          dustbinDetail.endTime = newEndDateTime;
+          dustbinDetail.duration = preDuration + "  MIN <img src='../../../assets/img/clock-icon.png'>";
+          obj["startTime"] = newStartDateTime;
+          obj["pickDateTime"] = newEndDateTime;
+          obj["endTime"] = newEndDateTime;
+        }
+      }
+      let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + dustbinId + "/" + this.planId;
+      this.db.object(dbPath).update(obj);
+      if (this.autoPickedDustbin == "") {
+        this.autoPickedDustbin = dustbinId;
+      }
+      else {
+        this.autoPickedDustbin = this.autoPickedDustbin + ", " + dustbinId;
+      }
+      this.planDetail.pickedCount = (Number(this.planDetail.pickedCount.replace("/", "")) + 1).toString() + "/";
+    }
+  }
+
+
+
 
   showPlanDetails(planId: any) {
     let plan = this.planList.find((item) => item.planId == planId);
@@ -511,6 +819,17 @@ export class DustbinAnalysisComponent implements OnInit {
       }
     }
     return count;
+  }
+
+  checkAutoPickedValue(binData: any, fieldName: string) {
+    let time = "0";
+    if (binData != null) {
+      if (binData[fieldName] != undefined) {
+        time = binData[fieldName];
+      }
+    }
+
+    return time;
   }
 
   checkNullValue(binData: any, fieldName: string) {
@@ -612,6 +931,9 @@ export class DustbinAnalysisComponent implements OnInit {
       // class for "bin is picked"
       divClass = "address ";
     }
+    else {
+      divClass = "address ";
+    }
 
     return divClass;
   }
@@ -626,7 +948,7 @@ export class DustbinAnalysisComponent implements OnInit {
         if (dustbinNotFoundImage != undefined) {
           duration = "";
         } else if (binData["duration"] != null) {
-          duration = binData["duration"] + "  min <img src='../../../assets/img/clock-icon.png'>";
+          duration = binData["duration"] + "  MIN <img src='../../../assets/img/clock-icon.png'>";
         }
       }
     }
