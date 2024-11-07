@@ -330,6 +330,7 @@ tbody {
 
  ::-webkit-scrollbar {
     width: 8px;
+    height: 15px;
 }
 
 
@@ -353,6 +354,7 @@ tbody {
 
  :hover::-webkit-scrollbar {
     width: 8px;
+    height: 15px;
 }
 
 
@@ -376,6 +378,7 @@ tbody {
 
 .mob-res::-webkit-scrollbar {
     width: 0px!important;
+    height: 15px;
 }
 
 
@@ -399,6 +402,7 @@ tbody {
 
 .mob-res:hover::-webkit-scrollbar {
     width: 0px!important;
+    height: 15px;
 }
 
 
@@ -784,6 +788,8 @@ textarea:focus-visible {
     height: calc(87vh - 80px);
     overflow: hidden;
     overflow-y: scroll;
+    overflow-x: scroll;
+
 }
 
 .table-scroll {
@@ -1486,6 +1492,7 @@ input {
     }
      ::-webkit-scrollbar {
         width: 0;
+        height: 15px;
         /* Remove scrollbar space */
         background: transparent;
         /* Optional: just make scrollbar invisible */
@@ -1605,6 +1612,7 @@ input {
     }
      ::-webkit-scrollbar {
         width: 0;
+        height: 15px;
         /* Remove scrollbar space */
         background: transparent;
         /* Optional: just make scrollbar invisible */
@@ -1870,4 +1878,15 @@ input {
 .main-span span {
     font-weight: bolder;
     font-size: 17px;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green{
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
+}
+.icon-red{
+    filter: brightness(0) saturate(100%) invert(27%) sepia(90%) saturate(7483%) hue-rotate(2deg) brightness(94%) contrast(108%);
 }

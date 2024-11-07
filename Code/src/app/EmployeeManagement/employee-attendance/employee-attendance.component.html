@@ -28,7 +28,10 @@
                                 <label>&nbsp; Include In-Active Employee</label></span>
 
                             <span class="export-span">
-                                <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel();"></i><br />
+                                <!-- <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel();"></i><br /> -->
+                                <div class="text-center">
+                                    <img src="../../../assets/icons/file-export-solid.svg" class="cursor-pointer" alt="export" (click)="exportToExcel();">
+                                </div>
                                 <span class="export-span-iner">Export</span>
                             </span>
                         </div>
@@ -91,9 +94,11 @@
                                 (click)="getAttendanceByEmployee();">Search</button>
                                 <input id="chkNotApprovedEmployee" type="checkbox" (change)="filterDataEmployee()"
                                 style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b>({{notApprovedCount}})</b>
-                                <span (click)="openLocation(contentLocation,0,'All')" style="cursor: pointer; margin-left: 20px; "> <i class="fa-solid fa-map-location-dot"
-                                    style="font-size: 14px; color: #2dbd23;"
-                                    ></i> Show All Location</span>
+                                <span (click)="openLocation(contentLocation,0,'All')" style="cursor: pointer; margin-left: 20px; "> 
+                                    <!-- <i class="fa-solid fa-map-location-dot" style="font-size: 14px; color: #2dbd23;"></i>  -->
+                                   <img src="../../../assets/icons/map-location-dot-solid.svg" class="mb-1 icon-green" alt="location">
+                                   
+                                    Show All Location</span>
                         </div>
 
                     </div>
@@ -154,15 +159,17 @@
                                                         </div>
                                                         <div class="ms-2 mt-2 d-flex flex-column justify-content-start position-relative" style="flex: 0.7;">
                                                             <div class="fw-bold {{data.cssClass}}" *ngIf="data.inTime">
-                                                                <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
+                                                                <!-- <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i> -->
+                                                                 <img src="../../../assets/icons/clock-regular.svg" class="me-2" alt="clock">
                                                                 {{data.inTime}}
                                                                 
-                                                            <i class="fa-solid fa-map-location-dot"
-                                                            style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
-                                                            (click)="openLocation(contentLocation,i,'single')"></i>
+                                                            <!-- <i class="fa-solid fa-map-location-dot" style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
+                                                            (click)="openLocation(contentLocation,i,'single')"></i> -->
+                                                            <img src="../../../assets/icons/map-location-dot-solid.svg" class="mb-1 float-right cursor-pointer icon-green" alt="location" (click)="openLocation(contentLocation,i,'single')">
                                                             </div>
                                                             <div class="mt-1" *ngIf="data.inLocation">
-                                                                <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
+                                                                <!-- <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i> -->
+                                                                <img src="../../../assets/icons/location-dot-solid.svg" class="me-2" alt="location">
                                                                 {{data.inLocation}}
                                                             </div>
                                                             <div class="position-absolute bottom-0 end-0 workingHrs-badge {{data.cssWorkingClass}} br-0" *ngIf="data.workingHour" title="Working Hours">
@@ -182,12 +189,14 @@
                                                         </div>
                                                         <div class="ms-2 mt-2" style="flex: 0.7;">
                                                             <div class="fw-bold" *ngIf="data.outTime">
-                                                                <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i>
+                                                                <!-- <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i> -->
+                                                                <img src="../../../assets/icons/clock-regular.svg" class="me-2" alt="clock">
                                                                 {{data.outTime}}
                                                                
                                                             </div>
                                                             <div class="mt-1" *ngIf="data.outLocation">
-                                                                <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i>
+                                                                <!-- <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i> -->
+                                                                <img src="../../../assets/icons/location-dot-solid.svg" class="me-2" alt="location">
                                                                 {{data.outLocation}}
                                                             </div>
                                                            
@@ -210,10 +219,12 @@
                                                 <td class="text-left br-1" style=" width:15%!important;">
                                                     <div [ngClass]="data.approveBy && 'mb-4'">
                                                         <span [ngClass]="data.status!=='Not Approved' && 'fw-bold'" [ngStyle]="{'color': data.status === 'Absent'? 'red' : ''}"> {{data.status}}</span>
-                                                        <i class="fa-solid fa-person-circle-check"
+                                                        <!-- <i class="fa-solid fa-person-circle-check"
                                                         style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                         [hidden]="data.isAttendanceApprover=='0'"
-                                                        (click)="openApprovePopup(contentApprove,i,data.approverStatus);"></i>
+                                                        (click)="openApprovePopup(contentApprove,i,data.approverStatus);"></i> -->
+                                                        <img src="../../../assets/icons/person-circle-check-solid.svg" class="me-2 float-right cursor-pointer" alt="person" [hidden]="data.isAttendanceApprover=='0'" (click)="openApprovePopup(contentApprove,i,data.approverStatus);">
+                                                        
                                                     </div>
                                                     <div [hidden]="isAttendanceApprover=='0'" >
                                                         {{data.approveBy}}

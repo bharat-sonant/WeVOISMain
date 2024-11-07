@@ -300,6 +300,9 @@ tbody {
     color: #0ba118;
     padding-left: 12px;
     border: 1px solid #0ba118;
+    img{
+        filter: brightness(0) saturate(100%) invert(38%) sepia(94%) saturate(2178%) hue-rotate(90deg) brightness(100%) contrast(101%);
+    }
     //  border-radius: 15px;
 }
 
@@ -338,6 +341,9 @@ tbody {
     -o-transition: all 0.4s;
     -moz-transition: all 0.4s;
     transition: all 0.4s;
+    img{
+        filter: brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(70%) contrast(95%);
+    }
 }
 
 textarea {
@@ -807,4 +813,12 @@ table tr:hover {
   cursor: pointer;
   color: green;
   font-size: 20px;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green{
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
 }

@@ -39,13 +39,16 @@
         <div class="col-md-7" >
             <div class="pageName ">
                 <span class="header-page-2">Monthly Payment Report</span>
-            <div style="float: right; margin-right: 20px; text-align: center;width: 140px;"><i
-                class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                (click)="updatePaymentData();"></i><p style="font-size: 8px; font-weight: none;">Last
-                Update {{lastUpdateDate}}</p> </div>
-            <div style="float: right; margin-right: 20px; text-align: center;"><i
-                    class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                    (click)="exportToExcel();"></i><p style="font-size: 8px;"> Export to Excel</p></div>
+            <div style="float: right; margin-right: 20px; text-align: center;width: 140px;">
+                <!-- <i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
+                (click)="updatePaymentData();"></i> -->
+                <img src="../../../assets/icons/rotate-right-solid.svg" height="24" width="24" alt="sync" class="cursor-pointer icon-green mb-1" (click)="updatePaymentData();"/>
+                <p style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</p> </div>
+            <div style="float: right; margin-right: 20px; text-align: center;">
+                <!-- <i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
+                    (click)="exportToExcel();"></i> -->
+                    <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer mb-1" (click)="exportToExcel();">
+                    <p style="font-size: 8px;"> Export to Excel</p></div>
             <div style="float: right; margin-right: 20px; text-align: center;"><h3
                     style="font-size: 20px; margin-bottom: 0px !important;">{{totalAmount}}</h3><p
                     style="font-size: 8px; font-weight: none;">Toatl Amount</p> </div>

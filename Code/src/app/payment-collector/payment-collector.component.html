@@ -2,7 +2,10 @@
     <div class="row no-gutters">
         <div class="col-md-2 no-gutters-iner">
             <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentEmployee,0,'add');">
-                <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp;
+                <span class="text-bg"><span class="icon">
+                    <!-- <i class="fas fa-plus"></i> -->
+                     <img src="../../assets/icons/plus-solid.svg" class="icon-green" alt="add">
+                </span> &nbsp;
                     NEW</span></button>
         </div>
         <div class="col-md-8 Surveyor-box">
@@ -64,25 +67,31 @@
                                                 </td>
                                                 <td class="text-center table-data-2">
                                                     <span [hidden]="data.empId=='100'">
-                                                        <i class="fas fa-map-marked-alt marked-icon"
+                                                        <!-- <i class="fas fa-map-marked-alt marked-icon"
                                                             (click)="openModel(contentWard,data.empId,'ward');"
-                                                            title="Assign Ward"></i>
+                                                            title="Assign Ward"></i> -->
+                                                        <img src="../../assets/icons/map-location-dot-solid.svg" class="marked-icon cursor-pointer icon-green" alt="location" (click)="openModel(contentWard,data.empId,'ward');" title="Assign Ward">
+<!-- 
                                                         <i class="far fa-times-circle circle-icon"
                                                             (click)="openModel(contentConfirmation,data.empId,'delete')"
-                                                            title="Remove Assignment"></i>
+                                                            title="Remove Assignment"></i> -->
+                                                        <img src="../../assets/icons/circle-xmark-regular.svg" class="circle-icon cursor-pointer" alt="delete" (click)="openModel(contentConfirmation,data.empId,'delete')" title="Remove Assignment">
 
 
                                                         <a href="{{data.docImageUrl}}" target="blank" title="Document">
-                                                            <i class="fa fa-download download-icon"
-                                                                style="color: green;padding-right: 10px;cursor: pointer;"></i>
+                                                            <!-- <i class="fa fa-download download-icon"
+                                                                style="color: green;padding-right: 10px;cursor: pointer;"></i> -->
+                                                            <img src="../../assets/icons/download-solid.svg" class="download-icon cursor-pointer pr-1" alt="download">
+
                                                         </a>
-                                                        <a href="{{data.qrCodeImageUrl}}" target="blank"
-                                                            title="Qr Code">
-                                                            <i class="fa-solid fa-qrcode"
-                                                                style="padding-right: 10px;cursor: pointer;"></i></a>
-                                                        <i class="far fa-edit edit-icon"
+                                                        <a href="{{data.qrCodeImageUrl}}" target="blank" title="Qr Code">
+                                                            <!-- <i class="fa-solid fa-qrcode" style="padding-right: 10px;cursor: pointer;"></i> -->
+                                                            <img src="../../assets/icons/qrcode-solid.svg" class="cursor-pointer pr-1" alt="qr code">
+                                                            </a>
+                                                        <!-- <i class="far fa-edit edit-icon"
                                                             (click)="openModel(contentEmployee,data.empId,'update');"
-                                                            title="Edit Entry"></i>
+                                                            title="Edit Entry"></i> -->
+                                                            <img src="../../assets/icons/pen-to-square-regular.svg" class="edit-icon cursor-pointer" alt="edit" (click)="openModel(contentEmployee,data.empId,'update');" title="Edit Entry">
                                                     </span>
                                                 </td>
                                             </tr>
@@ -104,7 +113,10 @@
                         <div class="col-md-12 text-left">
                             <h5> <b>{{collectionData.name}}</b></h5>
                             <span class="export-span">
-                                <i class="fa-solid fa-file-export export-icon" title="Export collection report" (click)="exportToExcel();"></i><br />
+                                <!-- <i class="fa-solid fa-file-export export-icon" title="Export collection report" (click)="exportToExcel();"></i><br /> -->
+                                <div class="text-center">
+                                    <img src="../../assets/icons/file-export-solid.svg" class="export-icon cursor-pointer" alt="export" (click)="exportToExcel();" title="Export collection report">
+                                </div>
                                 <span class="export-span-iner">Export</span>
                             </span>
                         </div>
@@ -151,8 +163,10 @@
                                                         <td class="text-right markers-details">
                                                             {{data.collection}}</td>
                                                         <td class="text-right markers-details">
-                                                            <i class="far fa-eye eye-icon" style="cursor: pointer;"
-                                                                (click)="openCollectionDetail(contentCollectionDetail,data.date);"></i>
+                                                            <!-- <i class="far fa-eye eye-icon" style="cursor: pointer;"
+                                                                (click)="openCollectionDetail(contentCollectionDetail,data.date);"></i> -->
+                                                            <img src="../../assets/icons/eye-regular.svg" class="cursor-pointer"
+                                                            (click)="openCollectionDetail(contentCollectionDetail,data.date);" alt="eye">
                                                         </td>
                                                     </tr>
 
@@ -221,7 +235,8 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i>
+                        <!-- <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> -->
+                        <img src="../../assets/icons/file-invoice-dollar-solid.svg" alt="file" aria-hidden="true">
                     </span>
                 </div>
                 <label [hidden]="isWardShow=='0'">Ward</label>
@@ -232,7 +247,8 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
+                        <img src="../../assets/icons/map-location-dot-solid.svg" alt="marker" aria-hidden="true"/>
                     </span>
                 </div>
                 <label  [hidden]="isWardShow=='0'">Select Lines</label>
@@ -273,14 +289,17 @@
                     <input type="text" id="txtName" class="input-green" placeholder="Name" autocomplete="off" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
+                        <img src="../../assets/icons/user-solid.svg" alt="user" aria-hidden="true"/>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
                     <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." autocomplete="off" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-mobile-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-mobile-alt" aria-hidden="true"></i> -->
+                        <img src="../../assets/icons/mobile-screen-button-solid.svg" alt="mobile" aria-hidden="true"/>
+
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
@@ -288,7 +307,9 @@
                         autocomplete="off" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-key" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-key" aria-hidden="true"></i> -->
+                        <img src="../../assets/icons/key-solid.svg" alt="key" aria-hidden="true"/>
+
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>

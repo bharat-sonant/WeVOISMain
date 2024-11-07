@@ -15,8 +15,14 @@
             Card Update History
         </div>
         <div class="col-md-4" style="color:#fff; text-align: right; padding-right: 10px;">
-            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;"><i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="exportToExcel();"></i><span style="font-size: 8px;"><br /> Export to Excel</span></div>
-            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;width: 140px;"><i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="updateCardHistoryJSON();"></i><br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span> </div>
+            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;">
+                <!-- <i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="exportToExcel();"></i> -->
+                <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer" (click)="exportToExcel();">
+                <span style="font-size: 8px;"><br /> Export to Excel</span></div>
+            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;width: 140px;">
+                <!-- <i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="updateCardHistoryJSON();"></i> -->
+                <img src="../../../assets/icons/rotate-right-solid.svg" height="24" width="24" alt="sync" class="cursor-pointer icon-green" (click)="updateCardHistoryJSON();"/>
+                <br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span> </div>
         </div>
     </div>
 </section>

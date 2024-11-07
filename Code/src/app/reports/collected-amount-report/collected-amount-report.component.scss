@@ -373,3 +373,11 @@ table td {
     top: 50%;
     transform: translate(-50%, -50%);
 }
+.cursor-pointer{
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green{
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
+}

@@ -22,8 +22,14 @@
             </select>
         </div>
         <div class="col-md-7" style="margin-top: 10px;">Due Amount Report
-            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;"><i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="exportToExcel();"></i><span style="font-size: 8px;"><br /> Export to Excel</span></div>
-            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;width: 140px;"><i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="updateCardColectionData();"></i><br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span> </div>
+            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;">
+                <!-- <i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="exportToExcel();"></i> -->
+                 <img src="../../../assets/icons/file-export-solid.svg" alt="export" class="cursor-pointer" (click)="exportToExcel();">
+                <span style="font-size: 8px;"><br /> Export to Excel</span></div>
+            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;width: 140px;">
+                <!-- <i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="updateCardColectionData();"></i> -->
+                <img src="../../../assets/icons/rotate-right-solid.svg" height="24" width="24" alt="sync" class="cursor-pointer icon-green" (click)="updateCardColectionData();"/>
+                <br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span> </div>
             <div style="float: right; margin-right: 20px;margin-top: -12px; text-align: center;"><span style="font-size: 20px;">{{totalDueAmount}}</span><br /><span style="font-size: 8px; font-weight: none;">Toatl Amount</span> </div>
 
 

@@ -3,11 +3,15 @@
         <div class="col-md-5" style="padding-left: 10px;">
             <div class=" left-menu">
             <button class="btn-hvr" (click)="setDate('','previous');"><span class="arrow-span">
-                    <i class="fa-solid fa-angles-left"></i> </span></button>
+                    <!-- <i class="fa-solid fa-angles-left"></i>  -->
+                    <img src="../../../assets/icons/angles-left-solid.svg" height="17" width="17" alt="previous" class="cursor-pointer mb-1"/>
+                </span></button>
             <input id="txtDate" class="report-controls custom-date-input pd-t mrg-5 arrow-input" type="date"
                 (change)="setDate($event.target.value,'current')" style="width:134px;     margin: 0px 3px 0px 3px;" />
-            <button class="btn-hvr" (click)="setDate('','next');"><span class="arrow-span"><i
-                        class="fa-solid fa-angles-right"></i></span></button>
+            <button class="btn-hvr" (click)="setDate('','next');"><span class="arrow-span">
+                <!-- <i class="fa-solid fa-angles-right"></i> -->
+                <img src="../../../assets/icons/angles-right-solid.svg" height="17" width="17" alt="next" class="cursor-pointer mb-1"/>
+                    </span></button>
 
             <select class="caret-select" id="ddlType" (change)="getFilter()" style="width: 180px;">
                 <option value="Ward No">
@@ -22,9 +26,11 @@
         <div class="col-md-7">
             <div class="pageName ">
                 <span class="header-page-2">Daily Payment Report</span>
-                <div style="float: right; margin-right: 20px; text-align: center;"><i class="fa-solid fa-file-export"
+                <div style="float: right; margin-right: 20px; text-align: center;">
+                    <!-- <i class="fa-solid fa-file-export"
                         style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                        (click)="exportToExcel();"></i>
+                        (click)="exportToExcel();"></i> -->
+                        <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer mb-1" (click)="exportToExcel();">
                     <p style="font-size: 8px;"> Export to Excel</p>
                 </div>
                 <div style="float: right; margin-right: 20px; text-align: center;">

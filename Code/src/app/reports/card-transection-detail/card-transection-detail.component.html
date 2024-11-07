@@ -34,9 +34,11 @@
                                         </button>
                                         <span
                                             style="float: right; text-align: center; margin-top: 10px; font-size: 10px; padding-right: 20px">
-                                            <i class="fa-solid fa-file-export"
+                                            <!-- <i class="fa-solid fa-file-export"
                                                 style="cursor:pointer; color:green;  font-size: 24px; "
-                                                (click)="exportToExcel();"></i><br />
+                                                (click)="exportToExcel();"></i> -->
+                                                <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer" (click)="exportToExcel();">
+                                                <br />
                                             Export to Excel
                                         </span>
                                     </div>
@@ -115,7 +117,10 @@
                          
                             <div class="d-flex mt-0">
                                 <h5 class="detail-card">Paid Amount     : </h5>
-                                <p class="mb-0  ms-3"><b><i class="fa-solid fa-indian-rupee-sign"></i> {{totalAmount}}</b></p>
+                                <p class="mb-0  ms-3"><b>
+                                    <!-- <i class="fa-solid fa-indian-rupee-sign"></i> -->
+                                     <img src="../../../assets/icons/indian-rupee-sign-solid.svg" height="15" width="15" alt="">
+                                     {{totalAmount}}</b></p>
                             </div>
 
 

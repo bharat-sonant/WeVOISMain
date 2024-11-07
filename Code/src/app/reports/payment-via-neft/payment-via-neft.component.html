@@ -37,9 +37,11 @@
                         <div class="col-md-3 text-center" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-right p-r ml-20" style="padding-right: 20px!important;">
-                                    <i class="fa-solid fa-file-export"
+                                    <!-- <i class="fa-solid fa-file-export"
                                         style="cursor:pointer; color:green;  font-size: 24px; "
-                                        (click)="exportToExcel();"></i><br />
+                                        (click)="exportToExcel();"></i> -->
+                                        <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer" (click)="exportToExcel();">
+                                        <br />
                                     <span style="font-size: 10px;"> Export to Excel </span>
                                 </div>
                             </div>
@@ -128,15 +130,21 @@
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <a href="{{data.imageUrl}}" target="_blank">
-                                                    <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i></a>
+                                                    <!-- <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i> -->
+                                                    <img src="../../../assets/icons/image-regular.svg" height="18" width="18" alt="export" class="cursor-pointer icon-red">
+                                                </a>
                                                 </td>
                                                 <td class="text-center br-1">
-                                                    <i class="fa-solid fa-file-circle-exclamation"
+                                                    <!-- <i class="fa-solid fa-file-circle-exclamation"
                                                         style="cursor: pointer;font-size: 18px;"
                                                         (click)="openModel(contentDetail,data.cardNo,data.collectedDate,data.key,'clear',data.entityType,data.entityId)"></i>
                                                         <i class="fa-solid fa-ban"
                                                         style="cursor: pointer;font-size: 18px; color: red; margin-left: 10px;"
-                                                        (click)="openModel(contentDeclinedDetail,data.cardNo,data.collectedDate,data.key,'decilned',data.entityType,data.entityId)"></i> 
+                                                        (click)="openModel(contentDeclinedDetail,data.cardNo,data.collectedDate,data.key,'decilned',data.entityType,data.entityId)"></i>  -->
+                                                        <img src="../../../assets/icons/file-circle-exclamation-solid.svg" height="18" width="18" alt="file" class="cursor-pointer"
+                                                        (click)="openModel(contentDetail,data.cardNo,data.collectedDate,data.key,'clear',data.entityType,data.entityId)">
+                                                        <img src="../../../assets/icons/ban-solid.svg" height="18" width="18" alt="invalid" class="cursor-pointer icon-red ms-1"
+                                                        (click)="openModel(contentDeclinedDetail,data.cardNo,data.collectedDate,data.key,'decilned',data.entityType,data.entityId)">
                                                 </td>
                                             </tr>
                                         </tbody>

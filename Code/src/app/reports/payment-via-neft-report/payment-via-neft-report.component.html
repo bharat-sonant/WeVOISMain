@@ -2,7 +2,10 @@
     <div class="row no-gutters">
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
             Payment Via NEFT Report            
-            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: right;width: 180px;"><i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="updateReportJSON();"></i><br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span> </div>
+            <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: right;width: 180px;">
+                <!-- <i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="updateReportJSON();"></i> -->
+                <img src="../../../assets/icons/rotate-right-solid.svg" height="24" width="24" alt="sync" class="cursor-pointer icon-green" (click)="updateReportJSON();"/>
+                <br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span> </div>
         </div>
     </div>
 </section>
@@ -38,9 +41,11 @@
                         <div class="col-md-3 text-center" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-right p-r ml-20" style="padding-right: 20px!important;">
-                                    <i class="fa-solid fa-file-export"
+                                    <!-- <i class="fa-solid fa-file-export"
                                         style="cursor:pointer; color:green;  font-size: 24px; "
-                                        (click)="exportToExcel();"></i><br />
+                                        (click)="exportToExcel();"></i> -->
+                                        <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer" (click)="exportToExcel();">
+                                        <br />
                                     <span style="font-size: 10px;"> Export to Excel </span>
                                 </div>
                             </div>
@@ -145,7 +150,9 @@
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <a href="{{data.imageUrl}}" target="_blank">
-                                                        <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i></a>
+                                                        <!-- <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i> -->
+                                                        <img src="../../../assets/icons/image-regular.svg" height="18" width="18" alt="export" class="cursor-pointer icon-red">
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </tbody>
