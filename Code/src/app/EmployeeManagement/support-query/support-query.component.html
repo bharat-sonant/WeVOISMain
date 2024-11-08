@@ -115,25 +115,31 @@
                                                     {{data.assignedToName}}</td>
                                                 <td class="text-left br-1" [hidden]="isShowAll==false">
                                                     <div style="cursor: pointer; color:green ; " [hidden]="data.status!='resolved'" (click)="openModel(contentResolvedDetail,data.id,'adminResolved');">
-                                                        <i class="fa-solid fa-r"></i>esolved
+                                                        <!-- <i class="fa-solid fa-r"></i>  -->
+                                                        <img src="../../../assets/icons/r-solid.svg" class="icon-green mb-1" height="12" width="12" alt="R"><span style="margin-left: -2px;">esolved</span>
                                                     </div>
                                                     <div style="color:red ; " [hidden]="data.status!='pending'">
-                                                        <i class="fa-solid fa-p"></i>ending
+                                                        <!-- <i class="fa-solid fa-p"></i> -->
+                                                        <img src="../../../assets/icons/p-solid.svg" class="icon-red mb-1" height="12" width="12" alt="P"><span style="margin-left: -2px;">ending</span>
                                                     </div>
                                                     <div style="color:navy ; " [hidden]="data.status!='assigned'">
-                                                        <i class="fa-solid fa-a"></i>ssigned
+                                                        <!-- <i class="fa-solid fa-a"></i> -->
+                                                        <img src="../../../assets/icons/a-solid.svg" class="icon-navy mb-1" height="12" width="12" alt="A"><span style="margin-left: -2px;">ssigned</span>
                                                     </div>
 
                                                 </td>
-                                                <td class="text-left br-1">
+                                                <td class="text-left br-1" style="width: 80px;">
                                                     <div style="color:navy ; cursor: pointer;" (click)="openModel(contentAssign,data.id,'assign');" [hidden]="data.assignedTo!='0' || data.status=='resolved'">
-                                                        <i class="fa-solid fa-user-pen"></i>
+                                                        <!-- <i class="fa-solid fa-user-pen"></i> -->
+                                                         <img src="../../../assets/icons/user-pen-solid.svg" alt="edit" height="15" width="15" class="icon-navy cursor-pointer">
                                                     </div>
                                                     <div style="color:green ; cursor: pointer;" (click)="openModel(contentResolved,data.id,'resolved');" [hidden]="data.status!='resolved' || data.assignedTo=='0'">
-                                                        <i class="fa-solid fa-r"></i>solved
+                                                        <!-- <i class="fa-solid fa-r"></i>solved -->
+                                                        <img src="../../../assets/icons/r-solid.svg" class="icon-green mb-1" height="12" width="12" alt="R"><span style="margin-left: -2px;">esolved</span>
                                                     </div>
                                                     <div style="color:red ; cursor: pointer;" (click)="openModel(contentResolved,data.id,'resolved');" [hidden]="data.status=='resolved' || data.assignedTo=='0'">
-                                                        <i class="fa-solid fa-p"></i>ending
+                                                        <!-- <i class="fa-solid fa-p"></i>ending -->
+                                                        <img src="../../../assets/icons/p-solid.svg" class="icon-red mb-1" height="12" width="12" alt="P"><span style="margin-left: -2px;">ending</span>
                                                     </div>
 
                                                 </td>
@@ -175,7 +181,8 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
+                         <img src="../../../assets/icons/user-solid.svg" alt="user" aria-hidden="true">
                     </span>
                 </div><br />
                 <br />
@@ -202,7 +209,8 @@
                     <input type="date" id="txtResolvedDate" class="input-green" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                        <!-- <i class="fa-solid fa-calendar-days" aria-hidden="true"></i> -->
+                         <img src="../../../assets/icons/calendar-days-solid.svg" height="15" width="15" style="margin-bottom: 2px;" alt="calendar" aria-hidden="true">
                     </span>
                 </div>
                 <label>Description</label>

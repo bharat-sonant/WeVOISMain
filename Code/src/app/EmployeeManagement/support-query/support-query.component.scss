@@ -426,6 +426,9 @@ tbody {
     color: #0ba118;
     padding-left: 12px;
     border: 1px solid #0ba118;
+    img{
+        filter: brightness(0) saturate(100%) invert(38%) sepia(94%) saturate(2178%) hue-rotate(90deg) brightness(100%) contrast(101%);
+    }
     //  border-radius: 15px;
 }
 
@@ -464,6 +467,9 @@ tbody {
     -o-transition: all 0.4s;
     -moz-transition: all 0.4s;
     transition: all 0.4s;
+    img{
+        filter: brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(70%) contrast(95%);
+    }
 }
 
 textarea {
@@ -1822,4 +1828,18 @@ input {
     cursor: cell;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green{
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
+}
+.icon-red{
+    filter: brightness(0) saturate(100%) invert(27%) sepia(90%) saturate(7483%) hue-rotate(2deg) brightness(94%) contrast(108%);
+}
+.icon-navy{
+    filter: brightness(0) saturate(100%) invert(11%) sepia(30%) saturate(5000%) hue-rotate(210deg) brightness(75%) contrast(100%);
 }

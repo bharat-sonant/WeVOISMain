@@ -42,8 +42,10 @@
                                                     {{data.type}}
                                                 </td>
                                                 <td class="text-center br-1">
-                                                    <i class="fas fa-user-edit" style="cursor: pointer; font-size: 15px;" (click)="openModel(contentUser,data.id,'update');"></i> &nbsp;&nbsp;
-                                                    <i class="fa-solid fa-trash" style="cursor: pointer; font-size: 15px; color: red;" (click)="openModel(contentComfirmDelete,data.id,'delete');"></i>
+                                                    <!-- <i class="fas fa-user-edit" style="cursor: pointer; font-size: 15px;" (click)="openModel(contentUser,data.id,'update');"></i> &nbsp;&nbsp;
+                                                    <i class="fa-solid fa-trash" style="cursor: pointer; font-size: 15px; color: red;" (click)="openModel(contentComfirmDelete,data.id,'delete');"></i> -->
+                                                    <img src="../../../assets/icons/user-pen-solid.svg" height="17" width="17" alt="edit" (click)="openModel(contentUser,data.id,'update');" class="cursor-pointer"> &nbsp;&nbsp;
+                                                    <img src="../../../assets/icons/trash-solid.svg" height="15" width="15" alt="delete" (click)="openModel(contentComfirmDelete,data.id,'delete');" class="cursor-pointer icon-red">
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -127,21 +129,25 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/user-solid.svg" alt="user" aria-hidden="true"/>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
                     <input type="text" id="txtUserName" class="input-green" placeholder="Name" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/user-solid.svg" alt="user" aria-hidden="true"/>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
                     <input type="text" id="txtPassword" class="input-green" placeholder="Password" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-key" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-key" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/key-solid.svg" alt="key" aria-hidden="true"/>
+
                     </span>
                 </div>
                 <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT" (click)="saveUsers();" style="height: 45px;" />

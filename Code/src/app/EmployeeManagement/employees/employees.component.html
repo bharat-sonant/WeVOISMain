@@ -58,7 +58,9 @@
                             {{employeeCountSummary.active}}<br/><span id="spStatus" class="text-input-iner-span">Active</span>
                         </div>
                         <div class="col-md-1 text-center" style="font-size: 12px;padding-top:14px;">
-                            <i class="fa-solid fa-file-export" style="font-size: 25px; color:green; cursor: pointer;" (click)="exportEmployee()" title="export excel"></i><br/> Export
+                            <!-- <i class="fa-solid fa-file-export" style="font-size: 25px; color:green; cursor: pointer;" (click)="exportEmployee()" title="export excel"></i> -->
+                            <img src="../../../assets/icons/file-export-solid.svg" alt="export" class="cursor-pointer icon-green" (click)="exportEmployee();" title="export excel">
+                            <br/> Export
                         </div>
 
                     </div>
@@ -99,7 +101,8 @@
                                                     <span [hidden]="data.status==1" class="red-span" (click)="openModel(contentConfirmation,data.empId,'in-active')">In-active</span>
                                                 </td>
                                                 <td class="text-center br-1">
-                                                    <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId,'designation');" title="Edit Entry"></i>
+                                                    <!-- <i class="far fa-edit edit-icon" (click)="openModel(contentDesignation,data.empId,'designation');" title="Edit Entry"></i> -->
+                                                    <img src="../../../assets/icons/pen-to-square-regular.svg" class="edit-icon cursor-pointer" alt="edit" (click)="openModel(contentDesignation,data.empId,'designation');" title="Edit Entry">
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -157,7 +160,8 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/map-location-dot-solid.svg" alt="marker" aria-hidden="true"/>
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
@@ -168,7 +172,9 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/map-location-dot-solid.svg" alt="marker" aria-hidden="true"/>
+
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
@@ -182,7 +188,9 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/map-location-dot-solid.svg" alt="marker" aria-hidden="true"/>
+
                     </span>
                 </div>
                 <input type="button" class="btn btn-success submit-btn" value="SUBMIT" (click)="updateDesignation();" />
