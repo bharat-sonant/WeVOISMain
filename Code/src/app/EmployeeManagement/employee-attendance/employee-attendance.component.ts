@@ -289,6 +289,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               let inImageUrl = '';
               let outImageUrl = '';
               let approveAt = ''; //to show approve at time in new line
+              let reason = '';
 
               let cssClass = "text-left br-1";
               let cssWorkingClass = "text-left br-1";
@@ -319,6 +320,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                   if (attendanceData["inDetails"]["status"] != null) {
                     status = attendanceData["inDetails"]["status"];
                     approverStatus = status;
+                    reason = attendanceData["inDetails"]["reason"]
                     if (status == "0") {
                       status = "Not Approved";
                     } if (status == "1") {
@@ -334,7 +336,6 @@ export class EmployeeAttendanceComponent implements OnInit {
 
                     } if (status == "default") {
                       status = "Leave";
-
                     }
                   }
                   if (attendanceData["inDetails"]["approveBy"] != null) {
@@ -388,7 +389,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               this.employeeList.push({
                 empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
                 inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, inLocation: inLocation,
-                outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl,approveAt , displayName:detail.name
+                outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl,approveAt , displayName:detail.name,reason:reason
               });
             }
 
@@ -464,6 +465,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               let inImageUrl = '';
               let outImageUrl = '';
               let approveAt = '';//to show approve at time in new line
+              let reason = '';
 
               if (attendanceData["inDetails"] != null) {
                 inImageUrl = attendanceData["inDetails"]['imageURL'] || '';
@@ -471,6 +473,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 if (attendanceData["inDetails"]["status"] != null) {
                   status = attendanceData["inDetails"]["status"];
                   approverStatus = status;
+                  reason = attendanceData["inDetails"]["reason"]
                   if (status == "0") {
                     status = "Not Approved";
                   } if (status == "1") {
@@ -566,7 +569,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl,approveAt,displayName: this.commonService.convertDateWithMonthName(date) });
+              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager,inImageUrl,outImageUrl,approveAt,displayName: this.commonService.convertDateWithMonthName(date),reason:reason});
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -711,7 +714,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   openApprovePopup(content: any, index: any, approverStatus: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 250;
+    let height = 300;
     let width = 300;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -719,6 +722,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", "26px");
     let empId = this.attendanceList[index]["empId"];
     let date = $(this.txtDate).val().toString();
+    let reason = this.attendanceList[index]["reason"];
     if (this.filterType != "byDate") {
       date = this.attendanceList[index]["name"];
     }
@@ -726,19 +730,28 @@ export class EmployeeAttendanceComponent implements OnInit {
     $(this.hddEmpId).val(empId);
     $(this.hddDate).val(date);
     $(this.hddIndex).val(index);
+    setTimeout(() => {
+      $('#inputReason').val(reason)
+    }, 200);
   }
 
   approveAttendance() {
     let date = $(this.hddDate).val().toString();
     let index = $(this.hddIndex).val().toString();
     let approveStatus = $(this.ddlStatus).val();
+    let reason = $('#inputReason').val() ? $('#inputReason').val().toString():'';
+    if((approveStatus == "2" || approveStatus == "3" ||approveStatus == "4") && reason.trim()===''){
+      this.commonService.setAlertMessage("error", "Please enter the reason!");
+      return;
+    }
     let empId = $(this.hddEmpId).val();
     let year = date.split('-')[0];
     let approveDate = this.commonService.getTodayDateTime();
     let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
     let dbPath = "Attendance/" + empId + "/" + year + "/" + monthName + "/" + date + "/inDetails";
-    this.db.object(dbPath).update({ status: approveStatus, approveBy: localStorage.getItem("userID"), approveAt: approveDate });
+    this.db.object(dbPath).update({ status: approveStatus, approveBy: localStorage.getItem("userID"), approveAt: approveDate ,reason:reason});
     this.attendanceList[index]["approverStatus"] = approveStatus;
+    this.attendanceList[index]["reason"] = reason;
     if (approveStatus == "0") {
       this.attendanceList[index]["status"] = "Not Approved";
     } else if (approveStatus == "1") {

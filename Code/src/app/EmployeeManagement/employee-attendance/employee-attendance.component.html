@@ -217,7 +217,7 @@
                                                    {{data.attendanceManager}}
                                                 </td>
                                                 <td class="text-left br-1" style=" width:15%!important;">
-                                                    <div [ngClass]="data.approveBy && 'mb-4'">
+                                                    <div >
                                                         <span [ngClass]="data.status!=='Not Approved' && 'fw-bold'" [ngStyle]="{'color': data.status === 'Absent'? 'red' : ''}"> {{data.status}}</span>
                                                         <!-- <i class="fa-solid fa-person-circle-check"
                                                         style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
@@ -226,7 +226,10 @@
                                                         <img src="../../../assets/icons/person-circle-check-solid.svg" class="me-2 float-right cursor-pointer" alt="person" [hidden]="data.isAttendanceApprover=='0'" (click)="openApprovePopup(contentApprove,i,data.approverStatus);">
                                                         
                                                     </div>
-                                                    <div [hidden]="isAttendanceApprover=='0'" >
+                                                    <div *ngIf="data.status!=='Not Approved' && data.status!=='Full Day'" [hidden]="isAttendanceApprover=='0' || !data.reason" style="font-size: 11px;">
+                                                        <b>Reason</b> : {{data.reason}}
+                                                    </div>
+                                                    <div [hidden]="isAttendanceApprover=='0'" [ngClass]="data.approveBy && 'mt-4'">
                                                         {{data.approveBy}}
                                                     </div>
                                                     <div [hidden]="isAttendanceApprover=='0' || !data.approveAt" style="font-size: 11px;">
@@ -260,16 +263,18 @@
                 <h5 class="modal-title" id="exampleModalLongTitle">Approve Attendance</h5>
                 <img src="../../../assets/img/close-grey.png" class="img-close" (click)="cancelApprove();">
             </div>
-            <div class="modal-body">
+            <div class="modal-body d-flex flex-column justify-content-center">
                 <div class="row">
-                    <select id="ddlStatus" class="filter-select filter-input">
+                    <select #ddlStatus id="ddlStatus" class="filter-select filter-input">
                         <option value="0">Not Approved</option>
                         <option value="1">Full Day</option>
                         <option value="2">Pre Lunch</option>
                         <option value="3">Post Lunch</option>
                         <option value="4">Absent</option>
                     </select>
-
+                </div>
+                <div class="row mt-2" *ngIf="ddlStatus.value=='2' || ddlStatus.value=='3' || ddlStatus.value=='4'">
+                    <textarea id="inputReason" placeholder="enter reason here" style="height: 100px;" required></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6" style="text-align: center;margin-top: 15px;">
