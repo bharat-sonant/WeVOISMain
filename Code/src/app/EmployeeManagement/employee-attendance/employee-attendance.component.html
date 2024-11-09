@@ -263,7 +263,7 @@
                 <h5 class="modal-title" id="exampleModalLongTitle">Approve Attendance</h5>
                 <img src="../../../assets/img/close-grey.png" class="img-close" (click)="cancelApprove();">
             </div>
-            <div class="modal-body d-flex flex-column justify-content-center">
+            <div class="modal-body ">
                 <div class="row">
                     <select #ddlStatus id="ddlStatus" class="filter-select filter-input">
                         <option value="0">Not Approved</option>
@@ -273,8 +273,8 @@
                         <option value="4">Absent</option>
                     </select>
                 </div>
-                <div class="row mt-2" *ngIf="ddlStatus.value=='2' || ddlStatus.value=='3' || ddlStatus.value=='4'">
-                    <textarea id="inputReason" placeholder="enter reason here" style="height: 100px;" required></textarea>
+                <div class="row mt-2" style="height: 80px;">
+                    <textarea id="inputReason" placeholder="Please enter reason"  required *ngIf="ddlStatus.value=='2' || ddlStatus.value=='3' || ddlStatus.value=='4'"></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6" style="text-align: center;margin-top: 15px;">
