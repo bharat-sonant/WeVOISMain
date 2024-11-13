@@ -1004,3 +1004,139 @@ label{
 }
 
 }
+
+//*********************************** new css*********************************************
+
+.modal-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+.wrap-input-effects {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.input-green {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #666666;
+  display: block;
+  width: 100%;
+  background: #fff;
+  height: 40px;
+  border-radius: 2px;
+  padding: 0 12px 0 45px;
+  border: 1px solid lightgray;
+}
+
+.input-green::before {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #666666;
+  display: block;
+  width: 100%;
+  background: #fff;
+  height: 40px;
+  border-radius: 2px;
+  padding: 0 25px 0 25px;
+  border: 1px solid lightgray;
+}
+
+.input-green:focus {
+  outline: none;
+}
+
+.input-green:focus+.focus-input+.symbol-input {
+  color: #0ba118;
+  padding-left: 12px;
+  border: 1px solid #0ba118;
+  img{
+      filter: brightness(0) saturate(100%) invert(38%) sepia(94%) saturate(2178%) hue-rotate(90deg) brightness(100%) contrast(101%);
+  }
+  //  border-radius: 15px;
+}
+.focus-input {
+  display: block;
+  position: absolute;
+  //  border-radius: 25px; 
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  outline: none !important;
+  border: none;
+  box-shadow: 0px 0px 0px 0px;
+}
+
+.focus-input-time {
+  display: block;
+  position: absolute;
+  //  border-radius: 25px; 
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  width: 200px;
+  height: 100%;
+  outline: none !important;
+  border: none;
+  box-shadow: 0px 0px 0px 0px;
+}
+.symbol-input {
+  font-size: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  //border-radius: 25px;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding-left: 18px;
+  pointer-events: none;
+  color: #666666;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+  img{
+      filter: brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(70%) contrast(95%);
+  }
+}
+.symbol-input-time {
+  font-size: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  //border-radius: 25px;
+  top: 8px;
+  left: 210px;
+  width: 100%;
+  height: 100%;
+  padding-left: 18px;
+  pointer-events: none;
+  color: #666666;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+}
+.active-input {
+  vertical-align: middle;
+}
+
+.submit-btn {
+  background: #0ba118!important;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+

@@ -1,8 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
-import { NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { AngularFireStorage } from "angularfire2/storage";
+import { promise } from "protractor";
+
 
 @Component({
   selector: "app-dustbin-analysis",
@@ -10,7 +13,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
   styleUrls: ["./dustbin-analysis.component.scss"],
 })
 export class DustbinAnalysisComponent implements OnInit {
-  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService,private modalService: NgbModal,private storage: AngularFireStorage) { }
 
   planList: any[];
   dustbinList: any[];
@@ -53,7 +56,8 @@ export class DustbinAnalysisComponent implements OnInit {
     analysisDetail: "",
     manualRemarks: "",
     imageCaptureAddress: "",
-    latLng: ""
+    latLng: "",
+    isAutoPicked:'0'
   };
 
   planDetail: planDetails = {
@@ -73,6 +77,7 @@ export class DustbinAnalysisComponent implements OnInit {
     pendingAnalysis: "0",
     refreshTime: "00:00",
   };
+  showUpdateDetailButton = 0;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -348,6 +353,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.canDoAnalysis = "no";
     this.binDetail.latLng = "";
     this.binDetail.imageCaptureAddress = "";
+    this.binDetail.isAutoPicked = '0'
 
     // now reset plan data
     this.planDetail.driverName = "--";
@@ -1004,6 +1010,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
     this.binDetail.manualRemarks = this.dustbinList[index]["manualRemarks"];
+    this.binDetail.isAutoPicked = this.dustbinList[index]['isNotPickedIcon'];
 
     setTimeout(function () {
       $("#ImageLoader").hide();
@@ -1256,6 +1263,103 @@ export class DustbinAnalysisComponent implements OnInit {
     $("#slide" + index).removeClass(slideClass);
     $("#box" + index).removeClass(classname);
   }
+  openModel(content: any, id: any, type: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 480;
+    let width = 500;
+  
+    if(type==='UpdateDustbinPickedDetail'){
+      $('#txtStartTime').val(this.binDetail.startTime || '');
+      $('#txtEndTime').val(this.binDetail.endTime || '');
+      
+    }
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+     
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+  updateDustbinPickupDetail=()=>{
+
+    let startTime = $('#txtStartTime').val();
+    let endTime = $('#txtEndTime').val();
+    const imageElements = {
+        filledTopView: $('#imgFilledTopView')[0] as HTMLInputElement,
+        filledFarFrom: $('#imgFilledFarFrom')[0] as HTMLInputElement,
+        emptyTopView: $('#imgEmptyTopView')[0] as HTMLInputElement,
+        emptyFarFrom: $('#imgEmptyFarFrom')[0] as HTMLInputElement
+    };
+
+    // Check if end time is after start time
+    if (new Date(`${this.selectedDate} ${endTime}`) < new Date(`${this.selectedDate} ${startTime}`)) {
+        this.commonService.setAlertMessage("error", "End time must be greater than start time.");
+        return;
+    }
+
+    $("#divLoader").show();
+    const storageCityName = this.commonService.getFireStoreCity();
+    const token = new Date().getTime();
+    const urlObj = {};
+    const uploadPromises = [];
+
+    const imageDetails = [
+        { key: "filledTopView", name: "filledTopViewImage.jpg" },
+        { key: "filledFarFrom", name: "filledFarFromImage.jpg" },
+        { key: "emptyTopView", name: "emptyTopViewImage.jpg" },
+        { key: "emptyFarFrom", name: "emptyFarFromImage.jpg" }
+    ];
+
+    imageDetails.forEach(({ key, name }) => {
+        const fileInput = imageElements[key];
+        const file = fileInput.files ? fileInput.files[0] : null;
+        if (file) {
+            const url = `https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/${storageCityName}%2FDustbinImages%2FDustbinPickHistory%2F${this.currentYear}%2F${this.currentMonthName}%2F${this.selectedDate}%2F${this.binDetail.binId}%2F${this.planDetail.planId}%2F${name}?alt=media&token=${token}`;
+            const filePath = `/${storageCityName}/DustbinImages/DustbinPickHistory/${this.currentYear}/${this.currentMonthName}/${this.selectedDate}/${this.binDetail.binId}/${this.planDetail.planId}/${name}`;
+
+            urlObj[`${key}ImageUrl`] = url;
+            uploadPromises.push(this.storage.upload(filePath, file));
+        }
+    });
+
+    Promise.all(uploadPromises).then((responses) => {
+      let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId +"/";
+      let timeData = {
+        endTime: this.selectedDate + " " + endTime,
+        startTime: this.selectedDate + " " + startTime,
+        pickDateTime: this.selectedDate + " " + endTime,
+        }
+
+      this.db.object(dbPath).update(timeData);
+      this.db.object(dbPath+'Image/Urls').update(urlObj);
+      
+      let data = this.dustbinList.find((item) => item.dustbinId == this.binDetail.binId);
+      data.startTime = this.selectedDate + " " + startTime;
+      data.endTime = this.selectedDate + " " + endTime;
+      this.binDetail.startTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + startTime);
+      this.binDetail.endTime = this.commonService.gteHrsAndMinutesOnly(this.selectedDate + " " + endTime);
+      Object.keys(urlObj).map(key=>{
+        this.binDetail[key] = urlObj[key];
+        data[key.replace("Url", "")] = urlObj[key];
+      });
+      
+      // To reset model fields
+      $("#txtStartTime").val("");
+      $("#txtEndTime").val("");
+      $("#imgFilledTopView").val("");
+      $("#imgFilledFarFrom").val("");
+      $("#imgEmptyTopView").val("");
+      $("#imgEmptyFarFrom").val("");
+      this.commonService.setAlertMessage("success", "Dustbin picked detail updated successfully.");
+      this.closeModel()
+      $("#divLoader").hide();
+
+    });
+  }
 }
 
 export class dustbinDetail {
@@ -1285,6 +1389,8 @@ export class dustbinDetails {
   manualRemarks: string;
   imageCaptureAddress: string;
   latLng: string;
+  isAutoPicked:any;
+
 }
 
 export class planDetails {
