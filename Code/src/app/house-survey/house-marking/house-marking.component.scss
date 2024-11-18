@@ -6,20 +6,20 @@
 }
 
 .caret-select {
-    margin-top: 10px!important;
-    margin-left: 20px!important;
+    margin-top: 10px !important;
+    margin-left: 20px !important;
     border-radius: 5px;
     padding: 10px;
     width: 170px;
 }
 
 .caret-select-vehicle {
-    margin-top: 0px!important;
-    margin-left: 0px!important;
+    margin-top: 0px !important;
+    margin-left: 0px !important;
     border-radius: 5px;
     padding: 10px;
     width: 97%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
 }
 
@@ -27,10 +27,10 @@ button {
     width: 140px;
     border-radius: 5px;
     padding: 10px;
-    margin-top: 10px!important;
-    border: none!important;
+    margin-top: 10px !important;
+    border: none !important;
     margin-left: -30px;
-    margin-left: 20px!important;
+    margin-left: 20px !important;
 }
 
 .box {
@@ -86,7 +86,7 @@ button {
 
 .total-house h6 {
     font-size: 8px;
-    font-weight: normal!important;
+    font-weight: normal !important;
     letter-spacing: 0.5px;
 }
 
@@ -184,7 +184,7 @@ display:block;}
 
 .sticky li:hover {
     margin-left: -405px;
-    background-color: none!important;
+    background-color: none !important;
 }
 
 .sticky li p {
@@ -207,7 +207,7 @@ display:block;}
 /* Sticky Social Icon End*/
 
 .sticky a {
-    text-decoration: none!important;
+    text-decoration: none !important;
 }
 
 .sticky .driver {
@@ -220,7 +220,7 @@ display:block;}
 .sticky .texts {
     text-decoration: none;
     font-size: 12px;
-    color: #fff!important;
+    color: #fff !important;
 }
 
 .sticky .helper {
@@ -241,9 +241,9 @@ display:block;}
     padding-top: 80px;
     padding-left: 85px;
     font-size: 18px;
-    color: #000!important;
+    color: #000 !important;
     font-weight: 600;
-    text-decoration: none!important;
+    text-decoration: none !important;
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -o-transform: rotate(90deg);
@@ -263,21 +263,23 @@ display:block;}
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         color: #fff;
     }
+
     .caret-select {
-        margin-top: 11px!important;
+        margin-top: 11px !important;
         border-radius: 5px;
         padding: 10px;
-        border: none!important;
+        border: none !important;
         width: 80%;
-        margin-left: 45px!important;
+        margin-left: 45px !important;
     }
+
     button {
         width: 80%;
         border-radius: 5px;
         padding: 9px;
-        margin-top: 7px!important;
-        border: none!important;
-        margin-left: 45px!important;
+        margin-top: 7px !important;
+        border: none !important;
+        margin-left: 45px !important;
     }
 }
 
@@ -291,21 +293,23 @@ display:block;}
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         color: #fff;
     }
+
     .caret-select {
-        margin-top: 11px!important;
+        margin-top: 11px !important;
         border-radius: 5px;
         padding: 10px;
-        border: none!important;
+        border: none !important;
         width: 80%;
-        margin-left: 45px!important;
+        margin-left: 45px !important;
     }
+
     button {
         width: 80%;
         border-radius: 5px;
         padding: 9px;
-        margin-top: 7px!important;
-        border: none!important;
-        margin-left: 45px!important;
+        margin-top: 7px !important;
+        border: none !important;
+        margin-left: 45px !important;
     }
 }
 
@@ -319,21 +323,23 @@ display:block;}
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         color: #fff;
     }
+
     .caret-select {
-        margin-top: 10px!important;
+        margin-top: 10px !important;
         border-radius: 5px;
         padding: 10px;
-        border: none!important;
+        border: none !important;
         width: 90%;
-        margin-left: 45px!important;
+        margin-left: 45px !important;
     }
+
     button {
         width: 50%;
         border-radius: 5px;
         padding: 10px;
-        margin-top: 10px!important;
-        border: none!important;
-        margin-left: -30!important;
+        margin-top: 10px !important;
+        border: none !important;
+        margin-left: -30 !important;
     }
 }
 
@@ -415,13 +421,13 @@ display:block;}
     font-size: 16px;
     line-height: 18px;
     font-weight: 500;
-    margin: 0px!important;
+    margin: 0px !important;
 }
 
 .tracking-bg .main-info p {
     font-size: 11px;
     color: #fff;
-    margin: 0px!important;
+    margin: 0px !important;
 }
 
 
@@ -449,7 +455,7 @@ display:block;}
 }
 
 .btn-hvr:hover {
-    background: #726f6f!important;
+    background: #726f6f !important;
 }
 
 .driver h5 {
@@ -498,7 +504,7 @@ display:block;}
 }
 
 .all-details {
-    width: 0!important;
+    width: 0 !important;
     -webkit-transition: max-width 0.5s;
     transition: max-width 0.3s;
     display: inline-block;
@@ -510,11 +516,11 @@ display:block;}
 }
 
 button:focus-visible {
-    outline: none!important;
+    outline: none !important;
 }
 
 .main-box:hover .all-details {
-    width: 13rem!important;
+    width: 13rem !important;
     transform: translate(-15em, 0);
     -webkit-transform: translate(-15em, 0);
     -moz-transform: translate(-15em, 0);
@@ -531,7 +537,7 @@ button:focus-visible {
 }
 
 .show-btn:hover {
-    background: #0ba118!important;
+    background: #0ba118 !important;
 }
 
 .img-circle {
@@ -591,7 +597,7 @@ button:focus-visible {
     float: left;
     text-align: center;
     border-right: 1px dotted lightgray;
-    background: linear-gradient( 135deg, white 92%, #82d387 96%, #5ec765 91%, #5b9922 100%);
+    background: linear-gradient(135deg, white 92%, #82d387 96%, #5ec765 91%, #5b9922 100%);
     transition: 0.3s ease-in-out;
 }
 
@@ -725,7 +731,7 @@ button:focus-visible {
 }
 
 .house-type h3 {
-    margin: 0px!important;
+    margin: 0px !important;
     font-size: 12px;
     color: #333;
     border-bottom: 1px dashed lightgray;
@@ -765,7 +771,7 @@ button:focus-visible {
     color: #fff;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    padding: 2px!important;
+    padding: 2px !important;
     border-bottom: none;
     // box-shadow: 0px 4px 7px 0px lightgrey;
     font-size: 12px;
@@ -807,7 +813,7 @@ button:focus-visible {
 }
 
 .pl-0 {
-    padding-left: 0px!important
+    padding-left: 0px !important
 }
 
 .ml-21 {
@@ -815,7 +821,7 @@ button:focus-visible {
 }
 
 .mt-12 {
-    margin-top: 12px!important;
+    margin-top: 12px !important;
 }
 
 #btnAssign {
@@ -920,7 +926,7 @@ table {
 }
 
 .table-btn:hover {
-    background-color: #12be21!important;
+    background-color: #12be21 !important;
 }
 
 thead th {
@@ -974,23 +980,23 @@ table td {
 /**************************Table End***************************/
 
 .pl-10 {
-    padding-left: 10px!important;
+    padding-left: 10px !important;
 }
 
 .pr-10 {
-    padding-right: 10px!important;
+    padding-right: 10px !important;
 }
 
 .ml-10 {
-    margin-left: 10px!important;
+    margin-left: 10px !important;
 }
 
 .pr-46 {
-    padding-right: 46px!important;
+    padding-right: 46px !important;
 }
 
 .pl-5 {
-    padding-left: 5px!important;
+    padding-left: 5px !important;
 }
 
 .modal-body {
@@ -1021,7 +1027,7 @@ table td {
 
 .f-left p {
     font-size: 12px;
-    margin: 0px!important;
+    margin: 0px !important;
     float: left;
     width: 87px;
     font-weight: normal;
@@ -1035,13 +1041,13 @@ table td {
 
 .f-left h3 {
     font-size: 12px;
-    margin: 0px!important;
+    margin: 0px !important;
     float: left;
     width: 100%;
     font-weight: normal;
     color: #333;
     text-transform: capitalize;
-    margin-top: 1px!important;
+    margin-top: 1px !important;
 }
 
 
@@ -1054,7 +1060,7 @@ table td {
 
 /* Track */
 
- ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     -webkit-box-shadow: transparent;
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -1063,21 +1069,21 @@ table td {
 
 /* Handle */
 
- ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: transparent;
     -webkit-box-shadow: transparent;
 }
 
- :hover::-webkit-scrollbar {
+:hover::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- :hover::-webkit-scrollbar-track {
+:hover::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -1086,7 +1092,7 @@ table td {
 
 /* Handle */
 
- :hover::-webkit-scrollbar-thumb {
+:hover::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: #20a120;
@@ -1097,7 +1103,7 @@ table td {
 /******************************Custom Scrollbar End*********************************/
 
 .markers h5 {
-    margin: 0px!important;
+    margin: 0px !important;
     font-weight: bold;
     color: #0ba118;
 }
@@ -1173,7 +1179,7 @@ table td {
     color: #fff;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 9px!important;
+    margin-left: 9px !important;
 }
 
 .off-input {
@@ -1191,8 +1197,8 @@ table td {
     padding: 10px 8px;
     color: #fff;
     width: 40px;
-    margin-left: 8px!important;
-    margin-right: 10px!important;
+    margin-left: 8px !important;
+    margin-right: 10px !important;
     border-radius: 5px;
     cursor: pointer;
 }
@@ -1248,7 +1254,7 @@ table td {
 
 .approve-btn {
     width: 100px;
-    background: #0ba118!important;
+    background: #0ba118 !important;
 }
 
 .markerdata-img {
@@ -1288,7 +1294,7 @@ table td {
 }
 
 .Assign-btn {
-    background: #0ba118!important;
+    background: #0ba118 !important;
 }
 
 .grey-img-div {
@@ -1316,23 +1322,23 @@ table td {
 
 .Reject-btn {
     width: 45%;
-    background: #0ba118!important;
-    margin-left: 0px!important;
-    margin-bottom: 10px!important;
+    background: #0ba118 !important;
+    margin-left: 0px !important;
+    margin-bottom: 10px !important;
 }
 
 .Delete-btn {
     width: 45%;
-    background: red!important;
-    margin-left: 0px!important;
-    margin-bottom: 10px!important;
+    background: red !important;
+    margin-left: 0px !important;
+    margin-bottom: 10px !important;
 }
 
 .Delete-btn-2 {
     width: 45%;
-    background: red!important;
-    margin-left: 0px!important;
-    margin-bottom: 10px!important;
+    background: red !important;
+    margin-left: 0px !important;
+    margin-bottom: 10px !important;
 }
 
 .arrow {
@@ -1343,55 +1349,70 @@ table td {
     .ward-header-outer {
         display: none;
     }
+
     .house-card-box {
         top: 135px !important;
         right: 0px !important;
     }
+
     .assign-button {
         top: 560px !important;
         position: fixed;
     }
+
     .image-box {
         top: 365px !important;
         position: fixed;
         right: 0px !important;
     }
+
     .markers-heading-main {
         padding-left: 15px !important;
     }
+
     .approve-btn {
         margin-left: 20px !important;
     }
+
     .driver-helper-box {
         display: none !important;
     }
+
     .Already-heading-main {
         padding-right: 15px;
     }
+
     .markera-allspan {
         margin: 10px;
     }
+
     .header {
         height: 130px;
         ;
     }
+
     .circle-icon-main {
         margin-left: unset;
         margin-top: 12px;
     }
+
     .cardboard-icon-main {
         margin-left: unset;
         margin-top: 12px;
     }
+
     .arrow {
         display: block !important;
     }
+
     .display {
         display: none;
     }
+
     .addclass {
         display: block;
     }
+
     .caret-select {
         width: 83% !important;
     }
@@ -1401,16 +1422,20 @@ table td {
     .header {
         height: 160px;
     }
+
     .house-card-box {
         top: 160px !important;
     }
+
     .image-box {
         top: 390px !important;
         position: fixed;
     }
+
     .assign-button {
         top: 590px !important;
     }
+
     .arrow {
         margin-top: 90px
     }
@@ -1420,19 +1445,24 @@ table td {
     .assign-button {
         top: 195px;
     }
+
     .image-box {
         top: 270px !important;
         position: fixed !important;
     }
+
     .ward-header-outer {
         display: none !important;
     }
+
     .extra-class {
         min-width: 50% !important;
     }
+
     .no-gutters {
         justify-content: space-between;
     }
+
     .driver-helper-box {
         top: 72px !important;
         z-index: unset !important;
@@ -1525,7 +1555,7 @@ table tr:hover {
 .table-one-iner {
     border-bottom: 1px solid #dee2e6;
     border-left: 1px solid #dee2e6;
-    margin-bottom: 0px!important
+    margin-bottom: 0px !important
 }
 
 .table-heading1 {
@@ -1574,12 +1604,12 @@ table tr:hover {
 }
 
 .caret-select-reason {
-    margin-top: 0px!important;
-    margin-left: 0px!important;
+    margin-top: 0px !important;
+    margin-left: 0px !important;
     border-radius: 5px;
     padding: 10px;
     width: 100%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
 }
 
@@ -1604,3 +1634,28 @@ table tr:hover {
 //         max-height:20%;
 //     }
 // }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green {
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
+}
+
+.green-filter {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(92%) saturate(420%) hue-rotate(65deg) brightness(103%) contrast(98%);
+}
+
+.icon-red {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(90%) saturate(7483%) hue-rotate(2deg) brightness(94%) contrast(108%);
+}
+
+.icon-blue {
+    filter: invert(43%) sepia(83%) saturate(453%) hue-rotate(178deg) brightness(96%) contrast(92%);
+}
+
+.icon-white {
+    filter: invert(100%) brightness(100%);
+}

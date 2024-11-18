@@ -1,7 +1,8 @@
 <div id="divLoaderCounts" class="loaderClassMain">
     <span class="spanLoader" id="spLoader">
         <img src="../../../assets/img/loading.gif" width="50"><br /><span
-            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting data<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
+            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting data<br /></span><span
+            style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
 </div>
 <div id="divLoaderMain" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
@@ -14,28 +15,46 @@
         <div class="col-md-9 text-right total-house fix-home-outer">
             <div class="fix-home">
                 <div class="float-first">
-                    <i class="fas fa-home home-icon"></i> <span class="house">
-                        {{markerData.totalMarkers}}</span><br>
+                    <!-- <i class="fas fa-home home-icon"></i>  -->
+                    <img src="../../../assets/icons/house-solid.svg" alt="House" class="icon-blue" width="16"
+                        style="margin-bottom: 6px;" />
+                    <span class="house" style="margin-left: 4px;">{{markerData.totalMarkers}}</span>
+                    <br>
                     <h6>Total Marker</h6>
                 </div>
                 <div class="float-fourth float-second2">
-                    <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
+                    <!-- <i class="fas fa-house-damage icon-damage2"></i>  -->
+                    <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="House Crack" class="icon-green"
+                        width="17" style="margin-bottom: 6px;" />
+                    <span class="house">
                         {{markerData.totalHouses}}</span><br>
                     <h6>Houses</h6>
                 </div>
 
                 <div class="float-first fix-home-iner" style="padding-top: 5px;" [hidden]="isShowEntityExport==false">
-                    <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i><br>
+                    <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
+                        (click)="getAllZoneHouseTypeList();"></i> -->
+                    <img src="../../../assets/icons/file-export-solid.svg" alt="File"
+                        (click)="getAllZoneHouseTypeList();" class="cursor-pointer" width="22px" />
+                    <br>
                     <h6>Export Entity Types</h6>
                 </div>
 
                 <div class="float-first fix-home-iner" style="padding-top: 5px;" [hidden]="isShowEntityExport==false">
-                    <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="openExportMarkerData(contentExportMarkers);"></i><br>
+                    <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
+                        (click)="openExportMarkerData(contentExportMarkers);"></i> -->
+                    <img src="../../../assets/icons/file-export-solid.svg" alt="File" class="cursor-pointer"
+                        (click)="openExportMarkerData(contentExportMarkers);" width="22px" />
+                    <br>
                     <h6>Export Markers</h6>
                 </div>
 
                 <div class="float-first fix-home-iner" style="padding-top: 0px;" [hidden]="isActionShow==false">
-                    <button class="refresh" (click)="updateMarkerCounts();"><i class="fas fa-redo-alt"></i></button><br>
+                    <button class="refresh" (click)="updateMarkerCounts();">
+                        <!-- <i class="fas fa-redo-alt"></i> -->
+                        <img src="../../../assets/icons/rotate-right-solid.svg" alt="Rotate" class="cursor-pointer"
+                            width="14" />
+                    </button><br>
                     <h6>{{markerData.lastUpdate}}</h6>
                 </div>
             </div>
@@ -58,7 +77,8 @@
                                                 Markers</th>
                                             <th class="text-right Markers-table-heading">
                                                 Houses</th>
-                                            <th class="text-right Already-table-heading" [hidden]="isAlreadyShow==false">
+                                            <th class="text-right Already-table-heading"
+                                                [hidden]="isAlreadyShow==false">
                                                 Already Installed</th>
                                             <th class="text-right Markers-table-heading">
                                                 Complex(s)</th>
@@ -68,7 +88,10 @@
                                                 Status</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row {{data.preCssClass}}" id="tr{{i}}" *ngFor="let data of wardProgressList; let i=index" (click)="getMarkingDetail(data.wardNo,i);" [hidden]="data.wardNo==0" style="cursor:pointer ;">
+                                            <tr class="table-row {{data.preCssClass}}" id="tr{{i}}"
+                                                *ngFor="let data of wardProgressList; let i=index"
+                                                (click)="getMarkingDetail(data.wardNo,i);" [hidden]="data.wardNo==0"
+                                                style="cursor:pointer ;">
                                                 <td class="table-data">
                                                     {{data.wardNo}}</td>
                                                 <td class="text-right table-data">
@@ -113,7 +136,8 @@
                         </div>
                         <div class="col-md-6 text-center">
 
-                            <h5 style="text-align: end;font-size:11px;padding: 0px 18px;">Last scan time.- {{this.markerData.lastScan}}
+                            <h5 style="text-align: end;font-size:11px;padding: 0px 18px;">Last scan time.-
+                                {{this.markerData.lastScan}}
 
                             </h5>
 
@@ -131,7 +155,8 @@
                         <div class="col-md-2 text-center responsive">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.wardApprovedLines}}</span> <br> Approved Lines
+                                    <span class="tbl-points"> {{markerData.wardApprovedLines}}</span> <br> Approved
+                                    Lines
                                 </h3>
                             </div>
                         </div>
@@ -157,9 +182,15 @@
                             </div>
                         </div>
                         <div class="col-md-2 text-center responsive">
-                            <div class="table-heading" style="cursor: pointer;" (click)="getZoneHouseTypeList(contentHouseType);">
+                            <div class="table-heading" style="cursor: pointer;"
+                                (click)="getZoneHouseTypeList(contentHouseType);">
                                 <h3>
-                                    <span class="tbl-points"> <i class="fa-solid fa-table-list"></i></span> <br> Entity Types
+                                    <span class="tbl-points">
+                                        <!-- <i class="fa-solid fa-table-list"></i> -->
+                                        <img src="../../../assets/icons/table-list-solid.svg" alt="table-list"
+                                            class="icon-green" width="18" />
+                                    </span> <br> Entity
+                                    Types
                                 </h3>
                             </div>
                         </div>
@@ -178,7 +209,8 @@
                                                     <th class="text-right table-data-Markers2">Markers</th>
                                                     <th class="text-right table-data-Markers2">Houses</th>
                                                     <th class="text-right table-data-Markers2">Complex(s)</th>
-                                                    <th class="text-right table-data-Already2" [hidden]="isAlreadyShow==false">Already Installed
+                                                    <th class="text-right table-data-Already2"
+                                                        [hidden]="isAlreadyShow==false">Already Installed
                                                     </th>
                                                     <th class="text-center table-data-Approved2">Approved
                                                     </th>
@@ -197,19 +229,32 @@
                                                             <span [hidden]="data.complex=='0'">{{data.complex}}
                                                                 ({{data.houseInComplex}})</span>
                                                         </td>
-                                                        <td class="text-right table-data2" [hidden]="isAlreadyShow==false">
+                                                        <td class="text-right table-data2"
+                                                            [hidden]="isAlreadyShow==false">
                                                             {{data.alreadyCard}}</td>
                                                         <td class="text-center table-data2">
                                                             <span [hidden]="data.markers==0">
-                                                                <i class="fas fa-check check-icon"
-                                                                    [hidden]="data.isApproved==false"></i>
-                                                                <i class="fas fa-times times-icon"
-                                                                    [hidden]="data.isApproved==true"></i>
+                                                                <!-- <i class="fas fa-check check-icon"
+                                                                    [hidden]="data.isApproved==false"></i> -->
+                                                                <img src="../../../assets/icons/check-solid.svg"
+                                                                    alt="Check" class="icon-green"
+                                                                    [hidden]="data.isApproved==false" width="16"
+                                                                    style="margin-right: 4px;" />
+                                                                <!-- <i class="fas fa-times times-icon"
+                                                                    [hidden]="data.isApproved==true"></i> -->
+                                                                <img src="../../../assets/icons/times-solid.svg"
+                                                                    alt="Times" class="icon-red"
+                                                                    [hidden]="data.isApproved==true" width="12" />
                                                             </span>
                                                         </td>
                                                         <td class="text-center table-data2">
+                                                            <!-- <i class="far fa-eye eye-icon" [hidden]="data.markers==0"
+                                                                (click)="showLineDetail(contentLineMarkers,data.wardNo,data.lineNo);"></i> -->
+                                                            <img src="../../../assets/icons/eye-regular.svg" alt="eye"
+                                                                [hidden]="data.markers==0"
+                                                                (click)="showLineDetail(contentLineMarkers,data.wardNo,data.lineNo);"
+                                                                class="cursor-pointer" style="max-width: 150%;" />
 
-                                                            <i class="far fa-eye eye-icon" [hidden]="data.markers==0" (click)="showLineDetail(contentLineMarkers,data.wardNo,data.lineNo);"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -260,7 +305,8 @@
                         <div class="main-tag">
                             <div class="f-left  {{dt.class}}">
                                 <div style="width:100%!important ;">
-                                    <h3 class="f-left-heading">{{dt.type}}<span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span></h3>
+                                    <h3 class="f-left-heading">{{dt.type}}<span [hidden]="dt.servingCount==0"
+                                            style="font-weight: bold;"> ({{dt.servingCount}})</span></h3>
                                 </div>
 
                             </div>
@@ -282,7 +328,11 @@
     <div class="modal-header">
         <h5 class="modal-title text-center" (click)="exportHouseTypeList('0');" style="color: green; cursor: pointer;">
             <span style="color: #000; font-size: 12px;"> Total Entity
-                Type : {{totalTypeCount}}</span>&nbsp; <i class="fa-solid fa-file-export"></i>&nbsp;<span style="color: #000; font-size: 12px;">Export </span>
+                Type : {{totalTypeCount}}</span>&nbsp;
+            <!-- <i class="fa-solid fa-file-export"></i> -->
+            <img src="../../../assets/icons/file-export-solid.svg" alt="file" width="18"
+                class="cursor-pointer icon-green" />
+            &nbsp;<span style="color: #000; font-size: 12px;">Export </span>
         </h5>
         <button type="button" class="close" (click)="closeModel();" style="border: none;">
             <span aria-hidden="true">&times;</span>

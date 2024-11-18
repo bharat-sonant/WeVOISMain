@@ -16,8 +16,11 @@
             <div class="display" id="popup2">
                 <div class="fix-home">
                     <div class="float-first">
-                        <i class="fas fa-redo-alt" style="font-size: 28px; cursor: pointer;"
-                            (click)="updateJSONData();"></i> <br>
+                        <!-- <i class="fas fa-redo-alt" style="font-size: 28px; cursor: pointer;"
+                            (click)="updateJSONData();"></i>  -->
+                        <img src="../../../assets/icons/rotate-right-solid.svg" alt="roatate-icon" width="24"
+                            class="cursor-pointer icon-white" (click)="updateJSONData();" />
+                        <br>
                         <h6>{{verifiedDetail.lastUpdate}}</h6>
                     </div>
 
@@ -151,16 +154,19 @@
                     <div class="border-bottom">
                         &nbsp;&nbsp; <input type="checkbox" id="chkVerifiedMarkers"
                             (change)="showVerifiedMarkersOnMap('marker');" /> Show New Markers
-                        <i id="exportNewMarkers" class="fa-solid fa-file-export"
+                        <!-- <i id="exportNewMarkers" class="fa-solid fa-file-export"
                             style="font-size: 20px; cursor: pointer; color: #1fda2f; float: right;margin-right: 20px;"
-                            (click)="exportVerifiedMarkers();"></i>
+                            (click)="exportVerifiedMarkers();"></i> -->
+                            <img src="../../../assets/icons/file-export-solid.svg" alt="file" class="green-filter cursor-pointer" width="20"
+                            (click)="exportVerifiedMarkers();" style="float: right;margin-left: 6px;display: none;"/>
                     </div>
                 </div>
             </div>
             <div class="row row-box">
                 <div class="col-md-12 row-box-iner" style="text-align: left!important;">
                     &nbsp;&nbsp;<span style="cursor: pointer;" (click)="showMarkerDetails(contentLineMarkers)">
-                        <i class="far fa-eye eye-icon"></i> View Markers Images
+                        <!-- <i class="far fa-eye eye-icon"></i>  -->
+                         <img src="../../../assets/icons/eye-regular.svg" alt="eye" style="max-width: 25px;" /> View Markers Images
                     </span>
                 </div>
             </div>
@@ -181,7 +187,8 @@
             <div class="row row-box">
                 <div class="col-md-12 row-box-iner" style="text-align: left!important;">
                     &nbsp;&nbsp;<span style="cursor: pointer;" (click)="showReVerifiedCardDetails(contentLineSurveyed)">
-                        <i class="far fa-eye eye-icon"></i> View Card Images
+                        <!-- <i class="far fa-eye eye-icon"></i>  -->
+                        <img src="../../../assets/icons/eye-regular.svg" alt="eye" style="max-width: 25px;" /> View Card Images
                     </span>
                 </div>
             </div>

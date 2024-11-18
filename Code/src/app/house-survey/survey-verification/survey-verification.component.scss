@@ -6,11 +6,11 @@
 }
 
 .caret-select {
-    margin-top: 10px!important;
-    margin-left: 20px!important;
+    margin-top: 10px !important;
+    margin-left: 20px !important;
     border-radius: 5px;
     padding: 10px;
-    border: none!important;
+    border: none !important;
     width: 200px;
 }
 
@@ -18,10 +18,10 @@ button {
     width: 140px;
     border-radius: 5px;
     padding: 10px;
-    margin-top: 10px!important;
-    border: none!important;
+    margin-top: 10px !important;
+    border: none !important;
     margin-left: -30px;
-    margin-left: 20px!important;
+    margin-left: 20px !important;
 }
 
 .box {
@@ -61,7 +61,7 @@ button {
 
 .total-house h6 {
     font-size: 8px;
-    font-weight: normal!important;
+    font-weight: normal !important;
     letter-spacing: 0.5px;
 }
 
@@ -146,7 +146,7 @@ button {
 
 .sticky li:hover {
     margin-left: -405px;
-    background-color: none!important;
+    background-color: none !important;
 }
 
 .sticky li p {
@@ -169,7 +169,7 @@ button {
 /* Sticky Social Icon End*/
 
 .sticky a {
-    text-decoration: none!important;
+    text-decoration: none !important;
 }
 
 .sticky .driver {
@@ -182,7 +182,7 @@ button {
 .sticky .texts {
     text-decoration: none;
     font-size: 12px;
-    color: #fff!important;
+    color: #fff !important;
 }
 
 .sticky .helper {
@@ -203,9 +203,9 @@ button {
     padding-top: 80px;
     padding-left: 85px;
     font-size: 18px;
-    color: #000!important;
+    color: #000 !important;
     font-weight: 600;
-    text-decoration: none!important;
+    text-decoration: none !important;
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -o-transform: rotate(90deg);
@@ -225,21 +225,23 @@ button {
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         color: #fff;
     }
+
     .caret-select {
-        margin-top: 11px!important;
+        margin-top: 11px !important;
         border-radius: 5px;
         padding: 10px;
-        border: none!important;
+        border: none !important;
         width: 80%;
-        margin-left: 45px!important;
+        margin-left: 45px !important;
     }
+
     button {
         width: 80%;
         border-radius: 5px;
         padding: 9px;
-        margin-top: 7px!important;
-        border: none!important;
-        margin-left: 45px!important;
+        margin-top: 7px !important;
+        border: none !important;
+        margin-left: 45px !important;
     }
 }
 
@@ -252,26 +254,30 @@ button {
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         color: #fff;
     }
+
     .caret-select {
-        margin-top: 11px!important;
+        margin-top: 11px !important;
         border-radius: 5px;
         padding: 10px;
-        border: none!important;
+        border: none !important;
         width: 100%;
         margin-left: 0 !important;
     }
+
     button {
         width: 80%;
         border-radius: 5px;
         padding: 9px;
-        margin-top: 7px!important;
-        border: none!important;
-        margin-left: 45px!important;
+        margin-top: 7px !important;
+        border: none !important;
+        margin-left: 45px !important;
     }
+
     .no-gutters-iner {
         max-width: 24%;
         margin-left: 40px;
     }
+
     .background-black {
         max-width: 69%;
     }
@@ -287,21 +293,23 @@ button {
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         color: #fff;
     }
+
     .caret-select {
-        margin-top: 10px!important;
+        margin-top: 10px !important;
         border-radius: 5px;
         padding: 10px;
-        border: none!important;
+        border: none !important;
         width: 90%;
-        margin-left: 45px!important;
+        margin-left: 45px !important;
     }
+
     button {
         width: 50%;
         border-radius: 5px;
         padding: 10px;
-        margin-top: 10px!important;
-        border: none!important;
-        margin-left: -30!important;
+        margin-top: 10px !important;
+        border: none !important;
+        margin-left: -30 !important;
     }
 }
 
@@ -383,13 +391,13 @@ button {
     font-size: 16px;
     line-height: 18px;
     font-weight: 500;
-    margin: 0px!important;
+    margin: 0px !important;
 }
 
 .tracking-bg .main-info p {
     font-size: 11px;
     color: #fff;
-    margin: 0px!important;
+    margin: 0px !important;
 }
 
 
@@ -418,7 +426,7 @@ button {
 }
 
 .btn-hvr:hover {
-    background: #726f6f!important;
+    background: #726f6f !important;
 }
 
 .driver h5 {
@@ -467,7 +475,7 @@ button {
 }
 
 .all-details {
-    width: 0!important;
+    width: 0 !important;
     -webkit-transition: max-width 0.5s;
     transition: max-width 0.3s;
     display: inline-block;
@@ -479,11 +487,11 @@ button {
 }
 
 button:focus-visible {
-    outline: none!important;
+    outline: none !important;
 }
 
 .main-box:hover .all-details {
-    width: 20rem!important;
+    width: 20rem !important;
     transform: translate(-15em, 0);
     -webkit-transform: translate(-15em, 0);
     -moz-transform: translate(-15em, 0);
@@ -501,7 +509,7 @@ button:focus-visible {
 }
 
 .show-btn:hover {
-    background: #0ba118!important;
+    background: #0ba118 !important;
 }
 
 .img-circle {
@@ -561,7 +569,7 @@ button:focus-visible {
     float: left;
     text-align: center;
     border-right: 1px dotted lightgray;
-    background: linear-gradient( 135deg, white 92%, #82d387 96%, #5ec765 91%, #5b9922 100%);
+    background: linear-gradient(135deg, white 92%, #82d387 96%, #5ec765 91%, #5b9922 100%);
     transition: 0.3s ease-in-out;
 }
 
@@ -706,7 +714,7 @@ button:focus-visible {
     color: #fff;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    padding: 2px!important;
+    padding: 2px !important;
     border-bottom: none;
     // box-shadow: 0px 4px 7px 0px lightgrey;
     font-size: 12px;
@@ -738,7 +746,7 @@ button:focus-visible {
 
 .f-left p {
     font-size: 12px;
-    margin: 0px!important;
+    margin: 0px !important;
     float: left;
     width: 78px;
     font-weight: bold;
@@ -752,13 +760,13 @@ button:focus-visible {
 
 .f-left h3 {
     font-size: 12px;
-    margin: 0px!important;
+    margin: 0px !important;
     float: left;
     width: calc(100%);
     font-weight: normal;
     color: #333;
     text-transform: capitalize;
-    margin-top: 1px!important;
+    margin-top: 1px !important;
 }
 
 .border-bottom {
@@ -781,16 +789,16 @@ button:focus-visible {
 .house-card-box .float-r {
     float: left;
     width: calc(100% - 125px);
-    margin-right: 0px!important;
+    margin-right: 0px !important;
     padding: 0px 0px;
 }
 
 button:focus-visible {
-    outline: none!important;
+    outline: none !important;
 }
 
 button:focus {
-    outline: none!important;
+    outline: none !important;
 }
 
 .img-close {
@@ -883,7 +891,7 @@ button:focus {
 
 /* Track */
 
- ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     box-shadow: transparent;
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -892,21 +900,21 @@ button:focus {
 
 /* Handle */
 
- ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: transparent;
     box-shadow: transparent;
 }
 
- :hover::-webkit-scrollbar {
+:hover::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- :hover::-webkit-scrollbar-track {
+:hover::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -915,7 +923,7 @@ button:focus {
 
 /* Handle */
 
- :hover::-webkit-scrollbar-thumb {
+:hover::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: #20a120;
@@ -968,7 +976,7 @@ button:focus {
 }
 
 .damage-icon {
-    color: rgb(213, 42, 255)!important;
+    color: rgb(213, 42, 255) !important;
 }
 
 .house-damage {
@@ -1008,7 +1016,7 @@ button:focus {
     color: #fff;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 0px!important;
+    margin-left: 0px !important;
 }
 
 .arrow-input {
@@ -1026,8 +1034,8 @@ button:focus {
     padding: 10px 8px;
     color: #fff;
     width: 40px;
-    margin-left: 8px!important;
-    margin-right: 10px!important;
+    margin-left: 8px !important;
+    margin-right: 10px !important;
     border-radius: 5px;
     cursor: pointer;
 }
@@ -1067,8 +1075,8 @@ button:focus {
     border-bottom: 2px solid #000;
 }
 
-.cardNo-input{
-    
+.cardNo-input {
+
     width: 45%;
     border: 1px solid lightgray;
     border-radius: 5px;
@@ -1298,42 +1306,53 @@ button:focus {
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         height: 115px !important;
     }
+
     .blanck-box2 {
         padding-top: 0px !important;
     }
+
     .header {
         height: unset !important;
     }
+
     .house-card-box {
         top: 226px !important;
     }
+
     .float-first {
         width: 50% !important;
     }
+
     .float-second {
         width: 30%;
         padding-right: 10px !important
     }
+
     .float-third {
         width: 50% !important;
     }
+
     .float-fourth {
         width: 30% !important;
         padding-right: 10px !important;
     }
+
     .fix-home {
         flex-wrap: wrap !important;
         display: flex;
         justify-content: flex-end;
     }
+
     .addclass {
         opacity: 1 !important;
         transition: 0.7s;
     }
+
     .display {
         opacity: 0 !important;
         transition: 0.7s
     }
+
     .display1 {
         width: 55px !important;
         height: 55px;
@@ -1345,6 +1364,7 @@ button:focus {
         text-align: end;
         z-index: 1111;
     }
+
     .background-black {
         position: fixed;
         top: 106px;
@@ -1352,6 +1372,7 @@ button:focus {
         width: 230px;
         right: 15px !important;
     }
+
     .caret-select {
         width: 83% !important;
         margin-left: 40px !important;
@@ -1376,7 +1397,7 @@ button:focus {
     border: 1px solid lightgray;
     border-radius: 5px;
     padding: 5px;
-    margin-bottom: 10px!important;
+    margin-bottom: 10px !important;
     background-color: #f1f1f1;
 }
 
@@ -1384,16 +1405,29 @@ button:focus {
     border: 1px solid lightgray;
     border-radius: 5px;
     padding: 5px;
-    margin-bottom: 10px!important;
+    margin-bottom: 10px !important;
     background-color: #b5f8c6;
 }
 
 .caret-select-vehicle {
-    margin-top: 0px!important;
-    margin-left: 0px!important;
+    margin-top: 0px !important;
+    margin-left: 0px !important;
     border-radius: 5px;
     padding: 10px;
     width: 97%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// SVG icon color
+.green-filter {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(92%) saturate(420%) hue-rotate(65deg) brightness(103%) contrast(98%);
+}
+
+.icon-white {
+    filter: invert(1) brightness(2);
 }

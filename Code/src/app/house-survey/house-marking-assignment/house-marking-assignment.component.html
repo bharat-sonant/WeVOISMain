@@ -10,17 +10,26 @@
             <div class="display" id="popup">
                 <div class="fix-home">
                     <div class="float-second float-second2">
-                        <i class="fas fa-house-damage"></i> <span class="house"> {{houseData.totalCards}}</span><br>
+                        <!-- <i class="fas fa-house-damage"></i>  -->
+                        <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="house-chimney" width="20"
+                            class="green-filter" style="margin-bottom: 6px;" />
+                        <span class="house"> {{houseData.totalCards}}</span><br>
                         <h6>Cards</h6>
                     </div>
                     <div class="float-fourth float-second2">
-                        <i class="fas fa-house-damage icon-damage2"></i> <span class="house">
+                        <!-- <i class="fas fa-house-damage icon-damage2"></i>  -->
+                        <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="house-chimney" width="20"
+                            class="green-filter" style="margin-bottom: 6px;" />
+                        <span class="house">
                             {{houseData.totalHouses}}</span><br>
                         <h6>Houses</h6>
                     </div>
 
-                    <div class="float-first fix-home-iner" style="padding-top: 0px;  cursor: pointer;" (click)="updateSurveyorSummary();" [hidden]="isActionShow==false">
-                        <i class="fas fa-redo-alt icon-damage2" style="color: #1fda2f;"></i>
+                    <div class="float-first fix-home-iner" style="padding-top: 0px;  cursor: pointer;"
+                        (click)="updateSurveyorSummary();" [hidden]="isActionShow==false">
+                        <!-- <i class="fas fa-redo-alt icon-damage2" style="color: #1fda2f;"></i> -->
+                        <img src="../../../assets/icons/rotate-right-solid.svg" alt="Rotate"
+                            class="cursor-pointer green-filter" width="18" />
                         <span class="house">
                             {{houseData.lastUpdate}}</span><br>
                         <h6>Last Updated</h6>
@@ -54,7 +63,9 @@
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" style="cursor: pointer;" id="tr{{i}}" *ngFor="let data of assignedList; let i=index" (click)="getServeyorDetail(data.userId,i);">
+                                            <tr class="table-row" style="cursor: pointer;" id="tr{{i}}"
+                                                *ngFor="let data of assignedList; let i=index"
+                                                (click)="getServeyorDetail(data.userId,i);">
                                                 <td class="table-data">{{i+1}}</td>
                                                 <td class="table-data">
                                                     {{data.name}}</td>
@@ -65,33 +76,44 @@
                                                 <td class="table-data">
                                                     {{data.lines}}</td>
                                                 <td class="text-right">
-                                                    <div class="showAllData">
+                                                    <div class="showAllData"
+                                                        style="display: flex; align-items: center;">
                                                         <span [hidden]="data.isLogin=='no' || data.isActive==false">
-                                                   
-                                                <i class="fa-solid fa-user-lock" style="color:rgb(19, 236, 19)" (click)="updateLoginStatus(data.userId)" 
-                                                title="yes">
-
-                                                </i>
-                                                </span>
-
+                                                            <!-- <i class="fa-solid fa-user-lock" style="color:rgb(19, 236, 19)" (click)="updateLoginStatus(data.userId)" title="yes"></i> -->
+                                                            <img src="../../../assets/icons/user-lock-solid.svg"
+                                                                alt="user-lock" (click)="updateLoginStatus(data.userId)"
+                                                                title="yes" class="cursor-pointer green-filter"
+                                                                width="16" style="margin-right: 16px;" />
+                                                        </span>
                                                         <span [hidden]="data.isLogin=='yes' || data.isActive==false">
-                                                   <i class="fa-solid fa-user-lock" style="color:red" (click)="updateLoginStatus(data.userId)"
-                                                   title="no">
+                                                            <!-- <i class="fa-solid fa-user-lock" style="color:red"
+                                                                (click)="updateLoginStatus(data.userId)" title="no">
 
-                                                   </i>
-                                                </span>
-
-                                                        <span class="Inactive-span" [hidden]="data.isActive==true">Inactive</span>
-                                                        <span [hidden]="data.isActive==false">
-                                                        <i class="fas fa-map-marked-alt marked-icon"
-                                                            (click)="openModel(contentAssign,data.userId,'update');"
-                                                            title="Edit Assignment"
-                                                            ></i>
-                                                        <i class="far fa-times-circle circle-icon"
-                                                            (click)="openModel(contentConfirmation,data.userId,'delete')"
-                                                            title="Remove Entry"
-                                                            ></i>
-                                                    </span>
+                                                            </i> -->
+                                                            <img src="../../../assets/icons/user-lock-solid.svg"
+                                                                alt="user-lock" (click)="updateLoginStatus(data.userId)"
+                                                                title="no" class="cursor-pointer icon-red" width="16"
+                                                                style="margin-right: 16px;" />
+                                                        </span>
+                                                        <span class="Inactive-span"
+                                                            [hidden]="data.isActive==true">Inactive</span>
+                                                        <span [hidden]="data.isActive==false"
+                                                            style="margin-right: 50px;">
+                                                            <!-- <i class="fas fa-map-marked-alt marked-icon"
+                                                                (click)="openModel(contentAssign,data.userId,'update');"
+                                                                title="Edit Assignment"></i> -->
+                                                            <img src="../../../assets/icons/map-location-dot-solid.svg"
+                                                                alt="Map" class="cursor-pointer icon-green" width="16"
+                                                                (click)="openModel(contentAssign,data.userId,'update');"
+                                                                title="Edit Assignment" style="margin-right: 6px;" />
+                                                            <!-- <i class="far fa-times-circle circle-icon"
+                                                                (click)="openModel(contentConfirmation,data.userId,'delete')"
+                                                                title="Remove Entry"></i> -->
+                                                            <img src="../../../assets/icons/circle-xmark-regular.svg"
+                                                                alt="Circle" class="cursor-pointer"
+                                                                (click)="openModel(contentConfirmation,data.userId,'delete')"
+                                                                title="Remove Entry" />
+                                                        </span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -145,7 +167,14 @@
                         <div class="col text-center extra-class">
                             <div class="table-heading">
                                 <h3>
-                                    <span class="tbl-points"><i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="exportEmployeeSurveyedData();"></i></span> <br> Export
+                                    <span class="tbl-points">
+                                        <!-- <i class="fa-solid fa-file-export"
+                                            style="font-size: 20px; cursor: pointer; color: #1fda2f;"
+                                            (click)="exportEmployeeSurveyedData();"></i> -->
+                                        <img src="../../../assets/icons/file-export-solid.svg" alt="File"
+                                            class="green-filter cursor-pointer" width="24"
+                                            (click)="exportEmployeeSurveyedData();" />
+                                    </span> <br> Export
                                 </h3>
                             </div>
                         </div>
@@ -173,13 +202,17 @@
                                                         <td class="table-data2">
                                                             {{data.date}}</td>
                                                         <td class="border-right table-data2">
-                                                            <span [hidden]="data.surveyed!=null">-</span> {{data.surveyed}}
+                                                            <span [hidden]="data.surveyed!=null">-</span>
+                                                            {{data.surveyed}}
                                                         </td>
                                                         <td class="border-right table-data2">
-                                                            <span [hidden]="data.houses!=undefind">-</span> {{data.houses}}
+                                                            <span [hidden]="data.houses!=undefind">-</span>
+                                                            {{data.houses}}
                                                         </td>
                                                         <td class="text-right table-data2">
-                                                            <span [hidden]="data.complex!=0">-</span><span [hidden]="data.complex==0"> {{data.complex}} ({{data.houseHold}})</span>
+                                                            <span [hidden]="data.complex!=0">-</span><span
+                                                                [hidden]="data.complex==0"> {{data.complex}}
+                                                                ({{data.houseHold}})</span>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -206,7 +239,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title modal-header-title" id="exampleModalLongTitle">Are you sure you want to remove assignment ?</h5>
+                <h5 class="modal-title modal-header-title" id="exampleModalLongTitle">Are you sure you want to remove
+                    assignment ?</h5>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="deleteId" value="0" />
@@ -245,7 +279,9 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/map-location-dot-solid.svg" alt="map" width="16"
+                            aria-hidden="true" class="icon-grey" />
                     </span>
                 </div>
                 <div class="row">
@@ -254,13 +290,15 @@
                         <div class="checkbox-scroll">
                             <div class="row">
                                 <div class="col-md-2 checkbox-div" *ngFor="let line of lineList">
-                                    <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" /> {{line.lineNo}}
+                                    <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" />
+                                    {{line.lineNo}}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <input type="button" class="btn btn-success submit-btn saveAssignment-btn" value="SUBMIT" (click)="saveAssignment();" />
+                <input type="button" class="btn btn-success submit-btn saveAssignment-btn" value="SUBMIT"
+                    (click)="saveAssignment();" />
             </div>
         </div>
     </div>

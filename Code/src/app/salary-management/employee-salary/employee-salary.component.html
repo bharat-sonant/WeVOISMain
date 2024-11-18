@@ -36,7 +36,9 @@
         <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
             <div class="fix-home" style="display: none;">
                 <div id="topPenality" class="float-first ml-10 mt-0">
-                    <span class="house"><i class="fas fa-rupee-sign" style="color:green"></i>
+                    <span class="house">
+                        <!-- <i class="fas fa-rupee-sign" style="color:green"></i> -->
+                        <img src="../../../assets/icons/rupee-sign-solid.svg" width="16" class="icon-green">
                         {{salaryDetail.totalSalary}}</span><br>
                     <h6>Total Salary</h6>
                 </div>
@@ -85,9 +87,13 @@
                                             <span style="text-align: center;">
                                                 <label style="padding: 7px 0px;
                                            margin-left: 30px;" class="hover-shadow">
-                                                    <i class="fas fa-download"
+                                                    <!-- <i class="fas fa-download"
                                                         style="color: green; font-size: 26px; cursor: pointer; "
-                                                        (click)="downloadSalary();"></i><br />
+                                                        (click)="downloadSalary();"></i> -->
+                                                    <img src="../../../assets/icons/download-solid.svg" width="26"
+                                                        alt="download" class="icon-green cursor-pointer"
+                                                        (click)="downloadSalary();">
+                                                    <br />
                                                     Download Salary</label>
                                                 &nbsp; &nbsp; &nbsp; &nbsp;</span>
                                         </div>
@@ -95,8 +101,11 @@
                                             <span style="text-align: center;">
                                                 <label for="fileUpload" style="padding: 7px 0px;margin-left: 30px;
                                            " class="hover-shadow">
-                                                    <i class="fas fa-upload"
-                                                        style="color: green; font-size: 26px; cursor: pointer; "></i><br />
+                                                    <!-- <i class="fas fa-upload"
+                                                        style="color: green; font-size: 26px; cursor: pointer; "></i> -->
+                                                    <img src="assets/icons/upload-solid.svg" width="26" alt="upload"
+                                                        class="icon-green cursor-pointer">
+                                                    <br />
                                                     Upload updated salary
                                                 </label>
                                                 <input id="fileUpload" type="file" name="file" class="file-upload-field"
@@ -108,9 +117,13 @@
                                         <div class="outer">
                                             <span style="text-align: center;">
                                                 <label style="padding: 7px 0px;margin-left: 30px;padding-right: 23px;">
-                                                    <i class="fas fa-download"
+                                                    <!-- <i class="fas fa-download"
                                                         style="color: green; font-size: 26px; cursor: pointer; "
-                                                        (click)="updateAccountDetail();"></i><br />
+                                                        (click)="updateAccountDetail();"></i> -->
+                                                    <img src="../../../assets/icons/download-solid.svg" width="26"
+                                                        alt="download" class="icon-green cursor-pointer"
+                                                        (click)="updateAccountDetail();">
+                                                    <br />
                                                     Download for NEFT</label></span>
                                         </div>
                                     </span>
@@ -150,8 +163,12 @@
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of salaryList; let i=index">
                                                 <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
-                                                    <i class="fas fa-circle" style="color:red"
-                                                        [hidden]="data.status==1"></i>
+                                                    <!-- <i class="fas fa-circle" style="color:red"
+                                                        [hidden]="data.status==1"></i> -->
+                                                    <img src="../../../assets/icons/circle-solid.svg" width="15"
+                                                        class="icon-red" alt="circle" [hidden]="data.status==1">
+                                                    <!-- <img src="../../../assets/icons/circle-exclamation-solid.svg"
+                                                        style="cursor: pointer;" [hidden]="data.status==1"> -->
                                                     {{data.name}} <b> ({{data.empCode}})</b>
                                                 </td>
                                                 <td class="text-left br-1">
@@ -172,11 +189,18 @@
                                                     <input id="chk{{data.empId}}" type="checkbox"
                                                         [disabled]="data.uploadedSalary==0"
                                                         [hidden]="data.isShow==1  || data.hold==1">
-                                                    <i class="fas fa-exclamation-circle"
+                                                    <!-- <i class="fas fa-exclamation-circle"
                                                         style="color: red; cursor: pointer;" [hidden]="data.isShow!=1"
-                                                        (click)="openModel(contentShowRemarks,data.empId);"></i>
-                                                    <i class="far fa-hand-paper" style="color:blue"
-                                                        [hidden]="data.hold==0"></i>
+                                                        (click)="openModel(contentShowRemarks,data.empId);"></i> -->
+                                                    <img src="../../../assets/icons/circle-exclamation-solid.svg"
+                                                        class="icon-red cursor-pointer" alt="circle-exclamation"
+                                                        width="12" [hidden]="data.isShow != 1"
+                                                        (click)="openModel(contentShowRemarks, data.empId);">
+                                                    <!-- <i class="far fa-hand-paper" style="color:blue"
+                                                        [hidden]="data.hold==0"></i> -->
+                                                    <img src="../../../assets/icons/hand-regular.svg" width="12"
+                                                        class="dark-blue-filter" alt="hand" [hidden]="data.hold==0">
+
                                                 </td>
                                             </tr>
                                         </tbody>

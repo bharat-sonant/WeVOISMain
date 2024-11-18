@@ -14,11 +14,11 @@
 }
 
 .caret-select {
-    margin-top: 0px!important;
-    margin-left: 10px!important;
+    margin-top: 0px !important;
+    margin-left: 10px !important;
     border-radius: 5px;
     padding: 10px;
-    border: none!important;
+    border: none !important;
     width: 97%;
 }
 
@@ -26,11 +26,11 @@
     cursor: pointer;
     width: 50px;
     height: 43px;
-    background: #888!important;
+    background: #888 !important;
 }
 
 .btn-hvr:hover {
-    background: #979797!important;
+    background: #979797 !important;
 }
 
 .inactive {
@@ -57,17 +57,17 @@
 /**************************Table Start***************************/
 
 .rowWidth {
-    width: 200px!important;
+    width: 200px !important;
     text-align: right;
 }
 
 .rowWidthTime {
-    width: 100px!important;
+    width: 100px !important;
     text-align: left;
 }
 
 .rowWidthWard {
-    width: 200px!important;
+    width: 200px !important;
     text-align: left;
 }
 
@@ -103,7 +103,7 @@ table {
 }
 
 thead th {
-    padding: 5px 7px!important;
+    padding: 5px 7px !important;
     font-size: 14px;
     color: rgb(56, 56, 56);
     font-weight: bold;
@@ -149,12 +149,12 @@ thead th {
 table td {
     padding: 5px 12px !important;
     font-size: 12px;
-    width: 200px!important;
-    height: 50px!important;
+    width: 200px !important;
+    height: 50px !important;
 }
 
 .tdBorder {
-    border-right: 1px solid #dee2e6!important;
+    border-right: 1px solid #dee2e6 !important;
 }
 
 .img-close {
@@ -176,7 +176,7 @@ table td {
 
 /********** Custom Scroll Css ***********/
 
- ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 10px;
     height: 10px;
     -webkit-transform: translate3d(0, 0, 0);
@@ -186,7 +186,7 @@ table td {
 
 /* Track */
 
- ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     -webkit-box-shadow: transparent;
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -195,21 +195,21 @@ table td {
 
 /* Handle */
 
- ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: transparent;
     -webkit-box-shadow: transparent;
 }
 
- :hover::-webkit-scrollbar {
+:hover::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- :hover::-webkit-scrollbar-track {
+:hover::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -218,7 +218,7 @@ table td {
 
 /* Handle */
 
- :hover::-webkit-scrollbar-thumb {
+:hover::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: #20a120;
@@ -247,16 +247,16 @@ table td {
 }
 
 #myBox .card {
-    margin-bottom: -6px!important;
+    margin-bottom: -6px !important;
     border-radius: 0px;
 }
 
 #myBox .card-header {
-    padding: 0px!important;
+    padding: 0px !important;
 }
 
 #myBox .card-body {
-    padding: 0px!important;
+    padding: 0px !important;
 }
 
 #myBox .info-bg {
@@ -309,7 +309,7 @@ table td {
     line-height: 18px;
     font-weight: 500;
     color: #333333;
-    margin: 0px!important;
+    margin: 0px !important;
 }
 
 // .main-info span{
@@ -327,7 +327,7 @@ table td {
 .main-info p {
     font-size: 10px;
     color: #333333;
-    margin: 0px!important;
+    margin: 0px !important;
 }
 
 
@@ -352,4 +352,13 @@ table td {
 
 br {
     mso-data-placement: same-cell;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green {
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
 }

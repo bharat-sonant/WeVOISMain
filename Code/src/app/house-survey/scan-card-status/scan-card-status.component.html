@@ -19,24 +19,33 @@
                     <div id="divByEmployee" class="row">
 
                         <div class="col-md-3">
-                            <input id="txtSearch" type="text" class="filter-select filter-input" autocomplete="off" placeholder="Enter Card Serial No." (keyup)="getScanCardFilteredData();">
+                            <input id="txtSearch" type="text" class="filter-select filter-input" autocomplete="off"
+                                placeholder="Enter Card Serial No." (keyup)="getScanCardFilteredData();">
                         </div>
-                        <div class="col-md-2 " style="text-align:center; padding-left: 5px!important; padding-right:5px!important ;">
-                            <span style="color:green; font-weight: bold;"> {{summaryData.installed}}</span><br/>
+                        <div class="col-md-2 "
+                            style="text-align:center; padding-left: 5px!important; padding-right:5px!important ;">
+                            <span style="color:green; font-weight: bold;"> {{summaryData.installed}}</span><br />
                             <span style="font-size: 12px;">Installed</span>
                         </div>
-                        <div class="col-md-2" style="text-align:center; padding-left: 5px!important; padding-right:5px!important ;">
-                            <span style="color:red;font-weight: bold;">{{summaryData.unInstalled}}</span><br/>
+                        <div class="col-md-2"
+                            style="text-align:center; padding-left: 5px!important; padding-right:5px!important ;">
+                            <span style="color:red;font-weight: bold;">{{summaryData.unInstalled}}</span><br />
                             <span style="font-size: 12px;">Un-Installed</span>
                         </div>
-                        <div class="col-md-1" style="text-align:center; padding-left: 5px!important; padding-right:5px!important ;">
-                            <i class="fa-solid fa-file-export" style="color:green; cursor: pointer; font-size: 20px;" (click)="exportScanCardStatus();"></i> <br/>
+                        <div class="col-md-1"
+                            style="text-align:center; padding-left: 5px!important; padding-right:5px!important ;">
+                            <!-- <i class="fa-solid fa-file-export" style="color:green; cursor: pointer; font-size: 20px;" (click)="exportScanCardStatus();"></i> <br/> -->
+                            <img src="../../../assets/icons/file-export-solid.svg" alt="file" width="20"
+                                class="icon-green cursor-pointer" (click)="exportScanCardStatus();" /><br />
                             <span style="font-size: 12px;">Export</span>
                         </div>
                         <div class="col-md-4 " style="text-align: right; padding-right: 25px;font-size: 12px;">
 
-                            <i class="fas fa-redo-alt refresh" aria-hidden="true" (click)="getScanCardData();"></i><br /> Last update date : {{summaryData.date}}
-
+                            <!-- <i class="fas fa-redo-alt refresh" aria-hidden="true" (click)="getScanCardData();"></i><br /> Last update date : {{summaryData.date}} -->
+                            <img src="../../../assets/icons/rotate-right-solid.svg" alt="rotate-right"
+                                aria-hidden="true" (click)="getScanCardData();" width="20"
+                                class="icon-green cursor-pointer" /><br /> Last update date :
+                            {{summaryData.date}}
                         </div>
 
                     </div>
@@ -64,8 +73,15 @@
                                                     {{data.scanDate}}
                                                 </td>
                                                 <td class="text-center br-1">
-                                                    <i class="fa-solid fa-check" style="color:green; font-size: 20px;" [hidden]="data.cardInstalled=='no'"></i>
-                                                    <i class="fa-solid fa-xmark" style="color: red; font-size: 20px;" [hidden]="data.cardInstalled=='yes'"></i>
+                                                    <!-- <i class="fa-solid fa-check" style="color:green; font-size: 20px;"
+                                                        [hidden]="data.cardInstalled=='no'"></i> -->
+                                                    <img src="../../../assets/icons/check-solid.svg" alt="check"
+                                                        width="22" class="icon-green"
+                                                        [hidden]="data.cardInstalled=='no'" />
+                                                    <!-- <i class="fa-solid fa-xmark" style="color: red; font-size: 20px;"
+                                                        [hidden]="data.cardInstalled=='yes'"></i> -->
+                                                    <img src="../../../assets/icons/xmark-solid.svg" alt="cross"
+                                                        width="22" class="icon-red" [hidden]="data.cardInstalled=='yes'/>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -77,28 +93,29 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 card-main">
-            <div class="card card-body-outer">
-                <div id="content" #content class="card-body card-body2">
-                    <div class="row">
+        <div class=" col-md-6 card-main">
+                                                    <div class="card card-body-outer">
+                                                        <div id="content" #content class="card-body card-body2">
+                                                            <div class="row">
 
-                        <div class="col-md-12">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-12 pr-1">
+                                                                <div class="col-md-12">
+                                                                    <form>
+                                                                        <div class="row">
+                                                                            <div class="col-md-12 pr-1">
 
-                                    </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center form-group-outer">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
-                                        </div>
-                                    </div>
+                                                                            </div>
+                                                                            <div id="divMessage"
+                                                                                class="col-md-12 pr-1 text-center form-group-outer">
+                                                                                <div class="form-group">
+                                                                                    <h5>No data available</h5>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

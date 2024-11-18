@@ -16,15 +16,20 @@
             Ward Line Road Detail
         </div>
         <div class="col-md-3 main-headers" style="text-align: center;">
-            <div style="float: right; margin-right: 20px; text-align: center;"><i
+            <div style="float: right; margin-right: 20px; text-align: center;">
+                <!-- <i
                 class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                (click)="exportToExcel();"></i><p style="font-size: 8px;"> Export to Excel</p></div>
+                (click)="exportToExcel();"></i> -->
+                <img src="../../../assets/icons/file-export-solid.svg" alt="File" class="cursor-pointer icon-green"
+                    (click)="exportToExcel();" width="24" />
+                <p style="font-size: 8px;"> Export to Excel</p>
+            </div>
         </div>
     </div>
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">            
+        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-body">
                     <form>
@@ -44,7 +49,8 @@
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of roadList; let i=index" style="cursor: pointer;" (click)="getWardRoadDetail(i)">
+                                            <tr id="tr{{i}}" *ngFor="let data of roadList; let i=index"
+                                                style="cursor: pointer;" (click)="getWardRoadDetail(i)">
                                                 <td class="text-left br-1">
                                                     {{i+1}}
                                                 </td>

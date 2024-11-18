@@ -15,7 +15,11 @@
         <div class="col-md-9 text-right total-house fix-home-outer">
             <div class="fix-home">
                 <div class="float-first fix-home-iner" style="padding-top: 0px;">
-                    <button class="refresh" (click)="updateSupervisorReport();"><i class="fas fa-redo-alt"></i></button><br>
+                    <button class="refresh" (click)="updateSupervisorReport();">
+                        <!-- <i class="fas fa-redo-alt"></i> -->
+                        <img src="../../../assets/icons/rotate-right-solid.svg" alt="Rotate" class="cursor-pointer"
+                        width="14" />
+                    </button><br>
                     <h6>Last updated on {{lastUpdatedTime}}</h6>
                 </div>
             </div>

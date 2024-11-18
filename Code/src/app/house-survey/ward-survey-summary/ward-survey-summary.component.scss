@@ -26,26 +26,26 @@
     display: inline-block;
     position: relative;
     width: 100%;
-    margin-bottom: 0px!important;
+    margin-bottom: 0px !important;
 }
 
 .caret-select {
-    margin-top: -5px!important;
-    margin-right: 10px!important;
+    margin-top: -5px !important;
+    margin-right: 10px !important;
     border-radius: 5px;
     padding: 10px;
     width: 97%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
 }
 
 .caret-select-vehicle {
-    margin-top: 0px!important;
-    margin-left: 0px!important;
+    margin-top: 0px !important;
+    margin-left: 0px !important;
     border-radius: 5px;
     padding: 10px;
     width: 97%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
 }
 
@@ -57,7 +57,7 @@
     border: 1px solid lightgray;
     cursor: cell;
     margin-top: 0px;
-    height: 33px!important;
+    height: 33px !important;
     font-size: 12px;
 }
 
@@ -247,14 +247,14 @@ tbody {
     cursor: pointer;
 }
 
- ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     -webkit-box-shadow: transparent;
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -263,21 +263,21 @@ tbody {
 
 /* Handle */
 
- ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: transparent;
     -webkit-box-shadow: transparent;
 }
 
- :hover::-webkit-scrollbar {
+:hover::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- :hover::-webkit-scrollbar-track {
+:hover::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -286,7 +286,7 @@ tbody {
 
 /* Handle */
 
- :hover::-webkit-scrollbar-thumb {
+:hover::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: #20a120;
@@ -432,7 +432,7 @@ textarea:focus-visible {
 }
 
 .submit-btn {
-    background: #0ba118!important;
+    background: #0ba118 !important;
 }
 
 .custom-header {
@@ -516,7 +516,7 @@ table tr:hover {
 }
 
 .active-tr i {
-    color: #fff!important;
+    color: #fff !important;
 }
 
 .checkbox-scroll {
@@ -570,7 +570,7 @@ label {
 
 .f-left p {
     font-size: 12px;
-    margin: 0px!important;
+    margin: 0px !important;
     float: left;
     width: 87px;
     font-weight: normal;
@@ -584,12 +584,12 @@ label {
 
 .f-left h3 {
     font-size: 12px;
-    margin: 0px!important;
+    margin: 0px !important;
     float: left;
     font-weight: normal;
     color: #333;
     text-transform: capitalize;
-    margin-top: 1px!important;
+    margin-top: 1px !important;
 }
 
 .fix-home {
@@ -626,7 +626,7 @@ label {
 
 .total-house h6 {
     font-size: 8px;
-    font-weight: normal!important;
+    font-weight: normal !important;
     letter-spacing: 0.5px;
 }
 
@@ -680,7 +680,7 @@ label {
 
 .card-body-outer {
     margin-top: -6px;
-    height: 85vh!important
+    height: 85vh !important
 }
 
 .card-iner {
@@ -691,7 +691,7 @@ label {
 .table-one-iner {
     border-bottom: 1px solid #dee2e6;
     border-left: 1px solid #dee2e6;
-    margin-bottom: 0px!important
+    margin-bottom: 0px !important
 }
 
 .table-heading1 {
@@ -751,7 +751,7 @@ label {
 
 .custom-header-outer {
     margin-top: -6px;
-    height: 85vh!important;
+    height: 85vh !important;
     overflow: hidden;
 }
 
@@ -915,27 +915,34 @@ label {
     .Surveyheading {
         font-size: 15px !important;
     }
+
     .table-one {
         overflow-x: scroll
     }
+
     .card-outer {
         padding-left: 7px;
         padding-right: 6px;
         margin-top: 40px !important;
     }
+
     .custom-header {
         height: unset !important;
     }
+
     .table-scroll {
         overflow-x: scroll
     }
+
     .float-second2 {
         cursor: pointer;
         width: 155px;
     }
+
     .fix-home {
         margin-top: 20px !important;
     }
+
     .fix-home-outer {
         margin-left: auto;
         margin-left: auto;
@@ -946,15 +953,19 @@ label {
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         left: 0px;
     }
+
     .float-first {
         width: 155px !important;
     }
+
     .display {
         display: none;
     }
+
     .addclass {
         display: block;
     }
+
     .arrow {
         margin-top: 20px;
         display: block !important;
@@ -962,12 +973,15 @@ label {
         display: block !important;
         text-align: right
     }
+
     .no-gutters {
         margin-right: 0px !important;
     }
+
     .card-body {
         padding: 15px 0px 10px 0px;
     }
+
     .refresh-btn {
         margin-left: 5px !important;
     }
@@ -977,31 +991,40 @@ label {
     .Surveyheading {
         display: none;
     }
+
     .table-scroll {
         overflow-x: scroll
     }
+
     .table-one {
         overflow-x: scroll
     }
+
     .no-gutters-iner {
         display: none !important
     }
+
     .float-second2 {
         cursor: pointer;
         width: 105px;
     }
+
     .header {
         height: 58px !important;
     }
+
     .fix-home-outer {
         margin-left: auto;
     }
+
     .float-first {
         width: 100px !important;
     }
+
     .row2 {
         margin: 0 !important;
     }
+
     .fix-home-outer {
         min-width: 60% !important
     }
@@ -1018,22 +1041,28 @@ label {
     .Surveyheading {
         font-size: 12px;
     }
+
     .table-one {
         overflow-x: scroll
     }
+
     .card-outer {
         padding-left: 0px;
         padding-right: 6px;
     }
+
     .custom-header {
         height: unset !important;
     }
+
     .table-scroll {
         overflow-x: scroll
     }
+
     .header {
         height: 58px !important;
     }
+
     .fix-home-outer {
         margin-left: auto;
         margin-left: auto;
@@ -1044,19 +1073,24 @@ label {
         background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
         left: 0px;
     }
+
     .float-second2 {
         cursor: pointer;
         width: 120px;
     }
+
     .float-first {
         width: 120px !important;
     }
+
     .display {
         display: none;
     }
+
     .addclass {
         display: block;
     }
+
     .arrow {
         margin-top: 20px;
         display: block !important;
@@ -1064,12 +1098,15 @@ label {
         display: block !important;
         text-align: right
     }
+
     .no-gutters {
         margin-right: 0px !important;
     }
+
     .table-one::-webkit-scrollbar {
         display: none !important;
     }
+
     .card-outer {
         margin-top: 20px !important;
     }
@@ -1083,6 +1120,15 @@ label {
     }
 }
 
+@media only screen and (min-width:768px) and (max-width:1366px) {
+    .fix-home-outer {
+        min-width: 50%;
+        margin-left: auto;
+        margin-top: 0px !important;
+    }
+}
+
+
 .not-matched {
     background-color: rgb(253, 199, 199);
 }
@@ -1091,7 +1137,7 @@ label {
     border: 1px solid lightgray;
     border-radius: 5px;
     padding: 5px;
-    margin-bottom: 10px!important;
+    margin-bottom: 10px !important;
     background-color: #f1f1f1;
 }
 
@@ -1099,6 +1145,23 @@ label {
     border: 1px solid lightgray;
     border-radius: 5px;
     padding: 5px;
-    margin-bottom: 10px!important;
+    margin-bottom: 10px !important;
     background-color: #b5f8c6;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green {
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
+}
+
+.green-filter {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(92%) saturate(420%) hue-rotate(65deg) brightness(103%) contrast(98%);
+}
+
+.icon-blue {
+    filter: invert(43%) sepia(83%) saturate(453%) hue-rotate(178deg) brightness(96%) contrast(92%);
 }
