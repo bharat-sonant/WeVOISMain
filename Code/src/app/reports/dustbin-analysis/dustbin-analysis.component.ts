@@ -127,7 +127,7 @@ export class DustbinAnalysisComponent implements OnInit {
 
   setDefaultValues() {
     this.selectedDate = this.commonService.setTodayDate();
-    this.selectedDate = "2024-10-28";
+    //this.selectedDate = "2024-10-28";
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );
