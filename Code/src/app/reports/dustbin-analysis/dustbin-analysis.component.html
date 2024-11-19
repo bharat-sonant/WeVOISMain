@@ -227,10 +227,16 @@
                                                 History </span></button>
                                     </a>
                                 </div>
-
-                            </div>
-                            
-
+                                <div id="updateDustbinDiv" [hidden]="showUpdateDetailButton==0" class="col-md-12 mt-10 pl-0 pr-0"  (click)="openModel(UpdateDustbinPickedDetail,binDetail,'UpdateDustbinPickedDetail');">
+                                    <button class="button"><span>Update Dustbin Picked Detail</span></button>
+                                </div>
+                                <div id="resetDustbinDiv"  [hidden]="showResetPickedButton==0" class="col-md-12 mt-10 pl-0 pr-0"  (click)="resetDustbinPickedDetail();">
+                                    <button class="button"><span>Reset Picked Detail</span></button>
+                                </div>
+                                <div id="restoreDustbinDiv"  [hidden]="showReStorePickedButton==0" class="col-md-12 mt-10 pl-0 pr-0"  (click)="restoreDustbinPickedDetail();">
+                                    <button class="button"><span>Re-store Picked Detail</span></button>
+                                </div>
+                            </div>  
                         </div>
                     </div>
                     <div class="col-md-6 mob-mid mob-hide-outer">
@@ -333,7 +339,7 @@
                         <div class="scroll-list">
                             <div id="filter{{i}}" class="{{data.divClass}}"
                                 *ngFor="let data of dustbinList ; let i=index"
-                                (click)="data.iconClass!='fas fa-ellipsis-h' && showDustbinData(i);">
+                                (click)="data.divClass!='address md-background' && showDustbinData(i);">
                                 <i class="{{data.iconClass}}"></i>
                                 <div class="address-text-outer">
                                     <div class="address-text">
@@ -360,3 +366,47 @@
         </div>
     </div>
 </section>
+<ng-template #UpdateDustbinPickedDetail>   
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Update Dustbin Picked Detail</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- <input id="key" type="hidden" value="0" /> -->
+                 <div class="row mb-3" >
+                    <div class="col-md-6" >
+                        <label>  Start Time </label> <br/> 
+                        <input id="txtStartTime" class="caret-select" type="time" style="width:150px;font-size: 15px;" />
+                    </div>
+                    <div class="col-md-6">
+                        <label>  End Time </label> <br/> 
+                        <input id="txtEndTime" class="caret-select" type="time" style="width:150px;font-size: 15px;" />
+                    </div>
+                 </div>
+                 <div class="row mb-3">
+                    <div class="col-md-12" style="margin-bottom: 10px; ">
+                        <label> ऊपर से भरा</label><br/>
+                         <input id="imgFilledTopView" type="file" accept="image/*"/>
+                     </div>
+                     <div class="col-md-12" style="padding-bottom: 10px; ">
+                        <label> भरा दूर से</label><br/>
+                         <input id="imgFilledFarFrom" type="file" accept="image/*"/>
+                     </div>
+                     <div class="col-md-12" style="padding-bottom: 10px; ">
+                        <label> ऊपर से खाली</label><br/>
+                         <input id="imgEmptyTopView" type="file" accept="image/*"/>
+                     </div>
+                     <div class="col-md-12" style="padding-bottom: 10px; ">
+                        <label> खाली दूर से</label><br/>
+                         <input id="imgEmptyFarFrom" type="file" accept="image/*"/>
+                     </div>
+                 </div>
+                <input type="button" class="btn w-100 btn-success submit-btn" value="SUBMIT" style="height: 40px;" (click)="updateDustbinPickupDetail()"/>
+            </div>
+        </div>
+    </div>
+</ng-template>

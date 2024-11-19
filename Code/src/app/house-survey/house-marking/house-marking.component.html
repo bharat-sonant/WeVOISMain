@@ -4,7 +4,8 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4">
-            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+                [(ngModel)]="selectedZone">
                 <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
                     ngSelected="zone.zoneNo == selectedZone?'selected':''">
                     {{zone.zoneName}}
@@ -19,22 +20,34 @@
 
             <div class="fix-home">
                 <div id="divLastUpdate" class="float-fourth fix-home-iner">
-                    <i class="far fa-clock"></i><span class="house"><span class="clock-span">
+                    <!-- <i class="far fa-clock"></i> -->
+                    <img src="../../../assets/icons/clock-regular.svg" class="icon-white" alt="clock" width="16"
+                        style="margin-bottom: 2px;" />
+                    <span class="house"><span class="clock-span">
                             {{markerData.lastScanTime}}</span></span><br>
                     <h6>Last Marked At</h6>
                 </div>
                 <div class="float-first cardboard-icon-main" [hidden]="isAlreadyShow==false">
-                    <i class="fas fa-vr-cardboard"></i> <span class="house"><span class="cardboard-span">
+                    <!-- <i class="fas fa-vr-cardboard"></i> -->
+                    <img src="../../../assets/icons/vr-cardboard-solid.svg" alt="cardBoard" width="16"
+                        class="green-filter" style="margin-bottom: 4px;" />
+                    <span class="house"><span class="cardboard-span">
                             {{markerData.alreadyCardCount}}</span></span><br>
                     <h6>Already Card Count</h6>
                 </div>
                 <div class="float-second circle-icon-main">
-                    <i class="fas fa-check-circle"></i> <span class="house"><span class="circle-span">
+                    <!-- <i class="fas fa-check-circle"></i> -->
+                    <img src="../../../assets/icons/circle-check-solid.svg" alt="check" width="16" class="green-filter"
+                        style="margin-bottom: 2px;" />
+                    <span class="house"><span class="circle-span">
                             {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
                     <h6>Approved Lines</h6>
                 </div>
-                <div class="float-third">
-                    <i class="fas fa-house-damage"></i> <span class="house"> {{markerData.totalMarkers}}</span><br>
+                <div class="float-third" style="margin-top: 12px;">
+                    <!-- <i class="fas fa-house-damage"></i>  -->
+                    <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="house-chimney" width="18"
+                        class="green-filter" style="margin-bottom: 4px;" />
+                    <span class="house"> {{markerData.totalMarkers}}</span><br>
                     <h6>Total Marker</h6>
                 </div>
                 <div class="arrow" onclick="show()">
@@ -57,8 +70,9 @@
                 <div class="col-md-12 arrow-btn-div">
                     <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
                         << </button>
-                    <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
-                    <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
+                            <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);"
+                                autocomplete="off" value="1" />
+                            <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
                                 >>
                             </button>
                 </div>
@@ -87,8 +101,11 @@
                     <span class="markera-allspan">
                         <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
                         All
-                    </span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers,'approvedMarker');" style="margin-left: 35px;">
-                        <i class="fas fa-eye">&nbsp;</i>Approve Marker</span>
+                    </span> <span class="markera-allspan2"
+                        (click)="showLineDetail(contentLineMarkers,'approvedMarker');" style="margin-left: 35px;">
+                        <!-- <i class="fas fa-eye"> &nbsp;</i> -->
+                        <img src="../../../assets/icons/eye-regular.svg" alt="eye" class="cursor-pointer" />&nbsp;
+                        Approve Marker</span>
                 </div>
                 <div class="col-md-6 Confirm-main">
                     <div class="row">
@@ -122,7 +139,8 @@
             <div class="col-md-12 house-type">
                 <h3> {{markerData.houseType}}
                     <br /> {{markerData.alreadyCard}}
-                    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeSubModel('#markerImageBox')" style="float: right;">
+                    <img src="../../../assets/img/close-grey.png" class="img-close"
+                        (click)="closeSubModel('#markerImageBox')" style="float: right;">
                 </h3>
                 <!-- <div class="img-close-outer"> -->
 
@@ -149,12 +167,14 @@
         <div id="divDetails" class="house-card-box-iner">
             <div class="row house-card-box-iner2">
                 <div class="col-md-6 markers markers-heading-main">
-                    <h5 (click)="showLineDetail(contentModifiedMarkers,'modifiedMarker');" style="cursor: pointer;"> {{markerData.totalHouseTypeModifiedCount}} </h5>
+                    <h5 (click)="showLineDetail(contentModifiedMarkers,'modifiedMarker');" style="cursor: pointer;">
+                        {{markerData.totalHouseTypeModifiedCount}} </h5>
                     <p>Modified Entities</p>
                 </div>
 
                 <div class="col-md-6 markers markers-heading-main">
-                    <h5 (click)="showLineDetail(contentDeletedMarkers,'deletedMarker');" style="cursor: pointer;"> {{markerData.totalRemovedMarkersCount}} </h5>
+                    <h5 (click)="showLineDetail(contentDeletedMarkers,'deletedMarker');" style="cursor: pointer;">
+                        {{markerData.totalRemovedMarkersCount}} </h5>
                     <p>Deleted Entities</p>
                 </div>
 
@@ -163,17 +183,22 @@
     </div>
 
 
-    <button class="btn btn-success assign-button Assign-btn" style="right: 15px;top: 295px;"> 
-        <span id="btnNearBy">Near By Wards</span><i class="bi bi-caret-down-fill" [hidden]="nearByStatus=='show'" style="margin-left: 5px;"></i><i class="bi bi-caret-right-fill" [hidden]="nearByStatus=='hide'" style="margin-left: 5px;"></i>
+    <button class="btn btn-success assign-button Assign-btn" style="right: 15px;top: 295px;">
+        <span id="btnNearBy">Near By Wards</span><i class="bi bi-caret-down-fill" [hidden]="nearByStatus=='show'"
+            style="margin-left: 5px;"></i><i class="bi bi-caret-right-fill" [hidden]="nearByStatus=='hide'"
+            style="margin-left: 5px;"></i>
         <!-- <span><i class="far fa-hand-point-right"></i></span> -->
-        
+
     </button>
     <div class="div-nearByWards">
-        <h6 [hidden]="nearByWards[0]!=null" style="margin-top: 25%;margin-left: 15%; font-size: 12px; font-weight: none!important;">No DATA AVAILABLE</h6>
+        <h6 [hidden]="nearByWards[0]!=null"
+            style="margin-top: 25%;margin-left: 15%; font-size: 12px; font-weight: none!important;">No DATA AVAILABLE
+        </h6>
         <table>
             <tbody>
                 <tr class="table-row" *ngFor="let data of nearByWards;let i=index">
-                    <td class="table-data" id="tr{{i}}"><span><input type="checkbox" style="height:15px;width: 15px;" id="checkBox{{i}}" (change)="showNearByWards(i,data)">&nbsp;&nbsp; {{data}}</span></td>
+                    <td class="table-data" id="tr{{i}}"><span><input type="checkbox" style="height:15px;width: 15px;"
+                                id="checkBox{{i}}" (change)="showNearByWards(i,data)">&nbsp;&nbsp; {{data}}</span></td>
                 </tr>
             </tbody>
         </table>
@@ -288,7 +313,8 @@
         <input type="hidden" id="type" value="0">
 
         <div class="pop-up-header">
-            <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}} [Line {{this.markerData.lineno}}]
+            <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}} [Line
+                {{this.markerData.lineno}}]
             </h5>
 
             <div class="img-close-outer">
@@ -299,7 +325,8 @@
     </div>
 
     <div class="modal-body divStatus">
-        <div id="divHouseType" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+        <div id="divHouseType"
+            style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
             <input type="hidden" id="houseIndex" value="0">
             <input type="hidden" id="houseWardNo" value="0">
             <input type="hidden" id="houseLineNo" value="0">
@@ -307,7 +334,8 @@
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change House Type</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <div class="col-md-12">
-                    <select id="ddlHouseType" class="caret-select-vehicle" (change)="setEntitiesCounts($event.target.value);">
+                    <select id="ddlHouseType" class="caret-select-vehicle"
+                        (change)="setEntitiesCounts($event.target.value);">
                         <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
                             {{dt.houseType}}
                         </option>
@@ -315,44 +343,47 @@
                 </div>
                 <div class="col-md-12">
                     Owner Name
-                    <input id="txtOwnerName" type="text" class="caret-select-vehicle" value=""/>
+                    <input id="txtOwnerName" type="text" class="caret-select-vehicle" value="" />
                 </div>
                 <div id="divNoOfPersons" class="col-md-12">
                     No. of Person
-                    <input id="txtNoOfPerson" type="text" class="caret-select-vehicle" value=""/>
+                    <input id="txtNoOfPerson" type="text" class="caret-select-vehicle" value="" />
                 </div>
                 <div id="divEntityCount" class="col-md-12">
                     No. of Entities
-                    <input id="txtNoOfEntities" type="text" class="caret-select-vehicle" value=""/>
+                    <input id="txtNoOfEntities" type="text" class="caret-select-vehicle" value="" />
                 </div>
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
                     <button class="btn btn-success " (click)="updateHouseType();" style="width: 100px;">
                         Save</button>
                 </div>
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
+                    <button class="btn btn-danger " (click)="cancelHouseType();"
+                        style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
                         Cancel</button>
                 </div>
             </div>
         </div>
-        <div id="divConfirm" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
+        <div id="divConfirm"
+            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
             <div class="col-md-12" style="padding-top: 10px; border-top: 1px solid rgba(128, 128, 128, 0.471);">
                 <label for="" style="font-weight: bold;">Delete Reason</label>
-                <select id="reasonSelect" class="caret-select-reason" [(ngModel)]="deleteReason" style="padding-top: 10px;">
-                <option  value="0">
-                    --Select--
-                </option>
-                <option  value="Marking is not visible properly">
-                    Marking is not visible properly
-                </option>
-                <option  value="Duplicate marking">
-                    Duplicate marking
-                </option>
-                <option  value="Garbage data">
-                    Garbage data
-                </option>    
-            </select>
+                <select id="reasonSelect" class="caret-select-reason" [(ngModel)]="deleteReason"
+                    style="padding-top: 10px;">
+                    <option value="0">
+                        --Select--
+                    </option>
+                    <option value="Marking is not visible properly">
+                        Marking is not visible properly
+                    </option>
+                    <option value="Duplicate marking">
+                        Duplicate marking
+                    </option>
+                    <option value="Garbage data">
+                        Garbage data
+                    </option>
+                </select>
             </div>
             <div class="row">
                 <input type="hidden" id="deleteMarkerId" value="0">
@@ -369,7 +400,8 @@
                 </div>
             </div>
         </div>
-        <div id="divConfirmApprove" style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width:550px">
+        <div id="divConfirmApprove"
+            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width:550px">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Confirm</h5>
             <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                 <input type="hidden" id="approveMarkerId" value="0">
@@ -382,7 +414,8 @@
 
                     </div>
                     <div class="col-md-12">
-                        <input type="checkbox" id="chkApprovedMarkar">&nbsp;&nbsp;I am sure, There is no other marker image same as this marker <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(No duplicate marker)
+                        <input type="checkbox" id="chkApprovedMarkar">&nbsp;&nbsp;I am sure, There is no other marker
+                        image same as this marker <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(No duplicate marker)
 
                     </div>
                 </div>
@@ -392,7 +425,8 @@
                             Confirm</button>
                     </div>
                     <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                        <button class="btn btn-danger " (click)="cancelMarkerApproveDelete()" style="text-transform: uppercase;">
+                        <button class="btn btn-danger " (click)="cancelMarkerApproveDelete()"
+                            style="text-transform: uppercase;">
                             Cancel</button>
                     </div>
                 </div>
@@ -406,7 +440,8 @@
             </select>&nbsp;&nbsp;
             <input type="text" id="txtLine" class="caret-select" />&nbsp;&nbsp;
             <button class="btn btn-success " (click)="getOtherMarkerData()">Include line</button>&nbsp;&nbsp;
-            <span id="btnRemoveIncludedLines" (click)="removeAddLines()" style="cursor:pointer; text-decoration: underline;display: none;">Remove Included Lines</span>
+            <span id="btnRemoveIncludedLines" (click)="removeAddLines()"
+                style="cursor:pointer; text-decoration: underline;display: none;">Remove Included Lines</span>
         </div>
         <!-- ////////////////////////////////// -->
 
@@ -421,28 +456,35 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
-                                    ></i></h3><br />
+                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
+                                    style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp;
+                                <!-- <i
+                                    class="fa-solid fa-pen-to-square" style="cursor: pointer;"
+                                    (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"></i> -->
+                                <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
+                                    (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
+                                    style="max-width: 25px;border: none;" />
+                            </h3><br />
                             <span [hidden]="dt.status==''">
                                 <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
                                             [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                             </span>
                             <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
-                               Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                <br/>
+                                Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
+                                <br />
                             </span>
                             <span style="font-size:11px" [hidden]="dt.ownerName==''">
                                 Owner Name : {{dt.ownerName}}
-                                 <br/>
-                             </span>
-                             <span style="font-size:11px" [hidden]="dt.persons==''">
+                                <br />
+                            </span>
+                            <span style="font-size:11px" [hidden]="dt.persons==''">
                                 No. of Persons : {{dt.persons}}
-                                 <br/>
-                             </span>
-                             <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
+                                <br />
+                            </span>
+                            <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
                                 No. of Entity : {{dt.totalEntity}}
-                                 <br/>
-                             </span>
+                                <br />
+                            </span>
                             <span style="font-size:11px">
                                 Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                 <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
@@ -452,16 +494,31 @@
                         </div>
                     </div>
                     <div style="text-align: left; margin-bottom: 20px;">
-                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'marker');">
-                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove
+                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
+                            (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'marker');">
+                            <!-- <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove -->
+                            <img src="../../../assets/icons/a-solid.svg" alt="A" class="cursor-pointer icon-green"
+                                width="15" style="border: none;margin: 0;padding: 0;" />pprove
+
                         </span>
-                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'marker');">
-                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
-                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
+                            (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'marker');">&nbsp; &nbsp;
+                            <!-- <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject -->
+                            <img src="../../../assets/icons/r-solid.svg" alt="R" class="cursor-pointer icon-blue"
+                                width="15" style="border: none;margin: 0;padding: 0;" />eject
+                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
+                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
+                            &nbsp; &nbsp;
+                            <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                            <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
+                                width="15" style="border: none;margin: 0;padding: 0;" />elete
                         </span>
-                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
-                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
+                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
+                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
+                            &nbsp; &nbsp;
+                            <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                            <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
+                                width="15" style="border: none;margin: 0;padding: 0;" />elete
                         </span>
                     </div>
 
@@ -482,48 +539,71 @@
                         </div>
                         <div class="main-tag">
                             <div class="f-left">
-                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
-                                        [hidden]="isActionShow==false"></i></h3><br />
+                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
+                                        style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp;
+                                    <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
+                                        (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
+                                        [hidden]="isActionShow==false"></i> -->
+                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
+                                        (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
+                                        [hidden]="isActionShow==false" style="max-width: 25px;border: none;" />
+                                </h3><br />
                                 <span [hidden]="dt.status==''">
-                                <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
-                                            [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
+                                    <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
+                                                [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                                 </span>
                                 <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
-                               Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                <br/>
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.ownerName==''">
-                                Owner Name : {{dt.ownerName}}
-                                 <br/>
-                             </span>
-                             <span style="font-size:11px" [hidden]="dt.persons==''">
-                                No. of Persons : {{dt.persons}}
-                                 <br/>
-                             </span>
-                             <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
-                                No. of Entity : {{dt.totalEntity}}
-                                 <br/>
-                             </span>
+                                    Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
+                                    <br />
+                                </span>
+                                <span style="font-size:11px" [hidden]="dt.ownerName==''">
+                                    Owner Name : {{dt.ownerName}}
+                                    <br />
+                                </span>
+                                <span style="font-size:11px" [hidden]="dt.persons==''">
+                                    No. of Persons : {{dt.persons}}
+                                    <br />
+                                </span>
+                                <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
+                                    No. of Entity : {{dt.totalEntity}}
+                                    <br />
+                                </span>
                                 <span style="font-size:11px">
-                                Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
-                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
-                                    Date : {{dt.approveDate}}</span>
+                                    Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
+                                    <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
+                                        Date : {{dt.approveDate}}</span>
 
                                 </span>
                             </div>
                         </div>
                         <div style="text-align: left; margin-bottom: 20px;">
-                            <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'marker');">
-                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove
-                        </span>
-                            <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'marker');">
-                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
-                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
-                        </span>
-                            <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
-                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
-                        </span>
+                            <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
+                                (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'marker');">
+                                <!-- <i class="fa-solid fa-a"
+                                    style="color:green; font-size: 16px; cursor: pointer;"></i>pprove -->
+                                <img src="../../../assets/icons/a-solid.svg" alt="A" class="cursor-pointer icon-green"
+                                    width="15" style="border: none;margin: 0;padding: 0;" />pprove
+                            </span>
+                            <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
+                                (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'marker');">
+                                &nbsp; &nbsp;
+                                <!-- <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject -->
+                                <img src="../../../assets/icons/r-solid.svg" alt="R" class="cursor-pointer icon-blue"
+                                    width="15" style="border: none;margin: 0;padding: 0;" />eject
+                            </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
+                                (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
+                                &nbsp; &nbsp;
+                                <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                                <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
+                                    width="15" style="border: none;margin: 0;padding: 0;" />elete
+                            </span>
+                            <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
+                                (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
+                                &nbsp; &nbsp;
+                                <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                                <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
+                                    width="15" style="border: none;margin: 0;padding: 0;" />elete
+                            </span>
                         </div>
 
                     </div>
@@ -542,48 +622,70 @@
                         </div>
                         <div class="main-tag">
                             <div class="f-left">
-                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0" style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp; <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');"
-                                        [hidden]="isActionShow==false"></i></h3><br />
+                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
+                                        style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp;
+                                    <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
+                                        (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');"
+                                        [hidden]="isActionShow==false"></i> -->
+                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
+                                        (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');"
+                                        [hidden]="isActionShow==false" style="max-width: 25px;border: none;" />
+                                </h3><br />
                                 <span [hidden]="dt.status==''">
-                                <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
-                                            [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
+                                    <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
+                                                [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                                 </span>
                                 <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
                                     Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                     <br/>
-                                 </span>
-                                 <span style="font-size:11px" [hidden]="dt.ownerName==''">
-                                     Owner Name : {{dt.ownerName}}
-                                      <br/>
-                                  </span>
-                                  <span style="font-size:11px" [hidden]="dt.persons==''">
-                                     No. of Persons : {{dt.persons}}
-                                      <br/>
-                                  </span>
-                                  <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
+                                    <br />
+                                </span>
+                                <span style="font-size:11px" [hidden]="dt.ownerName==''">
+                                    Owner Name : {{dt.ownerName}}
+                                    <br />
+                                </span>
+                                <span style="font-size:11px" [hidden]="dt.persons==''">
+                                    No. of Persons : {{dt.persons}}
+                                    <br />
+                                </span>
+                                <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
                                     No. of Entity : {{dt.totalEntity}}
-                                     <br/>
-                                 </span>
+                                    <br />
+                                </span>
                                 <span style="font-size:11px">
-                                Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
-                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
-                                    Date : {{dt.approveDate}}</span>
+                                    Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
+                                    <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
+                                        Date : {{dt.approveDate}}</span>
 
                                 </span>
                             </div>
                         </div>
                         <div style="text-align: left; margin-bottom: 20px;">
-                            <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'" (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'includedMarker');">
-                            <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove
-                        </span>
-                            <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''" (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');">
-                            &nbsp; &nbsp; <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'includedMarker');">
-                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
-                        </span>
-                            <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false" (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'includedMarker');">
-                            &nbsp; &nbsp;<i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete
-                        </span>
+                            <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
+                                (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'includedMarker');">
+                                <!-- <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove -->
+                                <img src="../../../assets/icons/a-solid.svg" alt="A" class="cursor-pointer icon-green"
+                                    width="15" style="border: none;margin: 0;padding: 0;" />pprove
+                            </span>
+                            <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
+                                (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');">
+                                &nbsp; &nbsp;
+                                <!-- <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject -->
+                                <img src="../../../assets/icons/r-solid.svg" alt="R" class="cursor-pointer icon-blue"
+                                    width="15" style="border: none;margin: 0;padding: 0;" />eject
+                            </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
+                                (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'includedMarker');">
+                                &nbsp; &nbsp;
+                                <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                                <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
+                                    width="15" style="border: none;margin: 0;padding: 0;" />elete
+                            </span>
+                            <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
+                                (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'includedMarker');">
+                                &nbsp; &nbsp;
+                                <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                                <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
+                                    width="15" style="border: none;margin: 0;padding: 0;" />elete
+                            </span>
                         </div>
 
                     </div>
@@ -600,16 +702,19 @@
             </div>
 
             <div id="approveLineCheckDiv" style="width:60%;text-align: center;padding-top: 25px;">
-                <input type="checkbox" id="approveCheck" style="height: 15px;width: 15px;" (click)="checkvalue('approveCheck')">&nbsp;&nbsp;
+                <input type="checkbox" id="approveCheck" style="height: 15px;width: 15px;"
+                    (click)="checkvalue('approveCheck')">&nbsp;&nbsp;
                 <p style="display: inline-block;">I have checked all markers carefully before approve line. </p>
             </div>
-            <div id="approveLineStatusDiv" style="width:60%;text-align: center;padding-top: 25px;" [hidden]="this.markerData.lineApprovedBy==''">
-                <p>Approved By <b>{{this.markerData.lineApprovedBy}}</b> on <b>{{this.markerData.lineApprovedDate}}</b>.</p>
+            <div id="approveLineStatusDiv" style="width:60%;text-align: center;padding-top: 25px;"
+                [hidden]="this.markerData.lineApprovedBy==''">
+                <p>Approved By <b>{{this.markerData.lineApprovedBy}}</b> on <b>{{this.markerData.lineApprovedDate}}</b>.
+                </p>
 
             </div>
             <div class="pr-46" style="padding-top: 5px;width:20%;">
                 <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
-                        Line</button>
+                    Line</button>
             </div>
 
 
@@ -650,9 +755,9 @@
                             <h3 class="f-left-heading"> {{dt.houseType}}
                             </h3><br />
                             <span style="font-weight:bold;font-size:11px">
-                               Line {{dt.lineNo}}
-                                
-                            </span><br/>
+                                Line {{dt.lineNo}}
+
+                            </span><br />
                             <span style="font-size:11px" [hidden]="dt.removedBy==''">
                                 Deleted By : {{dt.removedBy}}<br /> Deleted Date : {{dt.removedDate}}<br />
                                 <span [hidden]="dt.reason==undefined">Reason : {{dt.reason}}</span>
@@ -680,10 +785,12 @@
         </div>
     </div>
 
-    <div id="divModifiedEntities" style="display: none; position: absolute;z-index: 9999;background-color: #fff;  width: 80%; margin-left: 10%; margin-top: 20px; border: 1px solid lightgray;">
+    <div id="divModifiedEntities"
+        style="display: none; position: absolute;z-index: 9999;background-color: #fff;  width: 80%; margin-left: 10%; margin-top: 20px; border: 1px solid lightgray;">
         <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Modified Entities</h5>
         <div class="img-close-outer">
-            <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeSubModel('#divModifiedEntities')">
+            <img src="../../../assets/img/close-grey.png" class="img-close"
+                (click)="closeSubModel('#divModifiedEntities')">
 
         </div>
         <div class="row" style="border-top: 1px solid lightgray; margin-right: 10px; margin-left: 10px;">
@@ -731,7 +838,12 @@
                     </div>
                     <div class="main-tag">
                         <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.houseType}} &nbsp;&nbsp;&nbsp; <i class="fas fa-eye" style="cursor: pointer;" (click)="getModifiedMarkersList(dt.modifiedHouseTypeHistoryId,dt.lineNo)"></i>
+                            <h3 class="f-left-heading"> {{dt.houseType}} &nbsp;&nbsp;&nbsp;
+                                <!-- <i class="fas fa-eye"
+                                    style="cursor: pointer;"
+                                    (click)="getModifiedMarkersList(dt.modifiedHouseTypeHistoryId,dt.lineNo)"></i> -->
+                                <img src="../../../assets/icons/eye-regular.svg" alt="eye" class="cursor-pointer"
+                                    (click)="getModifiedMarkersList(dt.modifiedHouseTypeHistoryId,dt.lineNo)" />
                             </h3>
                         </div>
                     </div>

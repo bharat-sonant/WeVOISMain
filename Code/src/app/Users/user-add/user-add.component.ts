@@ -159,6 +159,11 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canUpdateLeaveBalance"))).checked = true;
         }
       }
+      if (data["canUpdateDustbinPickDetail"] != undefined) {
+        if (data["canUpdateDustbinPickDetail"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canUpdateDustbinPickDetail"))).checked = true;
+        }
+      }
       if (data["canViewAttendance"] != undefined) {
         if (data["canViewAttendance"] == 1) {
           (<HTMLInputElement>(document.getElementById("canViewAttendance"))).checked = true;
@@ -263,6 +268,7 @@ export class UserAddComponent implements OnInit {
     let canUpdateOpendepotPickDetail: any = 0;
     let canUpdateLeaveBalance:any=0;
     let canViewAttendance:any=0;
+    let canUpdateDustbinPickDetail:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -316,6 +322,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canUpdateOpendepotPickDetail = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateLeaveBalance");
     if (element.checked == true) canUpdateLeaveBalance = 1;
+    element = <HTMLInputElement>document.getElementById("canUpdateDustbinPickDetail");
+    if (element.checked == true) canUpdateDustbinPickDetail = 1;
     element = <HTMLInputElement>document.getElementById("canViewAttendance");
     if (element.checked == true) canViewAttendance = 1;
     if (this.userid == null) {
@@ -352,7 +360,8 @@ export class UserAddComponent implements OnInit {
       canUpdateEmployeeDetail: canUpdateEmployeeDetail,
       canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
       canUpdateLeaveBalance:canUpdateLeaveBalance,
-      canViewAttendance:canViewAttendance
+      canViewAttendance:canViewAttendance,
+      canUpdateDustbinPickDetail:canUpdateDustbinPickDetail
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

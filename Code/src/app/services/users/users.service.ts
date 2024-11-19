@@ -116,6 +116,7 @@ export class UsersService {
               let accessCities = "";
               let canUpdateOpendepotPickDetail=0;
               let canViewAttendance=0;
+              let canUpdateDustbinPickDetail=0;
               if (data[key]["haltDisableAccess"] != undefined) {
                 haltDisableAccess = data[key]["haltDisableAccess"];
               }
@@ -149,6 +150,9 @@ export class UsersService {
               if(data[key]["canViewAttendance"]!=undefined){
                 canViewAttendance=data[key]["canViewAttendance"];
               }
+              if(data[key]["canUpdateDustbinPickDetail"]!=undefined){
+                canUpdateDustbinPickDetail=data[key]["canUpdateDustbinPickDetail"];
+              }
               if (data[key]["isDelete"] == "0") {
                 userList.push({
                   userKey: data[key]["userId"],
@@ -177,7 +181,8 @@ export class UsersService {
                   imgUrl:imgUrl,
                   utitle:utitle,
                   canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
-                  canViewAttendance:canViewAttendance
+                  canViewAttendance:canViewAttendance,
+                  canUpdateDustbinPickDetail:canUpdateDustbinPickDetail
                 });
               }
             }

@@ -24,8 +24,10 @@
                 <span style="font-size: 8px;">Not Verified </span>
             </div>-->
             <div style="text-align: center; width: 45%;">
-                <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
-                    (click)="exportList('all');"></i><br />
+                <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
+                    (click)="exportList('all');"></i><br /> -->
+                <img src="../../../assets/icons/file-export-solid.svg" alt="file" width="24"
+                    class="cursor-pointer green-filter" (click)="exportList('all');" /><br />
                 <span style="font-size: 8px;">Export All</span>
             </div>
         </div>
@@ -63,8 +65,10 @@
                         </div>
                         <div class="col-md-3" style="text-align: center;" [hidden]="isShowFilter==false">
 
-                            <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
-                                (click)="exportList('filtered');"></i><br />
+                            <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
+                                (click)="exportList('filtered');"></i><br /> -->
+                            <img src="../../../assets/icons/file-export-solid.svg" alt="file" width="24"
+                                class="cursor-pointer green-filter" (click)="exportList('filtered');" /><br />
                             <span style="font-size: 12px;">Export Filtered </span>
                         </div>
                     </div>
@@ -94,7 +98,7 @@
                         <div class="col-md-6">
                             <input type="radio" id="chkReverified" name="chkradio" (change)="getFilter();"
                                 style="margin-top: 10px;" /> Re-Surveyed Cards
-                            <b>({{reverifiedCardsCount}})</b> 
+                            <b>({{reverifiedCardsCount}})</b>
                         </div>
                     </div>
                 </div>
@@ -161,14 +165,14 @@
         <div>Card Image</div>
         <div style="width:100%; min-height:180px;">
             <a href="{{imageURL}}" target="_blank">
-            <img [src]="imageURL" style="width:100%;height:auto; display: block;" /></a>
+                <img [src]="imageURL" style="width:100%;height:auto; display: block;" /></a>
         </div>
     </div>
     <div class="col-md-6">
         <div>House Image</div>
-        <div style="width:100%; min-height:180px;">            
+        <div style="width:100%; min-height:180px;">
             <a href="{{imageHouseURL}}" target="_blank">
-            <img [src]="imageHouseURL" style="width:100%;height:auto; display: block;" /></a>
+                <img [src]="imageHouseURL" style="width:100%;height:auto; display: block;" /></a>
         </div>
     </div>
     <div class="col-md-12">

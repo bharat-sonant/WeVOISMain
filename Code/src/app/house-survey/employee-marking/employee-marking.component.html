@@ -2,7 +2,10 @@
     <div class="row no-gutters">
         <div class="col-md-2 no-gutters-iner">
             <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentEmployee,0,'add');">
-                <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp;
+                <span class="text-bg"><span class="icon">
+                        <!-- <i class="fas fa-plus"></i> -->
+                        <img src="../../../assets/icons/plus-solid.svg" alt="Plus" class="icon-green">
+                    </span> &nbsp;
                     NEW</span></button>
 
         </div>
@@ -33,7 +36,10 @@
                                                 Action</th>
                                         </thead>
                                         <tbody>
-                                            <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index" class="{{data.trClass}}" (click)="getMarkerDetail(data.empId, data.wardNo,i);" style="cursor: pointer;">
+                                            <tr class="table-row" id="tr{{i}}"
+                                                *ngFor="let data of userList; let i=index" class="{{data.trClass}}"
+                                                (click)="getMarkerDetail(data.empId, data.wardNo,i);"
+                                                style="cursor: pointer;">
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-2">
                                                     {{data.name}}</td>
@@ -43,17 +49,33 @@
                                                     {{data.wardNo}}</td>
                                                 <td class="text-center">
                                                     <span [hidden]="data.isActive==false">
-                                                        <i class="fas fa-map-marked-alt marked-icon"
+                                                        <!-- <i class="fas fa-map-marked-alt marked-icon"
                                                             (click)="openModel(contentWard,data.empId,'ward');"
-                                                            title="Assign Ward"></i>
-                                                        <i class="far fa-times-circle circle-icon"
+                                                            title="Assign Ward"></i> -->
+                                                        <img src="../../../assets/icons/map-location-dot-solid.svg"
+                                                            alt="Map"
+                                                            (click)="openModel(contentWard,data.empId,'ward');"
+                                                            title="Assign Ward" class="icon-green"
+                                                            style="margin-right: 4px; vertical-align: middle;">
+                                                        <!-- <i class="far fa-times-circle circle-icon"
                                                             (click)="openModel(contentConfirmation,data.empId,'delete')"
-                                                            title="Remove Assignment"></i>
-                                                        <i class="far fa-edit edit-icon"
+                                                            title="Remove Assignment"></i> -->
+                                                        <img src="../../../assets/icons/circle-xmark-regular.svg"
+                                                            alt="Circle"
+                                                            (click)="openModel(contentConfirmation,data.empId,'delete')"
+                                                            title="Remove Assignment"
+                                                            style="margin-right: 4px; vertical-align: middle;">
+                                                        <!-- <i class="far fa-edit edit-icon"
                                                             (click)="openModel(contentEmployee,data.empId,'update');"
-                                                            title="Edit Entry"></i>
+                                                            title="Edit Entry"></i> -->
+                                                        <img src="../../../assets/icons/pen-to-square-regular.svg"
+                                                            alt="Edit"
+                                                            (click)="openModel(contentEmployee,data.empId,'update');"
+                                                            title="Edit Entry"
+                                                            style="margin-right: 4px; vertical-align: middle;">
                                                     </span>
-                                                    <span class="inactive" [hidden]="data.isActive==true">Inactive</span>
+                                                    <span class="inactive"
+                                                        [hidden]="data.isActive==true">Inactive</span>
                                                 </td>
                                             </tr>
 
@@ -71,7 +93,8 @@
                 <div class="card-header custom-header">
                     <div class="row">
                         <div class="col-md-6 text-center">
-                            <h5 style="text-align: left; font-size:15px; padding: 6px 3px;"><b>{{markerData.name}}</b></h5>
+                            <h5 style="text-align: left; font-size:15px; padding: 6px 3px;"><b>{{markerData.name}}</b>
+                            </h5>
                         </div>
                         <div class="col-md-6 text-center">
 
@@ -111,7 +134,8 @@
                         <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
                             <div class="table-heading current-heading">
                                 <h3>
-                                    <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br />Current Ward Markers
+                                    <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br />Current Ward
+                                    Markers
                                 </h3>
                             </div>
                         </div>
@@ -185,7 +209,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove assignment ?</h5>
+                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
+                    assignment ?</h5>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="deleteId" value="0" />
@@ -225,13 +250,15 @@
                     </select>
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/map-location-dot-solid.svg" alt="Map" aria-hidden="true">
                     </span>
                 </div>
                 <div class="wrap-input-effects" required style="display: none;">
                     <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
                 </div>
-                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT" (click)="saveWard();" />
+                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT"
+                    (click)="saveWard();" />
             </div>
         </div>
     </div>
@@ -254,28 +281,33 @@
                     <input type="text" id="txtName" class="input-green" placeholder="Name" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/user-solid.svg" alt="User" aria-hidden="true" />
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
                     <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-mobile-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-mobile-alt" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/mobile-screen-button-solid.svg" alt="Mobile"
+                            aria-hidden="true" />
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
                     <input type="text" id="txtPassword" class="input-green" placeholder="Password" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-key" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-key" aria-hidden="true"></i> -->
+                        <img src="../../../assets/icons/key-solid.svg" alt="Key" aria-hidden="true" />
                     </span>
                 </div>
                 <div class="wrap-input-effects" required>
                     <input class="active-input" type="checkbox" id="chkAcive" checked> Is Active
 
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT" (click)="saveEmployee();" />
+                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
+                    (click)="saveEmployee();" />
             </div>
         </div>
     </div>
