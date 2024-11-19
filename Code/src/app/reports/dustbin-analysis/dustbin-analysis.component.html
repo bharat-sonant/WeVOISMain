@@ -227,13 +227,16 @@
                                                 History </span></button>
                                     </a>
                                 </div>
-                                <div class="col-md-12 mt-10 pl-0 pr-0" *ngIf="binDetail.isAutoPicked=='1'" (click)="openModel(UpdateDustbinPickedDetail,binDetail,'UpdateDustbinPickedDetail');">
+                                <div id="updateDustbinDiv" [hidden]="showUpdateDetailButton==0" class="col-md-12 mt-10 pl-0 pr-0"  (click)="openModel(UpdateDustbinPickedDetail,binDetail,'UpdateDustbinPickedDetail');">
                                     <button class="button"><span>Update Dustbin Picked Detail</span></button>
                                 </div>
-
-                            </div>
-                            
-
+                                <div id="resetDustbinDiv"  [hidden]="showResetPickedButton==0" class="col-md-12 mt-10 pl-0 pr-0"  (click)="resetDustbinPickedDetail();">
+                                    <button class="button"><span>Reset Picked Detail</span></button>
+                                </div>
+                                <div id="restoreDustbinDiv"  [hidden]="showReStorePickedButton==0" class="col-md-12 mt-10 pl-0 pr-0"  (click)="restoreDustbinPickedDetail();">
+                                    <button class="button"><span>Re-store Picked Detail</span></button>
+                                </div>
+                            </div>  
                         </div>
                     </div>
                     <div class="col-md-6 mob-mid mob-hide-outer">
@@ -336,7 +339,7 @@
                         <div class="scroll-list">
                             <div id="filter{{i}}" class="{{data.divClass}}"
                                 *ngFor="let data of dustbinList ; let i=index"
-                                (click)="data.iconClass!='fas fa-ellipsis-h' && showDustbinData(i);">
+                                (click)="data.divClass!='address md-background' && showDustbinData(i);">
                                 <i class="{{data.iconClass}}"></i>
                                 <div class="address-text-outer">
                                     <div class="address-text">
