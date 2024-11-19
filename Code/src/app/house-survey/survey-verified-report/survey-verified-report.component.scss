@@ -1870,3 +1870,13 @@ input {
     font-weight: bolder;
     font-size: 17px;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+// SVG icon color
+.green-filter {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(92%) saturate(420%) hue-rotate(65deg) brightness(103%) contrast(98%);
+}
+
+

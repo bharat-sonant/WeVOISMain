@@ -842,44 +842,57 @@ label {
     .Ward-Marking-heading {
         display: none;
     }
+
     .custom-header-outer {
         height: unset !important;
     }
+
     .loaderClass-outer {
         padding-left: 0px;
         padding-right: 0px;
     }
+
     .card-outer {
         padding-left: 0px !important;
         padding-right: 0px !important;
     }
+
     .table-one {
         overflow-x: scroll;
     }
+
     .table-outer {
         overflow-x: scroll;
     }
+
     div#divMessage {
         display: none;
     }
+
     .fix-home-outer {
         margin-left: auto;
     }
+
     .col-md-6.loaderClass-outer {
         margin-top: 35px !important;
     }
+
     .card-header {
         box-shadow: unset !important;
     }
+
     .responsive {
         width: 50% !important;
     }
+
     .custom-header {
         height: unset !important;
     }
+
     .card-body3 {
         margin-top: 0px !important;
     }
+
     .table-scroll {
         height: unset !important;
     }
@@ -889,19 +902,24 @@ label {
     .table-one {
         overflow-x: scroll;
     }
+
     .Ward-Marking-heading {
         display: none;
     }
+
     .fix-home-outer {
         margin-left: auto;
     }
+
     .responsive {
         padding-left: 0 !important;
         padding-right: 0 !important;
     }
+
     .fix-home-iner {
         margin-left: 0px !important
     }
+
     .table-outer {
         overflow-x: scroll !important;
     }
@@ -911,6 +929,7 @@ label {
     .Ward-Marking-heading {
         display: none;
     }
+
     .fix-home-outer {
         margin-left: auto;
     }
@@ -963,3 +982,22 @@ label {
 .inProgress {
     background-color: #d0eef4;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green {
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
+}
+
+.icon-red {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(90%) saturate(7483%) hue-rotate(2deg) brightness(94%) contrast(108%);
+}
+
+.icon-blue {
+    filter: invert(43%) sepia(83%) saturate(453%) hue-rotate(178deg) brightness(96%) contrast(92%);
+}
+
+

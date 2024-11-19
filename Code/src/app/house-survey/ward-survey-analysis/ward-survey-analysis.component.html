@@ -1,7 +1,8 @@
 <div id="divLoaderUpdate" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
-<div id="divVirtualSurvey" style="display: none; position: absolute;z-index: 99; width: 400px;background-color: #fff; margin-top: 5%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+<div id="divVirtualSurvey"
+    style="display: none; position: absolute;z-index: 99; width: 400px;background-color: #fff; margin-top: 5%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
     <input type="hidden" id="virtualWardNo" value="0">
     <input type="hidden" id="virtualLineNo" value="0">
     <input type="hidden" id="virtualMarkerNo" value="0">
@@ -25,7 +26,8 @@
                 Process</button>
         </div>
         <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-            <button class="btn btn-danger " (click)="cancelVirtualSurvey();" style="text-transform: uppercase;width: 100px;">
+            <button class="btn btn-danger " (click)="cancelVirtualSurvey();"
+                style="text-transform: uppercase;width: 100px;">
                 Cancel</button>
         </div>
     </div>
@@ -33,41 +35,51 @@
 <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4 no-gutters-iner">
-            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
-        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-          ngSelected="zone.zoneNo == selectedZone?'selected':''">
-          {{zone.zoneName}}
-        </option>
-      </select>
+            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
+                [(ngModel)]="selectedZone">
+                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                    {{zone.zoneName}}
+                </option>
+            </select>
         </div>
-
-
-
         <div id="houseCount" class="col-md-8 text-right total-house background-black">
             <div class="display" id="popup2">
                 <div class="fix-home">
-                    <div class="float-first fix-home-iner1">
-                        <i class="fas fa-home home-icon"></i> <span class="house"> {{progressData.totalMarkers}}</span><br>
-                        <h6>Total Marker</h6>
+                    <div class="float-first fix-home-iner1" style="margin-top: 10px;">
+                        <!-- <i class="fas fa-home home-icon"></i>  -->
+                        <img src="../../../assets/icons/house-solid.svg" alt="house" width="20" class="icon-red" />
+                        <span class="house" style="top: 3px; position: relative;">
+                            {{progressData.totalMarkers}}</span><br>
+                        <h6 style="margin-top: 6px;">Total Marker</h6>
                     </div>
-                    <div class="float-second">
-                        <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.totalSurveyed}}</span><br>
-                        <h6>Surveyed Marker</h6>
+                    <div class="float-second" style="margin-top: 10px;">
+                        <!-- <i class="fas fa-house-damage"></i> -->
+                        <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="Chimney" width="20"
+                            class="green-filter" />
+                        <span class="house" style="top: 3px; position: relative;">
+                            {{progressData.totalSurveyed}}</span><br>
+                        <h6 style="margin-top: 6px;">Surveyed Marker</h6>
                     </div>
-                    <div id="divRevisitCount" class="float-third" (click)="progressData.totalRevisit > 0 && openModel(contentRevisit,'RevisitAll')">
-                        <i class="fas fa-house-damage damage-icon"></i> <span class="house">
-            {{progressData.totalRevisit}}</span><br>
-                        <h6>Revisit Request</h6>
+                    <div id="divRevisitCount" class="float-third"
+                        (click)="progressData.totalRevisit > 0 && openModel(contentRevisit,'RevisitAll')"
+                        style="margin-top: 10px;">
+                        <!-- <i class="fas fa-house-damage damage-icon"></i> -->
+                        <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="Chimney" width="20"
+                            class="icon-purple" />
+                        <span class="house" style="top: 3px; position: relative;">
+                            {{progressData.totalRevisit}}</span><br>
+                        <h6 style="margin-top: 6px;">Revisit Request</h6>
                     </div>
-
-                    <div class="float-fourth" [hidden]="isAlreadyShow==false">
-                        <i class="fas fa-house-damage house-damage-icon"></i> <span class="house">
-            {{progressData.totalOldCards}}</span><br>
-                        <h6>Old Cards</h6>
+                    <div class="float-fourth" [hidden]="isAlreadyShow==false" style="margin-top: 10px;">
+                        <!-- <i class="fas fa-house-damage house-damage-icon"></i> -->
+                        <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="Chimney" width="20"
+                            class="icon-blue" />
+                        <span class="house" style="top: 3px; position: relative;">
+                            {{progressData.totalOldCards}}</span><br>
+                        <h6 style="margin-top: 6px;">Old Cards</h6>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -89,22 +101,29 @@
                 <div class="col-md-12 row-box-iner">
                     <div class="border-bottom">
                         <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
-            << </button>
-                        <input class="arrow-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
-                        <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
-                >>
-              </button>
+                            << </button>
+                                <input class="arrow-input" id="txtLineNo" type="text"
+                                    (keyup)="getCurrentLineDetail($event);" autocomplete="off" value="1" />
+                                <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
+                                    >>
+                                </button>
                     </div>
                 </div>
                 <div class="col-md-12 total-house fix-home-outer">
                     <div class="fix-home">
                         <div class="float-l fix-home-iner">
-                            <i class="fas fa-home home-icon"></i> <span class="house home-icon-span">
-              {{progressData.totalLineMarkers}}</span><br>
+                            <!-- <i class="fas fa-home home-icon"></i> -->
+                            <img src="../../../assets/icons/house-solid.svg" alt="House" width="20" class="icon-red" />
+                            <span class="house home-icon-span" style="top: 3px; position: relative;">
+                                {{progressData.totalLineMarkers}}</span><br>
                         </div>
-                        <div id="divLineScannedCount" class="float-l house-damage-icon-div" (click)="progressData.totalLineSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
-                            <i class="fas fa-house-damage"></i> <span class="house house-damage-icon-span">
-              {{progressData.totalLineSurveyed}}</span><br>
+                        <div id="divLineScannedCount" class="float-l house-damage-icon-div"
+                            (click)="progressData.totalLineSurveyed > 0 && openModel(contentLineMarkers,'ScannedCard')">
+                            <!-- <i class="fas fa-house-damage"></i> -->
+                            <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="Chimney" width="20"
+                                class="green-filter" />
+                            <span class="house house-damage-icon-span" style="top: 3px; position: relative;">
+                                {{progressData.totalLineSurveyed}}</span><br>
                         </div>
                     </div>
                 </div>
@@ -112,18 +131,28 @@
                 <div class="col-md-12 total-house fix-home-outer">
                     <div class="fix-home">
 
-                        <div id="divLineRevisitCount" class="float-l" (click)="progressData.totalLineRevisit > 0 && openModel(contentRevisit,'RevisitLine')">
-                            <i class="fas fa-house-damage damage-icon"></i> <span class="house house-damage-icon-span">
-              {{progressData.totalLineRevisit}}</span><br>
+                        <div id="divLineRevisitCount" class="float-l"
+                            (click)="progressData.totalLineRevisit > 0 && openModel(contentRevisit,'RevisitLine')"
+                            style="margin-top: 10px;">
+                            <!-- <i class="fas fa-house-damage damage-icon"></i> -->
+                            <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="Chimney" width="20"
+                                class="icon-purple" />
+                            <span class="house house-damage-icon-span" style="top: 3px; position: relative;">
+                                {{progressData.totalLineRevisit}}</span><br>
                         </div>
 
-                        <div style="padding-top: 20px;" class="float-l">
+                        <div style="padding-top: 15px;" class="float-l">
                             <input id="chkShowAll" type="checkbox" (change)="showAllMarkers();"> Show All
 
                         </div>
-                        <div id="divLineOldCardCount" class="float-l" (click)="progressData.totalLineOldCard > 0 && openModel(contentLineOldCard,'OldCard')" [hidden]="isAlreadyShow==false">
-                            <i class="fas fa-house-damage damage-icon2"></i> <span class="house house-damage-icon-span">
-              {{progressData.totalLineOldCard}}</span><br>
+                        <div id="divLineOldCardCount" class="float-l"
+                            (click)="progressData.totalLineOldCard > 0 && openModel(contentLineOldCard,'OldCard')"
+                            [hidden]="isAlreadyShow==false" style="margin-top: -5px;">
+                            <!-- <i class="fas fa-house-damage damage-icon2"></i> -->
+                            <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="Chimney" width="20"
+                                class="icon-blue" />
+                            <span class="house house-damage-icon-span" style="top: 3px; position: relative;">
+                                {{progressData.totalLineOldCard}}</span><br>
                         </div>
                     </div>
 
@@ -155,7 +184,8 @@
     <div class="row">
         <div class="col-md-12 text-left">
             <div class="f-left">
-                <h3> {{progressData.revisitHouseType}} <br /> {{progressData.revisitName}} <br /> {{progressData.revisitReason}}
+                <h3> {{progressData.revisitHouseType}} <br /> {{progressData.revisitName}} <br />
+                    {{progressData.revisitReason}}
                     <br /> {{progressData.revisitDate}}
                 </h3>
             </div>
@@ -202,13 +232,13 @@
                         <div class="f-left">
                             <h3 class="name-heading"> {{dt.name}} </h3><br />
                             <h3 class="mobile-heading" id="spMobile{{i}}"> {{dt.mobile}} </h3><br />
-
                             <h3 class="cardno-heading" id="spCardNo{{i}}"> {{dt.cardNo}} (RFID) </h3><br />
-
                             <h3> {{dt.surveyDate}} </h3><br />
                             <h3 class="h3caption"> SIKA </h3>
                             <input id="txt{{i}}" type="text" class="txtCardNo">&nbsp;
-                            <i class="fas fa-arrow-circle-right btnNext" (click)="getProcessRfId(i);"></i>
+                            <!-- <i class="fas fa-arrow-circle-right btnNext" (click)="getProcessRfId(i);"></i> -->
+                            <img src="../../../assets/icons/arrow-circle-right-solid.svg" alt="Arrow" width="20"
+                                class="icon-green cursor-pointer" (click)="getProcessRfId(i);" />
                         </div>
                     </div>
                 </div>
@@ -228,7 +258,8 @@
     </div>
     <div class="modal-body">
 
-        <div id="divHouseType" style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
+        <div id="divHouseType"
+            style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
             <input type="hidden" id="houseWardNo" value="0">
             <input type="hidden" id="houseLineNo" value="0">
             <input type="hidden" id="houseIndex" value="0">
@@ -251,17 +282,21 @@
                         Save</button>
                 </div>
                 <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelHouseType();" style="text-transform: uppercase;width: 100px;">
+                    <button class="btn btn-danger " (click)="cancelHouseType();"
+                        style="text-transform: uppercase;width: 100px;">
                         Cancel</button>
                 </div>
             </div>
         </div>
-        <div id="divEntityList" style="display:none;position: absolute;z-index: 9999; width: 80%; height:80%;background-color: #fff; padding: 20px; border: 1px solid lightgray; overflow-y: scroll; margin-top: 5%; margin-left: 10%;">
-            <img src="../../../assets/img/close-grey.png" style="float:right ;" class="img-close" (click)="hideEntity();">
+        <div id="divEntityList"
+            style="display:none;position: absolute;z-index: 9999; width: 80%; height:80%;background-color: #fff; padding: 20px; border: 1px solid lightgray; overflow-y: scroll; margin-top: 5%; margin-left: 10%;">
+            <img src="../../../assets/img/close-grey.png" style="float:right ;" class="img-close"
+                (click)="hideEntity();">
             <div class="row">
                 <div class="col-md-3 " *ngFor="let data of entityList" style="margin-right: -10px;">
                     <div class="row" style="margin: 0px;">
-                        <div style="border: 1px solid lightgray; border-radius: 5px; padding: 5px; margin-bottom: 10px!important;background-color: #f1f1f1; ">
+                        <div
+                            style="border: 1px solid lightgray; border-radius: 5px; padding: 5px; margin-bottom: 10px!important;background-color: #f1f1f1; ">
                             <div style="width: 96%; float:left; margin-left: 5px;">
                                 <div class="content-scroll-iner">
                                     <a href="{{data.entityImageURL}}" target="_blank">
@@ -286,7 +321,8 @@
                         <div class="{{dt.class}}">
                             <div style="width: 30%; float:left; margin-left: 5px; border:1px solid lightgray;">
                                 <div class="content-scroll-iner">
-                                    <div style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
+                                    <div
+                                        style="text-align: center; width: 27%!important; background-color: lightgray; font-size: 10px; z-index: 99; position: absolute;">
                                         Marker Image</div>
 
                                     <a href="{{dt.markerImageURL}}" target="_blank">
@@ -313,8 +349,13 @@
                                 <div class="main-tag">
                                     <div class="f-left">
                                         <h3 class="f-left-heading"> {{dt.name}} <b>({{dt.cardNo}})</b></h3><br />
-                                        <h3>{{dt.entityType}} <b [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b>&nbsp;&nbsp;&nbsp;
-                                            <i class="fa-solid fa-pen-to-square" style="cursor: pointer;" (click)="openHouseTypePopup(i);" [hidden]="isActionShow==true"></i>
+                                        <h3>{{dt.entityType}} <b
+                                                [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b>&nbsp;&nbsp;&nbsp;
+                                            <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
+                                                (click)="openHouseTypePopup(i);" [hidden]="isActionShow==true"></i> -->
+                                            <img src="../../../assets/icons/edit-solid.svg" alt="Edit" width="12"
+                                                style="border: none;float: right;" (click)="openHouseTypePopup(i);"
+                                                [hidden]="isActionShow==true" class="cursor-pointer" />
                                         </h3><br />
                                     </div>
                                 </div>
@@ -325,10 +366,16 @@
                                         <h3>
                                             {{dt.surveyorName}}
                                         </h3><br />
-                                        <h3> {{dt.surveyDate}} </h3><span [hidden]="dt.houseHoldCount==0" style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;<i
-                                                class="far fa-eye eye-icon"
+                                        <h3> {{dt.surveyDate}} </h3><span [hidden]="dt.houseHoldCount==0"
+                                            style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;
+                                            <!-- <i class="far fa-eye eye-icon"
                                                 style="float: right !important; cursor: pointer;"
-                                                (click)="showEntity(dt.cardNo);"></i></span><br />
+                                                (click)="showEntity(dt.cardNo);"></i> -->
+                                            <img src="../../../assets/icons/eye-regular.svg" alt="Eye"
+                                                class="cursor-pointer" style="float: right !important;"
+                                                (click)="showEntity(dt.cardNo);" />
+                                        </span>
+                                        <br />
 
                                     </div>
                                 </div>
@@ -346,9 +393,7 @@
 <!--Revisit Start-->
 
 <ng-template #contentRevisit>
-
     <div class="modal-dialog modal-dialog-centered" role="document">
-
         <div class="modal-content">
             <div id="divConfirm" class="modal-content-iner">
                 <h5 class="modal-title modal-content-iner-heading">Are you sure to delete?</h5>
@@ -356,11 +401,11 @@
                 <div class="row confirm-btn-div-outer">
                     <div class="col-md-6 confirm-btn-div">
                         <button class="btn btn-success " (click)="checkRevisit();">
-                Confirm</button>
+                            Confirm</button>
                     </div>
                     <div class="col-md-6 Cancel-btn-div">
                         <button class="btn btn-danger Cancel-btn" (click)="cancelRevisitDelete();">
-                Cancel</button>
+                            Cancel</button>
                     </div>
                 </div>
             </div>
@@ -371,38 +416,68 @@
                 <div class="row">
                     <div class="col-md-4 scrollable-halt-outer">
                         <div id="divSequence" class="scrollable-halt">
-                            <div class="{{dt.activeClass}}" *ngFor="let dt of revisitSurveyList, let i=index" (click)="getRevisitMarker(i);">
+                            <div class="{{dt.activeClass}}" *ngFor="let dt of revisitSurveyList, let i=index"
+                                (click)="getRevisitMarker(i);">
                                 <div [hidden]="dt.lines==0" class="work-stop-address line-detail">
-                                    <p><i class="fas fa-map-marker-alt"></i> Line {{dt.lineNo}}
-
+                                    <p>
+                                        <!-- <i class="fas fa-map-marker-alt"></i> -->
+                                        <img src="../../../assets/icons/map-marker-alt-solid.svg" alt="Marker"
+                                            class="icon-black" width="12" />
+                                        Line {{dt.lineNo}}
                                     </p>
                                 </div>
                                 <div class="work-stop-address-outer">
                                     <div class="work-stop-address house-icon-div">
-                                        <p><i class="fas fa-house-damage house-icon1"></i> {{dt.houseType}}
+                                        <p>
+                                            <!-- <i class="fas fa-house-damage house-icon1"></i> -->
+                                            <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="Chimney"
+                                                width="12" class="icon-black" />
+                                            {{dt.houseType}}
                                         </p>
                                     </div>
                                     <div class="work-stop-address house-icon-div">
-                                        <p><i class="fas fa-user-tie"></i> {{dt.name}}</p>
+                                        <p>
+                                            <!-- <i class="fas fa-user-tie"></i>  -->
+                                            <img src="../../../assets/icons/user-tie-solid.svg" alt="user-tie"
+                                                width="12" class="icon-black" />
+                                            {{dt.name}}
+                                        </p>
                                     </div>
                                     <div class="work-stop-address house-icon-div">
-                                        <p><i class="fas fa-registered registered-icon"></i> {{dt.reason}}</p>
+                                        <p>
+                                            <!-- <i class="fas fa-registered registered-icon"></i>  -->
+                                            <img src="../../../assets/icons/registered-solid.svg" alt="registered-icon"
+                                                width="12" class="icon-black" />
+                                            {{dt.reason}}
+                                        </p>
                                     </div>
 
                                     <div class="work-stop-address house-icon-div">
-                                        <p><i class="far fa-calendar-alt"></i> {{dt.requestDate}}
+                                        <p>
+                                            <!-- <i class="far fa-calendar-alt"></i> -->
+                                            <img src="../../../assets/icons/calendar-alt-solid.svg" alt="calender"
+                                                width="12" class="icon-black" />
+                                            {{dt.requestDate}}
 
                                         </p>
                                     </div>
                                     <div class="work-stop-address">
-                                        <p><i class="fas fa-user-check check-icon"></i> {{dt.surveyorName}}
+                                        <p>
+                                            <!-- <i class="fas fa-user-check check-icon"></i> -->
+                                            <img src="../../../assets/icons/user-check-solid.svg" alt="user-check"
+                                                width="12" class="icon-black" />
+                                            {{dt.surveyorName}}
                                             <span class="work-stop-address-span">
-                          <i class="fas fa-arrow-circle-right circle-right-icon"
-                            
-                            (click)="getProcess(i);"></i>
-                          <i class="far fa-trash-alt trash-icon"
-                            (click)="confirmRevisitRequest(i);"></i>
-                        </span>
+                                                <!-- <i class="fas fa-arrow-circle-right circle-right-icon"
+                                                    (click)="getProcess(i);"></i> -->
+                                                <img src="../../../assets/icons/arrow-circle-right-solid.svg"
+                                                    alt="arrow-circle" width="12" class="icon-black"
+                                                    (click)="getProcess(i);" />
+                                                <!-- <i class="far fa-trash-alt trash-icon"
+                                                    (click)="confirmRevisitRequest(i);"></i> -->
+                                                <img src="../../../assets/icons/trash-alt-solid.svg" alt="trash-alt"
+                                                    width="12" class="icon-black" (click)="confirmRevisitRequest(i);"/>
+                                            </span>
                                         </p>
                                     </div>
                                 </div>

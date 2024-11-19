@@ -57,7 +57,11 @@
                                     <button type="button" class="user-button"
                                         style="cursor: cell; float:right; margin-right:20px;"
                                         (click)="openModel(contentHolding,0,'hold');">
-                                        <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span>
+                                        <span class="text-bg"><span class="icon">
+                                                <!-- <i class="fas fa-plus"></i> -->
+                                                <img src="../../../assets/icons/plus-solid.svg" alt="plus"
+                                                    class="icon-green">
+                                            </span>
                                             &nbsp; ADD NEW</span></button>
                                 </div>
                             </div>
@@ -99,9 +103,12 @@
                                                 <td class="text-left br-1">
                                                     {{data.holdReason}}</td>
                                                 <td class="text-center br-1">
-                                                    <i class="fas fa-edit" style="cursor: pointer;"
+                                                    <!-- <i class="fas fa-edit" style="cursor: pointer;"
                                                         [hidden]="data.holdBy!=data.userID"
-                                                        (click)="openModel(contentHolding,data.empId,'hold');"></i>
+                                                        (click)="openModel(contentHolding,data.empId,'hold');"></i> -->
+                                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit"
+                                                        class="cursor-pointer" width="14"
+                                                        (click)="openModel(contentHolding,data.empId,'hold');">
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <span style="cursor: pointer;"

@@ -6,7 +6,8 @@
     <div class="row no-gutters">
         <div class="col-md-2 col-lg-2 col-xl-2 pl-18 ipad-pl-40">
             <div>
-                <select class="caret-select" id="ddlYear" (change)="changeYear()" style="width: 150px;" [(ngModel)]="selectedYear">
+                <select class="caret-select" id="ddlYear" (change)="changeYear()" style="width: 150px;"
+                    [(ngModel)]="selectedYear">
                     <option value="0">Year</option>
                     <option value={{yer.year}} *ngFor="let yer of yearList"
                         ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
@@ -33,25 +34,33 @@
                         <div class="col-md-12 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <span style="margin-top: 20%; margin-left: 20px; font-size: 16px; font-weight: bold;">
+                                    <span
+                                        style="margin-top: 20%; margin-left: 20px; font-size: 16px; font-weight: bold;">
                                         {{salaryDetail.name}}</span>
                                     <span style="float: right; margin-bottom: -10px;" class="main-box">
                                         <div class="outer">
                                             <span style="text-align: center;">
                                                 <label style="padding: 7px 0px;
                                            margin-left: 30px;" class="hover-shadow">
-                                                    <i class="fas fa-download"
+                                                    <!-- <i class="fas fa-download"
                                                         style="color: green; font-size: 26px; cursor: pointer; "
-                                                        (click)="downloadTemplate();"></i><br />
+                                                        (click)="downloadTemplate();"></i> -->
+                                                    <img src="../../../assets/icons/download-solid.svg" alt="download"
+                                                        class="cursor-pointer icon-green" width="26"
+                                                        (click)="downloadTemplate();">
+                                                    <br />
                                                     Download template</label>
                                                 &nbsp; &nbsp; &nbsp; &nbsp;</span>
-                                </div>
-                                <div class="outer">
-                                    <span style="text-align: center;">
+                                        </div>
+                                        <div class="outer">
+                                            <span style="text-align: center;">
                                                 <label for="fileUpload" style="padding: 7px 0px;margin-left: 30px;
                                            " class="hover-shadow">
-                                                    <i class="fas fa-upload"
-                                                        style="color: green; font-size: 26px; cursor: pointer; "></i><br />
+                                                    <!-- <i class="fas fa-upload"
+                                                        style="color: green; font-size: 26px; cursor: pointer; "></i> -->
+                                                    <img src="../../../assets/icons/upload-solid.svg" alt="upload"
+                                                        class="cursor-pointer icon-green" width="26">
+                                                    <br />
                                                     Upload transferred salary
                                                 </label>
                                                 <input id="fileUpload" type="file" name="file" class="file-upload-field"
@@ -59,126 +68,141 @@
                                                     (change)="uploadTransferredSalary();">
                                                 &nbsp; &nbsp; &nbsp; &nbsp;
                                             </span>
+                                        </div>
+                                    </span>
                                 </div>
-                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-12 pr-1">
-                            <div id="divList" class="table-wrapper table-one">
-                                <table id="tblPenalty" class="table table-line">
-                                    <thead>
-                                        <th class="br-1 td-1" style="border:none!important; width:15%;">Month</th>
-                                        <th class="br-1 td-1" style="border:none!important; width:15%;">Uploaded Salary
-                                        </th>
-                                        <th class="text-left br-1" style="border:none!important; width:15%;">
-                                            Transaction Date</th>
-                                        <th class="text-left br-1" style="border:none!important; width:20%;">
-                                            URN Number </th>
-                                        <th class="text-left br-1" style="border:none!important; width:15%;">
-                                            Remarks</th>
-                                        <th class="text-right br-1" style="border:none!important; width:20%;">
-                                            Amount </th>
-                                    </thead>
-                                    <tbody>
-                                        <tr id="tr{{i}}" *ngFor="let data of transactionList; let i=index">
-                                            <td class="td-1" style="width:15%; border-right:1px solid #dee2e6; vertical-align: top; font-weight: bold; border-bottom: 1px solid gray;">
-                                                {{data.month}}
-                                            </td>
-                                            <td class="text-right td-1" style="width:15%; border-right:1px solid #dee2e6; vertical-align: top; border-bottom: 1px solid gray;">
-                                                {{data.uploadedSalary}}
-                                            </td>
-                                            <td class="text-left br-1" colspan="4" style="width:70%; border-bottom: 1px solid gray;">
-                                                <table class="table table-line" style="border:none; margin-top: -8px;margin-bottom: -8px!important;margin-left: -10px;
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div id="divList" class="table-wrapper table-one">
+                                    <table id="tblPenalty" class="table table-line">
+                                        <thead>
+                                            <th class="br-1 td-1" style="border:none!important; width:15%;">Month</th>
+                                            <th class="br-1 td-1" style="border:none!important; width:15%;">Uploaded
+                                                Salary
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important; width:15%;">
+                                                Transaction Date</th>
+                                            <th class="text-left br-1" style="border:none!important; width:20%;">
+                                                URN Number </th>
+                                            <th class="text-left br-1" style="border:none!important; width:15%;">
+                                                Remarks</th>
+                                            <th class="text-right br-1" style="border:none!important; width:20%;">
+                                                Amount </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of transactionList; let i=index">
+                                                <td class="td-1"
+                                                    style="width:15%; border-right:1px solid #dee2e6; vertical-align: top; font-weight: bold; border-bottom: 1px solid gray;">
+                                                    {{data.month}}
+                                                </td>
+                                                <td class="text-right td-1"
+                                                    style="width:15%; border-right:1px solid #dee2e6; vertical-align: top; border-bottom: 1px solid gray;">
+                                                    {{data.uploadedSalary}}
+                                                </td>
+                                                <td class="text-left br-1" colspan="4"
+                                                    style="width:70%; border-bottom: 1px solid gray;">
+                                                    <table class="table table-line" style="border:none; margin-top: -8px;margin-bottom: -8px!important;margin-left: -10px;
                                                     width: 102%;">
-                                                    <tr *ngFor="let dt of data.list">
-                                                        <td class="text-left" style="width:25%; border-right: 1px solid lightgray;">
-                                                            {{dt.transationDate}}</td>
-                                                        <td class="text-left" style="width:30%; border-right: 1px solid lightgray;">
-                                                            {{dt.utrNo}}</td>
-                                                        <td class="text-left" style="width:20%; border-right: 1px solid lightgray;">
-                                                            {{dt.remarks}}</td>
-                                                        <td class="text-right" style="width:25%;"> {{dt.amount}}
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td class="td-1" style="width:15%; border-right:1px solid #dee2e6; vertical-align: top; font-weight: bold; border-bottom: 1px solid gray;">
-                                                Total
-                                            </td>
-                                            <td class="text-right td-1" style="width:15%; border-right:1px solid #dee2e6; font-weight: bold; vertical-align: top; border-bottom: 1px solid gray;">
-                                                {{salaryDetail.uploadedSalary}}
-                                            </td>
-                                            <td class="text-right br-1" colspan="4" style="width:70%; font-weight: bold; border-bottom: 1px solid gray;">
-                                                {{salaryDetail.transferredSalary}}
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                                <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
-                                    <div class="form-group">
-                                        <h5>No data available</h5>
+                                                        <tr *ngFor="let dt of data.list">
+                                                            <td class="text-left"
+                                                                style="width:25%; border-right: 1px solid lightgray;">
+                                                                {{dt.transationDate}}</td>
+                                                            <td class="text-left"
+                                                                style="width:30%; border-right: 1px solid lightgray;">
+                                                                {{dt.utrNo}}</td>
+                                                            <td class="text-left"
+                                                                style="width:20%; border-right: 1px solid lightgray;">
+                                                                {{dt.remarks}}</td>
+                                                            <td class="text-right" style="width:25%;"> {{dt.amount}}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td class="td-1"
+                                                    style="width:15%; border-right:1px solid #dee2e6; vertical-align: top; font-weight: bold; border-bottom: 1px solid gray;">
+                                                    Total
+                                                </td>
+                                                <td class="text-right td-1"
+                                                    style="width:15%; border-right:1px solid #dee2e6; font-weight: bold; vertical-align: top; border-bottom: 1px solid gray;">
+                                                    {{salaryDetail.uploadedSalary}}
+                                                </td>
+                                                <td class="text-right br-1" colspan="4"
+                                                    style="width:70%; font-weight: bold; border-bottom: 1px solid gray;">
+                                                    {{salaryDetail.transferredSalary}}
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                    </div>
-                </form>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-3 col-lg-3 col-xl-3 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;  position: absolute;z-index: 999; right:-9px;">
-        <div class="card" style="margin-top:-72px;  height: 100vh!important;">
-            <div class="card-header custom-header">
-                <div class="row align">
-                    <div class="col-md-12 text-left" style="padding-right:0px!important;">
-                        <div class="row">
-                            <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+        <div class="col-md-3 col-lg-3 col-xl-3 pl-0 pr-6 pad-mob-b-10 pad-pr-0"
+            style="padding-right:10px;  position: absolute;z-index: 999; right:-9px;">
+            <div class="card" style="margin-top:-72px;  height: 100vh!important;">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12 text-left" style="padding-right:0px!important;">
+                            <div class="row">
+                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
 
-                                <input id="txtSearch" type="text" class="filter-input" style="width: 95%!important;" placeholder="Search Employee" (keyup)="getEmployees();"><br /><br />
-                                <span style="padding-left: 10px; margin-top: 10px;">
+                                    <input id="txtSearch" type="text" class="filter-input" style="width: 95%!important;"
+                                        placeholder="Search Employee" (keyup)="getEmployees();"><br /><br />
+                                    <span style="padding-left: 10px; margin-top: 10px;">
                                         <input id="rdoActive" type="radio" checked (change)="filterData('active');">
                                         Active
                                         <input id="rdoUnactive" type="radio" (change)="filterData('inactive');">
                                         In-active</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-12 pr-1">
-                            <div class="table-wrapper table-one" style="height:calc(100vh - 140px)!important">
-                                <table class="table table-line">
-                                    <tbody>
-                                        <tr id="tr{{i}}" *ngFor="let data of employeeList; let i=index">
-                                            <td class="td-1" (click)="getSalaryTranscation(data.empId,data.name,data.empCode)" style="border-right:1px solid #dee2e6; cursor: pointer;">
-                                                {{data.name}} ({{data.empCode}})
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                                <div class="table-wrapper table-one" style="height:calc(100vh - 140px)!important">
+                                    <table class="table table-line">
+                                        <tbody>
+                                            <tr id="tr{{i}}" *ngFor="let data of employeeList; let i=index">
+                                                <td class="td-1"
+                                                    (click)="getSalaryTranscation(data.empId,data.name,data.empCode)"
+                                                    style="border-right:1px solid #dee2e6; cursor: pointer;">
+                                                    {{data.name}} ({{data.empCode}})
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
 
-                    </div>
-                </form>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 
