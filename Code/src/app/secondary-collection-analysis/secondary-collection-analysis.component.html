@@ -18,7 +18,10 @@
                                 <span class="header-span-inner">{{dustbinData.refreshTime}}
                                 </span></span>
                             <button class="refresh-button" (click)="refreshData();" title="Refresh Data">
-                                <i class="fas fa-redo-alt"></i></button>
+                                <!-- <i class="fas fa-redo-alt"></i> -->
+                                 <img src="../../assets/icons/rotate-right-solid.svg" alt="rotate-right-solid" width="20" class="icon-green cursor-pointer"
+                                 style="margin-bottom: 3px;"/>
+                            </button>
                         </div>
                     </h3>
                 </div>
@@ -194,9 +197,11 @@
                                             <p class="align-self-center"><b [innerHTML]="binDetail.analysisDetail"></b>
                                             </p>
                                             <button type="button" class="btn btn-success"
-                                                (click)="saveDustbinAnalysis();">Save <i
-                                                    class="fas fa-save"></i></button>
-
+                                                (click)="saveDustbinAnalysis();">Save 
+                                                <!-- <i
+                                                    class="fas fa-save"></i> -->
+                                                    <img src="../../assets/icons/save-solid.svg" alt="save-solid" width="10" class="icon-white cursor-pointer" style="margin-bottom: 2px;"/>
+                                                </button>
                                         </div>
                                     </div>
                                 </div>
@@ -228,8 +233,10 @@
                                             <p class="align-self-center"><b [innerHTML]="binDetail.analysisDetail"></b>
                                             </p>
                                             <button type="button" class="btn btn-success" style="width:150px"
-                                                (click)="saveOfflineDustbinDetail();">Update Pick Detail <i
-                                                    class="fas fa-save"></i></button>
+                                                (click)="saveOfflineDustbinDetail();">Update Pick Detail 
+                                                <!-- <i class="fas fa-save"></i> -->
+                                                <img src="../../assets/icons/save-solid.svg" alt="save-solid" width="10" class="icon-white cursor-pointer"/>
+                                                </button>
 
                                         </div>
                                     </div>
@@ -250,7 +257,9 @@
                                                 </span></span>
                                             <button class="refresh-button" (click)="refreshData();"
                                                 title="Refresh Data">
-                                                <i class="fas fa-redo-alt"></i></button>
+                                                <!-- <i class="fas fa-redo-alt"></i> -->
+                                                <img src="../../assets/icons/rotate-right-solid.svg" alt="rotate-right-solid" width="20" class="icon-green cursor-pointer" style="margin-bottom: 3px;"/>
+                                            </button>
                                         </div>
                                     </h3>
                                 </div>
@@ -270,13 +279,19 @@
                                     </div>
                                     <a class="carousel-control-prev" href="javaScript:void(0);" role="button">
                                         <span id="preLink" class="carousel-control-prev-icon" aria-hidden="true"
-                                            (click)="setSlideImage(0,'previous');"><i
-                                                class="fas fa-angle-left"></i></span>
+                                            (click)="setSlideImage(0,'previous');">
+                                            <!-- <i
+                                                class="fas fa-angle-left"></i> -->
+                                                <img src="../../assets/icons/angle-left-solid.svg" alt="angle-left" width="22" class="icon-white cursor-pointer"/>
+                                            </span>
                                         <span class="sr-only">Previous</span>
                                     </a>
                                     <a class="carousel-control-next" href="javaScript:void(0);" role="button">
                                         <span id="nextLink" class="carousel-control-next-icon" aria-hidden="true"
-                                            (click)="setSlideImage(0,'next')"><i class="fas fa-angle-right"></i></span>
+                                            (click)="setSlideImage(0,'next')">
+                                            <!-- <i class="fas fa-angle-right"></i> -->
+                                            <img src="../../assets/icons/angle-right-solid.svg" alt="angle-right" width="22" class="icon-white cursor-pointer"/>
+                                        </span>
                                         <span class="sr-only">Next</span>
                                     </a>
                                 </div>
@@ -284,7 +299,8 @@
                             <div class="col-md-6 mt-10 pr-5 pl-15">
                                 <div id="box1" class="icon-box active-box text-center"
                                     (click)="setSlideImage(1,'selected');">
-                                    <i id="i1" class="fas fa-caret-up"></i>
+                                    <!-- <i id="i1" class="fas fa-caret-up"></i> -->
+                                     <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i1" width="18" class="fas fa-caret-up cursor-pointer green-filter"/>
                                     <div class="text-field">
                                         <img id="img1" src="../../../assets/img/dustbin-hover.png" class="img-fluid">
                                         <h6 id="hText1" class="mt-15 full">कचरा उठाने से पहले
@@ -294,7 +310,9 @@
                             </div>
                             <div class="col-md-6 mt-10 pl-5 pr-5">
                                 <div id="box2" class="icon-box text-center" (click)="setSlideImage(2,'selected');">
-                                    <i id="i2" class="fas fa-caret-up" style="display: none;"></i>
+                                    <!-- <i id="i2" class="fas fa-caret-up" style="display: none;"></i> -->
+                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i2" width="18" class="fas fa-caret-up cursor-pointer green-filter"
+                                    style="display: none;"/>
                                     <div class="text-field">
                                         <img id="img2" src="../../../assets/img/dustbin.png" class="img-fluid">
                                         <h6 id="hText2" class="mt-15 full">कचरा उठाने के बाद </h6>
@@ -303,7 +321,9 @@
                             </div>
                             <div class="col-md-3 mt-10 pl-5 pr-5" style="display: none;">
                                 <div id="box3" class="icon-box text-center" (click)="setSlideImage(3,'selected');">
-                                    <i id="i3" class="fas fa-caret-up" style="display: none;"></i>
+                                    <!-- <i id="i3" class="fas fa-caret-up" style="display: none;"></i> -->
+                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i3" width="18" class="fas fa-caret-up cursor-pointer green-filter"
+                                    style="display: none;"/>
                                     <div class="text-field">
                                         <img id="img3" src="../../../assets/img/dustbin.png" class="img-fluid">
                                         <h6 id="hText3" class="mt-15 full">ऊपर से खाली
@@ -313,7 +333,9 @@
                             </div>
                             <div class="col-md-3 mt-10 pl-5" style="display: none;">
                                 <div id="box4" class="icon-box text-center" (click)="setSlideImage(4,'selected');">
-                                    <i id="i4" class="fas fa-caret-up" style="display: none;"></i>
+                                    <!-- <i id="i4" class="fas fa-caret-up" style="display: none;"></i> -->
+                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i4" width="18" class="fas fa-caret-up cursor-pointer green-filter"
+                                    style="display: none;"/>
                                     <div class="text-field">
                                         <img id="img4" src="../../../assets/img/dustbin.png" class="img-fluid">
                                         <h6 id="hText3" class="mt-15 full">खाली दूर से
@@ -339,15 +361,19 @@
                                 <div class="address-main" [hidden]="data.iconClass=='fas fa-ellipsis-h'">
                                     <div class="address-text">                                        
                                         <h6>
-                                            <i class="fa-solid fa-circle" style="color:red; font-size: 10px;" [hidden]="data.isOffline==0 || userType=='External User'" ></i>
+                                            <!-- <i class="fa-solid fa-circle" style="color:red; font-size: 10px;" [hidden]="data.isOffline==0 || userType=='External User'" ></i> -->
+                                             <img src="../../assets/icons/circle-solid.svg" alt="circle-solid" class="icon-red fa-solid fa-circle" width="10"
+                                             [hidden]="data.isOffline==0 || userType=='External User'"/>
                                            &nbsp;<span  [innerHTML]="data.duration"></span>
                                         </h6>
                                     </div>
                                 </div>
                                 <div class="address-main" [hidden]="data.iconClass!='fas fa-ellipsis-h' || canUpdateOpendepotPickDetail=='0'">
                                     <div class="address-text">
-                                        <i class="far fa-edit" (click)="showDustbinData(i,'edit')" title="Update Pick Detail"
-                                            style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>
+                                        <!-- <i class="far fa-edit" (click)="showDustbinData(i,'edit')" title="Update Pick Detail"
+                                            style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i> -->
+                                            <img src="../../assets/icons/pen-to-square-regular.svg" alt="pen-to-sqaure" class="cursor-pointer" width="15"
+                                            (click)="showDustbinData(i,'edit')" title="Update Pick Detail"/>
                                     </div>
                                 </div>
                             </div>
