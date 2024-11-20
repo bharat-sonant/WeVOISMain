@@ -10,8 +10,11 @@
         </div>
         <div class="col-md-4 Ward-Marking-heading">
             <span style="float: right; text-align: center; font-size: 10px!important; padding-right: 20px">
-                <i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                    (click)="exportToExcel();"></i><br />
+                <!-- <i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
+                    (click)="exportToExcel();"></i><br /> -->
+                <img src="../../assets/icons/file-export-solid.svg" alt="file"
+                    class="icon-green cursor-pointer fa-solid fa-file-export" width="24"
+                    (click)="exportToExcel();" /><br />
                 Export to Excel
             </span>
         </div>
@@ -106,17 +109,34 @@
                                                             {{data.disabledByName}}
                                                         </td>
                                                         <td class="table-data2">
-                                                            <i class="far fa-edit edit-icon"
+                                                            <!-- <i class="far fa-edit edit-icon"
                                                                 (click)="openModel(contentDustbin,data.dustbin,'update');"
-                                                                title="Edit Entry"></i>
-                                                            <i class="fa-solid fa-check check-icon"
+                                                                title="Edit Entry"></i> -->
+                                                            <img src="../../assets/icons/pen-to-square-solid.svg"
+                                                                alt="pen-to-square" width="20"
+                                                                class="cursor-pointer far fa-edit edit-icon"
+                                                                (click)="openModel(contentDustbin,data.dustbin,'update');"
+                                                                title="Edit Entry" style="margin-right: 5px;" />
+                                                            <!-- <i class="fa-solid fa-check check-icon"
                                                                 [hidden]="data.isDisabled=='yes'"
                                                                 (click)="updateDustbinStatus(data.dustbin,'yes');"
-                                                                title="Disable Dustbin"></i>
-                                                            <i class="fa-solid fa-xmark xmark-icon"
+                                                                title="Disable Dustbin"></i> -->
+                                                            <img src="../../assets/icons/check-solid.svg"
+                                                                alt="check-solid" width="20"
+                                                                class="cursor-pointer icon-green fa-solid fa-check check-icon"
+                                                                [hidden]="data.isDisabled=='yes'"
+                                                                (click)="updateDustbinStatus(data.dustbin,'yes');"
+                                                                title="Disable Dustbin" />
+                                                            <!-- <i class="fa-solid fa-xmark xmark-icon"
                                                                 [hidden]="data.isDisabled=='no'"
                                                                 (click)="updateDustbinStatus(data.dustbin,'no');"
-                                                                title="Enable Dustbin"></i>
+                                                                title="Enable Dustbin"></i> -->
+                                                                <img src="../../assets/icons/xmark-solid.svg"
+                                                                alt="check-solid" width="18"
+                                                                class="cursor-pointer icon-red fa-solid fa-xmark xmark-icon"
+                                                                [hidden]="data.isDisabled=='no'"
+                                                                (click)="updateDustbinStatus(data.dustbin,'no');"
+                                                                title="Enable Dustbin" />
                                                         </td>
                                                     </tr>
                                                 </tbody>
