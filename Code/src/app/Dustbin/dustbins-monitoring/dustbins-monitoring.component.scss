@@ -135,7 +135,7 @@
 }
 
 .custom-checkbox label {
-    margin-right: 20px!important;
+    margin-right: 20px !important;
     font-size: 10px;
 }
 
@@ -186,16 +186,16 @@
 }
 
 #myBox .card {
-    margin-bottom: -6px!important;
+    margin-bottom: -6px !important;
     border-radius: 0px;
 }
 
 #myBox .card-header {
-    padding: 0px!important;
+    padding: 0px !important;
 }
 
 #myBox .card-body {
-    padding: 0px!important;
+    padding: 0px !important;
 }
 
 #myBox .info-bg {
@@ -248,7 +248,7 @@
     line-height: 18px;
     font-weight: 500;
     color: #333333;
-    margin: 0px!important;
+    margin: 0px !important;
 }
 
 // .main-info span{
@@ -266,7 +266,7 @@
 .main-info p {
     font-size: 10px;
     color: #333333;
-    margin: 0px!important;
+    margin: 0px !important;
 }
 
 
@@ -313,24 +313,30 @@
     .fleet2 {
         display: none;
     }
+
     .fleet-text2 {
         display: none;
     }
+
     .mob-l {
         padding-left: 35px;
     }
+
     .mob-btn {
         width: 20px;
     }
+
     .d-zone {
         display: none;
     }
+
     .custom-date-input {
         height: 41px;
         padding-left: 10px;
-        width: 145px!important;
+        width: 145px !important;
         font-size: 12px;
     }
+
     .mob-hide {
         display: none;
     }
@@ -340,24 +346,30 @@
     .fleet2 {
         display: none;
     }
+
     .fleet-text2 {
         display: none;
     }
+
     .mob-l {
         padding-left: 35px;
     }
+
     .mob-btn {
         width: 20px;
     }
+
     .d-zone {
         display: none;
     }
+
     .custom-date-input {
         height: 41px;
         padding-left: 10px;
-        width: 145px!important;
+        width: 145px !important;
         font-size: 12px;
     }
+
     .mob-hide {
         display: none;
     }
@@ -370,6 +382,7 @@
     .fleet2 {
         display: none;
     }
+
     .fleet-text2 {
         display: none;
     }
@@ -390,11 +403,11 @@
 }
 
 .form-control {
-    border-radius: 4px!important;
+    border-radius: 4px !important;
 }
 
 .form-control:focus {
-    border: 1px solid #403735!important;
+    border: 1px solid #403735 !important;
     box-shadow: none;
     outline: 0 !important;
     color: #2c2c2c;
@@ -408,4 +421,21 @@
     text-align: center;
     width: 30px;
     white-space: nowrap;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-white {
+    filter: brightness(0) saturate(100%) invert(100%);
+}
+
+.icon-green {
+    filter: brightness(0) saturate(100%) invert(24%) sepia(98%) saturate(2424%) hue-rotate(88deg) brightness(97%) contrast(91%);
+}
+
+.icon-red {
+    filter: brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(7478%) hue-rotate(0deg) brightness(96%) contrast(101%);
 }
