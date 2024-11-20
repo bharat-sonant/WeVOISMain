@@ -5,13 +5,16 @@
                 <!------------- Header Start ---------->
                 <div class="row">
                     <div class="col-md-6 text-left text-left1">
-                        <button style="margin-left:15px; margin-right: 0px; " type="submit" (click)="setDate('','previous');" class="btn mob-btn">
-              << </button>
-                        <input id="txtDate" class="report-controls custom-date-input" type="date" (change)="setDate($event.target.value,'current')" />
-                        <button style="margin-left:0px; margin-right: 6px;" type="submit" (click)="setDate('','next');" class="btn  mob-btn">
-              >> </button>
-                        <button type="submit" (click)="showHaltSummary();" class="btn mob-btn btn2">
-              View Halt Summary</button>
+                        <button style="margin-left:15px; margin-right: 0px; " type="submit"
+                            (click)="setDate('','previous');" class="btn mob-btn">
+                            << </button>
+                                <input id="txtDate" class="report-controls custom-date-input" type="date"
+                                    (change)="setDate($event.target.value,'current')" />
+                                <button style="margin-left:0px; margin-right: 6px;" type="submit"
+                                    (click)="setDate('','next');" class="btn  mob-btn">
+                                    >> </button>
+                                <button type="submit" (click)="showHaltSummary();" class="btn mob-btn btn2">
+                                    View Halt Summary</button>
 
                     </div>
                     <div class="col-md-3 text-left">
@@ -20,7 +23,11 @@
                     </div>
                     <div class="col-md-3 text-right pr-20">
 
-                        <span class="paper2"> <i class="far fa-hand-paper"></i> {{haltDetails.wardHalt}} Hour</span>
+                        <span class="paper2">
+                            <!-- <i class="far fa-hand-paper"></i> -->
+                            <img src="../../../assets/icons/hand-regular.svg" alt="hand" class="icon-white"
+                                width="14" />
+                            {{haltDetails.wardHalt}} Hour</span>
                     </div>
                 </div>
                 <!------------- Header End ---------->
@@ -28,28 +35,45 @@
                     <!------------- Halt Scroll List Start ---------->
                     <div class="col-md-3 mob-space-25 iner-main">
                         <div class="scrollable-halt">
-                            <div class="{{data.divClass}}" *ngFor="let data of haltDataList, let i=index" (click)="getHaltMap(i);">
+                            <div class="{{data.divClass}}" *ngFor="let data of haltDataList, let i=index"
+                                (click)="getHaltMap(i);">
                                 <div class="halt-details">
-                                    <h5 class="stopped-time">Stopped Time : <br><strong class="{{data.haltClass}}"><i
-                        class="far fa-clock"></i>
-                      {{data.time}}</strong></h5>
-                                    <h5 class="break-time">Break Time : <br><strong class="{{data.haltClass}}"><i
-                        class="far fa-clock"></i>
-                      {{data.duration}} Min.</strong></h5>
+                                    <h5 class="stopped-time">Stopped Time : <br><strong class="{{data.haltClass}}">
+                                            <!-- <i class="far fa-clock"></i> -->
+                                            <img src="../../../assets/icons/clock-regular.svg" alt="clock" width="11"
+                                                 />
+                                            {{data.time}}</strong></h5>
+                                    <h5 class="break-time">Break Time : <br><strong class="{{data.haltClass}}">
+                                            <!-- <i class="far fa-clock"></i> -->
+                                            <img src="../../../assets/icons/clock-regular.svg" alt="clock" width="11"
+                                                />
+                                            {{data.duration}} Min.</strong></h5>
                                     <span [hidden]="data.ishaltDisableAccess==0">
-                    <button class="remark-btn button" [hidden]="data.canRemove=='no'"
-                      (click)="openModel(contentRemark,i,'disable');"><i class="fas fa-check check2"
-                        ></i></button>
-                    <button class="remark-btn button" [hidden]="data.canRemove=='yes'"
-                      (click)="openModel(contentRemark,i,'show');"><i class="fas fa-times times2"
-                        ></i></button>
-                  </span>
+                                        <button class="remark-btn button" [hidden]="data.canRemove=='no'"
+                                            (click)="openModel(contentRemark,i,'disable');">
+                                            <!-- <i class="fas fa-check check2"></i> -->
+                                             <img src="../../../assets/icons/check-solid.svg" alt="check" width="16" class="icon-green"/>
+                                             
+                                        </button>
+                                        <button class="remark-btn button" [hidden]="data.canRemove=='yes'"
+                                            (click)="openModel(contentRemark,i,'show');">
+                                            <!-- <i class="fas fa-times times2"></i> -->
+                                            <img src="../../../assets/icons/xmark-solid.svg" alt="cross" width="16" class="icon-red"/>
+                                        </button>
+                                    </span>
                                 </div>
                                 <div class="work-stop-address work-stop-address2">
-                                    <p><i class="fas fa-registered registered2"></i> {{data.type}}</p>
+                                    <p>
+                                        <!-- <i class="fas fa-registered registered2"></i> -->
+                                        <img src="../../../assets/icons/registered-solid.svg" alt="registered-solid"
+                                            width="16" class="icon-green" />
+                                        {{data.type}}
+                                    </p>
                                 </div>
                                 <div class="work-stop-address">
-                                    <i class="fas fa-map-marker-alt alt2"></i>
+                                    <!-- <i class="fas fa-map-marker-alt alt2"></i> -->
+                                    <img src="../../../assets/icons/location-dot-solid.svg" alt="map-location"
+                                        style="margin: 0;float: left;" />
                                     <p class="location2"><span> {{data.location}}</span></p>
                                 </div>
                             </div>
@@ -65,21 +89,55 @@
                                     <div class="row total-halt">
                                         <div class="col-md-5 mob-r-15 total-halt-iner">
                                             <div class="dh-back dh-back-main">
-                                                <h3><i class="fas fa-car-alt"></i> Driver </h3>
-                                                <h3 class="float-left"><i class="far fa-user"></i> {{haltDetails.driverName}}</h3>
-                                                <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.driverMobile}}</a>
+                                                <h3>
+                                                    <!-- <i class="fas fa-car-alt"></i>  -->
+                                                    <img src="../../../assets/icons/car-alt-solid.svg" alt="car-icon"
+                                                        width="12" class="icon-green" />
+                                                    Driver
+                                                </h3>
+                                                <h3 class="float-left">
+                                                    <!-- <i class="far fa-user"></i> -->
+                                                    <img src="../../../assets/icons/user-solid.svg" alt="user-icon"
+                                                        width="12" class="icon-green" />
+                                                    {{haltDetails.driverName}}
+                                                </h3>
+                                                <a href="tel:+911234567890">
+                                                    <!-- <i class="fas fa-mobile-alt"></i> -->
+                                                    <img src="../../../assets/icons/mobile-screen-button-solid.svg"
+                                                        alt="mobile-icon" width="12" class="icon-green" />
+                                                    {{haltDetails.driverMobile}}</a>
                                             </div>
                                         </div>
                                         <div class="col-md-5 mob-mt-4 mob-r-15 mob-l-15 dh-back-main">
                                             <div class="dh-back">
-                                                <h3><i class="fab fa-hire-a-helper"></i> Helper </h3>
-                                                <h3 class="float-left"><i class="far fa-user"></i> {{haltDetails.helperName}}</h3>
-                                                <a href="tel:+911234567890"><i class="fas fa-mobile-alt"></i> {{haltDetails.helperMobile}}</a>
+                                                <h3>
+                                                    <!-- <i class="fab fa-hire-a-helper"></i>  -->
+                                                    <img src="../../../assets/icons/hire-a-helper-brands-solid.svg"
+                                                        alt="helper-icon" width="12" class="icon-green" />
+                                                    Helper
+                                                </h3>
+                                                <h3 class="float-left">
+                                                    <!-- <i class="far fa-user"></i> -->
+                                                    <img src="../../../assets/icons/user-solid.svg" alt="user-icon"
+                                                        width="12" class="icon-green" />
+                                                    {{haltDetails.helperName}}
+                                                </h3>
+                                                <a href="tel:+911234567890">
+                                                    <!-- <i class="fas fa-mobile-alt"></i> -->
+                                                    <img src="../../../assets/icons/mobile-screen-button-solid.svg"
+                                                        alt="mobile-icon" width="12" class="icon-green" />
+                                                    {{haltDetails.helperMobile}}</a>
                                             </div>
                                         </div>
                                         <div class="col-md-2 mob-mt-4 mob-l-15 on-map-main">
                                             <div class="on-map">
-                                                <h5 class="danger-halt"><i _ngcontent-pns-c5="" class="far fa-hand-paper"></i> {{haltDetails.totalBreakHours}} Hour
+                                                <h5 class="danger-halt">
+                                                    <!-- <i _ngcontent-pns-c5=""
+                                                        class="far fa-hand-paper"></i>  -->
+                                                    <img src="../../../assets/icons/hand-regular.svg" alt="car-icon"
+                                                        width="12" class="icon-red" />
+                                                    {{haltDetails.totalBreakHours}}
+                                                    Hour
                                                     <br>
                                                     <p>Total Halt</p>
                                                 </h5>
@@ -102,11 +160,15 @@
             <!------------- Ward Scroll List Start ---------->
             <div class="col-md-2 pr-0 pl-0 mob-space mt-top">
                 <div class="scroll-list">
-                    <div class="{{list.divClass}} list2" *ngFor="let list of haltList" (click)="list.totalBreak!=0 && getZoneDetail(list.zoneNo);">
+                    <div class="{{list.divClass}} list2" *ngFor="let list of haltList"
+                        (click)="list.totalBreak!=0 && getZoneDetail(list.zoneNo);">
                         <div class="ward-details">
                             <h6>{{list.zoneName}}</h6>
                             <div class="halt-time alert-halt">
-                                <p class="{{list.haltClass}}"> {{list.totalBreakHours}} <i class="far fa-clock active-rotate-red"></i>
+                                <p class="{{list.haltClass}}"> {{list.totalBreakHours}}
+                                    <!-- <i
+                                        class="far fa-clock active-rotate-red"></i> -->
+                                    <img src="../../../assets/icons/clock-regular.svg" alt="clock" width="13" class="active-rotate-red" />
                                 </p>
                             </div>
                         </div>
@@ -126,8 +188,8 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Remark for halt</h5>
                 <button type="button" class="close" (click)="closeModel();">
-          <span aria-hidden="true">&times;</span>
-        </button>
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="haltId" value="0" />
