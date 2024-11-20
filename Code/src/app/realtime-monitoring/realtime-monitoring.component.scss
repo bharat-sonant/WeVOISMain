@@ -3,7 +3,7 @@
     float: right;
     width: calc(100% - 80px);
     background-color: #E3E3E3;
-    background-color: #f1f3f1!important;
+    background-color: #f1f3f1 !important;
     -webkit-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
     transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
 }
@@ -199,11 +199,11 @@
     font-size: 14px;
     color: #333333;
     font-weight: bold;
-    text-transform: lowercase!important;
+    text-transform: lowercase !important;
 }
 
 .staff-info h3::first-line {
-    text-transform: capitalize!important;
+    text-transform: capitalize !important;
 }
 
 .staff-info p {
@@ -385,7 +385,7 @@
     width: 100%;
     height: 180px;
     border-radius: 7px;
-    border: 2px solid #d8d8d8!important;
+    border: 2px solid #d8d8d8 !important;
 }
 
 .fa-expand-monitoring {
@@ -504,7 +504,7 @@ button:focus {
 }
 
 .remark-content table {
-    margin-bottom: 0rem!important;
+    margin-bottom: 0rem !important;
 }
 
 .remark-content thead {
@@ -618,7 +618,7 @@ table {
 }
 
 .table-btn:hover {
-    background-color: #12be21!important;
+    background-color: #12be21 !important;
 }
 
 thead th {
@@ -768,7 +768,7 @@ table td {
     -webkit-box-pack: center;
     //justify-content: center;
     color: #000;
-    text-align: left!important;
+    text-align: left !important;
     white-space: nowrap;
     background-color: #95e495;
     font-size: 11px;
@@ -809,8 +809,8 @@ table td {
 
 .img-tooltip {
     position: absolute;
-    top: 8px!important;
-    left: 0px!important;
+    top: 8px !important;
+    left: 0px !important;
 }
 
 
@@ -887,10 +887,10 @@ table td {
 
 .remarks .modal-content {
     position: fixed;
-    left: 50%!important;
+    left: 50% !important;
     transform: translateX(-50%);
-    width: 800px!important;
-    height: 550px!important;
+    width: 800px !important;
+    height: 550px !important;
 }
 
 .scrollable-halt {
@@ -977,7 +977,7 @@ table td {
 
 .halt-map iframe {
     padding: 10px;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     border-radius: 5px;
     height: 470px;
 }
@@ -985,59 +985,74 @@ table td {
 // Small devices (landscape phones, 576px and up)
 @media (max-width: 576px) {
     .pos-right {
-        padding-right: 42px!important;
+        padding-right: 42px !important;
     }
+
     .update-time {
-        font-size: 12px!important;
+        font-size: 12px !important;
     }
+
     .ward-header {
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
+
     .mob-r {
-        padding-right: 20px!important;
+        padding-right: 20px !important;
     }
+
     .mob-l {
-        padding-left: 5px!important;
+        padding-left: 5px !important;
     }
+
     .mob-r-1 {
-        padding-right: 15px!important;
+        padding-right: 15px !important;
     }
+
     .mob-l-1 {
-        padding-left: 15px!important;
+        padding-left: 15px !important;
     }
+
     .mt-10 {
         margin-top: 10px;
         margin-bottom: 10px;
     }
+
     .ipad-pd {
-        padding-left: 5px!important;
-        padding-right: 20px!important;
+        padding-left: 5px !important;
+        padding-right: 20px !important;
     }
+
     .scrollable-content {
         border-radius: 7px;
         border: 1px solid #E1E1E1
     }
+
     .scroll-stop {
         position: relative;
         right: 0px;
     }
+
     .btm-top {
         padding-bottom: 10px;
         border-bottom: 1px solid #e0e0e0;
     }
+
     .btm {
         padding-bottom: 10px;
         padding-top: 10px;
         border-bottom: 1px solid #e0e0e0;
     }
+
     .btm-end {
         padding-top: 10px;
     }
+
     .mob-border {
         border: 1px solid #e0e0e0;
     }
+
     .mob-border-end {
         border: 1px solid #e0e0e0;
         margin-top: 15px;
@@ -1051,26 +1066,32 @@ table td {
         float: right;
         width: calc(100% - 80px);
         background-color: #E3E3E3;
-        background-color: #f1f3f1!important;
+        background-color: #f1f3f1 !important;
         -webkit-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
         transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
     }
+
     .pl-25 {
-        padding-left: 20px!important;
-        padding-right: 10px!important;
+        padding-left: 20px !important;
+        padding-right: 10px !important;
     }
+
     .pl-10 {
-        padding-left: 10px!important;
+        padding-left: 10px !important;
     }
+
     .pr-20 {
-        padding-right: 20px!important;
+        padding-right: 20px !important;
     }
+
     .pr-12 {
-        padding-right: 12px!important;
+        padding-right: 12px !important;
     }
+
     .scrollable-content {
         border: 1px solid #E1E1E1
     }
+
     .scroll-stop {
         position: fixed;
         right: -6px;
@@ -1080,18 +1101,22 @@ table td {
 // Large devices (desktops, 992px and up)
 @media (min-width: 992px) and (max-width: 1199.98px) {
     .pr-20 {
-        padding-right: 30px!important;
+        padding-right: 30px !important;
     }
+
     .pl-25 {
-        padding-left: 23px!important;
-        padding-right: 18px!important;
+        padding-left: 23px !important;
+        padding-right: 18px !important;
     }
+
     .pl-10 {
-        padding-right: 5px!important;
+        padding-right: 5px !important;
     }
+
     .ipad-pd {
-        padding-right: 20px!important;
+        padding-right: 20px !important;
     }
+
     .scroll-stop {
         position: fixed;
         right: -5px;
@@ -1153,6 +1178,7 @@ table td {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -1177,6 +1203,7 @@ table td {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(-360deg);
     }
@@ -1234,7 +1261,7 @@ table td {
     width: 100%;
 }
 
-.helper-section img {
+.img-fluid {
     width: 85px;
     height: 85px;
     border-radius: 50%;
@@ -1266,11 +1293,11 @@ table td {
     text-align: center;
     font-size: 12px;
     font-weight: 400;
-    text-transform: lowercase!important;
+    text-transform: lowercase !important;
 }
 
 .id-card-text h6::first-line {
-    text-transform: capitalize!important;
+    text-transform: capitalize !important;
 }
 
 .id-card-text p {
@@ -1387,6 +1414,7 @@ input:checked+.slider:before {
     border-radius: 2px;
     padding: 0 25px 0 25px;
     border: 1px solid lightgray;
+
 }
 
 .input-green:focus {
@@ -1397,7 +1425,11 @@ input:checked+.slider:before {
     color: #0ba118;
     padding-left: 12px;
     border: 1px solid #0ba118;
+
     //  border-radius: 15px;
+    img {
+        filter: brightness(0) saturate(100%) invert(24%) sepia(98%) saturate(2424%) hue-rotate(88deg) brightness(97%) contrast(91%);
+    }
 }
 
 .focus-input {
@@ -1435,6 +1467,10 @@ input:checked+.slider:before {
     -o-transition: all 0.4s;
     -moz-transition: all 0.4s;
     transition: all 0.4s;
+
+    img {
+        filter: brightness(0) saturate(100%) invert(40%) sepia(1%) saturate(0%) hue-rotate(0deg) brightness(90%) contrast(100%);
+    }
 }
 
 textarea {
@@ -1457,7 +1493,7 @@ textarea:focus-visible {
 }
 
 .table>tbody>tr {
-    position: inherit!important;
+    position: inherit !important;
 }
 
 @media only screen and (max-width: 377px) {
@@ -1476,4 +1512,29 @@ textarea:focus-visible {
     .scrollable-content {
         height: 100% !important;
     }
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// SVG icon color
+.icon-green {
+    filter: brightness(0) saturate(100%) invert(24%) sepia(98%) saturate(2424%) hue-rotate(88deg) brightness(97%) contrast(91%);
+}
+
+.icon-red {
+    filter: brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(7478%) hue-rotate(0deg) brightness(96%) contrast(101%);
+}
+
+.icon-blue {
+    filter: invert(29%) sepia(82%) saturate(2753%) hue-rotate(178deg) brightness(91%) contrast(101%);
+}
+
+.icon-darkBlue {
+    filter: brightness(0) saturate(100%) invert(16%) sepia(6%) saturate(1295%) hue-rotate(200deg) brightness(96%) contrast(98%);
+}
+
+.icon-grey {
+    filter: brightness(0) saturate(100%) invert(40%) sepia(1%) saturate(0%) hue-rotate(0deg) brightness(90%) contrast(100%);
 }

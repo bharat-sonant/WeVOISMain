@@ -1210,3 +1210,29 @@ label {
 .zone-select {
     width: 100% !important
 }
+
+.cursor-pointer{
+    cursor: pointer;
+  }
+  
+  // SVG icon color
+  .icon-green {
+    filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
+  }
+  
+  .green-filter {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(92%) saturate(420%) hue-rotate(65deg) brightness(103%) contrast(98%);
+  }
+  
+  .icon-red {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(90%) saturate(7483%) hue-rotate(2deg) brightness(94%) contrast(108%);
+  }
+  
+  .icon-blue {
+    filter: invert(43%) sepia(83%) saturate(453%) hue-rotate(178deg) brightness(96%) contrast(92%);
+  }
+  
+  .icon-white {
+    filter: invert(100%) brightness(100%);
+  }
+  
