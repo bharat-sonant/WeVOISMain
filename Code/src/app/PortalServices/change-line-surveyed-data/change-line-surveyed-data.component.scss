@@ -15,26 +15,26 @@
     display: inline-block;
     position: relative;
     width: 100%;
-    margin-bottom: 0px!important;
+    margin-bottom: 0px !important;
 }
 
 .caret-select {
-    margin-top: -5px!important;
-    margin-right: 10px!important;
+    margin-top: -5px !important;
+    margin-right: 10px !important;
     border-radius: 5px;
     padding: 10px;
     width: 97%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
 }
 
 .caret-select-vehicle {
-    margin-top: 0px!important;
-    margin-left: 0px!important;
+    margin-top: 0px !important;
+    margin-left: 0px !important;
     border-radius: 5px;
     padding: 10px;
     width: 97%;
-    border: 1px solid lightgray!important;
+    border: 1px solid lightgray !important;
     font-size: 12px;
 }
 
@@ -46,7 +46,7 @@
     border: 1px solid lightgray;
     cursor: cell;
     margin-top: 0px;
-    height: 33px!important;
+    height: 33px !important;
     font-size: 12px;
 }
 
@@ -206,14 +206,14 @@ tbody {
     cursor: pointer;
 }
 
- ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     -webkit-box-shadow: transparent;
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -222,21 +222,21 @@ tbody {
 
 /* Handle */
 
- ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: transparent;
     -webkit-box-shadow: transparent;
 }
 
- :hover::-webkit-scrollbar {
+:hover::-webkit-scrollbar {
     width: 8px;
 }
 
 
 /* Track */
 
- :hover::-webkit-scrollbar-track {
+:hover::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-border-radius: 0px;
     border-radius: 0px;
@@ -245,7 +245,7 @@ tbody {
 
 /* Handle */
 
- :hover::-webkit-scrollbar-thumb {
+:hover::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0px;
     border-radius: 0px;
     background: #20a120;
@@ -295,7 +295,11 @@ tbody {
     color: #0ba118;
     padding-left: 12px;
     border: 1px solid #0ba118;
+
     //  border-radius: 15px;
+    img {
+        filter: brightness(0) saturate(100%) invert(38%) sepia(94%) saturate(2178%) hue-rotate(90deg) brightness(100%) contrast(101%);
+    }
 }
 
 .focus-input {
@@ -333,6 +337,10 @@ tbody {
     -o-transition: all 0.4s;
     -moz-transition: all 0.4s;
     transition: all 0.4s;
+
+    img {
+        filter: brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(70%) contrast(95%);
+    }
 }
 
 textarea {
@@ -391,7 +399,7 @@ textarea:focus-visible {
 }
 
 .submit-btn {
-    background: #0ba118!important;
+    background: #0ba118 !important;
 }
 
 .custom-header {
@@ -444,23 +452,23 @@ textarea:focus-visible {
 }
 
 .mb-15 {
-    margin-bottom: 15px!important;
+    margin-bottom: 15px !important;
 }
 
 .ml-0 {
-    margin-left: 0px!important;
+    margin-left: 0px !important;
 }
 
 .mr-10 {
-    margin-right: -10px!important;
+    margin-right: -10px !important;
 }
 
 .pl-0 {
-    padding-left: 0px!important;
+    padding-left: 0px !important;
 }
 
 .pr-0 {
-    padding-right: 0px!important;
+    padding-right: 0px !important;
 }
 
 .table-one {
@@ -486,7 +494,7 @@ table tr:hover {
 }
 
 .active-tr i {
-    color: #fff!important;
+    color: #fff !important;
 }
 
 form {
@@ -543,7 +551,7 @@ select.caret-select2 {
 }
 
 .card-body2 {
-    height: 80vh!important;
+    height: 80vh !important;
     padding: 0px 10px 0px 0px;
     overflow: hidden;
 }
@@ -564,7 +572,7 @@ select.caret-select2 {
 
 .card-body3 {
     padding: 25px 120px;
-    height: 37vh!important;
+    height: 37vh !important;
 }
 
 .modal-header2 h5 {
@@ -601,11 +609,13 @@ input.input4 {
     .card-body3 {
         padding: 25px 45px !important;
     }
+
     .Update2 {
         padding-left: 0px;
         padding-right: 17px;
         margin-top: 15px !important
     }
+
     .card-body3 {
         height: 32vh !important;
     }
@@ -615,35 +625,44 @@ input.input4 {
     .card-body3 {
         padding: 25px 45px !important;
     }
+
     .wrap-class {
         flex-wrap: wrap
     }
+
     .Update2 {
         padding-left: 0px;
         padding-right: 7px;
         margin-top: 15px !important;
     }
+
     .button button {
         margin-top: 2px;
         margin-left: 0px;
     }
+
     .main-panel {
         background-color: #fff !important;
     }
+
     .padding-remove {
         padding-right: 15px !important
     }
+
     .card-header {
         padding: 15px 0px 15px 0px !important;
     }
+
     .Update2 {
         padding-left: 0px;
         padding-right: 7px;
         margin-top: 15px !important;
     }
+
     .card-body3 {
         height: 25vh !important;
     }
+
     .card-body2 {
         height: 58vh !important;
     }
@@ -653,37 +672,47 @@ input.input4 {
     .card-body3 {
         padding: 25px 15px !important;
     }
+
     .wrap-class {
         flex-wrap: wrap
     }
+
     .Update2 {
         padding-left: 0px;
         padding-right: 17px;
     }
+
     .button button {
         margin-top: 2px;
         margin-left: 0px;
     }
+
     form {
         padding: 25px 15px;
     }
+
     .custom-header h5 {
         font-size: 13px !important
     }
+
     .main-panel {
         background: #fff !important;
     }
+
     .padding-remove {
         padding-right: 15px !important
     }
+
     .card-header {
         padding: 15px 0px 15px 0px !important;
     }
+
     .Update2 {
         padding-left: 0px;
         padding-right: 7px;
         margin-top: 15px !important;
     }
+
     .card-body3 {
         height: 32vh !important;
     }
@@ -693,6 +722,7 @@ input.input4 {
     .card-body3 {
         height: 30vh !important;
     }
+
     .card-body2 {
         height: 75vh !important;
     }
