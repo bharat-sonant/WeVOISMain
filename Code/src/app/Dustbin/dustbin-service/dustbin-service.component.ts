@@ -211,6 +211,12 @@ export class DustbinServiceComponent implements OnInit {
       return;
     }
 
+    let compaireDate=new Date("2024-11-01");
+    if(new Date(date.toString())<=compaireDate){
+      this.commonService.setAlertMessage("error", "Please select date after 01 nov 2024");
+      return;
+    }
+
     if (driverId == "0") {
       this.commonService.setAlertMessage("error", "Please select driver");
       return;

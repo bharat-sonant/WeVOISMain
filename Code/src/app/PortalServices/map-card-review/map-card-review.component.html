@@ -18,12 +18,16 @@
   
         </div>
         <div class="fix-home">
-          <div class="float-r" style="margin-left: 10px;">
-            <i class="fas fa-home"></i> <span class="house"> {{progressData.houses}}</span><br>
+          <div class="float-r" style="margin-left: 10px;margin-top: 15px;">
+            <!-- <i class="fas fa-home"></i>  -->
+             <img src="../../../assets/icons/house-solid.svg" alt="House" width="20" class="icon-blue" style="margin-bottom: 5px;"/>
+            <span class="house"> {{progressData.houses}}</span><br>
             <h6>Total House</h6>
           </div>
-          <div class="float-r"  style="display: none;">
-            <i class="fas fa-house-damage"></i> <span class="house"> {{progressData.scanedHouses}}</span><br>
+          <div class="float-r" style="margin-top: 15px;display: none;">
+            <!-- <i class="fas fa-house-damage"></i>  -->
+            <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="Chimney" width="20" class="green-filter" style="margin-bottom: 5px;"/>
+            <span class="house"> {{progressData.scanedHouses}}</span><br>
             <h6>Scanned House</h6>
           </div>
         </div>
