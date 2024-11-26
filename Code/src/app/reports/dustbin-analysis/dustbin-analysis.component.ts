@@ -638,7 +638,6 @@ export class DustbinAnalysisComponent implements OnInit {
         }
       }
       else {
-        this.commonService.setAlertMessage("error","test")
         this.dustbinList[index]["isNotPickedIcon"] = "0";
         this.dustbinList[index]["divClass"] = "address md-background";
       }     
