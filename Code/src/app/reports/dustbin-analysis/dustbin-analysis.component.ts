@@ -407,9 +407,9 @@ export class DustbinAnalysisComponent implements OnInit {
           } else {
             let bins = pickingPlanWithDateData["bins"];
             let resetPicked = pickingPlanWithDateData["resetPicked"] ? pickingPlanWithDateData["resetPicked"] : "";
-            let detail=this.planList.find(item=>item.planId==this.planId);
-            if(detail!=undefined){
-             detail.resetPicked=resetPicked;
+            let detail = this.planList.find(item => item.planId == this.planId);
+            if (detail != undefined) {
+              detail.resetPicked = resetPicked;
             }
             this.getBinsDetail(bins, planId);
           }
@@ -418,9 +418,9 @@ export class DustbinAnalysisComponent implements OnInit {
       } else {
         let bins = pickingPlanData["bins"];
         let resetPicked = pickingPlanData["resetPicked"] ? pickingPlanData["resetPicked"] : "";
-        let detail=this.planList.find(item=>item.planId==this.planId);
-        if(detail!=undefined){
-         detail.resetPicked=resetPicked;
+        let detail = this.planList.find(item => item.planId == this.planId);
+        if (detail != undefined) {
+          detail.resetPicked = resetPicked;
         }
         this.getBinsDetail(bins, planId);
       }
@@ -604,36 +604,44 @@ export class DustbinAnalysisComponent implements OnInit {
       }
     }
     else {
-      if (this.selectedDate != this.commonService.setTodayDate()) {
-        this.dustbinList[index]["isNotPickedIcon"] = "1";
-        if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1) {
+      let compaireDate = new Date("2024-11-01");
+      if (new Date(this.selectedDate) >= compaireDate) {
+        if (this.selectedDate != this.commonService.setTodayDate()) {
+          this.dustbinList[index]["isNotPickedIcon"] = "1";
+          if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1) {
+            this.dustbinList[index]["isNotPickedIcon"] = "0";
+            this.dustbinList[index]["divClass"] = "address md-background";
+          }
+          let planDetail = this.planList.find(item => item.planId == this.planId);
+          if (planDetail != undefined) {
+            let resetPickedList = planDetail.resetPicked.split(",");
+            if (resetPickedList.length == 0) {
+              this.getUnpickedDustbinDetail(dustbinId);
+            }
+            else {
+              let isReset = false;
+              for (let i = 0; i < resetPickedList.length; i++) {
+                if (resetPickedList[i].trim() == dustbinId) {
+                  isReset = true;
+                  i = resetPickedList.length;
+                }
+              }
+              if (isReset == false) {
+                this.getUnpickedDustbinDetail(dustbinId);
+              }
+            }
+          }
+        }
+        else {
           this.dustbinList[index]["isNotPickedIcon"] = "0";
           this.dustbinList[index]["divClass"] = "address md-background";
         }
-        let planDetail = this.planList.find(item => item.planId == this.planId);
-        if (planDetail != undefined) {
-          let resetPickedList = planDetail.resetPicked.split(",");
-          if (resetPickedList.length == 0) {
-            this.getUnpickedDustbinDetail(dustbinId);
-          }
-          else {
-            let isReset = false;
-            for (let i = 0; i < resetPickedList.length; i++) {
-              if (resetPickedList[i].trim() == dustbinId) {
-                isReset = true;
-                i = resetPickedList.length;
-              }
-            }
-            if (isReset == false) {
-              this.getUnpickedDustbinDetail(dustbinId);
-            }
-          }
-        }
       }
       else {
+        this.commonService.setAlertMessage("error","test")
         this.dustbinList[index]["isNotPickedIcon"] = "0";
         this.dustbinList[index]["divClass"] = "address md-background";
-      }
+      }     
     }
   }
 
@@ -1417,7 +1425,7 @@ export class DustbinAnalysisComponent implements OnInit {
         planDetail.resetPicked = this.binDetail.binId;
       }
       else {
-        planDetail.resetPicked = planDetail.resetPicked+"," + this.binDetail.binId;
+        planDetail.resetPicked = planDetail.resetPicked + "," + this.binDetail.binId;
       }
       let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/";
       this.db.object(dbPath).set(null);
