@@ -31,6 +31,7 @@ export class DustbinAnalysisComponent implements OnInit {
   cityName: any;
   userType: any;
   isShowData: any;
+  isShowActualPicked:any;
   db: any;
   serviceName = "dustbin-analysis";
   autoPickedDustbin: any;
@@ -71,6 +72,7 @@ export class DustbinAnalysisComponent implements OnInit {
     pickedCount: "",
     assignedCount: "",
     notAtLocationCount: "",
+    actualPickedCount:"",
   };
 
   dustbinData: dustbinDetail = {
@@ -92,6 +94,11 @@ export class DustbinAnalysisComponent implements OnInit {
     element.href = this.cityName + "/3B/dustbin-planing";
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
+    this.isShowActualPicked=0;
+    if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1 || this.cityName!='sikar') {
+      this.isShowActualPicked=1;
+    }
+    
     if (this.userType == "External User" && this.cityName == "jodhpur") {
       this.isShowData = false;
     }
@@ -366,6 +373,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.planDetail.driverName = "--";
     this.planDetail.vehicle = "--";
     this.planDetail.pickedCount = "";
+    this.planDetail.actualPickedCount="";
     this.planDetail.assignedCount = " -- ";
     this.planDetail.notAtLocationCount = " -- ";
   }
@@ -442,6 +450,7 @@ export class DustbinAnalysisComponent implements OnInit {
           if (dustbinHistoryData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getBinsDetail", dustbinHistoryData);
           }
+
           this.dustbinList.push({
             dustbinId: binId,
             address: dustbinAddress,
@@ -466,8 +475,10 @@ export class DustbinAnalysisComponent implements OnInit {
             analysisRemark: this.checkAnalysisValues(dustbinHistoryData, "remark"),
             manualRemarks: this.checkAnalysisValues(dustbinHistoryData, "manualRemark"),
             isPicked: "0",
-            isNotPickedIcon: this.checkAutoPickedValue(dustbinHistoryData, "isAutoPicked")
+            isNotPickedIcon: this.checkAutoPickedValue(dustbinHistoryData, "isAutoPicked"),
+            isAutoPicked: this.checkAutoPickedValue(dustbinHistoryData, "isAutoPicked")
           });
+          console.log(this.dustbinList);
           this.setPickedBins(index);
 
           if (this.dustbinList[index]["divClass"] != "address md-background" && firstIndexNeedtobeSelected == -1) {
@@ -597,6 +608,7 @@ export class DustbinAnalysisComponent implements OnInit {
     if (this.dustbinList[index]["emptyDustbinTopViewImage"] != this.imageNotAvailablePath) {
       isPicked = true;
     }
+
     if (isPicked == true) {
       this.dustbinList[index]["isPicked"] = "1";
       if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1) {
@@ -604,8 +616,8 @@ export class DustbinAnalysisComponent implements OnInit {
       }
     }
     else {
-      let compaireDate = new Date("2024-11-01");
-      if (new Date(this.selectedDate) >= compaireDate) {
+      let compaireDate = new Date("2024-10-01");
+      if (new Date(this.selectedDate) >= compaireDate && this.cityName=='sikar') {
         if (this.selectedDate != this.commonService.setTodayDate()) {
           this.dustbinList[index]["isNotPickedIcon"] = "1";
           if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1) {
@@ -845,6 +857,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.planDetail.notAtLocationCount = this.getDustbinCounts("notAtLocation").toString();
     this.planDetail.dutyStartTime = "";
     this.planDetail.dutyEndTime = "";
+    this.planDetail.actualPickedCount=this.getDustbinCounts("actual").toString();
   }
 
   getDustbinCounts(countType: string) {
@@ -858,6 +871,17 @@ export class DustbinAnalysisComponent implements OnInit {
         const element = this.dustbinList[index];
         if (element["isPicked"] == "1") {
           count++;
+        }
+      }
+    }
+
+    if(countType=="actual"){
+      for (let index = 0; index < this.dustbinList.length; index++) {
+        const element = this.dustbinList[index];
+        if (element["isPicked"] == "1") {
+          if (element["isAutoPicked"] == "0") {
+          count++;
+          }
         }
       }
     }
@@ -877,7 +901,7 @@ export class DustbinAnalysisComponent implements OnInit {
     let time = "0";
     if (binData != null) {
       if (binData[fieldName] != undefined) {
-        time = binData[fieldName];
+        time = binData[fieldName].toString();
       }
     }
 
@@ -1715,6 +1739,7 @@ export class planDetails {
   dutyStartTime: string;
   dutyEndTime: string;
   pickedCount: string;
+  actualPickedCount:string;
   assignedCount: string;
   notAtLocationCount: string;
 }

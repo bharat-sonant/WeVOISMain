@@ -368,6 +368,7 @@
                     </div>
                     <div class="col-md-3 desk-right mob-bottom">
                         <div class="scroll-list">
+                            <div style="text-align: right;" [hidden]="isShowActualPicked==1">{{planDetail.actualPickedCount}}</div>
                             <div id="filter{{i}}" class="{{data.divClass}}"
                                 *ngFor="let data of dustbinList ; let i=index"
                                 (click)="data.divClass!='address md-background' && showDustbinData(i);">
