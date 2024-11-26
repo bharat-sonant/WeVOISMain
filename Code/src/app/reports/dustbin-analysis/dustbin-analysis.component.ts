@@ -478,7 +478,6 @@ export class DustbinAnalysisComponent implements OnInit {
             isNotPickedIcon: this.checkAutoPickedValue(dustbinHistoryData, "isAutoPicked"),
             isAutoPicked: this.checkAutoPickedValue(dustbinHistoryData, "isAutoPicked")
           });
-          console.log(this.dustbinList);
           this.setPickedBins(index);
 
           if (this.dustbinList[index]["divClass"] != "address md-background" && firstIndexNeedtobeSelected == -1) {
