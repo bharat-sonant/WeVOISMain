@@ -219,6 +219,7 @@ export class DustbinManageComponent implements OnInit {
     this.dustbinService.updateDustbinDetail(dustbin, data, 'update');
     this.updateLocalStorageDustbin(dustbin, data);
     this.getDustbins();
+    $(this.dustbinId).val("0");
     this.commonService.setAlertMessage("success", "Dustbin detail updated successfully !!!");
   }
 
@@ -292,8 +293,8 @@ export class DustbinManageComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    $(this.dustbinId).val(id);
     if (type == "update") {
+      $(this.dustbinId).val(id);
       $("#exampleModalLongTitle").html("Manage Dustbin");
       let dustbinDetail = this.dustbinList.find((item) => item.dustbin == id);
       if (dustbinDetail != undefined) {
@@ -309,6 +310,7 @@ export class DustbinManageComponent implements OnInit {
       }
     }
     else {
+      $(this.dustbinId).val("0");
       $("#exampleModalLongTitle").html("Add Dustbin");
       setTimeout(() => {
         document.getElementById('txtaddress').removeAttribute('readonly');
