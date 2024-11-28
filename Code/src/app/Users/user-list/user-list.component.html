@@ -22,31 +22,32 @@
                 <div class="card-body">
                     <form>
                         <div class="row">
-                                <div class="col-6"></div>
-                                <div class="col-2"  >
-                                    <div class="wrap-input-effects" required>
-                                        <select  id="select-userType" class="input-green" (change)="filterUserList()" >
-                                            <option value="0">All Users</option>
-                                            <option value="Internal User">Internal User</option>
-                                            <option  value="External User">External User</option>
-                                        </select>
-                                    </div>
+                            <div class="col-6"></div>
+                            <div class="col-2">
+                                <div class="wrap-input-effects" required>
+                                    <select id="select-userType" class="input-green" (change)="filterUserList()">
+                                        <option value="0">All Users</option>
+                                        <option value="Internal User">Internal User</option>
+                                        <option value="External User">External User</option>
+                                    </select>
                                 </div>
-                                <div class="col-2" >
-                                    <div  class="wrap-input-effects"  required>
-                                        <select id="select-role" class="input-green"  (change)="filterUserList()">
-                                            <option value="0">All Role</option>
-                                            <option  *ngFor="let dt of rolesList" value="{{dt.roleId}}">{{dt.roleName}} - {{dt.active}}</option>
-                                        </select>
-                                    </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="wrap-input-effects" required>
+                                    <select id="select-role" class="input-green" (change)="filterUserList()">
+                                        <option value="0">All Role</option>
+                                        <option *ngFor="let dt of rolesList" value="{{dt.roleId}}">{{dt.roleName}} -
+                                            {{dt.active}}</option>
+                                    </select>
                                 </div>
-                                <div class="col-1 text-end">
-                                  <label class="switch">
+                            </div>
+                            <div class="col-1 text-end">
+                                <label class="switch">
                                     <input id="chkFilter" type="checkbox" (click)="getFilterUsers()">
                                     <span class="slider round"></span>
-                                  </label><br/>
-                                  <label id="lblStatus">Active</label>
-                                </div>
+                                </label><br />
+                                <label id="lblStatus">Active</label>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 pr-1">
@@ -71,19 +72,36 @@
                                                 <td class="border-right">{{usr.email}}</td>
                                                 <td class="border-right">{{usr.mobile}}</td>
                                                 <td class="border-right">{{usr.lastLogin}}</td>
-                                                <td class="text-right" *ngIf="isShowAction==true">
-                                                    <i class="far fa-edit"
+                                                <td class="text-right" *ngIf="isShowAction==true"
+                                                    style="justify-content: flex-end; align-items: center; gap: 1px;">
+                                                    <!-- <i class="far fa-edit"
                                                         routerLink="/{{usr.cityName}}/useradd/{{usr.userId}}"
                                                         title="Edit User"
-                                                        style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <i class="fa-solid fa-user-xmark" (click)="changeUserStatus(usr.userId,'deactive')"
+                                                        style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i>&nbsp;&nbsp;&nbsp;&nbsp; -->
+                                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit"
+                                                        width="18" routerLink="/{{usr.cityName}}/useradd/{{usr.userId}}"
+                                                        title="Edit User"
+                                                        class="cursor-pointer icon-blue" />&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <!-- <i class="fa-solid fa-user-xmark"
+                                                        (click)="changeUserStatus(usr.userId,'deactive')"
                                                         title="Deactivate User"
-                                                        style="cursor:pointer !important; font-size: 15px;color: red;"></i>
+                                                        style="cursor:pointer !important; font-size: 15px;color: red;"></i> -->
+                                                    <img src="../../../assets/icons/user-xmark-solid.svg"
+                                                        alt="user-xmark" width="18" title="Deactivate User"
+                                                        (click)="changeUserStatus(usr.userId,'deactive')"
+                                                        class="cursor-pointer icon-red" />
+
                                                 </td>
                                                 <td class="text-right" *ngIf="isShowAction==false">
-                                                    <i class="fa-solid fa-user-check" (click)="changeUserStatus(usr.userId,'active')"
+                                                    <!-- <i class="fa-solid fa-user-check"
+                                                        (click)="changeUserStatus(usr.userId,'active')"
                                                         title="Activate User"
-                                                        style="cursor:pointer !important; font-size: 15px;color: green;"></i>
+                                                        style="cursor:pointer !important; font-size: 15px;color: green;"></i> -->
+                                                        <img src="../../../assets/icons/user-check-solid.svg"
+                                                        alt="user-check" width="18" 
+                                                        (click)="changeUserStatus(usr.userId,'active')"
+                                                        title="Activate User"
+                                                        class="cursor-pointer icon-green" />
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -102,8 +120,10 @@
 
         <div class="col-md-12" style="display: flex; justify-content: center;">
             <div class="add-user">
-                <button type="button" class="btn btn-success" (click)="addNew()"><i class="fas fa-user-plus"
-                        style="margin-right: 5px;"></i> Add User</button>
+                <button type="button" class="btn btn-success" (click)="addNew()">
+                    <!-- <i class="fas fa-user-plus" style="margin-right: 5px;"></i> Add User -->
+                     <img src="../../../assets/icons/user-plus-solid.svg" alt="user-plus" style="margin-right: 5px;" width="18" class="icon-white"/> Add User
+                </button>
             </div>
         </div>
     </div>
