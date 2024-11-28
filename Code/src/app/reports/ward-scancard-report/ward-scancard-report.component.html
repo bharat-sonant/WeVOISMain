@@ -38,7 +38,8 @@
                                                 Ward Length(km)</th>
                                             <th class="text-right" style="border-right:1px solid #dee2e6; width:40%;">
                                                 Covered Length(km)
-                                                <i class="far fa-file-pdf" style="float: right; font-size: 20px; color:#f96332; margin-left: 10px; cursor: pointer;" (click)="SavePDF('main');"></i></th>
+                                                <img class="pdfIcon" src="../../../assets/icons/file-pdf-regular.svg" width="37px"style="float: right; color:#f96332; margin-left: 10px; cursor: pointer;"  (click)="SavePDF('main');" alt="">
+                                                <!-- <i class="far fa-file-pdf" style="float: right; font-size: 20px; color:#f96332; margin-left: 10px; cursor: pointer;" (click)="SavePDF('main');"></i></th> -->
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of wardDataList; let i=index" style="cursor: pointer;" (click)="getScanDetail(data.wardNo,i);">
@@ -99,7 +100,8 @@
                                                     <th class="border-right" style="border-right:1px solid #dee2e6; width:20%;">RFID</th>
                                                     <th class="border-right" style="border-right:1px solid #dee2e6; width:20%;">Time</th>
                                                     <th class="border-right" style="border-right:1px solid #dee2e6; width:20%;">Scaned By
-                                                        <i class="far fa-file-pdf" style="float: right; font-size: 20px; color:#f96332; cursor: pointer;" (click)="SavePDF('detail');"></i>
+                                                        <img class="far fa-file-pdf" src="../../../assets/icons/file-pdf-regular.svg" width="37px"style="float: right; margin-left: 10px; cursor: pointer;"  (click)="SavePDF('detail');"alt="">
+                                                        <!-- <i class="far fa-file-pdf" style="float: right; font-size: 20px; color:#f96332; cursor: pointer;" (click)="SavePDF('detail');"></i> -->
                                                     </th>
                                                 </thead>
                                                 <tbody>
