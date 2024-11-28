@@ -318,6 +318,9 @@ tbody {
     padding-left: 12px;
     border: 1px solid #0ba118;
     //  border-radius: 15px;
+    img {
+        filter: invert(36%) sepia(87%) saturate(577%) hue-rotate(88deg) brightness(93%) contrast(90%);
+    }
 }
 
 .focus-input {
@@ -781,3 +784,23 @@ table tr:hover {
         overflow-x: scroll !important;
     }
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+// SVG Images Uses Icons
+ .icon-blue {
+    filter: invert(38%) sepia(74%) saturate(2721%) hue-rotate(201deg) brightness(93%) contrast(92%);
+ }
+
+ .icon-green {
+    filter: invert(48%) sepia(75%) saturate(377%) hue-rotate(99deg) brightness(91%) contrast(90%);
+ }
+
+ .icon-chocolate{
+    filter: invert(38%) sepia(92%) saturate(410%) hue-rotate(4deg) brightness(90%) contrast(97%);
+ }
+
+ .icon-grey{
+    filter: invert(40%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(70%) contrast(90%);
+ }
