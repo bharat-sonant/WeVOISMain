@@ -135,17 +135,17 @@ export class PaymentCollectorComponent implements OnInit {
         this.commonService.setAlertMessage("error", "Plese select ward !!!");
         return;
       }
-      this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((response:any) => {
-        let data=JSON.parse(response);
+      this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((response: any) => {
+        let data = JSON.parse(response);
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
-          let lineNo=keyArray[i];
+          let lineNo = keyArray[i];
           if (parseInt(lineNo)) {
-            this.lineList.push({ lineNo:lineNo, isChecked: 0 });
+            this.lineList.push({ lineNo: lineNo, isChecked: 0 });
           }
         }
         resolve("success");
-      });     
+      });
     });
   }
 
@@ -162,7 +162,7 @@ export class PaymentCollectorComponent implements OnInit {
           let totalCollectionAmount = 0;
 
           let dateArray = Object.keys(data);
-          let promise = dateArray.map(async(date)=>{
+          let promise = dateArray.map(async (date) => {
             let timeStamp = new Date(date).getTime();
             let displayDate = this.commonService.convertDateWithMonthName(date);
             if (date != "Entities") {
@@ -180,11 +180,11 @@ export class PaymentCollectorComponent implements OnInit {
                     detailArray.push({ cardNo: data[date][key]["cardNo"], merchantTransactionId: data[date][key]["merchantTransactionId"], payMethod: data[date][key]["payMethod"], retrievalReferenceNo: data[date][key]["retrievalReferenceNo"], transactionAmount: data[date][key]["transactionAmount"] });
                   }
                 }
-                collectionList.push({ date: date,displayDate:displayDate,collection: totalAmount.toFixed(2), detailArray: detailArray,timeStamp:timeStamp});
+                collectionList.push({ date: date, displayDate: displayDate, collection: totalAmount.toFixed(2), detailArray: detailArray, timeStamp: timeStamp });
               }
             }
           });
-          Promise.all(promise).then(resp=>{
+          Promise.all(promise).then(resp => {
             this.getEntityCollection(empId, collectionList, totalCollectionAmount);
           });
         }
@@ -195,65 +195,65 @@ export class PaymentCollectorComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEntityCollection");
     let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + empId + "/Entities";
     let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
-        instance.unsubscribe();
-        if (data != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEntityCollection", data);
-          let entityKeyArray = Object.keys(data);
-          for (let m = 0; m < entityKeyArray.length; m++) {
-            let entityKey = entityKeyArray[m];
-            let dateData = data[entityKey];
-            let dateArray = Object.keys(dateData);
-            for (let n = 0; n < dateArray.length; n++) {
-              let date = dateArray[n];
-              let totalAmount = 0;
-              let detail = collectionList.find(item => item.date == date);
-              if (detail != undefined) {
-                let keyArray = Object.keys(dateData[date]);
-                if (keyArray.length > 0) {
-                  let detailArray = detail.detailArray;
-                  for (let j = 0; j < keyArray.length; j++) {
-                    let key = keyArray[j];
-                    if (dateData[date][key]["cardNo"] != null) {
+      instance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEntityCollection", data);
+        let entityKeyArray = Object.keys(data);
+        for (let m = 0; m < entityKeyArray.length; m++) {
+          let entityKey = entityKeyArray[m];
+          let dateData = data[entityKey];
+          let dateArray = Object.keys(dateData);
+          for (let n = 0; n < dateArray.length; n++) {
+            let date = dateArray[n];
+            let totalAmount = 0;
+            let detail = collectionList.find(item => item.date == date);
+            if (detail != undefined) {
+              let keyArray = Object.keys(dateData[date]);
+              if (keyArray.length > 0) {
+                let detailArray = detail.detailArray;
+                for (let j = 0; j < keyArray.length; j++) {
+                  let key = keyArray[j];
+                  if (dateData[date][key]["cardNo"] != null) {
 
-                      if (dateData[date][key]["transactionAmount"] != null) {
-                        totalCollectionAmount += Number(dateData[date][key]["transactionAmount"]);
-                        totalAmount += Number(dateData[date][key]["transactionAmount"]);
-                      }
-                      detailArray.push({ cardNo: dateData[date][key]["cardNo"], merchantTransactionId: dateData[date][key]["merchantTransactionId"], payMethod: dateData[date][key]["payMethod"], retrievalReferenceNo: dateData[date][key]["retrievalReferenceNo"], transactionAmount: dateData[date][key]["transactionAmount"] });
+                    if (dateData[date][key]["transactionAmount"] != null) {
+                      totalCollectionAmount += Number(dateData[date][key]["transactionAmount"]);
+                      totalAmount += Number(dateData[date][key]["transactionAmount"]);
                     }
+                    detailArray.push({ cardNo: dateData[date][key]["cardNo"], merchantTransactionId: dateData[date][key]["merchantTransactionId"], payMethod: dateData[date][key]["payMethod"], retrievalReferenceNo: dateData[date][key]["retrievalReferenceNo"], transactionAmount: dateData[date][key]["transactionAmount"] });
                   }
-                  detail.collection = (Number(detail.collection) + totalAmount).toFixed(2);
-                  detail.detailArray = detailArray;
                 }
+                detail.collection = (Number(detail.collection) + totalAmount).toFixed(2);
+                detail.detailArray = detailArray;
               }
-              else {
-                let keyArray = Object.keys(dateData[date]);
-                if (keyArray.length > 0) {
-                  let detailArray = [];
-                  for (let j = 0; j < keyArray.length; j++) {
-                    let key = keyArray[j];
-                    if (dateData[date][key]["cardNo"] != null) {
-                      if (dateData[date][key]["transactionAmount"] != null) {
-                        totalCollectionAmount += Number(dateData[date][key]["transactionAmount"]);
-                        totalAmount += Number(dateData[date][key]["transactionAmount"]);
-                      }
-                      detailArray.push({ cardNo: dateData[date][key]["cardNo"], merchantTransactionId: dateData[date][key]["merchantTransactionId"], payMethod: dateData[date][key]["payMethod"], retrievalReferenceNo: dateData[date][key]["retrievalReferenceNo"], transactionAmount: dateData[date][key]["transactionAmount"] });
+            }
+            else {
+              let keyArray = Object.keys(dateData[date]);
+              if (keyArray.length > 0) {
+                let detailArray = [];
+                for (let j = 0; j < keyArray.length; j++) {
+                  let key = keyArray[j];
+                  if (dateData[date][key]["cardNo"] != null) {
+                    if (dateData[date][key]["transactionAmount"] != null) {
+                      totalCollectionAmount += Number(dateData[date][key]["transactionAmount"]);
+                      totalAmount += Number(dateData[date][key]["transactionAmount"]);
                     }
+                    detailArray.push({ cardNo: dateData[date][key]["cardNo"], merchantTransactionId: dateData[date][key]["merchantTransactionId"], payMethod: dateData[date][key]["payMethod"], retrievalReferenceNo: dateData[date][key]["retrievalReferenceNo"], transactionAmount: dateData[date][key]["transactionAmount"] });
                   }
-                  collectionList.push({ date: date,displayDate:this.commonService.convertDateWithMonthName(date),collection: totalAmount.toFixed(2), detailArray: detailArray });
                 }
+                collectionList.push({ date: date, displayDate: this.commonService.convertDateWithMonthName(date), collection: totalAmount.toFixed(2), detailArray: detailArray });
               }
             }
           }
         }
+      }
 
-        let detail = this.userList.find(item => item.empId == empId);
-        if (detail != undefined) {
-          detail.collectedAmount = totalCollectionAmount.toFixed(2);
-          detail.collectionList = collectionList;
-          this.collectionData.sumTotalCollection = (Number(this.collectionData.sumTotalCollection) + totalCollectionAmount).toFixed(2);
-        }
-      });
+      let detail = this.userList.find(item => item.empId == empId);
+      if (detail != undefined) {
+        detail.collectedAmount = totalCollectionAmount.toFixed(2);
+        detail.collectionList = collectionList;
+        this.collectionData.sumTotalCollection = (Number(this.collectionData.sumTotalCollection) + totalCollectionAmount).toFixed(2);
+      }
+    });
 
   }
 
@@ -268,7 +268,7 @@ export class PaymentCollectorComponent implements OnInit {
       this.collectionData.name = detail.name;
       this.collectionData.totalCollection = Number(detail.collectedAmount).toFixed(2);
       this.collectionData.totalDays = detail.collectionList.length;
-      this.collectionList = detail.collectionList.sort((a,b)=>a.timeStamp>b.timeStamp?1:-1);
+      this.collectionList = detail.collectionList.sort((a, b) => a.timeStamp > b.timeStamp ? 1 : -1);
     }
   }
 
@@ -481,7 +481,7 @@ export class PaymentCollectorComponent implements OnInit {
                         }
                       }
                     }, 200);
-                    
+
                   });
                 }
               }
@@ -542,24 +542,98 @@ export class PaymentCollectorComponent implements OnInit {
   saveWard() {
     let empID = $("#empID").val();
     let lines = "";
-    if ($("#ddlDevice").val() == "0") {
-      this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
-      return;
+    if (this.cityName != "jodhpur") {
+      if ($("#ddlDevice").val() == "0") {
+        this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
+        return;
+      }
+
+      if (this.isWardShow == "1") {
+        if ($("#ddlWard").val() == "0") {
+          this.commonService.setAlertMessage("error", "Please select ward !!!");
+          return;
+        }
+        let isLine = false;
+
+        if (this.lineList.length > 0) {
+          for (let i = 0; i < this.lineList.length; i++) {
+            let lineNo = this.lineList[i]["lineNo"];
+            let chk = "chk" + lineNo;
+            let element = <HTMLInputElement>document.getElementById(chk);
+            if (element.checked == true) {
+              isLine = true;
+              if (lines != "") {
+                lines = lines + ",";
+              }
+              lines = lines + lineNo;
+            }
+          }
+        }
+        if (isLine == false) {
+          this.commonService.setAlertMessage("error", "Plese select at least one line !!!");
+          return;
+        }
+      }
+
+      if (empID != "0") {
+        let deviceNo = $("#ddlDevice").val();
+        let wardNo = "";
+        if (this.isWardShow == "1") {
+          wardNo = $("#ddlWard").val().toString();
+        }
+        let list = this.userList.filter(item => item.empId != empID);
+        let detail = list.find(item => item.deviceNo == deviceNo);
+        if (detail != undefined) {
+          this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
+          return;
+        }
+        let element = <HTMLInputElement>document.getElementById("chkRemove");
+        if (element.checked == true) {
+          deviceNo = null;
+          wardNo = null;
+          lines = null;
+        }
+
+        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
+        let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
+          userJSONInstance.unsubscribe();
+          if (userJsonData != null) {
+            userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
+            userJsonData[empID.toString()]["assignedWard"] = wardNo;
+            userJsonData[empID.toString()]["assignedLines"] = lines;
+            let fileName = "paymentCollector.json";
+            let filePath = "/CollectionManagement/";
+            this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
+              this.commonService.setAlertMessage("success", "Device assigned successfully !!!");
+              $("#empID").val("0");
+              $("#ddlDevice").val("0");
+              $("#ddlWard").val("0");
+              this.lineList = [];
+              this.closeModel();
+              let userDetail = this.userList.find((item) => item.empId == empID);
+              if (userDetail != undefined) {
+                userDetail.deviceNo = deviceNo;
+                if (this.isWardShow == "1") {
+                  userDetail.wardNo = wardNo;
+                  userDetail.lines = lines;
+                }
+              }
+            });
+          }
+        });
+      }
     }
-    if (this.isWardShow == "1") {
+    else {
       if ($("#ddlWard").val() == "0") {
         this.commonService.setAlertMessage("error", "Please select ward !!!");
         return;
       }
-      let isLine = false;
-
       if (this.lineList.length > 0) {
         for (let i = 0; i < this.lineList.length; i++) {
           let lineNo = this.lineList[i]["lineNo"];
           let chk = "chk" + lineNo;
           let element = <HTMLInputElement>document.getElementById(chk);
           if (element.checked == true) {
-            isLine = true;
             if (lines != "") {
               lines = lines + ",";
             }
@@ -567,58 +641,56 @@ export class PaymentCollectorComponent implements OnInit {
           }
         }
       }
-      if (isLine == false) {
-        this.commonService.setAlertMessage("error", "Plese select at least one line !!!");
-        return;
-      }
-    }
 
-    if (empID != "0") {
-      let deviceNo = $("#ddlDevice").val();
-      let wardNo = "";
-      if(this.isWardShow=="1"){
-        wardNo=$("#ddlWard").val().toString();
-      }
-      let list=this.userList.filter(item=>item.empId!=empID);
-      let detail = list.find(item => item.deviceNo == deviceNo);
-      if (detail != undefined) {
-        this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
-        return;
-      }
-      let element = <HTMLInputElement>document.getElementById("chkRemove");
-      if (element.checked == true) {
-        deviceNo = null;
-        wardNo = null;
-        lines = null;
-      }
-
-      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
-      let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
-        userJSONInstance.unsubscribe();
-        if (userJsonData != null) {
-          userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
-          userJsonData[empID.toString()]["assignedWard"] = wardNo;
-          userJsonData[empID.toString()]["assignedLines"] = lines;
-          let fileName = "paymentCollector.json";
-          let filePath = "/CollectionManagement/";
-          this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
-            this.commonService.setAlertMessage("success", "Device assigned successfully !!!");
-            $("#empID").val("0");
-            $("#ddlDevice").val("0");
-            $("#ddlWard").val("0");
-            this.lineList = [];
-            this.closeModel();
-            let userDetail = this.userList.find((item) => item.empId == empID);
-            if (userDetail != undefined) {
-              userDetail.deviceNo = deviceNo;
-              if(this.isWardShow=="1"){
-                userDetail.wardNo=wardNo;
-                userDetail.lines=lines;
-              }
-            }
-          });
+      if (empID != "0") {
+        let deviceNo = $("#ddlDevice").val();
+        let wardNo = "";
+        if (this.isWardShow == "1") {
+          wardNo = $("#ddlWard").val().toString();
         }
-      });
+        let list = this.userList.filter(item => item.empId != empID);
+        if (deviceNo != "0") {
+          let detail = list.find(item => item.deviceNo == deviceNo);
+          if (detail != undefined) {
+            this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
+            return;
+          }
+        }
+        let element = <HTMLInputElement>document.getElementById("chkRemove");
+        if (element.checked == true) {
+          deviceNo = null;
+          wardNo = null;
+          lines = null;
+        }
+
+        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
+        let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
+          userJSONInstance.unsubscribe();
+          if (userJsonData != null) {
+            userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
+            userJsonData[empID.toString()]["assignedWard"] = wardNo;
+            userJsonData[empID.toString()]["assignedLines"] = lines;
+            let fileName = "paymentCollector.json";
+            let filePath = "/CollectionManagement/";
+            this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
+              this.commonService.setAlertMessage("success", "Device assigned successfully !!!");
+              $("#empID").val("0");
+              $("#ddlDevice").val("0");
+              $("#ddlWard").val("0");
+              this.lineList = [];
+              this.closeModel();
+              let userDetail = this.userList.find((item) => item.empId == empID);
+              if (userDetail != undefined) {
+                userDetail.deviceNo = deviceNo;
+                if (this.isWardShow == "1") {
+                  userDetail.wardNo = wardNo;
+                  userDetail.lines = lines;
+                }
+              }
+            });
+          }
+        });
+      }
     }
   }
 

@@ -2,7 +2,10 @@
     <div class="row no-gutters">
         <div class="col-md-2 no-gutters-iner">
             <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentRole,0,'add');">
-                <span class="text-bg"><span class="icon"><i class="fas fa-plus"></i></span> &nbsp;
+                <span class="text-bg"><span class="icon">
+                    <!-- <i class="fas fa-plus"></i> -->
+                     <img src="../../../assets/icons/plus-solid.svg" alt="plus-solid" class="icon-green fas fa-plus"/>
+                </span> &nbsp;
                     NEW</span></button>
 
         </div>
@@ -36,10 +39,13 @@
                                                 <td class="table-data-1">{{i+1}}</td>
                                                 <td class="table-data-2">
                                                     {{data.roleName}}</td>
-                                                <td class="text-right">
-                                                    <i routerLink="/{{cityName}}/role-page-access/{{data.roleId}}" title="Page Access" class="now-ui-icons business_badge" style="cursor:pointer !important; font-size: 15px; color: chocolate;"></i>
-                                                    <i class="far fa-edit edit-icon" style="padding-left: 20px;" (click)="openModel(contentRole,data.roleId,'update');" title="Edit Entry"></i>
-                                                    <i class="far fa-times-circle circle-icon" (click)="openModel(contentConfirmation,data.roleId,'delete')" title="Remove Entry" style="padding-left:20px ;"></i>
+                                                <td class="text-right" style="justify-content:flex-end;">
+                                                    <!-- <i routerLink="/{{cityName}}/role-page-access/{{data.roleId}}" title="Page Access" class="now-ui-icons business_badge" style="cursor:pointer !important; font-size: 15px; color: chocolate;"></i> -->
+                                                     <img src="../../../assets/icons/address-card-regular.svg" alt="address-card" routerLink="/{{cityName}}/role-page-access/{{data.roleId}}" title="Page Access" class="now-ui-icons business_badge cursor-pointer icon-chocolate" width="16" style="margin-right: 5px;" />
+                                                    <!-- <i class="far fa-edit edit-icon" style="padding-left: 20px;" (click)="openModel(contentRole,data.roleId,'update');" title="Edit Entry"></i> -->
+                                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit-icon" (click)="openModel(contentRole,data.roleId,'update');" title="Edit Entry" class="far fa-edit edit-icon cursor-pointer icon-blue" width="18" style="margin-right: 5px;"/>
+                                                    <!-- <i class="far fa-times-circle circle-icon" (click)="openModel(contentConfirmation,data.roleId,'delete')" title="Remove Entry" style="padding-left:20px ;"></i> -->
+                                                    <img src="../../../assets/icons/circle-xmark-regular.svg" alt="circle-xmark-regular" class="far fa-times-circle circle-icon icon-red cursor-pointer" (click)="openModel(contentConfirmation,data.roleId,'delete')" title="Remove Entry" width="16"/>
                                                 </td>
                                             </tr>
 
@@ -105,7 +111,8 @@
                     <input type="text" id="txtRoleName" class="input-green" placeholder="Role Name" />
                     <span class="focus-input"></span>
                     <span class="symbol-input">
-                        <i class="fas fa-user-alt" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
+                    <img src="../../../assets/icons/user-solid.svg" alt="user-solid" aria-hidden="true" width="14" class="icon-grey"/>
                     </span>
                 </div>
                 <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT" (click)="saveRole();" />

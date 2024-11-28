@@ -1871,3 +1871,13 @@ input {
     font-weight: bolder;
     font-size: 17px;
 }
+
+  // SVG Image Icons
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  
+  .icon-green {
+    filter: invert(50%) sepia(78%) saturate(485%) hue-rotate(83deg) brightness(97%) contrast(89%);
+  }
+

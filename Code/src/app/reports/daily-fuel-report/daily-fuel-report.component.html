@@ -46,9 +46,12 @@
 
                                 </div>
                                 <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <i class="fa-solid fa-file-export"
+                                    <!-- <i class="fa-solid fa-file-export"
                                         style="cursor:pointer; color:green;  font-size: 24px; "
-                                        (click)="exportToExcel();"></i><br />
+                                        (click)="exportToExcel();"></i> -->
+                                    <img src="../../../assets/icons/file-export-solid.svg" alt="file-export-solid"
+                                        (click)="exportToExcel();" class="cursor-pointer icon-green" width="24" />
+                                    <br />
                                     <span style="font-size: 10px;"> Export to Excel </span>
                                 </div>
                             </div>
@@ -82,7 +85,7 @@
                                                 GPS KM
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
-                                                Driver Name 
+                                                Driver Name
                                             </th>
                                         </thead>
                                         <tbody>
@@ -95,10 +98,15 @@
                                                 </td>
                                                 <td class="text-right br-1">
                                                     <div style="width:100% " *ngFor="let diesel of data.diesel ">
-                                                        {{diesel.qty}} <i class="far fa-eye eye-icon"
+                                                        {{diesel.qty}}
+                                                        <!-- <i class="far fa-eye eye-icon"
                                                             [hidden]="diesel.isUpdate==0"
                                                             (click)="showHistory(contentHistory,diesel.key)"
-                                                            style="color: red; cursor: pointer;"></i>
+                                                            style="color: red; cursor: pointer;"></i> -->
+                                                        <img src="../../../assets/icons/eye-regular.svg"
+                                                            alt="eye-regular" class="icon-red cursor-pointer"
+                                                            width="25%" [hidden]="diesel.isUpdate==0"
+                                                            (click)="showHistory(contentHistory,diesel.key)" />
                                                     </div>
                                                 </td>
                                                 <td class="text-right br-1">
@@ -106,8 +114,9 @@
                                                         <span style="float:left;">
                                                             <a href="{{diesel.slipImageUrl}}" target="_blank"
                                                                 style="color:#000">
-                                                                <i class="fa-solid fa-file-invoice"
-                                                                    style="font-size: 20px;"></i>
+                                                                <!-- <i class="fa-solid fa-file-invoice"
+                                                                    style="font-size: 20px;"></i> -->
+                                                                    <img src="../../../assets/icons/file-invoice-solid.svg" alt="file-invoice-solid" width="20"/>
                                                             </a>
                                                             &nbsp;
                                                             <a href="{{diesel.meterImageUrl}}" target="_blank"
@@ -197,7 +206,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="dth">
-                            <div >
+                            <div>
                                 <div class="table-wrapper table-two">
                                     <table class="table table-line">
                                         <tbody style="border: 1px solid lightgray!important;">
@@ -217,7 +226,8 @@
                                                     <b> Quantity :</b> {{data.quantity}}<br />
                                                     <b> Amount :</b> {{data.amount}}<br />
                                                     <b> Meter Reading :</b> {{data.meterReading}}<br />
-                                                    <b> By </b> {{data.createdBy}}  <b>on </b> {{data.creationDate}} {{data.time}}
+                                                    <b> By </b> {{data.createdBy}} <b>on </b> {{data.creationDate}}
+                                                    {{data.time}}
                                                 </td>
                                             </tr>
                                         </tbody>
