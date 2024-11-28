@@ -8,34 +8,40 @@
                 <!------------- Header Start ---------->
                 <div class="row">
                     <div class="col-md-5 text-left" style="margin-top: 5.5px;margin-left: 10px;">
-                        <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)" style="width: 150px;" [(ngModel)]="selectedYear">
-              <option value="0">Year</option>
-              <option value={{yer.year}} *ngFor="let yer of yearList"
-                ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
-            </select>
-                        <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)" style="width: 150px;">
-              <option value="0">Month</option>
-              <option value="01">January</option>
-              <option value="02">February</option>
-              <option value="03">March</option>
-              <option value="04">April</option>
-              <option value="05">May</option>
-              <option value="06">June</option>
-              <option value="07">July</option>
-              <option value="08">August</option>
-              <option value="09">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
-            </select>
+                        <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+                            style="width: 150px;" [(ngModel)]="selectedYear">
+                            <option value="0">Year</option>
+                            <option value={{yer.year}} *ngFor="let yer of yearList"
+                                ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+                        </select>
+                        <select class="caret-select" id="ddlMonth" (change)="changeMonthSelection($event.target.value)"
+                            style="width: 150px;">
+                            <option value="0">Month</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
                     </div>
                     <div class="col-md-4 text-left">
                         <h5 class="hide">Vehicle Fuel Report</h5>
                     </div>
-                    
+
                     <div class="field-box">
-                        <div class="refresh" (click)="updateJSONData();" style="text-align: right!important; padding-right: 10px;">
-                            <h1><i class="fas fa-sync-alt" style="color:#57e663"></i>
+                        <div class="refresh" (click)="updateJSONData();"
+                            style="text-align: right!important; padding-right: 10px;">
+                            <h1>
+                                <!-- <i class="fas fa-sync-alt" style="color:#57e663"></i> -->
+                                <img src='../../../assets/icons/sync-alt-solid.svg' alt="sync-alt-solid"
+                                    class="icon-filter-green" width="16" />
                                 <p>Last Update {{fuelDetail.lastUpdateDate}}</p>
                             </h1>
                         </div>
@@ -62,10 +68,14 @@
                     <div class="col-md-5 mob-space-25" style="padding-left: 30px; padding-right: 10px;">
                         <div class="halt-bg" style="border-bottom: 5px solid green;">
                             <div class="halt-details" style="width: 100%; border-bottom: none;">
-                                <h5 class="stopped-time">Total Quantity : <br><strong><i class="fas fa-gas-pump"></i>
-                    {{fuelDetail.totalQuantity}}</strong></h5>
-                                <h5 class="break-time">Total Amount : <br><strong><i class="fas fa-rupee-sign"></i>
-                    {{fuelDetail.totalAmount}} </strong></h5>
+                                <h5 class="stopped-time">Total Quantity : <br><strong>
+                                    <!-- <i class="fas fa-gas-pump"></i> -->
+                                     <img src="../../../assets/icons/gas-pump-solid.svg" alt="gas-pump-solid" width="12"/>
+                                        {{fuelDetail.totalQuantity}}</strong></h5>
+                                <h5 class="break-time">Total Amount : <br><strong>
+                                    <!-- <i class="fas fa-rupee-sign"></i> -->
+                                    <img src="../../../assets/icons/rupee-sign-solid.svg" alt="rupee-sign-solid" width="10"/>
+                                        {{fuelDetail.totalAmount}} </strong></h5>
                             </div>
                         </div>
                         <div class="scrollable-halt">
@@ -93,16 +103,20 @@
                                                 <tbody>
                                                     <!---->
                                                     <tr *ngFor="let data of vehicleFuelList, let i=index">
-                                                        <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                        <td class="text-left"
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                             {{data.date}}
                                                         </td>
-                                                        <td class="text-right" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                        <td class="text-right"
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                             {{data.meterReading}}
                                                         </td>
-                                                        <td class="text-right" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                        <td class="text-right"
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                             {{data.quantity}}
                                                         </td>
-                                                        <td class="text-right" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                        <td class="text-right"
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                             {{data.amount}}
                                                         </td>
                                                     </tr>
@@ -127,24 +141,32 @@
 
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mob-mt-4 mob-r-15 mob-l-15" style="padding-left: 5px; padding-right: 0px;">
+                                        <div class="col-md-4 mob-mt-4 mob-r-15 mob-l-15"
+                                            style="padding-left: 5px; padding-right: 0px;">
                                             <div class="dh-back">
-                                                <i class="fas fa-truck-pickup" style="color:#333!important; margin-right: 7px;"></i> {{fuelDetail.vehicleName}}
+                                                <!-- <i class="fas fa-truck-pickup"
+                                                    style="color:#333!important; margin-right: 7px;"></i> -->
+                                                    <img src="../../../assets/icons/truck-pickup-solid.svg" alt="truck-pickup-solid" style="margin-right: 7px;" width="12"/>
+                                                {{fuelDetail.vehicleName}}
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mob-mt-4 mob-l-15" style="padding-left: 5px; padding-right: 15px;">
+                                        <div class="col-md-3 mob-mt-4 mob-l-15"
+                                            style="padding-left: 5px; padding-right: 15px;">
                                             <div class="on-map">
-                                                <i class="fas fa-route"></i>&nbsp; {{fuelDetail.totalDistance}}
+                                                <!-- <i class="fas fa-route"></i> -->
+                                                 <img src="../../../assets/icons/route-solid.svg" alt="route-solid" width="12"/> &nbsp; {{fuelDetail.totalDistance}}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="mob-mt-5" style="padding: 5px; border: 1px solid lightgray; border-radius: 5px; margin-top: -5px;">
+                                    <div class="mob-mt-5"
+                                        style="padding: 5px; border: 1px solid lightgray; border-radius: 5px; margin-top: -5px;">
                                         <div id="haltMap" style="width:100%;height:85vh; ">
                                             <div class="dth">
                                                 <div class="table-bg">
                                                     <div class="tableFixHead" style="overflow-x: hidden;">
-                                                        <table class="table table-hover" style="margin-top: 0px!important;">
+                                                        <table class="table table-hover"
+                                                            style="margin-top: 0px!important;">
                                                             <thead>
                                                                 <tr>
                                                                     <th class="text-left" scope="col">
@@ -164,16 +186,20 @@
                                                             <tbody>
                                                                 <!---->
                                                                 <tr *ngFor="let data of vehicleTrackList, let i=index">
-                                                                    <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; width: 100px!important;">
+                                                                    <td class="text-left"
+                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; width: 100px!important;">
                                                                         {{data.date}}
                                                                     </td>
-                                                                    <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                    <td class="text-left"
+                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                                         {{data.name}}
                                                                     </td>
-                                                                    <td class="text-left" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                    <td class="text-left"
+                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                                         {{data.ward}}
                                                                     </td>
-                                                                    <td class="text-right" style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                    <td class="text-right"
+                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                                         {{data.distance}}
                                                                     </td>
                                                                 </tr>
@@ -195,7 +221,8 @@
             <!------------- Ward Scroll List Start ---------->
             <div class="col-md-2 halt-header pr-0 pl-0 mob-space mt-top">
                 <div class="scroll-list">
-                    <div class="{{list.cssClass}}" *ngFor="let list of vehicleList, let i=index" (click)="list.cssClass!='' && getFuelList(list.vehicle,i);" style="cursor:not-allowed;">
+                    <div class="{{list.cssClass}}" *ngFor="let list of vehicleList, let i=index"
+                        (click)="list.cssClass!='' && getFuelList(list.vehicle,i);" style="cursor:not-allowed;">
                         <div class="ward-details">
                             <h6>{{list.vehicle}}</h6>
                         </div>

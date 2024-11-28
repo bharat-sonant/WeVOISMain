@@ -6,7 +6,10 @@
 
         <div class="field-box">
             <div class="refresh" (click)="updateJSONData();" style="text-align: right!important; padding-right: 10px;">
-                <h1><i class="fas fa-sync-alt" style="color:#57e663;font-size: 24px;"></i>
+                <h1>
+                    <!-- <i class="fas fa-sync-alt" style="color:#57e663;font-size: 24px;"></i> -->
+                     <img src="../../../assets/icons/sync-alt-solid.svg" alt="sync-alt-solid" width="22"
+                     class="icon-green"/>
                     <p>Last Update {{fuelDetail.lastUpdateDate}}</p>
                 </h1>
             </div>
@@ -78,8 +81,11 @@
                                 </div>
                                 <div class="col-md-3 text-left export-main">
                                     <span class="export-span">
-                                        <i class="fa-solid fa-file-export export-icon"
-                                            (click)="exportToExcel();"></i><br />
+                                        <!-- <i class="fa-solid fa-file-export export-icon"
+                                            (click)="exportToExcel();"></i> -->
+                                            <img src="../../../assets/icons/file-export-solid.svg" alt="file-export-solid"
+                                            (click)="exportToExcel();" class="icon-green cursor-pointer" width="24"/>
+                                            <br />
                                         Export to Excel
                                     </span>
                                 </div>

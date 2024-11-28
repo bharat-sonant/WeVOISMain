@@ -854,3 +854,13 @@ table tr:hover {
     font-weight: bold;
     color: #fff;
 }
+
+// SVG Elements and Icons
+.cursor-pointer {
+    cursor: pointer;
+  }
+  
+  .icon-filter-green {
+    filter: invert(64%) sepia(59%) saturate(541%) hue-rotate(83deg) brightness(102%) contrast(91%);
+  }
+  
