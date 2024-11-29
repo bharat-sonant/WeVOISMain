@@ -293,18 +293,9 @@ font-size: 15px;
   width:25px;
   cursor: pointer;
 }
-
 .selectedZone{
   background-color: #dee2e6;
 }
-
-
-
-
-
-
-
-
 .halt-summary{
   background-color: #fff;
   border-radius: 2px;
@@ -312,7 +303,7 @@ font-size: 15px;
   min-height: 341px;
 }
 .halt-details{
-  //padding: 10px;
+  padding: 10px;
   border-right: 1px solid #dee2e6;
   border-left: 1px solid transparent;
   border-top: 1px solid transparent;
@@ -342,6 +333,15 @@ font-size: 15px;
   width: 40px;
   height: 40px;
 }
+.halt-details img {
+  padding: 10px;
+  border-radius: 50%; 
+  background: #f3f3f3; 
+  margin-right: 5px;
+  width: 40px; 
+  height: 40px; 
+  object-fit: contain;
+}
 .fa-rupee-sign{
   color:#0ba118!important;
 }
@@ -355,6 +355,27 @@ font-size: 15px;
 }
 .halt-details:hover p{
   color:#fff;
+}
+
+// Svg image
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.icon-white {
+  filter: brightness(0) saturate(100%) invert(100%);
+}
+
+.icon-green {
+  filter: brightness(0) saturate(100%) invert(24%) sepia(98%) saturate(2424%) hue-rotate(88deg) brightness(97%) contrast(91%);
+}
+
+.green-filter {
+  filter: invert(53%) sepia(86%) saturate(533%) hue-rotate(95deg) brightness(100%) contrast(92%);
+}
+
+.icon-red {
+  filter: brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(7478%) hue-rotate(0deg) brightness(96%) contrast(101%);
 }
 
 

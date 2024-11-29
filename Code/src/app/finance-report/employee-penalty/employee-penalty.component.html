@@ -36,7 +36,10 @@
         <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
             <div class="fix-home">
                 <div id="topPenality" class="float-first ml-10 mt-0">
-                    <span class="house"><i class="far fa-times-circle"></i> {{penalitylDetail.totalPenality}}</span><br>
+                    <span class="house">
+                        <!-- <i class="far fa-times-circle"></i> {{penalitylDetail.totalPenality}} -->
+                         <img src="../../../assets/icons/circle-xmark-regular.svg" alt="circle-xmark-regular" class="icon-red far fa-times-circle" width="14"/> {{penalitylDetail.totalPenality}}
+                    </span><br>
                     <h6>Penalty</h6>
                 </div>
             </div>
@@ -64,11 +67,13 @@
                                         </option>
                                     </select>
                                     <input id="txtDate" class="date-input" type="date" (change)="filterData()" style="margin-right: 10px;">
-                                    <i class="fas fa-sync-alt" style="color:green; cursor: pointer; font-size: 16px;  position: absolute;top: 22px;"
-                                        (click)="resetData();"></i>
-
-                                        <i class="fas fa-file-export" style="color: green; font-size: 25px; cursor: pointer; float: right; margin-top: 10px;" (click)="exportexcel();"></i>
-
+                                    <!-- <i class="fas fa-sync-alt" style="color:green; cursor: pointer; font-size: 16px;  position: absolute;top: 22px;"
+                                        (click)="resetData();"></i> -->
+                                        <img src="../../../assets/icons/sync-alt-solid.svg" alt="sync-alt-solid" class="icon-green cursor-pointer fas fa-sync-alt"
+                                        style="position: absolute;top: 22px;" width="16" (click)="resetData();"/>
+                                        <!-- <i class="fas fa-file-export" style="color: green; font-size: 25px; cursor: pointer; float: right; margin-top: 10px;" (click)="exportexcel();"></i> -->
+                                        <img src="../../../assets/icons/file-export-solid.svg" alt="file-export-solid" class="icon-green cursor-pointer"
+                                        style="float: right; margin-top: 10px;" width="25" (click)="exportexcel();"/>
                                 </div>
                             </div>
                         </div>
