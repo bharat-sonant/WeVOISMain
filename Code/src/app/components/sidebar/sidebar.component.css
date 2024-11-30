@@ -687,7 +687,3 @@ color: #fff;
 .icon-white {
   filter: invert(1);
 }
-
-.icon-green {
-  filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
-}

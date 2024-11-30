@@ -31,7 +31,7 @@
                 <div class="col-md-2 mt-15" style="padding-right: 8px;" routerLinkActive="active" *ngFor="let usr of accessList ">
                     <div class="more-cards rainbow" [routerLink]="[usr.url]" [hidden]="usr.isOuterUrl=='yes'">
                         <div class="vertical">
-                            <i class="{{usr.img}}" style="font-weight: bold;"></i> <br>
+                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;width: 18px;" /> <br>
                             <h3>{{usr.name}}</h3>
                         </div>
                     </div>
@@ -47,10 +47,20 @@
 
         <div class="row">
             <div class="col-md-12 text-center home-footer">
-                Copyright by <b style="color: #f1f1f1;  border-right: 2px solid rgb(165, 165, 165);  padding-right: 10px;">WeVOIS</b> &nbsp; <a href="https://www.facebook.com/wevois/" target="_blank"><i class="fab fa-facebook-f"></i></a> &nbsp; <a href="https://twitter.com/wevois?lang=en"
-                    target="_blank"><i class="fab fa-twitter"></i></a> &nbsp; <a href="https://in.linkedin.com/company/wevois-labs-pvt-ltd" target="_blank"><i
-            class="fab fa-linkedin-in"></i></a> &nbsp; <a href="https://www.instagram.com/wevoislabs/?hl=en" target="_blank"><i
-            class="fab fa-instagram" style="color: green;"></i></a>
+                Copyright by <b style="color: #f1f1f1;  border-right: 2px solid rgb(165, 165, 165);  padding-right: 10px;">WeVOIS</b> &nbsp; <a href="https://www.facebook.com/wevois/" target="_blank">
+                    <!-- <i class="fab fa-facebook-f"></i> -->
+                     <img src="../../assets/icons/facebook-f-brands-solid.svg" alt="facebook-f-brands-solid" class="icon-facebook" width="10"/>
+                </a> &nbsp; <a href="https://twitter.com/wevois?lang=en"
+                    target="_blank">
+                    <!-- <i class="fab fa-twitter"></i> -->
+                    <img src="../../assets/icons/twitter-brands-solid.svg" alt="twitter-brands-solid" class="icon-twitter" width="14"/>
+                </a> &nbsp; <a href="https://in.linkedin.com/company/wevois-labs-pvt-ltd" target="_blank">
+                    <!-- <i class="fab fa-linkedin-in"></i> -->
+                    <img src="../../assets/icons/linkedin-in-brands-solid.svg" alt="linkedin-in-brands-solid" class="icon-linkdin" width="14"/>
+                </a> &nbsp; <a href="https://www.instagram.com/wevoislabs/?hl=en" target="_blank">
+                    <!-- <i class="fab fa-instagram" style="color: green;"></i> -->
+                    <img src="../../assets/icons/instagram-brands-solid.svg" alt="instagram-brands-solid" class="icon-instagram" width="14"/>
+                </a>
             </div>
         </div>
 
