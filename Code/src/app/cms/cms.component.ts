@@ -77,9 +77,11 @@ export class CmsComponent implements OnInit {
     if (element != undefined) {
       $("#div" + k).show();
       $("#span" + k).html(userAccessList[i]["name"]);
-      let className = $("#icon" + k).attr("class");
-      $("#icon" + k).removeClass(className);
-      $("#icon" + k).addClass(userAccessList[i]["img"]);
+      // let className = $("#icon" + k).attr("class");
+      // $("#icon" + k).addClass(className);
+      let imgElement=<HTMLImageElement>document.getElementById("icon" + k);
+      imgElement.src=userAccessList[i]["img"];
+      // $("#icon" + k).addClass(userAccessList[i]["img"]);
       if (element != null) {
         element.addEventListener("click", (e) => {
           if (userAccessList[i]["url"].toString().includes("https")) {
@@ -96,9 +98,11 @@ export class CmsComponent implements OnInit {
     if (element != undefined) {
       $("#divMob" + k).show();
       $("#spanMob" + k).html(userAccessList[i]["name"]);
-      let className = $("#iconMob" + k).attr("class");
-      $("#iconMob" + k).removeClass(className);
-      $("#iconMob" + k).addClass(userAccessList[i]["img"]);
+      // let className = $("#iconMob" + k).attr("class");
+      // $("#iconMob" + k).removeClass(className);
+      let imgElement=<HTMLImageElement>document.getElementById("iconMob" + k);
+      imgElement.src=userAccessList[i]["img"];
+      // $("#iconMob" + k).addClass(userAccessList[i]["img"]);
       if (element != null) {
         element.addEventListener("click", (e) => {
           if (userAccessList[i]["url"].toString().includes("https")) {
