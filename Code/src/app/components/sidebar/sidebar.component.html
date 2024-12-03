@@ -17,34 +17,38 @@
                 <img id="cityImage" src="./assets/img/sikar.svg" class="img-fluid" alt="" title="" style="width: 22px;">
                 <p
                     style="margin-top: -27px; margin-left: 45px; color: #fff; text-transform: uppercase; font-size: 12px;">
-                    <span id="cityName">Sikar</span> 
+                    <span id="cityName">Sikar</span>
                     <!-- <i class="fas fa-caret-down"></i> -->
-                     <img src="../../../assets/icons/caret-down-solid.svg" alt="caret-down-solid" class="icon-white" width="12px" style="margin-left: 100px;"/>
+                    <img src="../../../assets/icons/caret-down-solid.svg" alt="caret-down-solid" class="icon-white"
+                        width="12px" style="margin-left: 100px;" />
                 </p>
             </li>
         </div>
         <li routerLinkActive="active" *ngFor="let usr of accessList">
-            <a [routerLink]="[usr.url]" (click)="getPage(usr.url)" [hidden]="usr.isOuterUrl=='yes'" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-                <img [src]="usr.img" class="icon-white" style="padding: 5px;height: 30px;"/>
+            <a [routerLink]="[usr.url]" (click)="getPage(usr.url)" [hidden]="usr.isOuterUrl=='yes'"
+                style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <img [src]="usr.img" class="icon-white" style="height:25px;" />
                 <p style="margin: 0;">{{usr.name}}</p>
             </a>
-            <a [attr.href]="usr.url" target="_blank" [hidden]="usr.isOuterUrl=='no'" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-                <!-- padding: 10px 15px 20px 25px; -->
-                <img [src]="usr.img" class="icon-white" style="padding: 5px;height:30px;" />
+            <a [attr.href]="usr.url" target="_blank" [hidden]="usr.isOuterUrl=='no'"
+                style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <img [src]="usr.img" class="icon-white" style="height:25px;" />
                 <p style="margin: 0;">{{usr.name}}</p>
             </a>
         </li>
         <li>
-            <a [routerLink]="[userDetail.changePasswordLink]" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <a [routerLink]="[userDetail.changePasswordLink]"
+                style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
                 <!-- <i class="now-ui-icons users_single-02"></i> -->
-                 <img src="../../../assets/icons/user-regular.svg" alt="user-regular" width="18" class="icon-white"/>
+                <img src="../../../assets/icons/user-regular.svg" alt="user-regular" width="18" class="icon-white" />
                 <p style="margin: 0;">Change Password</p>
             </a>
         </li>
         <li>
             <a href="/logout" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
                 <!-- <i class="fas fa-sign-out-alt"></i> -->
-                <img src="../../../assets/icons/right-from-bracket-solid.svg" alt="right-from-bracket-solid" width="18" class="icon-white"/>
+                <img src="../../../assets/icons/right-from-bracket-solid.svg" alt="right-from-bracket-solid" width="18"
+                    class="icon-white" />
                 <p style="margin: 0;">Log Out</p>
             </a>
         </li>
