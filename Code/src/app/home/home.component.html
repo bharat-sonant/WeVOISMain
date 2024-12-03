@@ -33,14 +33,14 @@
                     *ngFor="let usr of accessList ">
                     <div class="more-cards rainbow" [routerLink]="[usr.url]" [hidden]="usr.isOuterUrl=='yes'">
                         <div class="vertical">
-                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;height: 35px;" /> <br>
+                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;height: 30px;" /> <br>
                             <h3>{{usr.name}}</h3>
                         </div>
                     </div>
                     <a class="more-cards rainbow" [attr.href]="usr.url" target="_blank" [hidden]="usr.isOuterUrl=='no'"
                         style="text-decoration:none;">
                         <div class="vertical">
-                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;height:35px;" /> <br>
+                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;height:30px;" /> <br>
                             <h3>{{usr.name}}</h3>
                         </div>
                     </a>
