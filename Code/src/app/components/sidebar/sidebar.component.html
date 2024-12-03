@@ -27,12 +27,12 @@
         <li routerLinkActive="active" *ngFor="let usr of accessList">
             <a [routerLink]="[usr.url]" (click)="getPage(usr.url)" [hidden]="usr.isOuterUrl=='yes'"
                 style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-                <img [src]="usr.img" class="icon-white" style="height:25px;" />
+                <img [src]="usr.img" class="icon-white" style="height:22px;" />
                 <p style="margin: 0;">{{usr.name}}</p>
             </a>
             <a [attr.href]="usr.url" target="_blank" [hidden]="usr.isOuterUrl=='no'"
                 style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-                <img [src]="usr.img" class="icon-white" style="height:25px;" />
+                <img [src]="usr.img" class="icon-white" style="height:22px;" />
                 <p style="margin: 0;">{{usr.name}}</p>
             </a>
         </li>
