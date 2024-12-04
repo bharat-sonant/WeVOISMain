@@ -195,7 +195,7 @@ export class UsersService {
 
   setPortalPages() {
     let portalAccessList = [];
-    const path = this.commonService.fireStoragePath + "Common%2FPortalPages.json?alt=media";
+    const path = this.commonService.fireStoragePath + "Common%2FPortalPages1.json?alt=media";
     let pageJSONInstance = this.httpService.get(path).subscribe(pageJsonData => {
       pageJSONInstance.unsubscribe();
       let pageList = JSON.parse(JSON.stringify(pageJsonData));

@@ -82,6 +82,7 @@ export class RouteTrackingComponent {
   vtsVehicleList: any[] = [];
   routePolyline: any[] = [];
   lblVTS = "#lblVTS";
+  chkVTS="#chkVTS";
   userType: any;
   trackData: trackDetail =
     {
@@ -93,9 +94,11 @@ export class RouteTrackingComponent {
 
   ngOnInit() {
     this.userType = localStorage.getItem("userType");
-    if (this.userType == "External User") {
-      this.router.navigate(["/" + localStorage.getItem("cityName") + "/something-wrong"]);
-    }
+     if (this.userType == "External User") {
+      $(this.chkVTS).hide();
+      $(this.lblVTS).hide();
+       // this.router.navigate(["/" + localStorage.getItem("cityName") + "/something-wrong"]);
+     }
     this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.savePageLoadHistory("Monitoring", "Route-Tracking", localStorage.getItem("userID"));
@@ -697,59 +700,10 @@ export class RouteTrackingComponent {
       let dutyOnOffList = JSON.parse(JSON.stringify(response));
       if (dutyOnOffList.length > 0) {
         let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
-        this.commonService.getStorageLocationHistory(dbPath).then(response => {
-          this.routePathStore = [];
-          if (response["status"] == "Fail") {
-            let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-              routePath => {
-                vehicleTracking.unsubscribe();
-                if (routePath != null) {
-                  let routeKeyArray = Object.keys(routePath);
-                  let keyArray = [];
-                  if (routeKeyArray.length > 0) {
-                    if (this.isActualData == 0) {
-                      keyArray = routeKeyArray;
-                    }
-                    else {
-                      for (let i = 0; i < routeKeyArray.length; i++) {
-                        if (!routeKeyArray[i].toString().includes('-')) {
-                          keyArray.push(routeKeyArray[i]);
-                        }
-                      }
-                    }
-                  }
-
-                  let arrayLength = keyArray.length - 2;
-                  if (this.selectedDate != this.toDayDate) {
-                    arrayLength = keyArray.length - 3;
-                  }
-
-                  let dutyInTime = dutyOnOffList[0]["inTime"];
-                  let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
-                  let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
-                  let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
-                  for (let i = 0; i < arrayLength; i++) {
-                    let index = keyArray[i];
-                    let time = index.toString().split('-')[0];
-                    let routeDateTime = new Date(this.selectedDate + " " + time);
-                    if (this.userType == "External User") {
-
-                      this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
-
-                    }
-                    else {
-                      if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                        this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
-                      }
-                    }
-                  }
-                  this.showDataOnMap();
-                }
-              });
-
-          }
-          else {
-            let routePath = response["data"];
+        this.routePathStore = [];
+        let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
+          routePath => {
+            vehicleTracking.unsubscribe();
             if (routePath != null) {
               let routeKeyArray = Object.keys(routePath);
               let keyArray = [];
@@ -766,33 +720,62 @@ export class RouteTrackingComponent {
                 }
               }
 
-              let arrayLength = keyArray.length - 2;
-              if (this.selectedDate != this.toDayDate) {
-                arrayLength = keyArray.length - 3;
-              }
-
               let dutyInTime = dutyOnOffList[0]["inTime"];
               let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
               let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
               let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
-              for (let i = 0; i < arrayLength; i++) {
-                let index = keyArray[i];
-                let time = index.toString().split('-')[0];
-                let routeDateTime = new Date(this.selectedDate + " " + time);
-                if (this.userType == "External User") {
-                  this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+              
+              if (this.userType == "External User") {
+                let newArray = keyArray.reverse();
+                let keyArrayNew = [];
+                for (let i = 0; i < newArray.length; i++) {
+                  let index = newArray[i];
+                  if (newArray[i + 1] != undefined) {
+                    let nextIndex = newArray[i + 1];
+                    let time = index.toString().split('-')[0];
+                    let nextTime = nextIndex.toString().split('-')[0];
+                    if (time == nextTime) {
+                      keyArrayNew.push(index);
+                      i++;
+                    }
+                    else {
+                      keyArrayNew.push(index);
+                    }
+                  }
+                  else {
+                    keyArrayNew.push(index);
+                  }
                 }
-                else {
-                  if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                    this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                keyArray = keyArrayNew.reverse();
+                for (let i = 0; i < keyArray.length; i++) {
+                  let index = keyArray[i];
+                  let time = index.toString().split('-')[0];
+                  if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
+                    let routeDateTime = new Date(this.selectedDate + " " + time);
+                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                      this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                    }
+                  }
+                }
+              }
+              else {
+                for (let i = 0; i < keyArray.length; i++) {
+                  let index = keyArray[i];
+                  let time = index.toString().split('-')[0];
+                  if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
+                    let routeDateTime = new Date(this.selectedDate + " " + time);
+                    if (!index.includes("-")) {
+                      if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                        this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                      }
+                    }
                   }
                 }
               }
               this.showDataOnMap();
-
             }
-          }
-        });
+          });
+
       }
     });
 
@@ -1093,16 +1076,50 @@ export class RouteTrackingComponent {
                   let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
                   let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
 
-                  for (let i = 0; i < keyArray.length - 3; i++) {
-                    let index = keyArray[i];
-                    let time = index.toString().split('-')[0];
-                    if (this.userType == "External User") {
-                      monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                  if (this.userType == "External User") {
+                    let newArray = keyArray.reverse();
+                    let keyArrayNew = [];
+                    for (let i = 0; i < newArray.length; i++) {
+                      let index = newArray[i];
+                      if (newArray[i + 1] != undefined) {
+                        let nextIndex = newArray[i + 1];
+                        let time = index.toString().split('-')[0];
+                        let nextTime = nextIndex.toString().split('-')[0];
+                        if (time == nextTime) {
+                          keyArrayNew.push(index);
+                          i++;
+                        }
+                        else {
+                          keyArrayNew.push(index);
+                        }
+                      }
+                      else {
+                        keyArrayNew.push(index);
+                      }
                     }
-                    else {
-                      let routeDateTime = new Date(this.selectedDate + " " + time);
-                      if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                        monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                    keyArray = keyArrayNew.reverse();
+                    for (let i = 0; i < keyArray.length; i++) {
+                      let index = keyArray[i];
+                      let time = index.toString().split('-')[0];
+                      if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
+                        let routeDateTime = new Date(this.selectedDate + " " + time);
+                        if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                          monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                        }
+                      }
+                    }
+                  }
+                  else {
+                    for (let i = 0; i < keyArray.length; i++) {
+                      let index = keyArray[i];
+                      let time = index.toString().split('-')[0];
+                      if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
+                        let routeDateTime = new Date(this.selectedDate + " " + time);
+                        if (!index.includes("-")) {
+                          if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                            monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                          }
+                        }
                       }
                     }
                   }
@@ -1110,9 +1127,9 @@ export class RouteTrackingComponent {
                 }
               }
             );
-
           }
           else {
+            /*
             let routePath = response["data"];
             let routeKeyArray = Object.keys(routePath);
             let keyArray = [];
@@ -1148,7 +1165,7 @@ export class RouteTrackingComponent {
               }
             }
             this.getMonthDetailList(monthList, year, monthName, monthDate);
-
+*/
           }
         })
       }
