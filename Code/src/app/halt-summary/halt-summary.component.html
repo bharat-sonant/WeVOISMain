@@ -9,10 +9,14 @@
     <div class="row no-gutters" style="margin-top: 10px;">
       <div class="col-md-8" style="padding-right: 5px; padding-left: 2px;">
         <span id="spGraph" style="position: absolute; z-index: 99; right:25px; margin-top: 10px;"> <a
-            href="javaScript:void(0);" (click)="showGraph();"><i class="fas fa-chart-line" style="font-size: 28px;color: #0ba118;"></i>
+            href="javaScript:void(0);" (click)="showGraph();">
+            <!-- <i class="fas fa-chart-line" style="font-size: 28px;color: #0ba118;"></i> -->
+        <img src="../../assets/icons/chart-line-solid.svg" alt="chart-line-solid" class="green-filter fas fa-chart-line" width="28"/>
           </a></span>
         <span id="spTable" style="position: absolute; z-index: 99; right:25px; margin-top: 10px;">
-          <a href="javaScript:void(0);" (click)="showTable();"><i class="fas fa-table" style="font-size: 28px;color: #0ba118;"></i>
+          <a href="javaScript:void(0);" (click)="showTable();">
+            <!-- <i class="fas fa-table" style="font-size: 28px;color: #0ba118;"></i> -->
+            <img src="../../assets/icons/table-list-solid.svg" alt="table-list-solid" class="green-filter fas fa-table" width="28"/>
           </a></span>
 
         <div id="divTbl" class="dth">
@@ -85,19 +89,22 @@
               <div class="halt-details" (click)="openMapModel(content)" style="cursor:pointer;">
                 <p><b>Today</b> Halts</p>
                 <h3>
-                  <i class="fab fa-houzz"></i>  {{haltDataShow.todayHaltApproved}}/{{haltDataShow.todayHalt}}
+                  <!-- <i class="fab fa-houzz"></i>  {{haltDataShow.todayHaltApproved}}/{{haltDataShow.todayHalt}} -->
+                  <img src="../../assets/icons/houzz-brands-solid.svg" alt="houzz-brands-solid" class="fab fa-houzz" width="14"/> {{haltDataShow.todayHaltApproved}}/{{haltDataShow.todayHalt}}
                 </h3>
               </div>
               <div class="halt-details">
                 <p><b>Week</b> Halts</p>
                 <h3>
-                  <i class="fab fa-houzz"></i>  {{haltDataShow.weekHaltApproved}}/{{haltDataShow.weekHalt}}
+                  <!-- <i class="fab fa-houzz"></i>  -->
+                  <img src="../../assets/icons/houzz-brands-solid.svg" alt="houzz-brands-solid" class="fab fa-houzz" width="14"/>  {{haltDataShow.weekHaltApproved}}/{{haltDataShow.weekHalt}}
                 </h3>
               </div>
               <div class="halt-details">
                 <p><b>Month</b> Halts</p>
                 <h3>
-                  <i class="fab fa-houzz"></i>  {{haltDataShow.monthHaltApproved}}/{{haltDataShow.monthHalt}}
+                  <!-- <i class="fab fa-houzz"></i>   -->
+                  <img src="../../assets/icons/houzz-brands-solid.svg" alt="houzz-brands-solid" class="fab fa-houzz" width="14"/> {{haltDataShow.monthHaltApproved}}/{{haltDataShow.monthHalt}}
                 </h3>
               </div>
             </div>
@@ -105,19 +112,22 @@
               <div class="halt-details">
                 <p><b>Today</b> Amount</p>
                 <h3>
-                  <i class="fas fa-rupee-sign" style="padding-top: 12px;"></i>  {{haltDataShow.todaySalary}}/-
+                  <!-- <i class="fas fa-rupee-sign" style="padding-top: 12px;"></i>  -->
+                  <img src="../../assets/icons/rupee-sign-green-solid.svg" alt="rupee-sign-green-solid" class="fas fa-rupee-sign" width="14" style="padding-top: 12px;"/> {{haltDataShow.todaySalary}}/-
                 </h3>
               </div>
               <div class="halt-details">
                 <p><b>Week</b> Amount</p>
                 <h3>
-                  <i class="fas fa-rupee-sign" style="padding-top: 12px;"></i>  {{haltDataShow.weekSalary}}/-
+                  <!-- <i class="fas fa-rupee-sign" style="padding-top: 12px;"></i>   -->
+                  <img src="../../assets/icons/rupee-sign-green-solid.svg" alt="rupee-sign-green-solid" class="fas fa-rupee-sign" width="14" style="padding-top: 12px;"/> {{haltDataShow.weekSalary}}/-
                 </h3>
               </div>
               <div class="halt-details">
                 <p><b>Month</b> Amount</p>
                 <h3>
-                  <i class="fas fa-rupee-sign" style="padding-top: 12px;"></i>  {{haltDataShow.monthSalary}}/-
+                  <!-- <i class="fas fa-rupee-sign" style="padding-top: 12px;"></i>   -->
+                  <img src="../../assets/icons/rupee-sign-green-solid.svg" alt="rupee-sign-green-solid" class="fas fa-rupee-sign" width="14" style="padding-top: 12px;"/> {{haltDataShow.monthSalary}}/-
                 </h3>
               </div>
             </div>
@@ -132,9 +142,10 @@
           <div class="inner-text">
             <b id="sptodaySalary"> {{haltDataShow.todaySalary}}</b>/<span id="splastDaySalery">
               {{haltDataShow.lastDaySalery}}</span><br>
-            Profit/Lose <b>Today</b>&nbsp; <span id="sptodayProfitLose">{{haltDataShow.todayProfitLose}}</span>/- <i
-              class="fas fa-long-arrow-alt-down" title="Halt Down"
-              id="sptodayPercent">{{haltDataShow.todayPercent}}%</i></div>
+            Profit/Lose <b>Today</b>&nbsp; <span id="sptodayProfitLose">{{haltDataShow.todayProfitLose}}</span>/- 
+            <!-- <i class="fas fa-long-arrow-alt-down" title="Halt Down" id="sptodayPercent">{{haltDataShow.todayPercent}}%</i> -->
+             <img src="../../assets/icons/long-arrow-alt-down-solid.svg" alt="long-arrow-alt-down-solid" class="fas fa-long-arrow-alt-down icon-green" title="Halt Down" id="sptodayPercent" width="10"/>{{haltDataShow.todayPercent}}%
+            </div>
         </div>
       </div>
       <div class="col-md-4" style="padding-right: 10px; padding-left:5px;">
@@ -142,8 +153,9 @@
           <div class="inner-text">
             <b id="spweekSalary">{{haltDataShow.weekSalary}}</b>/<span
               id="splastWeekSalary">{{haltDataShow.lastWeekSalary}}</span><br>
-            Profit/Lose <b>Weak</b>&nbsp; <span id="spweekProfitLose"> {{haltDataShow.weekProfitLose}}</span>/- <i
-              class="fas fa-long-arrow-alt-down" title="Halt Down" id="spweekPercent">{{haltDataShow.weekPercent}}%</i>
+            Profit/Lose <b>Weak</b>&nbsp; <span id="spweekProfitLose"> {{haltDataShow.weekProfitLose}}</span>/- 
+            <!-- <i class="fas fa-long-arrow-alt-down" title="Halt Down" id="spweekPercent">{{haltDataShow.weekPercent}}%</i> -->
+            <img src="../../assets/icons/long-arrow-alt-down-solid.svg" alt="long-arrow-alt-down-solid" class="fas fa-long-arrow-alt-down icon-red" title="Halt Down" id="spweekPercent" width="10"/>{{haltDataShow.weekPercent}}%
           </div>
         </div>
       </div>
@@ -152,9 +164,10 @@
           <div class="inner-text">
             <b id="spmonthSalary">{{haltDataShow.monthSalary}}</b>/<span
               id="splastMonthSalary">{{haltDataShow.lastMonthSalary}}</span><br>
-            Profit/Lose <b>Month</b>&nbsp; <span id="spmonthProfitLose"> {{haltDataShow.monthProfitLose}}</span>/- <i
-              class="fas fa-long-arrow-alt-down" title="Halt Down"
-              id="spmonthPercent">{{haltDataShow.monthPercent}}%</i></div>
+            Profit/Lose <b>Month</b>&nbsp; <span id="spmonthProfitLose"> {{haltDataShow.monthProfitLose}}</span>/- 
+            <!-- <i class="fas fa-long-arrow-alt-down" title="Halt Down" id="spmonthPercent">{{haltDataShow.monthPercent}}%</i> -->
+            <img src="../../assets/icons/long-arrow-alt-down-solid.svg" alt="long-arrow-alt-down-solid" class="fas fa-long-arrow-alt-down icon-red" title="Halt Down" id="spmonthPercent" width="10"/>{{haltDataShow.monthPercent}}%
+          </div>
         </div>
       </div>
     </div>

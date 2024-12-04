@@ -2,11 +2,13 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-2 halts-header">
-                <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)" style="width: 150px;" [(ngModel)]="selectedYear">
-          <option value="0">Year</option>
-          <option value={{yer.year}} *ngFor="let yer of yearList" ngSelected="yer.year == selectedYear?'selected':''">
-            {{yer.year}}</option>
-        </select>
+                <select class="caret-select" id="ddlYear" (change)="changeYearSelection($event.target.value)"
+                    style="width: 150px;" [(ngModel)]="selectedYear">
+                    <option value="0">Year</option>
+                    <option value={{yer.year}} *ngFor="let yer of yearList"
+                        ngSelected="yer.year == selectedYear?'selected':''">
+                        {{yer.year}}</option>
+                </select>
 
             </div>
             <div class="col-md-2 halts-header">
@@ -25,7 +27,8 @@
                     <div style="background-color: #fff; padding-top: 20px; border-radius: 0.25rem;
         box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);">
                         <div id="divGraph" style="margin-top: 15px;width: 100%!important;">
-                            <div id="chartContainer" style="height: 350px; width: 98%; margin-left:auto;margin-right:auto;  ">
+                            <div id="chartContainer"
+                                style="height: 350px; width: 98%; margin-left:auto;margin-right:auto;  ">
                             </div>
                         </div>
                     </div>
@@ -55,16 +58,21 @@
             </div>
 
             <div class="last-update">
-                <span class="pos-right" style="float:right; font-size: 10px; line-height: 15px; padding-right:50px; padding-top: 10px; text-align: right;color:#fff;">Last
-          Update<br />
-          <span class="update-time"
-            style="font-size: 18px; font-weight: bold;color: #fff;">{{salaryData.lastUpdateTime}} </span></span>
-                <button class="refresh" (click)="updateSalary();" title="Update Salaey"><i class="fas fa-redo-alt"
-            style="color:#0ba118;"></i></button>
+                <span class="pos-right"
+                    style="float:right; font-size: 10px; line-height: 15px; padding-right:50px; padding-top: 10px; text-align: right;color:#fff;">Last
+                    Update<br />
+                    <span class="update-time"
+                        style="font-size: 18px; font-weight: bold;color: #fff;">{{salaryData.lastUpdateTime}}
+                    </span></span>
+                <button class="refresh" (click)="updateSalary();" title="Update Salaey">
+                    <!-- <i class="fas fa-redo-alt" style="color:#0ba118;"></i> -->
+                    <img src="../../assets/icons/rotate-right-solid.svg" alt="rotate-right-solid"
+                        class="green-filter cursor-pointer" width="14" />
+                </button>
             </div>
             <div class="salary-header" style="display: none;">
                 ₹ {{salaryData.totalSalary}} <br> <span style="font-size:12px;font-weight: normal;color:#fff;">Total
-          Salary</span>
+                    Salary</span>
             </div>
 
         </div>
