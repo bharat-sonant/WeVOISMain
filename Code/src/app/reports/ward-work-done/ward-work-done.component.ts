@@ -51,10 +51,18 @@ export class WardWorkDoneComponent implements OnInit {
 
   getWorkDoneDates() {
     this.workDateList.push({ day: 'day1', class: 'class1', date: this.toDayDate });
-    for (let i = 1; i < 7; i++) {
-      let previousDate = this.commonService.getPreviousDate(this.toDayDate, i);
-      this.workDateList.push({ day: 'day' + (i + 1), class: 'class' + (i + 1), date: previousDate });
-    }
+    let previousDate = this.commonService.getPreviousDate(this.toDayDate, 1);
+    this.workDateList.push({ day: 'day' + (2), class: 'class' + (2), date: previousDate });
+    previousDate = this.commonService.getPreviousDate(previousDate, 1);
+    this.workDateList.push({ day: 'day' + (3), class: 'class' + (3), date: previousDate });
+    previousDate = this.commonService.getPreviousDate(previousDate, 1);
+    this.workDateList.push({ day: 'day' + (4), class: 'class' + (4), date: previousDate });
+    previousDate = this.commonService.getPreviousDate(previousDate, 1);
+    this.workDateList.push({ day: 'day' + (5), class: 'class' + (5), date: previousDate });
+    previousDate = this.commonService.getPreviousDate(previousDate, 1);
+    this.workDateList.push({ day: 'day' + (6), class: 'class' + (6), date: previousDate });
+    previousDate = this.commonService.getPreviousDate(previousDate, 1);
+    this.workDateList.push({ day: 'day' + (7), class: 'class' + (7), date: previousDate });
     this.getZoneList();
   }
 
@@ -87,6 +95,7 @@ export class WardWorkDoneComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkDone");
     if (this.workDateList.length > 0) {
       for (let i = 0; i < this.workDateList.length; i++) {
+        
         let date = this.workDateList[i]["date"];
         let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
         let year = date.split('-')[0];
@@ -106,7 +115,7 @@ export class WardWorkDoneComponent implements OnInit {
                       detail[dateDetail.class] = "lessWork";
                     }
                   }
-                  else{
+                  else {
                     detail[dateDetail.class] = "inactive";
                   }
                   if (this.userType == "External User") {
@@ -115,7 +124,7 @@ export class WardWorkDoneComponent implements OnInit {
                       if (Number(Math.round(workPercentage["updatedWorkPercentage"])) < 85) {
                         detail[dateDetail.class] = "lessWork";
                       }
-                      else{
+                      else {
                         detail[dateDetail.class] = "";
                       }
                     }

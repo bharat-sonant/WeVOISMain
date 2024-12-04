@@ -144,7 +144,9 @@ export class WardWorkPercentageComponent implements OnInit {
                   expectedLines = wardTotalLines;
                 }
                 let updateLines = expectedLines - (completedLines + skippedLines);
-                this.updateLineStatus(dutyInTime, wardTotalLines, updateLines, wardLines, lineStatusList, skipLineList);
+
+                //$("#divLoader").hide();
+                this.updateLineStatus(dutyInTime, wardTotalLines, updateLines, wardLines, lineStatusList, skipLineList, expectedLines);
               }
             );
           }
@@ -157,11 +159,11 @@ export class WardWorkPercentageComponent implements OnInit {
     });
   }
 
-  updateLineStatus(dutyInTime: any, wardTotalLines: any, expectedLine: any, wardLines: any, lineStatusList: any, skipLineList: any) {
+  updateLineStatus(dutyInTime: any, wardTotalLines: any, updateLines: any, wardLines: any, lineStatusList: any, skipLineList: any, expectedLine: any) {
     let count = 1;
     let isNewLine = 0;
     for (let i = 1; i <= wardTotalLines; i++) {
-      if (count <= expectedLine) {
+      if (count <= updateLines) {
         let detail = lineStatusList.find(item => item.lineNo == i);
         if (detail == undefined) {
           let lineLength = "0";
@@ -238,8 +240,131 @@ export class WardWorkPercentageComponent implements OnInit {
           let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
           this.db.object(dbPath).update({ completedLines: completedLines, skippedLines: skippedLines, wardCoveredDistance: coveredLength, updatedWorkPercentage: percentage });
         }
-        this.updateLocationHistory(dutyInTime, lineStatusList, expectedLine, wardLines, skippedLines, percentage);
+        this.updateLocationHistoryNew(dutyInTime, lineStatusList, expectedLine, wardLines);
+
       });
+  }
+
+  async updateLocationHistoryNew(dutyInTime: any, lineStatusList: any, expectedLine: any, wardLines: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateLocationHistory");
+    let lineList = [];
+    let time = dutyInTime;
+    if (lineStatusList.length > 0) {
+      let timeList = lineStatusList[lineStatusList.length - 1]["endTime"].split(':');
+      time = timeList[0] + ":" + timeList[1];
+    }
+    for (let i = 1; i <= expectedLine; i++) {
+      let detail = lineStatusList.find(item => item.lineNo == i);
+      if (detail == undefined) {
+        lineList.push({ linoNo: i });
+      }
+    }
+    if (lineList.length > 0) {
+      let lineStatusList = [];
+      for (let i = 0; i < lineList.length; i++) {
+        for (let j = 0; j < 10; j++) {
+          let date = this.commonService.getPreviousDate(this.selectedDate, (j + 1));
+          let data = await this.getPriviousLineStatus(date, lineList[i]["linoNo"]);
+          if (data["status"] == "yes") {
+            lineStatusList.push({ status: data["status"], endTime: data["endTime"], startTime: data["startTime"], lineNo: data["lineNo"], duration: data["duration"], date: data["date"] });
+            j = 10;
+          }
+          else if (j == 9) {
+            lineStatusList.push({ status: data["status"], endTime: data["endTime"], startTime: data["startTime"], lineNo: data["lineNo"], duration: data["duration"], date: data["date"] });
+          }
+        }
+      }
+      if (lineStatusList.length > 0) {
+        this.getPreviousLocationHistory(0, lineStatusList, time, wardLines);
+      }
+    }
+  }
+
+  getPriviousLineStatus(date: any, lineNo: any) {
+    return new Promise((resolve) => {
+      let year = date.split("-")[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split("-")[1]) - 1);
+      let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date + "/LineStatus/" + lineNo;
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        if (data != null) {
+          if (data["start-time"] != null) {
+            let timeList = data["end-time"].split(":");
+            let time = timeList[0] + ":" + timeList[1];
+            let startTimeList = data["start-time"].split(":");
+            let startTime = startTimeList[0] + ":" + startTimeList[1];
+            let duration = this.commonService.timeDifferenceMin(new Date(date + " " + time), new Date(date + " " + startTime))
+            let obj = { status: "yes", endTime: time, startTime: startTime, lineNo: lineNo, duration: duration, date: date };
+            resolve(obj);
+          }
+          else {
+            let obj = { status: "no", endTime: "", startTime: "", lineNo: lineNo, duration: 0, date: "" };
+            resolve(obj);
+          }
+        }
+        else {
+          let obj = { status: "no", endTime: "", startTime: "", lineNo: lineNo, duration: 0, date: "" };
+          resolve(obj);
+        }
+      });
+
+    })
+  }
+
+  getPreviousLocationHistory(index: any, list: any, time: any, wardLines: any) {
+    if (index < list.length) {
+      let status = list[index]["status"];
+      let lineNo = list[index]["lineNo"];
+      if (status == "yes") {
+        let date = list[index]["date"];
+        let startTime = list[index]["startTime"];
+        let endTime = list[index]["endTime"];
+        let year = date.split("-")[0];
+        let monthName = this.commonService.getCurrentMonthName(Number(date.split("-")[1]) - 1);
+        let dbPath = "LocationHistory/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date;
+        let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+          instance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let locationTime = keyArray[i];
+                if (new Date(date + " " + locationTime) >= new Date(date + " " + startTime) && new Date(date + " " + locationTime) <= new Date(date + " " + endTime)) {
+                  let dateTime = new Date(this.selectedDate + " " + time);
+                  dateTime.setMinutes(dateTime.getMinutes() + 1);
+                  time = (dateTime.getHours() < 10 ? '0' : '') + dateTime.getHours() + ":" + (dateTime.getMinutes() < 10 ? '0' : '') + dateTime.getMinutes();
+                  dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + time + "-" + lineNo;
+                  this.db.object(dbPath).update(data[locationTime]);
+                }
+              }
+            }
+          }
+          index++;
+          this.getPreviousLocationHistory(index, list, time, wardLines);
+        })
+      }
+      else {
+        let lineDetail = wardLines.find(item => item.lineNo == lineNo);
+        if (lineDetail != undefined) {
+          let latLng = this.getLatLng(lineDetail.points);
+          const data = {
+            "distance-in-meter": lineDetail.lineLength,
+            "lat-lng": latLng
+          }
+          let dateTime = new Date(this.selectedDate + " " + time);
+          dateTime.setMinutes(dateTime.getMinutes() + 1);
+          time = (dateTime.getHours() < 10 ? '0' : '') + dateTime.getHours() + ":" + (dateTime.getMinutes() < 10 ? '0' : '') + dateTime.getMinutes();
+          let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + time + "-" + lineNo;
+          this.db.object(dbPath).update(data);
+        }
+        index++;
+        this.getPreviousLocationHistory(index, list, time, wardLines);
+      }
+    }
+    else{
+      $("#divLoader").hide();
+      this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
+    }
   }
 
   updateLocationHistory(dutyInTime: any, lineStatusList: any, expectedLine: any, wardLines: any, skippedLines: any, percentage: any) {
