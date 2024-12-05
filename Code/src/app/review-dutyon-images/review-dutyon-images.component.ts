@@ -328,7 +328,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDriverHelper", workerData);
           let driverList = workerData["driverName"].split(',');
           let helperList = workerData["helperName"].split(',');
-          let secondHelperList = workerData["secondHelperName"].split(',') ? workerData["secondHelperName"].split(',') : [];
+          let secondHelperList = workerData["secondHelperName"] ? workerData["secondHelperName"].split(',') : [];
           let vehicleList = workerData["vehicle"].split(',');
           let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
           if (detail != undefined) {
