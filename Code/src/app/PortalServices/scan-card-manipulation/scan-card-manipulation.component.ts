@@ -120,8 +120,10 @@ export class ScanCardManipulationComponent implements OnInit {
                 if (cardArray.length > 0) {
                   for (let j = 0; j < cardArray.length; j++) {
                     let cardNumber = cardArray[j];
+                    if (cardData[cardNumber]["latLng"] != null) {
                     let latlng = cardData[cardNumber]["latLng"].toString().replace('(', '').replace(')', '');
                     wardHouses.push({ lineNo: lineNo, cardNumber: cardNumber, latlng: latlng });
+                    }
                   }
                 }
               }
