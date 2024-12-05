@@ -23,9 +23,9 @@
         <div class="col-md-4 text-center"
             style="margin-left: -30px; font-size: 20px;letter-spacing: 2px; margin-top: -7px;">
             Ward Duty On/Off Images
-        </div>        
+        </div>
         <div class="col-md-4 text-right" style="position: absolute;right: 30px;">
-            
+
         </div>
     </div>
 </section>
@@ -44,7 +44,7 @@
                                     <table class="table table-one-iner">
                                         <thead>
                                             <th class="table-head1">S.No.</th>
-                                            <th class="table-head2"  style="width:100px">Zone</th>
+                                            <th class="table-head2" style="width:100px">Zone</th>
                                             <th class="table-head3">Duty On/Off Images</th>
                                         </thead>
                                         <tbody>
@@ -57,7 +57,7 @@
                                                     <div style="width: 100%; display: flex;">
                                                         <div *ngFor="let dtImage of dt.dutyOnImages;"
                                                             style="width:260px; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
-                                                            
+
                                                             <div style="width:110px; float: left; height:160px;">
                                                                 <a href="{{dtImage.imageUrl}}" target="_blank"
                                                                     style="color:#000; width:100px">
@@ -75,6 +75,7 @@
                                                             <div style="text-align: left; float:left">
                                                                 <b>Driver : </b> {{dtImage.driver}}<br />
                                                                 <b>Helper : </b> {{dtImage.helper}}<br />
+                                                                <b>secondaryHelper : </b> {{dtImage.secondHelper}}<br />
                                                                 <b>Vehicle : </b> {{dtImage.vehicle}}<br />
                                                                 <b>In Time : </b> {{dtImage.time}}<br />
                                                                 <span [hidden]="dtImage.timeDutyOff==''">

@@ -92,11 +92,13 @@ export class ReviewDutyonImagesComponent implements OnInit {
               if (imageList.length > 0) {
                 let driverList = dataList[i]["driver"].split(',');
                 let helperList = dataList[i]["helper"].split(',');
+                let secondHelperList = dataList[i]["secondHelper"] ? dataList[i]["secondHelper"].split(',') : [];
                 let vehicleList = dataList[i]["vehicle"].split(',');
                 for (let j = 0; j < imageList.length; j++) {
                   let imageName = imageList[j].toString().trim();
                   let driverId = "---";
                   let helperId = "---";
+                  let secondHelperId ="---";
                   let vehicle = "---";
                   let time = "---";
                   if (driverList[j] != null) {
@@ -104,6 +106,9 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   }
                   if (helperList[j] != null) {
                     helperId = helperList[j];
+                  }
+                  if (secondHelperList[j] != null) {
+                    secondHelperId = secondHelperList[j];
                   }
                   if (vehicleList[j] != null) {
                     vehicle = vehicleList[j];
@@ -116,7 +121,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   }
 
                   let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
-                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, driver: "---", helper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl });
+                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId,secondHelperId:secondHelperId, driver: "---", helper: "---",secondHelper:"---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl });
                 }
               }
             }
@@ -216,6 +221,9 @@ export class ReviewDutyonImagesComponent implements OnInit {
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["helperId"]).then((employee) => {
           list[i]["helper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
         });
+        this.commonService.getEmplyeeDetailByEmployeeId(list[i]["secondHelperId"]).then((employee) => {
+          list[i]["secondHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+        });
       }
     }
   }
@@ -242,7 +250,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   if (outTimeList[i] != undefined) {
                     offTime = outTimeList[i];
                   }
-                  dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "" });
+                  dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---",secondHelper:"---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "" });
                 }
               }
               if (summaryData["dutyOnImage"] != null) {
