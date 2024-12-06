@@ -124,6 +124,15 @@ export class PortalAccessComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "manesar") {
         $("#manesarBox").show();
         isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "iit-roorkee") {
+        $("#iitRoorkeeBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "nawa") {
+        $("#nawaBox").show();
+        isBaseCity = true;
+      }  else if (this.accessCity[i]["city"] == "sonipat") {
+        $("#sonipatBox").show();
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jodhpur-bwg") {
         $("#jodhpurBwgBox").show();
         isBaseCity = true;

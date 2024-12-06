@@ -75,7 +75,8 @@
                                                             <div style="text-align: left; float:left">
                                                                 <b>Driver : </b> {{dtImage.driver}}<br />
                                                                 <b>Helper : </b> {{dtImage.helper}}<br />
-                                                                <b>secondaryHelper : </b> {{dtImage.secondHelper}}<br />
+                                                                <span [hidden]="dtImage.secondHelper=='---'">
+                                                                <b>Secondary Helper : </b> {{dtImage.secondHelper}}<br /></span>
                                                                 <b>Vehicle : </b> {{dtImage.vehicle}}<br />
                                                                 <b>In Time : </b> {{dtImage.time}}<br />
                                                                 <span [hidden]="dtImage.timeDutyOff==''">
