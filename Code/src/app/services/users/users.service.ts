@@ -25,7 +25,7 @@ export class UsersService {
 
   getPortalPages() {
     return new Promise((resolve) => {
-      const path = this.commonService.fireStoragePath + "Common%2FPortalPages.json?alt=media";
+      const path = this.commonService.fireStoragePath + "Common%2FPortalPages1.json?alt=media";
       let portalPageJSONInstance = this.httpService.get(path).subscribe(portalPageJsonData => {
         portalPageJSONInstance.unsubscribe();
         resolve(portalPageJsonData);

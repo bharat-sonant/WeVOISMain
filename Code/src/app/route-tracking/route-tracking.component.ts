@@ -133,7 +133,7 @@ export class RouteTrackingComponent {
       }
     }
     else {
-      this.selectedZone = "1";
+      this.selectedZone = "0";
     }
     this.setMaps();
     this.onSubmit();
