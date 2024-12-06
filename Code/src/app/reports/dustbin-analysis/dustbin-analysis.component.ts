@@ -615,7 +615,7 @@ export class DustbinAnalysisComponent implements OnInit {
       }
     }
     else {
-      let compaireDate = new Date("2024-10-01");
+      let compaireDate = new Date("2024-08-01");
       if (new Date(this.selectedDate) >= compaireDate && this.cityName=='sikar') {
         if (this.selectedDate != this.commonService.setTodayDate()) {
           this.dustbinList[index]["isNotPickedIcon"] = "1";
