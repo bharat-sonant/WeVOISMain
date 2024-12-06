@@ -408,6 +408,18 @@ export class CommonService {
     else if (cityName == "chirawa") {
       latLng.push({ lat: 28.2421284, lng: 75.6382847 });
     }
+    else if (cityName == "nawa") {
+      latLng.push({ lat: 27.02355529, lng: 75.0051479 });
+    }
+    else if (cityName == "nawa") {
+      latLng.push({ lat: 27.02355529, lng: 75.0051479 });
+    }
+    else if (cityName == "sonipat") {
+      latLng.push({ lat: 28.99438060, lng: 77.0191231 });
+    }
+    else if (cityName == "iit-roorkee") {
+      latLng.push({ lat: 29.86603638, lng: 77.89051172 });
+    }
     return latLng;
   }
 

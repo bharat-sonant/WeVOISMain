@@ -56,16 +56,16 @@ export class ReviewDutyonImagesComponent implements OnInit {
     Promise.all(promises).then((results) => {
       for (let i = 0; i < results.length; i++) {
         if (results[i]["status"] == "success") {
-          let detail=this.zoneDutyOnList.find(item=>item.zoneNo==results[i]["data"].zoneNo);
-          if(detail!=undefined){
-            detail.dutyOnImages=results[i]["data"].dutyOnImages;
-            if(results[i]["data"].dutyOnImages.length>0){
+          let detail = this.zoneDutyOnList.find(item => item.zoneNo == results[i]["data"].zoneNo);
+          if (detail != undefined) {
+            detail.dutyOnImages = results[i]["data"].dutyOnImages;
+            if (results[i]["data"].dutyOnImages.length > 0) {
               this.getDriverHelper(results[i]["data"].zoneNo);
             }
           }
         }
-      }   
-      this.getDustbinDutyOnImages();       
+      }
+      this.getDustbinDutyOnImages();
     });
   }
 
@@ -92,11 +92,13 @@ export class ReviewDutyonImagesComponent implements OnInit {
               if (imageList.length > 0) {
                 let driverList = dataList[i]["driver"].split(',');
                 let helperList = dataList[i]["helper"].split(',');
+                let secondHelperList = dataList[i]["secondHelper"] ? dataList[i]["secondHelper"].split(',') : [];
                 let vehicleList = dataList[i]["vehicle"].split(',');
                 for (let j = 0; j < imageList.length; j++) {
                   let imageName = imageList[j].toString().trim();
                   let driverId = "---";
                   let helperId = "---";
+                  let secondHelperId = "---";
                   let vehicle = "---";
                   let time = "---";
                   if (driverList[j] != null) {
@@ -104,6 +106,9 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   }
                   if (helperList[j] != null) {
                     helperId = helperList[j];
+                  }
+                  if (secondHelperList[j] != null) {
+                    secondHelperId = secondHelperList[j];
                   }
                   if (vehicleList[j] != null) {
                     vehicle = vehicleList[j];
@@ -116,7 +121,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   }
 
                   let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
-                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, driver: "---", helper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl });
+                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, driver: "---", helper: "---", secondHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl });
                 }
               }
             }
@@ -156,8 +161,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
               if (dutyOnDetail != undefined) {
                 for (let j = 0; j <= 5; j++) {
                   if (data["task" + j] != null) {
-                    if (data["task" + j]["task"].includes("BinLifting") || data["task" + j]["openDepotPlanId"]!=null) {
-                      if (data["task" + j]["binLiftingPlanId"] == planId || data["task" + j]["openDepotPlanId"]==planId) {
+                    if (data["task" + j]["task"].includes("BinLifting") || data["task" + j]["openDepotPlanId"] != null) {
+                      if (data["task" + j]["binLiftingPlanId"] == planId || data["task" + j]["openDepotPlanId"] == planId) {
                         if (data["task" + j]["in-out"] != null) {
                           let keyArray = Object.keys(data["task" + j]["in-out"]);
                           for (let k = 0; k < keyArray.length; k++) {
@@ -172,15 +177,15 @@ export class ReviewDutyonImagesComponent implements OnInit {
                         }
                       }
                     }
-                    else{
-                      
+                    else {
+
                     }
                   }
                 }
                 for (let j = 0; j <= 5; j++) {
                   if (data["task" + j] != null) {
-                    if (data["task" + j]["task"].includes("BinLifting") || data["task" + j]["openDepotPlanId"]!=null) {
-                      if (data["task" + j]["binLiftingPlanId"] == planId || data["task" + j]["openDepotPlanId"]==planId) {
+                    if (data["task" + j]["task"].includes("BinLifting") || data["task" + j]["openDepotPlanId"] != null) {
+                      if (data["task" + j]["binLiftingPlanId"] == planId || data["task" + j]["openDepotPlanId"] == planId) {
                         if (data["task" + j]["in-out"] != null) {
                           let keyArray = Object.keys(data["task" + j]["in-out"]);
                           for (let k = keyArray.length - 1; k >= 0; k--) {
@@ -216,92 +221,95 @@ export class ReviewDutyonImagesComponent implements OnInit {
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["helperId"]).then((employee) => {
           list[i]["helper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
         });
+        this.commonService.getEmplyeeDetailByEmployeeId(list[i]["secondHelperId"]).then((employee) => {
+          list[i]["secondHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+        });
       }
     }
   }
 
-  getDutyOnImages(zoneNo:any){
+  getDutyOnImages(zoneNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDutyOnImages");
     return new Promise((resolve) => {
       let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
       let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
         summaryData => {
           summaryInstance.unsubscribe();
-          let dutyOnImages=[];
+          let dutyOnImages = [];
           if (summaryData != null) {
-              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnImages", summaryData);
-              if (summaryData["dutyInTime"] != null) {
-                let timeList = summaryData["dutyInTime"].split(',');
-                let outTimeList = [];
-                if(summaryData["dutyOutTime"]!=null){
-                  outTimeList=summaryData["dutyOutTime"].split(',');
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnImages", summaryData);
+            if (summaryData["dutyInTime"] != null) {
+              let timeList = summaryData["dutyInTime"].split(',');
+              let outTimeList = [];
+              if (summaryData["dutyOutTime"] != null) {
+                outTimeList = summaryData["dutyOutTime"].split(',');
+              }
+              for (let i = 0; i < timeList.length; i++) {
+                let time = timeList[i];
+                let offTime = "";
+                if (outTimeList[i] != undefined) {
+                  offTime = outTimeList[i];
                 }
-                for (let i = 0; i < timeList.length; i++) {
-                  let time = timeList[i];
-                  let offTime = "";
-                  if (outTimeList[i] != undefined) {
-                    offTime = outTimeList[i];
-                  }
-                  dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "" });
+                dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", secondHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "" });
+              }
+            }
+            if (summaryData["dutyOnImage"] != null) {
+              let list = summaryData["dutyOnImage"].split(',');
+              for (let i = 0; i < list.length; i++) {
+                let imageName = list[i].toString().trim();
+                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+                if (imageName.includes("1")) {
+                  dutyOnImages[0]["imageUrl"] = imageUrl;
+                }
+                else if (imageName.includes("2")) {
+                  dutyOnImages[1]["imageUrl"] = imageUrl;
+                }
+                else if (imageName.includes("3")) {
+                  dutyOnImages[2]["imageUrl"] = imageUrl;
+                }
+                else if (imageName.includes("4")) {
+                  dutyOnImages[3]["imageUrl"] = imageUrl;
+                }
+                else if (imageName.includes("5")) {
+                  dutyOnImages[4]["imageUrl"] = imageUrl;
                 }
               }
-              if (summaryData["dutyOnImage"] != null) {
-                let list = summaryData["dutyOnImage"].split(',');
-                for (let i = 0; i < list.length; i++) {
-                  let imageName=list[i].toString().trim();
-                  let imageUrl=this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
-                  if(imageName.includes("1")){
-                    dutyOnImages[0]["imageUrl"]=imageUrl;
+            }
+            if (summaryData["dutyOutImage"] != null) {
+              let list = summaryData["dutyOutImage"].split(',');
+              for (let i = 0; i < list.length; i++) {
+                let imageName = list[i].toString().trim();
+                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+                if (imageName.includes("1")) {
+                  if (dutyOnImages.length > 0) {
+                    dutyOnImages[0]["imageDutyOffUrl"] = imageUrl;
                   }
-                  else if(imageName.includes("2")){
-                    dutyOnImages[1]["imageUrl"]=imageUrl;
+                }
+                else if (imageName.includes("2")) {
+                  if (dutyOnImages.length > 1) {
+                    dutyOnImages[1]["imageDutyOffUrl"] = imageUrl;
                   }
-                  else if(imageName.includes("3")){
-                    dutyOnImages[2]["imageUrl"]=imageUrl;
+                }
+                else if (imageName.includes("3")) {
+                  if (dutyOnImages.length > 2) {
+                    dutyOnImages[2]["imageDutyOffUrl"] = imageUrl;
                   }
-                  else if(imageName.includes("4")){
-                    dutyOnImages[3]["imageUrl"]=imageUrl;
+                }
+                else if (imageName.includes("4")) {
+                  if (dutyOnImages.length > 3) {
+                    dutyOnImages[3]["imageDutyOffUrl"] = imageUrl;
                   }
-                  else if(imageName.includes("5")){
-                    dutyOnImages[4]["imageUrl"]=imageUrl;
+                }
+                else if (imageName.includes("5")) {
+                  if (dutyOnImages.length > 4) {
+                    dutyOnImages[4]["imageDutyOffUrl"] = imageUrl;
                   }
                 }
               }
-              if (summaryData["dutyOutImage"] != null) {
-                let list = summaryData["dutyOutImage"].split(',');
-                for (let i = 0; i < list.length; i++) {
-                  let imageName=list[i].toString().trim();
-                  let imageUrl=this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
-                  if(imageName.includes("1")){
-                    if(dutyOnImages.length>0){
-                    dutyOnImages[0]["imageDutyOffUrl"]=imageUrl;
-                    }
-                  }
-                  else if(imageName.includes("2")){
-                    if(dutyOnImages.length>1){
-                    dutyOnImages[1]["imageDutyOffUrl"]=imageUrl;
-                    }
-                  }
-                  else if(imageName.includes("3")){
-                    if(dutyOnImages.length>2){
-                    dutyOnImages[2]["imageDutyOffUrl"]=imageUrl;
-                    }
-                  }
-                  else if(imageName.includes("4")){
-                    if(dutyOnImages.length>3){
-                    dutyOnImages[3]["imageDutyOffUrl"]=imageUrl;
-                    }
-                  }
-                  else if(imageName.includes("5")){
-                    if(dutyOnImages.length>4){
-                    dutyOnImages[4]["imageDutyOffUrl"]=imageUrl;
-                    }
-                  }
-                }
-              }  
-              resolve({ status: "success", data: {zoneNo:zoneNo,dutyOnImages:dutyOnImages} });          
+            }
+            resolve({ status: "success", data: { zoneNo: zoneNo, dutyOnImages: dutyOnImages } });
           }
-          else{
+          else {
             resolve({ status: "fail", data: {} });
           }
         }
@@ -320,6 +328,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDriverHelper", workerData);
           let driverList = workerData["driverName"].split(',');
           let helperList = workerData["helperName"].split(',');
+          let secondHelperList = workerData["secondHelperName"] ? workerData["secondHelperName"].split(',') : [];
           let vehicleList = workerData["vehicle"].split(',');
           let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
           if (detail != undefined) {
@@ -327,6 +336,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
             for (let i = 0; i < list.length; i++) {
               let driver = "---";
               let helper = "---";
+              let secondHelper = "---";
               let vehicle = "---";
               if (driverList[i] != null) {
                 driver = driverList[i];
@@ -334,11 +344,15 @@ export class ReviewDutyonImagesComponent implements OnInit {
               if (helperList[i] != null) {
                 helper = helperList[i];
               }
+              if (secondHelperList[i] != null) {
+                secondHelper = secondHelperList[i];
+              }
               if (vehicleList[i] != null) {
                 vehicle = vehicleList[i];
               }
               detail.dutyOnImages[i]["driver"] = driver;
               detail.dutyOnImages[i]["helper"] = helper;
+              detail.dutyOnImages[i]["secondHelper"] = secondHelper;
               detail.dutyOnImages[i]["vehicle"] = vehicle;
             }
           }
