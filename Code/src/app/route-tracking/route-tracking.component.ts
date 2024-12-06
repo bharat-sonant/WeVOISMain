@@ -122,6 +122,7 @@ export class RouteTrackingComponent {
 
     this.getZoneList();
 
+    this.setMaps();
     const id = this.actRoute.snapshot.paramMap.get('id');
     if (id != null) {
       if (id.includes("~")) {
@@ -130,13 +131,14 @@ export class RouteTrackingComponent {
       }
       else {
         this.selectedZone = id.trim();
+        this.onSubmit();
       }
     }
     else {
-      this.selectedZone = "0";
+      setTimeout(() => {
+        this.selectedZone = "0";        
+      }, 2000);
     }
-    this.setMaps();
-    this.onSubmit();
   }
 
   getIcon(type: any) {
