@@ -286,4 +286,135 @@ export class MonthlyWorkReportComponent {
         }
       });
   }
+
+  exportToExcel(){
+    if(this.monthWorkList.length>0){
+      let htmlString = "";
+    htmlString = "<table>";
+    htmlString += "<tr>";
+    htmlString += "<td>";
+    htmlString += "Date";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Zone";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Start Time";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Ward Reach On";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "End Time";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Vehicle";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Driver";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Helper";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Work Time";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Halt Time";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Work Percentage";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Run KM";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Zone Run KM";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "Ward Coverage Report Approximate in %";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += "S. I. Sign";
+    htmlString += "</td>";
+    htmlString += "</tr>";
+    if (this.monthWorkList.length > 0) {
+      for (let i = 0; i < this.monthWorkList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.monthWorkList[i]["date"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.selectedZone;
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["startTime"] != null) {
+          htmlString += this.monthWorkList[i]["startTime"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["reachTime"] != null) {
+          htmlString += this.monthWorkList[i]["reachTime"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["endTime"] != null) {
+          htmlString += this.monthWorkList[i]["endTime"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["vehicle"] != null) {
+          htmlString += this.monthWorkList[i]["vehicle"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["driver"] != null) {
+          htmlString += this.monthWorkList[i]["driver"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["helper"] != null) {
+          htmlString += this.monthWorkList[i]["helper"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["workTime"] != null) {
+          htmlString += this.monthWorkList[i]["workTime"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["haltTime"] != null) {
+          htmlString += this.monthWorkList[i]["haltTime"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        if (this.monthWorkList[i]["workPercentage"] != null) {
+          htmlString += this.monthWorkList[i]["workPercentage"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["runKM"] != null) {
+          htmlString += this.monthWorkList[i]["runKM"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+        if (this.monthWorkList[i]["zoneRunKM"] != null) {
+          htmlString += this.monthWorkList[i]["zoneRunKM"];
+        }
+        htmlString += "</td>";
+        htmlString += "<td>";
+       
+        htmlString += "</td>";
+        htmlString += "<td>";
+       
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+    }
+    htmlString += "</table>";
+    let fileName = this.commonService.getFireStoreCity() + "-Monthly-Work-Report-"+this.selectedZone+"-" + this.selectedYear + "-" + this.selectedMonthName + ".xlsx";
+    this.commonService.exportExcel(htmlString, fileName);
+    }
+
+  }
 }

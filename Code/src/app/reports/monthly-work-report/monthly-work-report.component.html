@@ -1,6 +1,6 @@
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-12 no-gutters-iner">
+        <div class="col-md-10 no-gutters-iner">
 
             <select class="caret-select" id="ddlYear" (change)="changeFilter()"
                 [(ngModel)]="selectedYear" style="width:200px">
@@ -32,6 +32,14 @@
                     {{zone.zoneName}}
                 </option>
             </select>
+        </div>
+        <div class="col-md-2 text-left" style="padding-right:0px!important; padding-top: 10px;">
+            <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
+                <i class="fa-solid fa-file-export"
+                    style="cursor:pointer; color:green;  font-size: 24px; "
+                    (click)="exportToExcel();"></i><br />
+                Export to Excel
+            </span>
         </div>
     </div>
 </section>
