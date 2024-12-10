@@ -1,0 +1,85 @@
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-12 no-gutters-iner">
+
+            <select class="caret-select" id="ddlYear" (change)="changeFilter()"
+                [(ngModel)]="selectedYear" style="width:200px">
+                <option value="0">Year</option>
+                <option value={{yer.year}} *ngFor="let yer of yearList"
+                    ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+            </select>
+
+            <select class="caret-select" id="ddlMonth" [(ngModel)]="selectedMonth" (change)="changeFilter()" style="width:200px">
+                <option value="0">Month</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>          
+
+            <select class="caret-select" id="ddlZone" (change)="changeFilter()"
+                style="width:200px" [(ngModel)]="selectedZone">
+                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                    {{zone.zoneName}}
+                </option>
+            </select>
+        </div>
+    </div>
+</section>
+<section class="halts halts2">
+    <div class="container-fluid">
+        <div class="row row2">
+            <div class="col-md-12 table-bg-outer">
+                <div>
+                    <div class="table-bg">
+                        <div class="tableFixHead">
+                            <table class="table table-hover table-main">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col" class="text-left">Vehicle</th>
+                                        <th scope="col" class="text-left">Start Time</th>
+                                        <th scope="col" class="text-left">Ward Reach On</th>
+                                        <th scope="col" class="text-left">End Time</th>
+                                        <th scope="col" class="text-left">Driver</th>
+                                        <th scope="col" class="text-left">Helper</th>
+                                        <th scope="col" class="text-left">Work Time (hour)</th>
+                                        <th scope="col" class="text-left">Halt Time (hour)</th>
+                                        <th scope="col" class="text-left">Work Percentage</th>
+                                        <th scope="col" class="text-left">Run KM</th>
+                                        <th scope="col" class="text-left">Zone Run KM</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let dt of monthWorkList">
+                                        <td class="text-left tdBorder" style="width:100px">{{dt.date}}</td>
+                                        <td class="text-left border-right">{{dt.vehicle}}</td>
+                                        <td class="text-left border-right">{{dt.startTime}}</td>
+                                        <td class="text-left border-right">{{dt.reachTime}}</td>
+                                        <td class="text-left border-right">{{dt.endTime}}</td>
+                                        <td class="text-left border-right">{{dt.driver}}</td>
+                                        <td class="text-left border-right">{{dt.helper}}</td>
+                                        <td class="text-left border-right">{{dt.workTime}}</td>
+                                        <td class="text-left border-right">{{dt.haltTime}}</td>
+                                        <td class="text-right border-right">{{dt.workPercentage}}</td>
+                                        <td class="text-right border-right">{{dt.runKM}}</td>
+                                        <td class="text-right border-right">{{dt.zoneRunKM}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
