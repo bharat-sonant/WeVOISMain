@@ -558,20 +558,22 @@ export class WardWorkTrackingComponent {
   }
 
   showAllScanedHouses() {
-    this.progressData.scanedHouses = 0;
-    if (this.isShowAllHouse == false) {
-      this.isShowAllHouse = true;
-    }
-    else {
-      this.isShowAllHouse = false;
-    }
-    if (this.houseMarkerList.length > 0) {
-      for (let i = 0; i < this.houseMarkerList.length; i++) {
-        let cardNo = this.houseMarkerList[i]["cardNo"];
-        let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
-        if (houseDetail != undefined) {
-          this.setProgressDetailScanedHouseCount(houseDetail.scanBy);
-          this.setScanedIcon(houseDetail, houseDetail.scanBy);
+    if (localStorage.getItem("userType") != "External User") {
+      this.progressData.scanedHouses = 0;
+      if (this.isShowAllHouse == false) {
+        this.isShowAllHouse = true;
+      }
+      else {
+        this.isShowAllHouse = false;
+      }
+      if (this.houseMarkerList.length > 0) {
+        for (let i = 0; i < this.houseMarkerList.length; i++) {
+          let cardNo = this.houseMarkerList[i]["cardNo"];
+          let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
+          if (houseDetail != undefined) {
+            this.setProgressDetailScanedHouseCount(houseDetail.scanBy);
+            this.setScanedIcon(houseDetail, houseDetail.scanBy);
+          }
         }
       }
     }
