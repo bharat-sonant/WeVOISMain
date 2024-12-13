@@ -144,6 +144,9 @@ export class WardWorkPercentageComponent implements OnInit {
                   expectedLines = wardTotalLines;
                 }
                 let updateLines = expectedLines - (completedLines + skippedLines);
+                console.log(completedLines)
+                console.log(skippedLines)
+                console.log(updateLines)
 
                 //$("#divLoader").hide();
                 this.updateLineStatus(dutyInTime, wardTotalLines, updateLines, wardLines, lineStatusList, skipLineList, expectedLines);
@@ -160,6 +163,9 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   updateLineStatus(dutyInTime: any, wardTotalLines: any, updateLines: any, wardLines: any, lineStatusList: any, skipLineList: any, expectedLine: any) {
+    
+    console.log("skipLineList")
+    console.log(skipLineList)
     let count = 1;
     let isNewLine = 0;
     for (let i = 1; i <= wardTotalLines; i++) {
@@ -211,6 +217,10 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   updateSummary(wardLines: any, wardTotalLines: any, dutyInTime: any, lineStatusList: any, expectedLine: any) {
+    console.log("updateSummary=>")
+    console.log(wardTotalLines);
+    console.log(expectedLine);
+    console.log(lineStatusList);
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSummary");
     let coveredLength = 0;
     let completedLines = 0;
@@ -246,6 +256,10 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   async updateLocationHistoryNew(dutyInTime: any, lineStatusList: any, expectedLine: any, wardLines: any) {
+    
+    console.log("updateLocationHistoryNew=>")
+    console.log(lineStatusList)
+    console.log(expectedLine)
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateLocationHistory");
     let lineList = [];
     let time = dutyInTime;

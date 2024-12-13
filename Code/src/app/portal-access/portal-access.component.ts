@@ -136,6 +136,9 @@ export class PortalAccessComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "jodhpur-bwg") {
         $("#jodhpurBwgBox").show();
         isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "tonk-raj") {
+        $("#tonkRajBox").show();
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         $("#jaipurBox").show();
       }

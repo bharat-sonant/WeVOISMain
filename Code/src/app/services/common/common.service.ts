@@ -267,6 +267,9 @@ export class CommonService {
     else if (cityName == "chirawa") {
       cardPrefix="CHI";
     }
+    else if (cityName == "tonk-raj") {
+      cardPrefix="TONR";
+    }
     return cardPrefix;
   }
 
@@ -419,6 +422,9 @@ export class CommonService {
     }
     else if (cityName == "iit-roorkee") {
       latLng.push({ lat: 29.86603638, lng: 77.89051172 });
+    }
+    else if (cityName == "tonk-raj") {
+      latLng.push({ lat: 26.165516, lng: 75.779292 });
     }
     return latLng;
   }

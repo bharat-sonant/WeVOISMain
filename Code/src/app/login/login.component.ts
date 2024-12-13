@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit {
     this.getRendomBackground();
     this.userService.setPortalPages();
     this.userService.setWebPortalUsers();
+    this.userService.setWebPortalUsers();
     this.toDayDate = this.commonService.setTodayDate();
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
@@ -106,6 +107,7 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "sonipat", name: "Sonipat", storagePath: "Sonipat" });
     this.cityList.push({ city: "nawa", name: "Nawa", storagePath: "Nawa" });
     this.cityList.push({ city: "iit-roorkee", name: "IIT-Roorkee", storagePath: "IIT-Roorkee" });
+    this.cityList.push({ city: "tonk-raj", name: "Tonk-Raj", storagePath: "Tonk-Raj" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
@@ -146,7 +148,7 @@ export class LoginComponent implements OnInit {
     let userName = $("#txtUserName").val();
     let password = $("#txtPassword").val();
     let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-    let userDetails = userList.find((item) => item.email == userName && item.password == password);
+    let userDetails = userList.find((item) => item.email == userName && item.password == password && item.isDelete == 0);
     if (userDetails != undefined) {
       if (userDetails.accessCities == "") {
         this.commonService.setAlertMessage("error", "No access given to you, Please contact to admin, Thanks for you patience !!!");
@@ -169,7 +171,7 @@ export class LoginComponent implements OnInit {
       localStorage.setItem("userKey", userDetails.userKey);
       localStorage.setItem("userType", userDetails.userType);
       localStorage.setItem("userPassword", userDetails.password);
-      localStorage.setItem("roleId",userDetails.roleId);
+      localStorage.setItem("roleId", userDetails.roleId);
       if (userDetails.officeAppUserId != 0) {
         localStorage.setItem("officeAppUserId", userDetails.officeAppUserId);
       }
@@ -241,10 +243,10 @@ export class LoginComponent implements OnInit {
         if (new Date(this.commonService.setTodayDate()) < new Date(this.expiryDate)) {
           localStorage.setItem("loginStatus", "Success");
           $(this.divLoader).show();
-          let obj={
-            lastLogin:this.commonService.getTodayDateTime()
+          let obj = {
+            lastLogin: this.commonService.getTodayDateTime()
           }
-          this.commonService.saveCommonJsonFile(obj, userDetails.userId+".json", "/Common/EmployeeLastLogin/");
+          this.commonService.saveCommonJsonFile(obj, userDetails.userId + ".json", "/Common/EmployeeLastLogin/");
           this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
         } else {
           localStorage.setItem("loginStatus", "Fail");
@@ -254,12 +256,13 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("expiryDate", null);
         localStorage.setItem("loginStatus", "Success");
         $(this.divLoader).show();
-        let obj={
-          lastLogin:this.commonService.getTodayDateTime()
+        let obj = {
+          lastLogin: this.commonService.getTodayDateTime()
         }
-        this.commonService.saveCommonJsonFile(obj, userDetails.userId+".json", "/Common/EmployeeLastLogin/");
+        this.commonService.saveCommonJsonFile(obj, userDetails.userId + ".json", "/Common/EmployeeLastLogin/");
         this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
       }
+
     } else {
       localStorage.setItem("loginStatus", "Fail");
       this.commonService.setAlertMessage("error", "Invalid username or password !!!");
@@ -281,11 +284,11 @@ export class LoginComponent implements OnInit {
     $(this.divLoader).hide();
   }
 
-  setLastLoginTime(userId:any){
-    let obj={
-      lastLogin:this.commonService.getTodayDateTime()
+  setLastLoginTime(userId: any) {
+    let obj = {
+      lastLogin: this.commonService.getTodayDateTime()
     }
-    this.commonService.saveCommonJsonFile(obj, userId+".json", "/Common/EmployeeLastLogin/");
+    this.commonService.saveCommonJsonFile(obj, userId + ".json", "/Common/EmployeeLastLogin/");
   }
 
   setUserCityAccess(userId: any, accessCities: any, roleId: any) {
@@ -317,7 +320,7 @@ export class LoginComponent implements OnInit {
         }
       }
     }
-    this.redirectHomePage();
+     this.redirectHomePage();
   }
 }
 

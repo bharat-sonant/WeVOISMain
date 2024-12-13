@@ -60,7 +60,6 @@ export class DustbinManageComponent implements OnInit {
         if (this.dustbinStorageList != null) {
           this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
           this.selectedStatus = "enabled";
-          console.log(this.dustbinStorageList)
           this.getDustbins();
         }
       }

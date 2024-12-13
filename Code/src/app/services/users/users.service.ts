@@ -109,6 +109,7 @@ export class UsersService {
               let isActual = 0;
               let isLock = 0;
               let isAdmin = 0;
+              let isDelete=0;
               let isActualWorkPercentage=0;
               let isAttendanceApprover=0;
               let isManager = 0;
@@ -117,6 +118,9 @@ export class UsersService {
               let canUpdateOpendepotPickDetail=0;
               let canViewAttendance=0;
               let canUpdateDustbinPickDetail=0;
+              if(data[key]["isDelete"]!=undefined){
+                isDelete=data[key]["isDelete"];
+              }
               if (data[key]["haltDisableAccess"] != undefined) {
                 haltDisableAccess = data[key]["haltDisableAccess"];
               }
@@ -153,7 +157,7 @@ export class UsersService {
               if(data[key]["canUpdateDustbinPickDetail"]!=undefined){
                 canUpdateDustbinPickDetail=data[key]["canUpdateDustbinPickDetail"];
               }
-              if (data[key]["isDelete"] == "0") {
+             // if (data[key]["isDelete"] == "0") {
                 userList.push({
                   userKey: data[key]["userId"],
                   userId: data[key]["userId"],
@@ -176,6 +180,7 @@ export class UsersService {
                   isLock: isLock,
                   isAdmin: isAdmin,
                   isManager: isManager,
+                  isDelete:isDelete,
                   roleId: roleId,
                   accessCities: accessCities,
                   imgUrl:imgUrl,
@@ -184,7 +189,7 @@ export class UsersService {
                   canViewAttendance:canViewAttendance,
                   canUpdateDustbinPickDetail:canUpdateDustbinPickDetail
                 });
-              }
+              //}
             }
           }
         }        
