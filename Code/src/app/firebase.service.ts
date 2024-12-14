@@ -614,7 +614,7 @@ export class FirebaseService {
       databaseName = "dtdsonipat";
       databaseURL = "https://dtdsonipat.firebaseio.com";
     }
-    else if (city == 'sonipat') {
+    else if (city == 'iit-roorkee') {
       this.fireBase = {
         apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
         authDomain: "dtdnavigator.firebaseapp.com",
