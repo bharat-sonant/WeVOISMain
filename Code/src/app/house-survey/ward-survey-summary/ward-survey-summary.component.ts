@@ -69,7 +69,7 @@ export class WardSurveySummaryComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.savePageLoadHistory("Survey-Management","Survey-Summary",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Survey-Management", "Survey-Summary", localStorage.getItem("userID"));
     this.isActionShow = true;
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       this.isActionShow = false;
@@ -119,7 +119,7 @@ export class WardSurveySummaryComponent implements OnInit {
     );
   }
 
-  duplicateHouseCardList:any[]=[];
+  duplicateHouseCardList: any[] = [];
 
   updateSurveyCounts() {
     $(this.divLoaderCounts).show();
@@ -437,7 +437,7 @@ export class WardSurveySummaryComponent implements OnInit {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyComplexCount_Bharat", houseData);
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
-            let cardsCount=0;
+            let cardsCount = 0;
 
             let wardLastLineNo = keyArray[keyArray.length - 1];
             for (let i = 1; i <= parseInt(wardLastLineNo); i++) {
@@ -458,12 +458,12 @@ export class WardSurveySummaryComponent implements OnInit {
                   //this.updateHousesDataHouseType(zoneNo, line, cardNo, cardObj[cardNo]["cardType"]);
                   // }
                   if (cardObj[cardNo]["latLng"] != null) {
-                    let duplicateDetail=this.duplicateHouseCardList.find(item=>item.cardNo==cardNo);
-                    if(duplicateDetail!=undefined){
-                      console.log(cardNo,line);
+                    let duplicateDetail = this.duplicateHouseCardList.find(item => item.cardNo == cardNo);
+                    if (duplicateDetail != undefined) {
+                      console.log(cardNo, line);
                     }
-                    else{
-                      this.duplicateHouseCardList.push({cardNo:cardNo});
+                    else {
+                      this.duplicateHouseCardList.push({ cardNo: cardNo });
                     }
                     cardsCount++;
                     if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
@@ -534,8 +534,8 @@ export class WardSurveySummaryComponent implements OnInit {
                 houseCount: houseCount
               });
             }
-            
-           // console.log(cardsCount);
+
+            // console.log(cardsCount);
           }
         }
         dbPath = "EntitySurveyData/TotalHouseHoldCount/" + zoneNo;
@@ -1114,6 +1114,9 @@ export class WardSurveySummaryComponent implements OnInit {
           for (let i = 0; i < data.length; i++) {
             if (data[i]["latLng"] != null) {
               let city = this.commonService.getFireStoreCity();
+              if (this.cityName == "sikar") {
+                city = "Sikar-Survey";
+              }
               let entityList = [];
               let houseHoldCount = 0;
               let surveyorName = "";

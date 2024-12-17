@@ -1298,9 +1298,9 @@ export class CommonService {
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
     let cityName = localStorage.getItem("cityName");
     let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-    if (cityName == "sikar") {
-      path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
-    }
+   // if (cityName == "sikar") {
+   //   path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
+   // }
     let markingWardInstance = this.httpService.get(path).subscribe(data => {
       markingWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));

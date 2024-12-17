@@ -597,6 +597,7 @@ export class WardMarkingSummaryComponent implements OnInit {
     );
   }
 
+
   //#endregion
 
   getLineDetail(wardNo: any, lineNo: any) {
@@ -661,6 +662,9 @@ export class WardMarkingSummaryComponent implements OnInit {
 
 
               let city = this.commonService.getFireStoreCity();
+          if (this.cityName == "sikar") {
+            city = "Sikar-Survey";
+          }
 
               let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];

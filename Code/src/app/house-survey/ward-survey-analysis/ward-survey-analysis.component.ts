@@ -63,6 +63,7 @@ export class WardSurveyAnalysisComponent {
   wardLineMarkerImageList: any[] = [];
   isActionShow: any;
   serviceName = "survey-analysis";
+  fireStoragePath = "";
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -91,7 +92,7 @@ export class WardSurveyAnalysisComponent {
     this.toDayDate = this.commonService.setTodayDate();
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.savePageLoadHistory("Survey-Management","Survey-Analysis",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Survey-Management", "Survey-Analysis", localStorage.getItem("userID"));
     this.isActionShow = true;
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       this.isActionShow = false;
@@ -131,7 +132,9 @@ export class WardSurveyAnalysisComponent {
   }
 
   getHouseType() {
-    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    
+    let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+
     let houseTypeInstance = this.httpService.get(path).subscribe(data => {
       houseTypeInstance.unsubscribe();
       if (data != null) {
@@ -531,6 +534,9 @@ export class WardSurveyAnalysisComponent {
     } else if (revisitKey != "") {
       let wardNo = this.selectedZone;
       let city = this.commonService.getFireStoreCity();
+      if (this.cityName == "sikar") {
+        city = "Sikar-Survey";
+      }
       let progressData = this.progressData;
       let houseTypeList = this.houseTypeList;
       let db = this.db;
@@ -606,28 +612,31 @@ export class WardSurveyAnalysisComponent {
       });
     }
     else {
-/*
-      let city = this.commonService.getFireStoreCity();
-      let wardNo = this.selectedZone;
-      marker.addListener("click", function () {
-        $("#divOldCardDetail").hide();
-        $("#divCardDetail").hide();
-        $('#divRevisitDetail').hide();
-        $("#divVirtualSurvey").show();
-        $("#virtualWardNo").val(wardNo);
-        $("#virtualLineNo").val(lineNo);
-        $("#virtualMarkerNo").val(markerNo);
-        $("#virtualLat").val(lat);
-        $("#virtualLng").val(lng);
-        $("#virtualHouseType").val(entityType);
-        $("#lblEntityTypeVirtual").html(entityType);
-        $("#virtualImageName").val(imageName);
-        $("#virtualAddress").val(address);
-        let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
-        let element = <HTMLImageElement>document.getElementById("imgVertual");
-        element.src = imageURL;
-      });
-*/
+      /*
+             let city = this.commonService.getFireStoreCity();
+              if (this.cityName == "sikar") {
+                city = "Sikar-Survey";
+              }
+            let wardNo = this.selectedZone;
+            marker.addListener("click", function () {
+              $("#divOldCardDetail").hide();
+              $("#divCardDetail").hide();
+              $('#divRevisitDetail').hide();
+              $("#divVirtualSurvey").show();
+              $("#virtualWardNo").val(wardNo);
+              $("#virtualLineNo").val(lineNo);
+              $("#virtualMarkerNo").val(markerNo);
+              $("#virtualLat").val(lat);
+              $("#virtualLng").val(lng);
+              $("#virtualHouseType").val(entityType);
+              $("#lblEntityTypeVirtual").html(entityType);
+              $("#virtualImageName").val(imageName);
+              $("#virtualAddress").val(address);
+              let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let element = <HTMLImageElement>document.getElementById("imgVertual");
+              element.src = imageURL;
+            });
+      */
     }
     if (map == this.mapRevisit) {
       this.revisitMarker.push({ marker });
@@ -698,7 +707,11 @@ export class WardSurveyAnalysisComponent {
               let mobile = "";
               let ward = this.selectedZone;
               let houseImage = cardNumber + "House.jpg";
-              const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + wardNo + "/" + lineNo + "/" + markerImageName;
+              let city = this.commonService.getFireStoreCity();
+              if (this.cityName == "sikar") {
+                city = "Sikar-Survey";
+              }
+              const pathOld = city + "/MarkingSurveyImages/" + wardNo + "/" + lineNo + "/" + markerImageName;
 
               const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
               ref.getDownloadURL()
@@ -707,7 +720,7 @@ export class WardSurveyAnalysisComponent {
                   xhr.responseType = 'blob';
                   xhr.onload = (event) => {
                     var blob = xhr.response;
-                    const pathNew = this.commonService.getFireStoreCity() + "/SurveyHouseImage/" + houseImage;
+                    const pathNew = city + "/SurveyHouseImage/" + houseImage;
                     const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
                     ref1.put(blob).then((promise) => {
                       // ref.delete();
@@ -894,6 +907,9 @@ export class WardSurveyAnalysisComponent {
         data => {
           scannedCardInstance.unsubscribe();
           let city = this.commonService.getFireStoreCity();
+          if (this.cityName == "sikar") {
+            city = "Sikar-Survey";
+          }
           if (data.length > 0) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScannedCard", data);
             for (let i = 0; i < data.length; i++) {
@@ -1089,6 +1105,9 @@ export class WardSurveyAnalysisComponent {
         data => {
           oldCardInstance.unsubscribe();
           let city = this.commonService.getFireStoreCity();
+          if (this.cityName == "sikar") {
+            city = "Sikar-Survey";
+          }
           if (data.length > 0) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOldCard", data);
             for (let i = 0; i < data.length; i++) {
@@ -1239,6 +1258,9 @@ export class WardSurveyAnalysisComponent {
 
                 let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
                 let city = this.commonService.getFireStoreCity();
+                if (this.cityName == "sikar") {
+                  city = "Sikar-Survey";
+                }
                 let imageURL = "";
                 if (data[index]["image"] != null) {
                   imageURL = this.commonService.fireStoragePath + city + "%2FRevisitCardImage%2F" + data[index]["image"] + "?alt=media";
@@ -1302,6 +1324,9 @@ export class WardSurveyAnalysisComponent {
                   let surveyorId = data[index]["id"];
                   let requestDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
                   let city = this.commonService.getFireStoreCity();
+                  if (this.cityName == "sikar") {
+                    city = "Sikar-Survey";
+                  }
                   let imageURL = "";
                   if (data[index]["image"] != null) {
                     imageURL = this.commonService.fireStoragePath + city + "%2FRevisitCardImage%2F" + data[index]["image"] + "?alt=media";

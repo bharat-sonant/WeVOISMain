@@ -421,7 +421,7 @@ export class HouseMarkingComponent {
               let modifiedHouseTypeHistoryId = "";
               this.markerData.wardno = this.selectedZone;
               this.markerData.lineno = this.lineNo;
-              let totalEntity="0";
+              let totalEntity = "0";
 
               if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
                 servingCount = parseInt(data[index]["totalHouses"]);
@@ -468,6 +468,9 @@ export class HouseMarkingComponent {
 
 
               let city = this.commonService.getFireStoreCity();
+              if (this.cityName == "sikar") {
+                city = "Sikar-Survey";
+              }
               let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
@@ -485,7 +488,7 @@ export class HouseMarkingComponent {
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons,totalEntity:totalEntity });
+              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
@@ -609,7 +612,7 @@ export class HouseMarkingComponent {
               let markingBy = "";
               let ApproveId = 0;
               let approveName = ""
-              let totalEntity="0";
+              let totalEntity = "0";
               let modifiedHouseTypeHistoryId = "";
               this.markerData.wardno = this.selectedZone;
               this.markerData.lineno = this.lineNo;
@@ -655,6 +658,9 @@ export class HouseMarkingComponent {
               }
 
               let city = this.commonService.getFireStoreCity();
+              if (this.cityName == "sikar") {
+                city = "Sikar-Survey";
+              }
               let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
@@ -673,7 +679,7 @@ export class HouseMarkingComponent {
                 houseType = houseTypeDetail.houseType;
               }
 
-              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons,totalEntity:totalEntity });
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
@@ -804,7 +810,7 @@ export class HouseMarkingComponent {
           let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + detail.cardNumber;
           let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
             houseInstance.unsubscribe();
-            if(data!=null){   
+            if (data != null) {
               this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, ownerName: ownerName, servingCount: houseServingCount, totalPerson: totalPerson });
             }
           });
@@ -1489,6 +1495,9 @@ export class HouseMarkingComponent {
 
       let markerDetail = this.markerData;
       let city = this.commonService.getFireStoreCity();
+      if (this.cityName == "sikar") {
+        city = "Sikar-Survey";
+      }
       let commonService = this.commonService;
       marker.addListener("click", function () {
         $("#divLoader").show();
@@ -1794,6 +1803,9 @@ export class HouseMarkingComponent {
 
             let image = dataKey["image"];
             let city = this.commonService.getFireStoreCity();
+            if (this.cityName == "sikar") {
+              city = "Sikar-Survey";
+            }
             let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
 
             let removedById = dataKey["removeBy"];
@@ -1887,6 +1899,9 @@ export class HouseMarkingComponent {
                 // To get image url....
                 let imageName = key["image"];
                 let city = this.commonService.getFireStoreCity();
+                if (this.cityName == "sikar") {
+                  city = "Sikar-Survey";
+                }
                 let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
 
                 // To get Housetype name from housetype id

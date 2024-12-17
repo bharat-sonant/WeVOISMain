@@ -45,7 +45,7 @@ export class LineMarkerMappingComponent {
   allMarkers: any[];
   selectedCardDetails: any[];
   toDayDate: any;
-  wardBoundary:any;
+  wardBoundary: any;
   public movedMarkerCount: any;
   public totalMoveMarkerCount: any;
 
@@ -66,7 +66,7 @@ export class LineMarkerMappingComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Survey-Management","Line-Marker-Mapping",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Survey-Management", "Line-Marker-Mapping", localStorage.getItem("userID"));
     this.movedMarkerCount = 0;
     this.totalMoveMarkerCount = 0;
     this.lineNo = 1;
@@ -104,10 +104,10 @@ export class LineMarkerMappingComponent {
     this.lineNo = 1;
     this.previousLine = 1;
     $("#txtLineNo").val(this.lineNo);
-    $("#chk_wardLine").prop('checked',false);
+    $("#chk_wardLine").prop('checked', false);
     if (this.wardBoundary) {
       this.wardBoundary[0]["line"].setMap(null);
-      this.wardBoundary=undefined;
+      this.wardBoundary = undefined;
     }
     this.loadData();
   }
@@ -143,7 +143,7 @@ export class LineMarkerMappingComponent {
       this.wardBoundary[0]["line"].setMap(null);
     }
     this.polylines = [];
-    this.wardBoundary=undefined;
+    this.wardBoundary = undefined;
   }
 
   getAllLinesFromJson() {
@@ -454,7 +454,11 @@ export class LineMarkerMappingComponent {
       let oldImageName = data["image"];
       data["image"] = lastKey + ".jpg";
       let newImageName = lastKey + ".jpg";
-      const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
+      let city = this.commonService.getFireStoreCity();
+      if (this.cityName == "sikar") {
+        city = "Sikar-Survey";
+      }
+      const pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
       const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
       ref.getDownloadURL()
         .then((url) => {
@@ -462,7 +466,7 @@ export class LineMarkerMappingComponent {
           xhr.responseType = 'blob';
           xhr.onload = (event) => {
             var blob = xhr.response;
-            const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
+            const pathNew = city + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
             const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
             ref1.put(blob).then((promise) => {
               // ref.delete();
@@ -513,7 +517,7 @@ export class LineMarkerMappingComponent {
               this.db.object(dbPath).remove();
               index = index + 1;
               this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
-              
+
             }).catch((error) => {
               index = index + 1;
               failureCount = failureCount + 1;
@@ -621,9 +625,9 @@ export class LineMarkerMappingComponent {
         }
       });
   }
-  showWardLine(checkBox:any){
-    if(checkBox.checked && this.selectedZone && this.selectedZone!=='0'){
-      this.wardBoundary=undefined;
+  showWardLine(checkBox: any) {
+    if (checkBox.checked && this.selectedZone && this.selectedZone !== '0') {
+      this.wardBoundary = undefined;
       this.commonService.getWardBoundary(this.selectedZone, this.wardBoundary, 5).then((boundaryData: any) => {
         if (this.wardBoundary != undefined) {
           this.wardBoundary[0]["line"].setMap(null);
@@ -637,15 +641,15 @@ export class LineMarkerMappingComponent {
         this.map.fitBounds(bounds);
       });
     }
-    else{
-      checkBox.checked=false;
-      if(!this.selectedZone){
+    else {
+      checkBox.checked = false;
+      if (!this.selectedZone) {
         this.commonService.setAlertMessage("error", "Please select ward !!!");
       }
       if (this.wardBoundary) {
         this.wardBoundary[0]["line"].setMap(null);
       }
-      this.wardBoundary=undefined;
+      this.wardBoundary = undefined;
     }
   }
 }

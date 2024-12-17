@@ -236,7 +236,11 @@ export class LineCardMappingComponent {
                 markerData["image"] = lastMarkerKey + ".jpg";
                 let newImageName = lastMarkerKey + ".jpg";
                 markerData["latLng"] = latLng;
-                const pathOld = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + lineFrom + "/" + oldImageName;
+                let city = this.commonService.getFireStoreCity();
+                if (this.cityName == "sikar") {
+                  city = "Sikar-Survey";
+                }
+                const pathOld = city + "/MarkingSurveyImages/" + this.selectedZone + "/" + lineFrom + "/" + oldImageName;
                 const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
                 ref.getDownloadURL()
                   .then((url) => {
@@ -244,7 +248,7 @@ export class LineCardMappingComponent {
                     xhr.responseType = 'blob';
                     xhr.onload = (event) => {
                       var blob = xhr.response;
-                      const pathNew = this.commonService.getFireStoreCity() + "/MarkingSurveyImages/" + this.selectedZone + "/" + lineTo + "/" + newImageName;
+                      const pathNew = city + "/MarkingSurveyImages/" + this.selectedZone + "/" + lineTo + "/" + newImageName;
                       const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
                       ref1.put(blob).then((promise) => {
                         // ref.delete();
