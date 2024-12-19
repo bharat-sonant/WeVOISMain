@@ -24,6 +24,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
   selectedMonthName: any;
   divMainLoader = "#divMainLoader";
   serviceName = "review-duty-on-images";
+  isActualData:any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -38,6 +39,13 @@ export class ReviewDutyonImagesComponent implements OnInit {
     this.selectedDate = this.todayDate;
     this.selectedYear = this.selectedDate.split('-')[0];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+    if(localStorage.getItem("userType")=="External User")
+    {
+      this.isActualData=0;
+    }
+    else{
+      this.isActualData=1;
+    }
     this.getZones();
   }
 
@@ -126,6 +134,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
               }
             }
             this.zoneDutyOnList.push({ zoneNo: planName, zoneName: zoneName, dutyOnImages: dutyOnImages });
+            
             this.getEmployeeNamebyId(planName);
             this.getDutyOnTime(planName, planId);
           }
@@ -354,10 +363,36 @@ export class ReviewDutyonImagesComponent implements OnInit {
               detail.dutyOnImages[i]["helper"] = helper;
               detail.dutyOnImages[i]["secondHelper"] = secondHelper;
               detail.dutyOnImages[i]["vehicle"] = vehicle;
+
+              if(this.isActualData === 1){
+                this.getUpdatedTime(zone,i, detail);
+              }
             }
           }
         }
       });
+  }
+
+  getUpdatedTime(zone:any,idx:any, detail: any){
+    const dbPath = `/WardTimeManageHistory/${this.selectedYear}/${this.selectedMonthName}/${this.selectedDate}/${zone}`
+    this.db.object(dbPath).valueChanges().subscribe((res: any)=>{
+      if(res){
+        if(res.dutyOn){
+          const actualDutyOnTime =  res.dutyOn[1].preTime || null
+          if(actualDutyOnTime){
+            detail.dutyOnImages[idx]['actualDutyOnTime'] = actualDutyOnTime
+          }
+        }
+        
+        if(res.dutyOff){
+          const actualDutyOffTime = res.dutyOff[1].preTime || null   
+          if(actualDutyOffTime){
+            detail.dutyOnImages[idx]['actualDutyOffTime'] = actualDutyOffTime
+          }
+        }
+      }
+    })
+  
   }
 
   setDate(type: string) {
