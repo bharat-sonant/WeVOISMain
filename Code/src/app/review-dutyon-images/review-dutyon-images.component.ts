@@ -364,7 +364,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
               detail.dutyOnImages[i]["secondHelper"] = secondHelper;
               detail.dutyOnImages[i]["vehicle"] = vehicle;
 
-              if(this.isActualData === 1){
+              if(this.isActualData === 1 && i === 0){
                 this.getUpdatedTime(zone,i, detail);
               }
             }
