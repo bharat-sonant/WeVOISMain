@@ -60,6 +60,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   canViewAttendance: any;
   userList: any[] = [];
   attendanceManagerList: any[] = [];
+  modificationRequestList: any[] = [];
   public notApprovedCount: any;
 
   public mapLocation: google.maps.Map;
@@ -97,7 +98,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.getSelectedYearMonthName();
     this.fireStorePath = this.commonService.fireStoragePath;
     this.getEmployees();
-    this.getAllModificationRequest();
+    this.updateModificationRequestList();
   }
 
   setFilterType(filterVal: any, empId: any) {
@@ -402,6 +403,7 @@ export class EmployeeAttendanceComponent implements OnInit {
         }
       );
     }
+
   }
 
   getAttendanceByEmployee() {
@@ -467,6 +469,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               let outImageUrl = '';
               let approveAt = '';//to show approve at time in new line
               let reason = '';
+              let isModificationRequired = false
 
               if (attendanceData["inDetails"] != null) {
                 inImageUrl = attendanceData["inDetails"]['imageURL'] || '';
@@ -570,7 +573,18 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              this.employeeList.push({ empId: empId, name: date, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
+              let detail = this.modificationRequestList.find(item=>item.empId==empId)
+              if (detail) {
+                let selectedDate = new Date(date);
+                let modificationDate = new Date(detail.date)
+                  if (modificationDate&&modificationDate.toDateString()===selectedDate.toDateString()) {
+                      isModificationRequired = true
+                  }
+                  else{
+                    isModificationRequired = false
+                  }
+              }
+              this.employeeList.push({ empId: empId, name: date,isModificationRequired:isModificationRequired, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -581,7 +595,7 @@ export class EmployeeAttendanceComponent implements OnInit {
         });
     }
     else {
-      this.attendanceList = this.employeeList;
+      this.attendanceList = this.employeeList
       this.getNotApprovedAttendanceCount();
       $(this.divLoader).hide();
     }
@@ -612,6 +626,7 @@ export class EmployeeAttendanceComponent implements OnInit {
 
   filterData() {
     this.attendanceList = [];
+    let updatedList;
     let filterVal = $(this.ddlTime).val();
     if (filterVal == "0") {
       this.attendanceList = this.employeeList;
@@ -629,6 +644,11 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
     if (filterVal == "0") {
       this.getNotApprovedAttendanceCount();
+    }
+
+    if (this.modificationRequestList.length > 0&&this.attendanceList.length>0) {
+      updatedList = this.checkIsModificationRequired(this.attendanceList)
+      this.attendanceList = updatedList
     }
   }
 
@@ -961,35 +981,97 @@ export class EmployeeAttendanceComponent implements OnInit {
 
     }
   }
+
+
+  updateModificationRequestList() {
+
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateModificationRequestList");
+    let storagePath = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FAttendanceModificationRequestJSON%2FlastUpdateDate.json?alt=media"
+    let storageInstance = this.httpService.get(storagePath).subscribe(dateObj => {
+      storageInstance.unsubscribe()
+      let lastUpdatedAt = new Date(dateObj['lastUpdatedAt']);
+      let currentDate = new Date()
+      if (dateObj && lastUpdatedAt.toDateString() === currentDate.toDateString()) {
+        storagePath = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FAttendanceModificationRequestJSON%2FmodifcationRequest.json?alt=media"
+        this.getAllModificationRequest(storagePath)
+      }
+      else {
+        this.getAllModificationRequest('')
+      }
+    })
+  }
   /*
   Function name : getAllmodificationRequest
   Description : This function is written for get all modification requests. Which are not approved and save json file to storage
   Written by : Ritik Parmar
   Written date  : 23-12-2024 
   */
-  getAllModificationRequest() {
+  getAllModificationRequest(path: string) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAllModificationRequest");
-    let modificationInstance = this.db.object('ModificationRequests/').valueChanges().subscribe(
-      modificationData => {
-        modificationInstance.unsubscribe()
-        if (modificationData !== null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAllModificationRequest", modificationData);
-          let list = Object.keys(modificationData).reduce((acc, id) => {
-            if (modificationData[id]['isApproved'].toString() === 'false') {
-              acc.push(modificationData[id])
-            }
-            return acc
-          }, [])
-          if (list && list.length > 0) {
-            this.commonService.saveJsonFile(list, 'modifcationRequest.json', '/AttendanceModificationRequestJSON/')
-            this.commonService.saveJsonFile({ lastUpdatedAt: this.commonService.getTodayDateTime() }, 'lastUpdateDate.json', '/AttendanceModificationRequestJSON/')
-          }
-          else {
-            return
-          }
-        }
-      }
-    )
 
+    if (path) {
+      let storageInstance = this.httpService.get(path).subscribe(response => {
+        storageInstance.unsubscribe();
+        if (response) {
+          this.modificationRequestList = JSON.parse(JSON.stringify(response));
+        } else {
+          this.modificationRequestList = [];
+        }
+      });
+    } else {
+      let modificationInstance = this.db.object('ModificationRequests/').valueChanges().subscribe(
+        modificationData => {
+          modificationInstance.unsubscribe();
+          if (modificationData !== null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAllModificationRequest", modificationData);
+            let list = Object.keys(modificationData).reduce((acc, id) => {
+              if (modificationData[id]['isApproved'].toString() === 'false') {
+                acc.push(modificationData[id]);
+              }
+              return acc;
+            }, []);
+            if (list && list.length > 0) {
+              this.modificationRequestList = list;
+              this.commonService.saveJsonFile(list, 'modifcationRequest.json', '/AttendanceModificationRequestJSON/');
+              this.commonService.saveJsonFile({ lastUpdatedAt: this.commonService.getTodayDateTime() }, 'lastUpdateDate.json', '/AttendanceModificationRequestJSON/');
+            } else {
+              this.modificationRequestList = [];
+            }
+          } else {
+            this.modificationRequestList = [];
+          }
+          // Call after modificationRequestList is updated
+
+        }
+      );
+    }
   }
+
+  checkIsModificationRequired(list: any[]): any[] {
+    let updatedList = [];
+  
+    if (list && list.length > 0) {
+      updatedList = list.map(emp => {
+        const detail = this.modificationRequestList.find(item => item.empId === emp.empId);
+  
+        if (detail) {
+          const modificationDate = new Date(detail.date);
+          const selectedDate = new Date(this.selectedDate);
+  
+          if (modificationDate.toDateString() === selectedDate.toDateString()) {
+            return { ...emp, isModificationRequired: true };
+          } else {
+            return { ...emp, isModificationRequired: false };
+          }
+        } else {
+          return { ...emp, isModificationRequired: false }; 
+        }
+      });
+  
+      return updatedList.filter(item => item !== undefined);
+    }
+  
+    return updatedList;
+  }
+  
 }

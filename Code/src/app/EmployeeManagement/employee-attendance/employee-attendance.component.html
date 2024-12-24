@@ -223,7 +223,10 @@
                                                         style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                         [hidden]="data.isAttendanceApprover=='0'"
                                                         (click)="openApprovePopup(contentApprove,i,data.approverStatus);"></i> -->
-                                                        <img src="../../../assets/icons/person-circle-check-solid.svg" class="me-2 float-right cursor-pointer" alt="person" [hidden]="data.isAttendanceApprover=='0'" (click)="openApprovePopup(contentApprove,i,data.approverStatus);">
+                                                        <div class="d-flex align-items-center float-right">
+                                                            <img src="../../../assets/icons/user-gear-solid.svg" width="16px" title="Modification" class="me-2  cursor-pointer icon-red" alt="person" [hidden]="!data.isModificationRequired"alt="">
+                                                            <img src="../../../assets/icons/person-circle-check-solid.svg" class="me-2  cursor-pointer" alt="person" [hidden]="data.isAttendanceApprover=='0'" (click)="openApprovePopup(contentApprove,i,data.approverStatus);">
+                                                        </div>
                                                         
                                                     </div>
                                                     <div *ngIf="data.status!=='Not Approved' && data.status!=='Full Day'" [hidden]="isAttendanceApprover=='0' || !data.reason" style="font-size: 11px;">
