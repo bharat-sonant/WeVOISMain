@@ -573,18 +573,18 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              let detail = this.modificationRequestList.find(item=>item.empId==empId)
+              let detail = this.modificationRequestList.find(item => item.empId == empId)
               if (detail) {
                 let selectedDate = new Date(date);
                 let modificationDate = new Date(detail.date)
-                  if (modificationDate&&modificationDate.toDateString()===selectedDate.toDateString()) {
-                      isModificationRequired = true
-                  }
-                  else{
-                    isModificationRequired = false
-                  }
+                if (modificationDate && modificationDate.toDateString() === selectedDate.toDateString()) {
+                  isModificationRequired = true
+                }
+                else {
+                  isModificationRequired = false
+                }
               }
-              this.employeeList.push({ empId: empId, name: date,isModificationRequired:isModificationRequired, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
+              this.employeeList.push({ empId: empId, name: date, isModificationRequired: isModificationRequired, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -646,7 +646,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       this.getNotApprovedAttendanceCount();
     }
 
-    if (this.modificationRequestList.length > 0&&this.attendanceList.length>0) {
+    if (this.modificationRequestList.length > 0 && this.attendanceList.length > 0) {
       updatedList = this.checkIsModificationRequired(this.attendanceList)
       this.attendanceList = updatedList
     }
@@ -982,7 +982,13 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
   }
 
+/*
+  function name : updateModificationRequestList
+  Description : This function is written for update modification request list
+  Written By : Ritik Parmar 
+  Written Date  : 24 Dec 2024
 
+*/
   updateModificationRequestList() {
 
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateModificationRequestList");
@@ -1002,9 +1008,13 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
   /*
   Function name : getAllmodificationRequest
-  Description : This function is written for get all modification requests. Which are not approved and save json file to storage
+  Description : This function is written for get all modification requests,
+  based on path parameter and if path is given then it will data from storage,
+  and  if not given then get from data base and save json file.
   Written by : Ritik Parmar
   Written date  : 23-12-2024 
+  Update by : Ritik Parmar
+  Updated Date : 24 Dec 2024 
   */
   getAllModificationRequest(path: string) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAllModificationRequest");
@@ -1046,32 +1056,37 @@ export class EmployeeAttendanceComponent implements OnInit {
       );
     }
   }
-
+/*
+  Function name : checkIsModificationRequired
+  Description : This function is written for update attandance List ,it will update isModificationRequired  in attandance list if modification is requested 
+  Written by : Ritik Parmar 
+  Written Date : 24-Dec-2024
+*/
   checkIsModificationRequired(list: any[]): any[] {
     let updatedList = [];
-  
+
     if (list && list.length > 0) {
       updatedList = list.map(emp => {
         const detail = this.modificationRequestList.find(item => item.empId === emp.empId);
-  
+
         if (detail) {
           const modificationDate = new Date(detail.date);
           const selectedDate = new Date(this.selectedDate);
-  
+
           if (modificationDate.toDateString() === selectedDate.toDateString()) {
             return { ...emp, isModificationRequired: true };
           } else {
             return { ...emp, isModificationRequired: false };
           }
         } else {
-          return { ...emp, isModificationRequired: false }; 
+          return { ...emp, isModificationRequired: false };
         }
       });
-  
+
       return updatedList.filter(item => item !== undefined);
     }
-  
+
     return updatedList;
   }
-  
+
 }
