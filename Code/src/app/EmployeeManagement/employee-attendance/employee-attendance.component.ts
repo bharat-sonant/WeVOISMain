@@ -12,6 +12,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   templateUrl: './employee-attendance.component.html',
   styleUrls: ['./employee-attendance.component.scss']
 })
+
 export class EmployeeAttendanceComponent implements OnInit {
 
   @ViewChild("gmap", null) gmap: any;
@@ -61,6 +62,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   userList: any[] = [];
   attendanceManagerList: any[] = [];
   modificationRequestList: any[] = [];
+  modificationPopUpData: any
   public notApprovedCount: any;
 
   public mapLocation: google.maps.Map;
@@ -251,7 +253,6 @@ export class EmployeeAttendanceComponent implements OnInit {
 
   getAttendance() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAttendance");
-
     $(this.ddlTime).val("0");
     this.employeeList = [];
     this.attendanceList = [];
@@ -573,17 +574,14 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              let detail = this.modificationRequestList.find(item => item.empId == empId)
+              let detail = this.modificationRequestList.find(item => item.empId == empId && new Date(date).toDateString() === new Date(item.date).toDateString())
               if (detail) {
-                let selectedDate = new Date(date);
-                let modificationDate = new Date(detail.date)
-                if (modificationDate && modificationDate.toDateString() === selectedDate.toDateString()) {
-                  isModificationRequired = true
-                }
-                else {
-                  isModificationRequired = false
-                }
+                isModificationRequired = true
               }
+              else {
+                isModificationRequired = false
+              }
+
               this.employeeList.push({ empId: empId, name: date, isModificationRequired: isModificationRequired, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
             }
             this.setAllMarker()
@@ -649,6 +647,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     if (this.modificationRequestList.length > 0 && this.attendanceList.length > 0) {
       updatedList = this.checkIsModificationRequired(this.attendanceList)
       this.attendanceList = updatedList
+
     }
   }
 
@@ -755,7 +754,37 @@ export class EmployeeAttendanceComponent implements OnInit {
       $('#inputReason').val(reason)
     }, 200);
   }
+  openModificationPopup(content: any, index: any) {
+    this.modalService.open(content, { size: 'lg' });
+    let windowHeight = $(window).height();
+    let height = 450;
+    let width = 300;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    let empId = this.attendanceList[index]["empId"];
+    let inTime = this.attendanceList[index]["inTime"];
+    let outTime = this.attendanceList[index]["outTime"];
+    let detail = this.modificationRequestList.find((emp) => emp.empId == empId);
+    let requestedInTime = detail.inTime ? detail.inTime.split('~') : ''
+    let requestedOutTime = detail.outTime ? detail.outTime.split('~') : ""
+    let remark = detail.remark;
+    let modificationCase = detail.case
+    this.modificationPopUpData = {
+      empId: empId,
+      modificationCase: modificationCase ? modificationCase : '---',
+      inTime: inTime ? inTime : '--/--',
+      outTime: outTime ? outTime : '--/--',
+      requestedInTime: requestedInTime ? requestedInTime[0] !== '--' ? requestedInTime[0] : requestedInTime[1] : '--/--',
+      requestedOutTime: requestedOutTime ? requestedOutTime[0] !== '--' ? requestedOutTime[0] : requestedOutTime[1] : '--/--',
+      remark: remark ? remark : "---",
 
+    }
+  }
+  cancelModificationPopup() {
+    this.modalService.dismissAll()
+  }
   approveAttendance() {
     let date = $(this.hddDate).val().toString();
     let index = $(this.hddIndex).val().toString();
@@ -982,13 +1011,13 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
   }
 
-/*
-  function name : updateModificationRequestList
-  Description : This function is written for update modification request list
-  Written By : Ritik Parmar 
-  Written Date  : 24 Dec 2024
-
-*/
+  /*
+    function name : updateModificationRequestList
+    Description : This function is written for update modification request list
+    Written By : Ritik Parmar 
+    Written Date  : 24 Dec 2024
+  
+  */
   updateModificationRequestList() {
 
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateModificationRequestList");
@@ -1056,31 +1085,24 @@ export class EmployeeAttendanceComponent implements OnInit {
       );
     }
   }
-/*
-  Function name : checkIsModificationRequired
-  Description : This function is written for update attandance List ,it will update isModificationRequired  in attandance list if modification is requested 
-  Written by : Ritik Parmar 
-  Written Date : 24-Dec-2024
-*/
+  /*
+    Function name : checkIsModificationRequired
+    Description : This function is written for update attandance List ,it will update isModificationRequired  in attandance list if modification is requested 
+    Written by : Ritik Parmar 
+    Written Date : 24-Dec-2024
+  */
   checkIsModificationRequired(list: any[]): any[] {
     let updatedList = [];
-
     if (list && list.length > 0) {
       updatedList = list.map(emp => {
-        const detail = this.modificationRequestList.find(item => item.empId === emp.empId);
+        const detail = this.modificationRequestList.find(item => Number(item.empId) === Number(emp.empId)&&new Date(this.selectedDate).toDateString()===new Date(item.date).toDateString());
 
         if (detail) {
-          const modificationDate = new Date(detail.date);
-          const selectedDate = new Date(this.selectedDate);
-
-          if (modificationDate.toDateString() === selectedDate.toDateString()) {
             return { ...emp, isModificationRequired: true };
           } else {
             return { ...emp, isModificationRequired: false };
           }
-        } else {
-          return { ...emp, isModificationRequired: false };
-        }
+        
       });
 
       return updatedList.filter(item => item !== undefined);

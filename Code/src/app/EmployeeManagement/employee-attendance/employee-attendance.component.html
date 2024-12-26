@@ -30,7 +30,8 @@
                             <span class="export-span">
                                 <!-- <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel();"></i><br /> -->
                                 <div class="text-center">
-                                    <img src="../../../assets/icons/file-export-solid.svg" class="cursor-pointer" alt="export" (click)="exportToExcel();">
+                                    <img src="../../../assets/icons/file-export-solid.svg" class="cursor-pointer"
+                                        alt="export" (click)="exportToExcel();">
                                 </div>
                                 <span class="export-span-iner">Export</span>
                             </span>
@@ -60,8 +61,8 @@
                                         </option>
                                     </select>
 
-                                    <select id="ddlAttendanceManager" class="filter-select filter-input" (change)="filterData()"
-                                        style="width:200px ; display:none">
+                                    <select id="ddlAttendanceManager" class="filter-select filter-input"
+                                        (change)="filterData()" style="width:200px ; display:none">
                                         <option value="0">
                                             --All Manager--
                                         </option>
@@ -72,8 +73,9 @@
 
 
 
-                                        <input id="chkNotApproved" type="checkbox" (change)="filterData()"
-                                        style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b> ({{notApprovedCount}})</b>
+                                    <input id="chkNotApproved" type="checkbox" (change)="filterData()"
+                                        style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b>
+                                        ({{notApprovedCount}})</b>
                         </div>
                     </div>
                     <div id="divByEmployee" class="row" [hidden]="filterType=='byDate'">
@@ -92,13 +94,15 @@
                                 style="width: 100px; margin-left: 10px;">
                             <button class="btn btn-success" style="margin-top:10px ;"
                                 (click)="getAttendanceByEmployee();">Search</button>
-                                <input id="chkNotApprovedEmployee" type="checkbox" (change)="filterDataEmployee()"
+                            <input id="chkNotApprovedEmployee" type="checkbox" (change)="filterDataEmployee()"
                                 style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b>({{notApprovedCount}})</b>
-                                <span (click)="openLocation(contentLocation,0,'All')" style="cursor: pointer; margin-left: 20px; "> 
-                                    <!-- <i class="fa-solid fa-map-location-dot" style="font-size: 14px; color: #2dbd23;"></i>  -->
-                                   <img src="../../../assets/icons/map-location-dot-solid.svg" class="mb-1 icon-green" alt="location">
-                                   
-                                    Show All Location</span>
+                            <span (click)="openLocation(contentLocation,0,'All')"
+                                style="cursor: pointer; margin-left: 20px; ">
+                                <!-- <i class="fa-solid fa-map-location-dot" style="font-size: 14px; color: #2dbd23;"></i>  -->
+                                <img src="../../../assets/icons/map-location-dot-solid.svg" class="mb-1 icon-green"
+                                    alt="location">
+
+                                Show All Location</span>
                         </div>
 
                     </div>
@@ -127,53 +131,68 @@
                                             <!-- <th class="text-left br-1 table-heading1 ">
                                                 In-Out Location
                                             </th> -->
-                                            <th class="text-left br-1 table-heading1 " [hidden]="filterType=='byEmployee'">
+                                            <th class="text-left br-1 table-heading1 "
+                                                [hidden]="filterType=='byEmployee'">
                                                 Manager
                                             </th>
-                                            <th class="text-left br-1 table-heading1"> 
+                                            <th class="text-left br-1 table-heading1">
                                                 Approve Status
-                                            <!-- </th>
+                                                <!-- </th>
                                             <th class="text-left br-1 table-heading1 col-w" -->
                                                 <!-- [hidden]="isAttendanceApprover=='0'"> -->
                                                 <!-- Approver -->
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index" >
+                                            <tr id="tr{{i}}" *ngFor="let data of attendanceList; let i=index">
                                                 <td class="text-left br-1" [hidden]="filterType=='byEmployee'"
                                                     style="cursor: pointer; width:15%!important"
                                                     (click)="setFilterType('byEmployee',data.empId)">
                                                     <div>{{data.displayName}}</div>
                                                     <b>[{{data.empCode}}]</b>
                                                 </td>
-                                                <td class="text-left br-1" [hidden]="filterType=='byDate'" style=" width:7%!important;">
+                                                <td class="text-left br-1" [hidden]="filterType=='byDate'"
+                                                    style=" width:7%!important;">
                                                     {{data.displayName}}
                                                 </td>
                                                 <td class="br-1" style="width:23%!important;">
                                                     <div class="d-flex justify-content-between w-100">
                                                         <div class="text-center" style="flex: 0.3;">
-                                                            <a href="{{data.inImageUrl}}" target="_blank" title="Click to view fullscreen">
-                                                                <img src="{{data.inImageUrl}}" alt="" *ngIf="data.inImageUrl"   style="height: 100px; width: 80%;">
+                                                            <a href="{{data.inImageUrl}}" target="_blank"
+                                                                title="Click to view fullscreen">
+                                                                <img src="{{data.inImageUrl}}" alt=""
+                                                                    *ngIf="data.inImageUrl"
+                                                                    style="height: 100px; width: 80%;">
                                                             </a>
-                                                            <img src="../../../assets/img/avtar-user.png" alt="" *ngIf="!data.inImageUrl" style="height: 100px; width: 80%">
+                                                            <img src="../../../assets/img/avtar-user.png" alt=""
+                                                                *ngIf="!data.inImageUrl"
+                                                                style="height: 100px; width: 80%">
                                                         </div>
-                                                        <div class="ms-2 mt-2 d-flex flex-column justify-content-start position-relative" style="flex: 0.7;">
+                                                        <div class="ms-2 mt-2 d-flex flex-column justify-content-start position-relative"
+                                                            style="flex: 0.7;">
                                                             <div class="fw-bold {{data.cssClass}}" *ngIf="data.inTime">
                                                                 <!-- <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i> -->
-                                                                 <img src="../../../assets/icons/clock-regular.svg" class="me-2" alt="clock">
+                                                                <img src="../../../assets/icons/clock-regular.svg"
+                                                                    class="me-2" alt="clock">
                                                                 {{data.inTime}}
-                                                                
-                                                            <!-- <i class="fa-solid fa-map-location-dot" style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
+
+                                                                <!-- <i class="fa-solid fa-map-location-dot" style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                             (click)="openLocation(contentLocation,i,'single')"></i> -->
-                                                            <img src="../../../assets/icons/map-location-dot-solid.svg" class="mb-1 float-right cursor-pointer icon-green" alt="location" (click)="openLocation(contentLocation,i,'single')">
+                                                                <img src="../../../assets/icons/map-location-dot-solid.svg"
+                                                                    class="mb-1 float-right cursor-pointer icon-green"
+                                                                    alt="location"
+                                                                    (click)="openLocation(contentLocation,i,'single')">
                                                             </div>
                                                             <div class="mt-1" *ngIf="data.inLocation">
                                                                 <!-- <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i> -->
-                                                                <img src="../../../assets/icons/location-dot-solid.svg" class="me-2" alt="location">
+                                                                <img src="../../../assets/icons/location-dot-solid.svg"
+                                                                    class="me-2" alt="location">
                                                                 {{data.inLocation}}
                                                             </div>
-                                                            <div class="position-absolute bottom-0 end-0 workingHrs-badge {{data.cssWorkingClass}} br-0" *ngIf="data.workingHour" title="Working Hours">
-                                                                <img src="../../../assets/img/working-hours-icon.png" alt="" style="height: 18px;">
+                                                            <div class="position-absolute bottom-0 end-0 workingHrs-badge {{data.cssWorkingClass}} br-0"
+                                                                *ngIf="data.workingHour" title="Working Hours">
+                                                                <img src="../../../assets/img/working-hours-icon.png"
+                                                                    alt="" style="height: 18px;">
                                                                 {{data.workingHour}}
                                                             </div>
                                                         </div>
@@ -182,24 +201,31 @@
                                                 <td class="br-1" style="width:23%!important;">
                                                     <div class="d-flex justify-content-between w-100">
                                                         <div class="text-center" style="flex: 0.3;">
-                                                            <a href="{{data.outImageUrl}}" target="_blank" title="Click to view fullscreen">
-                                                                <img src="{{data.outImageUrl}}" alt="" *ngIf="data.outImageUrl" style="height: 100px; width: 80%">
+                                                            <a href="{{data.outImageUrl}}" target="_blank"
+                                                                title="Click to view fullscreen">
+                                                                <img src="{{data.outImageUrl}}" alt=""
+                                                                    *ngIf="data.outImageUrl"
+                                                                    style="height: 100px; width: 80%">
                                                             </a>
-                                                            <img src="../../../assets/img/avtar-user.png" alt="" *ngIf="!data.outImageUrl" style="height: 100px; width: 80%">
+                                                            <img src="../../../assets/img/avtar-user.png" alt=""
+                                                                *ngIf="!data.outImageUrl"
+                                                                style="height: 100px; width: 80%">
                                                         </div>
                                                         <div class="ms-2 mt-2" style="flex: 0.7;">
                                                             <div class="fw-bold" *ngIf="data.outTime">
                                                                 <!-- <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i> -->
-                                                                <img src="../../../assets/icons/clock-regular.svg" class="me-2" alt="clock">
+                                                                <img src="../../../assets/icons/clock-regular.svg"
+                                                                    class="me-2" alt="clock">
                                                                 {{data.outTime}}
-                                                               
+
                                                             </div>
                                                             <div class="mt-1" *ngIf="data.outLocation">
                                                                 <!-- <i class="fa-solid fa-location-dot me-2" style="scale: 1.2;"></i> -->
-                                                                <img src="../../../assets/icons/location-dot-solid.svg" class="me-2" alt="location">
+                                                                <img src="../../../assets/icons/location-dot-solid.svg"
+                                                                    class="me-2" alt="location">
                                                                 {{data.outLocation}}
                                                             </div>
-                                                           
+
                                                         </div>
                                                     </div>
                                                 </td>
@@ -213,32 +239,47 @@
                                                    style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                    (click)="openLocation(contentLocation,i,'single')"></i>
                                                 </td> -->
-                                                <td class="text-left br-1" style=" width:10%!important;"  [hidden]="filterType=='byEmployee'">
-                                                   {{data.attendanceManager}}
+                                                <td class="text-left br-1" style=" width:10%!important;"
+                                                    [hidden]="filterType=='byEmployee'">
+                                                    {{data.attendanceManager}}
                                                 </td>
                                                 <td class="text-left br-1" style=" width:15%!important;">
-                                                    <div >
-                                                        <span [ngClass]="data.status!=='Not Approved' && 'fw-bold'" [ngStyle]="{'color': data.status === 'Absent'? 'red' : ''}"> {{data.status}}</span>
+                                                    <div>
+                                                        <span [ngClass]="data.status!=='Not Approved' && 'fw-bold'"
+                                                            [ngStyle]="{'color': data.status === 'Absent'? 'red' : ''}">
+                                                            {{data.status}}</span>
                                                         <!-- <i class="fa-solid fa-person-circle-check"
                                                         style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                         [hidden]="data.isAttendanceApprover=='0'"
                                                         (click)="openApprovePopup(contentApprove,i,data.approverStatus);"></i> -->
                                                         <div class="d-flex align-items-center float-right">
-                                                            <img src="../../../assets/icons/user-gear-solid.svg" width="16px" title="Modification" class="me-2  cursor-pointer icon-red" alt="person" [hidden]="!data.isModificationRequired"alt="">
-                                                            <img src="../../../assets/icons/person-circle-check-solid.svg" class="me-2  cursor-pointer" alt="person" [hidden]="data.isAttendanceApprover=='0'" (click)="openApprovePopup(contentApprove,i,data.approverStatus);">
+                                                            <img src="../../../assets/icons/user-gear-solid.svg"
+                                                                width="16px" title="Modification"
+                                                                (click)="openModificationPopup(contentModification,i);"
+                                                                class="me-2  cursor-pointer icon-red" alt="person"
+                                                                [hidden]="!data.isModificationRequired" alt="">
+                                                            <img src="
+                                                                ../../../assets/icons/person-circle-check-solid.svg"
+                                                                class="me-2  cursor-pointer" alt="person"
+                                                                [hidden]="data.isAttendanceApprover=='0'"
+                                                                (click)="openApprovePopup(contentApprove,i,data.approverStatus);">
                                                         </div>
-                                                        
+
                                                     </div>
-                                                    <div *ngIf="data.status!=='Not Approved' && data.status!=='Full Day'" [hidden]="isAttendanceApprover=='0' || !data.reason" style="font-size: 11px;">
+                                                    <div *ngIf="data.status!=='Not Approved' && data.status!=='Full Day'"
+                                                        [hidden]="isAttendanceApprover=='0' || !data.reason"
+                                                        style="font-size: 11px;">
                                                         <b>Reason</b> : {{data.reason}}
                                                     </div>
-                                                    <div [hidden]="isAttendanceApprover=='0'" [ngClass]="data.approveBy && 'mt-4'">
+                                                    <div [hidden]="isAttendanceApprover=='0'"
+                                                        [ngClass]="data.approveBy && 'mt-4'">
                                                         {{data.approveBy}}
                                                     </div>
-                                                    <div [hidden]="isAttendanceApprover=='0' || !data.approveAt" style="font-size: 11px;">
+                                                    <div [hidden]="isAttendanceApprover=='0' || !data.approveAt"
+                                                        style="font-size: 11px;">
                                                         [ {{data.approveAt}} ]
                                                     </div>
-                                                    
+
                                                 </td>
                                                 <!-- <td class="text-left br-1" [hidden]="isAttendanceApprover=='0'" style=" width:12%!important">
                                                     {{data.approveBy}}
@@ -254,7 +295,98 @@
             </div>
         </div>
     </div>
+
 </div>
+<ng-template #contentModification>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Attendance Modification</h5>
+                <img src="../../../assets/img/close-grey.png" (click)="cancelModificationPopup()" class="img-close" />
+            </div>
+            <div class="modal-body" style="padding: 10px 20px;">
+                <div class="row">
+                    <select style="cursor: pointer;" id="mdStatus1" class="filter-select filter-input">
+                        <option value="0">Not Approved</option>
+                        <option value="1">Full Day</option>
+                        <option value="2">Pre Lunch</option>
+                        <option value="3">Post Lunch</option>
+                        <option value="4">Absent</option>
+                    </select>
+                </div>
+                <div class="row mt-2" style="height: 30px;">
+                    <div class="d-flex align-items-center">
+                        <span style="font-size: 13px;"><b style="color: #5b5959">Case</b> : </span>
+                        <span
+                            style="font-size: 13px; margin-left: 4px;">{{modificationPopUpData.modificationCase}}</span>
+                    </div>
+                </div>
+                <div class="row mt-1" id="previousTime" style="height: 55px;">
+                    <div class="d-flex justify-content-between gap-1">
+                        <div class="d-flex   flex-column">
+                            <span style="font-size: 13px;"><b style="color: #5b5959">Prev In Time</b></span>
+                            <div class="d-flex align-items-center gap-1" style="padding: 2px 7px;">
+                                <img src="../../../assets/icons/clock-regular.svg" class="icon-green" alt="">
+                                <span style="font-size: 12px;">{{modificationPopUpData.inTime}}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex  flex-column">
+                            <span style="font-size: 13px;"><b style="color: #5b5959">Prev Out Time</b></span>
+                            <div class="d-flex align-items-center gap-1" style="padding: 2px 7px;">
+                                <img src="../../../assets/icons/clock-regular.svg" class="icon-red" alt="">
+                                <span style="font-size: 12px;">{{modificationPopUpData.outTime}}</span>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-1" id="requestedTime" style="height: 55px;">
+                    <div class="d-flex justify-content-between gap-1">
+                        <div class="d-flex  flex-column">
+                            <span style="font-size: 13px;"><b style="color: #5b5959">Modify In Time</b></span>
+                            <div class="d-flex align-items-center gap-1" style="padding: 2px 7px;">
+                                <img src="../../../assets/icons/clock-regular.svg" class="icon-green" alt="">
+                                <span style="font-size: 12px;">{{modificationPopUpData.requestedInTime}}</span>
+                            </div>
+
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span style="font-size: 13px;"><b style="color: #5b5959">Modify Out Time</b></span>
+                            <div class="d-flex align-items-center gap-1" style="padding: 2px 22px;">
+                                <img src="../../../assets/icons/clock-regular.svg" class="icon-red" alt="">
+                                <span style="font-size: 12px;">{{modificationPopUpData.requestedOutTime}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col-md-12 d-flex flex-column"
+                        style="height: auto; max-height: 100px; overflow-y: scroll; ">
+                        <span
+                            style="font-size: 13px; color: #5b5959; position: sticky; top: 0;  z-index: 1; padding-bottom: 5px;">
+                            <b>Reason</b>
+                        </span>
+                        <span style="font-size: 12px; word-break: break-word;">
+                            {{modificationPopUpData.remark}}
+                        </span>
+                    </div>
+                    <!-- <textarea id="mdinputReason" placeholder="Please enter reason here" required></textarea> -->
+                </div>
+
+                <div class="row mt-2 d-flex align-items-center">
+                    <div class="col-md-6" style="text-align: center; margin-top: 10px; ">
+                        <button class="btn btn-success" style="text-transform: uppercase;width:80%;">Confirm</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center;">
+                        <button class="btn btn-danger" (click)="cancelModificationPopup()"
+                            style="text-transform: uppercase; width: 80%;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
 
 <ng-template #contentApprove>
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -277,7 +409,8 @@
                     </select>
                 </div>
                 <div class="row mt-2" style="height: 80px;">
-                    <textarea id="inputReason" placeholder="Please enter reason"  required *ngIf="ddlStatus.value=='2' || ddlStatus.value=='3' || ddlStatus.value=='4'"></textarea>
+                    <textarea id="inputReason" placeholder="Please enter reason" required
+                        *ngIf="ddlStatus.value=='2' || ddlStatus.value=='3' || ddlStatus.value=='4'"></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6" style="text-align: center;margin-top: 15px;">
@@ -294,8 +427,6 @@
         </div>
     </div>
 </ng-template>
-
-
 <ng-template #contentLocation>
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -305,15 +436,15 @@
             </div>
             <div class="modal-body">
                 <div id="divLocation" class="row" style="border-bottom: 1px solid lightgray;">
-                    <div class="col-md-12" >
-                       <b> In Location : </b> <label id="lblInLocation"></label>
+                    <div class="col-md-12">
+                        <b> In Location : </b> <label id="lblInLocation"></label>
                     </div>
-                    <div class="col-md-12" >
-                       <b> Out Location : </b> <label id="lblOutLocation"></label>
+                    <div class="col-md-12">
+                        <b> Out Location : </b> <label id="lblOutLocation"></label>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12" style="margin-top: 10px;" >
+                    <div class="col-md-12" style="margin-top: 10px;">
                         <div id="locationtMap" style="width:100%;"></div>
                     </div>
                 </div>
