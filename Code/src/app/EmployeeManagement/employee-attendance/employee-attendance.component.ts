@@ -470,7 +470,6 @@ export class EmployeeAttendanceComponent implements OnInit {
               let outImageUrl = '';
               let approveAt = '';//to show approve at time in new line
               let reason = '';
-              let isModificationRequired = false
 
               if (attendanceData["inDetails"] != null) {
                 inImageUrl = attendanceData["inDetails"]['imageURL'] || '';
@@ -574,15 +573,10 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              let detail = this.modificationRequestList.find(item => item.empId == empId && new Date(date).toDateString() === new Date(item.date).toDateString())
-              if (detail) {
-                isModificationRequired = true
-              }
-              else {
-                isModificationRequired = false
-              }
+              let modificationDetail = this.modificationRequestList.find(item => Number(item.empId) == Number(empId) && new Date(date).toDateString() === new Date(item.date).toDateString())
+             
 
-              this.employeeList.push({ empId: empId, name: date, isModificationRequired: isModificationRequired, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
+              this.employeeList.push({ empId: empId, name: date, isModificationRequired: modificationDetail?true:false, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -781,6 +775,10 @@ export class EmployeeAttendanceComponent implements OnInit {
       remark: remark ? remark : "---",
 
     }
+  }
+  saveModificationRequest(){
+    let approver = document.getElementById('mdStatus1')
+    console.log(this.modificationPopUpData,approver)
   }
   cancelModificationPopup() {
     this.modalService.dismissAll()
