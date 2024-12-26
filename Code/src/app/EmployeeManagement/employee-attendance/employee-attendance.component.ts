@@ -50,6 +50,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   hddStatus = "#hddStatus";
   hddIndex = "#hddIndex";
   ddlStatus = "#ddlStatus";
+  mdStatus1 ='#mdStatus1';
   divConfirmApprove = "#divConfirmApprove";
   markers: any[] = [];
   logoutMarkers: any[] = [];
@@ -639,7 +640,13 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
 
     if (this.modificationRequestList.length > 0 && this.attendanceList.length > 0) {
-      updatedList = this.checkIsModificationRequired(this.attendanceList)
+      updatedList = this.attendanceList.map(emp => {
+        const detail = this.modificationRequestList.find(item => Number(item.empId) === Number(emp.empId)&&new Date(this.selectedDate).toDateString()===new Date(item.date).toDateString());
+        if (detail) {
+            return { ...emp, isModificationRequired: true };
+          } else {
+            return { ...emp, isModificationRequired: false };
+          }})
       this.attendanceList = updatedList
 
     }
@@ -767,18 +774,18 @@ export class EmployeeAttendanceComponent implements OnInit {
     let modificationCase = detail.case
     this.modificationPopUpData = {
       empId: empId,
+      index:index,
       modificationCase: modificationCase ? modificationCase : '---',
       inTime: inTime ? inTime : '--/--',
       outTime: outTime ? outTime : '--/--',
       requestedInTime: requestedInTime ? requestedInTime[0] !== '--' ? requestedInTime[0] : requestedInTime[1] : '--/--',
       requestedOutTime: requestedOutTime ? requestedOutTime[0] !== '--' ? requestedOutTime[0] : requestedOutTime[1] : '--/--',
       remark: remark ? remark : "---",
-
     }
   }
   saveModificationRequest(){
-    let approver = document.getElementById('mdStatus1')
-    console.log(this.modificationPopUpData,approver)
+   let approver = $(this.mdStatus1).val()
+
   }
   cancelModificationPopup() {
     this.modalService.dismissAll()
@@ -1083,30 +1090,4 @@ export class EmployeeAttendanceComponent implements OnInit {
       );
     }
   }
-  /*
-    Function name : checkIsModificationRequired
-    Description : This function is written for update attandance List ,it will update isModificationRequired  in attandance list if modification is requested 
-    Written by : Ritik Parmar 
-    Written Date : 24-Dec-2024
-  */
-  checkIsModificationRequired(list: any[]): any[] {
-    let updatedList = [];
-    if (list && list.length > 0) {
-      updatedList = list.map(emp => {
-        const detail = this.modificationRequestList.find(item => Number(item.empId) === Number(emp.empId)&&new Date(this.selectedDate).toDateString()===new Date(item.date).toDateString());
-
-        if (detail) {
-            return { ...emp, isModificationRequired: true };
-          } else {
-            return { ...emp, isModificationRequired: false };
-          }
-        
-      });
-
-      return updatedList.filter(item => item !== undefined);
-    }
-
-    return updatedList;
-  }
-
 }
