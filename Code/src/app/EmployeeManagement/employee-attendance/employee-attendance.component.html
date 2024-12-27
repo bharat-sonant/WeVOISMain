@@ -255,7 +255,7 @@
                                                         <div class="d-flex align-items-center float-right">
                                                             <img src="../../../assets/icons/user-gear-solid.svg"
                                                                 width="16px" title="Modification"
-                                                                (click)="openModificationPopup(contentModification,i);"
+                                                                (click)="openModificationPopup(contentModification,i,data.approverStatus);"
                                                                 class="me-2  cursor-pointer icon-red" alt="person"
                                                                 [hidden]="!data.isModificationRequired" alt="">
                                                             <img src="
@@ -306,7 +306,7 @@
             </div>
             <div class="modal-body" style="padding: 10px 20px;">
                 <div class="row">
-                    <select style="cursor: pointer;" id="mdStatus1" class="filter-select filter-input">
+                    <select style="cursor: pointer;" id="mdStatus1" #mdStatus1 class="filter-select filter-input">
                         <option value="0">Not Approved</option>
                         <option value="1">Full Day</option>
                         <option value="2">Pre Lunch</option>
@@ -376,7 +376,7 @@
 
                 <div class="row mt-2 d-flex align-items-center">
                     <div class="col-md-6" style="text-align: center; margin-top: 10px; ">
-                        <button class="btn btn-success" style="text-transform: uppercase;width:80%;">Confirm</button>
+                        <button (click)="saveModificationRequest()" class="btn btn-success" style="text-transform: uppercase;width:80%;">Confirm</button>
                     </div>
                     <div class="col-md-6" style="text-align: center;">
                         <button class="btn btn-danger" (click)="cancelModificationPopup()"

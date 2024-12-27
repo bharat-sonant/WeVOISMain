@@ -50,7 +50,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   hddStatus = "#hddStatus";
   hddIndex = "#hddIndex";
   ddlStatus = "#ddlStatus";
-  mdStatus1 ='#mdStatus1';
+  mdStatus1 = '#mdStatus1';
   divConfirmApprove = "#divConfirmApprove";
   markers: any[] = [];
   logoutMarkers: any[] = [];
@@ -141,6 +141,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       let dbPath = "Employees/" + empId + "/GeneralDetails";
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
+
           employeeDetailInstance.unsubscribe();
           if (employeeDetail) {
             let attendanceManager = "";
@@ -181,6 +182,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                     resolve({ status: "success", data: employeeData });
                   }
                   else if (this.canViewAttendance == "1") {
+        
                     employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "0", attendanceManager: attendanceManager };
                     resolve({ status: "success", data: employeeData });
                   }
@@ -266,11 +268,9 @@ export class EmployeeAttendanceComponent implements OnInit {
       let attendanceManager = this.allEmployeeList[i]["attendanceManager"];
       let designationId = this.allEmployeeList[i]["designationId"];
       let dbPath = "Attendance/" + empId + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-
       let employeeAttendanceInstance = this.db.object(dbPath).valueChanges().subscribe(
         attendanceData => {
           employeeAttendanceInstance.unsubscribe();
-
           if (attendanceData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAttendance", attendanceData);
             let detail = this.allEmployeeList.find(item => item.empId == empId);
@@ -575,9 +575,9 @@ export class EmployeeAttendanceComponent implements OnInit {
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
               let modificationDetail = this.modificationRequestList.find(item => Number(item.empId) == Number(empId) && new Date(date).toDateString() === new Date(item.date).toDateString())
-             
 
-              this.employeeList.push({ empId: empId, name: date, isModificationRequired: modificationDetail?true:false, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
+
+              this.employeeList.push({ empId: empId, name: date, isModificationRequired: modificationDetail ? true : false, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -640,13 +640,15 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
 
     if (this.modificationRequestList.length > 0 && this.attendanceList.length > 0) {
+      let date =  $(this.txtDate).val().toString()
       updatedList = this.attendanceList.map(emp => {
-        const detail = this.modificationRequestList.find(item => Number(item.empId) === Number(emp.empId)&&new Date(this.selectedDate).toDateString()===new Date(item.date).toDateString());
+        const detail = this.modificationRequestList.find(item => Number(item.empId) === Number(emp.empId) && new Date(date).toDateString() === new Date(item.date).toDateString());
         if (detail) {
-            return { ...emp, isModificationRequired: true };
-          } else {
-            return { ...emp, isModificationRequired: false };
-          }})
+          return { ...emp, isModificationRequired: true };
+        } else {
+          return { ...emp, isModificationRequired: false };
+        }
+      })
       this.attendanceList = updatedList
 
     }
@@ -755,7 +757,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       $('#inputReason').val(reason)
     }, 200);
   }
-  openModificationPopup(content: any, index: any) {
+  openModificationPopup(content: any, index: any, approverStatus: any) {
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
     let height = 450;
@@ -764,17 +766,22 @@ export class EmployeeAttendanceComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
+    $('#mdStatus1').val(approverStatus)
     let empId = this.attendanceList[index]["empId"];
     let inTime = this.attendanceList[index]["inTime"];
     let outTime = this.attendanceList[index]["outTime"];
-    let detail = this.modificationRequestList.find((emp) => emp.empId == empId);
-    let requestedInTime = detail.inTime ? detail.inTime.split('~') : ''
-    let requestedOutTime = detail.outTime ? detail.outTime.split('~') : ""
-    let remark = detail.remark;
-    let modificationCase = detail.case
+    let name = this.attendanceList[index]["name"];
+    let date = this.filterType==='byDate'? $(this.txtDate).val().toString():name;
+    let detail = this.modificationRequestList.find((emp) => Number(emp.empId) === Number(empId) && new Date(date).toDateString() === new Date(emp.date).toDateString());
+    let requestedInTime = detail&&detail.inTime ? detail.inTime.split('~') : ''
+    let requestedOutTime = detail&&detail.outTime ? detail.outTime.split('~') : ""
+    let remark = detail&&detail.remark?detail.remark:'';
+    let modificationCase = detail&&detail.case?detail.case:'';
     this.modificationPopUpData = {
       empId: empId,
-      index:index,
+      index: index,
+      date: date ? date : '',
+      modificationId: detail&&detail.modificationId?detail.modificationId:'',
       modificationCase: modificationCase ? modificationCase : '---',
       inTime: inTime ? inTime : '--/--',
       outTime: outTime ? outTime : '--/--',
@@ -783,11 +790,63 @@ export class EmployeeAttendanceComponent implements OnInit {
       remark: remark ? remark : "---",
     }
   }
-  saveModificationRequest(){
-   let approver = $(this.mdStatus1).val()
+  saveModificationRequest() {
+    let attendanceStatusValue = $('#mdStatus1').val()
+    let data = this.modificationPopUpData;
+    let { empId, index, modificationId, requestedInTime, requestedOutTime, date } = data;
+    if (empId && modificationId && requestedInTime && requestedOutTime && date) {
+      let year = date.split('-')[0];
+      let month = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      let approveDate = this.commonService.getTodayDateTime()
+      let inDetailsPath = `/Attendance/${empId}/${year}/${month}/${date}/inDetails`
+      let outDetailsPath = `/Attendance/${empId}/${year}/${month}/${date}/outDetails`
+      let modificationPath = `/ModificationRequests/${modificationId}/`
+      this.db.object(inDetailsPath).update({ status: attendanceStatusValue, approveAt: approveDate, approveBy: localStorage.getItem('userID'), time: requestedInTime })
+      this.db.object(outDetailsPath).update({ time: requestedOutTime });
+      this.db.object(modificationPath).update({ isApproved: 'true' });
+      this.attendanceList[index]["approverStatus"] = attendanceStatusValue;
+      if (attendanceStatusValue == "0") {
+        this.attendanceList[index]["status"] = "Not Approved";
+      } else if (attendanceStatusValue == "1") {
+        this.attendanceList[index]["status"] = "Full Day";
+      } else if (attendanceStatusValue == "2") {
+        this.attendanceList[index]["status"] = "Pre Lunch";
+
+      } else if (attendanceStatusValue == "3") {
+        this.attendanceList[index]["status"] = "Post Lunch";
+
+      } else if (attendanceStatusValue == "4") {
+        this.attendanceList[index]["status"] = "Absent";
+      }
+      this.attendanceList[index]['inTime'] = requestedInTime;
+      this.attendanceList[index]['outTime'] = requestedOutTime;
+      this.attendanceList[index]['isModificationRequired'] = false;
+      let approveAt = approveDate.split(" ")[0].split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(approveDate.split(" ")[0].split('-')[1])) + " " + approveDate.split(" ")[0].split('-')[0] + " at " + approveDate.split(" ")[1];
+      this.attendanceList[index]["approveAt"] = approveAt;
+      let userDetail = this.userList.find(item => item.userId == localStorage.getItem("userID"));
+      this.attendanceList[index]["approveBy"] = userDetail ? userDetail.name : ''
+      this.modificationRequestList = this.modificationRequestList.map(item=>{
+        if(Number(item.empId)===Number(empId)&&new Date(date).toDateString()===new Date(item.date).toDateString()){
+          return {...item,isApproved:'true'}
+        }
+        return item
+      })
+      let updatedModificationRequestList = this.modificationRequestList.filter(emp=>emp.isApproved.toString()==='false')
+      this.modificationRequestList = updatedModificationRequestList
+      this.commonService.saveJsonFile(updatedModificationRequestList, 'modifcationRequest.json', '/AttendanceModificationRequestJSON/');
+      this.commonService.saveJsonFile({ lastUpdatedAt: this.commonService.getTodayDateTime() }, 'lastUpdateDate.json', '/AttendanceModificationRequestJSON/');
+      this.commonService.setAlertMessage("success", "Attendance update successfully.");
+      this.cancelModificationPopup();
+    }
+    else {
+      this.commonService.setAlertMessage('error', 'Error saving changes !!!');
+
+      return
+    }
 
   }
   cancelModificationPopup() {
+    this.modificationPopUpData = {}
     this.modalService.dismissAll()
   }
   approveAttendance() {
@@ -831,7 +890,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
     this.getNotApprovedAttendanceCount();
     if (this.filterType == "byDate") {
-      let detail = this.employeeList.find(item => item.empId == this.attendanceList[index]["empId"]);
+      let detail = this.employeeList.find(item => Number(item.empId) === Number(empId));
       if (detail != undefined) {
         detail.status = this.attendanceList[index]["status"];
       }
@@ -1024,26 +1083,37 @@ export class EmployeeAttendanceComponent implements OnInit {
   
   */
   updateModificationRequestList() {
-
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateModificationRequestList");
-    let storagePath = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FAttendanceModificationRequestJSON%2FlastUpdateDate.json?alt=media"
-    let storageInstance = this.httpService.get(storagePath).subscribe(dateObj => {
-      storageInstance.unsubscribe()
-      let lastUpdatedAt = new Date(dateObj['lastUpdatedAt']);
-      let currentDate = new Date()
-      if (dateObj && lastUpdatedAt.toDateString() === currentDate.toDateString()) {
-        storagePath = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FAttendanceModificationRequestJSON%2FmodifcationRequest.json?alt=media"
-        this.getAllModificationRequest(storagePath)
-      }
-      else {
+    try {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateModificationRequestList");
+      let storagePath = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FAttendanceModificationRequestJSON%2FlastUpdateDate.json?alt=media"
+      let storageInstance = this.httpService.get(storagePath).subscribe(dateObj => {
+        storageInstance.unsubscribe()
+        if (dateObj) {
+          let lastUpdatedAt = new Date(dateObj['lastUpdatedAt']);
+          let currentDate = new Date()
+          if (dateObj && lastUpdatedAt.toDateString() === currentDate.toDateString()) {
+            storagePath = this.fireStorePath + this.commonService.getFireStoreCity() + "%2FAttendanceModificationRequestJSON%2FmodifcationRequest.json?alt=media"
+            this.getAllModificationRequest(storagePath)
+          }
+          else {
+            this.getAllModificationRequest('')
+          }
+        }
+        else {
+          this.getAllModificationRequest('')
+        }
+      }, error => {
         this.getAllModificationRequest('')
-      }
-    })
+      })
+    } catch (error) {
+      return
+    }
+
   }
   /*
   Function name : getAllmodificationRequest
   Description : This function is written for get all modification requests,
-  based on path parameter and if path is given then it will data from storage,
+  based on path parameter and if path is given then it will get data from storage,
   and  if not given then get from data base and save json file.
   Written by : Ritik Parmar
   Written date  : 23-12-2024 
@@ -1052,7 +1122,6 @@ export class EmployeeAttendanceComponent implements OnInit {
   */
   getAllModificationRequest(path: string) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAllModificationRequest");
-
     if (path) {
       let storageInstance = this.httpService.get(path).subscribe(response => {
         storageInstance.unsubscribe();
@@ -1070,7 +1139,7 @@ export class EmployeeAttendanceComponent implements OnInit {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAllModificationRequest", modificationData);
             let list = Object.keys(modificationData).reduce((acc, id) => {
               if (modificationData[id]['isApproved'].toString() === 'false') {
-                acc.push(modificationData[id]);
+                acc.push({ modificationId: id, ...modificationData[id] });
               }
               return acc;
             }, []);
