@@ -182,7 +182,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                     resolve({ status: "success", data: employeeData });
                   }
                   else if (this.canViewAttendance == "1") {
-        
+
                     employeeData = { empId: empId.toString(), empCode: employeeDetail.empCode, name: employeeDetail.name, designationId: employeeDetail.designationId, status: employeeDetail.status, isAttendanceApprover: "0", attendanceManager: attendanceManager };
                     resolve({ status: "success", data: employeeData });
                   }
@@ -267,13 +267,14 @@ export class EmployeeAttendanceComponent implements OnInit {
       let attendanceApprover = this.allEmployeeList[i]["attendanceApprover"];
       let attendanceManager = this.allEmployeeList[i]["attendanceManager"];
       let designationId = this.allEmployeeList[i]["designationId"];
+
       let dbPath = "Attendance/" + empId + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
       let employeeAttendanceInstance = this.db.object(dbPath).valueChanges().subscribe(
         attendanceData => {
           employeeAttendanceInstance.unsubscribe();
           if (attendanceData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAttendance", attendanceData);
-            let detail = this.allEmployeeList.find(item => item.empId == empId);
+            let detail = this.allEmployeeList.find(item => Number(item.empId) == Number(empId));
             if (detail != undefined) {
               let inTime = "";
               let outTime = "";
@@ -302,14 +303,14 @@ export class EmployeeAttendanceComponent implements OnInit {
                   inTime = attendanceData["inDetails"]["time"];
                   inLocationFull = attendanceData["inDetails"]["address"];
                   inImageUrl = attendanceData["inDetails"]['imageURL'] || '';
-                  if (attendanceData["inDetails"]["address"].toString().length > 85) {
+                  if (attendanceData["inDetails"]["address"] && attendanceData["inDetails"]["address"].toString().length > 85) {
                     inLocation = attendanceData["inDetails"]["address"].toString().substring(0, 85) + "...";
                   }
                   else {
                     inLocation = attendanceData["inDetails"]["address"];
                   }
                   let latLngString = attendanceData["inDetails"]["location"]
-                  if (latLngString != undefined) {
+                  if (latLngString && latLngString != undefined) {
                     let [latitude, longitude] = latLngString.split(',');
                     inLat = latitude
                     inLng = longitude
@@ -389,14 +390,20 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-
               this.employeeList.push({
                 empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
                 inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, inLocation: inLocation,
                 outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: detail.name, reason: reason
               });
-            }
 
+            }
+          }
+          else {
+
+            let data = this.getModificationRequestByEmployeeId(empId, this.selectedDate)
+            if (data) {
+              this.employeeList.push(data)
+            }
           }
           if (i == this.allEmployeeList.length - 1) {
             this.filterData();
@@ -404,6 +411,40 @@ export class EmployeeAttendanceComponent implements OnInit {
           }
         }
       );
+    }
+
+  }
+  getModificationRequestByEmployeeId(empId: any, date: any) {
+    let detail = this.modificationRequestList.find(emp => Number(emp.empId) === Number(empId) && new Date(date).toDateString() === new Date(emp.date).toDateString())
+    if (detail) {
+      let empDetail = this.allEmployeeList.find(emp => Number(emp.empId) === Number(empId));
+      let isAttendanceApprover = empDetail["isAttendanceApprover"];
+      let attendanceApprover = empDetail["attendanceApprover"];
+      let attendanceManager = empDetail["attendanceManager"];
+      let designationId = empDetail["designationId"];
+      let inTime = detail ? detail['inTime'].split('~')[1] : ""
+      let outTime = detail ? detail['outTime'].split('~')[1] : ""
+      let data = {
+        empId: empId,
+        displayName: this.filterType === 'byDate' ? empDetail.name : this.commonService.convertDateWithMonthName(date),
+        name: this.filterType === 'byDate' ? empDetail.name : date,
+        empCode: empDetail.empCode,
+        inTime: inTime ? inTime !== '--' ? inTime : "--/--" : "--/--",
+        outTime: outTime ? outTime !== '--' ? outTime : "--/--" : "--/--",
+        status: 'Not Approved',
+        approverStatus: '0',
+        designationId: designationId,
+        isAttendanceApprover: isAttendanceApprover,
+        attendanceApprover: attendanceApprover,
+        attendanceManager: attendanceManager,
+      }
+      if (this.filterType !== 'byDate') {
+        data['isModificationRequired'] = true;
+      }
+      return data
+    }
+    else {
+      return null
     }
 
   }
@@ -583,7 +624,12 @@ export class EmployeeAttendanceComponent implements OnInit {
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
           }
           else {
+            let data = this.getModificationRequestByEmployeeId(empId, date)
+            if (data) {
+              this.employeeList.push(data)
+            }
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
+
           }
         });
     }
@@ -605,7 +651,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       $(this.txtDate).val(newDate);
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
-        if (this.employeeList.length > 0) {
+        if (this.allEmployeeList.length > 0) {
           $(this.divLoader).show();
           this.getSelectedYearMonthName();
           this.getAttendance();
@@ -640,7 +686,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
 
     if (this.modificationRequestList.length > 0 && this.attendanceList.length > 0) {
-      let date =  $(this.txtDate).val().toString()
+      let date = $(this.txtDate).val().toString()
       updatedList = this.attendanceList.map(emp => {
         const detail = this.modificationRequestList.find(item => Number(item.empId) === Number(emp.empId) && new Date(date).toDateString() === new Date(item.date).toDateString());
         if (detail) {
@@ -757,6 +803,12 @@ export class EmployeeAttendanceComponent implements OnInit {
       $('#inputReason').val(reason)
     }, 200);
   }
+  /*
+  Funtion name :  openModificationPopup
+  Description : This function is working for open modification popup window of the selected employee and set employee modification details in popup window
+  Written by : Ritik Parmar
+  Written date : 26 Dec 2024
+   */
   openModificationPopup(content: any, index: any, approverStatus: any) {
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
@@ -771,17 +823,18 @@ export class EmployeeAttendanceComponent implements OnInit {
     let inTime = this.attendanceList[index]["inTime"];
     let outTime = this.attendanceList[index]["outTime"];
     let name = this.attendanceList[index]["name"];
-    let date = this.filterType==='byDate'? $(this.txtDate).val().toString():name;
+    let date = this.filterType === 'byDate' ? $(this.txtDate).val().toString() : name;
     let detail = this.modificationRequestList.find((emp) => Number(emp.empId) === Number(empId) && new Date(date).toDateString() === new Date(emp.date).toDateString());
-    let requestedInTime = detail&&detail.inTime ? detail.inTime.split('~') : ''
-    let requestedOutTime = detail&&detail.outTime ? detail.outTime.split('~') : ""
-    let remark = detail&&detail.remark?detail.remark:'';
-    let modificationCase = detail&&detail.case?detail.case:'';
+    let requestedInTime = detail && detail.inTime ? detail.inTime.split('~') : ''
+    let requestedOutTime = detail && detail.outTime ? detail.outTime.split('~') : ""
+    let remark = detail && detail.remark ? detail.remark : '';
+    let modificationCase = detail && detail.case ? detail.case : '';
+
     this.modificationPopUpData = {
       empId: empId,
       index: index,
       date: date ? date : '',
-      modificationId: detail&&detail.modificationId?detail.modificationId:'',
+      modificationId: detail && detail.modificationId ? detail.modificationId : '',
       modificationCase: modificationCase ? modificationCase : '---',
       inTime: inTime ? inTime : '--/--',
       outTime: outTime ? outTime : '--/--',
@@ -790,10 +843,22 @@ export class EmployeeAttendanceComponent implements OnInit {
       remark: remark ? remark : "---",
     }
   }
-  saveModificationRequest() {
+  /* 
+  Funtion name : updateEmployeeAttendance
+  Description : This function is working for update employee attendance as per its modification request and set updated data locally in attandance list
+  Written by  : Ritik Parmar
+  Written date : 26 Dec 2024
+  Updated by : Ritik Parmar
+  Updated date : 28 Dec 2024
+  */
+  updateEmployeeAttendance() {
     let attendanceStatusValue = $('#mdStatus1').val()
     let data = this.modificationPopUpData;
     let { empId, index, modificationId, requestedInTime, requestedOutTime, date } = data;
+    let cssClass = "text-left br-1";
+    let cssWorkingClass = "text-left br-1";
+    let workingHour = "";
+    let inTimestemp = 0;
     if (empId && modificationId && requestedInTime && requestedOutTime && date) {
       let year = date.split('-')[0];
       let month = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
@@ -804,7 +869,9 @@ export class EmployeeAttendanceComponent implements OnInit {
       this.db.object(inDetailsPath).update({ status: attendanceStatusValue, approveAt: approveDate, approveBy: localStorage.getItem('userID'), time: requestedInTime })
       this.db.object(outDetailsPath).update({ time: requestedOutTime });
       this.db.object(modificationPath).update({ isApproved: 'true' });
+
       this.attendanceList[index]["approverStatus"] = attendanceStatusValue;
+
       if (attendanceStatusValue == "0") {
         this.attendanceList[index]["status"] = "Not Approved";
       } else if (attendanceStatusValue == "1") {
@@ -818,23 +885,49 @@ export class EmployeeAttendanceComponent implements OnInit {
       } else if (attendanceStatusValue == "4") {
         this.attendanceList[index]["status"] = "Absent";
       }
+
+      let approveAt = approveDate.split(" ")[0].split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(approveDate.split(" ")[0].split('-')[1])) + " " + approveDate.split(" ")[0].split('-')[0] + " at " + approveDate.split(" ")[1];
+      let userDetail = this.userList.find(item => item.userId == localStorage.getItem("userID"));
+      if (requestedInTime) {
+        inTimestemp = new Date(date + " " + requestedInTime).getTime();
+        let afterTimestemp = new Date(date + " 08:30").getTime();
+        if (inTimestemp > afterTimestemp) {
+          cssClass = "text-left br-1 afterTime";
+        }
+      }
+
+      if (requestedOutTime) {
+        let currentTime = new Date(this.selectedDate + " " + requestedOutTime);
+        let inTimes = new Date(this.selectedDate + " " + requestedInTime);
+        let diff = (currentTime.getTime() - inTimes.getTime());
+        let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        let minutes = Math.floor((diff / (1000 * 60)) % 60);
+        let rminutes = minutes + hours * 60;
+        if (rminutes < 525) {
+          cssWorkingClass = "text-left br-1 workingTime";
+        }
+        workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
+      }
+      this.attendanceList[index]['isModificationRequired'] = false;
       this.attendanceList[index]['inTime'] = requestedInTime;
       this.attendanceList[index]['outTime'] = requestedOutTime;
-      this.attendanceList[index]['isModificationRequired'] = false;
-      let approveAt = approveDate.split(" ")[0].split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(approveDate.split(" ")[0].split('-')[1])) + " " + approveDate.split(" ")[0].split('-')[0] + " at " + approveDate.split(" ")[1];
-      this.attendanceList[index]["approveAt"] = approveAt;
-      let userDetail = this.userList.find(item => item.userId == localStorage.getItem("userID"));
-      this.attendanceList[index]["approveBy"] = userDetail ? userDetail.name : ''
-      this.modificationRequestList = this.modificationRequestList.map(item=>{
-        if(Number(item.empId)===Number(empId)&&new Date(date).toDateString()===new Date(item.date).toDateString()){
-          return {...item,isApproved:'true'}
+      this.attendanceList[index]['cssClass'] = cssClass
+      this.attendanceList[index]['cssWorkingClass'] = cssWorkingClass
+      this.attendanceList[index]['workingHour'] = workingHour
+      this.attendanceList[index]['inTimestemp'] = inTimestemp
+      this.attendanceList[index]["approveBy"] = userDetail ? userDetail.name : "";
+      this.attendanceList[index]["approveAt"] = approveAt; //to show approve at time in new line
+      this.modificationRequestList = this.modificationRequestList.map(item => {
+        if (Number(item.empId) === Number(empId) && new Date(date).toDateString() === new Date(item.date).toDateString()) {
+          return { ...item, isApproved: 'true' }
         }
         return item
-      })
-      let updatedModificationRequestList = this.modificationRequestList.filter(emp=>emp.isApproved.toString()==='false')
+      });
+      let updatedModificationRequestList = this.modificationRequestList.filter(emp => emp.isApproved.toString() === 'false')
       this.modificationRequestList = updatedModificationRequestList
       this.commonService.saveJsonFile(updatedModificationRequestList, 'modifcationRequest.json', '/AttendanceModificationRequestJSON/');
       this.commonService.saveJsonFile({ lastUpdatedAt: this.commonService.getTodayDateTime() }, 'lastUpdateDate.json', '/AttendanceModificationRequestJSON/');
+
       this.commonService.setAlertMessage("success", "Attendance update successfully.");
       this.cancelModificationPopup();
     }
@@ -845,6 +938,12 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
 
   }
+    /* 
+  Funtion name : updateEmployeeAttendance
+  Description : This function is working for close modification popup window
+  Written by  : Ritik Parmar
+  Written date : 26 Dec 2024
+  */
   cancelModificationPopup() {
     this.modificationPopUpData = {}
     this.modalService.dismissAll()
@@ -1077,7 +1176,7 @@ export class EmployeeAttendanceComponent implements OnInit {
 
   /*
     function name : updateModificationRequestList
-    Description : This function is written for update modification request list
+    Description : This function is written for update employee's modification request list
     Written By : Ritik Parmar 
     Written Date  : 24 Dec 2024
   
@@ -1117,8 +1216,8 @@ export class EmployeeAttendanceComponent implements OnInit {
   and  if not given then get from data base and save json file.
   Written by : Ritik Parmar
   Written date  : 23-12-2024 
-  Update by : Ritik Parmar
-  Updated Date : 24 Dec 2024 
+  Updated by : Ritik Parmar
+  Updated date : 24 Dec 2024 
   */
   getAllModificationRequest(path: string) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAllModificationRequest");
