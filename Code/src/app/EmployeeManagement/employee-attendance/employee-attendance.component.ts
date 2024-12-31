@@ -852,7 +852,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   Updated date : 28 Dec 2024
   */
   updateEmployeeAttendance() {
-    let attendanceStatusValue = $('#mdStatus1').val()
+    let attendanceStatusValue = $('#mdStatus1').val();
     let data = this.modificationPopUpData;
     let { empId, index, modificationId, requestedInTime, requestedOutTime, date } = data;
     let cssClass = "text-left br-1";
