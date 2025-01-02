@@ -32,13 +32,14 @@ export class WorkAssignReportComponent implements OnInit {
     this.selectedDate = this.commonService.setTodayDate();
     $('#txtDate').val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
-    this.currentYear = new Date().getFullYear();
+    this.currentYear = this.selectedDate.split("-")[0];
     this.getWorkAssignment();
   }
 
   getWorkAssignment() {
     let list = [];
     let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
+    console.log(dbPath)
     let workInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       workInstance.unsubscribe();
       if (data != null) {
@@ -167,6 +168,8 @@ export class WorkAssignReportComponent implements OnInit {
 
   setDate(filterVal: any) {
     this.selectedDate = filterVal;
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split("-")[0];
     this.resetData();
     this.getWorkAssignment();
 
@@ -176,6 +179,8 @@ export class WorkAssignReportComponent implements OnInit {
     let nextDate = this.commonService.getNextDate(currentDate, 1);
     $('#txtDate').val(nextDate);
     this.selectedDate = nextDate;
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split("-")[0];
     this.resetData();
     this.getWorkAssignment();
   }
@@ -184,6 +189,8 @@ export class WorkAssignReportComponent implements OnInit {
     let previousDate = this.commonService.getPreviousDate(currentDate, 1);
     $('#txtDate').val(previousDate);
     this.selectedDate = previousDate;
+    this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+    this.currentYear = this.selectedDate.split("-")[0];
     this.resetData();
     this.getWorkAssignment();
   }
