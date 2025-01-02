@@ -112,9 +112,9 @@ export class SalaryCalculationComponent implements OnInit {
         }
         this.wardWagesList = this.commonService.transformNumeric(this.wardWagesList, "-timestamp");
       }
-      this.getEmployee();
+      // this.getEmployee();
     }, error => {
-      this.getEmployee();
+      //this.getEmployee();
     });
   }
 
@@ -131,41 +131,47 @@ export class SalaryCalculationComponent implements OnInit {
   getEmployee() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEmployee");
     $(this.divLoader).show();
-
+    this.employeeList = [];
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let employeeInstance = this.httpService.get(path).subscribe(data => {
       employeeInstance.unsubscribe();
       let jsonData = JSON.stringify(data);
-      let list = JSON.parse(jsonData).filter(item => item.empType == 2 && item.status == 1);
+      let list = JSON.parse(jsonData).filter(item => item.empType == 2);
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
           let empId = list[i]["empId"];
-          let dbPath = "Employees/" + empId + "/GeneralDetails/salaryType";
-          let salaryTypeInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
-            salaryTypeInstance.unsubscribe();
-            let isSalaried = false;
-
-            if (data != null) {
-              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEmployee", data);
-              if (data == "salaried") {
-                isSalaried = true;
-              }
-            }
-            else {
-              isSalaried = true;
-            }
-
-            if (isSalaried == true) {
-              this.employeeList.push({ empId: list[i]["empId"], empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"] });
+          let dateOfLeave = list[i]["dateOfLeave"] ? list[i]["dateOfLeave"] : "";
+          let salaryType = list[i]["salaryType"];
+          let status = list[i]["status"];
+          let isSalaried = false;
+          if (salaryType == "salaried") {
+            isSalaried = true;
+          }
+          if (isSalaried == true) {
+            if (status == "1") {
+              this.employeeList.push({ empId: empId, empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], status: status, dateOfLeave: dateOfLeave, salaryType: salaryType });
               this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
             }
-            this.salaryList = this.employeeList;
-          });
+            else {
+              if (dateOfLeave != "") {
+                let compaireDate = new Date(this.selectedYear + "-" + this.selectedMonth + "-01");
+                if (new Date(dateOfLeave) > compaireDate) {
+                  this.employeeList.push({ empId: empId, empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], status: status, dateOfLeave: dateOfLeave, salaryType: salaryType });
+                  this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+                }
+              }
+            }
+          }
         }
+
+        this.salaryList = this.employeeList;
+        this.getSalary();
       }
+      /*
       setTimeout(() => {
         $(this.divLoader).hide();
       }, 12000);
+      */
 
     });
   }
@@ -178,11 +184,11 @@ export class SalaryCalculationComponent implements OnInit {
       this.salaryList = this.employeeList.filter(item => item.designation == filterVal);
       this.salaryList = this.salaryList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
     }
-    this.getSalary();
+   // this.getSalary();
   }
 
   async getSalary() {
-     $(this.divLoader).show();
+    $(this.divLoader).show();
 
     this.clearSalary();
     this.monthDays = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
@@ -215,7 +221,7 @@ export class SalaryCalculationComponent implements OnInit {
         let monthDate = this.selectedYear + '-' + (this.selectedMonth < 10 ? '0' : '') + this.selectedMonth + '-' + (i < 10 ? '0' : '') + i;
         this.getSalaryFromDailyWork(monthDate, i, this.monthDays);
       }
-     
+
       setTimeout(() => {
         $(this.divLoader).hide();
       }, loaderTime);
@@ -311,7 +317,7 @@ export class SalaryCalculationComponent implements OnInit {
                         }
                         let zoneDetail = this.zoneList.find(item => item.zoneNo == ward);
                         if (zoneDetail != undefined) {
-                          this.getWorkPercentage(empId, ward, monthDate, index, days, inTime, outTime);
+                          this.getWorkPercentage(empId, ward, monthDate, inTime, outTime);
                         }
                         for (let k = 0; k < workDetail.length; k++) {
                           totalWeges += Number(workDetail[k]["wages"]);
@@ -331,7 +337,7 @@ export class SalaryCalculationComponent implements OnInit {
 
                       let zoneDetail = this.zoneList.find(item => item.zoneNo == ward);
                       if (zoneDetail != undefined) {
-                        this.getWorkPercentage(empId, ward, monthDate, index, days, inTime, outTime);
+                        this.getWorkPercentage(empId, ward, monthDate, inTime, outTime);
                       }
                       for (let k = 0; k < workDetail.length; k++) {
                         totalWeges += Number(workDetail[k]["wages"]);
@@ -344,7 +350,7 @@ export class SalaryCalculationComponent implements OnInit {
                     }
                   }
                 }
-                
+
               }
             }
           }
@@ -354,7 +360,7 @@ export class SalaryCalculationComponent implements OnInit {
   }
 
 
-  getWorkPercentage(empId: any, ward: any, monthDate: any, index: any, days: any, inTime: any, outTime: any) {
+  getWorkPercentage(empId: any, ward: any, monthDate: any, inTime: any, outTime: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkPercentage");
     this.commonService.getWardLine(ward, monthDate).then((linesData: any) => {
       let wardLinesDataObj = JSON.parse(linesData);
@@ -371,7 +377,7 @@ export class SalaryCalculationComponent implements OnInit {
         let workLines = 0;
         if (data != null) {
           if (empId == "1437") {
-            
+
           }
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
@@ -395,7 +401,7 @@ export class SalaryCalculationComponent implements OnInit {
           let salaryDetail = this.salaryList.find(item => item.empId == empId);
           if (salaryDetail != undefined) {
             let day = "day" + Number(monthDate.split('-')[2]);
-            let workDetailList = salaryDetail[day];
+            let workDetailList = salaryDetail[day]?salaryDetail[day]:[];
             if (workDetailList.length > 0) {
               for (let i = 0; i < workDetailList.length; i++) {
                 if (workDetailList[i]["ward"] == ward) {
@@ -508,16 +514,18 @@ export class SalaryCalculationComponent implements OnInit {
 
   changeYearSelection(filterVal: any) {
     this.selectedYear = filterVal;
+    $(this.ddlRoles).val("0");
     if (filterVal != "0") {
-      this.getSalary();
+      this.getEmployee();
     }
   }
 
   changeMonthSelection(filterVal: any) {
     this.selectedMonth = Number(filterVal);
+    $(this.ddlRoles).val("0");
     if (this.selectedMonth != 0) {
       this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
-      this.getSalary();
+      this.getEmployee();
     }
   }
 

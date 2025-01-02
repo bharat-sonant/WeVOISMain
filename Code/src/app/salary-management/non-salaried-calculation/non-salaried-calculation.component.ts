@@ -112,9 +112,9 @@ export class NonSalariedCalculationComponent implements OnInit {
         }
         this.wardWagesList = this.commonService.transformNumeric(this.wardWagesList, "-timestamp");
       }
-      this.getEmployee();
+     // this.getEmployee();
     }, error => {
-      this.getEmployee();
+     // this.getEmployee();
     });
   }
 
@@ -131,9 +131,11 @@ export class NonSalariedCalculationComponent implements OnInit {
   getEmployee() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEmployee");
     $(this.divLoader).show();
+    /*
     setTimeout(() => {
       $(this.divLoader).hide();
     }, 2000);
+    */
     const path = this.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
     let employeeInstance = this.httpService.get(path).subscribe(data => {
       employeeInstance.unsubscribe();
@@ -142,6 +144,29 @@ export class NonSalariedCalculationComponent implements OnInit {
       if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
           let empId = list[i]["empId"];
+          let dateOfLeave = list[i]["dateOfLeave"] ? list[i]["dateOfLeave"] : "";
+          let salaryType = list[i]["salaryType"];
+          let status = list[i]["status"];
+          let isSalaried = false;
+          if (salaryType == "non-salaried") {
+            isSalaried = true;
+          }
+          if (isSalaried == true) {
+            if (status == "1") {
+              this.employeeList.push({ empId: empId, empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], status: status, dateOfLeave: dateOfLeave, salaryType: salaryType });
+              this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+            }
+            else {
+              if (dateOfLeave != "") {
+                let compaireDate = new Date(this.selectedYear + "-" + this.selectedMonth + "-01");
+                if (new Date(dateOfLeave) > compaireDate) {
+                  this.employeeList.push({ empId: empId, empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], status: status, dateOfLeave: dateOfLeave, salaryType: salaryType });
+                  this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+                }
+              }
+            }
+          }
+/*
           let dbPath = "Employees/" + empId + "/GeneralDetails/salaryType";
           let salaryTypeInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
             salaryTypeInstance.unsubscribe();
@@ -160,11 +185,17 @@ export class NonSalariedCalculationComponent implements OnInit {
             }
             this.salaryList = this.employeeList;
           });
+          */
         }
+        
+        this.salaryList = this.employeeList;
+        this.getSalary();
       }
+      /*
       setTimeout(() => {
         $(this.divLoader).hide();
       }, 12000);
+      */
 
     });
   }
@@ -506,16 +537,18 @@ export class NonSalariedCalculationComponent implements OnInit {
 
   changeYearSelection(filterVal: any) {
     this.selectedYear = filterVal;
+    $(this.ddlRoles).val("0");
     if (filterVal != "0") {
-      this.getSalary();
+      this.getEmployee();
     }
   }
 
   changeMonthSelection(filterVal: any) {
     this.selectedMonth = Number(filterVal);
+    $(this.ddlRoles).val("0");
     if (this.selectedMonth != 0) {
       this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
-      this.getSalary();
+      this.getEmployee();
     }
   }
 

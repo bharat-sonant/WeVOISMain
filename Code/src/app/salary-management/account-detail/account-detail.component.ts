@@ -479,11 +479,15 @@ export class AccountDetailComponent implements OnInit {
               let empCode = employeeDetail["GeneralDetails"]["empCode"];
               let designationId = employeeDetail["GeneralDetails"]["designationId"];
               let email = employeeDetail["GeneralDetails"]["email"];
+              let salaryType=employeeDetail["GeneralDetails"]["salaryType"]?employeeDetail["GeneralDetails"]["salaryType"]:"salaried";
+              let dateOfLeave=employeeDetail["GeneralDetails"]["dateOfLeave"]?employeeDetail["GeneralDetails"]["dateOfLeave"]:"";
               let accountNo = "";
               let ifsc = "";
               let modifyBy = "";
               let modifyDate = "";
               let isLock = 0;
+
+              console.log(dateOfLeave)
 
               if (employeeDetail["BankDetails"] != null) {
                 if (employeeDetail["BankDetails"]["AccountDetails"] != null) {
@@ -527,7 +531,7 @@ export class AccountDetailComponent implements OnInit {
                   }
                 }
               }
-              employeeData={ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType };
+              employeeData={ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType,dateOfLeave:dateOfLeave,salaryType:salaryType };
               resolve({ status: "success", data: employeeData });
             }
             else {
