@@ -38,7 +38,7 @@ export class EmployeePenaltyComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Finance-Reports","Penalty-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Finance-Reports", "Penalty-Report", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -136,7 +136,7 @@ export class EmployeePenaltyComponent implements OnInit {
                   this.employeeList = this.commonService.transformNumeric(this.employeeList, "name");
                 }
                 let orderBy = new Date(date).getTime();
-                this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], amount: empObj[empId]["amount"], orderBy: orderBy });
+                this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], createdOn: empObj[empId]["createdOn"], amount: empObj[empId]["amount"], orderBy: orderBy });
                 this.penalityList = this.penalityList.sort((a, b) =>
                   a.orderBy > b.orderBy ? 1 : -1
                 );
@@ -184,9 +184,10 @@ export class EmployeePenaltyComponent implements OnInit {
                       }
                       let orderBy = new Date(date).getTime();
                       let createdBy = empObj[empId]["createdBy"]
+                      let createdOn = empObj[empId]["createdOn"]
                       let detail = this.specialUserList.find(item => item.name == createdBy);
                       if (detail != undefined) {
-                        this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });
+                        this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, createdOn: createdOn, amount: empObj[empId]["amount"], orderBy: orderBy });
                         this.penalityList = this.penalityList.sort((a, b) =>
                           a.orderBy > b.orderBy ? 1 : -1
                         );
@@ -200,7 +201,7 @@ export class EmployeePenaltyComponent implements OnInit {
                               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPenality", empData);
                               createdBy = empData;
                             }
-                            this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, amount: empObj[empId]["amount"], orderBy: orderBy });
+                            this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, createdOn: createdOn, amount: empObj[empId]["amount"], orderBy: orderBy });
                             this.penalityList = this.penalityList.sort((a, b) =>
                               a.orderBy > b.orderBy ? 1 : -1
                             );
