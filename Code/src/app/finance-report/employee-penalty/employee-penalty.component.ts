@@ -254,7 +254,6 @@ export class EmployeePenaltyComponent implements OnInit {
   }
 
   exportexcel() {
-
     let htmlString = "";
     if (this.penalityList.length > 0) {
       htmlString = "<table>";
@@ -277,6 +276,9 @@ export class EmployeePenaltyComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Penalty by";
       htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Penalty on";
+      htmlString += "</td>";
 
       htmlString += "</tr>";
       for (let i = 0; i < this.penalityList.length; i++) {
@@ -298,6 +300,9 @@ export class EmployeePenaltyComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.penalityList[i]["createdBy"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.penalityList[i]["createdOn"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
