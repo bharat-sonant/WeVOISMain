@@ -301,8 +301,8 @@ export class EmployeePenaltyComponent implements OnInit {
         htmlString += "<td>";
         htmlString += this.penalityList[i]["createdBy"];
         htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.penalityList[i]["createdOn"];
+        htmlString += "<td t='s'>";
+        htmlString += String(this.penalityList[i]["createdOn"]);
         htmlString += "</td>";
         htmlString += "</tr>";
       }
