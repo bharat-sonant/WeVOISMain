@@ -538,8 +538,11 @@ export class NonSalariedCalculationComponent implements OnInit {
   changeYearSelection(filterVal: any) {
     this.selectedYear = filterVal;
     $(this.ddlRoles).val("0");
+    $(this.ddlMonth).val("0");
+    this.salaryList=[];
+    this.clearSalary();
     if (filterVal != "0") {
-      this.getEmployee();
+     // this.getEmployee();
     }
   }
 

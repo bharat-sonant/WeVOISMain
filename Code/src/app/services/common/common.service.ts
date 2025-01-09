@@ -270,6 +270,9 @@ export class CommonService {
     else if (cityName == "tonk-raj") {
       cardPrefix="TONR";
     }
+    else if (cityName == "jaipur-bwg") {
+      cardPrefix="JAIBWG";
+    }
     return cardPrefix;
   }
 
@@ -425,6 +428,9 @@ export class CommonService {
     }
     else if (cityName == "tonk-raj") {
       latLng.push({ lat: 26.165516, lng: 75.779292 });
+    }
+    else if (cityName == "jaipur-bwg") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
     return latLng;
   }

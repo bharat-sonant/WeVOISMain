@@ -142,23 +142,23 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(12, 0);
+    this.addDevices(4, 0);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice = lastDevice + 1;
-    if (index <= 18) {
+    if (index <= 30) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
         lastActive: "01/08/2024 08:10",
-        name: "KUC-" + lastDevice,
+        name: "TON-" + lastDevice,
         readerAppVersion: "1.0.3.6",
         status: "1"
       }
-      console.log("KUC-" + lastDevice);
-      let dbPath = "Devices/Kuchaman/" + key;
+      console.log("TON-" + lastDevice);
+      let dbPath = "Devices/Tonk-Raj/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }
@@ -925,16 +925,18 @@ export class Cms1Component implements OnInit {
         let address = fileList[i]["Address"];
         let lat = fileList[i]["Lat"];
         let lng = fileList[i]["Long"];
+        let pickFrequency = fileList[i]["Frq"];
+        let zone = fileList[i]["Zone"];
         const data = {
           address: address,
           lat: lat,
           lng: lng,
           isApproved: false,
-          pickFrequency: "1",
+          pickFrequency: pickFrequency,
           type: "Rectangular",
           ward: wardNo,
-          zone: "A",
-          createdDate: "2024-07-07"
+          zone: zone,
+          createdDate: "2024-12-30"
         }
         this.db.object("DustbinData/DustbinDetails/" + key.toString()).update(data);
         jsonObj[key] = data;

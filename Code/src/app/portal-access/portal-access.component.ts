@@ -30,7 +30,7 @@ export class PortalAccessComponent implements OnInit {
         $("#reengusBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "shahpura") {
-         $("#shahpuraBox").show();
+        $("#shahpuraBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-office") {
         $("#jaipurOfficeBox").show();
@@ -48,7 +48,7 @@ export class PortalAccessComponent implements OnInit {
         $("#jaisalmerBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "salasar") {
-         $("#salasarBox").show();
+        $("#salasarBox").show();
         //isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "behror") {
         $("#behrorBox").show();
@@ -130,7 +130,7 @@ export class PortalAccessComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "nawa") {
         $("#nawaBox").show();
         isBaseCity = true;
-      }  else if (this.accessCity[i]["city"] == "sonipat") {
+      } else if (this.accessCity[i]["city"] == "sonipat") {
         $("#sonipatBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jodhpur-bwg") {
@@ -138,6 +138,9 @@ export class PortalAccessComponent implements OnInit {
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "tonk-raj") {
         $("#tonkRajBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "jaipur-bwg") {
+        $("#jaipurBWGBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         $("#jaipurBox").show();
