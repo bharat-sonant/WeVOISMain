@@ -85,7 +85,6 @@ export class ReviewDutyonImagesComponent implements OnInit {
         if (dataList.length > 0) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDustbinDutyOnImages", dataList);
           for (let i = 0; i < dataList.length; i++) {
-            console.log("DataList", dataList);
             let dutyOnImages = [];
             let planName = dataList[i]["planName"];
             let binPlanId = dataList[i]["planId"];
