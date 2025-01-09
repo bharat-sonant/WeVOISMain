@@ -76,8 +76,14 @@
                                                                 <b>Driver : </b> {{dtImage.driver}}<br />
                                                                 <b>Helper : </b> {{dtImage.helper}}<br />
                                                                 <span [hidden]="dtImage.secondHelper=='---'">
-                                                                    <b>Secondary Helper : </b>
+                                                                    <b>Second Helper : </b>
                                                                     {{dtImage.secondHelper}}<br /></span>
+                                                                <span [hidden]="dtImage.thirdHelper=='---'">
+                                                                    <b>Third Helper : </b>
+                                                                    {{dtImage.thirdHelper}}<br /></span>
+                                                                <span [hidden]="dtImage.fourthHelper=='---'">
+                                                                    <b>Fourth Helper : </b>
+                                                                    {{dtImage.fourthHelper}}<br /></span>
                                                                 <b>Vehicle : </b> {{dtImage.vehicle}}
                                                                 <div
                                                                     style="display: flex; justify-content: space-between;">
