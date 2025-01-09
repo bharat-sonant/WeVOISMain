@@ -123,6 +123,12 @@ export class EmployeePenaltyComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let date = keyArray[i];
+            let todayDate = new Date(date);
+            let formattedDate = todayDate.toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            });
             let empObj = data[date];
             let empArray = Object.keys(empObj);
             if (empArray.length > 0) {
@@ -136,7 +142,7 @@ export class EmployeePenaltyComponent implements OnInit {
                   this.employeeList = this.commonService.transformNumeric(this.employeeList, "name");
                 }
                 let orderBy = new Date(date).getTime();
-                this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], createdOn: empObj[empId]["createdOn"], amount: empObj[empId]["amount"], orderBy: orderBy });
+                this.penalityList.push({ empId: empId, empCode: empCode, date: formattedDate, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: empObj[empId]["createdBy"], createdOn: empObj[empId]["createdOn"], amount: empObj[empId]["amount"], orderBy: orderBy });
                 this.penalityList = this.penalityList.sort((a, b) =>
                   a.orderBy > b.orderBy ? 1 : -1
                 );
@@ -169,6 +175,12 @@ export class EmployeePenaltyComponent implements OnInit {
             if (keyArray.length > 0) {
               for (let i = 0; i < keyArray.length; i++) {
                 let date = keyArray[i];
+                let todayDate = new Date(date);
+                let formattedDate = todayDate.toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                });
                 let empObj = data[date];
                 let empArray = Object.keys(empObj);
                 if (empArray.length > 0) {
@@ -184,10 +196,18 @@ export class EmployeePenaltyComponent implements OnInit {
                       }
                       let orderBy = new Date(date).getTime();
                       let createdBy = empObj[empId]["createdBy"]
-                      let createdOn = empObj[empId]["createdOn"]
+                      let createdOn = empObj[empId]["createdOn"];
+                      let splitCreatedOn = createdOn.split(" ")[0];
+                      let splitCreatedOn1 = createdOn.split(" ")[1];
+                      let createdDate = new Date(splitCreatedOn);
+                      let formattedcreatedDate = createdDate.toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      });
                       let detail = this.specialUserList.find(item => item.name == createdBy);
                       if (detail != undefined) {
-                        this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, createdOn: createdOn, amount: empObj[empId]["amount"], orderBy: orderBy });
+                        this.penalityList.push({ empId: empId, empCode: empCode, date: formattedDate, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, createdOn: formattedcreatedDate + " " + splitCreatedOn1, amount: empObj[empId]["amount"], orderBy: orderBy });
                         this.penalityList = this.penalityList.sort((a, b) =>
                           a.orderBy > b.orderBy ? 1 : -1
                         );
@@ -201,7 +221,7 @@ export class EmployeePenaltyComponent implements OnInit {
                               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getPenality", empData);
                               createdBy = empData;
                             }
-                            this.penalityList.push({ empId: empId, empCode: empCode, date: date, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, createdOn: createdOn, amount: empObj[empId]["amount"], orderBy: orderBy });
+                            this.penalityList.push({ empId: empId, empCode: empCode, date: formattedDate, name: name, penaltyType: empObj[empId]["penaltyType"], reason: empObj[empId]["reason"], createdBy: createdBy, createdOn: formattedcreatedDate + " " + splitCreatedOn1, amount: empObj[empId]["amount"], orderBy: orderBy });
                             this.penalityList = this.penalityList.sort((a, b) =>
                               a.orderBy > b.orderBy ? 1 : -1
                             );
@@ -217,6 +237,9 @@ export class EmployeePenaltyComponent implements OnInit {
                 if (i == keyArray.length - 1) {
                   setTimeout(() => {
                     this.allPenaltyList = this.penalityList;
+                    this.penalitylDetail.totalPenality = this.allPenaltyList.reduce((accumulator, current) => {
+                      return accumulator + (Number(current.amount) || 0);
+                    }, 0.00);
                     $(this.divLoader).hide();
                   }, 4000);
                 }
@@ -232,26 +255,44 @@ export class EmployeePenaltyComponent implements OnInit {
     });
   }
 
+
+
   filterData() {
     this.penalityList = [];
     if (this.allPenaltyList.length > 0) {
       let userId = $(this.ddlUser).val();
       let date = $(this.txtDate).val();
-      this.penalityList = this.allPenaltyList;
+      let todayDate = new Date(date.toString());
+      let formattedDate = todayDate.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+      let filteredList = this.allPenaltyList;
       if (userId != "0") {
-        this.penalityList = this.penalityList.filter(item => item.empId == userId);
+        filteredList = filteredList.filter(item => item.empId === userId);
       }
-      if (date != "") {
-        this.penalityList = this.penalityList.filter(item => item.date == date);
+      if (formattedDate != "") {
+        filteredList = filteredList.filter(item => item.date === formattedDate);
       }
+      this.penalityList = filteredList;
+      this.penalitylDetail.totalPenality = this.penalityList.reduce((accumulator, current) => {
+        return accumulator + (Number(current.amount) || 0);
+      }, 0.00);
     }
   }
+
 
   resetData() {
     $(this.txtDate).val("");
     $(this.ddlUser).val("0");
     this.penalityList = this.allPenaltyList;
+    this.penalitylDetail.totalPenality = this.penalityList.reduce((accumulator, current) => {
+      return accumulator + (Number(current.amount) || 0);
+    }, 0.00);
   }
+
+
 
   exportexcel() {
     let htmlString = "";
@@ -283,7 +324,7 @@ export class EmployeePenaltyComponent implements OnInit {
       htmlString += "</tr>";
       for (let i = 0; i < this.penalityList.length; i++) {
         htmlString += "<tr>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += this.penalityList[i]["date"];
         htmlString += "</td>";
         htmlString += "<td>";
@@ -324,6 +365,8 @@ export class EmployeePenaltyComponent implements OnInit {
 
 
 }
+
+
 
 export class penalitylDetail {
   totalPenality: string;
