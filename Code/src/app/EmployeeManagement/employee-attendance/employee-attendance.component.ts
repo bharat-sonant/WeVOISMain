@@ -278,6 +278,8 @@ export class EmployeeAttendanceComponent implements OnInit {
             if (detail != undefined) {
               let inTime = "";
               let outTime = "";
+              let inServerTime = '';
+              let outServerTime = '';
               let workingHour = "";
               let inTimestemp = 0;
               let inLocation = "";
@@ -301,6 +303,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
+                  inServerTime = attendanceData['inDetails']['serverTime']?attendanceData['inDetails']['serverTime']:"";
                   inLocationFull = attendanceData["inDetails"]["address"];
                   inImageUrl = attendanceData["inDetails"]['imageURL'] || '';
                   if (attendanceData["inDetails"]["address"] && attendanceData["inDetails"]["address"].toString().length > 85) {
@@ -359,6 +362,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (attendanceData["outDetails"] != null) {
                 if (attendanceData["outDetails"]["time"] != null) {
                   outTime = attendanceData["outDetails"]["time"];
+                  outServerTime = attendanceData['outDetails']['serverTime']?attendanceData['outDetails']['serverTime']:'';
                   outImageUrl = attendanceData["outDetails"]['imageURL'] || '';
                   if (attendanceData["outDetails"]["address"] != null) {
                     outLocationFull = attendanceData["outDetails"]["address"];
@@ -391,7 +395,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
               this.employeeList.push({
-                empId: empId, name: detail.name, empCode: detail.empCode, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
+                empId: empId, name: detail.name, empCode: detail.empCode,inServerTime:inServerTime,outServerTime:outServerTime ,designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
                 inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, inLocation: inLocation,
                 outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: detail.name, reason: reason
               });
@@ -493,6 +497,8 @@ export class EmployeeAttendanceComponent implements OnInit {
             if (detail != undefined) {
               let inTime = "";
               let outTime = "";
+              let inServerTime='';
+              let outServerTime='';
               let workingHour = "";
               let inTimestemp = 0;
               let status = "";
@@ -554,6 +560,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
+                  inServerTime = attendanceData['inDetails']['serverTime']?attendanceData['inDetails']['serverTime']:""
                   if (attendanceData["inDetails"]["address"] != null) {
                     inLocationFull = attendanceData["inDetails"]["address"];
                     if (attendanceData["inDetails"]["address"].toString().length > 85) {
@@ -582,6 +589,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 outImageUrl = attendanceData["outDetails"]['imageURL'] || '';
                 if (attendanceData["outDetails"]["time"] != null) {
                   outTime = attendanceData["outDetails"]["time"];
+                  outServerTime = attendanceData['outDetails']['serverTime']?attendanceData['outDetails']['serverTime']:"";
                   if (attendanceData["outDetails"]["address"] != null) {
                     outLocationFull = attendanceData["outDetails"]["address"];
                     if (attendanceData["outDetails"]["address"].toString().length > 85) {
@@ -618,7 +626,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               let modificationDetail = this.modificationRequestList.find(item => Number(item.empId) == Number(empId) && new Date(date).toDateString() === new Date(item.date).toDateString())
 
 
-              this.employeeList.push({ empId: empId, name: date, isModificationRequired: modificationDetail ? true : false, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
+              this.employeeList.push({ empId: empId, name: date,inServerTime:inServerTime,outServerTime:outServerTime ,isModificationRequired: modificationDetail ? true : false, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -699,7 +707,22 @@ export class EmployeeAttendanceComponent implements OnInit {
 
     }
   }
-
+  /*
+  Function name : filterByMismatchTime
+  Description : This function is working for filter employees attendance data by their mobile inOutTime and server inOutTime
+  Written by : Ritik Parmar
+  Written date : 15 Jan 2025
+   */
+filterByMismatchTime(event:Event){
+  const isChecked = (event.target as HTMLInputElement).checked;
+   if (isChecked) {
+      let filterList =this.employeeList.filter(emp=>emp.inTime.toString()!==emp.inServerTime.toString()||emp.outTime.toString()!==emp.outServerTime.toString())
+      this.attendanceList = filterList
+   }
+   else{
+    this.attendanceList = this.employeeList
+   }
+}
 
   filterDataEmployee() {
     this.attendanceList = [];

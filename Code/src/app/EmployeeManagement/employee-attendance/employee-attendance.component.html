@@ -72,7 +72,8 @@
                                     </select>
 
 
-
+                                    <input type="checkbox" name="misMatch" style="margin-left: 20px;cursor: pointer;"
+                                        id="CheckMismatch" (change)="filterByMismatchTime($event)" >&nbsp;Mismatch Time
                                     <input id="chkNotApproved" type="checkbox" (change)="filterData()"
                                         style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b>
                                         ({{notApprovedCount}})</b>
@@ -94,6 +95,9 @@
                                 style="width: 100px; margin-left: 10px;">
                             <button class="btn btn-success" style="margin-top:10px ;"
                                 (click)="getAttendanceByEmployee();">Search</button>
+
+                            <input type="checkbox" name="misMatch" style="margin-left: 20px; cursor: pointer;"
+                                id="CheckMismatch" (change)="filterByMismatchTime($event)" >&nbsp;Mismatch Time
                             <input id="chkNotApprovedEmployee" type="checkbox" (change)="filterDataEmployee()"
                                 style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b>({{notApprovedCount}})</b>
                             <span (click)="openLocation(contentLocation,0,'All')"
@@ -170,12 +174,15 @@
                                                         </div>
                                                         <div class="ms-2 mt-2 d-flex flex-column justify-content-start position-relative"
                                                             style="flex: 0.7;">
-                                                            <div class="fw-bold {{data.cssClass}}" *ngIf="data.inTime">
+                                                            <div class="fw-bold  {{data.cssClass}}"
+                                                                *ngIf="data.inTime">
                                                                 <!-- <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i> -->
-                                                                <img src="../../../assets/icons/clock-regular.svg"
-                                                                    class="me-2" alt="clock">
-                                                                {{data.inTime}}
-
+                                                                    <img src="../../../assets/icons/clock-regular.svg"
+                                                                        class="me-2" alt="clock">M &nbsp;
+                                                                    {{data.inTime}} <br>
+                                                                    <img src="../../../assets/icons/clock-regular.svg"
+                                                                        class="me-2 mt-1" alt="clock">
+                                                                   <span style="color:black;">S &nbsp;{{data.inServerTime}}</span>
                                                                 <!-- <i class="fa-solid fa-map-location-dot" style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                             (click)="openLocation(contentLocation,i,'single')"></i> -->
                                                                 <img src="../../../assets/icons/map-location-dot-solid.svg"
@@ -215,8 +222,11 @@
                                                             <div class="fw-bold" *ngIf="data.outTime">
                                                                 <!-- <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i> -->
                                                                 <img src="../../../assets/icons/clock-regular.svg"
-                                                                    class="me-2" alt="clock">
-                                                                {{data.outTime}}
+                                                                    class="me-2" alt="clock">M &nbsp;
+                                                                {{data.outTime}} <br>
+                                                                <img src="../../../assets/icons/clock-regular.svg"
+                                                                    class="me-2 mt-1" alt="clock">
+                                                               <span style="color: black;">S &nbsp;{{data.outServerTime}}</span>
 
                                                             </div>
                                                             <div class="mt-1" *ngIf="data.outLocation">
@@ -376,7 +386,8 @@
 
                 <div class="row mt-2 d-flex align-items-center">
                     <div class="col-md-6" style="text-align: center; margin-top: 10px; ">
-                        <button (click)="updateEmployeeAttendance()" class="btn btn-success" style="text-transform: uppercase;width:80%;">Confirm</button>
+                        <button (click)="updateEmployeeAttendance()" class="btn btn-success"
+                            style="text-transform: uppercase;width:80%;">Confirm</button>
                     </div>
                     <div class="col-md-6" style="text-align: center;">
                         <button class="btn btn-danger" (click)="cancelModificationPopup()"
