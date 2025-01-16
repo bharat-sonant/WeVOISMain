@@ -102,6 +102,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 let secondHelperList = dataList[i]["secondHelper"] ? dataList[i]["secondHelper"].split(',') : [];
                 let thirdHelperList = dataList[i]["thirdHelper"] ? dataList[i]["thirdHelper"].split(',') : [];
                 let fourthHelperList = dataList[i]["fourthHelper"] ? dataList[i]["fourthHelper"].split(',') : [];
+                let fifthHelperList = dataList[i]["fifthHelper"] ? dataList[i]["fifthHelper"].split(',') : [];
+                let sixthHelperList = dataList[i]["sixthHelper"] ? dataList[i]["sixthHelper"].split(',') : [];
                 let vehicleList = dataList[i]["vehicle"].split(',');
                 for (let j = 0; j < imageList.length; j++) {
                   let imageName = imageList[j].toString().trim();
@@ -110,6 +112,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   let secondHelperId = "---";
                   let thirdHelperId = "---";
                   let fourthHelperId = "---";
+                  let fifthHelperId = "---";
+                  let sixthHelperId = "---";
                   let vehicle = "---";
                   let time = "---";
                   if (driverList[j] != null) {
@@ -127,6 +131,12 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   if (fourthHelperList[j] != null) {
                     fourthHelperId = fourthHelperList[j];
                   }
+                  if (fifthHelperList[j] != null) {
+                    fifthHelperId = fifthHelperList[j];
+                  }
+                  if (sixthHelperList[j] != null) {
+                    sixthHelperId = sixthHelperList[j];
+                  }
                   if (vehicleList[j] != null) {
                     vehicle = vehicleList[j];
                   }
@@ -138,7 +148,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   }
 
                   let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
-                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl });
+                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl });
                 }
               }
             }
@@ -248,6 +258,12 @@ export class ReviewDutyonImagesComponent implements OnInit {
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["fourthHelperId"]).then((employee) => {
           list[i]["fourthHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
         });
+        this.commonService.getEmplyeeDetailByEmployeeId(list[i]["fifthHelperId"]).then((employee) => {
+          list[i]["fifthHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+        });
+        this.commonService.getEmplyeeDetailByEmployeeId(list[i]["sixthHelperId"]).then((employee) => {
+          list[i]["sixthHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+        });
       }
     }
   }
@@ -274,7 +290,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 if (outTimeList[i] != undefined) {
                   offTime = outTimeList[i];
                 }
-                dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "" });
+                dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "" });
               }
             }
             if (summaryData["dutyOnImage"] != null) {
@@ -355,6 +371,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
           let secondHelperList = workerData["secondHelperName"] ? workerData["secondHelperName"].split(',') : [];
           let thirdHelperList = workerData["thirdHelperName"] ? workerData["thirdHelperName"].split(',') : [];
           let fourthHelperList = workerData["fourthHelperName"] ? workerData["fourthHelperName"].split(',') : [];
+          let fifthHelperList = workerData["fifthHelperName"] ? workerData["fifthHelperName"].split(',') : [];
+          let sixthHelperList = workerData["sixthHelperName"] ? workerData["sixthHelperName"].split(',') : [];
           let vehicleList = workerData["vehicle"].split(',');
           let detail = this.zoneDutyOnList.find(item => item.zoneNo == zone);
           if (detail != undefined) {
@@ -365,6 +383,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
               let secondHelper = "---";
               let thirdHelper = "---";
               let fourthHelper = "---";
+              let fifthHelper = "---";
+              let sixthHelper = "---";
               let vehicle = "---";
               if (driverList[i] != null) {
                 driver = driverList[i];
@@ -381,6 +401,12 @@ export class ReviewDutyonImagesComponent implements OnInit {
               if (fourthHelperList[i] != null) {
                 fourthHelper = fourthHelperList[i];
               }
+              if (fifthHelperList[i] != null) {
+                fifthHelper = fifthHelperList[i];
+              }
+              if (sixthHelperList[i] != null) {
+                sixthHelper = sixthHelperList[i];
+              }
               if (vehicleList[i] != null) {
                 vehicle = vehicleList[i];
               }
@@ -389,6 +415,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
               detail.dutyOnImages[i]["secondHelper"] = secondHelper;
               detail.dutyOnImages[i]["thirdHelper"] = thirdHelper;
               detail.dutyOnImages[i]["fourthHelper"] = fourthHelper;
+              detail.dutyOnImages[i]["fifthHelper"] = fifthHelper;
+              detail.dutyOnImages[i]["sixthHelper"] = sixthHelper;
               detail.dutyOnImages[i]["vehicle"] = vehicle;
 
               if (this.isActualData === 1 && i === 0) {
