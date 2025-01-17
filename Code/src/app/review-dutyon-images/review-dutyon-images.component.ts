@@ -93,8 +93,16 @@ export class ReviewDutyonImagesComponent implements OnInit {
             if (dataList[i]["dutyOnImage"] != null) {
               let imageList = dataList[i]["dutyOnImage"].split(',');
               let imageOffList = [];
+              let imageOnMeterList = [];
+              let imageOutMeterList = [];
               if (dataList[i]["dutyOutImage"] != null) {
                 imageOffList = dataList[i]["dutyOutImage"].split(',');
+              }
+              if (dataList[i]["dutyOnMeterImage"] != null) {
+                imageOnMeterList = dataList[i]["dutyOnMeterImage"].split(',');
+              }
+              if (dataList[i]["dutyOutMeterImage"] != null) {
+                imageOutMeterList = dataList[i]["dutyOutMeterImage"].split(',');
               }
               if (imageList.length > 0) {
                 let driverList = dataList[i]["driver"].split(',');
@@ -142,13 +150,20 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   }
                   let dutyOffImageName = "";
                   let dutyOffImageUrl = "";
+                  let dutyOnMeterImageUrl = "";
+                  let dutyOutMeterImageUrl = "";
                   if (imageOffList[j] != undefined) {
                     dutyOffImageName = imageOffList[j].toString().trim();
                     dutyOffImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
                   }
-
+                  if (imageOnMeterList[j] != undefined) {
+                    dutyOnMeterImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnMeterReadingImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
+                  }
+                  if (imageOutMeterList[j] != undefined) {
+                    dutyOutMeterImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutMeterReadingImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
+                  }
                   let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
-                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl });
+                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl, imageDutyOnMeterUrl: dutyOnMeterImageUrl,imageDutyOutMeterUrl:dutyOutMeterImageUrl });
                 }
               }
             }
@@ -290,7 +305,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 if (outTimeList[i] != undefined) {
                   offTime = outTimeList[i];
                 }
-                dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "" });
+                dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "", imageDutyOnMeterUrl: "",imageDutyOutMeterUrl:"" });
               }
             }
             if (summaryData["dutyOnImage"] != null) {
@@ -312,6 +327,28 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 }
                 else if (imageName.includes("5")) {
                   dutyOnImages[4]["imageUrl"] = imageUrl;
+                }
+              }
+            }
+            if (summaryData["dutyOnMeterImage"] != null) {
+              let list = summaryData["dutyOnMeterImage"].split(',');
+              for (let i = 0; i < list.length; i++) {
+                let imageName = list[i].toString().trim();
+                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnMeterReadingImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+                if (imageName.includes("1")) {
+                  dutyOnImages[0]["imageDutyOnMeterUrl"] = imageUrl;
+                }
+                else if (imageName.includes("2")) {
+                  dutyOnImages[1]["imageDutyOnMeterUrl"] = imageUrl;
+                }
+                else if (imageName.includes("3")) {
+                  dutyOnImages[2]["imageDutyOnMeterUrl"] = imageUrl;
+                }
+                else if (imageName.includes("4")) {
+                  dutyOnImages[3]["imageDutyOnMeterUrl"] = imageUrl;
+                }
+                else if (imageName.includes("5")) {
+                  dutyOnImages[4]["imageDutyOnMeterUrl"] = imageUrl;
                 }
               }
             }
@@ -343,6 +380,38 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 else if (imageName.includes("5")) {
                   if (dutyOnImages.length > 4) {
                     dutyOnImages[4]["imageDutyOffUrl"] = imageUrl;
+                  }
+                }
+              }
+            }
+            if (summaryData["dutyOutMeterImage"] != null) {
+              let list = summaryData["dutyOutMeterImage"].split(',');
+              for (let i = 0; i < list.length; i++) {
+                let imageName = list[i].toString().trim();
+                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutMeterReadingImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+                if (imageName.includes("1")) {
+                  if (dutyOnImages.length > 0) {
+                    dutyOnImages[0]["imageDutyOutMeterUrl"] = imageUrl;
+                  }
+                }
+                else if (imageName.includes("2")) {
+                  if (dutyOnImages.length > 1) {
+                    dutyOnImages[1]["imageDutyOutMeterUrl"] = imageUrl;
+                  }
+                }
+                else if (imageName.includes("3")) {
+                  if (dutyOnImages.length > 2) {
+                    dutyOnImages[2]["imageDutyOutMeterUrl"] = imageUrl;
+                  }
+                }
+                else if (imageName.includes("4")) {
+                  if (dutyOnImages.length > 3) {
+                    dutyOnImages[3]["imageDutyOutMeterUrl"] = imageUrl;
+                  }
+                }
+                else if (imageName.includes("5")) {
+                  if (dutyOnImages.length > 4) {
+                    dutyOnImages[4]["imageDutyOutMeterUrl"] = imageUrl;
                   }
                 }
               }

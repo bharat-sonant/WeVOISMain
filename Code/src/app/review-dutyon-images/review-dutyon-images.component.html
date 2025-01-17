@@ -54,23 +54,38 @@
                                                     {{dt.zoneName}}
                                                 </td>
                                                 <td class="table-data-3">
-                                                    <div style="width: 100%; display: flex;">
+                                                    <div style="width: 100%; display: flex;flex-wrap: wrap; gap: 10px;">
                                                         <div *ngFor="let dtImage of dt.dutyOnImages;"
-                                                            style="width:260px; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
-
-                                                            <div style="width:110px; float: left; height:160px;">
-                                                                <a href="{{dtImage.imageUrl}}" target="_blank"
-                                                                    style="color:#000; width:100px">
-                                                                    <img [src]="dtImage.imageUrl"
-                                                                        style="width:110px;height:150px;"
-                                                                        [hidden]="dtImage.imageUrl==''" /></a>
-                                                            </div>
-                                                            <div style="width:110px; float: right;height:160px;">
-                                                                <a href="{{dtImage.imageDutyOffUrl}}" target="_blank"
-                                                                    style="color:#000"
-                                                                    [hidden]="dtImage.imageDutyOffUrl==''">
-                                                                    <img [src]="dtImage.imageDutyOffUrl"
-                                                                        style="width:110px; height:150px; margin-right:10px;" /></a>
+                                                            style="width:465px; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                                                            <div style="display: flex; justify-content: space-between;">
+                                                                <div style="width:102px; float: left; height:160px;">
+                                                                    <a href="{{dtImage.imageUrl}}" target="_blank"
+                                                                        style="color:#000; width:100px">
+                                                                        <img [src]="dtImage.imageUrl"
+                                                                            style="width:110px;height:150px;"
+                                                                            [hidden]="dtImage.imageUrl==''" /></a>
+                                                                </div>
+                                                                <div style="width:102px; float: right;height:160px;">
+                                                                    <a href="{{dtImage.imageDutyOnMeterUrl}}"
+                                                                        target="_blank" style="color:#000"
+                                                                        [hidden]="dtImage.imageDutyOnMeterUrl==''">
+                                                                        <img [src]="dtImage.imageDutyOnMeterUrl"
+                                                                            style="width:110px; height:150px; margin-right:10px;" /></a>
+                                                                </div>
+                                                                <div style="width:102px; float: right;height:160px;">
+                                                                    <a href="{{dtImage.imageDutyOffUrl}}"
+                                                                        target="_blank" style="color:#000"
+                                                                        [hidden]="dtImage.imageDutyOffUrl==''">
+                                                                        <img [src]="dtImage.imageDutyOffUrl"
+                                                                            style="width:110px; height:150px; margin-right:10px;" /></a>
+                                                                </div>
+                                                                <div style="width:102px; float: right;height:160px;">
+                                                                    <a href="{{dtImage.imageDutyOutMeterUrl}}"
+                                                                        target="_blank" style="color:#000"
+                                                                        [hidden]="dtImage.imageDutyOutMeterUrl==''">
+                                                                        <img [src]="dtImage.imageDutyOutMeterUrl"
+                                                                            style="width:110px; height:150px; margin-right:10px;" /></a>
+                                                                </div>
                                                             </div>
                                                             <div style="text-align: left; float:left; width: 100%">
                                                                 <b>Driver : </b> {{dtImage.driver}}<br />
