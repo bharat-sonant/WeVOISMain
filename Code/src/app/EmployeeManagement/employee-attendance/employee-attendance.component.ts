@@ -116,6 +116,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.employeeList = [];
     (<HTMLInputElement>document.getElementById(this.chkNotApproved)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkNotApprovedEmployee)).checked = false;
+    (<HTMLInputElement>document.getElementById('CheckMismatch')).checked = false;
     if (this.filterType == "byDate") {
       this.getAttendance();
       this.showStatus = true;
@@ -259,7 +260,6 @@ export class EmployeeAttendanceComponent implements OnInit {
     $(this.ddlTime).val("0");
     this.employeeList = [];
     this.attendanceList = [];
-    (<HTMLInputElement>document.getElementById(this.chkNotApproved)).checked = false;
     this.notApprovedCount = 0;
     for (let i = 0; i < this.allEmployeeList.length; i++) {
       let empId = this.allEmployeeList[i]["empId"];
@@ -303,7 +303,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
-                  inServerTime = attendanceData['inDetails']['serverTime']?attendanceData['inDetails']['serverTime']:"";
+                  inServerTime = attendanceData['inDetails']['serverTime'] ? attendanceData['inDetails']['serverTime'] : "N/A";
                   inLocationFull = attendanceData["inDetails"]["address"];
                   inImageUrl = attendanceData["inDetails"]['imageURL'] || '';
                   if (attendanceData["inDetails"]["address"] && attendanceData["inDetails"]["address"].toString().length > 85) {
@@ -362,7 +362,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (attendanceData["outDetails"] != null) {
                 if (attendanceData["outDetails"]["time"] != null) {
                   outTime = attendanceData["outDetails"]["time"];
-                  outServerTime = attendanceData['outDetails']['serverTime']?attendanceData['outDetails']['serverTime']:'';
+                  outServerTime = attendanceData['outDetails']['serverTime'] ? attendanceData['outDetails']['serverTime'] : 'N/A';
                   outImageUrl = attendanceData["outDetails"]['imageURL'] || '';
                   if (attendanceData["outDetails"]["address"] != null) {
                     outLocationFull = attendanceData["outDetails"]["address"];
@@ -395,7 +395,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
               this.employeeList.push({
-                empId: empId, name: detail.name, empCode: detail.empCode,inServerTime:inServerTime,outServerTime:outServerTime ,designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
+                empId: empId, name: detail.name, empCode: detail.empCode, inServerTime: inServerTime, outServerTime: outServerTime, designationId: designationId, inTime: inTime, outTime: outTime, workingHour: workingHour,
                 inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, inLocation: inLocation,
                 outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, status: status, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceApprover: attendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: detail.name, reason: reason
               });
@@ -497,8 +497,8 @@ export class EmployeeAttendanceComponent implements OnInit {
             if (detail != undefined) {
               let inTime = "";
               let outTime = "";
-              let inServerTime='';
-              let outServerTime='';
+              let inServerTime = '';
+              let outServerTime = '';
               let workingHour = "";
               let inTimestemp = 0;
               let status = "";
@@ -560,7 +560,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               if (attendanceData["inDetails"] != null) {
                 if (attendanceData["inDetails"]["time"] != null) {
                   inTime = attendanceData["inDetails"]["time"];
-                  inServerTime = attendanceData['inDetails']['serverTime']?attendanceData['inDetails']['serverTime']:""
+                  inServerTime = attendanceData['inDetails']['serverTime'] ? attendanceData['inDetails']['serverTime'] : "N/A"
                   if (attendanceData["inDetails"]["address"] != null) {
                     inLocationFull = attendanceData["inDetails"]["address"];
                     if (attendanceData["inDetails"]["address"].toString().length > 85) {
@@ -589,7 +589,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 outImageUrl = attendanceData["outDetails"]['imageURL'] || '';
                 if (attendanceData["outDetails"]["time"] != null) {
                   outTime = attendanceData["outDetails"]["time"];
-                  outServerTime = attendanceData['outDetails']['serverTime']?attendanceData['outDetails']['serverTime']:"";
+                  outServerTime = attendanceData['outDetails']['serverTime'] ? attendanceData['outDetails']['serverTime'] : "N/A";
                   if (attendanceData["outDetails"]["address"] != null) {
                     outLocationFull = attendanceData["outDetails"]["address"];
                     if (attendanceData["outDetails"]["address"].toString().length > 85) {
@@ -626,7 +626,7 @@ export class EmployeeAttendanceComponent implements OnInit {
               let modificationDetail = this.modificationRequestList.find(item => Number(item.empId) == Number(empId) && new Date(date).toDateString() === new Date(item.date).toDateString())
 
 
-              this.employeeList.push({ empId: empId, name: date,inServerTime:inServerTime,outServerTime:outServerTime ,isModificationRequired: modificationDetail ? true : false, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
+              this.employeeList.push({ empId: empId, name: date, inServerTime: inServerTime, outServerTime: outServerTime, isModificationRequired: modificationDetail ? true : false, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
             }
             this.setAllMarker()
             this.getAttendanceEmployee(empId, this.commonService.getNextDate(date, 1), dateTo);
@@ -655,8 +655,10 @@ export class EmployeeAttendanceComponent implements OnInit {
   setDate(filterVal: any, type: string) {
     (<HTMLInputElement>document.getElementById(this.chkNotApproved)).checked = false;
     (<HTMLInputElement>document.getElementById(this.chkNotApprovedEmployee)).checked = false;
+    (<HTMLInputElement>document.getElementById('CheckMismatch')).checked = false;
     this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
       $(this.txtDate).val(newDate);
+
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
         if (this.allEmployeeList.length > 0) {
@@ -685,9 +687,26 @@ export class EmployeeAttendanceComponent implements OnInit {
     if ($(this.ddlAttendanceManager).val() !== "0") {
       this.attendanceList = this.employeeList.filter(item => item.attendanceApprover == $(this.ddlAttendanceManager).val());
     }
-
     if ((<HTMLInputElement>document.getElementById(this.chkNotApproved)).checked == true) {
       this.attendanceList = this.attendanceList.filter(item => item.status == "Not Approved" && item.isAttendanceApprover == "1");
+    }
+    if ((<HTMLInputElement>document.getElementById('CheckMismatch')).checked == true) {
+      let filterList = this.attendanceList.filter(emp => {
+        if ((emp.inTime && emp.inServerTime !== 'N/A') || (emp.outTime && emp.outServerTime !== 'N/A')) {
+          const currentDate: any = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+          // Convert to Date objects by combining the current date with the time string
+          let inTimeDate: any = new Date(`${currentDate}T${emp.inTime}:00`);  // Append seconds to the time string
+          let inServerTimeDate: any = new Date(`${currentDate}T${emp.inServerTime}:00`);
+          let outTimeDate: any = new Date(`${currentDate}T${emp.outTime}:00`);
+          let outServerTimeDate: any = new Date(`${currentDate}T${emp.outServerTime}:00`);
+          let inTimeDiff: any = Math.floor((inServerTimeDate - inTimeDate) / 1000 / 60);
+          let outTimeDiff: any = Math.floor((outServerTimeDate - outTimeDate) / 1000 / 60);
+          return inTimeDiff > 2 || outTimeDiff > 2;
+        }
+        return false
+      })
+      this.attendanceList = filterList
     }
     if (filterVal == "0") {
       this.getNotApprovedAttendanceCount();
@@ -713,20 +732,68 @@ export class EmployeeAttendanceComponent implements OnInit {
   Written by : Ritik Parmar
   Written date : 15 Jan 2025
    */
-filterByMismatchTime(event:Event){
-  const isChecked = (event.target as HTMLInputElement).checked;
-   if (isChecked) {
-      let filterList =this.employeeList.filter(emp=>emp.inTime.toString()!==emp.inServerTime.toString()||emp.outTime.toString()!==emp.outServerTime.toString())
-      this.attendanceList = filterList
-   }
-   else{
-    this.attendanceList = this.employeeList
-   }
-}
+  // filterByMismatchTime(event: Event) {
+  //   const isChecked = (event.target as HTMLInputElement).checked
+  //   if (isChecked) {
+  //     let filterVal = $(this.ddlTime).val();
+  //     if (filterVal == "0") {
+  //       this.attendanceList = this.employeeList;
+  //     }
+  //     else {
+  //       let filterTimestemp = new Date(this.selectedDate + " " + filterVal).getTime();
+  //       this.attendanceList = this.employeeList.filter(item => item.inTimestemp > filterTimestemp);
+  //     }
+  //     if ($(this.ddlAttendanceManager).val() !== "0") {
+  //       this.attendanceList = this.employeeList.filter(item => item.attendanceApprover == $(this.ddlAttendanceManager).val());
+  //     }
+
+  //     if ((<HTMLInputElement>document.getElementById(this.chkNotApproved)).checked == true) {
+  //       this.attendanceList = this.attendanceList.filter(item => item.status == "Not Approved" && item.isAttendanceApprover == "1");
+  //     }
+  //     let filterList = this.attendanceList.filter(emp => {
+  //       if ((emp.inTime && emp.inServerTime !== 'N/A') || (emp.outTime && emp.outServerTime !== 'N/A')) {
+  //         const currentDate: any = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+  //         // Convert to Date objects by combining the current date with the time string
+  //         let inTimeDate: any = new Date(`${currentDate}T${emp.inTime}:00`);  // Append seconds to the time string
+  //         let inServerTimeDate: any = new Date(`${currentDate}T${emp.inServerTime}:00`);
+  //         let outTimeDate: any = new Date(`${currentDate}T${emp.outTime}:00`);
+  //         let outServerTimeDate: any = new Date(`${currentDate}T${emp.outServerTime}:00`);
+  //         let inTimeDiff: any = Math.floor((inServerTimeDate - inTimeDate) / 1000 / 60);
+  //         let outTimeDiff: any = Math.floor((outServerTimeDate - outTimeDate) / 1000 / 60);
+  //         console.log(emp.empId, inTimeDiff, outTimeDiff)
+  //         return inTimeDiff > 2 || outTimeDiff > 2;
+  //       }
+  //       return false
+  //     })
+  //     this.attendanceList = filterList
+  //   }
+  //   else {
+  //     this.attendanceList = this.employeeList
+  //   }
+  // }
 
   filterDataEmployee() {
     this.attendanceList = [];
     this.attendanceList = this.employeeList;
+    if ((<HTMLInputElement>document.getElementById('CheckNotMismatch')).checked == true) {
+      let filterList = this.attendanceList.filter(emp => {
+        if ((emp.inTime && emp.inServerTime !== 'N/A') || (emp.outTime && emp.outServerTime !== 'N/A')) {
+          const currentDate: any = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+          // Convert to Date objects by combining the current date with the time string
+          let inTimeDate: any = new Date(`${currentDate}T${emp.inTime}:00`);  // Append seconds to the time string
+          let inServerTimeDate: any = new Date(`${currentDate}T${emp.inServerTime}:00`);
+          let outTimeDate: any = new Date(`${currentDate}T${emp.outTime}:00`);
+          let outServerTimeDate: any = new Date(`${currentDate}T${emp.outServerTime}:00`);
+          let inTimeDiff: any = Math.floor((inServerTimeDate - inTimeDate) / 1000 / 60);
+          let outTimeDiff: any = Math.floor((outServerTimeDate - outTimeDate) / 1000 / 60);
+          return inTimeDiff > 2 || outTimeDiff > 2;
+        }
+        return false
+      })
+      this.attendanceList = filterList
+    }
     if ((<HTMLInputElement>document.getElementById(this.chkNotApprovedEmployee)).checked == true) {
       this.attendanceList = this.attendanceList.filter(item => item.status == "Not Approved" && item.isAttendanceApprover == "1");
     }
@@ -961,12 +1028,12 @@ filterByMismatchTime(event:Event){
     }
 
   }
-    /* 
-  Funtion name : updateEmployeeAttendance
-  Description : This function is working for close modification popup window
-  Written by  : Ritik Parmar
-  Written date : 26 Dec 2024
-  */
+  /* 
+Funtion name : updateEmployeeAttendance
+Description : This function is working for close modification popup window
+Written by  : Ritik Parmar
+Written date : 26 Dec 2024
+*/
   cancelModificationPopup() {
     this.modificationPopUpData = {}
     this.modalService.dismissAll()

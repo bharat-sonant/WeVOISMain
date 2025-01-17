@@ -73,7 +73,7 @@
 
 
                                     <input type="checkbox" name="misMatch" style="margin-left: 20px;cursor: pointer;"
-                                        id="CheckMismatch" (change)="filterByMismatchTime($event)" >&nbsp;Mismatch Time
+                                        id="CheckMismatch" (change)="filterData()" >&nbsp;Mismatch Time
                                     <input id="chkNotApproved" type="checkbox" (change)="filterData()"
                                         style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b>
                                         ({{notApprovedCount}})</b>
@@ -97,7 +97,7 @@
                                 (click)="getAttendanceByEmployee();">Search</button>
 
                             <input type="checkbox" name="misMatch" style="margin-left: 20px; cursor: pointer;"
-                                id="CheckMismatch" (change)="filterByMismatchTime($event)" >&nbsp;Mismatch Time
+                                id="CheckNotMismatch" (change)="filterDataEmployee()" >&nbsp;Mismatch Time
                             <input id="chkNotApprovedEmployee" type="checkbox" (change)="filterDataEmployee()"
                                 style="margin-left: 20px;"> &nbsp;Attendance Not Approved <b>({{notApprovedCount}})</b>
                             <span (click)="openLocation(contentLocation,0,'All')"
@@ -182,7 +182,7 @@
                                                                     {{data.inTime}} <br>
                                                                     <img src="../../../assets/icons/clock-regular.svg"
                                                                         class="me-2 mt-1" alt="clock">
-                                                                   <span style="color:black;">S &nbsp;{{data.inServerTime}}</span>
+                                                                   <span style="color:black;">S &nbsp;&nbsp;{{data.inServerTime}}</span>
                                                                 <!-- <i class="fa-solid fa-map-location-dot" style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                             (click)="openLocation(contentLocation,i,'single')"></i> -->
                                                                 <img src="../../../assets/icons/map-location-dot-solid.svg"
@@ -226,7 +226,7 @@
                                                                 {{data.outTime}} <br>
                                                                 <img src="../../../assets/icons/clock-regular.svg"
                                                                     class="me-2 mt-1" alt="clock">
-                                                               <span style="color: black;">S &nbsp;{{data.outServerTime}}</span>
+                                                               <span style="color: black;">S &nbsp;&nbsp;{{data.outServerTime}}</span>
 
                                                             </div>
                                                             <div class="mt-1" *ngIf="data.outLocation">
