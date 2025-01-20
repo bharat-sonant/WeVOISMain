@@ -555,6 +555,9 @@
                                     <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
                                                 [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
                                 </span>
+                                <span [hidden]="dt.markerId=='0'">
+                                    <h3>MarkerId : <span class="{{dt.statusClass}}"> {{dt.markerId}}</span></h3>
+                                </span>
                                 <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
                                     Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
                                     <br />
