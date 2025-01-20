@@ -410,6 +410,7 @@ export class HouseMarkingComponent {
               }
               let approveDate = data[index]["approveDate"];
               let status = "";
+              let markerId = "0";
               let statusClass = "";
               let isRevisit = "0";
               let cardNumber = "";
@@ -455,6 +456,9 @@ export class HouseMarkingComponent {
                 isRevisit = "1";
                 statusClass = "status-deleted";
               }
+              if (data[index]["markerId"] != null) {
+                markerId = data[index]["markerId"];
+              }
               if (data[index]["approveById"] != null) {
 
                 ApproveId = data[index]["approveById"];
@@ -488,7 +492,7 @@ export class HouseMarkingComponent {
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity });
+              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
@@ -604,6 +608,7 @@ export class HouseMarkingComponent {
               }
               let approveDate = data[index]["approveDate"];
               let status = "";
+              let markerId = "0";
               let statusClass = "";
               let isRevisit = "0";
               let cardNumber = "";
@@ -645,6 +650,9 @@ export class HouseMarkingComponent {
                 isRevisit = "1";
                 statusClass = "status-deleted";
               }
+              if (data[index]["markerId"] != null) {
+                markerId = data[index]["markerId"];
+              }
               if (data[index]["approveById"] != null) {
 
                 ApproveId = data[index]["approveById"];
@@ -679,11 +687,10 @@ export class HouseMarkingComponent {
                 houseType = houseTypeDetail.houseType;
               }
 
-              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity });
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
-            console.log(this.markerListIncluded);
           }
           if (count == 0) {
             this.commonService.setAlertMessage("error", "No marker found in ward " + zoneNo + " on line " + lineNo + " !!!");
@@ -2021,7 +2028,7 @@ export class HouseMarkingComponent {
 
           $("#approveLineCheckDiv").hide();
           $("#approveLineStatusDiv").show();
-          // console.log(this.markerData.lineApprovedBy,this.markerData.lineApprovedDate)
+
 
 
         } else {
