@@ -410,7 +410,7 @@ export class HouseMarkingComponent {
               }
               let approveDate = data[index]["approveDate"];
               let status = "";
-              let markerId = "0";
+              let markerId = "";
               let statusClass = "";
               let isRevisit = "0";
               let cardNumber = "";
@@ -457,7 +457,7 @@ export class HouseMarkingComponent {
                 statusClass = "status-deleted";
               }
               if (data[index]["markerId"] != null) {
-                markerId = data[index]["markerId"];
+                markerId = this.commonService.getDefaultCardPrefix()+ data[index]["markerId"];
               }
               if (data[index]["approveById"] != null) {
 
@@ -608,7 +608,7 @@ export class HouseMarkingComponent {
               }
               let approveDate = data[index]["approveDate"];
               let status = "";
-              let markerId = "0";
+              let markerId = "";
               let statusClass = "";
               let isRevisit = "0";
               let cardNumber = "";
@@ -651,7 +651,7 @@ export class HouseMarkingComponent {
                 statusClass = "status-deleted";
               }
               if (data[index]["markerId"] != null) {
-                markerId = data[index]["markerId"];
+                markerId =this.commonService.getDefaultCardPrefix()+ data[index]["markerId"];
               }
               if (data[index]["approveById"] != null) {
 
