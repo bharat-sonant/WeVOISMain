@@ -418,7 +418,6 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 }
               }
             }
-            console.log(dutyOnImages)
             resolve({ status: "success", data: { zoneNo: zoneNo, dutyOnImages: dutyOnImages } });
           }
           else {
