@@ -295,17 +295,19 @@ export class ReviewDutyonImagesComponent implements OnInit {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnImages", summaryData);
             if (summaryData["dutyInTime"] != null) {
               let timeList = summaryData["dutyInTime"].split(',');
+              let remarkArray = summaryData['workPercentageRemark']&&summaryData['workPercentageRemark']!==undefined?summaryData['workPercentageRemark'].split(','):'';
               let outTimeList = [];
               if (summaryData["dutyOutTime"] != null) {
                 outTimeList = summaryData["dutyOutTime"].split(',');
               }
               for (let i = 0; i < timeList.length; i++) {
                 let time = timeList[i];
+                let workPercentageRemark = remarkArray[i]?remarkArray[i]:'';
                 let offTime = "";
                 if (outTimeList[i] != undefined) {
                   offTime = outTimeList[i];
                 }
-                dutyOnImages.push({ binPlanId: "", imageUrl: "", time: time, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "", imageDutyOnMeterUrl: "",imageDutyOutMeterUrl:"" });
+                dutyOnImages.push({ binPlanId: "", imageUrl: "",workPercentageRemark:workPercentageRemark, time: time, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "", imageDutyOnMeterUrl: "",imageDutyOutMeterUrl:"" });
               }
             }
             if (summaryData["dutyOnImage"] != null) {
@@ -416,6 +418,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 }
               }
             }
+            console.log(dutyOnImages)
             resolve({ status: "success", data: { zoneNo: zoneNo, dutyOnImages: dutyOnImages } });
           }
           else {
