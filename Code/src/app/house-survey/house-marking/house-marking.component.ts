@@ -44,6 +44,7 @@ export class HouseMarkingComponent {
   isShowWardAndLine: any;
   houseTypeList: any[] = [];
   divHouseType = "#divHouseType";
+  divEditMarkerRemark = "#divEditMarkerRemark";
   divEntityCount = "#divEntityCount";
   houseWardNo = "#houseWardNo";
   houseLineNo = "#houseLineNo";
@@ -98,6 +99,12 @@ export class HouseMarkingComponent {
   nearByWardsPolygon: any[] = [];
   nearByStatus: any;
   deleteReason: any = "0";
+  toUpdateRemark: any = {
+    zoneNo: '',
+    lineNo: '',
+    index: '', 
+    type: ''
+  }
 
   ngOnInit() {
     this.nearByStatus = "show";
@@ -395,7 +402,7 @@ export class HouseMarkingComponent {
               let date = "";
               let ownerName = "";
               let persons = "";
-
+              const markerRemark = data[index]['markerRemark'] || '';
 
               if (data[index]["ownerName"] != null) {
                 ownerName = data[index]["ownerName"].toUpperCase();
@@ -492,7 +499,7 @@ export class HouseMarkingComponent {
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity });
+              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
@@ -597,6 +604,7 @@ export class HouseMarkingComponent {
               let date = "";
               let ownerName = "";
               let persons = "";
+              const markerRemark = data[index].markerRemark || '';
               if (data[index]["ownerName"] != null) {
                 ownerName = data[index]["ownerName"].toUpperCase();
               } if (data[index]["totalPerson"] != null) {
@@ -687,7 +695,7 @@ export class HouseMarkingComponent {
                 houseType = houseTypeDetail.houseType;
               }
 
-              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity });
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
@@ -712,6 +720,42 @@ export class HouseMarkingComponent {
         $(this.divLoader).hide();
       }
     });
+  }
+
+  showUpdatePopupMarkerRemark(val:any, zoneNo: any, lineNo: any, index: any, type: any){
+    $(this.divEditMarkerRemark).show();
+    $('#txtMarkerRemark').val(val);
+    this.toUpdateRemark = {zoneNo, lineNo, index, type};
+  }
+
+  saveMarkerRemark(){
+    const markerRemark = $('#txtMarkerRemark').val()
+
+    if(!markerRemark){
+      return this.commonService.setAlertMessage('error', 'Please add remark')
+    }
+
+    const path = `EntityMarkingData/MarkedHouses/${this.toUpdateRemark.zoneNo}/${this.toUpdateRemark.lineNo}/${this.toUpdateRemark.index}`
+    this.db.object(path).update({ markerRemark });
+
+    // update it locally
+    let marker : any;
+    if(this.toUpdateRemark.type === 'markerList'){
+       marker = this.markerList.find(item => item.index == this.toUpdateRemark.index && item.zoneNo == this.toUpdateRemark.zoneNo && item.lineNo == this.toUpdateRemark.lineNo);
+    }
+    else if(this.toUpdateRemark.type === 'markerListIncluded'){
+      marker = this.markerListIncluded.find(item => item.index == this.toUpdateRemark.index && item.zoneNo == this.toUpdateRemark.zoneNo && item.lineNo == this.toUpdateRemark.lineNo);
+    }
+
+    marker.markerRemark = markerRemark;
+    this.commonService.setAlertMessage('success', 'Remark updated successfully')
+    this.cancelMarkerRemarkEdit()
+  }
+
+  cancelMarkerRemarkEdit(){
+    $('#txtMarkerRemark').val('')
+    $(this.divEditMarkerRemark).hide();
+    this.toUpdateRemark = {zoneNo: '', lineNo: '', index: '', type: ''};
   }
 
 

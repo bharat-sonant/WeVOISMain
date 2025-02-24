@@ -325,6 +325,31 @@
     </div>
 
     <div class="modal-body divStatus">
+        <div id="divEditMarkerRemark"
+            style="display: none; position: absolute; z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width: 400px;">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Update Remark</h5>
+            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="txtMarkerRemark">Remark:</label>
+                        <input id="txtMarkerRemark" type="text" class="caret-select-vehicle"
+                            placeholder="Enter remark...">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6" style="text-align: center; margin-top: 10px;">
+                        <button class="btn btn-success" (click)="saveMarkerRemark()">Save</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: center; margin-top: 10px;">
+                        <button class="btn btn-danger" (click)="cancelMarkerRemarkEdit()"
+                            style="text-transform: uppercase;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="divHouseType"
             style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
             <input type="hidden" id="houseIndex" value="0">
@@ -489,6 +514,13 @@
                                 <br />
                             </span>
                             <span style="font-size:11px">
+                                Remark : {{dt.markerRemark}}
+                                <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
+                                    (click)="showUpdatePopupMarkerRemark(dt.markerRemark,dt.zoneNo,dt.lineNo,dt.index,'markerList');"
+                                    style="max-width: 25px;border: none;" />
+                                <br />
+                            </span>
+                            <span style="font-size:11px">
                                 Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                 <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
                                     Date : {{dt.approveDate}}</span>
@@ -575,6 +607,13 @@
                                     <br />
                                 </span>
                                 <span style="font-size:11px">
+                                    Remark: {{dt.markerRemark}}
+                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
+                                        (click)="showUpdatePopupMarkerRemark(dt.markerRemark,dt.zoneNo,dt.lineNo,dt.index,'markerList');"
+                                        style="max-width: 25px;border: none;" />
+                                    <br />
+                                </span>
+                                <span style="font-size:11px">
                                     Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
                                     <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
                                         Date : {{dt.approveDate}}</span>
@@ -658,6 +697,13 @@
                                 </span>
                                 <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
                                     No. of Entity : {{dt.totalEntity}}
+                                    <br />
+                                </span>
+                                <span style="font-size:11px">
+                                    Remark: {{dt.markerRemark}}
+                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
+                                        (click)="showUpdatePopupMarkerRemark(dt.markerRemark,dt.zoneNo,dt.lineNo,dt.index,'markerListIncluded');"
+                                        style="max-width: 25px;border: none;" />
                                     <br />
                                 </span>
                                 <span style="font-size:11px">
