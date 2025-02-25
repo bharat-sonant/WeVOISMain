@@ -2048,6 +2048,19 @@ export class WardSurveyAnalysisComponent {
     );
   }
 
+  openApprovePopup(){
+    $('#divApprovePopup').show();
+  }
+  
+  confirmApproval(){
+    this.cancelApproval();
+  }
+
+  cancelApproval(){
+    $('#divApprovePopup').hide();
+  }
+
+
 
   getNameList() {
     this.nameList = ["Krishan kumar", "Satyanarayan", "Manoharlal", "Kishanlal Sharma", "Mahesh bhati", "Vinod saini", "Ratan Lal saini",
