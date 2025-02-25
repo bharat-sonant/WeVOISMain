@@ -288,6 +288,23 @@
                 </div>
             </div>
         </div>
+        <!-- popup for approve -->
+        <div class="modal-body divStatus">
+            <div id="divApprovePopup"
+                style="display: none; position: absolute; z-index: 9999; background-color: #fff; margin-top: 5%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width: 400px; height: fit-content;">
+                <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Approve Marker</h5>
+                <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: center; margin-top: 10px;">
+                            <button class="btn btn-success" (click)="confirmApproval()">Approve</button>
+                        </div>
+                        <div class="col-md-6" style="text-align: center; margin-top: 10px;">
+                            <button class="btn btn-danger" (click)="cancelApproval()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="divEntityList"
             style="display:none;position: absolute;z-index: 9999; width: 80%; height:80%;background-color: #fff; padding: 20px; border: 1px solid lightgray; overflow-y: scroll; margin-top: 5%; margin-left: 10%;">
             <img src="../../../assets/img/close-grey.png" style="float:right ;" class="img-close"
@@ -384,7 +401,7 @@
                                 </div>
                             </div>
                             <span style="cursor: pointer; display: flex; margin-left: 10px;"
-                                (click)="openApprovePopup()">
+                                (click)="openApprovePopup(dt.cardNo)">
                                 <img src="../../../assets/icons/a-solid.svg" alt="A" class="cursor-pointer icon-green"
                                     width="15" style="border: none;margin: 0;padding: 0;" />pprove
 
@@ -396,26 +413,12 @@
 
         </div>
     </div>
+
+
 </ng-template>
 <!--Surveyed Markers End-->
 
-<!-- popup for approve -->
-<div class="modal-body divStatus">
-    <div id="divApprovePopup"
-        style="display: none; position: absolute; z-index: 9999; background-color: #fff; margin-top: 5%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width: 400px; height: fit-content;">
-        <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Approve Marker</h5>
-        <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-            <div class="row">
-                <div class="col-md-6" style="text-align: center; margin-top: 10px;">
-                    <button class="btn btn-success" (click)="confirmApproval()">Approve</button>
-                </div>
-                <div class="col-md-6" style="text-align: center; margin-top: 10px;">
-                    <button class="btn btn-danger" (click)="cancelApproval()">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <!--Revisit Start-->
 <ng-template #contentRevisit>

@@ -87,6 +87,9 @@ export class WardSurveyAnalysisComponent {
     rfIdDate: "",
     rfIdAddress: ""
   };
+  toApproveDetails : any = {
+    cardNo: ''
+  };
 
   ngOnInit() {
     this.toDayDate = this.commonService.setTodayDate();
@@ -2048,16 +2051,32 @@ export class WardSurveyAnalysisComponent {
     );
   }
 
-  openApprovePopup(){
+  openApprovePopup(cardNo: any ){
+    this.toApproveDetails = {cardNo}
     $('#divApprovePopup').show();
   }
   
   confirmApproval(){
-    this.cancelApproval();
+    const path = `Houses/${this.selectedZone}/${this.lineNo}/${this.toApproveDetails.cardNo}`
+    const approvedBy = localStorage.getItem('userID');
+    const approvedDate = this.commonService.getTodayDateTime()
+
+    this.db.object(path).update({ approvedBy, approvedDate }).then(()=>{
+      // update it locally
+      const card = this.scannedCardList.find(card=>card.cardNo == this.toApproveDetails.cardNo);
+      if(card){
+        card.approvedBy = localStorage.getItem('userName');
+        card.approvedDate = approvedDate;
+      }
+    }).finally(()=>{
+      this.cancelApproval();
+    })
+    
   }
 
   cancelApproval(){
     $('#divApprovePopup').hide();
+    this.toApproveDetails = {cardNo: ''}
   }
 
 
