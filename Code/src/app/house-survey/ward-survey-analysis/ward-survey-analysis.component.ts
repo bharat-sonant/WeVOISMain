@@ -907,7 +907,7 @@ export class WardSurveyAnalysisComponent {
     if (this.scannedCardList.length == 0) {
       let dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo;
       let scannedCardInstance = this.db.list(dbPath).valueChanges().subscribe(
-        data => {
+        async(data) => {
           scannedCardInstance.unsubscribe();
           let city = this.commonService.getFireStoreCity();
           if (this.cityName == "sikar") {
@@ -984,8 +984,22 @@ export class WardSurveyAnalysisComponent {
                     markerImageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + detail.image + "?alt=media";
                   }
                 }
+                const approvedBy = data[i].approvedBy || '';
+                const approvedDate = data[i].approvedDate || '';
+                let approvedByName = ''
+                let formattedApprovedDate = ''
 
-                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, markerImageURL: markerImageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"] });
+                if(approvedBy){
+                  const userDetails: any = await this.commonService.getPortalUserDetailById(approvedBy);
+                  approvedByName = userDetails.name;
+                }
+                if(approvedDate){
+                  const date = approvedDate.split(' ')[0];
+                  const time = approvedDate.split(' ')[1];
+                  formattedApprovedDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+                }
+
+                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, markerImageURL: markerImageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"], approvedBy: approvedByName, approvedDate: formattedApprovedDate });
               }
             }
           }
@@ -2066,7 +2080,10 @@ export class WardSurveyAnalysisComponent {
       const card = this.scannedCardList.find(card=>card.cardNo == this.toApproveDetails.cardNo);
       if(card){
         card.approvedBy = localStorage.getItem('userName');
-        card.approvedDate = approvedDate;
+        const date = approvedDate.split(' ')[0];
+        const time = approvedDate.split(' ')[1];
+        const formattedApprovedDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+        card.approvedDate = formattedApprovedDate;
       }
     }).finally(()=>{
       this.cancelApproval();
