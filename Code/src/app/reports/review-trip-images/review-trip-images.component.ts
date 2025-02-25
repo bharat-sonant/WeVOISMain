@@ -27,6 +27,7 @@ export class ReviewTripImagesComponent implements OnInit {
   serviceName = "review-trip-images";
   vehicleCapacityObject:any={};
   totalWasteCollected:number=0;
+  totalTripCounts:number=0;
   imageNotAvailablePath = "../assets/img/img-not-available-01.jpg";
 
   ngOnInit() {
@@ -56,6 +57,7 @@ export class ReviewTripImagesComponent implements OnInit {
     this.zoneList = [];
     this.zoneTripList = [];
     this.totalWasteCollected=0;
+    this.totalTripCounts = 0;
     let dustbinPlans=await this.getDustbinPickingPlans();
     
 
@@ -76,7 +78,9 @@ export class ReviewTripImagesComponent implements OnInit {
                 detail.tripImageList=results[i]["data"].tripImageList;
                 detail.collectedZoneWaste=results[i]["data"].collectedZoneWaste;
                 this.getEmployeeNamebyId(results[i]["data"].zoneNo);
-
+                const tripCount = results[i]["data"].tripImageList.length || 0;
+                detail.tripCount = tripCount;
+                this.totalTripCounts += tripCount;
               }
             }
           }          
