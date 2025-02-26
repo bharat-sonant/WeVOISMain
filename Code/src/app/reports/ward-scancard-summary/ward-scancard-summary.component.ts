@@ -26,6 +26,8 @@ export class WardScancardSummaryComponent implements OnInit {
   totalScannedCards: any;
   totalNotScannedCards: any;
   isFirst = true;
+  penalty: String = '';
+  remark: String = '';
   db: any;
   public cityName: any;
   serviceName = "ward-scan-card-summary";
@@ -33,7 +35,7 @@ export class WardScancardSummaryComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.savePageLoadHistory("General-Reports","Ward-Scan-Card-Summary",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("General-Reports", "Ward-Scan-Card-Summary", localStorage.getItem("userID"));
     this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
@@ -72,7 +74,7 @@ export class WardScancardSummaryComponent implements OnInit {
     if (circleWardList.length > 0) {
       for (let i = 0; i < circleWardList.length; i++) {
         if (circleWardList[i]["wardNo"] != undefined) {
-          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, helperCode: "", helper: "" });
+          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, scannedTotalCards: 0, workPercentage: "0", helperCode: "", helper: "" });
         }
       }
       this.getWardDetail();
@@ -97,6 +99,8 @@ export class WardScancardSummaryComponent implements OnInit {
           let empCode = "";
           let scanned = 0;
           let notScanned = 0;
+          let scannedTotalCards = 0;
+          let workPercentage = '0';
           if (data != null) {
             helper = data.toString();
           }
@@ -105,6 +109,7 @@ export class WardScancardSummaryComponent implements OnInit {
             helperdata => {
               helperIdInstance.unsubscribe();
               if (helperdata != null) {
+                console.log('helperdata', helperdata)
                 this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", helperdata);
                 helperId = helperdata.toString().split(',')[0];
                 dbPath = "Employees/" + helperId + "/GeneralDetails/empCode";
@@ -120,8 +125,10 @@ export class WardScancardSummaryComponent implements OnInit {
                       notScannedData => {
                         notScannedInstance.unsubscribe();
                         if (notScannedData != null) {
+                          console.log('notScannedData', notScannedData)
                           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", notScannedData);
                           notScanned = Number(notScannedData);
+                          scannedTotalCards += notScanned
                         }
                         dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
                         let scannedInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -139,17 +146,31 @@ export class WardScancardSummaryComponent implements OnInit {
                                 }
                               }
                             }
-                            let detail = this.wardDataList.find(item => item.wardNo == wardNo);
-                            if (detail != undefined) {
-                              detail.helper = helper;
-                              detail.helperCode = empCode;
-                              detail.scanned = scanned;
-                              detail.notScanned = notScanned;
-                              this.totalNotScannedCards += Number(notScanned);
-                              this.totalScannedCards += Number(scanned);
-                            }
+                            dbPath = "/WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + "Summary" + "/" + "workPercentage"
+                            let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
+                              workPercentageData => {
+                                workPercentageInstance.unsubscribe();
+                                if (workPercentageData !== null && workPercentageData !== undefined) {
+                                  workPercentage = workPercentageData;
+                                }
+                                let detail = this.wardDataList.find(item => item.wardNo == wardNo);
+                                if (detail != undefined) {
+                                  console.log('workPercentage', workPercentage)
+                                  scannedTotalCards += scanned
+                                  detail.helper = helper;
+                                  detail.helperCode = empCode;
+                                  detail.scanned = scanned;
+                                  detail.notScanned = notScanned;
+                                  detail.workPercentage = workPercentage + "%";
+                                  detail.scannedTotalCards = scannedTotalCards ? scannedTotalCards : 0;
+                                  this.totalNotScannedCards += Number(notScanned);
+                                  this.totalScannedCards += Number(scanned);
+                                }
+                              }
+                            )
                           }
                         );
+
                       }
                     );
                   }
@@ -159,7 +180,19 @@ export class WardScancardSummaryComponent implements OnInit {
         }
       );
     }
+
   }
+  handleChange(index: number, type: string, event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    
+    if (type === 'penalty') {
+      inputElement.value = inputElement.value.replace(/\D/g, ''); // Remove non-numeric characters
+      this.wardDataList[index].penalty = inputElement.value;
+    } else {
+      this.wardDataList[index].remark = inputElement.value;
+    }
+  }
+  
   exportWardScanTypeList() {
     if (this.wardDataList.length > 0) {
       let htmlString = "";
