@@ -109,7 +109,6 @@ export class WardScancardSummaryComponent implements OnInit {
             helperdata => {
               helperIdInstance.unsubscribe();
               if (helperdata != null) {
-                console.log('helperdata', helperdata)
                 this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", helperdata);
                 helperId = helperdata.toString().split(',')[0];
                 dbPath = "Employees/" + helperId + "/GeneralDetails/empCode";
@@ -125,7 +124,7 @@ export class WardScancardSummaryComponent implements OnInit {
                       notScannedData => {
                         notScannedInstance.unsubscribe();
                         if (notScannedData != null) {
-                          console.log('notScannedData', notScannedData)
+                
                           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", notScannedData);
                           notScanned = Number(notScannedData);
                           scannedTotalCards += notScanned
@@ -155,7 +154,7 @@ export class WardScancardSummaryComponent implements OnInit {
                                 }
                                 let detail = this.wardDataList.find(item => item.wardNo == wardNo);
                                 if (detail != undefined) {
-                                  console.log('workPercentage', workPercentage)
+                          
                                   scannedTotalCards += scanned
                                   detail.helper = helper;
                                   detail.helperCode = empCode;
