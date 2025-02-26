@@ -232,6 +232,7 @@ tbody {
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 /* Track */
@@ -454,16 +455,17 @@ textarea:focus-visible {
 }
 
 .table-one {
-  height: 88vh;
-  overflow: hidden;
+  height: 78vh;
   overflow-y: scroll;
 }
 
 .table-scroll {
   padding: 0px;
-  height: 88vh;
-  overflow: hidden;
-  overflow-y: scroll;
+  height: 78vh;
+  overflow: auto; 
+}
+.table-scroll::-webkit-scrollbar{
+  height: 8px !important;
 }
 
 table tr:hover {

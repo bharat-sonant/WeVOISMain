@@ -3,24 +3,11 @@
 </div>
 <section class="header">
     <div class="row no-gutters">
-        <div class="col-md-6" style="padding-left: 18px;
-        margin-top: -15px;">
-            <button class="btn btn-primary " (click)="setDate('','previous');">
-                << </button>
-                    <input id="txtDate" class="date-input" type="date"
-                        (change)="setDate($event.target.value,'current')">
-                    <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
-                        >>
-                    </button> &nbsp;
-                    <select class="caret-select" id="ddlZone" (change)="changeCircleSelection($event.target.value)"
-                        style="width: 150px;">
-                        <option value="Circle1" selected>Circle1</option>
-                        <option value="Circle2" [hidden]="cityName!='sikar'">Circle2</option>
-                        <option value="Circle3" [hidden]="cityName!='sikar'">Circle3</option>
-                    </select>
-
+        <div class="col-md-4"></div>
+        <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <h5 style="font-size: 16px;font-weight: bold;">Ward Scan Card Summary</h5>
         </div>
-        <div class="col-md-6 d-flex justify-content-end "
+        <div class="col-md-4 d-flex justify-content-end "
             style="text-align:right; margin-top: -2px; font-size: 20px; letter-spacing: 1px;">
             <!-- <div class="d-flex w-100"> -->
             <div style="text-align:right;padding-right:20px;">
@@ -41,11 +28,32 @@
         </div>
     </div>
 </section>
-<div class="main-content">
+<div class="main-content" >
     <div class="row">
-        <div class="col-md-12" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  height: 88vh!important">
-                <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
+        <div class="col-md-12" style="padding-left: 0px;padding-right:7px; background-color: white;">
+            <div class="row d-flex" style="padding-left: 18px;
+            margin-bottom: 6px;">
+            <div class="d-flex col-md-6 align-items-baseline gap-2">
+                <button class="btn btn-primary " (click)="setDate('','previous');">
+                    << </button>
+                        <input id="txtDate" class="date-input" type="date"
+                            (change)="setDate($event.target.value,'current')">
+                        <button class="btn btn-primary" (click)="setDate('','next');" style="margin-left: 0px!important;">
+                            >>
+                        </button> &nbsp;
+                        <select class="caret-select" id="ddlZone" (change)="changeCircleSelection($event.target.value)"
+                            style="width: 150px;">
+                            <option value="Circle1" selected>Circle1</option>
+                            <option value="Circle2" [hidden]="cityName!='sikar'">Circle2</option>
+                            <option value="Circle3" [hidden]="cityName!='sikar'">Circle3</option>
+                        </select>
+            </div>
+            <div class="savePenaltyBtn col-md-6 d-flex  justify-content-end align-items-center ">
+                <button class="btn btn-success">Save Penalty</button>
+            </div>
+            </div>
+            <div class="card mb-0" style="margin-top:-6px;  height: 78vh!important ">
+                <div class="card-body" style="height:78vh; padding: 0px 10px 0px 0px;">
                     <form>
                         <div class="row">
                             <div class="col-md-12 pr-1">
