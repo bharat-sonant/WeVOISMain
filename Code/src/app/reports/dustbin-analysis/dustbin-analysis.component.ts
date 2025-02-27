@@ -1118,7 +1118,7 @@ export class DustbinAnalysisComponent implements OnInit {
       let remark = this.binDetail.analysisRemarks.split(",");
       for (let index = 0; index < remark.length; index++) {
         let value = remark[index];
-        if (value == "कचरा बाहर फैला हुआ है") {
+        if (value == "कूड़ेदान उठाने के बाद भी कचरा बाहर फेला हुआ है") {
           chkRemark1.checked = true;
         }
         if (value == "डस्टबिन टूटा हुआ है") {
@@ -1264,7 +1264,7 @@ export class DustbinAnalysisComponent implements OnInit {
     let remarks = "";
     let element = <HTMLInputElement>document.getElementById("chkRemark1");
     if (element.checked == true) {
-      remarks += "कचरा बाहर फैला हुआ है";
+      remarks += "कूड़ेदान उठाने के बाद भी कचरा बाहर फेला हुआ है";
     }
 
     element = <HTMLInputElement>document.getElementById("chkRemark2");
@@ -1289,7 +1289,7 @@ export class DustbinAnalysisComponent implements OnInit {
   getRemark(remarkNo: any) {
     let element = <HTMLInputElement>(document.getElementById("remark" + remarkNo));
     if (element.checked == true) {
-      this.remark = "कचरा बाहर फैला हुआ है।";
+      this.remark = "कूड़ेदान उठाने के बाद भी कचरा बाहर फेला हुआ है।";
     } else {
       this.remark = null;
     }

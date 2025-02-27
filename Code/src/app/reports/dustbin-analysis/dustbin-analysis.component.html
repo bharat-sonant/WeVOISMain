@@ -206,9 +206,10 @@
                                                 <b>Remarks</b>
                                             </div>
 
-                                            <div class="col-7 pr-0 radio-text dust-main">
-                                                <input type="checkbox" id="chkRemark1">
-                                                <label for="check1">&nbsp;कचरा बाहर फैला हुआ है</label>
+                                            <div class="col-7 pr-0 radio-text dust-main d-flex align-items-start">
+                                                <input type="checkbox" id="chkRemark1" class="mt-1">
+                                                <label for="check1">&nbsp;कूड़ेदान उठाने के बाद भी कचरा बाहर फेला हुआ
+                                                    है</label>
                                             </div>
                                             <div class="col-5 pl-0 radio-text dust-main">
                                                 <input type="checkbox" id="chkRemark2">
@@ -368,7 +369,8 @@
                     </div>
                     <div class="col-md-3 desk-right mob-bottom">
                         <div class="scroll-list">
-                            <div style="text-align: right;" [hidden]="isShowActualPicked==1">{{planDetail.actualPickedCount}}</div>
+                            <div style="text-align: right;" [hidden]="isShowActualPicked==1">
+                                {{planDetail.actualPickedCount}}</div>
                             <div id="filter{{i}}" class="{{data.divClass}}"
                                 *ngFor="let data of dustbinList ; let i=index"
                                 (click)="data.divClass!='address md-background' && showDustbinData(i);">
