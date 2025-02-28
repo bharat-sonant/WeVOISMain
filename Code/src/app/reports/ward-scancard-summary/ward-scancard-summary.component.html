@@ -49,7 +49,7 @@
                         </select>
             </div>
             <div class="savePenaltyBtn col-md-6 d-flex  justify-content-end align-items-center ">
-                <button class="btn btn-success">Save Penalty</button>
+                <button class="btn btn-success" (click)="savePenalty()" >Save Penalty</button>
             </div>
             </div>
             <div class="card mb-0" style="margin-top:-6px;  height: 78vh!important ">
@@ -106,14 +106,14 @@
                                                     <td class="text-left" style="border-right:1px solid #dee2e6">
                                                         <input id="txtPenalty{{i}}"
                                                             style="width: 170px; border: 1px solid #E3E3E3; outline: none !important; border-radius: 10px;"
-                                                            class="form-control" [value]="penalty"
+                                                            class="form-control" autocomplete="off" [value]="data.penalty"
                                                             (input)="handleChange(i, 'penalty', $event)"
                                                             placeholder="Enter Penalty" type="text">
                                                     </td>
                                                     <td class="text-left" style="border-right:1px solid #dee2e6">
                                                         <input id="txtRemark{{i}}"
                                                             style="width: 170px; border: 1px solid #E3E3E3; outline: none !important; border-radius: 10px;"
-                                                            class="form-control" [value]="remark"
+                                                            class="form-control" autocomplete="off" [value]="data.remark"
                                                             (input)="handleChange(i, 'remark', $event)"
                                                             placeholder="Enter Remark" type="text">
                                                     </td>

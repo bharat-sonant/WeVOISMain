@@ -26,8 +26,7 @@ export class WardScancardSummaryComponent implements OnInit {
   totalScannedCards: any;
   totalNotScannedCards: any;
   isFirst = true;
-  penalty: String = '';
-  remark: String = '';
+
   db: any;
   public cityName: any;
   serviceName = "ward-scan-card-summary";
@@ -74,7 +73,7 @@ export class WardScancardSummaryComponent implements OnInit {
     if (circleWardList.length > 0) {
       for (let i = 0; i < circleWardList.length; i++) {
         if (circleWardList[i]["wardNo"] != undefined) {
-          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, scannedTotalCards: 0, workPercentage: "0", helperCode: "", helper: "" });
+          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, scannedTotalCards: 0, workPercentage: "0", helperCode: "", helperId: '0', helper: "", penalty: "", remark: "", });
         }
       }
       this.getWardDetail();
@@ -115,6 +114,7 @@ export class WardScancardSummaryComponent implements OnInit {
                 let empInstance = this.db.object(dbPath).valueChanges().subscribe(
                   empCodeData => {
                     empInstance.unsubscribe();
+
                     if (empCodeData != null) {
                       empCode = empCodeData.toString();
 
@@ -124,7 +124,7 @@ export class WardScancardSummaryComponent implements OnInit {
                       notScannedData => {
                         notScannedInstance.unsubscribe();
                         if (notScannedData != null) {
-                
+
                           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", notScannedData);
                           notScanned = Number(notScannedData);
                           scannedTotalCards += notScanned
@@ -141,6 +141,7 @@ export class WardScancardSummaryComponent implements OnInit {
                                 if (index != "recentScanned" && index != "totalScanned" && index != "ImagesData" && index != "totalActualScanned") {
                                   if (scannedData[index]["scanBy"] != "-1") {
                                     scanned = scanned + 1;
+
                                   }
                                 }
                               }
@@ -150,21 +151,33 @@ export class WardScancardSummaryComponent implements OnInit {
                               workPercentageData => {
                                 workPercentageInstance.unsubscribe();
                                 if (workPercentageData !== null && workPercentageData !== undefined) {
+                                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", workPercentageData);
                                   workPercentage = workPercentageData;
                                 }
-                                let detail = this.wardDataList.find(item => item.wardNo == wardNo);
-                                if (detail != undefined) {
-                          
-                                  scannedTotalCards += scanned
-                                  detail.helper = helper;
-                                  detail.helperCode = empCode;
-                                  detail.scanned = scanned;
-                                  detail.notScanned = notScanned;
-                                  detail.workPercentage = workPercentage + "%";
-                                  detail.scannedTotalCards = scannedTotalCards ? scannedTotalCards : 0;
-                                  this.totalNotScannedCards += Number(notScanned);
-                                  this.totalScannedCards += Number(scanned);
-                                }
+                                dbPath = "Penalties" + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + helperId + "/"
+                                let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(penaltyData => {
+                                  penaltyInstance.unsubscribe();
+                                  let detail = this.wardDataList.find(item => item.wardNo == wardNo);
+                                  if (penaltyData != null&&penaltyData.isCardScanPenalty!==undefined&&penaltyData.isCardScanPenalty===1) {
+                                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", penaltyData);
+                                    detail.penalty = penaltyData.amount;
+                                    detail.remark = penaltyData.reason;
+                                  }
+                                  if (detail != undefined) {
+
+                                    scannedTotalCards += scanned
+                                    detail.helper = helper;
+                                    detail.helperCode = empCode;
+                                    detail.helperId = helperId;
+                                    detail.scanned = scanned;
+                                    detail.notScanned = notScanned;
+                                    detail.workPercentage = workPercentage + "%";
+                                    detail.scannedTotalCards = scannedTotalCards ? scannedTotalCards : 0;
+                                    this.totalNotScannedCards += Number(notScanned);
+                                    this.totalScannedCards += Number(scanned);
+                                  }
+                                })
+
                               }
                             )
                           }
@@ -175,23 +188,25 @@ export class WardScancardSummaryComponent implements OnInit {
                   }
                 )
               }
+              
+              
             })
         }
       );
     }
+  
 
   }
   handleChange(index: number, type: string, event: Event) {
     const inputElement = event.target as HTMLInputElement;
-    
     if (type === 'penalty') {
       inputElement.value = inputElement.value.replace(/\D/g, ''); // Remove non-numeric characters
-      this.wardDataList[index].penalty = inputElement.value;
+      this.wardDataList[index].penalty = Number(inputElement.value);
     } else {
       this.wardDataList[index].remark = inputElement.value;
     }
   }
-  
+
   exportWardScanTypeList() {
     if (this.wardDataList.length > 0) {
       let htmlString = "";
@@ -212,6 +227,18 @@ export class WardScancardSummaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += " Not Scanned Card";
       htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Total Scanned Cards";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Work Percentage";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Penalty";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Remark";
+      htmlString += "</td>";
       htmlString += "</tr>";
       for (let i = 0; i < this.wardDataList.length; i++) {
         htmlString += "<tr>";
@@ -229,6 +256,18 @@ export class WardScancardSummaryComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td >";
         htmlString += this.wardDataList[i]["notScanned"];
+        htmlString += "</td>";
+        htmlString += "<td >";
+        htmlString += this.wardDataList[i]["scannedTotalCards"];
+        htmlString += "</td>";
+        htmlString += "<td t=s >";
+        htmlString += this.wardDataList[i]["workPercentage"];
+        htmlString += "</td>";
+        htmlString += "<td >";
+        htmlString += this.wardDataList[i]["penalty"];
+        htmlString += "</td>";
+        htmlString += "<td >";
+        htmlString += this.wardDataList[i]["remark"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
@@ -281,7 +320,10 @@ export class WardScancardSummaryComponent implements OnInit {
           this.wardDataList[i]["helper"] = "";
           this.wardDataList[i]["scanned"] = 0;
           this.wardDataList[i]["notScanned"] = 0;
-          this.wardDataList[i]["helperId"] = "0";
+          this.wardDataList[i]["scannedTotalCards"] = 0;
+          this.wardDataList[i]["workPercentage"] = 0;
+          this.wardDataList[i]["penalty"] = '';
+          this.wardDataList[i]["remark"] = '';
         }
         this.getWardDetail();
       }
@@ -289,6 +331,45 @@ export class WardScancardSummaryComponent implements OnInit {
         this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
       }
     });
+  }
+  /*
+  Function name : savePenalty
+  Description : This function is working for save penalty  by helper employee code
+  Written by : Ritik Parmar
+  Written date : 27 Feb 2025
+ */
+  savePenalty() {
+    if (this.wardDataList.length === 0) return;
+    let userId = localStorage.getItem('userID');
+    let data:any ={};
+    // let isPenalty = this.wardDataList.some((item) => item.penalty === 0);
+    // if (isPenalty) return this.commonService.setAlertMessage('error', 'Please enter penalty greater than 0')
+    let detail = this.wardDataList.some(item => item.penalty && item.remark === '');
+    if (detail) return this.commonService.setAlertMessage('error', "Please write remark");
+    let savePenaltyList = this.wardDataList.filter(item => item.penalty !== '' && item.remark !== '');
+    if (savePenaltyList.length === 0) return this.commonService.setAlertMessage('error', "Please fill penalty and remark");
+    let validate = savePenaltyList.every((item) => item.helperId !== '0' && item.penalty && item.remark);
+    if (!validate) return this.commonService.setAlertMessage('error', 'Something went wrong');
+    for (let i = 0; i < savePenaltyList.length; i++) {
+      let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+      let year = this.selectedDate.split("-")[0];
+      let ward = savePenaltyList[i];
+      if (ward.penalty && ward.remark && ward.helperId !== '0') {
+        let dbPath = 'Penalties' + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + ward.helperId + "/"
+        console.log(ward)
+        data = {
+          amount: ward.penalty,
+          reason: ward.remark,
+          createdBy: userId,
+          createdOn: this.commonService.getTodayDateTime(),
+          penaltyType: 'Penalty',
+          isCardScanPenalty: 1
+        }
+        console.log(data);
+        this.db.object(dbPath).update(data);
+      }
+    }
+    this.commonService.setAlertMessage('success', 'Penalty updated successfully');
   }
 }
 
