@@ -48,7 +48,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("General-Reports","Vehicle-Fuel-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("General-Reports", "Vehicle-Fuel-Report", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -98,7 +98,7 @@ export class VehicleFuelReportComponent implements OnInit {
         );
       }
       $('#divLoader').hide();
-    }, error => {      
+    }, error => {
       $('#divLoader').hide();
       this.commonService.setAlertMessage("error", "No Record found. Please sync from top rigth side !!!");
     });
@@ -236,7 +236,7 @@ export class VehicleFuelReportComponent implements OnInit {
                 if (list[k]["ward"].includes("BinLifting")) {
                   let detail = this.vehicleTrackList.find(item => item.date == date && item.ward.includes("BinLifting"));
                   if (detail == undefined) {
-                    this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
+                    this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime });
                   }
                   else {
                     detail.ward = detail.ward + ", " + list[k]["ward"];
@@ -247,7 +247,7 @@ export class VehicleFuelReportComponent implements OnInit {
                   }
                 }
                 else {
-                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]) });
+                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime });
                 }
               }
             }
@@ -380,8 +380,53 @@ export class VehicleFuelReportComponent implements OnInit {
     }
   }
 
+  getDutyOnOffTime(track: any, date: any,) {
+    return new Promise((resolve) => {
 
-  getWardRunningDistance(listIndex: any, index: any, vehicleWorkList: any, workDetailList: any, vehicleLengthList: any) {
+      let dutyInTime = ''
+      let dutyOutTime = ''
+      if (track.ward.includes('BinLifting')) {
+        //  get data according to binLifting
+        const path = `DailyWorkDetail/${this.selectedYear}/${this.selectedMonthName}/${date}/${track.driver}`
+        let driverTaskInstance = this.db.object(path).valueChanges().subscribe(
+          data => {
+            driverTaskInstance.unsubscribe()
+
+            for (let i = 1; i <= 5; i++) {
+              const task = data[`task${i}`];
+              if (task && task.task === track.ward) {
+                Object.entries(task['in-out']).forEach(([time, type]) => {
+                  if (type === 'In') {
+                    dutyInTime = time
+                  }
+                  else {
+                    dutyOutTime = time
+                  }
+                })
+                break;
+              }
+            }
+
+            resolve({ dutyInTime, dutyOutTime })
+          })
+      } else {
+        // get data according to ward
+        const path = `WasteCollectionInfo/${track.ward}/${this.selectedYear}/${this.selectedMonthName}/${date}/Summary`
+        let summaryInstance = this.db.object(path).valueChanges().subscribe(
+          data => {
+            summaryInstance.unsubscribe();
+            dutyInTime = data.dutyInTime.split(',')[0] || '';
+            dutyOutTime = data.dutyOutTime.split(',').at(-1) || ''
+
+            resolve({ dutyInTime, dutyOutTime })
+          })
+      }
+
+    })
+
+  }
+
+  async getWardRunningDistance(listIndex: any, index: any, vehicleWorkList: any, workDetailList: any, vehicleLengthList: any) {
     if (listIndex == vehicleWorkList.length) {
       let vehicle = vehicleLengthList[index]["vehicle"];
       const objDate = {}
@@ -393,9 +438,16 @@ export class VehicleFuelReportComponent implements OnInit {
         if (list2.length > 0) {
           for (let k = 0; k < list2.length; k++) {
             let distance = Number(list2[k]["distance"]);
-            bb.push({ ward: list2[k]["zone"], distance: distance.toFixed(3), driver: list2[k]["empId"], name: list2[k]["name"] });
+            const data = { ward: list2[k]["zone"], distance: distance.toFixed(3), driver: list2[k]["empId"], name: list2[k]["name"], dutyInTime: '', dutyOutTime: '' }
+
+            const time: any = await this.getDutyOnOffTime(data, date)
+            data.dutyInTime = time.dutyInTime
+            data.dutyOutTime = time.dutyOutTime
+
+            bb.push(data);
           }
         }
+
         objDate[date] = bb;
         aa[j] = objDate[date];
       }
@@ -412,6 +464,7 @@ export class VehicleFuelReportComponent implements OnInit {
 
       vehicleLengthList[index]["km"] = vehicleRunningKM.toFixed(3);
       let filePath = "/VehicleFuelJSONData/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+      // console.log('saving objDate:', filePath + '/' + vehicle + ".json", objDate)
       this.commonService.saveJsonFile(objDate, vehicle + ".json", filePath + "VehicleWardKM/");
       if (index == vehicleLengthList.length - 1) {
         setTimeout(() => {
@@ -421,13 +474,13 @@ export class VehicleFuelReportComponent implements OnInit {
             totalKM = totalKM + Number(vehicleLengthList[i]["km"]);
           }
           this.fuelDetail.vehicleKM = totalKM.toFixed(3);
-          this.fuelDetail.totalMonthAmount=this.totalAmountJSON.toFixed(2);
-          this.fuelDetail.totalMonthQuantity=this.totalQtyJSON.toFixed(2);
+          this.fuelDetail.totalMonthAmount = this.totalAmountJSON.toFixed(2);
+          this.fuelDetail.totalMonthQuantity = this.totalQtyJSON.toFixed(2);
           let lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
           this.fuelDetail.lastUpdateDate = lastUpdateDate;
           const obj = { "totalKM": totalKM.toFixed(3), "qty": this.totalQtyJSON.toFixed(2), "amount": this.totalAmountJSON.toFixed(2), "lastUpdateDate": lastUpdateDate };
           this.commonService.saveJsonFile(obj, "MonthSummary.json", filePath);
-          this.commonService.setAlertMessage("success","Data updated successfully !!!");
+          this.commonService.setAlertMessage("success", "Data updated successfully !!!");
           this.getFuelMonthData();
         }, 6000);
 

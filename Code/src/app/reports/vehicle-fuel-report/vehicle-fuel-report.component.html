@@ -69,12 +69,14 @@
                         <div class="halt-bg" style="border-bottom: 5px solid green;">
                             <div class="halt-details" style="width: 100%; border-bottom: none;">
                                 <h5 class="stopped-time">Total Quantity : <br><strong>
-                                    <!-- <i class="fas fa-gas-pump"></i> -->
-                                     <img src="../../../assets/icons/gas-pump-solid.svg" alt="gas-pump-solid" width="12"/>
+                                        <!-- <i class="fas fa-gas-pump"></i> -->
+                                        <img src="../../../assets/icons/gas-pump-solid.svg" alt="gas-pump-solid"
+                                            width="12" />
                                         {{fuelDetail.totalQuantity}}</strong></h5>
                                 <h5 class="break-time">Total Amount : <br><strong>
-                                    <!-- <i class="fas fa-rupee-sign"></i> -->
-                                    <img src="../../../assets/icons/rupee-sign-solid.svg" alt="rupee-sign-solid" width="10"/>
+                                        <!-- <i class="fas fa-rupee-sign"></i> -->
+                                        <img src="../../../assets/icons/rupee-sign-solid.svg" alt="rupee-sign-solid"
+                                            width="10" />
                                         {{fuelDetail.totalAmount}} </strong></h5>
                             </div>
                         </div>
@@ -146,7 +148,8 @@
                                             <div class="dh-back">
                                                 <!-- <i class="fas fa-truck-pickup"
                                                     style="color:#333!important; margin-right: 7px;"></i> -->
-                                                    <img src="../../../assets/icons/truck-pickup-solid.svg" alt="truck-pickup-solid" style="margin-right: 7px;" width="12"/>
+                                                <img src="../../../assets/icons/truck-pickup-solid.svg"
+                                                    alt="truck-pickup-solid" style="margin-right: 7px;" width="12" />
                                                 {{fuelDetail.vehicleName}}
                                             </div>
                                         </div>
@@ -154,7 +157,8 @@
                                             style="padding-left: 5px; padding-right: 15px;">
                                             <div class="on-map">
                                                 <!-- <i class="fas fa-route"></i> -->
-                                                 <img src="../../../assets/icons/route-solid.svg" alt="route-solid" width="12"/> &nbsp; {{fuelDetail.totalDistance}}
+                                                <img src="../../../assets/icons/route-solid.svg" alt="route-solid"
+                                                    width="12" /> &nbsp; {{fuelDetail.totalDistance}}
                                             </div>
                                         </div>
                                     </div>
@@ -178,6 +182,12 @@
                                                                     <th class="text-left" scope="col">
                                                                         Ward
                                                                     </th>
+                                                                    <th class="text-left" scope="col">
+                                                                        Duty On
+                                                                    </th>
+                                                                    <th class="text-left" scope="col">
+                                                                        Duty Off
+                                                                    </th>
                                                                     <th class="text-right" scope="col">
                                                                         Distance Covered
                                                                     </th>
@@ -197,6 +207,14 @@
                                                                     <td class="text-left"
                                                                         style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                                         {{data.ward}}
+                                                                    </td>
+                                                                    <td class="text-left"
+                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                        {{data.dutyInTime}}
+                                                                    </td>
+                                                                    <td class="text-left"
+                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                        {{data.dutyOutTime}}
                                                                     </td>
                                                                     <td class="text-right"
                                                                         style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
