@@ -87,8 +87,8 @@
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of wardDataList; let i=index"
-                                                style="cursor: pointer;" (click)="getScanDetail(data.wardNo,i);">
+                                            <tr  id="tr{{i}}" *ngFor="let data of wardDataList;  let i=index"
+                                                style="cursor: pointer;" (click)="getScanDetail(data.wardNo,i);" [hidden]="data.isDataFound===false">
                                                 <td style="border-right:1px solid #dee2e6">
                                                     {{data.wardNo}}</td>
                                                 <td style="border-right:1px solid #dee2e6">

@@ -73,7 +73,7 @@ export class WardScancardSummaryComponent implements OnInit {
     if (circleWardList.length > 0) {
       for (let i = 0; i < circleWardList.length; i++) {
         if (circleWardList[i]["wardNo"] != undefined) {
-          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, notScanned: 0, scannedTotalCards: 0, workPercentage: "0", helperCode: "", helperId: '0', helper: "", penalty: "", remark: "", });
+          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0,isPenaltyRemarkChange:false, notScanned: 0, scannedTotalCards: 0, workPercentage: "0", helperCode: "", helperId: '0', helper: "", penalty: "", remark: "",isDataFound:false });
         }
       }
       this.getWardDetail();
@@ -154,11 +154,11 @@ export class WardScancardSummaryComponent implements OnInit {
                                   this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", workPercentageData);
                                   workPercentage = workPercentageData;
                                 }
-                                dbPath = "Penalties" + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + helperId + "/"
+                                dbPath = "WardScanCardPenalties" + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + helperId + "/" + wardNo + "/"
                                 let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(penaltyData => {
                                   penaltyInstance.unsubscribe();
                                   let detail = this.wardDataList.find(item => item.wardNo == wardNo);
-                                  if (penaltyData != null&&penaltyData.isCardScanPenalty!==undefined&&penaltyData.isCardScanPenalty===1) {
+                                  if (penaltyData != null && penaltyData.isCardScanPenalty !== undefined && penaltyData.isCardScanPenalty === 1) {
                                     this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", penaltyData);
                                     detail.penalty = penaltyData.amount;
                                     detail.remark = penaltyData.reason;
@@ -170,6 +170,7 @@ export class WardScancardSummaryComponent implements OnInit {
                                     detail.helperCode = empCode;
                                     detail.helperId = helperId;
                                     detail.scanned = scanned;
+                                    detail.isDataFound=true;
                                     detail.notScanned = notScanned;
                                     detail.workPercentage = workPercentage + "%";
                                     detail.scannedTotalCards = scannedTotalCards ? scannedTotalCards : 0;
@@ -188,22 +189,29 @@ export class WardScancardSummaryComponent implements OnInit {
                   }
                 )
               }
-              
-              
+              else{
+                let detail = this.wardDataList.find(item => item.wardNo == wardNo);
+                if (detail) {
+                        detail.isDataFound =false;                  
+                }
+              }
+
             })
         }
       );
     }
-  
+
 
   }
   handleChange(index: number, type: string, event: Event) {
     const inputElement = event.target as HTMLInputElement;
     if (type === 'penalty') {
       inputElement.value = inputElement.value.replace(/\D/g, ''); // Remove non-numeric characters
-      this.wardDataList[index].penalty = Number(inputElement.value);
+      this.wardDataList[index].penalty = inputElement.value;
+      this.wardDataList[index].isPenaltyRemarkChange = true;
     } else {
       this.wardDataList[index].remark = inputElement.value;
+      this.wardDataList[index].isPenaltyRemarkChange = true;
     }
   }
 
@@ -316,16 +324,7 @@ export class WardScancardSummaryComponent implements OnInit {
       $("#txtDate").val(newDate);
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
-        for (let i = 0; i < this.wardDataList.length; i++) {
-          this.wardDataList[i]["helper"] = "";
-          this.wardDataList[i]["scanned"] = 0;
-          this.wardDataList[i]["notScanned"] = 0;
-          this.wardDataList[i]["scannedTotalCards"] = 0;
-          this.wardDataList[i]["workPercentage"] = 0;
-          this.wardDataList[i]["penalty"] = '';
-          this.wardDataList[i]["remark"] = '';
-        }
-        this.getWardDetail();
+        this.onSubmit();
       }
       else {
         this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
@@ -341,35 +340,46 @@ export class WardScancardSummaryComponent implements OnInit {
   savePenalty() {
     if (this.wardDataList.length === 0) return;
     let userId = localStorage.getItem('userID');
-    let data:any ={};
-    // let isPenalty = this.wardDataList.some((item) => item.penalty === 0);
-    // if (isPenalty) return this.commonService.setAlertMessage('error', 'Please enter penalty greater than 0')
+    let data: any = {};
+    let isPenalty = this.wardDataList.some((item) => item.penalty!==''&&Number(item.penalty) === 0);
+    if (isPenalty) return this.commonService.setAlertMessage('error', 'Please enter penalty greater than 0')
     let detail = this.wardDataList.some(item => item.penalty && item.remark === '');
     if (detail) return this.commonService.setAlertMessage('error', "Please write remark");
     let savePenaltyList = this.wardDataList.filter(item => item.penalty !== '' && item.remark !== '');
     if (savePenaltyList.length === 0) return this.commonService.setAlertMessage('error', "Please fill penalty and remark");
     let validate = savePenaltyList.every((item) => item.helperId !== '0' && item.penalty && item.remark);
     if (!validate) return this.commonService.setAlertMessage('error', 'Something went wrong');
+    let isSaved=false;
     for (let i = 0; i < savePenaltyList.length; i++) {
       let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
       let year = this.selectedDate.split("-")[0];
       let ward = savePenaltyList[i];
-      if (ward.penalty && ward.remark && ward.helperId !== '0') {
-        let dbPath = 'Penalties' + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + ward.helperId + "/"
-        console.log(ward)
+      if (ward.penalty && ward.remark && ward.helperId !== '0'&&ward.isPenaltyRemarkChange) {
+        let dbPath = 'WardScanCardPenalties' + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + ward.helperId + "/" +ward.wardNo+"/"
         data = {
-          amount: ward.penalty,
+          amount: Number(ward.penalty),
           reason: ward.remark,
           createdBy: userId,
           createdOn: this.commonService.getTodayDateTime(),
           penaltyType: 'Penalty',
           isCardScanPenalty: 1
         }
-        console.log(data);
         this.db.object(dbPath).update(data);
+        isSaved = true;
+        let detail = this.wardDataList.find(item=>item.wardNo===ward.wardNo);
+        if (detail) {
+          detail.isPenaltyRemarkChange =false;
+        }
       }
     }
-    this.commonService.setAlertMessage('success', 'Penalty updated successfully');
+    if (isSaved) {
+      this.commonService.setAlertMessage('success', 'Penalty updated successfully');
+      isSaved=false;
+      return
+    }
+    else{
+     return this.commonService.setAlertMessage('error', "No Changes Found");
+    }
   }
 }
 
