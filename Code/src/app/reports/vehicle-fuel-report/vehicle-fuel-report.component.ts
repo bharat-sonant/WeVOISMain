@@ -236,7 +236,7 @@ export class VehicleFuelReportComponent implements OnInit {
                 if (list[k]["ward"].includes("BinLifting")) {
                   let detail = this.vehicleTrackList.find(item => item.date == date && item.ward.includes("BinLifting"));
                   if (detail == undefined) {
-                    this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime });
+                    this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage });
                   }
                   else {
                     detail.ward = detail.ward + ", " + list[k]["ward"];
@@ -247,7 +247,7 @@ export class VehicleFuelReportComponent implements OnInit {
                   }
                 }
                 else {
-                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime });
+                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage });
                 }
               }
             }
@@ -380,11 +380,12 @@ export class VehicleFuelReportComponent implements OnInit {
     }
   }
 
-  getDutyOnOffTime(track: any, date: any,) {
+  getTrackAdditionalDetails(track: any, date: any,) {
     return new Promise((resolve) => {
 
       let dutyInTime = ''
       let dutyOutTime = ''
+      let workPercentage = ''
       if (track.ward.includes('BinLifting')) {
         //  get data according to binLifting
         const path = `DailyWorkDetail/${this.selectedYear}/${this.selectedMonthName}/${date}/${track.driver}`
@@ -407,7 +408,7 @@ export class VehicleFuelReportComponent implements OnInit {
               }
             }
 
-            resolve({ dutyInTime, dutyOutTime })
+            resolve({ dutyInTime, dutyOutTime, workPercentage })
           })
       } else {
         // get data according to ward
@@ -417,8 +418,9 @@ export class VehicleFuelReportComponent implements OnInit {
             summaryInstance.unsubscribe();
             dutyInTime = data.dutyInTime.split(',')[0] || '';
             dutyOutTime = data.dutyOutTime.split(',').at(-1) || ''
+            workPercentage = data.workPercentage || ''
 
-            resolve({ dutyInTime, dutyOutTime })
+            resolve({ dutyInTime, dutyOutTime, workPercentage })
           })
       }
 
@@ -438,11 +440,12 @@ export class VehicleFuelReportComponent implements OnInit {
         if (list2.length > 0) {
           for (let k = 0; k < list2.length; k++) {
             let distance = Number(list2[k]["distance"]);
-            const data = { ward: list2[k]["zone"], distance: distance.toFixed(3), driver: list2[k]["empId"], name: list2[k]["name"], dutyInTime: '', dutyOutTime: '' }
+            const data = { ward: list2[k]["zone"], distance: distance.toFixed(3), driver: list2[k]["empId"], name: list2[k]["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '' }
 
-            const time: any = await this.getDutyOnOffTime(data, date)
-            data.dutyInTime = time.dutyInTime
-            data.dutyOutTime = time.dutyOutTime
+            const details: any = await this.getTrackAdditionalDetails(data, date)
+            data.dutyInTime = details.dutyInTime
+            data.dutyOutTime = details.dutyOutTime
+            data.workPercentage = details.workPercentage
 
             bb.push(data);
           }
