@@ -236,7 +236,7 @@ export class VehicleFuelReportComponent implements OnInit {
                 if (list[k]["ward"].includes("BinLifting")) {
                   let detail = this.vehicleTrackList.find(item => item.date == date && item.ward.includes("BinLifting"));
                   if (detail == undefined) {
-                    this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage, portalKm: list[k].portalKm });
+                    this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage, portalKm: list[k].portalKm, gps_km: list[k].gps_km });
                   }
                   else {
                     detail.ward = detail.ward + ", " + list[k]["ward"];
@@ -247,7 +247,7 @@ export class VehicleFuelReportComponent implements OnInit {
                   }
                 }
                 else {
-                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage, portalKm: list[k].portalKm });
+                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage, portalKm: list[k].portalKm, gps_km: list[k].gps_km });
                 }
               }
             }
@@ -490,6 +490,66 @@ export class VehicleFuelReportComponent implements OnInit {
     })
   }
 
+  getDistanceFromLatLonInKm(lat1: any, lon1: any, lat2: any, lon2: any) {
+    const R = 6377830; // metres
+    const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) *
+      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // in metres
+  }
+
+  getGPSKm(track: any, date: any, vehicle: any) {
+    return new Promise((resolve) => {
+      let url = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicle + "/" + date + ".json";
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          let distance = 0;
+          if (data) {
+            const [dutyInHr, dutyInMin] = track.dutyInTime.split(':')
+            const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":")
+
+            let keyArray = Object.keys(data);
+            for (let j = 0; j < keyArray.length - 2; j++) {
+              let time = keyArray[j];
+              const [hr, min] = time.split(':')
+              let nextTime = keyArray[j + 1];
+              const [nextHr, nextMin] = nextTime.split(':')
+
+              const isCurrTimeInRange = ((Number(hr) > Number(dutyInHr) ||
+                (Number(hr) === Number(dutyInHr) && Number(min) >= Number(dutyInMin))) &&
+                (Number(hr) < Number(dutyOutHr) ||
+                  (Number(hr) === Number(dutyOutHr) && Number(min) <= Number(dutyOutMin))));
+
+              const isNextTimeInRange = (Number(nextHr) > Number(dutyInHr) ||
+                (Number(nextHr) === Number(dutyInHr) && Number(nextMin) >= Number(dutyInMin))) &&
+                (Number(nextHr) < Number(dutyOutHr) ||
+                  (Number(nextHr) === Number(dutyOutHr) && Number(nextMin) <= Number(dutyOutMin)));
+
+              if (isCurrTimeInRange && isNextTimeInRange) {
+                let lat = data[time].split(',')[0];
+                let lng = data[time].split(',')[1];
+                let nextLat = data[nextTime].split(',')[0];
+                let nextLng = data[nextTime].split(',')[1];
+                distance = distance + Number(this.getDistanceFromLatLonInKm(lat, lng, nextLat, nextLng));
+              }
+            }
+            resolve((distance / 1000).toFixed(3));
+          }
+
+          resolve(distance)
+
+        })
+
+    });
+  }
+
   async getWardRunningDistance(listIndex: any, index: any, vehicleWorkList: any, workDetailList: any, vehicleLengthList: any) {
     if (listIndex == vehicleWorkList.length) {
       let vehicle = vehicleLengthList[index]["vehicle"];
@@ -502,15 +562,18 @@ export class VehicleFuelReportComponent implements OnInit {
         if (list2.length > 0) {
           for (let k = 0; k < list2.length; k++) {
             let distance = Number(list2[k]["distance"]);
-            const data = { ward: list2[k]["zone"], distance: distance.toFixed(3), driver: list2[k]["empId"], name: list2[k]["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '', portalKm: '' }
+            const data = { ward: list2[k]["zone"], distance: distance.toFixed(3), driver: list2[k]["empId"], name: list2[k]["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '', portalKm: '', gps_km: '' }
 
             const details: any = await this.getTrackAdditionalDetails(data, date)
             data.dutyInTime = details.dutyInTime
             data.dutyOutTime = details.dutyOutTime
             data.workPercentage = details.workPercentage
 
-            const portalKm: any = await this.getPortalKm(data, date, vehicle)
+            await this.getGPSKm(data, date, vehicle)
+            const [portalKm, gps_km] = await Promise.all([this.getPortalKm(data, date, vehicle), this.getGPSKm(data, date, vehicle)])
             data.portalKm = `${portalKm}`
+            data.gps_km = `${gps_km}`
+
             bb.push(data);
           }
         }
