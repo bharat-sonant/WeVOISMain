@@ -560,9 +560,9 @@ export class VehicleFuelReportComponent implements OnInit {
         let list2 = vehicleWorkList.filter(item => item.date == date);
         const bb = [];
         if (list2.length > 0) {
-          for (let k = 0; k < list2.length; k++) {
-            let distance = Number(list2[k]["distance"]);
-            const data = { ward: list2[k]["zone"], distance: distance.toFixed(3), driver: list2[k]["empId"], name: list2[k]["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '', portalKm: '', gps_km: '' }
+          await Promise.all(list2.map(async (item) => {
+            let distance = Number(item["distance"]);
+            const data = { ward: item["zone"], distance: distance.toFixed(3), driver: item["empId"], name: item["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '', portalKm: '', gps_km: '' }
 
             const details: any = await this.getTrackAdditionalDetails(data, date)
             data.dutyInTime = details.dutyInTime
@@ -574,7 +574,8 @@ export class VehicleFuelReportComponent implements OnInit {
             data.gps_km = `${gps_km}`
 
             bb.push(data);
-          }
+
+          }))
         }
 
         objDate[date] = bb;
