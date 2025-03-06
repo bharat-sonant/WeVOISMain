@@ -416,8 +416,8 @@ export class VehicleFuelReportComponent implements OnInit {
         let summaryInstance = this.db.object(path).valueChanges().subscribe(
           data => {
             summaryInstance.unsubscribe();
-            dutyInTime = data.dutyInTime.split(',')[0] || '';
-            dutyOutTime = data.dutyOutTime.split(',').at(-1) || ''
+            dutyInTime = data.dutyInTime ? data.dutyInTime.split(',')[0] : '';
+            dutyOutTime = data.dutyOutTime ? data.dutyOutTime.split(',').at(-1) : ''
             workPercentage = data.workPercentage || ''
 
             resolve({ dutyInTime, dutyOutTime, workPercentage })
