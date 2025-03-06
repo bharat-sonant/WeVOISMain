@@ -569,7 +569,6 @@ export class VehicleFuelReportComponent implements OnInit {
             data.dutyOutTime = details.dutyOutTime
             data.workPercentage = details.workPercentage
 
-            await this.getGPSKm(data, date, vehicle)
             const [portalKm, gps_km] = await Promise.all([this.getPortalKm(data, date, vehicle), this.getGPSKm(data, date, vehicle)])
             data.portalKm = `${portalKm}`
             data.gps_km = `${gps_km}`
