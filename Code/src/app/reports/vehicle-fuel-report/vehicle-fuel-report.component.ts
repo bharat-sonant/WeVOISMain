@@ -813,7 +813,7 @@ export class VehicleFuelReportComponent implements OnInit {
       htmlString += "</table>";
 
       // Generate the file name dynamically
-      let fileName = this.commonService.getFireStoreCity() + `-Vehicle-Tracking[${this.selectedMonthName} ${this.selectedYear}].xlsx`;
+      let fileName = this.commonService.getFireStoreCity() + `-Vehicle-Fuel-Report[${this.selectedMonthName} ${this.selectedYear}].xlsx`;
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
