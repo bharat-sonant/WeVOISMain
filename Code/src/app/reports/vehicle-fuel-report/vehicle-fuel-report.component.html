@@ -35,7 +35,7 @@
                         <h5 class="hide">Vehicle Fuel Report</h5>
                     </div>
 
-                    <div class="field-box">
+                    <div class="field-box d-flex">
                         <div class="refresh" (click)="updateJSONData();"
                             style="text-align: right!important; padding-right: 10px;">
                             <h1>
@@ -55,10 +55,19 @@
                                 <p>Amount</p>
                             </h1>
                         </div>
-                        <div class="totalhalt">
+                        <div class="totalhalt ps-1">
                             <h1>{{fuelDetail.vehicleKM}} <br>
                                 <p>Running KM</p>
                             </h1>
+                        </div>
+                        <div class="exportBtn">
+                            <span
+                                style="float: right; text-align: center; font-size: 10px!important; padding-right: 20px">
+                                <img src="../../../assets/icons/file-export-solid.svg" alt="file"
+                                    class="icon-green cursor-pointer" width="24" (click)="exportToExcel();" />
+                                <br />
+                                Export to Excel
+                            </span>
                         </div>
                     </div>
                 </div>

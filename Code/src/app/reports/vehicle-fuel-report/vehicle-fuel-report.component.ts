@@ -698,6 +698,8 @@ export class VehicleFuelReportComponent implements OnInit {
     this.getDailyWorkDetail(1, days, workDetailList);
   }
 
+
+
   updateJSONForDieselEntry() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateJSONForDieselEntry");
     this.totalQtyJSON = 0;
@@ -746,7 +748,79 @@ export class VehicleFuelReportComponent implements OnInit {
         }
       });
   }
+
+  exportToExcel() {
+    const exportData = [];
+    const days = new Date(this.selectedYear, this.selectedMonth, 0).getDate()
+
+    // loop through all days of month
+    for (let day: any = 1; day <= days; day++) {
+      day = day < 10 ? `0${day}` : day;
+      const date = `${this.selectedYear}-${this.selectedMonth}-${day}`;
+      const vehicleFuel = this.vehicleFuelList.find(data => data.date === date)  // find vehicle fuel details
+      const vehicleTracks = this.vehicleTrackList.filter(data => data.date === date)  //find list of vehicle tracks of the date
+
+      // if only vehicle fuel details found then add it to export data
+      if (vehicleTracks.length === 0 && vehicleFuel) {
+        exportData.push(vehicleFuel)
+      }
+
+      // if vehicle tracks are found then add them to export data along with vehicle fuel details if available
+      vehicleTracks.forEach((track, idx) => {
+        exportData.push({ ...(idx === 0 ? vehicleFuel : {}), ...track })  //add vehicleFuel only for first track on that date
+      });
+
+    }
+
+    if (exportData.length > 0) {
+      let htmlString = "<table>";
+
+      // Table Headers
+      htmlString += "<tr>";
+      htmlString += "<td>Date</td>";
+      htmlString += "<td>Meter Reading</td>";
+      htmlString += "<td>Quantity</td>";
+      htmlString += "<td>Amount</td>";
+      htmlString += "<td>Driver</td>";
+      htmlString += "<td>Ward</td>";
+      htmlString += "<td>Duty On</td>";
+      htmlString += "<td>Duty Off</td>";
+      htmlString += "<td>Work Percentage</td>";
+      htmlString += "<td>Portal KM</td>";
+      htmlString += "<td>GPS KM</td>";
+      htmlString += "<td>Distance Covered</td>";
+      htmlString += "</tr>";
+
+      // Table Rows
+      for (let i = 0; i < exportData.length; i++) {
+        let data = exportData[i];
+        htmlString += "<tr>";
+        htmlString += `<td>${data.date || ''}</td>`;
+        htmlString += `<td>${data.meterReading || ''}</td>`;
+        htmlString += `<td>${data.quantity || ''}</td>`;
+        htmlString += `<td>${data.amount || ''}</td>`;
+        htmlString += `<td>${data.name || ''}</td>`;
+        htmlString += `<td t=s >${data.ward || ''}</td>`;
+        htmlString += `<td>${data.dutyInTime || ''}</td>`;
+        htmlString += `<td>${data.dutyOutTime || ''}</td>`;
+        htmlString += `<td>${data.workPercentage || ''}</td>`;
+        htmlString += `<td>${data.portalKm || ''}</td>`;
+        htmlString += `<td>${data.gps_km || ''}</td>`;
+        htmlString += `<td>${data.distance || ''}</td>`;
+        htmlString += "</tr>";
+      }
+
+      htmlString += "</table>";
+
+      // Generate the file name dynamically
+      let fileName = this.commonService.getFireStoreCity() + `-Vehicle-Tracking[${this.selectedMonthName} ${this.selectedYear}].xlsx`;
+      this.commonService.exportExcel(htmlString, fileName);
+    }
+  }
+
 }
+
+
 
 export class fuelDetail {
   totalQuantity: string;

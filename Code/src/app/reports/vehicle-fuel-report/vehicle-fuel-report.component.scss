@@ -691,12 +691,13 @@ button {
 
 
 .field-box {
-  width: 480px !important;
+  width: 590px !important;
   position: fixed;
-  top: 10px;
+  top: 8px;
   right: 10px;
   text-align: center;
   z-index: 9999;
+  height: 38px;
 }
 
 .totalImages {
@@ -730,6 +731,14 @@ button {
   font-size: 10px;
   color: #fff;
   font-weight: normal;
+}
+
+
+.exportBtn{
+  color: #fff;
+  border-left: white 1px solid;
+  margin-left: 10px;
+  padding-left: 5px;
 }
 
 
