@@ -131,7 +131,7 @@
                                     <div class="all-data ">
                                         <div class="data-1 pen-analysis-outer">
 
-                                            <p class="pen-analysis">
+                                            <p class="pen-analysis" style="cursor: pointer;" (click)="showPendingAnalysis();">
                                                 {{dustbinData.pendingAnalysis}}</p>
                                             <h5>Pending Analysis</h5>
                                         </div>
@@ -206,12 +206,11 @@
                                                 <b>Remarks</b>
                                             </div>
 
-                                            <div class="col-7 pr-0 radio-text dust-main d-flex align-items-start">
-                                                <input type="checkbox" id="chkRemark1" class="mt-1">
-                                                <label for="check1">&nbsp;कूड़ेदान उठाने के बाद भी कचरा बाहर फेला हुआ
-                                                    है</label>
+                                            <div class="col-12 pr-0 radio-text dust-main">
+                                                <input type="checkbox" id="chkRemark1">
+                                                <label for="check1">&nbsp;कूड़ेदान उठाने के बाद भी कचरा बाहर फेला हुआ है</label>
                                             </div>
-                                            <div class="col-5 pl-0 radio-text dust-main">
+                                            <div class="col-12 pr-0 radio-text dust-main">
                                                 <input type="checkbox" id="chkRemark2">
                                                 <label for="check2">&nbsp;डस्टबिन टूटा हुआ है</label>
                                             </div>
@@ -369,8 +368,7 @@
                     </div>
                     <div class="col-md-3 desk-right mob-bottom">
                         <div class="scroll-list">
-                            <div style="text-align: right;" [hidden]="isShowActualPicked==1">
-                                {{planDetail.actualPickedCount}}</div>
+                            <div style="text-align: right;" [hidden]="isShowActualPicked==1">{{planDetail.actualPickedCount}}</div>
                             <div id="filter{{i}}" class="{{data.divClass}}"
                                 *ngFor="let data of dustbinList ; let i=index"
                                 (click)="data.divClass!='address md-background' && showDustbinData(i);">
@@ -392,6 +390,8 @@
                                             [hidden]="data.isNotPickedIcon==0" />
                                         <span [innerHTML]="data.duration" style="font-size: 10px;">
                                         </span>
+                                        <img src="../../assets/icons/dustbin.svg" alt="Remove Dustbin" class="icon-red  cursor-pointer" width="15" style="color:red"
+                                        (click)="openConfirmationModel(contentConfirmation,data.dustbinId,data.planId);" title="Remove Dustbin" [hidden]="data.iconClass!='fas fa-ellipsis-h' || canRemoveNotPickedDustbin=='0'"/>
 
                                     </div>
                                 </div>
@@ -405,6 +405,33 @@
         </div>
     </div>
 </section>
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <input type="hidden" id="hddRemoveIndex"/>
+                <input type="hidden" id="hddRemovePlanId"/>
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wrap-input-effects" style="display:block; padding-bottom: 20px;">
+                    <input id="chkConfirm" type="checkbox">&nbsp;You want to delete this dustbin from plan. Are you sure?
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="button" class="btn w-100 btn-success submit-btn"  value="Confirm" (click)="removeUnpickedDustbin();" style="height: 45px;margin-left: 0px;" />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="button" class="btn w-100 btn-danger"  value="Cancel" (click)="closeModel();" style="height: 45px;margin-left: 0px;margin-top: 0px;" />
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</ng-template>
 <ng-template #UpdateDustbinPickedDetail>
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">

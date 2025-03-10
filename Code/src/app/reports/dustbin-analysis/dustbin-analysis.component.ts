@@ -31,11 +31,12 @@ export class DustbinAnalysisComponent implements OnInit {
   cityName: any;
   userType: any;
   isShowData: any;
-  isShowActualPicked: any;
+  isShowActualPicked:any;
   db: any;
   serviceName = "dustbin-analysis";
   autoPickedDustbin: any;
   canUpdateDustbinPickDetail: any;
+  canRemoveNotPickedDustbin: any;
   binDetail: dustbinDetails = {
     binId: "",
     filledTopViewImageUrl: "",
@@ -72,7 +73,7 @@ export class DustbinAnalysisComponent implements OnInit {
     pickedCount: "",
     assignedCount: "",
     notAtLocationCount: "",
-    actualPickedCount: "",
+    actualPickedCount:"",
   };
 
   dustbinData: dustbinDetail = {
@@ -87,6 +88,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.userType = localStorage.getItem("userType");
     this.canUpdateDustbinPickDetail = localStorage.getItem("canUpdateDustbinPickDetail");
+    this.canRemoveNotPickedDustbin = localStorage.getItem("canRemoveNotPickedDustbin");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Dustbin-Management", "Dustbin-Analysis", localStorage.getItem("userID"));
@@ -94,11 +96,11 @@ export class DustbinAnalysisComponent implements OnInit {
     element.href = this.cityName + "/3B/dustbin-planing";
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
-    this.isShowActualPicked = 0;
-    if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1 || this.cityName != 'sikar') {
-      this.isShowActualPicked = 1;
+    this.isShowActualPicked=0;
+    if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1 || this.cityName!='sikar') {
+      this.isShowActualPicked=1;
     }
-
+    
     if (this.userType == "External User" && this.cityName == "jodhpur") {
       this.isShowData = false;
     }
@@ -134,7 +136,6 @@ export class DustbinAnalysisComponent implements OnInit {
 
   setDefaultValues() {
     this.selectedDate = this.commonService.setTodayDate();
-    //this.selectedDate = "2024-10-28";
     this.currentMonthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );
@@ -143,6 +144,103 @@ export class DustbinAnalysisComponent implements OnInit {
     this.dustbinData.refreshTime = this.commonService.getCurrentTime();
     this.fillPercentage = 0;
     $(this.txtManualRemark).val("");
+  }
+
+  showPendingAnalysis(){
+     let url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + localStorage.getItem("userID")+"/dustbin-pending-analysis";
+    window.open(url, "_blank");
+  }
+
+  
+  removeUnpickedDustbin() {
+    let element=<HTMLInputElement>document.getElementById("chkConfirm");
+    if(element.checked==false){
+      this.commonService.setAlertMessage("error","Please check confirmation!!!");
+      return;
+    }
+    let dustbinId = $("#hddRemoveIndex").val();
+    let planId = $("#hddRemovePlanId").val();
+    if (this.dustbinList.length > 0) {
+      this.dustbinList = this.dustbinList.filter(item => item.dustbinId != dustbinId);
+      if (this.dustbinList.length == 0) {
+        this.planList = this.planList.filter(item => item.planId != planId);
+      }
+      this.getRemoveUnpickedDustbinFromPlan(planId, dustbinId);
+    }
+    this.closeModel();
+  }
+
+  getRemoveUnpickedDustbinFromPlan(planId: any, dustbinId: any) {
+    let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId;
+    let planDateInstance = this.db.object(dbPath).valueChanges().subscribe(historyData => {
+      planDateInstance.unsubscribe();
+      if (historyData == null) {
+        dbPath = "DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId;
+        let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+          planInstance.unsubscribe();
+          if (planData != null) {
+            this.removeUnpickedDustbinFromPlan(planId, dustbinId, planData, dbPath);
+          }
+        });
+      }
+      else {
+        this.removeUnpickedDustbinFromPlan(planId, dustbinId, historyData, dbPath);
+      }
+    })
+  }
+
+  removeUnpickedDustbinFromPlan(planId: any, dustbinId: any, planData: any, dbPath: any) {
+    let binList = planData["bins"].split(",");
+    let sequenceList = planData["pickingSequence"].split(",");
+    let bins = "";
+    let pickingSequence = "";
+    for (let i = 0; i < binList.length; i++) {
+      if (binList[i].trim() != dustbinId.trim()) {
+        if (bins == "") {
+          bins = binList[i].trim();
+        }
+        else {
+          bins += "," + binList[i].trim();
+        }
+      }
+    }
+    for (let i = 0; i < sequenceList.length; i++) {
+      if (sequenceList[i].trim() != dustbinId.trim()) {
+        if (pickingSequence == "") {
+          pickingSequence = sequenceList[i].trim();
+        }
+        else {
+          pickingSequence += "," + sequenceList[i].trim();
+        }
+      }
+    }
+    let obj = {
+      bins: bins,
+      pickingSequence: pickingSequence
+    }
+    if(bins==""){
+      this.db.object(dbPath).set(null);
+      this.resetData();
+      this.getBinsForSelectedPlan(this.planList[0]["planId"]);
+    }
+    else{
+      this.db.object(dbPath).update(obj);
+    }
+    this.commonService.setAlertMessage("success","Dustbin removed from plan!!!");
+    
+  }
+
+  openConfirmationModel(content: any, id: any, planId: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 200;
+    let width = 450;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $("#hddRemoveIndex").val(id);
+    $("#hddRemovePlanId").val(planId);
   }
 
   getAssignedPlans() {
@@ -373,7 +471,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.planDetail.driverName = "--";
     this.planDetail.vehicle = "--";
     this.planDetail.pickedCount = "";
-    this.planDetail.actualPickedCount = "";
+    this.planDetail.actualPickedCount="";
     this.planDetail.assignedCount = " -- ";
     this.planDetail.notAtLocationCount = " -- ";
   }
@@ -453,6 +551,7 @@ export class DustbinAnalysisComponent implements OnInit {
 
           this.dustbinList.push({
             dustbinId: binId,
+            planId: planId,
             address: dustbinAddress,
             iconClass: this.setIconClass(dustbinHistoryData),
             divClass: this.setBackgroudClasss(dustbinHistoryData),
@@ -610,18 +709,24 @@ export class DustbinAnalysisComponent implements OnInit {
 
     if (isPicked == true) {
       this.dustbinList[index]["isPicked"] = "1";
+      this.dustbinList[index]["isNotPickedIcon"] = "0";
+      /*
       if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1) {
         this.dustbinList[index]["isNotPickedIcon"] = "0";
       }
+        */
     }
     else {
+      this.dustbinList[index]["isNotPickedIcon"] = "0";
+        this.dustbinList[index]["divClass"] = "address md-background";
+/*
       let compaireDate = new Date("2024-08-01");
-      if (new Date(this.selectedDate) >= compaireDate && this.cityName == 'sikar') {
+      if (new Date(this.selectedDate) >= compaireDate && this.cityName=='sikar') {
         if (this.selectedDate != this.commonService.setTodayDate()) {
           this.dustbinList[index]["isNotPickedIcon"] = "1";
           if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1) {
             this.dustbinList[index]["isNotPickedIcon"] = "0";
-            this.dustbinList[index]["divClass"] = "address";
+            this.dustbinList[index]["divClass"] = "address md-background";
           }
           let planDetail = this.planList.find(item => item.planId == this.planId);
           if (planDetail != undefined) {
@@ -645,13 +750,14 @@ export class DustbinAnalysisComponent implements OnInit {
         }
         else {
           this.dustbinList[index]["isNotPickedIcon"] = "0";
-          this.dustbinList[index]["divClass"] = "address";
+          this.dustbinList[index]["divClass"] = "address md-background";
         }
       }
       else {
         this.dustbinList[index]["isNotPickedIcon"] = "0";
-        this.dustbinList[index]["divClass"] = "address";
-      }
+        this.dustbinList[index]["divClass"] = "address md-background";
+      }     
+      */
     }
   }
 
@@ -856,7 +962,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.planDetail.notAtLocationCount = this.getDustbinCounts("notAtLocation").toString();
     this.planDetail.dutyStartTime = "";
     this.planDetail.dutyEndTime = "";
-    this.planDetail.actualPickedCount = this.getDustbinCounts("actual").toString();
+    this.planDetail.actualPickedCount=this.getDustbinCounts("actual").toString();
   }
 
   getDustbinCounts(countType: string) {
@@ -874,12 +980,12 @@ export class DustbinAnalysisComponent implements OnInit {
       }
     }
 
-    if (countType == "actual") {
+    if(countType=="actual"){
       for (let index = 0; index < this.dustbinList.length; index++) {
         const element = this.dustbinList[index];
         if (element["isPicked"] == "1") {
           if (element["isAutoPicked"] == "0") {
-            count++;
+          count++;
           }
         }
       }
@@ -1160,10 +1266,9 @@ export class DustbinAnalysisComponent implements OnInit {
     let canDo = "yes";
     if (this.binDetail.filledTopViewImageUrl == this.imageNotAvailablePath) {
       canDo = "no";
+    } else if (this.binDetail.dustbinNotFoundImageUrl != this.imageNotAvailablePath) {
+      canDo = "no";
     }
-    // else if (this.binDetail.dustbinNotFoundImageUrl != this.imageNotAvailablePath) {
-    //   canDo = "no";
-    // }
 
     return canDo;
   }
@@ -1739,7 +1844,7 @@ export class planDetails {
   dutyStartTime: string;
   dutyEndTime: string;
   pickedCount: string;
-  actualPickedCount: string;
+  actualPickedCount:string;
   assignedCount: string;
   notAtLocationCount: string;
 }
