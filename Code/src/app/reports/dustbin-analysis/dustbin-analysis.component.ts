@@ -31,7 +31,7 @@ export class DustbinAnalysisComponent implements OnInit {
   cityName: any;
   userType: any;
   isShowData: any;
-  isShowActualPicked:any;
+  isShowActualPicked: any;
   db: any;
   serviceName = "dustbin-analysis";
   autoPickedDustbin: any;
@@ -72,7 +72,7 @@ export class DustbinAnalysisComponent implements OnInit {
     pickedCount: "",
     assignedCount: "",
     notAtLocationCount: "",
-    actualPickedCount:"",
+    actualPickedCount: "",
   };
 
   dustbinData: dustbinDetail = {
@@ -94,11 +94,11 @@ export class DustbinAnalysisComponent implements OnInit {
     element.href = this.cityName + "/3B/dustbin-planing";
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
-    this.isShowActualPicked=0;
-    if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1 || this.cityName!='sikar') {
-      this.isShowActualPicked=1;
+    this.isShowActualPicked = 0;
+    if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1 || this.cityName != 'sikar') {
+      this.isShowActualPicked = 1;
     }
-    
+
     if (this.userType == "External User" && this.cityName == "jodhpur") {
       this.isShowData = false;
     }
@@ -373,7 +373,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.planDetail.driverName = "--";
     this.planDetail.vehicle = "--";
     this.planDetail.pickedCount = "";
-    this.planDetail.actualPickedCount="";
+    this.planDetail.actualPickedCount = "";
     this.planDetail.assignedCount = " -- ";
     this.planDetail.notAtLocationCount = " -- ";
   }
@@ -616,12 +616,12 @@ export class DustbinAnalysisComponent implements OnInit {
     }
     else {
       let compaireDate = new Date("2024-08-01");
-      if (new Date(this.selectedDate) >= compaireDate && this.cityName=='sikar') {
+      if (new Date(this.selectedDate) >= compaireDate && this.cityName == 'sikar') {
         if (this.selectedDate != this.commonService.setTodayDate()) {
           this.dustbinList[index]["isNotPickedIcon"] = "1";
           if (this.userType == "External User" || this.canUpdateDustbinPickDetail != 1) {
             this.dustbinList[index]["isNotPickedIcon"] = "0";
-            this.dustbinList[index]["divClass"] = "address md-background";
+            this.dustbinList[index]["divClass"] = "address";
           }
           let planDetail = this.planList.find(item => item.planId == this.planId);
           if (planDetail != undefined) {
@@ -645,13 +645,13 @@ export class DustbinAnalysisComponent implements OnInit {
         }
         else {
           this.dustbinList[index]["isNotPickedIcon"] = "0";
-          this.dustbinList[index]["divClass"] = "address md-background";
+          this.dustbinList[index]["divClass"] = "address";
         }
       }
       else {
         this.dustbinList[index]["isNotPickedIcon"] = "0";
-        this.dustbinList[index]["divClass"] = "address md-background";
-      }     
+        this.dustbinList[index]["divClass"] = "address";
+      }
     }
   }
 
@@ -856,7 +856,7 @@ export class DustbinAnalysisComponent implements OnInit {
     this.planDetail.notAtLocationCount = this.getDustbinCounts("notAtLocation").toString();
     this.planDetail.dutyStartTime = "";
     this.planDetail.dutyEndTime = "";
-    this.planDetail.actualPickedCount=this.getDustbinCounts("actual").toString();
+    this.planDetail.actualPickedCount = this.getDustbinCounts("actual").toString();
   }
 
   getDustbinCounts(countType: string) {
@@ -874,12 +874,12 @@ export class DustbinAnalysisComponent implements OnInit {
       }
     }
 
-    if(countType=="actual"){
+    if (countType == "actual") {
       for (let index = 0; index < this.dustbinList.length; index++) {
         const element = this.dustbinList[index];
         if (element["isPicked"] == "1") {
           if (element["isAutoPicked"] == "0") {
-          count++;
+            count++;
           }
         }
       }
@@ -1160,9 +1160,10 @@ export class DustbinAnalysisComponent implements OnInit {
     let canDo = "yes";
     if (this.binDetail.filledTopViewImageUrl == this.imageNotAvailablePath) {
       canDo = "no";
-    } else if (this.binDetail.dustbinNotFoundImageUrl != this.imageNotAvailablePath) {
-      canDo = "no";
     }
+    // else if (this.binDetail.dustbinNotFoundImageUrl != this.imageNotAvailablePath) {
+    //   canDo = "no";
+    // }
 
     return canDo;
   }
@@ -1738,7 +1739,7 @@ export class planDetails {
   dutyStartTime: string;
   dutyEndTime: string;
   pickedCount: string;
-  actualPickedCount:string;
+  actualPickedCount: string;
   assignedCount: string;
   notAtLocationCount: string;
 }
