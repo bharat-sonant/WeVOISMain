@@ -148,7 +148,17 @@ export class DustbinPlaningComponent implements OnInit {
           isBroken = isBroken + "Dustbin Disabled";
         }
         if (isBroken != "") { isBroken = "(" + isBroken + ")"; }
-        if (list[i]["isDisabled"] != "yes") {
+
+        if (list[i]["isDisabled"] == "yes") {
+          if (list[i]["disabledDate"] != "") {
+            let date = new Date(this.selectedYear + "/" + this.selectedMonth + "/01");
+            let disabledDate = new Date(list[i]["disabledDate"]);
+            if (disabledDate > date) {
+              this.dustbinList.push({ zoneNo: list[i]["zone"], dustbin: list[i]["dustbin"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isBroken: isBroken, isDisabled: list[i]["isDisabled"] });
+            }
+          }
+        }
+        else {
           this.dustbinList.push({ zoneNo: list[i]["zone"], dustbin: list[i]["dustbin"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isBroken: isBroken, isDisabled: list[i]["isDisabled"] });
         }
       }
@@ -297,11 +307,11 @@ export class DustbinPlaningComponent implements OnInit {
 
   setDustbinPickedDetail(pickData: any, binDetail: any, day: any, planDate: any, planId: any, planType: any) {
     let icon = this.dustbinService.getIcon("picked");
-    let dustbinNotLocationUrl=""
+    let dustbinNotLocationUrl = ""
     let empId = pickData["pickedBy"];
     if (pickData["remarks"] == "डस्टबिन लोकेशन पर नहीं है") {
       icon = this.dustbinService.getIcon("dustbinNotFound");
-      dustbinNotLocationUrl="<img src='../../assets/img/dustbinNotLocationText.png' height='15px'>";
+      dustbinNotLocationUrl = "<img src='../../assets/img/dustbinNotLocationText.png' height='15px'>";
     }
     else if (pickData["remarks"] == "डस्टबिन खाली है") {
       icon = this.dustbinService.getIcon("dustbinNotFilled");
@@ -323,17 +333,17 @@ export class DustbinPlaningComponent implements OnInit {
 
     let pickStatus = icon + filledPercentage + " at " + pickTime + "";
 
-    this.getEmployeeDetail(empId, binDetail, day, pickStatus, remark, filledPercentage, planDate, planId, pickTime, planType,dustbinNotLocationUrl);
+    this.getEmployeeDetail(empId, binDetail, day, pickStatus, remark, filledPercentage, planDate, planId, pickTime, planType, dustbinNotLocationUrl);
   }
 
-  getEmployeeDetail(empId: any, binDetail: any, day: any, pickStatus: any, remark: any, filledPercentage: any, planDate: any, planId: any, pickTime: any, planType: any,dustbinNotLocationUrl:any) {
+  getEmployeeDetail(empId: any, binDetail: any, day: any, pickStatus: any, remark: any, filledPercentage: any, planDate: any, planId: any, pickTime: any, planType: any, dustbinNotLocationUrl: any) {
     this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
       let name = employee["name"];
       pickStatus = pickStatus + " by " + name;
       if (remark != "") {
         pickStatus = pickStatus + "<br/>" + remark;
       }
-      if(dustbinNotLocationUrl!=""){
+      if (dustbinNotLocationUrl != "") {
         pickStatus = pickStatus + "<br/>" + dustbinNotLocationUrl;
       }
       if (planType == "ward") {
@@ -704,8 +714,8 @@ export class DustbinPlaningComponent implements OnInit {
       }
       else {
         let dbPath = "DustbinData/DustbinPickingPlans/" + planDate;
-        let planType="Dustbin";
-        
+        let planType = "Dustbin";
+
         const plan = {
           $Key: "0",
           bins: planData.bins,
@@ -743,7 +753,7 @@ export class DustbinPlaningComponent implements OnInit {
     }
     this.previousPlanList = [];
     this.dustbinService.getDustbinPreviousPlanByDate(date).then((planList: any) => {
-      this.previousPlanList=planList;
+      this.previousPlanList = planList;
     });
   }
 

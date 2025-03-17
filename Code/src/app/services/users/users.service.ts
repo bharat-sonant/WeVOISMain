@@ -118,6 +118,7 @@ export class UsersService {
               let canUpdateOpendepotPickDetail=0;
               let canViewAttendance=0;
               let canUpdateDustbinPickDetail=0;
+              let canRemoveNotPickedDustbin=0;
               if(data[key]["isDelete"]!=undefined){
                 isDelete=data[key]["isDelete"];
               }
@@ -157,6 +158,9 @@ export class UsersService {
               if(data[key]["canUpdateDustbinPickDetail"]!=undefined){
                 canUpdateDustbinPickDetail=data[key]["canUpdateDustbinPickDetail"];
               }
+              if(data[key]["canRemoveNotPickedDustbin"]!=undefined){
+                canRemoveNotPickedDustbin=data[key]["canRemoveNotPickedDustbin"];
+              }
              // if (data[key]["isDelete"] == "0") {
                 userList.push({
                   userKey: data[key]["userId"],
@@ -187,7 +191,8 @@ export class UsersService {
                   utitle:utitle,
                   canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
                   canViewAttendance:canViewAttendance,
-                  canUpdateDustbinPickDetail:canUpdateDustbinPickDetail
+                  canUpdateDustbinPickDetail:canUpdateDustbinPickDetail,
+                  canRemoveNotPickedDustbin:canRemoveNotPickedDustbin
                 });
               //}
             }

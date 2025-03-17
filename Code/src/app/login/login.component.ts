@@ -109,6 +109,15 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "iit-roorkee", name: "IIT-Roorkee", storagePath: "IIT-Roorkee" });
     this.cityList.push({ city: "tonk-raj", name: "Tonk-Raj", storagePath: "Tonk-Raj" });
     this.cityList.push({ city: "jaipur-bwg", name: "Jaipur-BWG", storagePath: "Jaipur-BWG" });
+    this.cityList.push({ city: "bharatpur", name: "Bharatpur", storagePath: "Bharatpur" });
+    this.cityList.push({ city: "etmadpur", name: "Etmadpur", storagePath: "Etmadpur" });
+    this.cityList.push({ city: "uniara", name: "Uniara", storagePath: "Uniara" });
+    this.cityList.push({ city: "sujalpur", name: "Sujalpur", storagePath: "Sujalpur" });
+    this.cityList.push({ city: "ajmer", name: "Ajmer", storagePath: "Ajmer" });
+    this.cityList.push({ city: "rajsamand", name: "Rajsamand", storagePath: "Rajsamand" });
+    this.cityList.push({ city: "sultanpur", name: "Sultanpur", storagePath: "Sultanpur" });
+    this.cityList.push({ city: "khairabad", name: "Khairabad", storagePath: "Khairabad" });
+    this.cityList.push({ city: "sanchore", name: "Sanchore", storagePath: "Sanchore" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
@@ -232,6 +241,12 @@ export class LoginComponent implements OnInit {
       }
       else {
         localStorage.setItem("canUpdateDustbinPickDetail", "0");
+      }
+      if (userDetails.canRemoveNotPickedDustbin != null) {
+        localStorage.setItem("canRemoveNotPickedDustbin", userDetails.canRemoveNotPickedDustbin);
+      }
+      else {
+        localStorage.setItem("canRemoveNotPickedDustbin", "0");
       }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
       localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);

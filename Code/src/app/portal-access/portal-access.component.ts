@@ -142,6 +142,33 @@ export class PortalAccessComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "jaipur-bwg") {
         $("#jaipurBWGBox").show();
         isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "etmadpur") {
+        $("#etmadpurBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "bharatpur") {
+        $("#bharatpurBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "ajmer") {
+        $("#ajmerBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "sujalpur") {
+        $("#sujalpurBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "uniara") {
+        $("#uniaraBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "rajsamand") {
+        $("#rajsamandBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "sultanpur") {
+        $("#sultanpurBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "khairabad") {
+        $("#khairabadBox").show();
+        isBaseCity = true;
+      }else if (this.accessCity[i]["city"] == "sanchore") {
+        $("#sanchoreBox").show();
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
         $("#jaipurBox").show();
       }

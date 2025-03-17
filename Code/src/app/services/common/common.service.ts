@@ -146,132 +146,159 @@ export class CommonService {
     return year + "-" + month + "-" + nextday;
   }
 
-  
+
   getDefaultCardPrefix() {
     let cardPrefix = "";
     let cityName = localStorage.getItem("cityName");
     if (cityName == "test") {
-      cardPrefix="TEST";
+      cardPrefix = "TEST";
     }
     else if (cityName == "jaipur-test") {
-      cardPrefix="JPT";
+      cardPrefix = "JPT";
     }
     else if (cityName == "jaipur-office") {
-      cardPrefix="TEST";
+      cardPrefix = "TEST";
     }
     else if (cityName == "jaipur") {
-      cardPrefix="TEST";
+      cardPrefix = "TEST";
     }
     else if (cityName == "sikar") {
-      cardPrefix="SIKA";
+      cardPrefix = "SIKA";
     }
     else if (cityName == "sikar-survey") {
-      cardPrefix="SIKA";
+      cardPrefix = "SIKA";
     }
     else if (cityName == "reengus") {
-      cardPrefix="RENA";
+      cardPrefix = "RENA";
     }
     else if (cityName == "shahpura") {
-      cardPrefix="SHAH";
+      cardPrefix = "SHAH";
     }
     else if (cityName == "kishangarh") {
-      cardPrefix="KNGH";
+      cardPrefix = "KNGH";
     }
     else if (cityName == "niwai") {
-      cardPrefix="NWI";
+      cardPrefix = "NWI";
     }
     else if (cityName == "jaisalmer") {
-      cardPrefix="JAIS";
+      cardPrefix = "JAIS";
     }
     else if (cityName == "salasar") {
-      cardPrefix="SALA";
+      cardPrefix = "SALA";
     }
     else if (cityName == "behror") {
-      cardPrefix="BEHR";
+      cardPrefix = "BEHR";
     }
     else if (cityName == "jaipur-malviyanagar") {
-      cardPrefix="MNZ";
+      cardPrefix = "MNZ";
     }
     else if (cityName == "mnz-test") {
-      cardPrefix="MNZ";
+      cardPrefix = "MNZ";
     }
     else if (cityName == "jaipur-murlipura") {
-      cardPrefix="MPZ";
+      cardPrefix = "MPZ";
     }
     else if (cityName == "mpz-test") {
-      cardPrefix="MPZ";
+      cardPrefix = "MPZ";
     }
     else if (cityName == "bhiwadi") {
-      cardPrefix="BHIW";
+      cardPrefix = "BHIW";
     }
     else if (cityName == "chhapar") {
-      cardPrefix="CHPR";
+      cardPrefix = "CHPR";
     }
     else if (cityName == "churu") {
-      cardPrefix="CHUR";
+      cardPrefix = "CHUR";
     }
     else if (cityName == "gwalior") {
-      cardPrefix="GWR";
+      cardPrefix = "GWR";
     }
     else if (cityName == "wevois-others") {
-      cardPrefix="WEVO";
+      cardPrefix = "WEVO";
     }
     else if (cityName == "tonk") {
-      cardPrefix="TONK";
+      cardPrefix = "TONK";
     }
     else if (cityName == "ratangarh") {
-      cardPrefix="RATG";
+      cardPrefix = "RATG";
     }
     else if (cityName == "nokha") {
-      cardPrefix="NKH";
+      cardPrefix = "NKH";
     }
     else if (cityName == "losal") {
-      cardPrefix="LSA";
+      cardPrefix = "LSA";
     }
     else if (cityName == "jammu-survey") {
-      cardPrefix="JAM";
+      cardPrefix = "JAM";
     }
     else if (cityName == "khandela") {
-      cardPrefix="KHL";
+      cardPrefix = "KHL";
     }
     else if (cityName == "watteye-office") {
-      cardPrefix="WEY";
+      cardPrefix = "WEY";
     }
     else if (cityName == "dehradun") {
-      cardPrefix="DEH";
+      cardPrefix = "DEH";
     }
     else if (cityName == "pali") {
-      cardPrefix="PAL";
+      cardPrefix = "PAL";
     }
     else if (cityName == "phulwari-sharif") {
-      cardPrefix="PWS";
+      cardPrefix = "PWS";
     }
     else if (cityName == "sujangarh") {
-      cardPrefix="SUG";
+      cardPrefix = "SUG";
     }
     else if (cityName == "noida") {
-      cardPrefix="NOI";
+      cardPrefix = "NOI";
     }
     else if (cityName == "jodhpur") {
-      cardPrefix="JODH";
+      cardPrefix = "JODH";
     }
     else if (cityName == "kuchaman") {
-      cardPrefix="KUMN";
+      cardPrefix = "KUMN";
     }
     else if (cityName == "manesar") {
-      cardPrefix="MAN";
+      cardPrefix = "MAN";
     }
     else if (cityName == "jodhpur-bwg") {
-      cardPrefix="JODBWG";
+      cardPrefix = "JODBWG";
     }
     else if (cityName == "chirawa") {
-      cardPrefix="CHI";
+      cardPrefix = "CHI";
     }
     else if (cityName == "tonk-raj") {
-      cardPrefix="TONR";
+      cardPrefix = "TONR";
     }
     else if (cityName == "jaipur-bwg") {
-      cardPrefix="JAIBWG";
+      cardPrefix = "JAIBWG";
+    }
+    else if (cityName == "etmadpur") {
+      cardPrefix = "ETM";
+    }
+    else if (cityName == "bharatpur") {
+      cardPrefix = "BHA";
+    }
+    else if (cityName == "uniara") {
+      cardPrefix = "UNI";
+    }
+    else if (cityName == "sujalpur") {
+      cardPrefix = "SUJ";
+    }
+    else if (cityName == "ajmer") {
+      cardPrefix = "AJM";
+    }
+    else if (cityName == "rajsamand") {
+      cardPrefix = "RAJ";
+    }
+    else if (cityName == "sultanpur") {
+      cardPrefix = "SUL";
+    }
+    else if (cityName == "khairabad") {
+      cardPrefix = "KHAI";
+    }
+    else if (cityName == "sanchore") {
+      cardPrefix = "SAN";
     }
     return cardPrefix;
   }
@@ -431,6 +458,33 @@ export class CommonService {
     }
     else if (cityName == "jaipur-bwg") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "bharatpur") {
+      latLng.push({ lat: 27.214840, lng: 77.5002347 });
+    }
+    else if (cityName == "etmadpur") {
+      latLng.push({ lat: 27.2547723, lng: 78.1590455 });
+    }
+    else if (cityName == "ajmer") {
+      latLng.push({ lat: 26.4497603, lng: 74.638332 });
+    }
+    else if (cityName == "sujalpur") {
+      latLng.push({ lat: 23.3941437, lng: 76.7070692 });
+    }
+    else if (cityName == "uniara") {
+      latLng.push({ lat: 25.9190125, lng: 76.0210168 });
+    }
+    else if (cityName == "rajsamand") {
+      latLng.push({ lat: 25.070579, lng: 73.8750379 });
+    }
+    else if (cityName == "sultanpur") {
+      latLng.push({ lat: 25.2872046, lng: 76.0210168 });
+    }
+    else if (cityName == "khairabad") {
+      latLng.push({ lat: 24.6568575, lng: 75.9264164 });
+    }
+    else if (cityName == "sanchore") {
+      latLng.push({ lat: 24.749691, lng: 71.7724481 });
     }
     return latLng;
   }
@@ -1181,12 +1235,12 @@ export class CommonService {
         localStorage.setItem("vehicle", JSON.stringify(vehicleList));
       }
     });
-  }  
+  }
 
   setDustbin(newDb: any) {
     let dustbinList = [];
     let openDepotList = [];
-    let allDustbinList=[];
+    let allDustbinList = [];
     let dbPath = "DustbinData/DustbinDetails";
     let dustbinInstance = newDb.object(dbPath).valueChanges().subscribe((dustbin) => {
       dustbinInstance.unsubscribe();
@@ -1200,6 +1254,7 @@ export class CommonService {
               let isDisabled = "no";
               let disabledBy = "";
               let isBroken = false;
+              let disabledDate="";
               if (dustbin[index]["pickFrequency"] != null) {
                 pickFrequency = Number(dustbin[index]["pickFrequency"]);
               }
@@ -1211,6 +1266,9 @@ export class CommonService {
               }
               if (dustbin[index]["disabledBy"] != null) {
                 disabledBy = dustbin[index]["disabledBy"];
+              }
+              if (dustbin[index]["disabledDate"] != null) {
+                disabledDate = dustbin[index]["disabledDate"];
               }
               if (dustbin[index]["dustbinType"] != null) {
                 allDustbinList.push({
@@ -1226,9 +1284,10 @@ export class CommonService {
                   ward: dustbin[index]["ward"],
                   isDisabled: isDisabled,
                   isBroken: isBroken,
-                  disabledBy: disabledBy
+                  disabledBy: disabledBy,
+                  disabledDate:disabledDate
                 });
-                if(dustbin[index]["dustbinType"]=="Open Depot"){
+                if (dustbin[index]["dustbinType"] == "Open Depot") {
                   openDepotList.push({
                     zone: dustbin[index]["zone"],
                     dustbin: keyArrray[i],
@@ -1242,10 +1301,11 @@ export class CommonService {
                     ward: dustbin[index]["ward"],
                     isDisabled: isDisabled,
                     isBroken: isBroken,
-                    disabledBy: disabledBy
+                    disabledBy: disabledBy,
+                    disabledDate:disabledDate
                   });
                 }
-                else{
+                else {
                   dustbinList.push({
                     zone: dustbin[index]["zone"],
                     dustbin: keyArrray[i],
@@ -1259,7 +1319,8 @@ export class CommonService {
                     ward: dustbin[index]["ward"],
                     isDisabled: isDisabled,
                     isBroken: isBroken,
-                    disabledBy: disabledBy
+                    disabledBy: disabledBy,
+                    disabledDate:disabledDate
                   });
                 }
 
@@ -1278,7 +1339,8 @@ export class CommonService {
                   ward: dustbin[index]["ward"],
                   isDisabled: isDisabled,
                   isBroken: isBroken,
-                  disabledBy: disabledBy
+                  disabledBy: disabledBy,
+                  disabledDate:disabledDate
                 });
               }
             }
@@ -1289,12 +1351,12 @@ export class CommonService {
         }
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
         localStorage.setItem("openDepot", JSON.stringify(openDepotList));
-        localStorage.setItem("allDustbin",JSON.stringify(allDustbinList));
+        localStorage.setItem("allDustbin", JSON.stringify(allDustbinList));
       }
       else {
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
         localStorage.setItem("openDepot", JSON.stringify(openDepotList));
-        localStorage.setItem("allDustbin",JSON.stringify(allDustbinList));
+        localStorage.setItem("allDustbin", JSON.stringify(allDustbinList));
       }
     });
   }
@@ -1304,9 +1366,9 @@ export class CommonService {
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
     let cityName = localStorage.getItem("cityName");
     let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-   // if (cityName == "sikar") {
-   //   path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
-   // }
+    // if (cityName == "sikar") {
+    //   path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
+    // }
     let markingWardInstance = this.httpService.get(path).subscribe(data => {
       markingWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
@@ -2217,14 +2279,14 @@ export class CommonService {
     }
 
   }
-  convertDateWithMonthName=(date:string)=>{
-    if(date){
+  convertDateWithMonthName = (date: string) => {
+    if (date) {
       let splittedDateArray = date.split(' ')[0].split('-');
-      let time =date.split(' ')[1];
-      splittedDateArray[1]=this.getCurrentMonthShortName(Number(splittedDateArray[1]))
-      let newDateString = (splittedDateArray.reverse().join(' ')).concat(time ?` ${time}`:'')
+      let time = date.split(' ')[1];
+      splittedDateArray[1] = this.getCurrentMonthShortName(Number(splittedDateArray[1]))
+      let newDateString = (splittedDateArray.reverse().join(' ')).concat(time ? ` ${time}` : '')
       return newDateString;
-      
+
     }
     return '';
   }

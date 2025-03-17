@@ -291,9 +291,14 @@
         <!-- popup for approve -->
         <div class="modal-body divStatus">
             <div id="divApprovePopup"
-                style="display: none; position: absolute; z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width: 400px; height: fit-content;">
-                <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Approve Marker</h5>
+                style="display: none; position: absolute; z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width: 450px; height: fit-content;">
+                <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Confirm</h5>
                 <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="checkbox" id="chkApprovedCard">&nbsp;&nbsp;I have checked card and house image carefully
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-6" style="text-align: center; margin-top: 10px;">
                             <button class="btn btn-success" (click)="confirmApproval()">Approve</button>

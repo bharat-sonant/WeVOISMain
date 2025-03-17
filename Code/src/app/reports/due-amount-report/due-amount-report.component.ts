@@ -91,7 +91,7 @@ export class DueAmountReportComponent implements OnInit {
   getYearList() {
     this.yearList = [];
     let year = parseInt(this.commonService.setTodayDate().split('-')[0]);
-    for (let i = year - 2; i <= year; i++) {
+    for (let i = year - 3; i <= year; i++) {
       this.yearList.push({ year: i });
     }
     this.selectedYear = year;
@@ -171,18 +171,18 @@ export class DueAmountReportComponent implements OnInit {
   setTotalInFooter() {
     let sum = this.wardCardList.reduce(function (previousValue, currentValue) {
       return {
-        Jan: (Number(previousValue.Jan) + Number(currentValue.Jan)).toFixed(2),
-        Feb: (Number(previousValue.Feb) + Number(currentValue.Feb)).toFixed(2),
-        Mar: (Number(previousValue.Mar) + Number(currentValue.Mar)).toFixed(2),
-        Apr: (Number(previousValue.Apr) + Number(currentValue.Apr)).toFixed(2),
-        May: (Number(previousValue.May) + Number(currentValue.May)).toFixed(2),
-        Jun: (Number(previousValue.Jun) + Number(currentValue.Jun)).toFixed(2),
-        Jul: (Number(previousValue.Jul) + Number(currentValue.Jul)).toFixed(2),
-        Aug: (Number(previousValue.Aug) + Number(currentValue.Aug)).toFixed(2),
-        Sep: (Number(previousValue.Sep) + Number(currentValue.Sep)).toFixed(2),
-        Oct: (Number(previousValue.Oct) + Number(currentValue.Oct)).toFixed(2),
-        Nov: (Number(previousValue.Nov) + Number(currentValue.Nov)).toFixed(2),
-        Dec: (Number(previousValue.Dec) + Number(currentValue.Dec)).toFixed(2),
+        Jan: (Number(previousValue.Jan ? previousValue.Jan : 0) + Number(currentValue.Jan ? currentValue.Jan : 0)).toFixed(2),
+        Feb: (Number(previousValue.Feb ? previousValue.Feb : 0) + Number(currentValue.Feb ? currentValue.Feb : 0)).toFixed(2),
+        Mar: (Number(previousValue.Mar ? previousValue.Mar : 0) + Number(currentValue.Mar ? currentValue.Mar : 0)).toFixed(2),
+        Apr: (Number(previousValue.Apr ? previousValue.Apr : 0) + Number(currentValue.Apr ? currentValue.Apr : 0)).toFixed(2),
+        May: (Number(previousValue.May ? previousValue.May : 0) + Number(currentValue.May ? currentValue.May : 0)).toFixed(2),
+        Jun: (Number(previousValue.Jun ? previousValue.Jun : 0) + Number(currentValue.Jun ? currentValue.Jun : 0)).toFixed(2),
+        Jul: (Number(previousValue.Jul ? previousValue.Jul : 0) + Number(currentValue.Jul ? currentValue.Jul : 0)).toFixed(2),
+        Aug: (Number(previousValue.Aug ? previousValue.Aug : 0) + Number(currentValue.Aug ? currentValue.Aug : 0)).toFixed(2),
+        Sep: (Number(previousValue.Sep ? previousValue.Sep : 0) + Number(currentValue.Sep ? currentValue.Sep : 0)).toFixed(2),
+        Oct: (Number(previousValue.Oct ? previousValue.Oct : 0) + Number(currentValue.Oct ? currentValue.Oct : 0)).toFixed(2),
+        Nov: (Number(previousValue.Nov ? previousValue.Nov : 0) + Number(currentValue.Nov ? currentValue.Nov : 0)).toFixed(2),
+        Dec: (Number(previousValue.Dec ? previousValue.Dec : 0) + Number(currentValue.Dec ? currentValue.Dec : 0)).toFixed(2),
 
       }
     });
@@ -265,30 +265,148 @@ export class DueAmountReportComponent implements OnInit {
       monthFrom = Number(this.chargeStartMonth);
     }
     if (Number(this.selectedYear) == Number(year)) {
-      monthTo =Number(this.commonService.getPreviousMonth(this.todayDate,1).toString().split('-')[1]);
+      monthTo = Number(this.commonService.getPreviousMonth(this.todayDate, 1).toString().split('-')[1]);
     }
 
     this.wardCardPaymentList = [];
-    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardWiseCardJSON%2F" + this.selectedZone + ".json?alt=media";
-    let entityTypeInstance = this.httpService.get(path).subscribe(data => {
-      entityTypeInstance.unsubscribe();
-      if (data != null) {
-        let list = JSON.parse(JSON.stringify(data));
-        this.totalCards = list.length;
-        for (let i = 0; i < list.length; i++) {
-          let entityTypeId = list[i]["entityType"];
-          let entityType = "";
-          let charges = "0";
-          let detail = this.entityTypeList.find(item => item.entityTypeId == entityTypeId);
-          if (detail != undefined) {
-            entityType = detail.entityType;
-            charges = detail.amount;
+
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
+        if (markerData != null) {
+          let keyArray = Object.keys(markerData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                if (lineData[markerNo]["latLng"] != null) {
+                  let markerId = "";
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    markerId = lineData[markerNo]["cardNumber"];
+                  }
+                  else if (lineData[markerNo]["markerId"] != null) {
+                    markerId = this.commonService.getDefaultCardPrefix() + lineData[markerNo]["markerId"];
+                  }
+
+                  let entityTypeId = lineData[markerNo]["houseType"];
+                  let entityType = "";
+                  let charges = "0";
+                  let detail = this.entityTypeList.find(item => item.entityTypeId == entityTypeId);
+                  if (detail != undefined) {
+                    entityType = detail.entityType;
+                    charges = detail.amount;
+                  }
+                  let cardDetail = this.wardCardPaymentList.find(item => item.cardNo == markerId);
+                  if (cardDetail == undefined) {
+                    this.wardCardPaymentList.push({ cardNo: markerId, entityTypeId: entityTypeId, entityType: entityType, charges: charges, totalAmount: 0 });
+                  }
+                }
+              }
+            }
           }
-          this.wardCardPaymentList.push({ cardNo: list[i]["cardNo"], entityTypeId: entityTypeId, entityType: entityType, charges: charges, totalAmount: 0 });
         }
-      }
-      this.getDueAmount(0, monthFrom, monthTo);
+        if (this.wardCardPaymentList.length > 0) {
+          this.totalCards = this.wardCardPaymentList.length;
+          const promises = [];
+          for (let i = 0; i < this.wardCardPaymentList.length; i++) {
+            promises.push(Promise.resolve(this.getDueAmountNew(this.wardCardPaymentList[i]["cardNo"], this.wardCardPaymentList[i]["charges"], monthFrom, monthTo)));
+          }
+          Promise.all(promises).then((results) => {
+            this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
+
+            let element = <HTMLElement>document.getElementById("divList");
+            element.scrollTop = 0;
+            this.rowDataList = 200;
+            this.wardCardList = this.wardCardPaymentList;
+            this.wardCardFinalList = this.wardCardList.slice(0, this.rowDataList);
+            this.setTotalInFooter();
+            let filePath = "/PaymentCollectionHistory/DueAmountHistory/" + this.selectedYear + "/";
+            const obj = { "cards": this.wardCardPaymentList, "lastUpdateDate": this.lastUpdateDate };
+            let fileName = this.selectedZone + ".json";
+            this.commonService.saveJsonFile(obj, fileName, filePath);
+            setTimeout(() => {
+              $(this.divLoader).hide();
+              this.commonService.setAlertMessage("success", "Data updated successfully !!!");
+            }, 1200);
+
+          });
+          // this.getDueAmount(0, monthFrom, monthTo);
+        }
+        else {
+          this.commonService.setAlertMessage("error", "No record found.");
+          $(this.divLoader).hide();
+        }
+      });
+    /*
+        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardWiseCardJSON%2F" + this.selectedZone + ".json?alt=media";
+        let entityTypeInstance = this.httpService.get(path).subscribe(data => {
+          entityTypeInstance.unsubscribe();
+          if (data != null) {
+            let list = JSON.parse(JSON.stringify(data));
+            this.totalCards = list.length;
+            for (let i = 0; i < list.length; i++) {
+              let entityTypeId = list[i]["entityType"];
+              let entityType = "";
+              let charges = "0";
+              let detail = this.entityTypeList.find(item => item.entityTypeId == entityTypeId);
+              if (detail != undefined) {
+                entityType = detail.entityType;
+                charges = detail.amount;
+              }
+              this.wardCardPaymentList.push({ cardNo: list[i]["cardNo"], entityTypeId: entityTypeId, entityType: entityType, charges: charges, totalAmount: 0 });
+            }
+          }
+          this.getDueAmount(0, monthFrom, monthTo);
+        });
+        */
+  }
+
+
+  getDueAmountNew(cardNo: any, charges: any, monthFrom: any, monthTo: any) {
+    return new Promise(async (resolve) => {
+      let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + this.selectedYear;
+      let collectionInstance = this.db.object(dbPath).valueChanges().subscribe(
+        async (data) => {
+          collectionInstance.unsubscribe();
+          let totalAmount = 0;
+          if (data != null) {
+            for (let i = monthFrom; i <= monthTo; i++) {
+              let monthName = this.commonService.getCurrentMonthShortName(i);
+              let amount = "0";
+              if (data[monthName] != null) {
+                if (data[monthName]["status"] == 'Pending') {
+                  amount = data[monthName]["amount"];
+                }
+              }
+              else {
+                amount = charges;
+                await this.setDueAmountDatabase(cardNo, monthName, amount);
+              }
+              totalAmount += Number(amount);
+              await this.setDueTotalAmount(cardNo, totalAmount);
+              await this.setMonthAmountInList(cardNo, monthName, amount);
+            }
+          }
+          else {
+            for (let i = monthFrom; i <= monthTo; i++) {
+              let monthName = this.commonService.getCurrentMonthShortName(i);
+              let amount = charges;
+              totalAmount += Number(amount);
+              await this.setDueTotalAmount(cardNo, totalAmount);
+              await this.setMonthAmountInList(cardNo, monthName, amount);
+              await this.setDueAmountDatabase(cardNo, monthName, amount);
+            }
+          }
+          resolve({ status: "success", data: {} });
+        }
+      );
     });
+
+
   }
 
   getDueAmount(index: any, monthFrom: any, monthTo: any) {
@@ -443,7 +561,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Jan"] != undefined) {
             htmlString += this.wardCardList[i]["Jan"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -451,7 +569,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Feb"] != undefined) {
             htmlString += this.wardCardList[i]["Feb"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -459,7 +577,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Mar"] != undefined) {
             htmlString += this.wardCardList[i]["Mar"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -467,7 +585,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Apr"] != undefined) {
             htmlString += this.wardCardList[i]["Apr"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -475,7 +593,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["May"] != undefined) {
             htmlString += this.wardCardList[i]["May"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -483,7 +601,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Jun"] != undefined) {
             htmlString += this.wardCardList[i]["Jun"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -491,7 +609,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Jul"] != undefined) {
             htmlString += this.wardCardList[i]["Jul"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -499,7 +617,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Aug"] != undefined) {
             htmlString += this.wardCardList[i]["Aug"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -507,7 +625,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Sep"] != undefined) {
             htmlString += this.wardCardList[i]["Sep"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -515,7 +633,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Oct"] != undefined) {
             htmlString += this.wardCardList[i]["Oct"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -523,7 +641,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Nov"] != undefined) {
             htmlString += this.wardCardList[i]["Nov"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";
@@ -531,7 +649,7 @@ export class DueAmountReportComponent implements OnInit {
           if (this.wardCardList[i]["Dec"] != undefined) {
             htmlString += this.wardCardList[i]["Dec"];
           }
-          else{
+          else {
             htmlString += 0;
           }
           htmlString += "</td>";

@@ -3,6 +3,7 @@ import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
 import { NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-secondary-collection-analysis',
@@ -11,7 +12,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class SecondaryCollectionAnalysisComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, private commonService: CommonService, public fs: FirebaseService) { }
+  constructor(private storage: AngularFireStorage, private commonService: CommonService, private modalService: NgbModal, public fs: FirebaseService) { }
 
   planList: any[];
   dustbinList: any[];
@@ -30,6 +31,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   cityName: any;
   db: any;
   canUpdateOpendepotPickDetail: any;
+  canRemoveNotPickedDustbin: any;
   dustbinStorageList: any[] = [];
   userType: any;
   binDetail: dustbinDetails = {
@@ -80,6 +82,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Secondary-Collection-Analysis", localStorage.getItem("userID"));
     this.canUpdateOpendepotPickDetail = localStorage.getItem("canUpdateOpendepotPickDetail");
+    this.canRemoveNotPickedDustbin = localStorage.getItem("canRemoveNotPickedDustbin");
     let element = <HTMLAnchorElement>(
       document.getElementById("dustbinReportLink")
     );
@@ -122,6 +125,103 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.dustbinData.refreshTime = this.commonService.getCurrentTime();
     this.fillPercentage = 0;
     $(this.txtManualRemark).val("");
+  }
+
+  
+  
+  removeUnpickedDustbin() {
+    let element=<HTMLInputElement>document.getElementById("chkConfirm");
+    if(element.checked==false){
+      this.commonService.setAlertMessage("error","Please check confirmation!!!");
+      return;
+    }
+    let dustbinId = $("#hddRemoveIndex").val();
+    let planId = $("#hddRemovePlanId").val();
+    if (this.dustbinList.length > 0) {
+      this.dustbinList = this.dustbinList.filter(item => item.dustbinId != dustbinId);
+      if (this.dustbinList.length == 0) {
+        this.planList = this.planList.filter(item => item.planId != planId);
+      }
+      this.getRemoveUnpickedDustbinFromPlan(planId, dustbinId);
+    }
+    this.closeModel();
+  }
+  
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  getRemoveUnpickedDustbinFromPlan(planId: any, dustbinId: any) {
+    let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId;
+    let planDateInstance = this.db.object(dbPath).valueChanges().subscribe(historyData => {
+      planDateInstance.unsubscribe();
+      if (historyData == null) {
+        dbPath = "DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId;
+        let planInstance = this.db.object(dbPath).valueChanges().subscribe(planData => {
+          planInstance.unsubscribe();
+          if (planData != null) {
+            this.removeUnpickedDustbinFromPlan(planId, dustbinId, planData, dbPath);
+          }
+        });
+      }
+      else {
+        this.removeUnpickedDustbinFromPlan(planId, dustbinId, historyData, dbPath);
+      }
+    })
+  }
+
+  removeUnpickedDustbinFromPlan(planId: any, dustbinId: any, planData: any, dbPath: any) {
+    let binList = planData["bins"].split(",");
+    let sequenceList = planData["pickingSequence"].split(",");
+    let bins = "";
+    let pickingSequence = "";
+    for (let i = 0; i < binList.length; i++) {
+      if (binList[i].trim() != dustbinId.trim()) {
+        if (bins == "") {
+          bins = binList[i].trim();
+        }
+        else {
+          bins += "," + binList[i].trim();
+        }
+      }
+    }
+    for (let i = 0; i < sequenceList.length; i++) {
+      if (sequenceList[i].trim() != dustbinId.trim()) {
+        if (pickingSequence == "") {
+          pickingSequence = sequenceList[i].trim();
+        }
+        else {
+          pickingSequence += "," + sequenceList[i].trim();
+        }
+      }
+    }
+    let obj = {
+      bins: bins,
+      pickingSequence: pickingSequence
+    }
+    if(bins==""){
+      this.db.object(dbPath).set(null);
+      this.resetData();
+      this.getBinsForSelectedPlan(this.planList[0]["planId"]);
+    }
+    else{
+      this.db.object(dbPath).update(obj);
+    }
+    this.commonService.setAlertMessage("success","Dustbin removed from plan!!!");
+    
+  }
+
+  openConfirmationModel(content: any, id: any, planId: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 200;
+    let width = 450;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $("#hddRemoveIndex").val(id);
+    $("#hddRemovePlanId").val(planId);
   }
 
   getAssignedPlans() {
@@ -332,6 +432,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
         let dustbinPickHistoryPath = this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + binId + "/" + planId).valueChanges().subscribe((dustbinHistoryData) => {
           this.dustbinList.push({
             dustbinId: binId,
+            planId:planId,
             address: dustbinAddress,
             iconClass: this.setIconClass(dustbinHistoryData),
             divClass: this.setBackgroudClasss(dustbinHistoryData),
@@ -655,7 +756,6 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.dustbinRemark = this.dustbinList[index]["dustbinRemark"];
     this.binDetail.analysisRemarks = this.dustbinList[index]["analysisRemark"];
     this.binDetail.manualRemarks = this.dustbinList[index]["manualRemarks"];
-    console.log(this.binDetail)
 
     if (type == "edit") {
       if (this.canUpdateOpendepotPickDetail == 1) {

@@ -17,6 +17,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   db: any;
   zoneList: any[];
   ddlZoneFrom = "#ddlZoneFrom";
+  ddlZoneMarker = "#ddlZoneMarker";
   txtLineNoFrom = "#txtLineNoFrom";
   ddlZoneTo = "#ddlZoneTo";
   txtLineNoTo = "#txtLineNoTo";
@@ -195,6 +196,72 @@ export class ChangeLineMarkerDataComponent implements OnInit {
       this.db.object(dbPath).update({ lastMarkerKey: lastKey });
       this.updateCounts(zoneFrom, zoneTo, "markerMove", failureCount);
     }
+  }
+
+  updateWardMarker() {
+    let zoneNo = $(this.ddlZoneMarker).val();
+    if (zoneNo == "0") {
+      this.commonService.setAlertMessage("error", "Please select zone !!!");
+      return;
+    }
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateWardMarker");
+    $(this.divLoader).show();
+    let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+    console.log(dbPath)
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
+        if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateWardMarker", markerData);
+          let keyArray = Object.keys(markerData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                let markerId="";
+                let latLng="";
+                let image="";
+                if (lineData[markerNo]["cardNumber"] != null) {
+                  markerId=lineData[markerNo]["cardNumber"];
+                }
+                else if(lineData[markerNo]["markerId"]!=null){
+                  markerId=this.commonService.getDefaultCardPrefix()+lineData[markerNo]["markerId"];
+                }
+                if(lineData[markerNo]["latLng"]!=null){
+                  latLng=lineData[markerNo]["latLng"];
+                }
+                if(lineData[markerNo]["image"]!=null){
+                  image=lineData[markerNo]["image"];
+                }
+                if(markerId!=""){
+                  let data={
+                    ward:zoneNo,
+                    line:lineNo,
+                    latLng:latLng,
+                    image:image,
+                    markerNo:markerNo
+                  }
+                  let path="EntityMarkingData/MarkerWardMapping/"+markerId;
+                  this.db.object(path).update(data);
+
+                  console.log(markerId);
+                  console.log(data);
+                }
+              }
+            }
+          }
+        this.commonService.setAlertMessage("success","Data updated successfully.")
+
+        }
+        else{
+          this.commonService.setAlertMessage("error","Sorry! No data found for selected ward.")
+        }
+        $(this.divLoader).hide();
+      });
+
   }
 
   updateCounts(zoneNo: any, zoneTo: any, type: any, failureCount: any) {

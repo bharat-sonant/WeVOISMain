@@ -2071,6 +2071,12 @@ export class WardSurveyAnalysisComponent {
   }
   
   confirmApproval(){
+    let Entity = "chkApprovedCard";
+    if ((<HTMLInputElement>document.getElementById(Entity)).checked == false) {
+      this.commonService.setAlertMessage("error", "Choose Card and House checkbox !!! ");
+      return;
+    }
+
     const path = `Houses/${this.selectedZone}/${this.lineNo}/${this.toApproveDetails.cardNo}`
     const approvedBy = localStorage.getItem('userID');
     const approvedDate = this.commonService.getTodayDateTime()

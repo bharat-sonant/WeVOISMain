@@ -174,15 +174,17 @@
                                                         </div>
                                                         <div class="ms-2 mt-2 d-flex flex-column justify-content-start position-relative"
                                                             style="flex: 0.7;">
-                                                            <div class="fw-bold  {{data.cssClass}}"
+                                                            <div
                                                                 *ngIf="data.inTime">
+                                                                <span class="fw-bold  {{data.cssClass}}">
                                                                 <!-- <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i> -->
                                                                     <img src="../../../assets/icons/clock-regular.svg"
-                                                                        class="me-2" alt="clock">M &nbsp;
-                                                                    {{data.inTime}} <br>
+                                                                        class="me-2" alt="clock">
+                                                                    {{data.inTime}} </span>(Mobile Time)<br>
+                                                                    <span class="fw-bold ">
                                                                     <img src="../../../assets/icons/clock-regular.svg"
                                                                         class="me-2 mt-1" alt="clock">
-                                                                   <span style="color:black;">S &nbsp;&nbsp;{{data.inServerTime}}</span>
+                                                                  {{data.inServerTime}} </span>(Server Time)
                                                                 <!-- <i class="fa-solid fa-map-location-dot" style="float: right; font-size: 14px; cursor: pointer; color: #2dbd23;"
                                                             (click)="openLocation(contentLocation,i,'single')"></i> -->
                                                                 <img src="../../../assets/icons/map-location-dot-solid.svg"
@@ -219,14 +221,16 @@
                                                                 style="height: 100px; width: 80%">
                                                         </div>
                                                         <div class="ms-2 mt-2" style="flex: 0.7;">
-                                                            <div class="fw-bold" *ngIf="data.outTime">
+                                                            <div *ngIf="data.outTime">
                                                                 <!-- <i class="fa-regular fa-clock me-2" style="scale: 1.2;"></i> -->
+                                                                <span  class="fw-bold">
                                                                 <img src="../../../assets/icons/clock-regular.svg"
-                                                                    class="me-2" alt="clock">M &nbsp;
-                                                                {{data.outTime}} <br>
+                                                                    class="me-2" alt="clock">
+                                                                {{data.outTime}}</span> (Mobile Time)<br>
+                                                                <span  class="fw-bold">
                                                                 <img src="../../../assets/icons/clock-regular.svg"
                                                                     class="me-2 mt-1" alt="clock">
-                                                               <span style="color: black;">S &nbsp;&nbsp;{{data.outServerTime}}</span>
+                                                               {{data.outServerTime}}</span> (Server Time)
 
                                                             </div>
                                                             <div class="mt-1" *ngIf="data.outLocation">

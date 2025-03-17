@@ -170,18 +170,18 @@ export class CollectedAmountReportComponent implements OnInit {
   setTotalInFooter() {
     let sum = this.wardCardList.reduce(function (previousValue, currentValue) {
       return {
-        Jan: (Number(previousValue.Jan) + Number(currentValue.Jan)).toFixed(2),
-        Feb: (Number(previousValue.Feb) + Number(currentValue.Feb)).toFixed(2),
-        Mar: (Number(previousValue.Mar) + Number(currentValue.Mar)).toFixed(2),
-        Apr: (Number(previousValue.Apr) + Number(currentValue.Apr)).toFixed(2),
-        May: (Number(previousValue.May) + Number(currentValue.May)).toFixed(2),
-        Jun: (Number(previousValue.Jun) + Number(currentValue.Jun)).toFixed(2),
-        Jul: (Number(previousValue.Jul) + Number(currentValue.Jul)).toFixed(2),
-        Aug: (Number(previousValue.Aug) + Number(currentValue.Aug)).toFixed(2),
-        Sep: (Number(previousValue.Sep) + Number(currentValue.Sep)).toFixed(2),
-        Oct: (Number(previousValue.Oct) + Number(currentValue.Oct)).toFixed(2),
-        Nov: (Number(previousValue.Nov) + Number(currentValue.Nov)).toFixed(2),
-        Dec: (Number(previousValue.Dec) + Number(currentValue.Dec)).toFixed(2),
+        Jan: (Number(previousValue.Jan ? previousValue.Jan : 0) + Number(currentValue.Jan ? currentValue.Jan : 0)).toFixed(2),
+        Feb: (Number(previousValue.Feb ? previousValue.Feb : 0) + Number(currentValue.Feb ? currentValue.Feb : 0)).toFixed(2),
+        Mar: (Number(previousValue.Mar ? previousValue.Mar : 0) + Number(currentValue.Mar ? currentValue.Mar : 0)).toFixed(2),
+        Apr: (Number(previousValue.Apr ? previousValue.Apr : 0) + Number(currentValue.Apr ? currentValue.Apr : 0)).toFixed(2),
+        May: (Number(previousValue.May ? previousValue.May : 0) + Number(currentValue.May ? currentValue.May : 0)).toFixed(2),
+        Jun: (Number(previousValue.Jun ? previousValue.Jun : 0) + Number(currentValue.Jun ? currentValue.Jun : 0)).toFixed(2),
+        Jul: (Number(previousValue.Jul ? previousValue.Jul : 0) + Number(currentValue.Jul ? currentValue.Jul : 0)).toFixed(2),
+        Aug: (Number(previousValue.Aug ? previousValue.Aug : 0) + Number(currentValue.Aug ? currentValue.Aug : 0)).toFixed(2),
+        Sep: (Number(previousValue.Sep ? previousValue.Sep : 0) + Number(currentValue.Sep ? currentValue.Sep : 0)).toFixed(2),
+        Oct: (Number(previousValue.Oct ? previousValue.Oct : 0) + Number(currentValue.Oct ? currentValue.Oct : 0)).toFixed(2),
+        Nov: (Number(previousValue.Nov ? previousValue.Nov : 0) + Number(currentValue.Nov ? currentValue.Nov : 0)).toFixed(2),
+        Dec: (Number(previousValue.Dec ? previousValue.Dec : 0) + Number(currentValue.Dec ? currentValue.Dec : 0)).toFixed(2),
 
       }
     });
@@ -268,28 +268,163 @@ export class CollectedAmountReportComponent implements OnInit {
     }
 
     this.wardCardPaymentList = [];
-    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardWiseCardJSON%2F" + this.selectedZone + ".json?alt=media";
-    let entityTypeInstance = this.httpService.get(path).subscribe(data => {
-      entityTypeInstance.unsubscribe();
-      if (data != null) {
-        let list = JSON.parse(JSON.stringify(data));
-        this.totalCards = list.length;
-        for (let i = 0; i < list.length; i++) {
-          let entityTypeId = list[i]["entityType"];
-          let entityType = "";
-          let charges = "0";
-          let detail = this.entityTypeList.find(item => item.entityTypeId == entityTypeId);
-          if (detail != undefined) {
-            entityType = detail.entityType;
-            charges = detail.amount;
+
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
+        if (markerData != null) {
+          let keyArray = Object.keys(markerData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                if (lineData[markerNo]["latLng"] != null) {
+                  let markerId = "";
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    markerId = lineData[markerNo]["cardNumber"];
+                  }
+                  else if (lineData[markerNo]["markerId"] != null) {
+                    markerId = this.commonService.getDefaultCardPrefix() + lineData[markerNo]["markerId"];
+                  }
+
+                  let entityTypeId = lineData[markerNo]["houseType"];
+                  let entityType = "";
+                  let charges = "0";
+                  let detail = this.entityTypeList.find(item => item.entityTypeId == entityTypeId);
+                  if (detail != undefined) {
+                    entityType = detail.entityType;
+                    charges = detail.amount;
+                  }
+                  let cardDetail = this.wardCardPaymentList.find(item => item.cardNo == markerId);
+                  if (cardDetail == undefined) {
+                    this.wardCardPaymentList.push({ cardNo: markerId, entityTypeId: entityTypeId, entityType: entityType, charges: charges, totalAmount: 0 });
+                  }
+                }
+              }
+            }
           }
-          this.wardCardPaymentList.push({ cardNo: list[i]["cardNo"], entityTypeId: entityTypeId, entityType: entityType, charges: charges, totalAmount: 0 });
         }
-      }
-      this.getCollectedAmount(0, monthFrom, monthTo);
-    });
+        if (this.wardCardPaymentList.length > 0) {
+          this.totalCards = this.wardCardPaymentList.length;
+          for(let i=0;i<this.wardCardPaymentList.length;i++){
+            for(let j=monthFrom;j<=monthTo;j++){
+              let monthName = this.commonService.getCurrentMonthShortName(j);
+              console.log(this.wardCardPaymentList[i]["cardNo"]);
+              console.log(monthName);
+              
+              this.setMonthAmountInList(this.wardCardPaymentList[i]["cardNo"], monthName.trim(), 0, "");
+            }
+          }
+
+          const promises = [];
+          for (let i = 0; i < this.wardCardPaymentList.length; i++) {
+            promises.push(Promise.resolve(this.getCollectedAmountNew(this.wardCardPaymentList[i]["cardNo"], monthFrom, monthTo)));
+          }
+          Promise.all(promises).then((results) => {
+
+            this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
+            this.wardCardList = this.wardCardPaymentList;
+            let element = <HTMLElement>document.getElementById("divList");
+            element.scrollTop = 0;
+            this.rowDataList = 200;
+            this.wardCardFinalList = this.wardCardList.slice(0, this.rowDataList);
+            this.setTotalInFooter();
+            let filePath = "/PaymentCollectionHistory/CollectedAmountHistory/" + this.selectedYear + "/";
+            const obj = { "cards": this.wardCardPaymentList, "lastUpdateDate": this.lastUpdateDate };
+            let fileName = this.selectedZone + ".json";
+            this.commonService.saveJsonFile(obj, fileName, filePath);
+            setTimeout(() => {
+              $(this.divLoader).hide();
+              this.commonService.setAlertMessage("success", "Data updated successfully !!!");
+            }, 1200);
+          });
+
+          // this.getCollectedAmount(0, monthFrom, monthTo);
+        }
+        else {
+          this.commonService.setAlertMessage("error", "No record found.");
+          $(this.divLoader).hide();
+        }
+      });
+
+
+
+    /*
+        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardWiseCardJSON%2F" + this.selectedZone + ".json?alt=media";
+        let entityTypeInstance = this.httpService.get(path).subscribe(data => {
+          entityTypeInstance.unsubscribe();
+          if (data != null) {
+            let list = JSON.parse(JSON.stringify(data));
+            this.totalCards = list.length;
+            for (let i = 0; i < list.length; i++) {
+              let entityTypeId = list[i]["entityType"];
+              let entityType = "";
+              let charges = "0";
+              let detail = this.entityTypeList.find(item => item.entityTypeId == entityTypeId);
+              if (detail != undefined) {
+                entityType = detail.entityType;
+                charges = detail.amount;
+              }
+              this.wardCardPaymentList.push({ cardNo: list[i]["cardNo"], entityTypeId: entityTypeId, entityType: entityType, charges: charges, totalAmount: 0 });
+            }
+          }
+          this.getCollectedAmount(0, monthFrom, monthTo);
+        });
+        */
   }
 
+
+  getCollectedAmountNew(cardNo: any, monthFrom: any, monthTo: any) {
+    return new Promise(async (resolve) => {
+      console.log(monthFrom,monthTo)
+      let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo;
+      let transactionInstance = this.db.object(dbPath).valueChanges().subscribe(async data => {
+        transactionInstance.unsubscribe();
+        let totalAmount = 0;
+        if (data != null) {
+          let yearArray = Object.keys(data);
+          for (let i = 0; i < yearArray.length; i++) {
+            let year = yearArray[i];
+            let yearData = data[year];
+            let monthArray = Object.keys(yearData);
+            for (let j = 0; j < monthArray.length; j++) {
+              let month = monthArray[j];
+              let monthData = yearData[month];
+              let dateArray = Object.keys(monthData);
+              for (let k = 0; k < dateArray.length; k++) {
+                let date = dateArray[k];
+                let dateData = monthData[date];
+                let keyArray = Object.keys(dateData);
+                for (let l = 0; l < keyArray.length; l++) {
+                  let key = keyArray[l];
+                  if (dateData[key]["monthYear"] != undefined) {
+                    let monthYearList = dateData[key]["monthYear"] ? dateData[key]["monthYear"].split(',') : [];
+                    let transactionAmount = dateData[key]["transactionAmount"] ? Number(dateData[key]["transactionAmount"]) : 0;
+                    let amount = transactionAmount / monthYearList.length;
+                    for (let m = 0; m < monthYearList.length; m++) {
+                      let monthName = monthYearList[m].split('-')[0];
+                      let yearName = monthYearList[m].split('-')[1];
+                      if (yearName == this.selectedYear) {
+                        totalAmount += Number(amount);
+                        await this.setCollectedTotalAmount(cardNo, totalAmount);
+                        await this.setMonthAmountInList(cardNo, monthName.trim(), Number(amount), date);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        resolve({ status: "success", data: {} });
+      });
+    });
+  }
+/*
   getCollectedAmount(index: any, monthFrom: any, monthTo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCollectedAmount");
     if (index == this.wardCardPaymentList.length) {
@@ -327,16 +462,16 @@ export class CollectedAmountReportComponent implements OnInit {
                   this.setCollectedTotalAmount(cardNo, totalAmount);
                   this.setMonthAmountInList(cardNo, monthName, amount);
                 }
-                else{
+                else {
                   this.setMonthAmountInList(cardNo, monthName, amount);
                 }
               }
-              else{
+              else {
                 this.setMonthAmountInList(cardNo, monthName, amount);
               }
             }
           }
-          else{
+          else {
             for (let i = monthFrom; i <= monthTo; i++) {
               let monthName = this.commonService.getCurrentMonthShortName(i);
               let amount = "0";
@@ -349,19 +484,39 @@ export class CollectedAmountReportComponent implements OnInit {
       );
     }
   }
+  */
 
-  setMonthAmountInList(cardNo: any, monthName: any, amount: any) {
-    let detail = this.wardCardPaymentList.find(item => item.cardNo == cardNo);
-    if (detail != undefined) {
-      detail[monthName] = Number(amount).toFixed(2);
-    }
+  
+  setMonthAmountInList(cardNo: any, monthName: any, amount: any, transactionDate: any) {
+    return new Promise((resolve) => {
+      let detail = this.wardCardPaymentList.find(item => item.cardNo == cardNo);
+      if (detail != undefined) {
+        detail[monthName] = Number(amount).toFixed(2);
+        let monthTransationDate = monthName + "transDate";
+        if (transactionDate != "") {
+          let month = transactionDate.split("-")[1];
+          let year = transactionDate.split("-")[0];
+          let day = transactionDate.split("-")[2];
+          let monthName1 = this.commonService.getCurrentMonthShortName(Number(month));
+          let date = day + "-" + monthName1 + "-" + year;
+          detail[monthTransationDate] = date;
+        }
+        else {
+          detail[monthTransationDate] = transactionDate;
+        }
+      }
+      resolve({ status: "success" });
+    })
   }
 
   setCollectedTotalAmount(cardNo: any, totalAmount: any) {
-    let detail = this.wardCardPaymentList.find(item => item.cardNo == cardNo);
-    if (detail != undefined) {
-      detail.totalAmount = Number(totalAmount).toFixed(2);
-    }
+    return new Promise((resolve) => {
+      let detail = this.wardCardPaymentList.find(item => item.cardNo == cardNo);
+      if (detail != undefined) {
+        detail.totalAmount = Number(totalAmount).toFixed(2);
+      }
+      resolve({ status: "success" });
+    })
   }
 
   exportToExcel() {
@@ -593,7 +748,7 @@ export class CollectedAmountReportComponent implements OnInit {
         htmlString += "</tr>";
       }
       htmlString += "</table>";
-      let fileName = this.commonService.getFireStoreCity() +"-"+this.selectedZone+"-"+this.selectedYear+ "-CollectedAmountReport.xlsx";
+      let fileName = this.commonService.getFireStoreCity() + "-" + this.selectedZone + "-" + this.selectedYear + "-CollectedAmountReport.xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
   }

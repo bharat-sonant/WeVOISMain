@@ -194,6 +194,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.getAllowedHalt();
     let element = <HTMLAnchorElement>(document.getElementById("wardProgressLink"));
     element.href = this.cityName + "/ward-monitoring-report";
     this.bounds = new google.maps.LatLngBounds();
@@ -215,6 +216,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
     this.zoneList = [];
     this.firstData = false;
+
     this.userId = localStorage.getItem("userID");
     this.commonService.savePageLoadHistory("Monitoring", "RealTime", localStorage.getItem("userID"));
     if (localStorage.getItem("userType") == "External User") {
@@ -223,7 +225,6 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.toDayDate.toString().split("-")[1]) - 1);
     this.currentYear = new Date().getFullYear();
     this.allZones = this.mapService.getZones(this.toDayDate);
-    this.minHalt = 5;
     this.setMap();
     this.getpeopleAtWork();
     this.getGarageWorkDutyOn();
@@ -231,6 +232,26 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.setWorkNotStarted();
     }
     this.getWardForLineWeitage();
+  }
+
+  
+  getAllowedHalt() {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FHaltSetting.json?alt=media";
+    let haltJsonInstance = this.httpService.get(path).subscribe(haltJsonData => {
+      haltJsonInstance.unsubscribe();
+      if (haltJsonData != null) {
+        if (haltJsonData["allowedHalt"] != null) {
+          this.minHalt = Number(haltJsonData["allowedHalt"]);
+        }
+        else {
+          this.minHalt = 5;
+        }
+      }
+      else {
+        this.minHalt = 5;
+      }
+    });
+
   }
 
   getWardForLineWeitage() {

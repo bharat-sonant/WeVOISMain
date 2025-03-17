@@ -169,6 +169,11 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canViewAttendance"))).checked = true;
         }
       }
+      if (data["canRemoveNotPickedDustbin"] != undefined) {
+        if (data["canRemoveNotPickedDustbin"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canRemoveNotPickedDustbin"))).checked = true;
+        }
+      }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -269,6 +274,7 @@ export class UserAddComponent implements OnInit {
     let canUpdateLeaveBalance:any=0;
     let canViewAttendance:any=0;
     let canUpdateDustbinPickDetail:any=0;
+    let canRemoveNotPickedDustbin:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -326,6 +332,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canUpdateDustbinPickDetail = 1;
     element = <HTMLInputElement>document.getElementById("canViewAttendance");
     if (element.checked == true) canViewAttendance = 1;
+    element = <HTMLInputElement>document.getElementById("canRemoveNotPickedDustbin");
+    if (element.checked == true) canRemoveNotPickedDustbin = 1;
     if (this.userid == null) {
       let lastKey = Number(this.userJsonData["lastKey"]) + 1;
       this.userid = lastKey;
@@ -361,7 +369,8 @@ export class UserAddComponent implements OnInit {
       canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
       canUpdateLeaveBalance:canUpdateLeaveBalance,
       canViewAttendance:canViewAttendance,
-      canUpdateDustbinPickDetail:canUpdateDustbinPickDetail
+      canUpdateDustbinPickDetail:canUpdateDustbinPickDetail,
+      canRemoveNotPickedDustbin:canRemoveNotPickedDustbin
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

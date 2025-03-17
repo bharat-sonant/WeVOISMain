@@ -354,7 +354,7 @@
                                 <div class="address-text-outer">
                                     <div class="address-text">
                                         <h6>                                            
-                                            {{data.address}}
+                                            {{data.dustbinId}}-{{data.address}}
                                         </h6>
                                     </div>
                                 </div>
@@ -368,12 +368,14 @@
                                         </h6>
                                     </div>
                                 </div>
-                                <div class="address-main" [hidden]="data.iconClass!='fas fa-ellipsis-h' || canUpdateOpendepotPickDetail=='0'">
+                                <div class="address-main" [hidden]="data.iconClass!='fas fa-ellipsis-h'">
                                     <div class="address-text">
                                         <!-- <i class="far fa-edit" (click)="showDustbinData(i,'edit')" title="Update Pick Detail"
                                             style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i> -->
                                             <img src="../../assets/icons/pen-to-square-regular.svg" alt="pen-to-sqaure" class="cursor-pointer" width="15"
-                                            (click)="showDustbinData(i,'edit')" title="Update Pick Detail"/>
+                                            (click)="showDustbinData(i,'edit')" title="Update Pick Detail" [hidden]="canUpdateOpendepotPickDetail=='0'"/>
+                                            <img src="../../assets/icons/dustbin.svg" alt="Remove Dustbin" class="icon-red  cursor-pointer" width="15"
+                                            (click)="openConfirmationModel(contentConfirmation,data.dustbinId,data.planId);" title="Remove Dustbin" [hidden]="canRemoveNotPickedDustbin=='0'"/>
                                     </div>
                                 </div>
                             </div>
@@ -386,3 +388,31 @@
         </div>
     </div>
 </section>
+
+<ng-template #contentConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <input type="hidden" id="hddRemoveIndex"/>
+                <input type="hidden" id="hddRemovePlanId"/>
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wrap-input-effects" style="display:block; padding-bottom: 20px;">
+                    <input id="chkConfirm" type="checkbox">&nbsp;You want to delete this dustbin from plan. Are you sure?
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="button" class="btn w-100 btn-success submit-btn"  value="Confirm" (click)="removeUnpickedDustbin();" style="height: 45px;margin-left: 0px;" />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="button" class="btn w-100 btn-danger"  value="Cancel" (click)="closeModel();" style="height: 45px;margin-left: 0px;margin-top: 0px;" />
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</ng-template>

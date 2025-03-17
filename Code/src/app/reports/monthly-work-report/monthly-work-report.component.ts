@@ -28,6 +28,7 @@ export class MonthlyWorkReportComponent {
   toDayDate: any;
   yearList: any[] = [];
   monthWorkList: any[] = [];
+  minHaltTime: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -39,8 +40,28 @@ export class MonthlyWorkReportComponent {
   setDefault() {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedZone = "0";
+    this.minHaltTime = 5;
     this.getYear();
     this.getZones();
+    this.getMinHaltTime();
+  }
+
+  getMinHaltTime() {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FHaltSetting.json?alt=media";
+    let haltJsonInstance = this.httpService.get(path).subscribe(haltJsonData => {
+      haltJsonInstance.unsubscribe();
+      if (haltJsonData != null) {
+        if (haltJsonData["allowedHalt"] != null) {
+          this.minHaltTime = Number(haltJsonData["allowedHalt"]);
+        }
+        else {
+          this.minHaltTime = 5;
+        }
+      }
+      else {
+        this.minHaltTime = 5;
+      }
+    });
   }
 
   getYear() {
@@ -86,7 +107,6 @@ export class MonthlyWorkReportComponent {
       this.monthWorkList.push({ date: monthDate });
       this.getWardWorkerDetail(monthDate);
       this.getWardSummary(monthDate);
-      this.getHaltTime(monthDate);
     }
   }
 
@@ -192,28 +212,64 @@ export class MonthlyWorkReportComponent {
           detail.workPercentage = workPercentage;
           detail.workTime = this.commonService.getHrsFull(totalMinutes);
         }
+        this.getHaltTime(date, startTime, endTime);
         this.getTotalRunKM(date, startTime, endTime);
       }
     });
   }
 
-  getHaltTime(date: any) {
+  getHaltTime(date: any, startTime: any, endTime: any) {
     let haltInfoPath = "HaltInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date;
     let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe((haltData) => {
       haltInfoData.unsubscribe();
       if (haltData != undefined) {
         if (haltData.length > 0) {
+          let sTime = new Date(date + " " + startTime);
+          let eTime = new Date(date);
+          if (endTime !== "") {
+            eTime = new Date(date + " " + endTime);
+          }
           let totalBreak = 0;
           for (let index = 0; index < haltData.length; index++) {
             if (haltData[index]["haltType"] != "network-off") {
-              let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
-              if (duration > 5) {
-                totalBreak += duration;
+              if (haltData[index]["location"] != null) {
+                let haltStartTime = haltData[index]["startTime"];
+                let haltTime = new Date(date + " " + haltStartTime);
+                if (date == this.toDayDate) {
+                  if (haltTime >= sTime) {
+                    let duration = haltData[index]["duration"] ? haltData[index]["duration"] : 0;
+                    if (Number(duration) > Number(this.minHaltTime)) {
+                      totalBreak += duration;
+                    }
+                  }
+                }
+                else {
+                  if (haltTime >= sTime && haltTime <= eTime) {
+                    let duration = haltData[index]["duration"] ? haltData[index]["duration"] : 0;
+                    if (haltData[index]["endTime"] != null) {
+                      let endHaltTime = new Date(date + " " + haltData[index]["endTime"]);
+                      if (eTime > endHaltTime) {
+                        duration = this.commonService.timeDifferenceMin(endHaltTime, haltTime);
+                      }
+                      else {
+                        duration = 0;
+                      }
+                    }
+                    else {
+                      duration = 0;
+                    }
+                    if (duration > Number(this.minHaltTime)) {
+                      totalBreak += duration;
+                    }
+                  }
+                }
               }
-              let detail = this.monthWorkList.find(item => item.date == date);
-              if (detail != undefined) {
-                detail.haltTime = this.commonService.getHrs(totalBreak) + " hr";
-              }
+            }
+          }
+          if (totalBreak > 0) {
+            let detail = this.monthWorkList.find(item => item.date == date);
+            if (detail != undefined) {
+              detail.haltTime = this.commonService.getHrs(totalBreak) + " hr";
             }
           }
         }
@@ -228,7 +284,7 @@ export class MonthlyWorkReportComponent {
       routePath => {
         vehicleTracking.unsubscribe();
         if (routePath != null) {
-          if(endTime==""){
+          if (endTime == "") {
             if (date == this.toDayDate) {
               endTime = this.commonService.getCurrentTime();
             }
@@ -272,7 +328,7 @@ export class MonthlyWorkReportComponent {
             let index = keyArray[i];
             let time = index.toString().split('-')[0];
             if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
-              
+
               let routeDateTime = new Date(date + " " + time);
               if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
                 distance += Number(routePath[index]["distance-in-meter"]);
@@ -281,139 +337,139 @@ export class MonthlyWorkReportComponent {
           }
           let detail = this.monthWorkList.find(item => item.date == date);
           if (detail != undefined) {
-            detail.runKM = (distance/1000).toFixed(3);
+            detail.runKM = (distance / 1000).toFixed(3);
           }
         }
       });
   }
 
-  exportToExcel(){
-    if(this.monthWorkList.length>0){
-      let htmlString = "";
-    htmlString = "<table>";
-    htmlString += "<tr>";
-    htmlString += "<td>";
-    htmlString += "Date";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Zone";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Start Time";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Ward Reach On";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "End Time";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Vehicle";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Driver";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Helper";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Work Time";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Halt Time";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Work Percentage";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Run KM";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Zone Run KM";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "Ward Coverage Report Approximate in %";
-    htmlString += "</td>";
-    htmlString += "<td>";
-    htmlString += "S. I. Sign";
-    htmlString += "</td>";
-    htmlString += "</tr>";
+  exportToExcel() {
     if (this.monthWorkList.length > 0) {
-      for (let i = 0; i < this.monthWorkList.length; i++) {
-        htmlString += "<tr>";
-        htmlString += "<td t='s'>";
-        htmlString += this.monthWorkList[i]["date"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.selectedZone;
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["startTime"] != null) {
-          htmlString += this.monthWorkList[i]["startTime"];
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Zone";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Start Time";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Ward Reach On";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "End Time";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Vehicle";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Driver";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Helper";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Work Time";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Halt Time";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Work Percentage";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Run KM";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Zone Run KM";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Ward Coverage Report Approximate in %";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "S. I. Sign";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      if (this.monthWorkList.length > 0) {
+        for (let i = 0; i < this.monthWorkList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td t='s'>";
+          htmlString += this.monthWorkList[i]["date"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.selectedZone;
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["startTime"] != null) {
+            htmlString += this.monthWorkList[i]["startTime"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["reachTime"] != null) {
+            htmlString += this.monthWorkList[i]["reachTime"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["endTime"] != null) {
+            htmlString += this.monthWorkList[i]["endTime"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["vehicle"] != null) {
+            htmlString += this.monthWorkList[i]["vehicle"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["driver"] != null) {
+            htmlString += this.monthWorkList[i]["driver"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["helper"] != null) {
+            htmlString += this.monthWorkList[i]["helper"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["workTime"] != null) {
+            htmlString += this.monthWorkList[i]["workTime"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["haltTime"] != null) {
+            htmlString += this.monthWorkList[i]["haltTime"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          if (this.monthWorkList[i]["workPercentage"] != null) {
+            htmlString += this.monthWorkList[i]["workPercentage"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["runKM"] != null) {
+            htmlString += this.monthWorkList[i]["runKM"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+          if (this.monthWorkList[i]["zoneRunKM"] != null) {
+            htmlString += this.monthWorkList[i]["zoneRunKM"];
+          }
+          htmlString += "</td>";
+          htmlString += "<td>";
+
+          htmlString += "</td>";
+          htmlString += "<td>";
+
+          htmlString += "</td>";
+          htmlString += "</tr>";
         }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["reachTime"] != null) {
-          htmlString += this.monthWorkList[i]["reachTime"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["endTime"] != null) {
-          htmlString += this.monthWorkList[i]["endTime"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["vehicle"] != null) {
-          htmlString += this.monthWorkList[i]["vehicle"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["driver"] != null) {
-          htmlString += this.monthWorkList[i]["driver"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["helper"] != null) {
-          htmlString += this.monthWorkList[i]["helper"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["workTime"] != null) {
-          htmlString += this.monthWorkList[i]["workTime"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["haltTime"] != null) {
-          htmlString += this.monthWorkList[i]["haltTime"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        if (this.monthWorkList[i]["workPercentage"] != null) {
-          htmlString += this.monthWorkList[i]["workPercentage"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["runKM"] != null) {
-          htmlString += this.monthWorkList[i]["runKM"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-        if (this.monthWorkList[i]["zoneRunKM"] != null) {
-          htmlString += this.monthWorkList[i]["zoneRunKM"];
-        }
-        htmlString += "</td>";
-        htmlString += "<td>";
-       
-        htmlString += "</td>";
-        htmlString += "<td>";
-       
-        htmlString += "</td>";
-        htmlString += "</tr>";
       }
-    }
-    htmlString += "</table>";
-    let fileName = this.commonService.getFireStoreCity() + "-Monthly-Work-Report-"+this.selectedZone+"-" + this.selectedYear + "-" + this.selectedMonthName + ".xlsx";
-    this.commonService.exportExcel(htmlString, fileName);
+      htmlString += "</table>";
+      let fileName = this.commonService.getFireStoreCity() + "-Monthly-Work-Report-" + this.selectedZone + "-" + this.selectedYear + "-" + this.selectedMonthName + ".xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
     }
 
   }

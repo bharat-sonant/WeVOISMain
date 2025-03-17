@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
 import { CommonService } from "../../services/common/common.service";
 import { MapService } from "../../services/map/map.service";
 import { FirebaseService } from "../../firebase.service";
+import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
@@ -18,7 +19,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 export class HaltsComponent {
   require: any;
   public map: google.maps.Map;
-  constructor(private router: Router, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private router: Router, public httpService: HttpClient, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private mapService: MapService, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   zoneList: any[];
   selectedDate: any;
@@ -42,6 +43,7 @@ export class HaltsComponent {
   cityName: any;
   ishaltDisableAccess = false;
   serviceName = "halt";
+  allowHaltTime: any;
   haltDetails: haltDetail = {
     zoneName: "---",
     driverName: "---",
@@ -51,12 +53,13 @@ export class HaltsComponent {
     totalBreakHours: "00:00",
     wardHalt: "00.00"
   };
+  wardDutyOnOffList: any[] = [];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Monitoring","Halts",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Monitoring", "Halts", localStorage.getItem("userID"));
     if (localStorage.getItem("haltDisableAccess") == "1") {
       this.ishaltDisableAccess = true;
     }
@@ -66,10 +69,29 @@ export class HaltsComponent {
     $("#txtDate").val(this.selectedDate);
     this.currentMonth = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = new Date(this.selectedDate).getFullYear();
-    this.minHalt = 5;
-    this.setMapHeight();
-    this.getZoneList();
-    this.getHaltList();
+    this.getAllowedHalt();
+  }
+
+  getAllowedHalt() {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FHaltSetting.json?alt=media";
+    let haltJsonInstance = this.httpService.get(path).subscribe(haltJsonData => {
+      haltJsonInstance.unsubscribe();
+      if (haltJsonData != null) {
+        if (haltJsonData["allowedHalt"] != null) {
+          this.minHalt = Number(haltJsonData["allowedHalt"]);
+        }
+        else {
+          this.minHalt = 5;
+        }
+      }
+      else {
+        this.minHalt = 5;
+      }
+      this.setMapHeight();
+      this.getZoneList();
+      this.getWardDutyOnOffList();
+    });
+
   }
 
   setMapHeight() {
@@ -83,59 +105,169 @@ export class HaltsComponent {
     this.zoneList = this.mapService.getZones(this.selectedDate);
   }
 
+  getWardDutyOnOffList() {
+    this.wardDutyOnOffList = [];
+    const promises = [];
+    for (let i = 0; i < this.zoneList.length; i++) {
+      promises.push(Promise.resolve(this.getWardDutyOnOffTime(this.zoneList[i].zoneNo, this.zoneList[i].zoneName)));
+    }
+    Promise.all(promises).then((results) => {
+      for (let i = 0; i < results.length; i++) {
+        if (results[i]["status"] == "success") {
+          let detail = this.zoneList.find(item => item.zoneNo == results[i]["data"].zoneNo);
+          if (detail != undefined) {
+            if (detail.startTime != "") {
+              this.wardDutyOnOffList.push({ zoneNo: results[i]["data"].zoneNo, zoneName: results[i]["data"].zoneName, startTime: results[i]["data"].startTime, endTime: results[i]["data"].endTime });
+            }
+          }
+        }
+      }
+      this.getHaltList();
+    });
+  }
+
+  getWardDutyOnOffTime(zoneNo: any, zoneName: any) {
+    return new Promise((resolve) => {
+      let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.selectedDate + "/Summary";
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let startTime = data["dutyInTime"] ? data["dutyInTime"].split(",")[0] : "";
+          let endTime = data["dutyOutTime"] ? data["dutyOutTime"].split(",")[data["dutyOutTime"].split(",").length - 1] : "";
+          resolve({ status: "success", data: { zoneNo: zoneNo, zoneName: zoneName, startTime: startTime, endTime: endTime } });
+        }
+        else {
+          resolve({ status: "success", data: { zoneNo: zoneNo, zoneName: zoneName, startTime: "", endTime: "" } });
+        }
+      });
+
+    });
+  }
+
+
+
+
+
   getHaltList() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHaltList");
     this.haltList = [];
     this.haltDataInfo = [];
     this.haltDetails.wardHalt = "00.00";
     let totalWardHalts = 0;
-    if (this.zoneList.length > 0) {
-      for (let i = 1; i < this.zoneList.length; i++) {
-        let haltInfoPath = "HaltInfo/" + this.zoneList[i]["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.selectedDate;
+    if (this.wardDutyOnOffList.length > 0) {
+      for (let i = 1; i < this.wardDutyOnOffList.length; i++) {
+        let haltInfoPath = "HaltInfo/" + this.wardDutyOnOffList[i]["zoneNo"] + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.selectedDate;
         let haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe((haltData) => {
           haltInfoData.unsubscribe();
-          let zoneNo = this.zoneList[i]["zoneNo"];
+          let zoneNo = this.wardDutyOnOffList[i]["zoneNo"];
+          let startTime = this.wardDutyOnOffList[i]["startTime"];
+          let endTime = this.wardDutyOnOffList[i]["endTime"];
+
           //let zoneName = this.zoneList[i]["zoneName"].replace("Ward ", "");
-          let zoneName = this.zoneList[i]["zoneName"];
+          let zoneName = this.wardDutyOnOffList[i]["zoneName"];
           let totalBreak = 0;
-          if (haltData.length > 0) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltList", haltData);
-            for (let index = 0; index < haltData.length; index++) {
-              if (haltData[index]["haltType"] != "network-off") {
-                let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
-                if (duration > this.minHalt) {
-                  totalBreak += duration;
+          if (this.wardDutyOnOffList[i]["startTime"] != "") {
+            if (haltData.length > 0) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHaltList", haltData);
+              let sTime = new Date(this.selectedDate + " " + startTime);
+              let eTime = new Date(this.selectedDate);
+              if (endTime !== "") {
+                eTime = new Date(this.selectedDate + " " + endTime);
+              }
+              for (let index = 0; index < haltData.length; index++) {
+                if (haltData[index]["haltType"] != "network-off") {
                   if (haltData[index]["location"] != null) {
-                    let removeReason = "0";
-                    let canRemove = "yes";
-                    let remark = "";
-                    if (haltData[index]["canRemove"] != null) {
-                      canRemove = haltData[index]["canRemove"];
+                    let haltStartTime = haltData[index]["startTime"];
+                    let haltTime = new Date(this.selectedDate + " " + haltStartTime);
+                    if (this.selectedDate == this.toDayDate) {
+                      if (haltTime >= sTime) {
+                        let duration = haltData[index]["duration"] ? haltData[index]["duration"] : 0;
+                        if (Number(duration) > this.minHalt) {
+                          totalBreak += duration;
+                        }
+                        let removeReason = "0";
+                        let canRemove = "yes";
+                        let remark = "";
+                        if (haltData[index]["canRemove"] != null) {
+                          canRemove = haltData[index]["canRemove"];
+                        }
+                        if (haltData[index]["removeReason"] != null) {
+                          removeReason = haltData[index]["removeReason"];
+                        }
+                        if (haltData[index]["remark"] != null) {
+                          remark = haltData[index]["remark"];
+                        }
+                        let latlng = haltData[index]["location"].split(":")[1].split(",");
+                        let lt = $.trim(latlng[0]).replace("(", "");
+                        let lg = $.trim(latlng[1]).replace(")", "");
+                        this.haltDataInfo.push({
+                          index: index,
+                          zoneNo: zoneNo,
+                          time: haltData[index]["startTime"],
+                          duration: duration,
+                          type: haltData[index]["haltType"],
+                          location: haltData[index]["locality"],
+                          lat: lt,
+                          lng: lg,
+                          removeReason: removeReason,
+                          canRemove: canRemove,
+                          remark: remark,
+                          ishaltDisableAccess: this.ishaltDisableAccess
+                        });
+                      }
                     }
-                    if (haltData[index]["removeReason"] != null) {
-                      removeReason = haltData[index]["removeReason"];
+                    else {
+                      if (haltTime >= sTime && haltTime <= eTime) {
+                        let duration = haltData[index]["duration"] ? haltData[index]["duration"] : 0;
+                        if (haltData[index]["endTime"] != null) {
+                          let endHaltTime = new Date(this.selectedDate + " " + haltData[index]["endTime"]);
+                          if (eTime > endHaltTime) {
+                            duration = this.commonService.timeDifferenceMin(endHaltTime, haltTime);
+                          }
+                          else {
+                            duration = 0;
+                          }
+                        }
+                        else {
+                          duration = 0;
+                        }
+
+                        if (Number(duration) > this.minHalt) {
+                          totalBreak += duration;
+                        }
+                        let removeReason = "0";
+                        let canRemove = "yes";
+                        let remark = "";
+                        if (haltData[index]["canRemove"] != null) {
+                          canRemove = haltData[index]["canRemove"];
+                        }
+                        if (haltData[index]["removeReason"] != null) {
+                          removeReason = haltData[index]["removeReason"];
+                        }
+                        if (haltData[index]["remark"] != null) {
+                          remark = haltData[index]["remark"];
+                        }
+                        let latlng = haltData[index]["location"].split(":")[1].split(",");
+                        let lt = $.trim(latlng[0]).replace("(", "");
+                        let lg = $.trim(latlng[1]).replace(")", "");
+                        this.haltDataInfo.push({
+                          index: index,
+                          zoneNo: zoneNo,
+                          time: haltData[index]["startTime"],
+                          duration: duration,
+                          type: haltData[index]["haltType"],
+                          location: haltData[index]["locality"],
+                          lat: lt,
+                          lng: lg,
+                          removeReason: removeReason,
+                          canRemove: canRemove,
+                          remark: remark,
+                          ishaltDisableAccess: this.ishaltDisableAccess
+                        });
+                      }
                     }
-                    if (haltData[index]["remark"] != null) {
-                      remark = haltData[index]["remark"];
-                    }
-                    let latlng = haltData[index]["location"].split(":")[1].split(",");
-                    let lt = $.trim(latlng[0]).replace("(", "");
-                    let lg = $.trim(latlng[1]).replace(")", "");
-                    this.haltDataInfo.push({
-                      index: index,
-                      zoneNo: zoneNo,
-                      time: haltData[index]["startTime"],
-                      duration: duration,
-                      type: haltData[index]["haltType"],
-                      location: haltData[index]["locality"],
-                      lat: lt,
-                      lng: lg,
-                      removeReason: removeReason,
-                      canRemove: canRemove,
-                      remark: remark,
-                      ishaltDisableAccess: this.ishaltDisableAccess
-                    });
                   }
+
                 }
               }
             }
@@ -167,6 +299,7 @@ export class HaltsComponent {
             }
           }
         });
+
       }
     }
   }
@@ -447,7 +580,7 @@ export class HaltsComponent {
         this.selectedDate = newDate;
         this.currentMonth = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
         this.currentYear = this.selectedDate.split("-")[0];
-        this.getHaltList();
+        this.getWardDutyOnOffList();
       }
       else {
         this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
