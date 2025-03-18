@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit {
     this.getRendomBackground();
     this.userService.setPortalPages();
     this.userService.setWebPortalUsers();
-    this.userService.setWebPortalUsers();
     this.toDayDate = this.commonService.setTodayDate();
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
@@ -263,7 +262,7 @@ export class LoginComponent implements OnInit {
             lastLogin: this.commonService.getTodayDateTime()
           }
           this.commonService.saveCommonJsonFile(obj, userDetails.userId + ".json", "/Common/EmployeeLastLogin/");
-          this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
+          this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId, userDetails.userType);
         } else {
           localStorage.setItem("loginStatus", "Fail");
           this.commonService.setAlertMessage("error", "Account Not Activate !!!");
@@ -276,7 +275,7 @@ export class LoginComponent implements OnInit {
           lastLogin: this.commonService.getTodayDateTime()
         }
         this.commonService.saveCommonJsonFile(obj, userDetails.userId + ".json", "/Common/EmployeeLastLogin/");
-        this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId);
+        this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId, userDetails.userType);
       }
 
     } else {
@@ -307,7 +306,16 @@ export class LoginComponent implements OnInit {
     this.commonService.saveCommonJsonFile(obj, userId + ".json", "/Common/EmployeeLastLogin/");
   }
 
-  setUserCityAccess(userId: any, accessCities: any, roleId: any) {
+  setUserCityAccess(userId: any, accessCities: any, roleId: any, userType: any) {
+    let list = [
+      { pageId: "2A2" },
+      { pageId: "10C" },
+      { pageId: "10D" },
+      { pageId: "10E" },
+      { pageId: "10F" },
+      { pageId: "16I" },
+      { pageId: "20U" }
+    ];
     if (this.roleJSONData != null) {
       let cityList = accessCities.split(',');
       for (let i = 0; i < cityList.length; i++) {
@@ -321,22 +329,35 @@ export class LoginComponent implements OnInit {
           for (let j = 0; j < pagesList.length; j++) {
             let accessDetails = this.portalAccessList.find((item) => item.pageID == pagesList[j].toString().trim());
             if (accessDetails != undefined) {
-              this.accessList.push({
-                city: city,
-                userId: userId,
-                parentId: accessDetails.parentId,
-                pageId: accessDetails.pageID,
-                name: accessDetails.name,
-                url: accessDetails.url,
-                position: accessDetails.position,
-                img: accessDetails.img,
-              });
+              let isPush = 0;
+              if (userType == "External User") {
+                let pageDetail = list.find(item => item.pageId == pagesList[j].toString().trim());
+                if (pageDetail == undefined) {
+                  isPush = 1;
+                }
+
+              }
+              else {
+                isPush = 1;
+              }
+              if (isPush == 1) {
+                this.accessList.push({
+                  city: city,
+                  userId: userId,
+                  parentId: accessDetails.parentId,
+                  pageId: accessDetails.pageID,
+                  name: accessDetails.name,
+                  url: accessDetails.url,
+                  position: accessDetails.position,
+                  img: accessDetails.img,
+                });
+              }
             }
           }
         }
       }
     }
-     this.redirectHomePage();
+    this.redirectHomePage();
   }
 }
 

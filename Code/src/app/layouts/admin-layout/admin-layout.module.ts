@@ -173,6 +173,21 @@ import { FieldExecutiveAttendanceComponent } from '../../VTS/field-executive-att
 import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-daily-work-report.component';
 
 
+// BI Dashboard
+
+import { AssetsDashboardComponent } from '../../reports/assets-dashboard/assets-dashboard.component';
+import { ComplaintDashboardComponent } from '../../reports/complaint-dashboard/complaint-dashboard.component';
+import { FuelDashboardComponent } from '../../reports/fuel-dashboard/fuel-dashboard.component';
+import { BikeFuelDashboardComponent } from '../../reports/bike-fuel-dashboard/bike-fuel-dashboard.component';
+import { MonitoringDashboardComponent } from '../../reports/monitoring-dashboard/monitoring-dashboard.component';
+import { SopDashboardComponent } from '../../reports/sop-dashboard/sop-dashboard.component';
+import { VehicleAnalysisDashboardComponent } from '../../reports/vehicle-analysis-dashboard/vehicle-analysis-dashboard.component';
+import { UccChargeCollectionDashboardComponent } from '../../reports/ucc-charge-collection-dashboard/ucc-charge-collection-dashboard.component';
+import { VehicleMaintenanceDashboardComponent } from '../../reports/vehicle-maintenance-dashboard/vehicle-maintenance-dashboard.component';
+import { CameraVtsDashboardComponent } from '../../reports/camera-vts-dashboard/camera-vts-dashboard.component';
+import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-dashboard/emp-monitoring-dashboard.component';
+
+
 
 
 
@@ -352,7 +367,18 @@ import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-da
     PaymentCollectorTrackingComponent,
     ErrorPageComponent,
     SecondaryCollectionWardMappingComponent,
-    MonthlyWorkReportComponent
+    MonthlyWorkReportComponent,
+    AssetsDashboardComponent,
+    ComplaintDashboardComponent,
+    FuelDashboardComponent,
+    BikeFuelDashboardComponent,
+    MonitoringDashboardComponent,
+    SopDashboardComponent,
+    VehicleAnalysisDashboardComponent,
+    UccChargeCollectionDashboardComponent,
+    VehicleMaintenanceDashboardComponent,
+    CameraVtsDashboardComponent,
+    EmpMonitoringDashboardComponent,
   ]
 })
 

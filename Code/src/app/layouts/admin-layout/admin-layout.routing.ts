@@ -167,6 +167,21 @@ import { FieldExecutiveAttendanceComponent } from '../../VTS/field-executive-att
 import { FeDailyWorkReportComponent } from '../../VTS/fe-daily-work-report/fe-daily-work-report.component';
 
 
+// BI Dashboard
+
+import { AssetsDashboardComponent } from '../../reports/assets-dashboard/assets-dashboard.component';
+import { ComplaintDashboardComponent } from '../../reports/complaint-dashboard/complaint-dashboard.component';
+import { FuelDashboardComponent } from '../../reports/fuel-dashboard/fuel-dashboard.component';
+import { BikeFuelDashboardComponent } from '../../reports/bike-fuel-dashboard/bike-fuel-dashboard.component';
+import { MonitoringDashboardComponent } from '../../reports/monitoring-dashboard/monitoring-dashboard.component';
+import { SopDashboardComponent } from '../../reports/sop-dashboard/sop-dashboard.component';
+import { VehicleAnalysisDashboardComponent } from '../../reports/vehicle-analysis-dashboard/vehicle-analysis-dashboard.component';
+import { UccChargeCollectionDashboardComponent } from '../../reports/ucc-charge-collection-dashboard/ucc-charge-collection-dashboard.component';
+import { VehicleMaintenanceDashboardComponent } from '../../reports/vehicle-maintenance-dashboard/vehicle-maintenance-dashboard.component';
+import { CameraVtsDashboardComponent } from '../../reports/camera-vts-dashboard/camera-vts-dashboard.component';
+import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-dashboard/emp-monitoring-dashboard.component';
+
+
 export const AdminLayoutRoutes: Routes = [
     { path: 'index', component: IndexComponent },
     { path: 'index#home', component: IndexComponent },
@@ -298,6 +313,17 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: ':cityId/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: ':cityId/role-page-access/:id', component: RolePageAccessComponent },
+    { path: ':cityId/assets-dashboard', component: AssetsDashboardComponent },
+    { path: ':cityId/complaint-dashboard', component: ComplaintDashboardComponent },
+    { path: ':cityId/fuel-dashboard', component: FuelDashboardComponent },
+    { path: ':cityId/bike-fuel-dashboard', component: BikeFuelDashboardComponent },
+    { path: ':cityId/monitoring-dashboard', component: MonitoringDashboardComponent },
+    { path: ':cityId/sop-dashboard', component: SopDashboardComponent },
+    { path: ':cityId/vehicle-analysis-dashboard', component: VehicleAnalysisDashboardComponent },
+    { path: ':cityId/ucc-charge-collection-dashboard', component: UccChargeCollectionDashboardComponent },
+    { path: ':cityId/vehicle-maintenance-dashboard', component: VehicleMaintenanceDashboardComponent },
+    { path: ':cityId/camera-vts-dashboard', component: CameraVtsDashboardComponent },
+    { path: ':cityId/emp-monitoring-dashboard', component: EmpMonitoringDashboardComponent },
 
 
     { path: ':cityId/:id/home', component: HomeComponent },
@@ -449,6 +475,17 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/payment-collector-tracking', component: PaymentCollectorTrackingComponent },
     { path: ':cityId/:id/open-depot-ward-mapping', component: SecondaryCollectionWardMappingComponent },
     { path: ':cityId/:id/monthly-ward-report', component: MonthlyWorkReportComponent },
+    { path: ':cityId/:id/assets-dashboard', component: AssetsDashboardComponent },
+    { path: ':cityId/:id/complaint-dashboard', component: ComplaintDashboardComponent },
+    { path: ':cityId/:id/fuel-dashboard', component: FuelDashboardComponent },
+    { path: ':cityId/:id/bike-fuel-dashboard', component: BikeFuelDashboardComponent },
+    { path: ':cityId/:id/monitoring-dashboard', component: MonitoringDashboardComponent },
+    { path: ':cityId/:id/sop-dashboard', component: SopDashboardComponent },
+    { path: ':cityId/:id/vehicle-analysis-dashboard', component: VehicleAnalysisDashboardComponent },
+    { path: ':cityId/:id/ucc-charge-collection-dashboard', component: UccChargeCollectionDashboardComponent },
+    { path: ':cityId/:id/vehicle-maintenance-dashboard', component: VehicleMaintenanceDashboardComponent },
+    { path: ':cityId/:id/camera-vts-dashboard', component: CameraVtsDashboardComponent },
+    { path: ':cityId/:id/emp-monitoring-dashboard', component: EmpMonitoringDashboardComponent },
     
 
 ]; 

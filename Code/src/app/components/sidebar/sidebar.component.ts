@@ -364,7 +364,7 @@ export class SidebarComponent implements OnInit {
                 }
               }
               else if (userAccessList[i]["url"].includes("/cms/21")) {
-                if (this.cityName == "jaipur-greater" || this.cityName=="dehradun" || this.cityName=="test") {
+                if (this.cityName == "jaipur-greater" || this.cityName == "dehradun" || this.cityName == "test") {
                   this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
                 }
               }
@@ -695,8 +695,8 @@ export class SidebarComponent implements OnInit {
       $("#span" + k).html(userAccessList[i]["name"]);
       // let className = $("#icon" + k).attr("class");
       // $("#icon" + k).removeClass(className);
-      let imgElement=<HTMLImageElement>document.getElementById("icon" + k);
-      imgElement.src=userAccessList[i]["img"];
+      let imgElement = <HTMLImageElement>document.getElementById("icon" + k);
+      imgElement.src = userAccessList[i]["img"];
       // $("#icon" + k).addClass(userAccessList[i]["img"]);
       if (element != null) {
         element.addEventListener("click", (e) => {
@@ -715,8 +715,8 @@ export class SidebarComponent implements OnInit {
       $("#spanMob" + k).html(userAccessList[i]["name"]);
       // let className = $("#iconMob" + k).attr("class");
       // $("#iconMob" + k).removeClass(className);
-      let imgElement=<HTMLImageElement>document.getElementById("iconMob" + k);
-      imgElement.src=userAccessList[i]["img"];
+      let imgElement = <HTMLImageElement>document.getElementById("iconMob" + k);
+      imgElement.src = userAccessList[i]["img"];
       // $("#iconMob" + k).addClass(userAccessList[i]["img"]);
       if (element != null) {
         element.addEventListener("click", (e) => {
@@ -734,16 +734,16 @@ export class SidebarComponent implements OnInit {
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
     if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
+      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
     }
     else {
-      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
+      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
     }
     window.open(url, "_blank");
   }
 
   clearAll() {
-    for (let k = 1; k <= 19; k++) {
+    for (let k = 1; k <= 30; k++) {
       $("#div" + k).hide();
       $("#divMob" + k).hide();
     }
@@ -3379,7 +3379,7 @@ export class SidebarComponent implements OnInit {
         $("#reengusBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "shahpura") {
-       // $("#shahpuraBox").show();
+        // $("#shahpuraBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-office") {
         $("#jaipurOfficeBox").show();

@@ -632,7 +632,6 @@ textarea:focus-visible {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 10px !important;
 }
 
 .main-heading h3 {
@@ -785,7 +784,6 @@ textarea:focus-visible {
     height: calc(87vh - 80px);
     overflow: hidden;
     overflow-y: scroll;
-    overflow-x: scroll;
 }
 
 .table-scroll {
@@ -1255,7 +1253,7 @@ label {
 }
 
 .card-body {
-    height: 80vh;
+    height: 100vh;
     padding: 0px 10px 0px 0px;
 }
 
@@ -1376,153 +1374,9 @@ input {
     .navbar-expand-lg {
         display: block;
     }
-   
-    .main-content {
-        margin-top: 10px!important;
+    .header {
+        display: none;
     }
-    .navbar a {
-        color: #FFFFFF;
-        font-weight: bold;
-        font-size: 12px;
-        margin-left: 20px;
-        margin-top: -5px;
-    }
-    .navbar .navbar-toggler {
-        float: right;
-        vertical-align: middle;
-        outline: 0;
-        cursor: pointer;
-        margin-top: 7px;
-        color: #fff;
-    }
-    .date-input {
-        width: 100%;
-        margin-top: 10px!important;
-    }
-    .btn-primary {
-        width: 100%;
-        margin-left: 0px!important;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: none!important;
-    }
-    .pr-0 {
-        padding-right: 0px!important;
-    }
-    .pl-8 {
-        padding-left: 8px!important;
-    }
-    .caret-select {
-        width: 95%!important;
-        margin-top: 5px !important;
-    }
-    .pr-25 {
-        padding-right: 25px;
-    }
-    .pl-25 {
-        padding-left: 5px;
-    }
-    .bg-light {
-        background: #232323 !important;
-    }
-    .mb-home {
-        margin-top: 10px;
-    }
-    
-    .main-heading {
-        text-align: center;
-        padding-right: 30px;
-        margin-bottom: 10px;
-    }
-    /****For custom header****/
-    .text-rights {
-        text-align: center!important;
-    }
-    /****For custom header****/
-    .filter-input {
-        margin-top: 10px;
-        border: 1px solid transparent!important;
-    }
-    .mob-40 {
-        padding-left: 40px;
-    }
-    .table-heading {
-        margin-top: -5px;
-    }
-    .main-content {
-        background: #f1f1f1!important;
-        padding-bottom: 100px!important;
-    }
-    .mob-10 {
-        margin-top: 10px!important;
-    }
-    .mob-pr-10 {
-        padding-left: 10px;
-        padding-right: 20px!important;
-    }
-    .mob-res {
-        height: 100vh;
-        overflow: visible;
-    }
-    .mob-pl-25 {
-        padding-left: 25px;
-    }
-    .bg-clean {
-        background: #ff0000;
-        height: 70px!important;
-    }
-    .f-all {
-        margin-top: -5px;
-    }
-    table {
-      
-        overflow-x: scroll;
-    }
-    .fa-angle-down {
-        margin-top: -13px;
-        position: absolute;
-    }
-     ::-webkit-scrollbar {
-        width: 0;
-        /* Remove scrollbar space */
-        background: transparent;
-        /* Optional: just make scrollbar invisible */
-    }
-    .total-km-main{
-        max-width: 45%;
-        margin-right: 5px;
-        
-     }
-     .total-ammount-main{
-         max-width: 45%;
-         margin-top: 5px !important;
-     }
-     .total-fuel-main{
-        max-width: 45%;
-        margin-right: 5px;
-       
-     }
-     .detail-box{
-       
-        margin-top: 15px !important;
-        margin-left: 20px !important;
-    }
-    .export-main{
-        max-width: 45%;
-        margin-top: 10px !important;
-     }
-     .main-headers{
-        font-size: 15px !important;
-     }
-}
-
-// Small devices (landscape phones, 576px and up)
-@media (min-width:450px) and (max-width: 576px) {
-    .navbar-expand-lg {
-        display: block;
-    }
-    
     .main-content {
         margin-top: 10px!important;
     }
@@ -1574,7 +1428,132 @@ input {
     .mb-home {
         margin-top: 10px;
     }
-    
+    .custom-header {
+        height: 250px;
+    }
+    .main-heading {
+        text-align: center;
+        padding-right: 30px;
+        margin-bottom: 10px;
+    }
+    /****For custom header****/
+    .text-rights {
+        text-align: center!important;
+    }
+    /****For custom header****/
+    .filter-input {
+        margin-top: 10px;
+        border: 1px solid transparent!important;
+    }
+    .mob-40 {
+        padding-left: 40px;
+    }
+    .table-heading {
+        margin-top: -5px;
+    }
+    .main-content {
+        background: #f1f1f1!important;
+        padding-bottom: 100px!important;
+    }
+    .mob-10 {
+        margin-top: 10px!important;
+    }
+    .mob-pr-10 {
+        padding-left: 10px;
+        padding-right: 20px!important;
+    }
+    .mob-res {
+        height: 100vh;
+        overflow: visible;
+    }
+    .mob-pl-25 {
+        padding-left: 25px;
+    }
+    .bg-clean {
+        background: #ff0000;
+        height: 70px!important;
+    }
+    .f-all {
+        margin-top: -5px;
+    }
+    table {
+        display: block;
+        overflow-x: scroll;
+    }
+    .fa-angle-down {
+        margin-top: -13px;
+        position: absolute;
+    }
+     ::-webkit-scrollbar {
+        width: 0;
+        /* Remove scrollbar space */
+        background: transparent;
+        /* Optional: just make scrollbar invisible */
+    }
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width:321px) and (max-width: 576px) {
+    .navbar-expand-lg {
+        display: block;
+    }
+    .header {
+        display: none;
+    }
+    .main-content {
+        margin-top: 10px!important;
+    }
+    .navbar a {
+        color: #FFFFFF;
+        font-weight: bold;
+        font-size: 12px;
+        margin-left: 20px;
+        margin-top: -5px;
+    }
+    .navbar .navbar-toggler {
+        float: right;
+        vertical-align: middle;
+        outline: 0;
+        cursor: pointer;
+        margin-top: 7px;
+        color: #fff;
+    }
+    .date-input {
+        width: 100%;
+        margin-top: 10px!important;
+    }
+    .btn-primary {
+        width: 100%;
+        margin-left: 0px!important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: none!important;
+    }
+    .pr-0 {
+        padding-right: 0px!important;
+    }
+    .pl-8 {
+        padding-left: 8px!important;
+    }
+    .caret-select {
+        width: 100%!important;
+    }
+    .pr-25 {
+        padding-right: 25px;
+    }
+    .pl-25 {
+        padding-left: 5px;
+    }
+    .bg-light {
+        background: #232323 !important;
+    }
+    .mb-home {
+        margin-top: 10px;
+    }
+    .custom-header {
+        height: 200px;
+    }
     .main-heading {
         text-align: center;
         padding-right: 30px;
@@ -1617,7 +1596,7 @@ input {
         margin-top: -5px;
     }
     table {
-     
+        display: block;
         overflow-x: scroll;
     }
     .fa-angle-down {
@@ -1629,84 +1608,6 @@ input {
         /* Remove scrollbar space */
         background: transparent;
         /* Optional: just make scrollbar invisible */
-    }
-    .caret-select{
-        width: 46% !important;
-    }
-    .total-fuel-main{
-       max-width: 24%;
-       margin-right: 5px;
-      
-    }
-    .total-km-main{
-       max-width: 24%;
-       margin-right: 5px;
-       
-    }
-    .total-ammount-main{
-        max-width: 24%;
-    }
-    .export-main{
-       max-width: 24%;
-    }
-    .detail-box{
-       
-        margin-top: 15px !important;
-        margin-left: 20px !important;
-    }
-}
-@media (min-width:320px) and (max-width: 451px){
-    .export-main{
-        max-width: 96%;
-        margin-top: 10px !important;
-     }
-     .total-km-main{
-        max-width: 30%;
-        margin-right: 5px;
-        
-     }
-     .total-ammount-main{
-         max-width: 30%;
-        
-     }
-     .total-fuel-main{
-        max-width: 30%;
-        margin-right: 5px;
-       
-     }
-     .detail-box{
-       
-        margin-top: 15px !important;
-        margin-left: 20px !important;
-    }
-    .caret-select{
-        width: 46% !important;
-    }
-}
-@media (min-width:577px) and (max-width: 767px){
-    .caret-select{
-        width: 46% !important;
-    }
-    .total-fuel-main{
-       max-width: 24%;
-       margin-right: 5px;
-      
-    }
-    .total-km-main{
-       max-width: 24%;
-       margin-right: 5px;
-       
-    }
-    .total-ammount-main{
-        max-width: 24%;
-    }
-    .export-main{
-       max-width: 24%;
-    }
-    .detail-box{
-       
-        margin-top: 15px !important;
-        margin-left: 20px !important;
     }
 }
 
@@ -1971,197 +1872,17 @@ input {
     font-size: 17px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.no-gutters-iner{
-    text-align: center;
-}
-.loaderClass-outer{
-    padding-left: 0px;
-    padding-right:7px;
-}
-.custom-header-outer{
-    margin-top:-6px;  
-    height: 88vh!important
-}
-.align-iner{
-    padding-right:0px!important;
-}
-.select-div{
-    padding-left: 20px!important;
-}
-.year-select{
-    width: 130px;
-}
-.month-select{
-    width: 130px;
-}
-.total-fuel-main{
-   
-    border: solid 1px  lightgray !important;
-}
-.total-km-main{
-    
-    border: solid 1px  lightgray !important;
-}
-.total-ammount-main{
-   
-    border: solid 1px  lightgray !important;
-}
-.export-main{
-    padding-right:0px!important;
-}
-.total-km-outer{
-    padding-left: 20px!important;
-}
-.tatal-km-span{
-    font-size: 10px;
-}
-.total-ammount-outer{
-    padding-left: 20px!important;
-}
-.total-ammount-span{
-    font-size: 10px;
-}
-.export-span{
-    float: right; 
-    text-align: center; 
-    font-size: 10px; 
-    padding-right: 20px
-}
-.export-icon{
-    cursor:pointer; 
-    color:green;  
-    font-size: 24px;
-}
-.border-none{
-    border:none!important;
-}
-.form-group-outer{
-    padding-top: 20vh; 
-    display: none;
-}
-.card-outer{
-    padding-left: 7px;
-    padding-right:0px;
-}
-.card-body-outer{
-    margin-top:-6px; 
-    height: 88vh!important;
-    overflow: hidden; 
-    display: none;
-}
-.card-iner{
-    padding: 3px 11px 15px 0px; 
-    font-size: 10px!important;
-}
-.form-group-outer2{
-    padding-top: 20vh; 
-    display: none;
-}
-.fuel-span{
-    font-size: 10px;
-}
-.total-fuel-outer{
-    margin-left: 0 !important;
-}
-
-
-
-
-
-
-@media (min-width:768px) and (max-width:1200px){
-    
-    .align-iner{
-     
-        min-width: 100% !important;
-    }
-    .year-select{
-        width: 43% !important;
-    }
-    .month-select{
-        width: 43% !important;
-    }
-    .detail-box{
-        min-width: 95% !important;
-        margin-top: 15px !important;
-    }
-    .export-span{
-        float: unset !important;
-        padding: 0 !important;
-    }
-    .export-main{
-        text-align: center !important;
-    }
-    .main-headers{
-       
-        font-size: 16px !important;
-    }
-}
-
-@media (min-width:1201px) and (max-width:1450px){
-    .year-select{
-        width: 45% !important;
-    }
-    .month-select{
-        width: 45% !important;
-    }
-}
-
-
-.field-box{
-    width: 200px!important;
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      text-align: center;
-      z-index: 9999;
-  }
-.refresh{
-    width: 200px;
-    float: left;
-    cursor: pointer;
-  }
-  .field-box h1{
-    margin: 0px!important;
-    font-size: 16px;
-    color: #fff;
-    font-weight: bold;
-  }
-  .field-box p{
-    margin: 0px!important;
-    font-size: 10px;
-    color: #fff;
-    font-weight: normal;
-  }
-
   // SVG Image Icons
-.cursor-pointer {
+  .cursor-pointer {
     cursor: pointer;
   }
   
   .icon-green {
     filter: invert(50%) sepia(78%) saturate(485%) hue-rotate(83deg) brightness(97%) contrast(89%);
   }
-  
+
   iframe {
-    width: 600px;
+    width: 1300px;
     height: 100vh!important;
   }
-
 
