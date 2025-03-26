@@ -30,7 +30,8 @@
                                             {{data.name}}
                                         </option>
                                     </select>
-                                    <input id="txtChequeNo" type="text" class="filter-input" placeholder="Cheque Number" (keyup)="getFilter()" />
+                                    <input id="txtChequeNo" type="text" class="filter-input" placeholder="Cheque Number"
+                                        (keyup)="getFilter()" />
                                 </div>
                             </div>
                         </div>
@@ -40,8 +41,9 @@
                                     <!-- <i class="fa-solid fa-file-export"
                                         style="cursor:pointer; color:green;  font-size: 24px; "
                                         (click)="exportToExcel();"></i> -->
-                                        <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer" (click)="exportToExcel();">
-                                        <br />
+                                    <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24"
+                                        alt="export" class="cursor-pointer" (click)="exportToExcel();">
+                                    <br />
                                     <span style="font-size: 10px;"> Export to Excel </span>
                                 </div>
                             </div>
@@ -90,6 +92,9 @@
                                                 Cheque Image
                                             </th>
                                             <th class="text-center br-1" style="border:none!important;">
+                                                House Image
+                                            </th>
+                                            <th class="text-center br-1" style="border:none!important;">
                                                 Action
                                             </th>
                                         </thead>
@@ -130,20 +135,30 @@
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <a href="{{data.imageUrl}}" target="_blank">
-                                                    <!-- <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i> -->
-                                                    <img src="../../../assets/icons/image-regular.svg" height="18" width="18" alt="export" class="cursor-pointer icon-red">
-                                                </a>
+                                                        <!-- <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i> -->
+                                                        <img src="../../../assets/icons/image-regular.svg" height="18"
+                                                            width="18" alt="export" class="cursor-pointer icon-red">
+                                                    </a>
+                                                </td>
+                                                <td class="text-center br-1">
+                                                    <a href="{{data.houseImgUrl}}" target="_blank">
+                                                        <!-- <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i> -->
+                                                        <img src="../../../assets/icons/image-regular.svg" height="18"
+                                                            width="18" alt="export" class="cursor-pointer icon-red">
+                                                    </a>
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <!-- <i class="fa-solid fa-file-circle-exclamation"
                                                         style="cursor: pointer;font-size: 18px;"
                                                         (click)="openModel(contentDetail,data.cardNo,data.collectedDate,data.key,'clear',data.entityType,data.entityId)"></i> -->
-                                                        <!-- <i class="fa-solid fa-ban"
+                                                    <!-- <i class="fa-solid fa-ban"
                                                         style="cursor: pointer;font-size: 18px; color: red; margin-left: 10px;"
                                                         (click)="openModel(contentDeclinedDetail,data.cardNo,data.collectedDate,data.key,'decilned',data.entityType,data.entityId)"></i>  -->
-                                                        <img src="../../../assets/icons/file-circle-exclamation-solid.svg" height="18" width="18" alt="file" class="cursor-pointer"
+                                                    <img src="../../../assets/icons/file-circle-exclamation-solid.svg"
+                                                        height="18" width="18" alt="file" class="cursor-pointer"
                                                         (click)="openModel(contentDetail,data.cardNo,data.collectedDate,data.key,'clear',data.entityType,data.entityId)">
-                                                        <img src="../../../assets/icons/ban-solid.svg" height="18" width="18" alt="invalid" class="cursor-pointer icon-red ms-1"
+                                                    <img src="../../../assets/icons/ban-solid.svg" height="18"
+                                                        width="18" alt="invalid" class="cursor-pointer icon-red ms-1"
                                                         (click)="openModel(contentDeclinedDetail,data.cardNo,data.collectedDate,data.key,'decilned',data.entityType,data.entityId)">
 
                                                 </td>
@@ -201,14 +216,16 @@
                 <input id="hddKey" type="hidden" value="" />
                 <div style="text-align:left;">
                     <label>Transaction ID</label>
-                    <input id="txtTransactionId" type="text" class="filter-input" style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                    <input id="txtTransactionId" type="text" class="filter-input"
+                        style="width:100%; margin-top: 0px; margin-left: 0px;" />
                 </div>
                 <div style="text-align:left;">
                     <label>Transaction Date</label>
-                    <input id="txtTransactionDate" type="date" class="filter-input" style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                    <input id="txtTransactionDate" type="date" class="filter-input"
+                        style="width:100%; margin-top: 0px; margin-left: 0px;" />
                 </div>
                 <div style="text-align:left; color:green;padding-top: 20px;">
-                    <input id="chkConfirm" type="checkbox"/> I have checked and above information is correct.
+                    <input id="chkConfirm" type="checkbox" /> I have checked and above information is correct.
                 </div>
                 <div style="padding-top: 20px;">
                     <input type="button" class="btn btn-success submit-btn" value="SUBMIT"
@@ -233,17 +250,19 @@
             <div class="modal-body" style="text-align:center;">
                 <input id="hddDeclinedCardNo" type="hidden" value="" />
                 <input id="hddDeclinedDate" type="hidden" value="" />
-                <input id="hddDeclinedKey" type="hidden" value="" />                
+                <input id="hddDeclinedKey" type="hidden" value="" />
                 <div style="text-align:left;">
                     <label>Decliened Date</label>
-                    <input id="txtDeclinedDate" type="date" class="filter-input" style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                    <input id="txtDeclinedDate" type="date" class="filter-input"
+                        style="width:100%; margin-top: 0px; margin-left: 0px;" />
                 </div>
                 <div style="text-align:left;">
                     <label>Decliened Reason</label>
-                    <input id="txtDeclinedReason" type="text" class="filter-input" style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                    <input id="txtDeclinedReason" type="text" class="filter-input"
+                        style="width:100%; margin-top: 0px; margin-left: 0px;" />
                 </div>
                 <div style="text-align:left; color:green;padding-top: 20px;">
-                    <input id="chkDeclinedConfirm" type="checkbox"/> I have checked and above information is correct.
+                    <input id="chkDeclinedConfirm" type="checkbox" /> I have checked and above information is correct.
                 </div>
                 <div style="padding-top: 20px;">
                     <input type="button" class="btn btn-success submit-btn" value="SUBMIT"
