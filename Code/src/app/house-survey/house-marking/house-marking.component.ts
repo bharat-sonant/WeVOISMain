@@ -501,7 +501,7 @@ export class HouseMarkingComponent {
               }
               const mobileNo = data[index]['mobileNumber'] || ''
               const houseNo = data[index]['houseNumber'] || ''
-              const address = `${data[index]['address1']} ${data[index]['address2']}` || ''
+              const address = data[index]['address'] || `${data[index]['address1']} ${data[index]['address2']}` || ''
               const streetColony = data[index]['streetColony'] || ''
               const buildingName = data[index]['buildingName'] || ''
               const totalHouses = data[index]['totalHouses'] || ''
@@ -704,7 +704,7 @@ export class HouseMarkingComponent {
 
               const mobileNo = data[index]['mobileNumber'] || ''
               const houseNo = data[index]['houseNumber'] || ''
-              const address = `${data[index]['address1']} ${data[index]['address2']}` || ''
+              const address = data[index]['address'] || `${data[index]['address1']} ${data[index]['address2']}` || ''
               const streetColony = data[index]['streetColony'] || ''
               const buildingName = data[index]['buildingName'] || ''
               const totalHouses = data[index]['totalHouses'] || ''
