@@ -130,7 +130,7 @@ export class HouseMarkingComponent {
 
   showHideAlreadyCardInstalled() {
     if (this.cityName == "sikar" || this.cityName == "reengus") {
-      this.isAlreadyShow = true;
+      //this.isAlreadyShow = true;
     }
   }
 
