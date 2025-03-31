@@ -102,7 +102,7 @@ export class HouseMarkingComponent {
   toUpdateRemark: any = {
     zoneNo: '',
     lineNo: '',
-    index: '', 
+    index: '',
     type: ''
   }
 
@@ -464,7 +464,7 @@ export class HouseMarkingComponent {
                 statusClass = "status-deleted";
               }
               if (data[index]["markerId"] != null) {
-                markerId = this.commonService.getDefaultCardPrefix()+ data[index]["markerId"];
+                markerId = this.commonService.getDefaultCardPrefix() + data[index]["markerId"];
               }
               if (data[index]["approveById"] != null) {
 
@@ -499,7 +499,15 @@ export class HouseMarkingComponent {
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
               }
-              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark });
+              const mobileNo = data[index]['mobileNumber'] || ''
+              const houseNo = data[index]['houseNumber'] || ''
+              const address = `${data[index]['address1']} ${data[index]['address2']}` || ''
+              const streetColony = data[index]['streetColony'] || ''
+              const buildingName = data[index]['buildingName'] || ''
+              const totalHouses = data[index]['totalHouses'] || ''
+              const totalPerson = data[index]['totalPerson'] || ''
+              const wardNumber = data[index]['wardNumber'] || ''
+              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
@@ -519,7 +527,6 @@ export class HouseMarkingComponent {
       }
 
     });
-
   }
   getUsername(index: any, userId: any, zoneNo: any, lineNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getUsername");
@@ -659,7 +666,7 @@ export class HouseMarkingComponent {
                 statusClass = "status-deleted";
               }
               if (data[index]["markerId"] != null) {
-                markerId =this.commonService.getDefaultCardPrefix()+ data[index]["markerId"];
+                markerId = this.commonService.getDefaultCardPrefix() + data[index]["markerId"];
               }
               if (data[index]["approveById"] != null) {
 
@@ -695,7 +702,16 @@ export class HouseMarkingComponent {
                 houseType = houseTypeDetail.houseType;
               }
 
-              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark });
+              const mobileNo = data[index]['mobileNumber'] || ''
+              const houseNo = data[index]['houseNumber'] || ''
+              const address = `${data[index]['address1']} ${data[index]['address2']}` || ''
+              const streetColony = data[index]['streetColony'] || ''
+              const buildingName = data[index]['buildingName'] || ''
+              const totalHouses = data[index]['totalHouses'] || ''
+              const totalPerson = data[index]['totalPerson'] || ''
+              const wardNumber = data[index]['wardNumber'] || ''
+
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
@@ -722,16 +738,16 @@ export class HouseMarkingComponent {
     });
   }
 
-  showUpdatePopupMarkerRemark(val:any, zoneNo: any, lineNo: any, index: any, type: any){
+  showUpdatePopupMarkerRemark(val: any, zoneNo: any, lineNo: any, index: any, type: any) {
     $(this.divEditMarkerRemark).show();
     $('#txtMarkerRemark').val(val);
-    this.toUpdateRemark = {zoneNo, lineNo, index, type};
+    this.toUpdateRemark = { zoneNo, lineNo, index, type };
   }
 
-  saveMarkerRemark(){
+  saveMarkerRemark() {
     const markerRemark = $('#txtMarkerRemark').val()
 
-    if(!markerRemark){
+    if (!markerRemark) {
       return this.commonService.setAlertMessage('error', 'Please add remark')
     }
 
@@ -739,11 +755,11 @@ export class HouseMarkingComponent {
     this.db.object(path).update({ markerRemark });
 
     // update it locally
-    let marker : any;
-    if(this.toUpdateRemark.type === 'markerList'){
-       marker = this.markerList.find(item => item.index == this.toUpdateRemark.index && item.zoneNo == this.toUpdateRemark.zoneNo && item.lineNo == this.toUpdateRemark.lineNo);
+    let marker: any;
+    if (this.toUpdateRemark.type === 'markerList') {
+      marker = this.markerList.find(item => item.index == this.toUpdateRemark.index && item.zoneNo == this.toUpdateRemark.zoneNo && item.lineNo == this.toUpdateRemark.lineNo);
     }
-    else if(this.toUpdateRemark.type === 'markerListIncluded'){
+    else if (this.toUpdateRemark.type === 'markerListIncluded') {
       marker = this.markerListIncluded.find(item => item.index == this.toUpdateRemark.index && item.zoneNo == this.toUpdateRemark.zoneNo && item.lineNo == this.toUpdateRemark.lineNo);
     }
 
@@ -752,10 +768,10 @@ export class HouseMarkingComponent {
     this.cancelMarkerRemarkEdit()
   }
 
-  cancelMarkerRemarkEdit(){
+  cancelMarkerRemarkEdit() {
     $('#txtMarkerRemark').val('')
     $(this.divEditMarkerRemark).hide();
-    this.toUpdateRemark = {zoneNo: '', lineNo: '', index: '', type: ''};
+    this.toUpdateRemark = { zoneNo: '', lineNo: '', index: '', type: '' };
   }
 
 
