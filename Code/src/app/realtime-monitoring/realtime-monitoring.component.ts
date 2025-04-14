@@ -68,7 +68,12 @@ export class RealtimeMonitoringComponent implements OnInit {
   wardLineStorage: any[] = [];
   employeeDetail: any[] = [];
   garageDutyList: any[] = [];
-
+  userAccessList: any;
+  permission: any = {
+    routeTracking: false,
+    wardWorkTracking: false,
+    wardMonitoringReport: false
+  };
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
@@ -192,6 +197,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
     this.userType = localStorage.getItem("userType");
+    this.userAccessList = localStorage.getItem('userAccessList');
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.getAllowedHalt();
@@ -232,9 +238,41 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.setWorkNotStarted();
     }
     this.getWardForLineWeitage();
+    this.managePermission(this.userAccessList);
   }
 
-  
+  managePermission(list: any) {
+
+    let updatedPermissions = {
+      routeTracking: false,
+      wardWorkTracking: false,
+      wardMonitoringReport: false
+    };
+    let data = JSON.parse(list);
+    let filterList = data.filter(item => item.city === this.cityName&&Number(item.userId)===Number(this.userId)).sort((a,b)=>a.name.localeCompare(b.name));
+    if (filterList.length > 0) {
+        filterList.forEach(item => {
+          switch (item.pageId) {
+            case '2X':
+              updatedPermissions.routeTracking = true;
+              break;
+            case '2Y':
+              updatedPermissions.wardWorkTracking = true;
+              break;
+            case '10A1':
+              updatedPermissions.wardMonitoringReport = true;
+              break;
+          }
+        });
+    }
+
+    this.permission = {
+      ...this.permission,
+      ...updatedPermissions
+    };
+  }
+
+
   getAllowedHalt() {
     const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSettings%2FHaltSetting.json?alt=media";
     let haltJsonInstance = this.httpService.get(path).subscribe(haltJsonData => {
