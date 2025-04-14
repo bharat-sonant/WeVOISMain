@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { AngularFireStorage } from "angularfire2/storage";
 
 
 @Component({
@@ -12,19 +13,21 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 })
 export class CardTransectionDetailComponent implements OnInit {
 
-  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService) { }
+  constructor(private commonService: CommonService, private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService) { }
   cityName: any;
   db: any;
   transactionList: any[];
   txtCardNo = "#txtCardNo";
   public totalAmount: any;
   divLoader = "#divLoader";
+  divEntity = "#divEntity";
   cardPrefix: any;
   houseTypeList: any[] = [];
   public ward: any;
   public name: any;
   public entityType: any;
   serviceName = "collection-management-card-payment-report";
+  cardEntityList: any[] = [];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -35,6 +38,7 @@ export class CardTransectionDetailComponent implements OnInit {
     this.ward = "---";
     this.name = "---";
     this.entityType = "---";
+    $(this.divEntity).hide();
     this.getHouseType();
   }
 
@@ -58,6 +62,8 @@ export class CardTransectionDetailComponent implements OnInit {
     this.ward = "---";
     this.name = "---";
     this.entityType = "---";
+    this.cardEntityList = [];
+    $(this.divEntity).hide();
     let cardNo = this.cardPrefix + $(this.txtCardNo).val();
     let dbPath = "CardWardMapping/" + cardNo;
     let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
@@ -76,11 +82,47 @@ export class CardTransectionDetailComponent implements OnInit {
             if (detail != undefined) {
               this.entityType = detail.houseType;
             }
+            if (Number(houseType) == 19 || Number(houseType) == 20) {
+              if (cardData["Entities"] != undefined) {
+                $(this.divEntity).show();
+                let keyArray = Object.keys(cardData["Entities"]);
+                for (let i = 0; i < keyArray.length; i++) {
+                  let key = keyArray[i];
+                  let name = cardData["Entities"][key]["name"];
+                  let houseImage = cardData["Entities"][key]["houseImage"];
+                  let houseImageURL = "";
+                  let entity = "";
+                  let entityDetail = this.houseTypeList.find(item => item.id == cardData["Entities"][key]["entityType"]);
+                  if (entityDetail != undefined) {
+                    entity = entityDetail.houseType;
+                  }
+                  let city = this.commonService.getFireStoreCity();
+                  if (this.cityName == "sikar") {
+                    city = "Sikar-Survey";
+                  }
+
+                  let imagePath = city + "/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage;
+                  this.commonService.checkImageExist(imagePath).then(resp => {
+                    if(resp==true){
+                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +city + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage+"?alt=media";
+                    }
+                    else{
+                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage+"?alt=media";
+                    }
+
+                    this.cardEntityList.push({ name: name, entity: entity, houseImageURL: houseImageURL });
+                  })
+                }
+              }
+            }
           }
         })
       }
     });
   }
+
+
+
 
   getTransaction() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTransaction");
@@ -130,9 +172,18 @@ export class CardTransectionDetailComponent implements OnInit {
                     else if (dateData[key]["PaymentMode"] != null) {
                       payMethod = dateData[key]["PaymentMode"];
                     }
+                    else if (dateData[key]["TranType"] != null) {
+                      payMethod = dateData[key]["TranType"];
+                    }
                     amount = amount + Number(dateData[key]["transactionAmount"]);
+                    let houseImage = "";
+                    let houseImageURL = "";
+                    if (dateData[key]["houseImage"]) {
+
+                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+                    }
                     let timestemp = new Date(date).getTime();
-                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
+                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL });
                     this.transactionList = this.transactionList.sort((a, b) =>
                       b.timestemp < a.timestemp ? 1 : -1
                     );
@@ -159,6 +210,7 @@ export class CardTransectionDetailComponent implements OnInit {
 
   getEntityPayment(entityData: any, amount: any) {
     let entityKeyArray = Object.keys(entityData);
+    let cardNo = this.cardPrefix + $(this.txtCardNo).val();
     for (let i = 0; i < entityKeyArray.length; i++) {
       let entityKey = entityKeyArray[i];
       let data = entityData[entityKey];
@@ -192,10 +244,19 @@ export class CardTransectionDetailComponent implements OnInit {
                 else if (dateData[key]["PaymentMode"] != null) {
                   payMethod = dateData[key]["PaymentMode"];
                 }
+                else if (dateData[key]["TranType"] != null) {
+                  payMethod = dateData[key]["TranType"];
+                }
                 amount = amount + Number(dateData[key]["transactionAmount"]);
+                let houseImage = "";
+                let houseImageURL = "";
+                if (dateData[key]["houseImage"]) {
+                  houseImage = dateData[key]["houseImage"];
+                  houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2FEntities%2F" + entityKey + "%2F" + date + "%2F" + houseImage + "?alt=media";
+                }
 
                 let timestemp = new Date(date).getTime();
-                this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"] });
+                this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL });
                 this.transactionList = this.transactionList.sort((a, b) =>
                   b.timestemp < a.timestemp ? 1 : -1
                 );

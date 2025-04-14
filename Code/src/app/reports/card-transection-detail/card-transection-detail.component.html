@@ -37,8 +37,10 @@
                                             <!-- <i class="fa-solid fa-file-export"
                                                 style="cursor:pointer; color:green;  font-size: 24px; "
                                                 (click)="exportToExcel();"></i> -->
-                                                <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer" (click)="exportToExcel();">
-                                                <br />
+                                            <img src="../../../assets/icons/file-export-solid.svg" height="24"
+                                                width="24" alt="export" class="cursor-pointer"
+                                                (click)="exportToExcel();">
+                                            <br />
                                             Export to Excel
                                         </span>
                                     </div>
@@ -48,7 +50,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-02" >
+            <div class="card-02">
                 <div class="card-header" style="background-color: #f1f1f1 !important;">
                     <h5 class="card-title mb-0  ">Card detail</h5>
                 </div>
@@ -90,7 +92,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                         
+
                             <div class="d-flex mt-0">
                                 <h5 class="detail-card">Ward : </h5>
                                 <p class="mb-0   ms-3">{{ward}}</p>
@@ -98,11 +100,11 @@
 
 
                         </div>
-                   
+
                     </div>
                     <div class="row">
                         <div class="col-12">
-                         
+
                             <div class="d-flex mt-0">
                                 <h5 class="detail-card">Entity Type : </h5>
                                 <p class="mb-0 ms-3">{{entityType}}</p>
@@ -110,22 +112,44 @@
 
 
                         </div>
-                   
+
                     </div>
                     <div class="row">
                         <div class="col-12">
-                         
+
                             <div class="d-flex mt-0">
-                                <h5 class="detail-card">Paid Amount     : </h5>
+                                <h5 class="detail-card">Paid Amount : </h5>
                                 <p class="mb-0  ms-3"><b>
-                                    <!-- <i class="fa-solid fa-indian-rupee-sign"></i> -->
-                                     <img src="../../../assets/icons/indian-rupee-sign-solid.svg" height="15" width="15" alt="">
-                                     {{totalAmount}}</b></p>
+                                        <!-- <i class="fa-solid fa-indian-rupee-sign"></i> -->
+                                        <img src="../../../assets/icons/indian-rupee-sign-solid.svg" height="15"
+                                            width="15" alt="">
+                                        {{totalAmount}}</b></p>
                             </div>
 
 
                         </div>
-                   
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-02" id="divEntity">
+                <div class="card-header" style="background-color: #f1f1f1 !important;">
+                    <h5 class="card-title mb-0  ">Entity Detail</h5>
+                </div>
+
+                <div class="card-body-2" style=" padding: 10px;">
+                    <div class="row">
+                        <div class="col-6" *ngFor="let data of cardEntityList; let i=index"
+                            style="border-bottom: 1px solid lightgray;">
+                            <div class="row" style="display: flex;">
+                                <div class="col-md-8">
+                                    Name : {{data.name}}<br />
+                                    Entity Type : {{data.entity}} </div>
+                                <div class="col-md-4">
+                                    <img [src]="data.houseImageURL" height="100px" width="100px" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -159,6 +183,9 @@
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Amount
                                             </th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                House Image
+                                            </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of transactionList; let i=index">
@@ -182,6 +209,9 @@
                                                 </td>
                                                 <td class="text-right br-1">
                                                     {{data.amount}}
+                                                </td>
+                                                <td class="text-right br-1">
+                                                    <img [src]="data.houseImageURL" style="height:30px; width:30px" />
                                                 </td>
                                             </tr>
                                         </tbody>
