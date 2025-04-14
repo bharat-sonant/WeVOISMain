@@ -486,6 +486,15 @@ export class CommonService {
     else if (cityName == "sanchore") {
       latLng.push({ lat: 24.749691, lng: 71.7724481 });
     }
+    else if (cityName == "jaipur-civil-line") {
+      latLng.push({ lat: 26.908028, lng: 75.7782204 });
+    }
+    else if (cityName == "jaipur-kishanpole") {
+      latLng.push({ lat: 26.9204252, lng: 75.8110759 });
+    }
+    else if (cityName == "jaunpur") {
+      latLng.push({ lat: 25.7462391, lng: 82.6760959 });
+    }
     return latLng;
   }
 
@@ -1366,9 +1375,9 @@ export class CommonService {
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
     let cityName = localStorage.getItem("cityName");
     let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-    // if (cityName == "sikar") {
-    //   path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
-    // }
+     if (cityName == "jodhpur") {
+       path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
+     }
     let markingWardInstance = this.httpService.get(path).subscribe(data => {
       markingWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
@@ -2145,6 +2154,22 @@ export class CommonService {
       }, error => {
         resolve(null);
       });
+    });
+  }
+
+  checkImageExist(imagePath:any){
+    return new Promise((resolve) => {
+      const ref = this.storage.storage.app.storage(this.fireStoragePath).ref(imagePath); 
+      ref.getDownloadURL()
+      .then(() => resolve(true)).catch((error) => {
+        if (error.code === 'storage/object-not-found') {
+          resolve(false); // Image does not exist
+        } else {
+          console.error('Firebase error:', error);
+          throw error; // Some other error
+        }
+      });
+    
     });
   }
 
