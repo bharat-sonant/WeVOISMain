@@ -11,7 +11,7 @@
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
-            <div class="card" style="margin-top:-6px;  height: auto!important; margin-bottom: 20px !important;">
+            <div class="card" style="margin-top:-6px;  height: auto!important; margin-bottom: 5px !important;">
                 <div class="card-header custom-header">
                     <!-- <div class="col-md-12"> -->
 
@@ -50,8 +50,8 @@
                     </div>
                 </div>
             </div>
-            <div class="card-02">
-                <div class="card-header" style="background-color: #f1f1f1 !important;">
+            <div class="card-02" style="margin-bottom: 10px;">
+                <div class="card-header" style="background-color: #f1f1f1 !important; ">
                     <h5 class="card-title mb-0  ">Card detail</h5>
                 </div>
 
@@ -81,7 +81,7 @@
                                     </div> -->
                             <div class="d-flex mt-3">
                                 <h5 class="detail-card">Name : </h5>
-                                <p class="mb-0  ms-3">{{name}}</p>
+                                <p class="mb-0   detail-data">{{name}}</p>
                             </div>
 
 
@@ -95,7 +95,7 @@
 
                             <div class="d-flex mt-0">
                                 <h5 class="detail-card">Ward : </h5>
-                                <p class="mb-0   ms-3">{{ward}}</p>
+                                <p class="mb-0    detail-data">{{ward}}</p>
                             </div>
 
 
@@ -107,7 +107,7 @@
 
                             <div class="d-flex mt-0">
                                 <h5 class="detail-card">Entity Type : </h5>
-                                <p class="mb-0 ms-3">{{entityType}}</p>
+                                <p class="mb-0  detail-data">{{entityType}}</p>
                             </div>
 
 
@@ -119,10 +119,10 @@
 
                             <div class="d-flex mt-0">
                                 <h5 class="detail-card">Paid Amount : </h5>
-                                <p class="mb-0  ms-3"><b>
+                                <p class="mb-0  detail-data"><b>
                                         <!-- <i class="fa-solid fa-indian-rupee-sign"></i> -->
-                                        <img src="../../../assets/icons/indian-rupee-sign-solid.svg" height="15"
-                                            width="15" alt="">
+                                        <img src="../../../assets/icons/indian-rupee-sign-solid.svg" height="13"
+                                            width="13" alt="">
                                         {{totalAmount}}</b></p>
                             </div>
 
@@ -136,17 +136,67 @@
                 <div class="card-header" style="background-color: #f1f1f1 !important;">
                     <h5 class="card-title mb-0  ">Entity Detail</h5>
                 </div>
-
-                <div class="card-body-2" style=" padding: 10px;">
-                    <div class="row">
+                <div style="height: calc(100vh - 470px); overflow: scroll;">
+                    <div class="card-body-2" style=" padding: 15px; ">
+                        <!-- <div class="row">
                         <div class="col-6" *ngFor="let data of cardEntityList; let i=index"
                             style="border-bottom: 1px solid lightgray;">
                             <div class="row" style="display: flex;">
                                 <div class="col-md-8">
-                                    Name : {{data.name}}<br />
-                                    Entity Type : {{data.entity}} </div>
+                                    <div class="d-flex ">
+                                        <h5 class="detail-card-shop">Name : </h5>
+                                        <p class="mb-0  ms-3 detail-data">{{data.name}}</p>
+                                    </div>
+                                    <div class="d-flex ">
+                                        <h5 class="detail-card-shop"> Entity Type : </h5>
+                                        <p class="mb-0  ms-3 detail-data">{{data.entity}} </p>
+                                    </div>
+                                </div>
                                 <div class="col-md-4">
                                     <img [src]="data.houseImageURL" height="100px" width="100px" />
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                        <div class="row">
+                            <div class="col-xxl-6 mb-3 border-bottom pb-2"
+                                *ngFor="let data of cardEntityList; let i=index">
+                                <div class="d-flex justify-content-between">
+                                    <div class="detail">
+                                        
+                                        <div class="d-flex  ">
+                                            <h5 class="detail-card-shop">Name :</h5>
+                                            <p class="mb-0   detail-data">{{data.name}}</p>
+                                        </div>
+                                        <div class="d-flex  ">
+                                            <h5 class="detail-card-shop"> Entity :</h5>
+                                            <p class="mb-0   detail-data">{{data.entity}} </p>
+                                        </div>
+                                    </div>
+                                    <div class="detail1">
+                                        <img [src]="cardEntityList[i]?.houseImageURL" height="80px" width="80px"
+                                            style="cursor: pointer;" data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal" />
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal" tabindex="-1"
+                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header d-flex align-items-center">
+                                                        <h5 class="card-title p-1 mb-0 ">Entity Detail Image</h5>
+                                                        <button type="button" class="btn-close btn3"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img [src]="cardEntityList[i]?.houseImageURL" width="100%" />
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -211,7 +261,28 @@
                                                     {{data.amount}}
                                                 </td>
                                                 <td class="text-right br-1">
-                                                    <img [src]="data.houseImageURL" style="height:30px; width:30px" />
+                                                    <!-- <img [src]="data.houseImageURL" style="height:30px; width:30px" /> -->
+
+                                                    <img [src]="data.houseImageURL" height="30px" width="30px"
+                                                    style="cursor: pointer;" data-bs-toggle="modal"
+                                                    data-bs-target="#exampleModal" />
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="exampleModal" tabindex="-1"
+                                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header d-flex align-items-center">
+                                                                <h5 class="card-title p-1 mb-0 ">Entity Detail Image</h5>
+                                                                <button type="button" class="btn-close btn3"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <img [src]="data.houseImageURL" width="100%" />
+                                                            </div>
+        
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 </td>
                                             </tr>
                                         </tbody>
