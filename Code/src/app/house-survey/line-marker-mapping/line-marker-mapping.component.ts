@@ -94,7 +94,7 @@ export class LineMarkerMappingComponent {
 
   getZones() {
     this.zoneList = [];
-    this.zoneList = JSON.parse(localStorage.getItem("markingWards"));
+    this.zoneList = JSON.parse(localStorage.getItem("allZoneList"));
   }
 
   changeZoneSelection(filterVal: any) {
@@ -458,6 +458,10 @@ export class LineMarkerMappingComponent {
       if (this.cityName == "sikar") {
         city = "Sikar-Survey";
       }
+      let markerID = "";
+      if (data["markerId"] != null) {
+        markerID = this.commonService.getDefaultCardPrefix() + data["markerId"];
+      }
       const pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
       const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
       ref.getDownloadURL()
@@ -473,6 +477,9 @@ export class LineMarkerMappingComponent {
               this.movedMarkerCount = this.movedMarkerCount + 1;
               if (data["cardNumber"] != null) {
                 let cardNo = data["cardNumber"];
+                if (markerID != "") {
+                  markerID = cardNo;
+                }
                 let dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
                 let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
                   cardInstance.unsubscribe();
@@ -515,6 +522,18 @@ export class LineMarkerMappingComponent {
 
               dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
               this.db.object(dbPath).remove();
+
+              if (markerID != "") {
+                dbPath = "EntityMarkingData/MarkerWardMapping/" + markerID;
+                let obj = {
+                  image: lastKey + ".jpg",
+                  line: lineTo.toString(),
+                  markerNo: lastKey.toString(),
+                  ward: zoneTo
+                }
+                this.db.object(dbPath).update(obj);
+              }
+
               index = index + 1;
               this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
 

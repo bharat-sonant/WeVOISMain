@@ -48,7 +48,6 @@ import { DustbinReportComponent } from '../../reports/dustbin-report/dustbin-rep
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
-import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.component';
 import { TaskManagerComponent } from '../../task-manager/task-manager.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
@@ -107,7 +106,6 @@ import { RolePageAccessComponent } from '../../user-management/role-page-access/
 import { MapsComponent } from '../../maps/maps.component';
 import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
-import { ManageWardSupervisorComponent } from '../../manage-ward-supervisor/manage-ward-supervisor.component';
 import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
 import { ScanCardManipulationComponent } from '../../PortalServices/scan-card-manipulation/scan-card-manipulation.component';
 import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-against-cards/add-marker-against-cards.component';
@@ -155,6 +153,9 @@ import { PaymentCollectorTrackingComponent } from '../../reports/payment-collect
 import { ErrorPageComponent } from '../../error-page/error-page.component';
 import { SecondaryCollectionWardMappingComponent } from '../../PortalServices/secondary-collection-ward-mapping/secondary-collection-ward-mapping.component';
 import { MonthlyWorkReportComponent } from '../../reports/monthly-work-report/monthly-work-report.component';
+import { WebPortalSettingComponent } from '../../PortalServices/web-portal-setting/web-portal-setting.component';
+import { WardRouteTrackingComponent } from '../../ward-route-tracking/ward-route-tracking.component';
+import { WardDutyOnComponent } from '../../PortalServices/ward-duty-on/ward-duty-on.component';
 
 // Jaipur-Greater
 
@@ -261,7 +262,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     CmsComponent,
     Cms1Component,
     VehicleReportComponent,
-    MultipleMapsComponent,
     TaskManagerComponent,
     WardTripAnalysisComponent,
     HouseMarkingComponent,
@@ -319,7 +319,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     MapsComponent,
     CardMarkerMappingComponent,
     ScanCardStatusComponent,
-    ManageWardSupervisorComponent ,
     ComplaintListComponent,
     ScanCardManipulationComponent,
     AddMarkerAgainstCardsComponent,
@@ -379,6 +378,9 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     VehicleMaintenanceDashboardComponent,
     CameraVtsDashboardComponent,
     EmpMonitoringDashboardComponent,
+    WebPortalSettingComponent,
+    WardRouteTrackingComponent,
+    WardDutyOnComponent,
   ]
 })
 

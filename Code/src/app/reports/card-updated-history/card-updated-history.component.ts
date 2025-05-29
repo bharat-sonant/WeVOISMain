@@ -110,30 +110,33 @@ export class CardUpdatedHistoryComponent implements OnInit {
           let list = [];
           for (let j = 0; j < keyArray.length; j++) {
             let key = keyArray[j];
-            let preEntityTypeId = cardData[key]["preEntityType"];
-            let entityTypeId = cardData[key]["entityType"];
-            let preEntityType = "";
-            let entityType = "";
-            let detail = this.entityTypeList.find(item => item.entityTypeId == preEntityTypeId);
-            if (detail != undefined) {
-              preEntityType = detail.entityType;
+            if (key != "Entities") {
+              let preEntityTypeId = cardData[key]["preEntityType"];
+              let entityTypeId = cardData[key]["entityType"];
+              let preEntityType = "";
+              let entityType = "";
+              let detail = this.entityTypeList.find(item => item.entityTypeId == preEntityTypeId);
+              if (detail != undefined) {
+                preEntityType = detail.entityType;
+              }
+              detail = this.entityTypeList.find(item => item.entityTypeId == entityTypeId);
+              if (detail != undefined) {
+                entityType = detail.entityType;
+              }
+              let date = cardData[key]["updateDateTime"];
+              let time = date.split(" ")[1];
+              let newDate = date.split(" ")[0];
+              let month = newDate.split("-")[1];
+              let year = newDate.split("-")[0];
+              let day = newDate.split("-")[2];
+              let monthName = this.commonService.getCurrentMonthShortName(Number(month));
+              date = day + " " + monthName + " " + year + " | " + time.split(":")[0] + ":" + time.split(":")[1];
+              //date = day + " " + monthName + " " + year;
+              list.push({ date: date, preEntityType: preEntityType, entityType: entityType, name: cardData[key]["name"], address: cardData[key]["address"], mobile: cardData[key]["mobile"], entityUpdateByName: cardData[key]["entityUpdateByName"] });
+
+              cardUpdateListJSON.push({ cardNo: cardNo, counts: keyArray.length, list: list });
             }
-            detail = this.entityTypeList.find(item => item.entityTypeId == entityTypeId);
-            if (detail != undefined) {
-              entityType = detail.entityType;
-            }
-            let date = cardData[key]["updateDateTime"];
-            let time = date.split(" ")[1];
-            let newDate = date.split(" ")[0];
-            let month = newDate.split("-")[1];
-            let year = newDate.split("-")[0];
-            let day = newDate.split("-")[2];
-            let monthName = this.commonService.getCurrentMonthShortName(Number(month));
-             date = day + " " + monthName + " " + year + " | " + time.split(":")[0] + ":" + time.split(":")[1];
-            //date = day + " " + monthName + " " + year;
-            list.push({ date: date, preEntityType: preEntityType, entityType: entityType, name: cardData[key]["name"], address: cardData[key]["address"], mobile: cardData[key]["mobile"], entityUpdateByName: cardData[key]["entityUpdateByName"] });
           }
-          cardUpdateListJSON.push({ cardNo: cardNo, counts: keyArray.length, list: list });
         }
         this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
         this.cardUpdateList = cardUpdateListJSON;
@@ -146,7 +149,7 @@ export class CardUpdatedHistoryComponent implements OnInit {
         $(this.divLoader).hide();
       }
       else {
-        this.commonService.setAlertMessage("error","No data found !!!");
+        this.commonService.setAlertMessage("error", "No data found !!!");
         $(this.divLoader).hide();
       }
     });

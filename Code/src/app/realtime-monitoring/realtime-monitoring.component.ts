@@ -220,6 +220,9 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (this.cityName == "jodhpur") {
       this.hiddenWardList = [{ zone: "31-R1" }, { zone: "31-R2" }, { zone: "34-R1" }, { zone: "34-R2" }, { zone: "36-R1" }, { zone: "36-R2" }, { zone: "37-R1" }, { zone: "37-R2" }, { zone: "33-R1" }, { zone: "33-R2" }, { zone: "39" }];
     }
+    if (this.cityName == "ajmer") {
+      this.hiddenWardList = [{ zone: "21" }, { zone: "27" }];
+    }
     this.zoneList = [];
     this.firstData = false;
 
@@ -249,21 +252,21 @@ export class RealtimeMonitoringComponent implements OnInit {
       wardMonitoringReport: false
     };
     let data = JSON.parse(list);
-    let filterList = data.filter(item => item.city === this.cityName&&Number(item.userId)===Number(this.userId)).sort((a,b)=>a.name.localeCompare(b.name));
+    let filterList = data.filter(item => item.city === this.cityName && Number(item.userId) === Number(this.userId)).sort((a, b) => a.name.localeCompare(b.name));
     if (filterList.length > 0) {
-        filterList.forEach(item => {
-          switch (item.pageId) {
-            case '2X':
-              updatedPermissions.routeTracking = true;
-              break;
-            case '2Y':
-              updatedPermissions.wardWorkTracking = true;
-              break;
-            case '10A1':
-              updatedPermissions.wardMonitoringReport = true;
-              break;
-          }
-        });
+      filterList.forEach(item => {
+        switch (item.pageId) {
+          case '2X':
+            updatedPermissions.routeTracking = true;
+            break;
+          case '2Y':
+            updatedPermissions.wardWorkTracking = true;
+            break;
+          case '10A1':
+            updatedPermissions.wardMonitoringReport = true;
+            break;
+        }
+      });
     }
 
     this.permission = {
@@ -814,6 +817,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         for (let i = 0; i < lines.length; i++) {
           let lineNo = lines[i]["lineNo"];
           if (lines[i]["lineStatus"] == "LineCompleted") {
+
             lastLineNo = lineNo;
             actualLineCompleted++;
             lineLength += Number(lines[i]["lineLength"]);
@@ -950,7 +954,12 @@ export class RealtimeMonitoringComponent implements OnInit {
       let element = <HTMLAnchorElement>(document.getElementById("routeTrackingLink"));
       element.href = this.cityName + "/route-tracking/" + zoneNo;
       element = <HTMLAnchorElement>document.getElementById("mapsLink");
-      element.href = this.cityName + "/ward-work-tracking/" + zoneNo;
+      if (this.cityName == "ajmer" && this.userType == "External User") {
+        element.href = this.cityName + "/ward-route-tracking/" + zoneNo;
+      }
+      else {
+        element.href = this.cityName + "/ward-work-tracking/" + zoneNo;
+      }
     }
   }
 
@@ -1241,7 +1250,6 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   // Halt Time
 
-
   showHaltTime() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showHaltTime");
     this.todayHaltList = [];
@@ -1251,44 +1259,68 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.haltInfoData.unsubscribe();
     }
     let haltInfoPath = "HaltInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
-    this.haltInfoData = this.db.list(haltInfoPath).valueChanges().subscribe((haltData) => {
+    this.haltInfoData = this.db.object(haltInfoPath).valueChanges().subscribe((haltData) => {
       this.instancesList.push({ instances: this.haltInfoData });
       this.todayHaltList = [];
       if (haltData != undefined) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showHaltTime", haltData);
+        let dutyStartTime = "";
+        let compairDate = new Date(this.toDayDate);
+        let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
+        if (zoneDetails != undefined) {
+          let startTime = zoneDetails.dutyOnTime;
+          let startList = startTime.split(",");
+          dutyStartTime = startList[0].trim();
+          compairDate = new Date(this.toDayDate + " " + dutyStartTime);
+
+        }
         let totalBreak = 0;
         this.workerDetails.currentHaltTime = "0:00";
+        if (haltData != null) {
+          let keyArray = Object.keys(haltData);
+          for (let i = 0; i < keyArray.length; i++) {
+            let time = keyArray[i];
+            let haltDate = new Date(this.toDayDate + " " + time);
+            let isHalt = true;
 
-        if (haltData.length > 0) {
-          for (let index = 0; index < haltData.length; index++) {
-            if (haltData[index]["haltType"] != "network-off") {
-              if (haltData[index]["location"] != null) {
-                let latlng = haltData[index]["location"].split(":")[1].split(",");
-                let lt = $.trim(latlng[0]).replace("(", "");
-                let lg = $.trim(latlng[1]).replace(")", "");
-                let duration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
-                if (duration > this.minHalt) {
-                  totalBreak += duration;
-                }
-                let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
-                if (zoneDetails != undefined) {
-                  this.workerDetails.haltTime = this.commonService.getHrs(totalBreak);
-
-                  let breakBGColor = this.getMarkerName(duration);
-                  $(this.totalHaltH3).css("color", this.commonService.getHrs(totalBreak));
-                  let activeClass = "halt-data-theme";
-                  if (this.todayHaltList.length == 0) {
-                    activeClass = "halt-data-theme active";
+            if (haltDate < compairDate) {
+              isHalt = false;
+            }
+            if (i < keyArray.length - 1) {
+              if (new Date(this.toDayDate + " " + keyArray[i + 1]) < new Date(this.toDayDate + " " + haltData[time]["endTime"])) {
+                isHalt = false;
+              }
+            }
+            if (isHalt == true) {
+              if (haltData[time]["haltType"] != "network-off") {
+                if (haltData[time]["location"] != null) {
+                  let latlng = haltData[time]["location"].split(":")[1].split(",");
+                  let lt = $.trim(latlng[0]).replace("(", "");
+                  let lg = $.trim(latlng[1]).replace(")", "");
+                  let duration = haltData[time]["duration"] != undefined ? haltData[time]["duration"] : 0;
+                  if (duration > this.minHalt) {
+                    totalBreak += duration;
                   }
-                  this.todayHaltList.push({ time: haltData[index]["startTime"], duration: duration, type: haltData[index]["haltType"], location: haltData[index]["locality"], lat: lt, lng: lg, breakBGColor: breakBGColor, activeClass: activeClass, });
-                  if (index == haltData.length - 1) {
-                    if (zoneDetails.status == "stopped") {
-                      let lastDuration = haltData[index]["duration"] != undefined ? haltData[index]["duration"] : 0;
-                      this.workerDetails.currentHaltTime = this.commonService.getHrs(lastDuration);
-                      $(this.currentHaltH3).css("color", this.getMarkerName(duration));
-                    } else {
-                      this.workerDetails.currentHaltTime = "0:00";
-                      $(this.currentHaltH3).css("color", this.getMarkerName(0));
+                  let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
+                  if (zoneDetails != undefined) {
+                    this.workerDetails.haltTime = this.commonService.getHrs(totalBreak);
+
+                    let breakBGColor = this.getMarkerName(duration);
+                    $(this.totalHaltH3).css("color", this.commonService.getHrs(totalBreak));
+                    let activeClass = "halt-data-theme";
+                    if (this.todayHaltList.length == 0) {
+                      activeClass = "halt-data-theme active";
+                    }
+                    this.todayHaltList.push({ time: haltData[time]["startTime"], duration: duration, type: haltData[time]["haltType"], location: haltData[time]["locality"], lat: lt, lng: lg, breakBGColor: breakBGColor, activeClass: activeClass, });
+                    if (i == keyArray.length - 1) {
+                      if (zoneDetails.status == "stopped") {
+                        let lastDuration = haltData[time]["duration"] != undefined ? haltData[time]["duration"] : 0;
+                        this.workerDetails.currentHaltTime = this.commonService.getHrs(lastDuration);
+                        $(this.currentHaltH3).css("color", this.getMarkerName(duration));
+                      } else {
+                        this.workerDetails.currentHaltTime = "0:00";
+                        $(this.currentHaltH3).css("color", this.getMarkerName(0));
+                      }
                     }
                   }
                 }
@@ -1299,7 +1331,6 @@ export class RealtimeMonitoringComponent implements OnInit {
       }
     });
   }
-
   // Halt Detail
 
   setMapHalt() {

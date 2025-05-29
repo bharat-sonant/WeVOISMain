@@ -201,10 +201,21 @@ export class DustbinPlaningComponent implements OnInit {
   getDustbinPickingPlans(type: any) {
     this.dustbinService.getDustbinPickingPlans().then((planData: any) => {
       if (planData != null) {
+        let keyArray = Object.keys(planData);
+        let currentDate = this.commonService.setTodayDate();
+        let compairDate = this.commonService.getPreviousDate(currentDate, 1);
+
         if (type == "Report") {
           this.getDustbinePlanedStatus(planData, "");
         }
         else {
+          for (let i = 0; i < keyArray.length; i++) {
+            let planDate = keyArray[i];
+            if (new Date(planDate) < new Date(compairDate)) {
+              this.movePreviousPlanInPlanHistory(planData[planDate], planDate);
+              delete planData[planDate];
+            }
+          }
           this.getPlanList(planData);
         }
       }
@@ -212,6 +223,19 @@ export class DustbinPlaningComponent implements OnInit {
         this.removeAssignedPlan();
       }
     });
+  }
+
+  movePreviousPlanInPlanHistory(planData: any, planDate: any) {
+    let keyArray = Object.keys(planData);
+    for (let i = 0; i < keyArray.length; i++) {
+      let planId = keyArray[i];
+      if (planData[planId]["isAssigned"] == "true") {
+        this.dustbinService.movePlanToDustbinPlanHistory(planDate, planData[planId], planId);
+      }
+
+      this.dustbinService.deletePlan(planDate, planId);
+
+    }
   }
 
   getDustbinePlanedStatus(planData: any, planType: any) {

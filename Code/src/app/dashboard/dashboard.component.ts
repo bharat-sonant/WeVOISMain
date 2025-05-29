@@ -401,6 +401,12 @@ export class DashboardComponent implements OnInit {
                         isOnDuty: 'no'
                       });
                     }
+                    else{
+                      this.db.object('RealTimeDetails/WardDetails/' + this.zoneList[index]["zoneNo"]).update({
+                        activityStatus: 'active',
+                        isOnDuty: 'yes'
+                      });
+                    }
                   }
                 });
             }

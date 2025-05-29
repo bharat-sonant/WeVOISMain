@@ -169,7 +169,16 @@ export class PortalAccessComponent implements OnInit {
       }else if (this.accessCity[i]["city"] == "sanchore") {
         $("#sanchoreBox").show();
         isBaseCity = true;
-      } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar") {
+      }else if (this.accessCity[i]["city"] == "jaunpur") {
+        $("#jaunpurBox").show();
+        isBaseCity = true;
+      }else if (this.accessCity[i]["city"] == "mapusa-goa") {
+        $("#mapusaBox").show();
+        isBaseCity = true;
+      }else if (this.accessCity[i]["city"] == "ecogram") {
+        $("#ecogramBox").show();
+        isBaseCity = true;
+      } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar" || this.accessCity[i]["city"] == "jaipur-civil-line" || this.accessCity[i]["city"] == "jaipur-kishanpole") {
         $("#jaipurBox").show();
       }
     }
@@ -234,10 +243,10 @@ export class PortalAccessComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", "50px");
 
     for (let i = 0; i < this.accessCity.length; i++) {
-      if (this.accessCity[i]["city"] == "jaipur-jagatpura") {
-        // $("#jaipurJagatpuraBox").show();
-      } else if (this.accessCity[i]["city"] == "jaipur-jhotwara") {
-        // $("#jaipurJhotwaraBox").show();
+      if (this.accessCity[i]["city"] == "jaipur-civil-line") {
+         $("#jaipurCivilLineBox").show();
+      } else if (this.accessCity[i]["city"] == "jaipur-kishanpole") {
+         $("#jaipurKishanpoleBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-malviyanagar") {
         $("#jaipurMalviyanagarBox").show();
       } else if (this.accessCity[i]["city"] == "jaipur-mansarovar") {

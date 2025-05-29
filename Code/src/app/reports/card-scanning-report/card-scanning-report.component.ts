@@ -22,10 +22,12 @@ export class CardScanningReportComponent implements OnInit {
   public cityName: any;
   txtDate = "#txtDate";
   serviceName = "card-scanning-report";
+  userType: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    this.commonService.savePageLoadHistory("General-Reports","Card-Scanning-Report",localStorage.getItem("userID"));
+    this.userType = localStorage.getItem("userType");
+    this.commonService.savePageLoadHistory("General-Reports", "Card-Scanning-Report", localStorage.getItem("userID"));
     this.setDefaults();
   }
 
@@ -86,7 +88,7 @@ export class CardScanningReportComponent implements OnInit {
           let detail = this.scannedList.find(item => item.ward == ward);
           if (detail != undefined) {
             detail.cards = Number(houseCountData);
-            this.getScannedCards(ward);
+            this.getScannedCardsNew(ward);
           }
         }
         else {
@@ -95,7 +97,7 @@ export class CardScanningReportComponent implements OnInit {
             let detail = this.scannedList.find(item => item.ward == ward);
             if (detail != undefined) {
               detail.cards = wardLinesDataObj["totalHouseCount"];
-              this.getScannedCards(ward);
+              this.getScannedCardsNew(ward);
             }
           });
         }
@@ -117,6 +119,53 @@ export class CardScanningReportComponent implements OnInit {
           let detail = this.scannedList.find(item => item.ward == ward);
           if (detail != undefined) {
             detail.scanned = totalScanned;
+            if (Number(detail.scanned) > Number(detail.cards)) {
+              detail.scanned = detail.cards;
+            }
+            let scanPercentage = ((Number(detail.scanned) / Number(detail.cards)) * 100);
+            if (!isNaN(scanPercentage)) {
+              detail.percentage = scanPercentage.toFixed(0);
+            }
+          }
+        }
+      }
+    );
+  }
+
+
+  getScannedCardsNew(ward: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScannedCards");
+    let year = this.selectedDate.split('-')[0];
+    let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+    let dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + this.selectedDate;
+    let scannedCardsInstance = this.db.object(dbPath).valueChanges().subscribe(
+      scannedCardObj => {
+        scannedCardsInstance.unsubscribe();
+        if (scannedCardObj != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScannedCards", scannedCardObj);
+          let scannedCardCount = 0;
+          if (this.userType == "External User") {
+            scannedCardCount = scannedCardObj["totalScanned"];
+          }
+          else {
+
+            let keyArray = Object.keys(scannedCardObj);
+
+            for (let i = 0; i < keyArray.length; i++) {
+              let cardNo = keyArray[i];
+              if (cardNo != "ImagesData") {
+                if (cardNo != "recentScanned") {
+                  if (cardNo != "totalScanned") {
+                    if (scannedCardObj[cardNo]["scanBy"] != "-1")
+                      scannedCardCount++;
+                  }
+                }
+              }
+            }
+          } 
+          let detail = this.scannedList.find(item => item.ward == ward);
+          if (detail != undefined) {
+            detail.scanned = scannedCardCount;
             if (Number(detail.scanned) > Number(detail.cards)) {
               detail.scanned = detail.cards;
             }

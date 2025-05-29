@@ -64,6 +64,12 @@ export class WardSurveyAnalysisComponent {
   isActionShow: any;
   serviceName = "survey-analysis";
   fireStoragePath = "";
+  divHouseDetail = "#divHouseDetail";
+  houseOwnerName = "#houseOwnerName";
+  houseOwnerMobile = "#houseOwnerMobile";
+  houseDetailIndex = "#houseDetailIndex";
+  txtHouseOwnerName = "#txtHouseOwnerName";
+  txtHouseOwnerMobile = "#txtHouseOwnerMobile";
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -87,7 +93,7 @@ export class WardSurveyAnalysisComponent {
     rfIdDate: "",
     rfIdAddress: ""
   };
-  toApproveDetails : any = {
+  toApproveDetails: any = {
     cardNo: ''
   };
 
@@ -135,7 +141,7 @@ export class WardSurveyAnalysisComponent {
   }
 
   getHouseType() {
-    
+
     let path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
 
     let houseTypeInstance = this.httpService.get(path).subscribe(data => {
@@ -907,7 +913,7 @@ export class WardSurveyAnalysisComponent {
     if (this.scannedCardList.length == 0) {
       let dbPath = "Houses/" + this.selectedZone + "/" + this.lineNo;
       let scannedCardInstance = this.db.list(dbPath).valueChanges().subscribe(
-        async(data) => {
+        async (data) => {
           scannedCardInstance.unsubscribe();
           let city = this.commonService.getFireStoreCity();
           if (this.cityName == "sikar") {
@@ -950,7 +956,25 @@ export class WardSurveyAnalysisComponent {
                     houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                   }
                   else {
-                    houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+
+                    let url1 = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+                    let url2 = this.commonService.fireStoragePath + "Sikar" + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+                    // if (city == "Sikar-Survey") {
+
+                    //   let isImageExist = await this.imageExists(url1);
+                    //    console.log(isImageExist)
+                    //   if (isImageExist == false) {
+                    //      houseImageURL = url2;
+                    //    }
+                    //    else {
+                    //     houseImageURL = url1;
+                    //    }
+                    //    console.log(houseImageURL);
+                    //  }
+                    //   else {
+                    houseImageURL = url1;
+                    //   }
+
                   }
                 }
                 if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
@@ -964,6 +988,9 @@ export class WardSurveyAnalysisComponent {
                       let entityImageURL = "../../../assets/img/system-generated-image.jpg";
                       if (entityData[keyIndex]["house image"] != null) {
                         entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["house image"] + "?alt=media";
+                      }
+                      if (entityData[keyIndex]["houseImage"] != null) {
+                        entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["houseImage"] + "?alt=media";
                       }
                       entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL });
                     }
@@ -989,17 +1016,17 @@ export class WardSurveyAnalysisComponent {
                 let approvedByName = ''
                 let formattedApprovedDate = ''
 
-                if(approvedBy){
+                if (approvedBy) {
                   const userDetails: any = await this.commonService.getPortalUserDetailById(approvedBy);
                   approvedByName = userDetails.name;
                 }
-                if(approvedDate){
+                if (approvedDate) {
                   const date = approvedDate.split(' ')[0];
                   const time = approvedDate.split(' ')[1];
                   formattedApprovedDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
                 }
 
-                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, markerImageURL: markerImageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"], approvedBy: approvedByName, approvedDate: formattedApprovedDate });
+                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, markerImageURL: markerImageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], address: data[i]["address"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"], approvedBy: approvedByName, approvedDate: formattedApprovedDate });
               }
             }
           }
@@ -1008,6 +1035,97 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
+  async imageExists(url: string): Promise<boolean> {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok && response.headers.get('Content-Type') && response.headers.get('Content-Type').startsWith('image/');
+      //return response.ok && response.headers.get('Content-Type')?.startsWith('image/')===true;
+      //return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  getHouseImageFromURL(url1: any, url2: any) {
+    return new Promise((resolve) => {
+      const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(url1);
+      ref.getDownloadURL()
+        .then((url) => {
+          resolve(url1)
+        })
+        .catch((error) => {
+          resolve(url2)
+        });
+    });
+  }
+
+  cancelHouseDetail() {
+    $(this.houseOwnerName).val("");
+    $(this.houseOwnerMobile).val("");
+    $(this.txtHouseOwnerName).val("");
+    $(this.txtHouseOwnerMobile).val("");
+    $(this.houseDetailIndex).val("0");
+    $(this.divHouseDetail).hide();
+  }
+
+  openHouseDetailPopup(index: any) {
+    $(this.divHouseDetail).show();
+    $(this.houseDetailIndex).val(index);
+    if (this.scannedCardList.length > 0) {
+      $(this.houseOwnerName).val(this.scannedCardList[index]["name"]);
+      $(this.houseOwnerMobile).val(this.scannedCardList[index]["mobile"]);
+      $(this.txtHouseOwnerName).val(this.scannedCardList[index]["name"]);
+      $(this.txtHouseOwnerMobile).val(this.scannedCardList[index]["mobile"]);
+    }
+    else {
+      $(this.houseOwnerName).val("");
+      $(this.houseOwnerMobile).val("");
+      $(this.txtHouseOwnerName).val("");
+      $(this.txtHouseOwnerMobile).val("");
+      $(this.houseDetailIndex).val("0");
+    }
+  }
+
+  updateHouseOwnerDetail() {
+    let wardNo = this.selectedZone;
+    let lineNo = this.lineNo;
+    let index = $(this.houseDetailIndex).val();
+    let preOwnerName = $(this.houseOwnerName).val();
+    let preMobile = $(this.houseOwnerMobile).val();
+    let name = $(this.txtHouseOwnerName).val();
+    let mobile = $(this.txtHouseOwnerMobile).val();
+    this.scannedCardList[Number(index)]["name"] = name;
+    this.scannedCardList[Number(index)]["mobile"] = mobile;
+    let cardNumber = this.scannedCardList[Number(index)]["cardNo"];
+    let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNumber;
+    this.db.object(dbPath).update({ name: name, mobile: mobile });
+    this.updateHouseDetailHistory(preOwnerName, preMobile, name, mobile, cardNumber);
+    this.cancelHouseDetail();
+    this.commonService.setAlertMessage("success", "Saved successfully !!!");
+  }
+
+  updateHouseDetailHistory(preName: any, preMobile: any, name: any, mobile: any, cardNo: any) {
+    let dbPath = "EntitySurveyData/HouseDetailUpdateHistory/" + cardNo + "/lastKey";
+    let historyInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      historyInstance.unsubscribe();
+      let lastKey = 1;
+      if (data != null) {
+        lastKey = Number(data) + 1;
+      }
+      dbPath = "EntitySurveyData/HouseDetailUpdateHistory/" + cardNo + "/" + lastKey;
+      let obj = {
+        preName: preName,
+        preMobile: preMobile,
+        name: name,
+        mobile: mobile,
+        _by: localStorage.getItem("userId"),
+        _at: this.commonService.getTodayDateTime()
+      }
+      this.db.object(dbPath).update(obj);
+      dbPath = "EntitySurveyData/HouseDetailUpdateHistory/" + cardNo;
+      this.db.object(dbPath).update({ lastKey: lastKey });
+    });
+  }
 
   openHouseTypePopup(index: any) {
     $(this.divHouseType).show();
@@ -2065,12 +2183,12 @@ export class WardSurveyAnalysisComponent {
     );
   }
 
-  openApprovePopup(cardNo: any ){
-    this.toApproveDetails = {cardNo}
+  openApprovePopup(cardNo: any) {
+    this.toApproveDetails = { cardNo }
     $('#divApprovePopup').show();
   }
-  
-  confirmApproval(){
+
+  confirmApproval() {
     let Entity = "chkApprovedCard";
     if ((<HTMLInputElement>document.getElementById(Entity)).checked == false) {
       this.commonService.setAlertMessage("error", "Choose Card and House checkbox !!! ");
@@ -2081,25 +2199,25 @@ export class WardSurveyAnalysisComponent {
     const approvedBy = localStorage.getItem('userID');
     const approvedDate = this.commonService.getTodayDateTime()
 
-    this.db.object(path).update({ approvedBy, approvedDate }).then(()=>{
+    this.db.object(path).update({ approvedBy, approvedDate }).then(() => {
       // update it locally
-      const card = this.scannedCardList.find(card=>card.cardNo == this.toApproveDetails.cardNo);
-      if(card){
+      const card = this.scannedCardList.find(card => card.cardNo == this.toApproveDetails.cardNo);
+      if (card) {
         card.approvedBy = localStorage.getItem('userName');
         const date = approvedDate.split(' ')[0];
         const time = approvedDate.split(' ')[1];
         const formattedApprovedDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
         card.approvedDate = formattedApprovedDate;
       }
-    }).finally(()=>{
+    }).finally(() => {
       this.cancelApproval();
     })
-    
+
   }
 
-  cancelApproval(){
+  cancelApproval() {
     $('#divApprovePopup').hide();
-    this.toApproveDetails = {cardNo: ''}
+    this.toApproveDetails = { cardNo: '' }
   }
 
 

@@ -24,16 +24,17 @@ export class PortalServicesComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
     if (localStorage.getItem("userType") == "External User") {
-      this.userType="1";
+      this.userType = "1";
     }
-    else{
-      this.userType="2";
+    else {
+      this.userType = "2";
     }
     this.isActual = localStorage.getItem("isActual");
     this.getUserAccess();
   }
 
   getUserAccess() {
+    console.log(localStorage.getItem("canAddWardDutyOn"));
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       for (let i = 0; i < userAccessList.length; i++) {
@@ -93,6 +94,15 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8A4" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divOpenDepotWardMapping").show();
         }
+        if (userAccessList[i]["pageId"] == "8A5" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divWebPortalSettings").show();
+        }
+        if (userAccessList[i]["pageId"] == "8A6" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          
+          if (localStorage.getItem("canAddWardDutyOn") == "1") {
+            $("#divWardDutyOn").show();
+          }
+        }
       }
     }
   }
@@ -116,10 +126,10 @@ export class PortalServicesComponent implements OnInit {
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
     if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userId + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
+      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userId + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
     }
     else {
-      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userId + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
+      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userId + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
     }
     window.open(url, "_blank");
   }

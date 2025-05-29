@@ -119,6 +119,8 @@ export class UsersService {
               let canViewAttendance=0;
               let canUpdateDustbinPickDetail=0;
               let canRemoveNotPickedDustbin=0;
+              let canAccessBIDashboard=0;
+              let canAddWardDutyOn=0;
               if(data[key]["isDelete"]!=undefined){
                 isDelete=data[key]["isDelete"];
               }
@@ -161,6 +163,12 @@ export class UsersService {
               if(data[key]["canRemoveNotPickedDustbin"]!=undefined){
                 canRemoveNotPickedDustbin=data[key]["canRemoveNotPickedDustbin"];
               }
+              if(data[key]["canAccessBIDashboard"]!=undefined){
+                canAccessBIDashboard=data[key]["canAccessBIDashboard"];
+              }
+              if(data[key]["canAddWardDutyOn"]!=undefined){
+                canAddWardDutyOn=data[key]["canAddWardDutyOn"];
+              }
              // if (data[key]["isDelete"] == "0") {
                 userList.push({
                   userKey: data[key]["userId"],
@@ -192,7 +200,9 @@ export class UsersService {
                   canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
                   canViewAttendance:canViewAttendance,
                   canUpdateDustbinPickDetail:canUpdateDustbinPickDetail,
-                  canRemoveNotPickedDustbin:canRemoveNotPickedDustbin
+                  canRemoveNotPickedDustbin:canRemoveNotPickedDustbin,
+                  canAccessBIDashboard:canAccessBIDashboard,
+                  canAddWardDutyOn:canAddWardDutyOn
                 });
               //}
             }

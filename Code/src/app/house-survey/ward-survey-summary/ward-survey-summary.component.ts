@@ -125,7 +125,7 @@ export class WardSurveySummaryComponent implements OnInit {
     $(this.divLoaderCounts).show();
     this.employeeSurvey = [];
     this.dateSummaryList = [];
-    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
+    this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
     this.lineuptoLoop = this.wardList.length;
     this.updateCounts_Bharat(1);
   }
@@ -569,7 +569,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
 
   getWardProgressList() {
-    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
+    this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
     this.wardProgressList = [];
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
@@ -639,9 +639,11 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "<td>";
         htmlString += "Mobile";
         htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += "Date";
-        htmlString += "</td>";
+        if (localStorage.getItem("userType") == "Internal User") {
+          htmlString += "<td>";
+          htmlString += "Date";
+          htmlString += "</td>";
+        }
         htmlString += "</tr>";
         for (let i = 0; i < this.cardHousesList.length; i++) {
           htmlString += "<tr>";
@@ -672,9 +674,11 @@ export class WardSurveySummaryComponent implements OnInit {
           htmlString += "<td>";
           htmlString += this.cardHousesList[i]["mobile"];
           htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += this.cardHousesList[i]["date"];
-          htmlString += "</td>";
+          if (localStorage.getItem("userType") == "Internal User") {
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["date"];
+            htmlString += "</td>";
+          }
           htmlString += "</tr>";
           totalHouses += Number(this.cardHousesList[i]["houseCount"]);
         }

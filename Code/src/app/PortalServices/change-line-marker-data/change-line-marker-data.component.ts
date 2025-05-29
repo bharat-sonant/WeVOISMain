@@ -15,7 +15,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
   cityName: any;
   db: any;
-  zoneList: any[];
+  zoneList: any[] = [];
   ddlZoneFrom = "#ddlZoneFrom";
   ddlZoneMarker = "#ddlZoneMarker";
   txtLineNoFrom = "#txtLineNoFrom";
@@ -37,7 +37,29 @@ export class ChangeLineMarkerDataComponent implements OnInit {
   }
 
   getZones() {
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.zoneList = JSON.parse(localStorage.getItem("allZoneList"));
+  }
+
+  getAllZones() {
+    let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }];
+    console.log(hiddenList);
+    this.zoneList.push({ zoneNo: "0", zoneName: "-- Select --" });
+    let dbPath = "Tasks";
+    let zoneInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      zoneInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let zone=keyArray[i];
+          console.log(zone)
+          let detail = hiddenList.find(item =>zone.toString().includes(item.zone.toString()));
+          console.log(detail);
+          if (detail == undefined) {
+            this.zoneList.push({ zoneNo: zone, zoneName: "Zone " +zone });
+          }
+        }
+      }
+    })
   }
 
   saveData() {
@@ -114,6 +136,10 @@ export class ChangeLineMarkerDataComponent implements OnInit {
       if (this.cityName == "sikar") {
         city = "Sikar-Survey";
       }
+      let markerID = "";
+      if (data["markerId"] != null) {
+        markerID = this.commonService.getDefaultCardPrefix() + data["markerId"];
+      }
       const pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
       const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
       ref.getDownloadURL()
@@ -128,6 +154,9 @@ export class ChangeLineMarkerDataComponent implements OnInit {
               // ref.delete();
               if (data["cardNumber"] != null) {
                 let cardNo = data["cardNumber"];
+                if (markerID != "") {
+                  markerID = cardNo;
+                }
                 let dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
                 let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
                   cardInstance.unsubscribe();
@@ -144,6 +173,8 @@ export class ChangeLineMarkerDataComponent implements OnInit {
 
                     // modify card ward mapping
                     this.db.object("CardWardMapping/" + cardNo).set({ line: lineTo, ward: zoneTo });
+
+
 
                     if (cardData["mobile"] != "") {
                       // modify house ward mapping
@@ -173,6 +204,17 @@ export class ChangeLineMarkerDataComponent implements OnInit {
 
               dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
               this.db.object(dbPath).remove();
+
+              if (markerID != "") {
+                dbPath = "EntityMarkingData/MarkerWardMapping/" + markerID;
+                let obj = {
+                  image: lastKey + ".jpg",
+                  line: lineTo.toString(),
+                  markerNo: lastKey.toString(),
+                  ward: zoneTo
+                }
+                this.db.object(dbPath).update(obj);
+              }
               index = index + 1;
               this.moveData(index, markerNoList, lastKey, markerData, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
             }).catch((error) => {
@@ -207,7 +249,6 @@ export class ChangeLineMarkerDataComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateWardMarker");
     $(this.divLoader).show();
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
-    console.log(dbPath)
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       markerData => {
         markerInstance.unsubscribe();
@@ -221,46 +262,55 @@ export class ChangeLineMarkerDataComponent implements OnInit {
               let markerKeyArray = Object.keys(lineData);
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
-                let markerId="";
-                let latLng="";
-                let image="";
+                let markerId = "";
+                let latLng = "";
+                let image = "";
                 if (lineData[markerNo]["cardNumber"] != null) {
-                  markerId=lineData[markerNo]["cardNumber"];
+                  markerId = lineData[markerNo]["cardNumber"];
                 }
-                else if(lineData[markerNo]["markerId"]!=null){
-                  markerId=this.commonService.getDefaultCardPrefix()+lineData[markerNo]["markerId"];
+                else if (lineData[markerNo]["markerId"] != null) {
+                  markerId = this.commonService.getDefaultCardPrefix() + lineData[markerNo]["markerId"];
                 }
-                if(lineData[markerNo]["latLng"]!=null){
-                  latLng=lineData[markerNo]["latLng"];
+                if (lineData[markerNo]["latLng"] != null) {
+                  latLng = lineData[markerNo]["latLng"];
                 }
-                if(lineData[markerNo]["image"]!=null){
-                  image=lineData[markerNo]["image"];
+                if (lineData[markerNo]["image"] != null) {
+                  image = lineData[markerNo]["image"];
                 }
-                if(markerId!=""){
-                  let data={
-                    ward:zoneNo,
-                    line:lineNo,
-                    latLng:latLng,
-                    image:image,
-                    markerNo:markerNo
+                if (markerId != "") {
+                  let data = {
+                    ward: zoneNo,
+                    line: lineNo,
+                    latLng: latLng,
+                    image: image,
+                    markerNo: markerNo
                   }
-                  let path="EntityMarkingData/MarkerWardMapping/"+markerId;
+                  let path = "EntityMarkingData/MarkerWardMapping/" + markerId;
                   this.db.object(path).update(data);
-
-                  console.log(markerId);
-                  console.log(data);
                 }
               }
             }
           }
-        this.commonService.setAlertMessage("success","Data updated successfully.")
+          this.commonService.setAlertMessage("success", "Data updated successfully.")
 
         }
-        else{
-          this.commonService.setAlertMessage("error","Sorry! No data found for selected ward.")
+        else {
+          this.commonService.setAlertMessage("error", "Sorry! No data found for selected ward.")
         }
         $(this.divLoader).hide();
       });
+
+  }
+
+  saveOnStorage() {
+    let path = "EntityMarkingData/MarkerWardMapping/";
+    let instance = this.db.object(path).valueChanges().subscribe(data => {
+      instance.unsubscribe();
+      if (data != null) {
+        this.commonService.saveCommonJsonFile(data, "MarkerWardMapping.json", this.commonService.getFireStoreCity() + "/MarkerWardMapping/");
+        this.commonService.setAlertMessage("success", "File saved successfully.")
+      }
+    });
 
   }
 

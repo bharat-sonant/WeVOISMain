@@ -264,27 +264,21 @@ export class FleetMonitorComponent {
                       icon: vehiclePath,
                     });
                     this.bounds.extend({ lat: Number(location[0]), lng: Number(location[1]) });
-                    let statusString = '<div style="width: 100px;background-color: white;float: left;">';
-                    statusString += '<div style="background:green;float: left;color:white;width: ' + workPercentage + '%;text-align:center;font-size:12px;"> ' + workPercentage + '%';
-                    statusString += '</div></div>';
+                    let statusString = '<div style="width: 100px;float: left;">';
+                    statusString+='<div style="text-align: center;padding:5px;width: 65px; margin-left:17px;background: #fc6b03;color: white;">' + zoneNo + '</div>';
+                    statusString += '<div style="width: 100px;background-color:white;float: left;border: 1px solid #b3b2b2;"><div style="background:green;float: left;color:white;width: ' + workPercentage + '%;text-align:center;font-size:12px;"> ' + workPercentage + '%';
+                    statusString += '</div></div></div>';
                     var infowindow = new google.maps.InfoWindow({
                       content: statusString,
                     });
 
                     infowindow.open(this.map, marker);
 
-                    let wardString = '<div style="min-height: 35px;min-width: 35px;text-align: center;background: #fc6b03;color: white;'
-                    wardString += 'font-size: 14px;font-weight: bold;padding:2px">' + zoneNo.replace("mkt", "Market ") + '</div>';
-                    var infowindow1 = new google.maps.InfoWindow({
-                      content: wardString,
-                    });
-
-                    infowindow1.open(this.map, marker);
-
                     setTimeout(function () {
                       $('.gm-ui-hover-effect').css("display", "none");
-                      $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px").css("z-index", "99");
+                      $('.gm-style-iw-c').css("border-radius", "3px").css("padding", "0px").css("z-index", "99").css("box-shadow","none").css("background-color","transparent");
                       $('.gm-style-iw-d').css("overflow", "unset");
+                      $('.gm-style-iw-chr').css("display","none");
                     }, 300);
 
                     let details = this.workerDetails;

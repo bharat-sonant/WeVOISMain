@@ -35,6 +35,8 @@ export class DustbinService {
   }
 
 
+
+
   updateDustbinDetail(dustbinId: any, data: any, type: any) {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     let dbPath = "DustbinData/DustbinDetails/" + dustbinId;
@@ -694,6 +696,21 @@ export class DustbinService {
     let dbPath = "DustbinData/DustbinPickingPlans/" + date + "/" + key + "";
     this.db.object(dbPath).remove();
   }
+
+  movePlanToDustbinPlanHistory(date: any,planData:any,planId:any) {
+    return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "movePlanToDustbinPlanHistory");
+      let year = date.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+      let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date+"/"+planId;
+      console.log(dbPath);
+      console.log(planData);
+      this.db.object(dbPath).update(planData);
+     
+    });
+  }
+
 }
 
 

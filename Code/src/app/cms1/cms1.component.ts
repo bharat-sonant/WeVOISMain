@@ -142,7 +142,7 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(4, 0);
+    this.addDevices(1, 0);
   }
 
   addDevices(lastDevice: any, index: any) {
@@ -152,13 +152,13 @@ export class Cms1Component implements OnInit {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
-        lastActive: "01/08/2024 08:10",
-        name: "TON-" + lastDevice,
-        readerAppVersion: "1.0.3.6",
+        lastActive: "26/05/2025 08:10",
+        name: "JAI-" + (lastDevice < 10 ? '0' : '') + lastDevice,
+        readerAppVersion: "1.0.3.7",
         status: "1"
       }
-      console.log("TON-" + lastDevice);
-      let dbPath = "Devices/Tonk-Raj/" + key;
+      console.log("JAI-" + lastDevice);
+      let dbPath = "Devices/Jaipur-Civil-Line/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }
@@ -2372,8 +2372,120 @@ export class Cms1Component implements OnInit {
     }
   }
 
+  addHouseEcogram() {
+    let wardNo = "8";
+    let element = <HTMLInputElement>document.getElementById("flpUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      if (fileList.length > 0) {
+        let dbPathMarker = "EntityMarkingData/MarkedHouses/" + wardNo + "/1";
+        let markerInstance = this.db.object(dbPathMarker).valueChanges().subscribe(data => {
+          markerInstance.unsubscribe();
+          let lastMarkerKey = 0;
+          let marksCount = 0;
+          let markerKey = 0;
+          if (data != null) {
+            lastMarkerKey = Number(data["lastMarkerKey"]);
+            marksCount = Number(data["marksCount"]);
+            markerKey = Number(data["lastMarkerKey"]);
+          }
+          for (let i = 0; i < fileList.length; i++) {
+            let cardNo = "";
+            let cardImage = "";
+            let latLng = "";
+            let imageUrl = "";
+            let WasteGeneratorType="";
+            let areaCode="";
+            if (fileList[i]["PropertyID"] != undefined) {
+              cardNo = fileList[i]["PropertyID"].toString().replaceAll(".", "~");
+              if (fileList[i]["PropertyIMG"] != undefined) {
+                imageUrl = fileList[i]["PropertyIMG"];
+                if (fileList[i]["Lat"] != undefined && fileList[i]["Long"] != undefined) {
+                  if(fileList[i]["WasteGeneratorType"]!=undefined){
+                    WasteGeneratorType=fileList[i]["WasteGeneratorType"];
+                  }
+                  if(fileList[i]["areacode"]!=undefined){
+                    areaCode=fileList[i]["areacode"];
+                  }
+                  latLng = fileList[i]["Lat"] + "," + fileList[i]["Long"];
+                  cardImage = fileList[i]["PropertyID"] + ".jpg";
+                  marksCount++;
+                  lastMarkerKey++;
+                  markerKey++;
+                  let objMarker = {
+                    address: "",
+                    cardNumber: cardNo,
+                    date: this.commonService.getTodayDateTime(),
+                    houseType: 1,
+                    latLng: latLng,
+                    userId: "101",
+                    wasteGeneratorType:WasteGeneratorType,
+                    areaCode:areaCode
+                  }
+                  let objCard = {
+                    address: "",
+                    cardImage: cardImage,
+                    cardNo: cardNo,
+                    cardType: "आवासीय",
+                    createdDate: this.commonService.getTodayDateTime(),
+                    houseType: "1",
+                    latLng: "(" + latLng + ")",
+                    line: "1",
+                    ward: "1",
+                    surveyorId: "4",
+                    wasteGeneratorType:WasteGeneratorType,
+                    areaCode:areaCode
+                  }
+                  let objCardWardMapping = {
+                    line: "1",
+                    ward: wardNo
+                  }
+                 // this.uploadCardImage(imageUrl, cardImage)
+                  this.db.object("CardWardMapping/" + cardNo).update(objCardWardMapping);
+                  this.db.object("EntityMarkingData/MarkedHouses/" + wardNo + "/1/" + markerKey).update(objMarker);
+                  this.db.object("Houses/" + wardNo + "/1/" + cardNo).update(objCard);
+                }
+              }
+            }
+          }
+          this.db.object(dbPathMarker).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
+        });
+      }
+    }
+  }
 
+  async uploadCardImage(url: any, cardImage: any) {
+    try {
+      // Step 1: Fetch image as a Blob
+      const blob = await this.httpService.get(url, { responseType: 'blob' }).toPromise();
 
+      const pathNew = "Ecogram/SurveyCardImage/" + cardImage;
+      const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
+      ref1.put(blob).then((promise) => {
+        // ref.delete();
+
+      }
+      ).catch((error) => {
+
+      });
+
+      console.log('Image uploaded successfully');
+    } catch (err) {
+      console.error('Error uploading image:', err);
+    }
+
+  }
 
   checkCardMove() {
     let wardNo = "149-R2";
@@ -3906,7 +4018,7 @@ export class Cms1Component implements OnInit {
       if (cardData != null) {
         let keyArray = Object.keys(cardData);
         for (let i = 0; i < keyArray.length; i++) {
-          cardWardList.push({ cardNo: keyArray[i],line:cardData[keyArray[i]]["line"],ward:cardData[keyArray[i]]["ward"] });
+          cardWardList.push({ cardNo: keyArray[i], line: cardData[keyArray[i]]["line"], ward: cardData[keyArray[i]]["ward"] });
         }
         dbPath = "PaymentCollectionInfo/PaymentTransactionHistory";
         let pInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
@@ -3916,12 +4028,12 @@ export class Cms1Component implements OnInit {
             for (let i = 0; i < keyArray1.length; i++) {
               cardPaymentList.push({ cardNo: keyArray1[i] });
             }
-            let list=[];
-            for(let i=0;i<cardWardList.length;i++){
-              let detail=cardPaymentList.find(item=>item.cardNo==cardWardList[i]["cardNo"]);
-              if(detail==undefined){
-                if(cardWardList[i]["cardNo"].includes("PALM")){
-                list.push({cardNo:cardWardList[i]["cardNo"],ward:cardWardList[i]["ward"],line:cardWardList[i]["line"]})
+            let list = [];
+            for (let i = 0; i < cardWardList.length; i++) {
+              let detail = cardPaymentList.find(item => item.cardNo == cardWardList[i]["cardNo"]);
+              if (detail == undefined) {
+                if (cardWardList[i]["cardNo"].includes("PALM")) {
+                  list.push({ cardNo: cardWardList[i]["cardNo"], ward: cardWardList[i]["ward"], line: cardWardList[i]["line"] })
                 }
               }
             }

@@ -386,7 +386,10 @@ export class PaymentViaNeftComponent implements OnInit {
         transactionDateTime: transactionDate,
         updatedBy: localStorage.getItem("userID"),
         updatedDate: this.commonService.getCurrentTimeWithSecond(),
-        houseImage: detail.houseImage || ''
+        houseImage: detail.houseImage || '',
+        neftNo:detail.neftNo?detail.neftNo:'',
+        bankName:detail.bankName?detail.bankName:'',
+        payDate:date
       }
 
       let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1])-1);
@@ -495,7 +498,10 @@ export class PaymentViaNeftComponent implements OnInit {
       transactionDateTime: transactionDate,
       updatedBy: localStorage.getItem("userID"),
       updatedDate: this.commonService.getCurrentTimeWithSecond(),
-      houseImage: detail.houseImage || ''
+      houseImage: detail.houseImage || '',
+      neftNo:detail.neftNo?detail.neftNo:'',
+      bankName:detail.bankName?detail.bankName:'',
+      payDate:date
     }
 
     let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1])-1);

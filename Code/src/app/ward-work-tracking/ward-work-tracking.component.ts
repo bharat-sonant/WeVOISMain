@@ -92,6 +92,7 @@ export class WardWorkTrackingComponent {
   wardLinesDataObj: any;
   isShowAllHouse = false;
   isShowHouses: any;
+  public isShowLineDetail:any;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -116,6 +117,12 @@ export class WardWorkTrackingComponent {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    if(localStorage.getItem("roleId")=="17" || localStorage.getItem("roleId")=="8"){
+      this.isShowLineDetail="1";
+    }
+    else{
+      this.isShowLineDetail="0";
+    }
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.savePageLoadHistory("Monitoring", "Ward-Work-Tracking", localStorage.getItem("userID"));
     this.setDefault();

@@ -147,20 +147,27 @@ export class NonSalariedCalculationComponent implements OnInit {
           let dateOfLeave = list[i]["dateOfLeave"] ? list[i]["dateOfLeave"] : "";
           let salaryType = list[i]["salaryType"];
           let status = list[i]["status"];
+          let designation=list[i]["designation"];
+          if(designation=="Driver"){
+            designation="Transportation Executive";
+          }
+          else if(designation=="Helper"){
+            designation="Service Executive";
+          }
           let isSalaried = false;
           if (salaryType == "non-salaried") {
             isSalaried = true;
           }
           if (isSalaried == true) {
             if (status == "1") {
-              this.employeeList.push({ empId: empId, empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], status: status, dateOfLeave: dateOfLeave, salaryType: salaryType });
+              this.employeeList.push({ empId: empId, empCode: list[i]["empCode"], name: list[i]["name"], designation: designation, status: status, dateOfLeave: dateOfLeave, salaryType: salaryType });
               this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
             }
             else {
               if (dateOfLeave != "") {
                 let compaireDate = new Date(this.selectedYear + "-" + this.selectedMonth + "-01");
                 if (new Date(dateOfLeave) > compaireDate) {
-                  this.employeeList.push({ empId: empId, empCode: list[i]["empCode"], name: list[i]["name"], designation: list[i]["designation"], status: status, dateOfLeave: dateOfLeave, salaryType: salaryType });
+                  this.employeeList.push({ empId: empId, empCode: list[i]["empCode"], name: list[i]["name"], designation: designation, status: status, dateOfLeave: dateOfLeave, salaryType: salaryType });
                   this.employeeList = this.employeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
                 }
               }

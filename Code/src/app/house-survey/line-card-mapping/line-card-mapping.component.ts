@@ -44,7 +44,7 @@ export class LineCardMappingComponent {
   previousLine: any;
   db: any;
   cityName: any;
-  wardBoundary:any;
+  wardBoundary: any;
   serviceName = "line-card-mapping";
   cardDetails: CardDetails = {
     mobile: "",
@@ -68,7 +68,7 @@ export class LineCardMappingComponent {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Survey-Management","Line-Card-Mapping",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Survey-Management", "Line-Card-Mapping", localStorage.getItem("userID"));
     this.selectedCardDetails = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.setHeight();
@@ -90,13 +90,13 @@ export class LineCardMappingComponent {
 
   getZones() {
     this.zoneList = [];
-    this.zoneList = this.mapService.getlatestZones();
+    this.zoneList = JSON.parse(localStorage.getItem("allZoneList"));
   }
 
   changeZoneSelection(filterVal: any) {
     this.activeZone = filterVal;
     $("#txtLineNo").val("1");
-    $("#chk_wardLine").prop('checked',false);
+    $("#chk_wardLine").prop('checked', false);
     if (this.wardBoundary) {
       this.wardBoundary[0]["line"].setMap(null);
     }
@@ -240,6 +240,10 @@ export class LineCardMappingComponent {
                 if (this.cityName == "sikar") {
                   city = "Sikar-Survey";
                 }
+                let markerID = "";
+                if (markerData["markerId"] != null) {
+                  markerID = cardNo;
+                }
                 const pathOld = city + "/MarkingSurveyImages/" + this.selectedZone + "/" + lineFrom + "/" + oldImageName;
                 const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
                 ref.getDownloadURL()
@@ -269,6 +273,17 @@ export class LineCardMappingComponent {
 
                 dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineFrom + "/" + markerNo;
                 this.db.object(dbPath).remove();
+
+                if (markerID != "") {
+                  dbPath = "EntityMarkingData/MarkerWardMapping/" + markerID;
+                  let obj = {
+                    image: lastMarkerKey + ".jpg",
+                    line: lineTo.toString(),
+                    markerNo: lastMarkerKey.toString(),
+                    ward: this.selectedZone
+                  }
+                  this.db.object(dbPath).update(obj);
+                }
                 lastMarkerKey++;
                 index++;
                 this.moveHouseData(index, lineFrom, lineTo, lastMarkerKey, markerList);
@@ -498,8 +513,8 @@ export class LineCardMappingComponent {
       $(".gm-style-iw-d").css("overflow", "unset");
     }, 1000);
   }
-  showWardLine(checkBox:any){
-    if(checkBox.checked && this.selectedZone){
+  showWardLine(checkBox: any) {
+    if (checkBox.checked && this.selectedZone) {
       this.commonService.getWardBoundary(this.selectedZone, this.wardBoundary, 5).then((boundaryData: any) => {
         if (this.wardBoundary != undefined) {
           this.wardBoundary[0]["line"].setMap(null);
@@ -513,9 +528,9 @@ export class LineCardMappingComponent {
         this.map.fitBounds(bounds);
       });
     }
-    else{
-      checkBox.checked=false;
-      if(!this.selectedZone){
+    else {
+      checkBox.checked = false;
+      if (!this.selectedZone) {
         this.commonService.setAlertMessage("error", "Please select ward !!!");
       }
       if (this.wardBoundary) {
@@ -523,7 +538,7 @@ export class LineCardMappingComponent {
       }
     }
   }
-  resetMap=()=>{
+  resetMap = () => {
     if (this.polylines.length > 0) {
       for (let i = 0; i < this.polylines.length; i++) {
         if (this.polylines[i] != undefined) {

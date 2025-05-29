@@ -233,35 +233,143 @@ export class DailyFuelReportComponent implements OnInit {
 
   getDailyWorkDetail() {
     let workDetailList = [];
-    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDailyWorkDetail%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + ".json?alt=media";
-    let workDetailInstance = this.httpService.get(path).subscribe(workData => {
-      workDetailInstance.unsubscribe();
-      if (workData != null) {
-        let keyArray = Object.keys(workData);
-        if (keyArray.length > 0) {
-          this.getEmployeeDetail(0, keyArray, workData, workDetailList);
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDailyWorkDetail");
+    let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+    let workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+      workData => {
+        workDetailInstance.unsubscribe();
+        if (workData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDailyWorkDetail", workData);
+          this.getWorkDetailList(workData).then(resp => {
+            workDetailList = JSON.parse(JSON.stringify(resp));
+            if (workDetailList.length > 0) {
+              let vehicleLengthList = [];
+              let vehicleDistinctList = workDetailList.map(item => item.vehicle)
+                .filter((value, index, self) => self.indexOf(value) === index);
+              for (let i = 0; i < vehicleDistinctList.length; i++) {
+                let vehicle = vehicleDistinctList[i];
+                let vehicleWorkList = workDetailList.filter(item => item.vehicle == vehicle);
+                vehicleLengthList.push({ vehicle: vehicle, length: vehicleWorkList.length, km: 0 });
+                vehicleLengthList = vehicleLengthList.sort((a, b) =>
+                  b.length > a.length ? -1 : 1
+                );
+              }
+              for (let i = 0; i < vehicleLengthList.length; i++) {
+                let vehicle = vehicleLengthList[i]["vehicle"];
+                let vehicleWorkList = workDetailList.filter(item => item.vehicle == vehicle);
+                if (vehicleWorkList.length > 0) {
+                  vehicleWorkList = vehicleWorkList.sort((a, b) => b.orderBy > a.orderBy ? -1 : 1);
+                  this.getWardRunningDistance(0, i, vehicleWorkList, workDetailList, vehicleLengthList);
+                }
+              }
+            }
+            else {
+              $('#divLoader').hide();
+            }
+          });
+        }
+        else {
+          $('#divLoader').hide();
+        }
+      });
+  }
+
+  getWorkDetailList(workData: any) {
+    return new Promise(async (resolve) => {
+      let workDetailList = [];
+      let keyArray = Object.keys(workData);
+      if (keyArray.length > 0) {
+        for (let index = 0; index < keyArray.length; index++) {
+          let empId = keyArray[index];
+          for (let k = 1; k <= 5; k++) {
+            if (workData[empId]["task" + k] != null) {
+              let zone = workData[empId]["task" + k]["task"];
+              let vehicle = workData[empId]["task" + k]["vehicle"];
+              let startTime = "";
+              let endTime = "";
+              let binLiftingPlanId = "";
+              if (workData[empId]["task" + k]["binLiftingPlanId"] != null) {
+                binLiftingPlanId = workData[empId]["task" + k]["binLiftingPlanId"];
+              }
+              if (vehicle != "NotApplicable") {
+                let task = "task" + k;
+                if (workData[empId][task]["in-out"] != null) {
+                  let data = workData[empId]["task" + k]["in-out"];
+                  let inOutKeyArray = Object.keys(data);
+                  for (let i = 0; i < inOutKeyArray.length; i++) {
+                    let time = inOutKeyArray[i];
+                    if (data[time] == "In") {
+                      startTime = time.split(":")[0] + ":" + time.split(":")[1];
+                    }
+                  }
+                  for (let i = inOutKeyArray.length - 1; i >= 0; i--) {
+                    let time = inOutKeyArray[i];
+                    if (data[time] == "Out") {
+                      endTime = time.split(":")[0] + ":" + time.split(":")[1];
+                    }
+                  }
+                }
+                let orderBy = new Date(this.selectedDate).getTime();
+                workDetailList.push({ vehicle: vehicle, zone: zone, task: task, empId: empId, driverName: "", binLiftingPlanId: binLiftingPlanId, startTime: startTime, endTime: endTime, orderBy: orderBy, distance: 0 });
+              }
+            }
+          }
+        }
+        if (workDetailList.length > 0) {
+          const promises = [];
+          for (let i = 0; i < workDetailList.length; i++) {
+            promises.push(Promise.resolve(this.getDriverDetail(workDetailList[i]["zone"], workDetailList[i]["empId"], workDetailList[i]["binLiftingPlanId"], workDetailList[i]["vehicle"], i)));
+          }
+
+          Promise.all(promises).then((results) => {
+            for (let i = 0; i < workDetailList.length; i++) {
+              let detail = results.find(item => item.index == i);
+              if (detail != undefined) {
+                workDetailList[i]["name"] = detail.driverName;
+              }
+            }
+            workDetailList = workDetailList.filter(item => item.name != "");
+            resolve(workDetailList);
+          });
         }
       }
-    }, error => {
-      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDailyWorkDetail");
-      let dbPath = "DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-      let workDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
-        workData => {
-          workDetailInstance.unsubscribe();
-          if (workData != null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDailyWorkDetail", workData);
-            if (this.selectedDate != this.commonService.setTodayDate()) {
-              this.commonService.saveJsonFile(workData, this.selectedDate + ".json", "/DailyWorkDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/");
-            }
-            let keyArray = Object.keys(workData);
-            if (keyArray.length > 0) {
-              this.getEmployeeDetail(0, keyArray, workData, workDetailList);
+    });
+  }
+
+  getDriverDetail(zone: any, empId: any, binLiftingPlanId: any, vehicle: any, index: any) {
+    return new Promise((resolve) => {
+      let driverName = "";
+      if (binLiftingPlanId != "") {
+        let dbPath = "DustbinData/DustbinAssignment/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + binLiftingPlanId + "/driver";
+        let instance = this.db.object(dbPath).valueChanges().subscribe(async driverIdData => {
+          instance.unsubscribe();
+          if (driverIdData != null) {
+            if (empId == driverIdData) {
+              let employee = await this.commonService.getEmplyeeDetailByEmployeeId(empId);
+              driverName = employee["name"];
             }
           }
-          else {
-            $('#divLoader').hide();
-          }
+          resolve({ index: index, driverName: driverName });
         });
+      }
+      else {
+        let dbPath = "WasteCollectionInfo/" + zone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/WorkerDetails";
+        let instance = this.db.object(dbPath).valueChanges().subscribe(async workerData => {
+          instance.unsubscribe();
+          if (workerData != null) {
+            let driverList = workerData["driver"].split(",");
+            let vehicleList = workerData["vehicle"].split(",");
+            let driverNameList=workerData["driverName"].split(",");
+            for (let i = 0; i < driverList.length; i++) {
+              if (empId == driverList[i].trim() && vehicle == vehicleList[i].trim()) {
+                driverName = driverNameList[i];
+              }
+            }
+          }
+          resolve({ index: index, driverName: driverName });
+        });
+      }
+
     });
   }
 
@@ -318,6 +426,7 @@ export class DailyFuelReportComponent implements OnInit {
                   }
                 }
                 let orderBy = new Date(this.selectedDate).getTime();
+
                 workDetailList.push({ vehicle: vehicle, zone: zone, task: task, name: name, empId: empId, startTime: startTime, endTime: endTime, orderBy: orderBy, distance: 0 });
               }
             }
@@ -355,7 +464,6 @@ export class DailyFuelReportComponent implements OnInit {
         }
       });
     }
-
   }
 
   getWardRunningDistance(listIndex: any, index: any, vehicleWorkList: any, workDetailList: any, vehicleLengthList: any) {
@@ -429,84 +537,6 @@ export class DailyFuelReportComponent implements OnInit {
           listIndex++;
           this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
         });
-
-      /*
-            this.commonService.getStorageLocationHistory(dbLocationPath).then(response => {
-              if (response["status"] == "Fail") {
-                let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
-                  locationData => {
-                    locationInstance.unsubscribe();
-                    let distance = "0";
-                    if (locationData != null) {
-                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRunningDistance", locationData);
-                      let keyArray = Object.keys(locationData);
-                      if (keyArray.length > 0) {
-                        let startDate = new Date(this.selectedDate + " " + startTime);
-                        let endDate = new Date(this.selectedDate + " " + endTime);
-                        let diffMs = endDate.getTime() - startDate.getTime(); // milliseconds between now & Christmas
-                        if (diffMs < 0) {
-                          endDate = new Date(this.commonService.getNextDate(this.selectedDate, 1) + " " + endTime);
-                          diffMs = endDate.getTime() - startDate.getTime();
-                        }
-                        let diffMins = Math.round(diffMs / 60000); // minutes
-                        for (let i = 0; i <= diffMins; i++) {
-                          let locationList = keyArray.filter(item => item.includes(startTime));
-                          if (locationList.length > 0) {
-                            for (let j = 0; j < locationList.length; j++) {
-                              if (locationData[locationList[j]]["distance-in-meter"] != null) {
-                                let coveredDistance = locationData[locationList[j]]["distance-in-meter"];
-                                distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
-                              }
-                            }
-                          }
-                          startDate = new Date(startDate.setMinutes(startDate.getMinutes() + 1));
-                          startTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
-                        }
-                        if (distance != "0") {
-                          vehicleWorkList[listIndex]["distance"] = (Number(distance) / 1000).toFixed(3);
-                        }
-                      }
-                    }
-                    listIndex++;
-                    this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
-                  });
-              }
-              else {
-                let distance = "0";
-                let locationData = response["data"];
-                let keyArray = Object.keys(locationData);
-                if (keyArray.length > 0) {
-                  let startDate = new Date(this.selectedDate + " " + startTime);
-                  let endDate = new Date(this.selectedDate + " " + endTime);
-                  let diffMs = endDate.getTime() - startDate.getTime(); // milliseconds between now & Christmas
-                  if (diffMs < 0) {
-                    endDate = new Date(this.commonService.getNextDate(this.selectedDate, 1) + " " + endTime);
-                    diffMs = endDate.getTime() - startDate.getTime();
-                  }
-                  let diffMins = Math.round(diffMs / 60000); // minutes
-                  for (let i = 0; i <= diffMins; i++) {
-                    let locationList = keyArray.filter(item => item.includes(startTime));
-                    if (locationList.length > 0) {
-                      for (let j = 0; j < locationList.length; j++) {
-                        if (locationData[locationList[j]]["distance-in-meter"] != null) {
-                          let coveredDistance = locationData[locationList[j]]["distance-in-meter"];
-                          distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
-                        }
-                      }
-                    }
-                    startDate = new Date(startDate.setMinutes(startDate.getMinutes() + 1));
-                    startTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
-                  }
-                  if (distance != "0") {
-                    vehicleWorkList[listIndex]["distance"] = (Number(distance) / 1000).toFixed(3);
-                  }
-                }
-                listIndex++;
-                this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
-              }
-            });
-      
-            */
     }
   }
 

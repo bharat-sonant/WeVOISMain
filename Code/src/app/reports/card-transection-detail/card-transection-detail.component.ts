@@ -4,6 +4,7 @@ import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 import { AngularFireStorage } from "angularfire2/storage";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 
 @Component({
@@ -13,7 +14,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class CardTransectionDetailComponent implements OnInit {
 
-  constructor(private commonService: CommonService, private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService) { }
+  constructor(private commonService: CommonService, private modalService: NgbModal, private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService) { }
   cityName: any;
   db: any;
   transactionList: any[];
@@ -27,7 +28,10 @@ export class CardTransectionDetailComponent implements OnInit {
   public name: any;
   public entityType: any;
   serviceName = "collection-management-card-payment-report";
+  imageNotAvailablePath = "../assets/img/image-not-found.jpg";
   cardEntityList: any[] = [];
+  imgMarkerURL="../assets/img/image-not-found.jpg";
+  imgHouseURL="../assets/img/image-not-found.jpg";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -38,6 +42,11 @@ export class CardTransectionDetailComponent implements OnInit {
     this.ward = "---";
     this.name = "---";
     this.entityType = "---";
+    let element = <HTMLImageElement>document.getElementById("imgMarker");
+    element.src = this.imageNotAvailablePath;
+    element = <HTMLImageElement>document.getElementById("imgHouse");
+    element.src = this.imageNotAvailablePath;
+
     $(this.divEntity).hide();
     this.getHouseType();
   }
@@ -62,6 +71,10 @@ export class CardTransectionDetailComponent implements OnInit {
     this.ward = "---";
     this.name = "---";
     this.entityType = "---";
+    let element = <HTMLImageElement>document.getElementById("imgMarker");
+    element.src = this.imageNotAvailablePath;
+    element = <HTMLImageElement>document.getElementById("imgHouse");
+    element.src = this.imageNotAvailablePath;
     this.cardEntityList = [];
     $(this.divEntity).hide();
     let cardNo = this.cardPrefix + $(this.txtCardNo).val();
@@ -82,6 +95,17 @@ export class CardTransectionDetailComponent implements OnInit {
             if (detail != undefined) {
               this.entityType = detail.houseType;
             }
+            let city = this.commonService.getFireStoreCity();
+            if (this.cityName == "sikar") {
+              city = "Sikar-Survey";
+            }
+            let mainHouseImage = cardData["houseImage"];
+            this.imgHouseURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + mainHouseImage + "?alt=media";
+            let element = <HTMLImageElement>document.getElementById("imgHouse");
+            element.src = this.imgHouseURL;
+
+            this.getMarkerImage(lineNo,cardNo);
+
             if (Number(houseType) == 19 || Number(houseType) == 20) {
               if (cardData["Entities"] != undefined) {
                 $(this.divEntity).show();
@@ -90,24 +114,21 @@ export class CardTransectionDetailComponent implements OnInit {
                   let key = keyArray[i];
                   let name = cardData["Entities"][key]["name"];
                   let houseImage = cardData["Entities"][key]["houseImage"];
-                  let houseImageURL = "";
+                  let houseImageURL = this.imageNotAvailablePath;
                   let entity = "";
                   let entityDetail = this.houseTypeList.find(item => item.id == cardData["Entities"][key]["entityType"]);
                   if (entityDetail != undefined) {
                     entity = entityDetail.houseType;
                   }
-                  let city = this.commonService.getFireStoreCity();
-                  if (this.cityName == "sikar") {
-                    city = "Sikar-Survey";
-                  }
+
 
                   let imagePath = city + "/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage;
                   this.commonService.checkImageExist(imagePath).then(resp => {
-                    if(resp==true){
-                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +city + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage+"?alt=media";
+                    if (resp == true) {
+                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
                     }
-                    else{
-                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" +this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage+"?alt=media";
+                    else {
+                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
                     }
 
                     this.cardEntityList.push({ name: name, entity: entity, houseImageURL: houseImageURL });
@@ -121,8 +142,34 @@ export class CardTransectionDetailComponent implements OnInit {
     });
   }
 
-
-
+  getMarkerImage(lineNo: any, cardNo: any) {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.ward + "/" + lineNo + "/";
+    let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markedHouseData => {
+        markedHouseInstance.unsubscribe();
+        if (markedHouseData != null) {
+          let keyArray = Object.keys(markedHouseData);
+          for (let j = 0; j < keyArray.length; j++) {
+            let markerNo = parseInt(keyArray[j]);
+            if (!isNaN(markerNo)) {
+              if (markedHouseData[markerNo]["cardNumber"] != null) {
+                if (markedHouseData[markerNo]["cardNumber"] == cardNo) {
+                  let image = markedHouseData[markerNo]["image"];
+                  let city = this.commonService.getFireStoreCity();
+                  if (this.cityName == "sikar") {
+                    city = "Sikar-Survey";
+                  }
+                  this.imgMarkerURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
+                  let element = <HTMLImageElement>document.getElementById("imgMarker");
+                  element.src = this.imgMarkerURL;
+                }
+              }
+            }
+          }
+        }
+      }
+    );
+  }
 
   getTransaction() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTransaction");
@@ -177,10 +224,10 @@ export class CardTransectionDetailComponent implements OnInit {
                     }
                     amount = amount + Number(dateData[key]["transactionAmount"]);
                     let houseImage = "";
-                    let houseImageURL = "";
+                    let houseImageURL = this.imageNotAvailablePath;
                     if (dateData[key]["houseImage"]) {
-
-                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+                      houseImage = dateData[key]["houseImage"];
+                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2F" + date + "%2F" + houseImage + "?alt=media";
                     }
                     let timestemp = new Date(date).getTime();
                     this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL });
@@ -192,12 +239,14 @@ export class CardTransectionDetailComponent implements OnInit {
                 }
               }
             }
-            else {
-              let entityData = data["Entities"];
-              this.getEntityPayment(entityData, amount);
-            }
           }
-          this.totalAmount = amount.toFixed(2);
+          if (data["Entities"] != null) {
+            let entityData = data["Entities"];
+            this.getEntityPayment(entityData, amount);
+          }
+          else {
+            this.totalAmount = amount.toFixed(2);
+          }
           $(this.divLoader).hide();
         }
         else {
@@ -209,6 +258,7 @@ export class CardTransectionDetailComponent implements OnInit {
   }
 
   getEntityPayment(entityData: any, amount: any) {
+
     let entityKeyArray = Object.keys(entityData);
     let cardNo = this.cardPrefix + $(this.txtCardNo).val();
     for (let i = 0; i < entityKeyArray.length; i++) {
@@ -249,7 +299,7 @@ export class CardTransectionDetailComponent implements OnInit {
                 }
                 amount = amount + Number(dateData[key]["transactionAmount"]);
                 let houseImage = "";
-                let houseImageURL = "";
+                let houseImageURL = this.imageNotAvailablePath;
                 if (dateData[key]["houseImage"]) {
                   houseImage = dateData[key]["houseImage"];
                   houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2FEntities%2F" + entityKey + "%2F" + date + "%2F" + houseImage + "?alt=media";
@@ -349,4 +399,33 @@ export class CardTransectionDetailComponent implements OnInit {
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
+
+
+  openHouseModel(content: any, url: any,type:any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 520;
+    let width = 348;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    if(type=="list"){
+    let element = <HTMLImageElement>document.getElementById("houseImage");
+    element.src = url;
+    }
+    else if(type=="marker"){
+      let element = <HTMLImageElement>document.getElementById("houseImage");
+      element.src = this.imgMarkerURL;
+    }else{
+      let element = <HTMLImageElement>document.getElementById("houseImage");
+    element.src = this.imgHouseURL;
+    }
+  }
+
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
 }

@@ -99,7 +99,7 @@ export class ScanCardManipulationComponent implements OnInit {
     }
     this.percentage = $("#ddlPercentage").val();
     this.selectedZone = $("#ddlZone").val();
-    let detail = this.nokhaAvailableWards.find(item => item.zoneNo == this.selectedZone);
+    let detail = this.zoneList.find(item => item.zoneNo == this.selectedZone);
     if (detail != undefined) {
       $(this.divLoader).show();
       let dbPath = "Houses/" + this.selectedZone;

@@ -380,7 +380,11 @@ export class PaymentViaChequeComponent implements OnInit {
         transactionDateTime: transactionDate,
         updatedBy: localStorage.getItem("userID"),
         updatedDate: this.commonService.getCurrentTimeWithSecond(),
-        houseImage: detail.houseImage || ''
+        houseImage: detail.houseImage || '',
+        chequeNo:detail.chequeNo?detail.chequeNo:'',
+        bankName:detail.bankName?detail.bankName:'',
+        payDate:date
+
       }
 
       let monthName = this.commonService.getCurrentMonthName(Number(transactionDate.toString().split("-")[1]) - 1);
@@ -489,7 +493,10 @@ export class PaymentViaChequeComponent implements OnInit {
         transactionDateTime: transactionDate,
         updatedBy: localStorage.getItem("userID"),
         updatedDate: this.commonService.getCurrentTimeWithSecond(),
-        houseImage: detail.houseImage || ''
+        houseImage: detail.houseImage || '',
+        chequeNo:detail.chequeNo?detail.chequeNo:'',
+        bankName:detail.bankName?detail.bankName:'',
+        payDate:date
       }
 
 

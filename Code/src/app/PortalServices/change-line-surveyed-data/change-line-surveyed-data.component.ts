@@ -27,7 +27,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Portal-Services","Change-Line-Surveyed-Data",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Portal-Services", "Change-Line-Surveyed-Data", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -37,7 +37,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   }
 
   getZones() {
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.zoneList = JSON.parse(localStorage.getItem("allZoneList"));
   }
 
   saveData() {
@@ -154,6 +154,10 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                 if (this.cityName == "sikar") {
                   city = "Sikar-Survey";
                 }
+                let markerID = "";
+                if (markerData["markerId"] != null) {
+                  markerID = cardNo;
+                }
                 const pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
                 const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
                 ref.getDownloadURL()
@@ -183,6 +187,19 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
 
                 dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
                 this.db.object(dbPath).remove();
+
+                if (markerID != "") {
+                  dbPath = "EntityMarkingData/MarkerWardMapping/" + markerID;
+                  let obj = {
+                    image: lastMarkerKey + ".jpg",
+                    line: lineTo.toString(),
+                    markerNo: lastMarkerKey.toString(),
+                    ward: zoneTo
+                  }
+                  this.db.object(dbPath).update(obj);
+                }
+
+                
                 lastMarkerKey++;
                 index++;
                 this.moveHouseData(index, zoneFrom, zoneTo, lineFrom, lineTo, lastMarkerKey, markerList, fromDataList);
@@ -309,7 +326,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
     );
   }
 
-  
+
   updateWardWiseCard() {
     $(this.divLoader).show();
     this.getWardWiseCards(1);
@@ -338,12 +355,12 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                 let houseArray = Object.keys(houseData);
                 for (let j = 0; j < houseArray.length; j++) {
                   let cardNo = houseArray[j];
-                  let entityType="1";
-                  let amount=0;
-                  if(houseData[cardNo]["houseType"]!=null){
-                    entityType=houseData[cardNo]["houseType"];
+                  let entityType = "1";
+                  let amount = 0;
+                  if (houseData[cardNo]["houseType"] != null) {
+                    entityType = houseData[cardNo]["houseType"];
                   }
-                  cardList.push({ cardNo: cardNo,entityType:entityType });
+                  cardList.push({ cardNo: cardNo, entityType: entityType });
                 }
                 houseCounts = houseCounts + houseArray.length;
               }

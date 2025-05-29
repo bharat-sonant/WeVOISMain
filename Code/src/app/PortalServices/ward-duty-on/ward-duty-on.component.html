@@ -1,0 +1,135 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<div>
+    <section class="header ">
+        <div class="row no-gutters ">
+            <div class="offset-3 col-6 heading text-center">
+                <b class="header-text">Ward Duty On </b>
+            </div>
+        </div>
+    </section>
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>Zone</label>
+                                <div class="wrap-input-effects" required>
+                                    <select class="caret-select" id="ddlZone">
+                                        <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Date From</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDateFrom" class="caret-select custom-date-input" type="date" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Date To</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDateTo" class="caret-select custom-date-input" type="date" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="wrap-input-effects" required>
+                                    <button id="btn" class="btn btn-success btn-xs" (click)="getData();">Find</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>Driver ID</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDriverId" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Driver Name</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDriver" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Helper ID</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtHelperId" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Helper Name</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtHelper" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>Vehicle</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtVehicle" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Duty On Time</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDutyOn" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Ward Rech On Time</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtReachOn" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Ward Out Time</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtOutTime" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Duty Off Time</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtDutyOff" class="caret-select custom-date-input" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Work Percentage</label>
+                                <div class="wrap-input-effects" required>
+                                    <input id="txtPercentage" class="caret-select" type="number" max="100" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <button class="btn btn-success btn-xs" (click)="saveData();">SAVE</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-12 pr-1">
+                                <div class="form-group">
+                                    <label id="lblMsg" style="color:red; font-size: 14px;"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-12 pr-1">
+                                <div class="form-group">
+                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30"
+                                        style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

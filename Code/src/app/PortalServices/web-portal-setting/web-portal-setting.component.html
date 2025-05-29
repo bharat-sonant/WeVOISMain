@@ -1,0 +1,172 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 top-header">
+            <b>Web Portal settings</b>
+        </div>
+    </div>
+</div>
+<section class="padding">
+    <div class="container-fluid p-0">
+        <div class="row">
+            <div class="col-md-12 bg-color">
+                <nav class="main1">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active buttons" id="tabDailyWorkReport" data-bs-toggle="tab" data-bs-target="#DailyWorkReport" type="button" role="tab" aria-controls="DailyWorkReport" aria-selected="true" (click)="setActiveTab('DailyWorkReport');">Daily Work Report
+                                                </button>
+                                                <!--
+                        <button class="nav-link buttons" id="tabReader" data-bs-toggle="tab" data-bs-target="#Reader" type="button" role="tab" aria-controls="Reader" aria-selected="false" (click)="setActiveTab('Reader');">Reader</button>
+                        <button class="nav-link buttons" id="tabHalt" data-bs-toggle="tab" data-bs-target="#Halt" type="button" role="tab" aria-controls="Halt" aria-selected="false" (click)="setActiveTab('Halt');">Halt</button>
+                        <button class="nav-link buttons" id="tabSalary" data-bs-toggle="tab" data-bs-target="#Salary" type="button" role="tab" aria-controls="Salary" aria-selected="false" (click)="setActiveTab('Salary');">Salary</button>
+                    -->
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active save" id="DailyWorkReport" role="tabpanel" aria-labelledby="tabDailyWorkReport">
+                        <form>
+                            <div class="form">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                    <input id="chkStartTime" class="caret-select" type="checkbox" />
+                                                
+                                                <label>Start Time</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                                    <input id="chkReachOn" class="caret-select" type="checkbox" />
+                                               
+                                                <label>Reach On</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkEndTime" class="caret-select" type="checkbox" />                                               
+                                                <label>End Time</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkVehicle" class="caret-select" type="checkbox" />                                               
+                                                <label>Vehicle</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkDriver" class="caret-select" type="checkbox" />                                               
+                                                <label>Driver</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkHelper" class="caret-select" type="checkbox" />                                               
+                                                <label>Helper</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkSecondHelper" class="caret-select" type="checkbox" />                                               
+                                                <label>Second Helper</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkTrips" class="caret-select" type="checkbox" />                                               
+                                                <label>Trips/Bins</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkWorkTime" class="caret-select" type="checkbox" />                                               
+                                                <label>Work Time</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkHaltTime" class="caret-select" type="checkbox" />                                               
+                                                <label>Halt Time</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkWorkPercentage" class="caret-select" type="checkbox" />                                               
+                                                <label>Work Percentage</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkRunKM" class="caret-select" type="checkbox" />                                               
+                                                <label>Run KM</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row">
+                                            <div class="col-md-12">                                                
+                                                    <input id="chkZoneRunKM" class="caret-select" type="checkbox" />                                               
+                                                <label>Zone Run KM</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <div class="row form-group2">
+                                    <div class="col-md-12 pr-1">
+                                        <div class="form-group">
+                                            <button id="btnSave" class="btn btn-success btn-xs" (click)="saveDailyWorkPermission();">SAVE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="tab-pane fade" id="Reader" role="tabpanel" aria-labelledby="tabReader">
+                        <form>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="Halt" role="tabpanel" aria-labelledby="tabHalt">
+                        <form>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="Salary" role="tabpanel" aria-labelledby="tabSalary">
+                        <form>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</section>

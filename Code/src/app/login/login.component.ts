@@ -117,6 +117,11 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "sultanpur", name: "Sultanpur", storagePath: "Sultanpur" });
     this.cityList.push({ city: "khairabad", name: "Khairabad", storagePath: "Khairabad" });
     this.cityList.push({ city: "sanchore", name: "Sanchore", storagePath: "Sanchore" });
+    this.cityList.push({ city: "jaipur-civil-line", name: "Civil Line", storagePath: "Jaipur-Civil-Line" });
+    this.cityList.push({ city: "jaipur-kishanpole", name: "Kishanpole", storagePath: "Jaipur-Kishanpole" });
+    this.cityList.push({ city: "jaunpur", name: "Jaunpur", storagePath: "Jaunpur" });
+    this.cityList.push({ city: "mapusa-goa", name: "Mapusa Goa", storagePath: "Mapusa-Goa" });
+    this.cityList.push({ city: "ecogram", name: "Ecogram", storagePath: "Ecogram" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
@@ -247,6 +252,18 @@ export class LoginComponent implements OnInit {
       else {
         localStorage.setItem("canRemoveNotPickedDustbin", "0");
       }
+      if (userDetails.canAccessBIDashboard != null) {
+        localStorage.setItem("canAccessBIDashboard", userDetails.canAccessBIDashboard);
+      }
+      else {
+        localStorage.setItem("canAccessBIDashboard", "0");
+      }
+      if (userDetails.canAddWardDutyOn != null) {
+        localStorage.setItem("canAddWardDutyOn", userDetails.canAddWardDutyOn);
+      }
+      else {
+        localStorage.setItem("canAddWardDutyOn", "0");
+      }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
       localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);
       localStorage.setItem("notificationMobileDataOff", userDetails.notificationMobileDataOff);
@@ -262,7 +279,7 @@ export class LoginComponent implements OnInit {
             lastLogin: this.commonService.getTodayDateTime()
           }
           this.commonService.saveCommonJsonFile(obj, userDetails.userId + ".json", "/Common/EmployeeLastLogin/");
-          this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId, userDetails.userType);
+          this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId, userDetails.canAccessBIDashboard);
         } else {
           localStorage.setItem("loginStatus", "Fail");
           this.commonService.setAlertMessage("error", "Account Not Activate !!!");
@@ -275,7 +292,7 @@ export class LoginComponent implements OnInit {
           lastLogin: this.commonService.getTodayDateTime()
         }
         this.commonService.saveCommonJsonFile(obj, userDetails.userId + ".json", "/Common/EmployeeLastLogin/");
-        this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId, userDetails.userType);
+        this.setUserCityAccess(userDetails.userId, userDetails.accessCities, userDetails.roleId, userDetails.canAccessBIDashboard);
       }
 
     } else {
@@ -306,7 +323,7 @@ export class LoginComponent implements OnInit {
     this.commonService.saveCommonJsonFile(obj, userId + ".json", "/Common/EmployeeLastLogin/");
   }
 
-  setUserCityAccess(userId: any, accessCities: any, roleId: any, userType: any) {
+  setUserCityAccess(userId: any, accessCities: any, roleId: any, canAccessBIDashboard: any) {
     let list = [
       { pageId: "2A2" },
       { pageId: "10C" },
@@ -330,16 +347,16 @@ export class LoginComponent implements OnInit {
             let accessDetails = this.portalAccessList.find((item) => item.pageID == pagesList[j].toString().trim());
             if (accessDetails != undefined) {
               let isPush = 0;
-              if (userType == "External User") {
-                let pageDetail = list.find(item => item.pageId == pagesList[j].toString().trim());
-                if (pageDetail == undefined) {
+              let pageDetail = list.find(item => item.pageId == pagesList[j].toString().trim());
+              if (pageDetail != undefined) {
+                if (Number(canAccessBIDashboard) == 1) {
                   isPush = 1;
                 }
-
               }
               else {
                 isPush = 1;
               }
+
               if (isPush == 1) {
                 this.accessList.push({
                   city: city,

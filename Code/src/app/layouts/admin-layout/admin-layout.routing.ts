@@ -40,7 +40,6 @@ import { DustbinReportComponent } from '../../reports/dustbin-report/dustbin-rep
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
-import { MultipleMapsComponent } from '../../multiple-maps/multiple-maps.component';
 import { TaskManagerComponent } from '../../task-manager/task-manager.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
@@ -99,7 +98,6 @@ import { RolePageAccessComponent } from '../../user-management/role-page-access/
 import { MapsComponent } from '../../maps/maps.component';
 import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
-import { ManageWardSupervisorComponent } from '../../manage-ward-supervisor/manage-ward-supervisor.component';
 import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
 import { ScanCardManipulationComponent } from '../../PortalServices/scan-card-manipulation/scan-card-manipulation.component';
 import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-against-cards/add-marker-against-cards.component';
@@ -147,6 +145,9 @@ import { PaymentCollectorTrackingComponent } from '../../reports/payment-collect
 import { ErrorPageComponent } from '../../error-page/error-page.component';
 import { SecondaryCollectionWardMappingComponent } from '../../PortalServices/secondary-collection-ward-mapping/secondary-collection-ward-mapping.component';
 import { MonthlyWorkReportComponent } from '../../reports/monthly-work-report/monthly-work-report.component';
+import { WebPortalSettingComponent } from '../../PortalServices/web-portal-setting/web-portal-setting.component';
+import { WardRouteTrackingComponent } from '../../ward-route-tracking/ward-route-tracking.component';
+import { WardDutyOnComponent } from '../../PortalServices/ward-duty-on/ward-duty-on.component';
 
 
 
@@ -192,7 +193,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'portal-access', component: PortalAccessComponent },
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
-    { path: 'manage-ward-supervisor', component: ManageWardSupervisorComponent },
     { path: 'complaint-list', component: ComplaintListComponent },
     { path: 'marker-approval-test', component: MarkerApprovalTestComponent },
     { path: 'supervisor-report', component: SupervisorReportComponent },
@@ -241,7 +241,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/useradd', component: UserAddComponent },
     { path: ':cityId/useracess/:id', component: UserAccessComponent },
     { path: ':cityId/halt-report', component: HaltReportComponent },
-    { path: ':cityId/route-tracking/:id', component: RouteTrackingComponent },
+    { path: ':cityId/route-tracking/:id1', component: RouteTrackingComponent },
     { path: ':cityId/route-tracking', component: RouteTrackingComponent },
     { path: ':cityId/halt-summary', component: HaltSummaryComponent },
     { path: ':cityId/salary-summary', component: SalarySummaryComponent },
@@ -259,7 +259,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/cms/:id', component: CmsComponent },
     { path: ':cityId/cms1', component: Cms1Component },
     { path: ':cityId/vehicle-report', component: VehicleReportComponent },
-    { path: ':cityId/multiple-maps', component: MultipleMapsComponent },
     { path: ':cityId/task-manager', component: TaskManagerComponent },
     { path: ':cityId/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: ':cityId/house-marking', component: HouseMarkingComponent },
@@ -350,7 +349,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/useradd', component: UserAddComponent },
     { path: ':cityId/:id/useracess/:id', component: UserAccessComponent },
     { path: ':cityId/:id/halt-report', component: HaltReportComponent },
-    { path: ':cityId/:id/route-tracking/:id', component: RouteTrackingComponent },
+    { path: ':cityId/:id/route-tracking/:id1', component: RouteTrackingComponent },
     { path: ':cityId/:id/route-tracking', component: RouteTrackingComponent },
     { path: ':cityId/:id/halt-summary', component: HaltSummaryComponent },
     { path: ':cityId/:id/salary-summary', component: SalarySummaryComponent },
@@ -368,7 +367,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/cms/:id', component: CmsComponent },
     { path: ':cityId/:id/cms1', component: Cms1Component },
     { path: ':cityId/:id/vehicle-report', component: VehicleReportComponent },
-    { path: ':cityId/:id/multiple-maps', component: MultipleMapsComponent },
     { path: ':cityId/:id/task-manager', component: TaskManagerComponent },
     { path: ':cityId/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: ':cityId/:id/house-marking', component: HouseMarkingComponent },
@@ -430,7 +428,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/maps', component: MapsComponent },
     { path: ':cityId/:id/card-marker-mapping', component: CardMarkerMappingComponent },
     { path: ':cityId/:id/scan-card-status', component: ScanCardStatusComponent },
-    { path: ':cityId/:id/manage-ward-supervisor', component: ManageWardSupervisorComponent },
     { path: ':cityId/:id/complaint-list', component: ComplaintListComponent },
     { path: ':cityId/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
     { path: ':cityId/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
@@ -486,6 +483,11 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/vehicle-maintenance-dashboard', component: VehicleMaintenanceDashboardComponent },
     { path: ':cityId/:id/camera-vts-dashboard', component: CameraVtsDashboardComponent },
     { path: ':cityId/:id/emp-monitoring-dashboard', component: EmpMonitoringDashboardComponent },
+    { path: ':cityId/:id/web-portal-setting', component: WebPortalSettingComponent },
+    { path: ':cityId/:id/ward-route-tracking', component: WardRouteTrackingComponent },
+    { path: ':cityId/ward-route-tracking/:id1', component: WardRouteTrackingComponent },
+    { path: ':cityId/ward-route-tracking', component: WardRouteTrackingComponent },
+    { path: ':cityId/:id/ward-duty-on', component: WardDutyOnComponent },
     
 
 ]; 

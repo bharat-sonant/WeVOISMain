@@ -288,6 +288,33 @@
                 </div>
             </div>
         </div>
+
+        <div id="divHouseDetail"
+        style="display: none; position: absolute;z-index: 9999; width: 380px;background-color: #fff; margin-top: 15%; margin-left: 38%; padding: 20px; border: 1px solid lightgray;">
+        <input type="hidden" id="houseOwnerName" value="">
+        <input type="hidden" id="houseOwnerMobile" value="">
+        <input type="hidden" id="houseDetailIndex" value="0">
+        <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Update House Owner Detail</h5>
+        <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
+            <div class="col-md-12">
+                Name
+                <input id="txtHouseOwnerName" type="text" class="caret-select-vehicle">
+
+            </div>
+            <div class="col-md-12" style="margin-top: 10px;">
+                Mobile No. <input id="txtHouseOwnerMobile" type="number" class="caret-select-vehicle">
+            </div>
+            <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                <button class="btn btn-success " style="width: 100px;" (click)="updateHouseOwnerDetail();">
+                    Save</button>
+            </div>
+            <div class="col-md-6" style="text-align: center;margin-top: 5px;">
+                <button class="btn btn-danger " (click)="cancelHouseDetail();"
+                    style="text-transform: uppercase;width: 100px;">
+                    Cancel</button>
+            </div>
+        </div>
+    </div>
         <!-- popup for approve -->
         <div class="modal-body divStatus">
             <div id="divApprovePopup"
@@ -296,7 +323,8 @@
                 <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
                     <div class="row">
                         <div class="col-md-12">
-                            <input type="checkbox" id="chkApprovedCard">&nbsp;&nbsp;I have checked card and house image carefully
+                            <input type="checkbox" id="chkApprovedCard">&nbsp;&nbsp;I have checked card and house image
+                            carefully
                         </div>
                     </div>
                     <div class="row">
@@ -369,11 +397,26 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div style="width: 48%; float:left; margin-left: 5px;">
+                                <div style="width: 100%;">&nbsp;</div>
+                                <div style="width: 32%; float:left; margin-left: 5px;">
                                     <div class="main-tag">
                                         <div class="f-left">
-                                            <h3 class="f-left-heading"> {{dt.name}} <b>({{dt.cardNo}})</b></h3><br />
-                                            <h3>{{dt.entityType}} <b
+                                            <h3 class="f-left-heading"><img src="../../../assets/img/man.png"
+                                                    style="width: 12px;"> {{dt.name}}  <img src="../../../assets/icons/edit-solid.svg" alt="Edit" width="12"
+                                                    style="border: none;float: right;" (click)="openHouseDetailPopup(i);"
+                                                    class="cursor-pointer" /></h3><br />
+                                            <h3 class="f-left-heading"><img src="../../../assets/img/mobile.png"
+                                                    style="width: 12px;"> {{dt.mobile}}</h3><br />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="width: 32%; float:left; margin-left: 5px;">
+                                    <div class="main-tag">
+                                        <div class="f-left">
+                                            <h3 class="f-left-heading"><img src="../../../assets/img/card.png"
+                                                    style="width: 20px;"> <b> {{dt.cardNo}}</b></h3><br />
+                                            <h3><img src="../../../assets/img/green-home.png">&nbsp; {{dt.entityType}}
+                                                <b
                                                     [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b>&nbsp;&nbsp;&nbsp;
                                                 <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
                                                 (click)="openHouseTypePopup(i);" [hidden]="isActionShow==true"></i> -->
@@ -384,13 +427,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div style="width: 48%; float:right;">
+                                <div style="width: 32%; float:right;">
                                     <div class="main-tag">
                                         <div class="f-left">
                                             <h3>
+                                                <img src="../../../assets/img/man.png" style="width: 12px;">
                                                 {{dt.surveyorName}}
                                             </h3><br />
-                                            <h3> {{dt.surveyDate}} </h3><span [hidden]="dt.houseHoldCount==0"
+                                            <h3><img src="../../../assets/img/clock-icon.png" style="width: 15px;">
+                                                {{dt.surveyDate}} </h3><span [hidden]="dt.houseHoldCount==0"
                                                 style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;
                                                 <!-- <i class="far fa-eye eye-icon"
                                                 style="float: right !important; cursor: pointer;"
@@ -401,6 +446,15 @@
                                             </span>
                                             <br />
 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="width: 100%; float:left; margin-left: 5px; margin-top: -10px;">
+                                    <div class="main-tag">
+                                        <div class="f-left">
+                                            <h3 class="f-left-heading"><img alt="address-book"
+                                                    src="../../../assets/icons/address-book-solid.svg" width="14">
+                                                {{dt.address}}</h3>
                                         </div>
                                     </div>
                                 </div>
@@ -433,7 +487,6 @@
                                 (click)="openApprovePopup(dt.cardNo)">
                                 <img src="../../../assets/icons/a-solid.svg" alt="A" class="cursor-pointer icon-green"
                                     width="15" style="border: none;margin: 0;padding: 0;" />pprove
-
                             </span>
                         </div>
                     </div>

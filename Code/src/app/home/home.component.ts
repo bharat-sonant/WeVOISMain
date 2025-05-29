@@ -31,6 +31,9 @@ export class HomeComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userid = localStorage.getItem("userID");
+    if(this.userid=="4" || this.userid=="182"){
+      $("#devendraLink").show();
+    }
     this.userType = localStorage.getItem("userType");
     this.userDetail.name = localStorage.getItem("userName");
     this.portalAccessList = [];

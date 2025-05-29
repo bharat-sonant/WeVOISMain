@@ -26,22 +26,36 @@ export class WardScancardReportComponent implements OnInit {
   selectedCircle: any;
   selectedDate: any;
   toDayDate: any;
-  wardDataList: any[];
-  wardScaanedList: any;
+  wardDataList: any[] = [];
+  wardScaanedList: any[] = [];
+  wardScanedListFiltered: any[] = [];
+  totalScanedCards:any;
   isFirst = true;
   db: any;
   public cityName: any;
+  public isEcogram: any;
   serviceName = "ward-scan-card-report";
-
+  userType: any;
   header = [["Card No.", "Name", "RFID", "Time", "Scaned By"]];
+  headerEcogram = [["Card No.", "Waste Category", "Time", "Scaned By"]];
   headerWard = [["Ward No.", "Ward Length(km)", "Covered Length(km)"]];
 
   tableData = [[]];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    if (this.cityName == "test" || this.cityName == "ecogram") {
+      this.isEcogram = "1";
+      $("#divEcogram").show();
+      this.totalScanedCards=0;
+    }
+    else {
+      this.isEcogram = "0";
+      $("#divEcogram").hide();
+    }
+    this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.savePageLoadHistory("General-Reports","Ward-Scan-Card-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("General-Reports", "Ward-Scan-Card-Report", localStorage.getItem("userID"));
     this.showLoder();
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
@@ -66,14 +80,19 @@ export class WardScancardReportComponent implements OnInit {
 
   generateDetailPdf() {
     this.tableData = [];
-    if (this.wardScaanedList.length > 0) {
-      for (let i = 0; i < this.wardScaanedList.length; i++) {
+    if (this.wardScanedListFiltered.length > 0) {
+      for (let i = 0; i < this.wardScanedListFiltered.length; i++) {
         let tableArray = [];
-        tableArray.push(this.wardScaanedList[i]["cardNo"]);
-        tableArray.push(this.wardScaanedList[i]["personName"]);
-        tableArray.push(this.wardScaanedList[i]["rfId"]);
-        tableArray.push(this.wardScaanedList[i]["time"]);
-        tableArray.push(this.wardScaanedList[i]["name"]);
+        tableArray.push(this.wardScanedListFiltered[i]["cardNo"]);
+        if (this.isEcogram == "0") {
+          tableArray.push(this.wardScanedListFiltered[i]["personName"]);
+          tableArray.push(this.wardScanedListFiltered[i]["rfId"]);
+        }
+        else {
+          tableArray.push(this.wardScanedListFiltered[i]["wasteCategory"]);
+        }
+        tableArray.push(this.wardScanedListFiltered[i]["time"]);
+        tableArray.push(this.wardScanedListFiltered[i]["name"]);
         this.tableData.push(tableArray);
       }
       var pdf = new jsPDF();
@@ -81,7 +100,7 @@ export class WardScancardReportComponent implements OnInit {
         pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
 
       let monthName = this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split("-")[1]));
-      let title = " Card Scan Report - Ward " + this.wardScaanedList[0]["wardNo"] + " [" + this.selectedDate.split("-")[2] + " " + monthName + " " + this.selectedDate.split("-")[0] + "]";
+      let title = " Card Scan Report - Ward " + this.wardScanedListFiltered[0]["wardNo"] + " [" + this.selectedDate.split("-")[2] + " " + monthName + " " + this.selectedDate.split("-")[0] + "]";
 
       pdf.text(title, pageWidth / 2, 8, { align: "center" });
       pdf.setFont("helvetica");
@@ -90,7 +109,7 @@ export class WardScancardReportComponent implements OnInit {
       pdf.setTextColor(99);
 
       (pdf as any).autoTable({
-        head: this.header,
+        head: this.isEcogram == "0" ? this.header : this.headerEcogram,
         body: this.tableData,
         theme: "grid",
       });
@@ -144,8 +163,8 @@ export class WardScancardReportComponent implements OnInit {
 
   getWards() {
     this.wardList = [];
-    this.commonService.getDefaultAllWards().then((wardList: any) => {
-      this.wardList = JSON.parse(wardList);
+    this.commonService.getCityWiseWard().then((zoneList: any) => {
+      this.wardList = JSON.parse(zoneList);
       this.selectedCircle = 'Circle1';
       this.onSubmit();
     });
@@ -155,6 +174,7 @@ export class WardScancardReportComponent implements OnInit {
     this.selectedCircle = filterVal;
     this.isFirst = true;
     this.clearList();
+    this.clearScanCardDetail();
     this.onSubmit();
   }
 
@@ -177,13 +197,13 @@ export class WardScancardReportComponent implements OnInit {
     }
   }
 
-  clearList(){
-    for(let i=0;i<this.wardDataList.length;i++){
-      this.wardDataList[i]["houses"]=0;
-      this.wardDataList[i]["scanned"]=0;
-      this.wardDataList[i]["wardLength"]=0;
-      this.wardDataList[i]["wardCoveredLength"]=0;
-      this.wardDataList[i]["workPer"]=0;
+  clearList() {
+    for (let i = 0; i < this.wardDataList.length; i++) {
+      this.wardDataList[i]["houses"] = 0;
+      this.wardDataList[i]["scanned"] = 0;
+      this.wardDataList[i]["wardLength"] = 0;
+      this.wardDataList[i]["wardCoveredLength"] = 0;
+      this.wardDataList[i]["workPer"] = 0;
     }
   }
 
@@ -201,7 +221,7 @@ export class WardScancardReportComponent implements OnInit {
     }
   }
 
-  getCoveredLength(index:any, wardNo:any) {
+  getCoveredLength(index: any, wardNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCoveredLength");
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
@@ -210,12 +230,12 @@ export class WardScancardReportComponent implements OnInit {
       instance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCoveredLength", data);
-        let length=0;
-        let keyArray=Object.keys(data);
-        for(let i=0;i<keyArray.length;i++){
-          if(data[keyArray[i]]["Status"]=="LineCompleted"){
-            if(data[keyArray[i]]["line-distance"]!=null){
-              length+=Number(data[keyArray[i]]["line-distance"]);
+        let length = 0;
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          if (data[keyArray[i]]["Status"] == "LineCompleted") {
+            if (data[keyArray[i]]["line-distance"] != null) {
+              length += Number(data[keyArray[i]]["line-distance"]);
             }
           }
         }
@@ -284,6 +304,7 @@ export class WardScancardReportComponent implements OnInit {
 
   setDate(filterVal: any, type: string) {
     this.clearList();
+    this.clearScanCardDetail();
     this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
       $("#txtDate").val(newDate);
       if (newDate != this.selectedDate) {
@@ -297,15 +318,32 @@ export class WardScancardReportComponent implements OnInit {
     });
   }
 
+  getFilterScanData(value: any) {
+    if (value == "0") {
+      this.wardScanedListFiltered = this.wardScaanedList;
+    }
+    else {
+      this.wardScanedListFiltered = this.wardScaanedList.filter(item => item.wasteCategory == value);
+    }
+    this.totalScanedCards=this.wardScanedListFiltered.length;
+
+  }
+
+  clearScanCardDetail(){
+    this.wardScaanedList = [];
+    this.wardScanedListFiltered = [];
+    this.totalScanedCards=0;
+  }
+
   getScanDetail(wardNo: any, index: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScanDetail");
     this.showLoder();
+    this.clearScanCardDetail();
     if (this.isFirst == false) {
       this.setActiveClass(index);
     } else {
       this.isFirst = false;
     }
-    this.wardScaanedList = [];
     let monthName = this.commonService.getCurrentMonthName(
       new Date(this.selectedDate).getMonth()
     );
@@ -328,46 +366,157 @@ export class WardScancardReportComponent implements OnInit {
             let keyArray = Object.keys(data);
             for (let i = 0; i < keyArray.length; i++) {
               let cardNo = keyArray[i];
+              let cardNumber="";
               if (cardNo != "ImagesData" && cardNo != "recentScanned" && cardNo != "totalScanned") {
-
+                let cardNoList = cardNo.split("~");
+                if (cardNoList.length > 1) {
+                  for (let p = 0; p < cardNoList.length; p++) {
+                    if (p == 0) {
+                      cardNumber = cardNoList[p];
+                    }
+                    else {
+                      cardNumber = cardNumber + "." + cardNoList[p];
+                    }
+                  }
+                }
+                else{
+                  cardNumber=cardNo;
+                }
                 let scanTime = data[cardNo]["scanTime"].split(":")[0] + ":" + data[cardNo]["scanTime"].split(":")[1];
                 let date = Number(new Date(this.selectedDate + " " + scanTime).getTime()) / 10000;
-                let dbPath = "CardWardMapping/" + cardNo;
+                if (this.userType == "External User") {
+                  if (this.cityName == "test" || this.cityName == "ecogram") {
+                    let wasteCategory = "";
+                    if (data[cardNo]["wasteCategory"] != undefined) {
+                      wasteCategory = data[cardNo]["wasteCategory"];
+                    }
 
-                let mapInstance = this.db.object(dbPath).valueChanges().subscribe((mapData) => {
-                  mapInstance.unsubscribe();
-                  if (mapData != null) {
-                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", mapData);
-                    let line = mapData["line"];
-                    let ward = mapData["ward"];
 
-                    dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
-
-                    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
-                      houseInstance.unsubscribe();
-                      let rfId = "";
-                      let personName = "";
-                      if (houseData != null) {
-                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", houseData);
-                        rfId = houseData["rfid"];
-                        personName = houseData["name"];
-                        this.wardScaanedList.push({
-                          wardNo: wardNo,
-                          cardNo: cardNo,
-                          time: scanTime,
-                          name: name,
-                          rfId: rfId,
-                          personName: personName,
-                          sno: Number(date),
-                        });
-                        this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
+                    this.wardScaanedList.push({
+                      wardNo: wardNo,
+                      cardNo: cardNumber,
+                      time: scanTime,
+                      name: name,
+                      rfId: "",
+                      personName: "",
+                      sno: Number(date),
+                      wasteCategory: wasteCategory
+                    });
+                    this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
                       Number(b.sno) < Number(a.sno) ? 1 : -1
                     );
-                      }
-                      
-                    });
+                    this.wardScanedListFiltered = this.wardScaanedList;
+                    this.totalScanedCards=this.wardScanedListFiltered.length;
                   }
-                });
+                  else {
+
+                    let dbPath = "CardWardMapping/" + cardNo;
+
+                    let mapInstance = this.db.object(dbPath).valueChanges().subscribe((mapData) => {
+                      mapInstance.unsubscribe();
+                      if (mapData != null) {
+                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", mapData);
+                        let line = mapData["line"];
+                        let ward = mapData["ward"];
+
+                        dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
+
+                        let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
+                          houseInstance.unsubscribe();
+                          let rfId = "";
+                          let personName = "";
+                          if (houseData != null) {
+                            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", houseData);
+                            rfId = houseData["rfid"];
+                            personName = houseData["name"];
+                            this.wardScaanedList.push({
+                              wardNo: wardNo,
+                              cardNo: cardNumber,
+                              time: scanTime,
+                              name: name,
+                              rfId: rfId,
+                              personName: personName,
+                              sno: Number(date),
+                              wasteCategory: ""
+                            });
+                            this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
+                              Number(b.sno) < Number(a.sno) ? 1 : -1
+                            );
+                            this.wardScanedListFiltered = this.wardScaanedList;
+                            this.totalScanedCards=this.wardScanedListFiltered.length;
+                          }
+
+                        });
+                      }
+                    });
+
+                  }
+                }
+                else {
+
+                  if (data[cardNo]["scanBy"] != "-1") {
+                    if (this.cityName == "test" || this.cityName == "ecogram") {
+                      let wasteCategory = "";
+                      if (data[cardNo]["wasteCategory"] != undefined) {
+                        wasteCategory = data[cardNo]["wasteCategory"];
+                      }
+                      this.wardScaanedList.push({
+                        wardNo: wardNo,
+                        cardNo: cardNumber,
+                        time: scanTime,
+                        name: name,
+                        rfId: "",
+                        personName: "",
+                        sno: Number(date),
+                        wasteCategory: wasteCategory
+                      });
+                      this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
+                        Number(b.sno) < Number(a.sno) ? 1 : -1
+                      );
+                      this.wardScanedListFiltered = this.wardScaanedList;
+                      this.totalScanedCards=this.wardScanedListFiltered.length;
+                    }
+                    else {
+                      let dbPath = "CardWardMapping/" + cardNo;
+                      let mapInstance = this.db.object(dbPath).valueChanges().subscribe((mapData) => {
+                        mapInstance.unsubscribe();
+                        if (mapData != null) {
+                          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", mapData);
+                          let line = mapData["line"];
+                          let ward = mapData["ward"];
+
+                          dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
+
+                          let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
+                            houseInstance.unsubscribe();
+                            let rfId = "";
+                            let personName = "";
+                            if (houseData != null) {
+                              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", houseData);
+                              rfId = houseData["rfid"];
+                              personName = houseData["name"];
+                              this.wardScaanedList.push({
+                                wardNo: wardNo,
+                                cardNo: cardNumber,
+                                time: scanTime,
+                                name: name,
+                                rfId: rfId,
+                                personName: personName,
+                                sno: Number(date),
+                              });
+                              this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
+                                Number(b.sno) < Number(a.sno) ? 1 : -1
+                              );
+                              this.wardScanedListFiltered = this.wardScaanedList;
+                              this.totalScanedCards=this.wardScanedListFiltered.length;
+                            }
+
+                          });
+                        }
+                      });
+                    }
+                  }
+                }
               }
             }
           }

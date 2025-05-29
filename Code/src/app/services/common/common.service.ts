@@ -300,6 +300,18 @@ export class CommonService {
     else if (cityName == "sanchore") {
       cardPrefix = "SAN";
     }
+    else if (cityName == "jaipur-civil-line") {
+      cardPrefix = "JAIC";
+    }
+    else if (cityName == "jaipur-kishanpole") {
+      cardPrefix = "JAIK";
+    }
+    else if (cityName == "jaunpur") {
+      cardPrefix = "JAUN";
+    }
+    else if (cityName == "mapusa-goa") {
+      cardPrefix = "MAP";
+    }
     return cardPrefix;
   }
 
@@ -494,6 +506,12 @@ export class CommonService {
     }
     else if (cityName == "jaunpur") {
       latLng.push({ lat: 25.7462391, lng: 82.6760959 });
+    }
+    else if (cityName == "mapusa-goa") {
+      latLng.push({ lat: 15.5908594, lng: 73.8086133 });
+    }
+    else if (cityName == "ecogram") {
+      latLng.push({ lat: 13.1836585, lng: 77.569515 });
     }
     return latLng;
   }
@@ -1094,6 +1112,7 @@ export class CommonService {
     this.setMarkerZone();
     this.setMarkingWards();
     this.setAllDepartments();
+    this.setAllZones(newDb)
   }
 
   setDesignation() {
@@ -1368,6 +1387,27 @@ export class CommonService {
         localStorage.setItem("allDustbin", JSON.stringify(allDustbinList));
       }
     });
+  }
+
+  setAllZones(newDb:any) {
+    let zoneList=[];
+    let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }, { zone: "QRT" }];
+    zoneList.push({ zoneNo: "0", zoneName: "-- Select --" });
+    let dbPath = "Tasks";
+    let zoneInstance = newDb.object(dbPath).valueChanges().subscribe(data => {
+      zoneInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let zone=keyArray[i];
+          let detail = hiddenList.find(item =>zone.toString().includes(item.zone.toString()));
+          if (detail == undefined) {
+            zoneList.push({ zoneNo: zone, zoneName: "Zone " +zone });
+          }
+        }
+      }
+      localStorage.setItem("allZoneList", JSON.stringify(zoneList));
+    })
   }
 
   setMarkingWards() {
@@ -2157,22 +2197,6 @@ export class CommonService {
     });
   }
 
-  checkImageExist(imagePath:any){
-    return new Promise((resolve) => {
-      const ref = this.storage.storage.app.storage(this.fireStoragePath).ref(imagePath); 
-      ref.getDownloadURL()
-      .then(() => resolve(true)).catch((error) => {
-        if (error.code === 'storage/object-not-found') {
-          resolve(false); // Image does not exist
-        } else {
-          console.error('Firebase error:', error);
-          throw error; // Some other error
-        }
-      });
-    
-    });
-  }
-
   getWardForLineWeitage() {
     return new Promise((resolve) => {
       let wardForWeightageList = [];
@@ -2314,5 +2338,22 @@ export class CommonService {
 
     }
     return '';
+  }
+
+  
+  checkImageExist(imagePath:any){
+    return new Promise((resolve) => {
+      const ref = this.storage.storage.app.storage(this.fireStoragePath).ref(imagePath); 
+      ref.getDownloadURL()
+      .then(() => resolve(true)).catch((error) => {
+        if (error.code === 'storage/object-not-found') {
+          resolve(false); // Image does not exist
+        } else {
+          console.error('Firebase error:', error);
+          throw error; // Some other error
+        }
+      });
+    
+    });
   }
 }

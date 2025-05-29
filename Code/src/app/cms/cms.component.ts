@@ -36,10 +36,10 @@ export class CmsComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.userid = localStorage.getItem("userID");
     if (localStorage.getItem("userType") == "External User") {
-      this.userType="1";
+      this.userType = "1";
     }
-    else{
-      this.userType="2";
+    else {
+      this.userType = "2";
     }
     this.isActual = localStorage.getItem("isActual");
     const id = this.actRoute.snapshot.paramMap.get("id");
@@ -79,29 +79,40 @@ export class CmsComponent implements OnInit {
       $("#span" + k).html(userAccessList[i]["name"]);
       // let className = $("#icon" + k).attr("class");
       // $("#icon" + k).addClass(className);
-      let imgElement=<HTMLImageElement>document.getElementById("icon" + k);
-      imgElement.src=userAccessList[i]["img"];
+      let imgElement = <HTMLImageElement>document.getElementById("icon" + k);
+      imgElement.src = userAccessList[i]["img"];
       // $("#icon" + k).addClass(userAccessList[i]["img"]);
       if (element != null) {
         element.addEventListener("click", (e) => {
           if (userAccessList[i]["url"].toString().includes("https")) {
-            this.goToOuterURL(userAccessList[i]["url"]);
+            if (localStorage.getItem("cityName") == "ajmer" && userAccessList[i]["pageId"] == "10A19") {
+              this.goToOuterURL(userAccessList[i]["url"]+"s");
+            }
+            else {
+              this.goToOuterURL(userAccessList[i]["url"]);
+            }
           }
           else {
-            this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+            if (localStorage.getItem("cityName") == "ajmer" && userAccessList[i]["pageId"] == "2Y" && localStorage.getItem("userType") == "External User") {
+              let url = "/ward-route-tracking";
+              this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + url);
+            }
+            else {
+              this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+            }
           }
         });
       }
     }
-    
+
     element = <HTMLElement>document.getElementById("divMob" + k);
     if (element != undefined) {
       $("#divMob" + k).show();
       $("#spanMob" + k).html(userAccessList[i]["name"]);
       // let className = $("#iconMob" + k).attr("class");
       // $("#iconMob" + k).removeClass(className);
-      let imgElement=<HTMLImageElement>document.getElementById("iconMob" + k);
-      imgElement.src=userAccessList[i]["img"];
+      let imgElement = <HTMLImageElement>document.getElementById("iconMob" + k);
+      imgElement.src = userAccessList[i]["img"];
       // $("#iconMob" + k).addClass(userAccessList[i]["img"]);
       if (element != null) {
         element.addEventListener("click", (e) => {
@@ -119,10 +130,10 @@ export class CmsComponent implements OnInit {
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
     if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
+      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
     }
     else {
-      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/"+this.userType+"/"+this.isActual+"/" + newUrl;
+      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
     }
     window.open(url, "_blank");
   }

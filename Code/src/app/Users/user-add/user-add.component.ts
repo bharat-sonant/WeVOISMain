@@ -174,6 +174,16 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canRemoveNotPickedDustbin"))).checked = true;
         }
       }
+      if (data["canAccessBIDashboard"] != undefined) {
+        if (data["canAccessBIDashboard"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canAccessBIDashboard"))).checked = true;
+        }
+      }
+      if (data["canAddWardDutyOn"] != undefined) {
+        if (data["canAddWardDutyOn"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canAddWardDutyOn"))).checked = true;
+        }
+      }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -275,6 +285,8 @@ export class UserAddComponent implements OnInit {
     let canViewAttendance:any=0;
     let canUpdateDustbinPickDetail:any=0;
     let canRemoveNotPickedDustbin:any=0;
+    let canAccessBIDashboard:any=0;
+    let canAddWardDutyOn:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -334,6 +346,10 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canViewAttendance = 1;
     element = <HTMLInputElement>document.getElementById("canRemoveNotPickedDustbin");
     if (element.checked == true) canRemoveNotPickedDustbin = 1;
+    element = <HTMLInputElement>document.getElementById("canAccessBIDashboard");
+    if (element.checked == true) canAccessBIDashboard = 1;
+    element = <HTMLInputElement>document.getElementById("canAddWardDutyOn");
+    if (element.checked == true) canAddWardDutyOn = 1;
     if (this.userid == null) {
       let lastKey = Number(this.userJsonData["lastKey"]) + 1;
       this.userid = lastKey;
@@ -370,7 +386,9 @@ export class UserAddComponent implements OnInit {
       canUpdateLeaveBalance:canUpdateLeaveBalance,
       canViewAttendance:canViewAttendance,
       canUpdateDustbinPickDetail:canUpdateDustbinPickDetail,
-      canRemoveNotPickedDustbin:canRemoveNotPickedDustbin
+      canRemoveNotPickedDustbin:canRemoveNotPickedDustbin,
+      canAccessBIDashboard:canAccessBIDashboard,
+      canAddWardDutyOn:canAddWardDutyOn
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

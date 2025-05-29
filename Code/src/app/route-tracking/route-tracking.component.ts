@@ -82,7 +82,7 @@ export class RouteTrackingComponent {
   vtsVehicleList: any[] = [];
   routePolyline: any[] = [];
   lblVTS = "#lblVTS";
-  chkVTS="#chkVTS";
+  chkVTS = "#chkVTS";
   userType: any;
   trackData: trackDetail =
     {
@@ -94,11 +94,11 @@ export class RouteTrackingComponent {
 
   ngOnInit() {
     this.userType = localStorage.getItem("userType");
-     if (this.userType == "External User") {
+    if (this.userType == "External User") {
       $(this.chkVTS).hide();
       $(this.lblVTS).hide();
-       // this.router.navigate(["/" + localStorage.getItem("cityName") + "/something-wrong"]);
-     }
+      // this.router.navigate(["/" + localStorage.getItem("cityName") + "/something-wrong"]);
+    }
     this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.savePageLoadHistory("Monitoring", "Route-Tracking", localStorage.getItem("userID"));
@@ -123,7 +123,7 @@ export class RouteTrackingComponent {
     this.getZoneList();
 
     this.setMaps();
-    const id = this.actRoute.snapshot.paramMap.get('id');
+    const id = this.actRoute.snapshot.paramMap.get('id1');
     if (id != null) {
       if (id.includes("~")) {
         let zoneUrl = id.toString().split("~")[0] + "(" + id.toString().split("~")[1] + ")";
@@ -136,7 +136,7 @@ export class RouteTrackingComponent {
     }
     else {
       setTimeout(() => {
-        this.selectedZone = "0";        
+        this.selectedZone = "0";
       }, 2000);
     }
   }
@@ -249,6 +249,9 @@ export class RouteTrackingComponent {
     else {
       $(this.lblVTS).html("Hide VTS Routes");
       $("#divVTSRoute").show();
+      let latLngCity = this.commonService.getDefaultCityLatLng();
+      let latCity = latLngCity[0]["lat"];
+      let lngCity = latLngCity[0]["lng"];
       if (this.vtsVehicleList.length == 0) {
         this.vtsVehicleName = "";
         let selectedYear = this.selectedDate.split("-")[0];
@@ -276,9 +279,20 @@ export class RouteTrackingComponent {
                 this.httpService.get(path).subscribe(data => {
                   if (data != null) {
                     let keyArray = Object.keys(data);
+                    let list = [];
                     for (let j = 0; j < keyArray.length - 2; j++) {
                       let time = keyArray[j];
-                      this.vtsVehicleList[i].routeList.push({ time: time, latLng: data[time] });
+                      let lat1 = Number(data[keyArray[j]].toString().split(",")[0]);
+                      let lng1 = Number(data[keyArray[j]].toString().split(",")[1]);
+                      let distance = this.getDistanceFromLatLonInKm(lat1, lng1, latCity, lngCity);
+                      if (distance < 20000) {
+                        list.push({ time: time, latLng: data[keyArray[j]] });
+                      }
+                    }
+                    for (let j = 0; j < list.length; j++) {
+                      let time = list[j]["time"];
+                      let latLng = list[j]["latLng"];
+                      this.vtsVehicleList[i].routeList.push({ time: time, latLng });
                     }
                     (<HTMLInputElement>document.getElementById("chk" + i)).checked = true;
                     this.drowVTSRoute(i);
@@ -703,6 +717,7 @@ export class RouteTrackingComponent {
       if (dutyOnOffList.length > 0) {
         let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
         this.routePathStore = [];
+        let routePathList = [];
         let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
           routePath => {
             vehicleTracking.unsubscribe();
@@ -726,7 +741,7 @@ export class RouteTrackingComponent {
               let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
               let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
               let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
-              
+
               if (this.userType == "External User") {
                 let newArray = keyArray.reverse();
                 let keyArrayNew = [];
@@ -752,10 +767,12 @@ export class RouteTrackingComponent {
                 for (let i = 0; i < keyArray.length; i++) {
                   let index = keyArray[i];
                   let time = index.toString().split('-')[0];
-                  if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
-                    let routeDateTime = new Date(this.selectedDate + " " + time);
-                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                      this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                  if (Number(routePath[index]["distance-in-meter"]) >0 ) {
+                    if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
+                      let routeDateTime = new Date(this.selectedDate + " " + time);
+                      if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                        routePathList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                      }
                     }
                   }
                 }
@@ -764,23 +781,95 @@ export class RouteTrackingComponent {
                 for (let i = 0; i < keyArray.length; i++) {
                   let index = keyArray[i];
                   let time = index.toString().split('-')[0];
-                  if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
-                    let routeDateTime = new Date(this.selectedDate + " " + time);
-                    if (!index.includes("-")) {
-                      if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                        this.routePathStore.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                  if (Number(routePath[index]["distance-in-meter"]) >0 ) {
+                    if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
+                      let routeDateTime = new Date(this.selectedDate + " " + time);
+                      if (!index.includes("-")) {
+                        if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                          routePathList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                        }
                       }
                     }
                   }
                 }
               }
+             // console.log(routePathList);
+              let latLngList = [];
+               this.routePathStore = routePathList;
+             // this.getLatLngList(routePathList);
+
+
               this.showDataOnMap();
+
+
+
             }
           });
 
       }
     });
+  }
 
+  getLatLngList(routePathList: any) {
+    let routeAllLatLngList = [];
+    for (let i = 0; i < routePathList.length; i++) {
+      let latLngList = routePathList[i]["latlng"].split('~');
+      for (let j = 0; j < latLngList.length; j++) {
+        let lat = latLngList[j].toString().replace("(", "").replace(")", "").split(",")[0];
+        let lng = latLngList[j].toString().replace("(", "").replace(")", "").split(",")[1];
+        routeAllLatLngList.push({ distanceinmeter: routePathList[i]["distanceinmeter"], time: routePathList[i]["time"], lat: lat, lng: lng });
+      }
+    }
+    console.log(routeAllLatLngList);
+    this.checkLatLngDistance(routeAllLatLngList, 0, []);
+  }
+
+  checkLatLngDistance(routeAllLatLngList: any, i: any, routeLatLngList: any) {
+    if (i == routeAllLatLngList.length - 1) {
+      console.log(routeAllLatLngList);
+      
+      let timeList = routeAllLatLngList.map(item => item.time)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      let finalRouteList = [];
+      for (let j = 0; j < timeList.length; j++) {
+        let filterList = routeAllLatLngList.filter(item => item.time == timeList[j]);
+        if (filterList.length > 0) {
+          let distanceinmeter = filterList[0]["distanceinmeter"];
+          let time = filterList[0]["time"];
+          let latLng = "";
+          for (let k = 0; k < filterList.length; k++) {
+            if (k == 0) {
+              latLng = "(" + filterList[k]["lat"] + "," + filterList[k]["lng"] + ")";
+            }
+            else {
+              let latLng1 = "(" + filterList[k]["lat"] + "," + filterList[k]["lng"] + ")";
+              latLng = latLng + "~" + latLng1;
+            }
+          }
+          finalRouteList.push({ distanceinmeter: distanceinmeter, time: time, latlng: latLng });
+        }
+      }
+      
+      // console.log(finalRouteList);
+      this.routePathStore = finalRouteList;
+      this.showDataOnMap();
+    }
+    else {
+      let lat1 = routeAllLatLngList[i]["lat"];
+      let lng1 = routeAllLatLngList[i]["lng"];
+      let lat2 = routeAllLatLngList[i + 1]["lat"];
+      let lng2 = routeAllLatLngList[i + 1]["lng"];
+      let checkDistance = Number(this.getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2));
+      if (checkDistance < 5) {
+        routeLatLngList.push({ distanceinmeter: routeAllLatLngList[i]["distanceinmeter"], time: routeAllLatLngList[i]["time"], lat: routeAllLatLngList[i]["lat"], lng: routeAllLatLngList[i]["lng"] });
+        i++;
+      }
+      else {
+        routeAllLatLngList.splice(i, 1);
+        console.log(i);
+      }
+      this.checkLatLngDistance(routeAllLatLngList, i, routeLatLngList);
+    }
   }
 
 
@@ -807,9 +896,11 @@ export class RouteTrackingComponent {
             let lat = lineData[lineData.length - 1]["lat"];
             let lng = lineData[lineData.length - 1]["lng"];
             let distance = this.getDistanceFromLatLonInKm(lat, lng, parseFloat(routePart[0]), parseFloat(routePart[1]));
+            // if (distance < 100) {
             let distanceInMeter = distance * 1000;
             totalDistance += distanceInMeter;
             lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: distance });
+            // }
           }
           else {
             lineData.push({ lat: parseFloat(routePart[0]), lng: parseFloat(routePart[1]), distance: 0 });

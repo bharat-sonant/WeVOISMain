@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: 'app-ward-work-percentage',
@@ -10,7 +11,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 })
 export class WardWorkPercentageComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, public httpService: HttpClient, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService) { }
 
   db: any;
   cityName: any;
@@ -37,7 +38,65 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   getZones() {
-    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    if (this.cityName == "jodhpur") {
+      this.getJodhpurWards();
+    }
+    else {
+      this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    }
+  }
+
+  getJodhpurWards() {
+
+
+    this.zoneList.push({ zoneNo: "0", zoneName: "-- Select --" });
+
+    let path = this.commonService.fireStoragePath + "Jodhpur%2FDefaults%2FAvailableWardJodhpur.json?alt=media";
+    let availableWardInstance = this.httpService.get(path).subscribe(data => {
+      availableWardInstance.unsubscribe();
+      let list = JSON.parse(JSON.stringify(data));
+
+      if (list.length > 0) {
+        for (let index = 0; index < list.length; index++) {
+          if (list[index] != null) {
+            if (!list[index].toString().includes("Test") && list[index] != "OfficeWork" && list[index] != "FixedWages" && list[index] != "BinLifting" && list[index] != "GarageWork" && list[index] != "Compactor" && list[index] != "SegregationWork" && list[index] != "GeelaKachra" && list[index] != "SecondHelper" && list[index] != "ThirdHelper") {
+              if (list[index].toString().includes("mkt")) {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Market " + list[index].toString().replace("mkt", ""), });
+              } else if (list[index].toString().includes("MarketRoute1")) {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Market 1" });
+              } else if (list[index].toString().includes("MarketRoute2")) {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Market 2" });
+              } else if (list[index].toString() == "WetWaste") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Wet 1" });
+              } else if (list[index].toString() == "WetWaste1") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Wet 2" });
+              } else if (list[index].toString() == "WetWaste2") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Wet 3" });
+              } else if (list[index].toString() == "WetWaste4") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Wet 4" });
+              } else if (list[index].toString() == "WetWaste5") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Wet 5" });
+              } else if (list[index].toString() == "WetWaste6") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Wet 6" });
+              } else if (list[index].toString() == "WetWaste7") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "Wet 7" });
+              } else if (list[index].toString() == "CompactorTracking1") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "CompactorTracking1", });
+              } else if (list[index].toString() == "CompactorTracking2") {
+                this.zoneList.push({ zoneNo: list[index], zoneName: "CompactorTracking2", });
+              } else if (list[index].toString().includes("Commercial") || list[index].toString().includes("Market")) {
+                this.zoneList.push({ zoneNo: list[index], zoneName: data[index], });
+              } else {
+                this.zoneList.push({ zoneNo: data[index], zoneName: "Zone " + data[index], });
+              }
+              //this.saveLocationHistory(data[index]);
+            }
+          }
+        }
+      }
+    }, error => {
+    });
+
   }
 
   saveData() {
@@ -144,9 +203,6 @@ export class WardWorkPercentageComponent implements OnInit {
                   expectedLines = wardTotalLines;
                 }
                 let updateLines = expectedLines - (completedLines + skippedLines);
-                console.log(completedLines)
-                console.log(skippedLines)
-                console.log(updateLines)
 
                 //$("#divLoader").hide();
                 this.updateLineStatus(dutyInTime, wardTotalLines, updateLines, wardLines, lineStatusList, skipLineList, expectedLines);
@@ -163,9 +219,6 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   updateLineStatus(dutyInTime: any, wardTotalLines: any, updateLines: any, wardLines: any, lineStatusList: any, skipLineList: any, expectedLine: any) {
-    
-    console.log("skipLineList")
-    console.log(skipLineList)
     let count = 1;
     let isNewLine = 0;
     for (let i = 1; i <= wardTotalLines; i++) {
@@ -217,10 +270,6 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   updateSummary(wardLines: any, wardTotalLines: any, dutyInTime: any, lineStatusList: any, expectedLine: any) {
-    console.log("updateSummary=>")
-    console.log(wardTotalLines);
-    console.log(expectedLine);
-    console.log(lineStatusList);
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSummary");
     let coveredLength = 0;
     let completedLines = 0;
@@ -246,9 +295,17 @@ export class WardWorkPercentageComponent implements OnInit {
               skippedLines++;
             }
           }
+
           percentage = ((completedLines / Number(wardTotalLines)) * 100).toFixed(2);
           let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/";
           this.db.object(dbPath).update({ completedLines: completedLines, skippedLines: skippedLines, wardCoveredDistance: coveredLength, updatedWorkPercentage: percentage });
+          let workPercentageDbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary/workPercentage";
+          let worPercentageInstance = this.db.object(workPercentageDbPath).valueChanges().subscribe(data => {
+            worPercentageInstance.unsubscribe();
+            if (data == null) {
+              this.db.object(dbPath).update({ workPercentage: "0" });
+            }
+          })
         }
         this.updateLocationHistoryNew(dutyInTime, lineStatusList, expectedLine, wardLines);
 
@@ -256,10 +313,6 @@ export class WardWorkPercentageComponent implements OnInit {
   }
 
   async updateLocationHistoryNew(dutyInTime: any, lineStatusList: any, expectedLine: any, wardLines: any) {
-    
-    console.log("updateLocationHistoryNew=>")
-    console.log(lineStatusList)
-    console.log(expectedLine)
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateLocationHistory");
     let lineList = [];
     let time = dutyInTime;
@@ -375,7 +428,7 @@ export class WardWorkPercentageComponent implements OnInit {
         this.getPreviousLocationHistory(index, list, time, wardLines);
       }
     }
-    else{
+    else {
       $("#divLoader").hide();
       this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
     }
