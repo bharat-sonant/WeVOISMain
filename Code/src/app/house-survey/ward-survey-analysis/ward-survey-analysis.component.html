@@ -218,7 +218,7 @@
         <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
 
     </div>
-    <div class="modal-body">
+    <div class="modal-body ">
 
         <div id="divStatus" class="content-scroll">
             <div class="row divStatus-iner">
@@ -364,7 +364,7 @@
                 </div>
             </div>
         </div>
-        <div id="divStatus" class="content-scroll">
+        <div id="divStatus" class="content-scroll contentscrollNd">
             <!-- <div class="row">
                 <div class="col-md-4" *ngFor="let dt of scannedCardList; let i=index" style="margin-right: -10px;">
                     <div class="row" style="margin: 0px;">
@@ -493,72 +493,86 @@
             <div class="row">
                 <div class="col-md-4 pe-0 " *ngFor="let dt of scannedCardList; let i=index ">
                     <div class="card card-detailss">
-                        <div class="card-body card-body-color">
-                            <div class="d-flex align-items-center gap-1 ">
-                                <div style="width: 33.33%; border-radius: 6px; overflow: hidden;">
+                        <div class="card-body card-body-color ">
+                            <div class="d-flex align-items-center gap-1 mb-3 ">
+                                <div style="width: 33.33%; border-radius: 6px; overflow: hidden;"
+                                    class="image-carousel">
                                     <div
                                         style="text-align: center; width: 31%!important; background-color: lightgray; font-size: 12px; z-index: 99; position: absolute; padding: 2px 2px; color: black; border-top-left-radius:6px ; border-top-right-radius:6px ;">
                                         Marker Image</div>
 
                                     <a href="{{dt.markerImageURL}}" target="_blank">
+
                                         <img [src]="dt.markerImageURL" class="imageurl" />
                                     </a>
 
                                 </div>
-                                <div style="width: 33.33%; border-radius: 6px; overflow: hidden;">
+                                <div style="width: 33.33%; border-radius: 6px; overflow: hidden;"
+                                    class="image-carousel">
                                     <a href="{{dt.imageURL}}" target="_blank">
                                         <img [src]="dt.imageURL" class="imageurl" />
                                     </a>
                                 </div>
-                                <div style="width: 33.33%; border-radius: 6px; overflow: hidden;">
+                                <div style="width: 33.33%; border-radius: 6px; overflow: hidden;"
+                                    class="image-carousel">
                                     <a href="{{dt.houseImageURL}}" target="_blank">
                                         <img [src]="dt.houseImageURL" class="imageurl" />
                                     </a>
                                 </div>
                             </div>
-                            <div class="d-flex  pt-4 pb-2 ">
-                                <div class="detailsurvey2">
-                                    <div class="d-flex  gap-1 mb-2 ">
-                                        <p class="m-0">Name <span>:</span></p>
-                                        <h4 class="m-0">{{dt.name}}</h4>
-                                        <img src="../../../assets/icons/edit-solid.svg" alt="Edit" class="solid-edit"
-                                            style="margin-right: 10px;" (click)="openHouseDetailPopup(i);" />
+                            <div class="datashow mb-2">
+                                <div class="d-flex">
+                                    <div class="detailsurvey2">
+                                        <div class="d-flex align-items: center justify-content-between   gap-1 mb-2 ">
+                                            <!-- <p class="m-0">Name <span>:</span></p> -->
+                                            <h4 class="m-0">{{dt.name}}</h4>
+                                            <img src="../../../assets/icons/edit-solid.svg" alt="Edit"
+                                                class="solid-edit" style="margin-right: 10px;"
+                                                (click)="openHouseDetailPopup(i);" />
+                                        </div>
+                                        <div class="d-flex mb-2 gap-1">
+                                            <!-- <p class="m-0">Mobile No. <span>:</span></p> -->
+                                            <h4 class="m-0">{{dt.mobile}}</h4>
+                                        </div>
+                                        <div class="d-flex gap-1">
+                                            <!-- <p class="m-0">Address <span>:</span></p> -->
+                                            <h4 class="m-0">{{dt.address}}</h4>
+                                        </div>
                                     </div>
-                                    <div class="d-flex mb-2 gap-1">
-                                        <p class="m-0">Mobile No. <span>:</span></p>
-                                        <h4 class="m-0">{{dt.mobile}}</h4>
-                                    </div>
-                                    <div class="d-flex gap-1">
-                                        <p class="m-0">Address <span>:</span></p>
-                                        <h4 class="m-0">{{dt.address}}</h4>
+                                    <div class="detailsurvey">
+                                        <div class="d-flex  gap-1 mb-2">
+                                            <!-- <p class="m-0">Card No. <span>:</span></p> -->
+                                            <h4 class="m-0">{{dt.cardNo}}</h4>
+
+                                        </div>
+                                        <div class="d-flex   gap-1">
+                                            <!-- <p class="m-0">Entity Type <span>:</span></p> -->
+                                            <h4 class="m-0">{{dt.entityType}} <Span class="editentity"><b
+                                                        [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b><img
+                                                        src="../../../assets/icons/edit-solid.svg" alt="Edit"
+                                                        class="solid-edit" [hidden]="isActionShow==true"
+                                                        (click)="openHouseTypePopup(i);" /></Span></h4>
+
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="detailsurvey">
-                                    <div class="d-flex  gap-1 mb-2">
-                                        <p class="m-0">Card No. <span>:</span></p>
-                                        <h4 class="m-0">{{dt.cardNo}}</h4>
-
-                                    </div>
-                                    <div class="d-flex   gap-1">
-                                        <p class="m-0">Entity Type <span>:</span></p>
-                                        <h4 class="m-0">{{dt.entityType}} <Span class="editentity"><b
-                                                    [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b><img
-                                                    src="../../../assets/icons/edit-solid.svg" alt="Edit"
-                                                    class="solid-edit" [hidden]="isActionShow==true"
-                                                    (click)="openHouseTypePopup(i);" /></Span></h4>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="card-footer cards-footers p-0">
-                            <div class="d-flex align-items-center  ">
                                 <div class="surveyobox ">
-                                    <div class="heading-box">
-                                        <h4>
-                                            survey by
+                                    <div class="heading-box mb-3">
+                                        <h4 class="heading">
+                                            Survey by <span style="color: #707070;">:</span>
                                         </h4>
+
+                                        <!-- <span style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;
+                                            <i class="far fa-eye eye-icon"
+                                                style="float: right !important; cursor: pointer;"
+                                                (click)="showEntity(dt.cardNo);"></i>
+                                            <img src="../../../assets/icons/eye-regular.svg" alt="Eye" style="width: 12px;"
+                                                class="cursor-pointer" (click)="showEntity(dt.cardNo);" />
+                                        </span> -->
+                                        <div class="surveyobox-details">
+                                            <h4 class="m-0  ">{{dt.surveyorName}}</h4>
+                                            <p class="m-0">( {{dt.surveyDate}} )</p>
+                                        </div>
                                         <span type="button" class=" position-relative Count-numbersur"
                                             [hidden]="dt.houseHoldCount==0">
                                             <img src="../../../assets/icons/eye-regular.svg" alt="Eye"
@@ -568,27 +582,37 @@
                                                 {{dt.houseHoldCount}}
                                             </span>
                                         </span>
-                                        <!-- <span style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;
-                                            <i class="far fa-eye eye-icon"
-                                                style="float: right !important; cursor: pointer;"
-                                                (click)="showEntity(dt.cardNo);"></i>
-                                            <img src="../../../assets/icons/eye-regular.svg" alt="Eye" style="width: 12px;"
-                                                class="cursor-pointer" (click)="showEntity(dt.cardNo);" />
-                                        </span> -->
-                                    </div>
-                                    <div class="surveyobox-details">
-                                        <h4 class="m-0  mb-1">{{dt.surveyorName}}</h4>
-                                        <p class="m-0">{{dt.surveyDate}}</p>
                                     </div>
 
-                                </div>
-                                <div class="approverbox p-0">
+                                    <div>
+                                        <div class="heading-box ">
+                                            <ng-container *ngIf="dt.approvedBy; else approveButton">
+                                                <h4 class="heading">Approver by <span style="color: #707070;">:</span>
+                                                </h4>
+                                                <div class="surveyobox-details">
+                                                    <h4 class="m-0 ">{{dt.approvedBy}}</h4>
+                                                    <p class="m-0">({{dt.approvedDate}})</p>
+                                                </div>
+                                            </ng-container>
+                                            <ng-template #approveButton>
+                                                <div class="Btn-approv"
+                                                    style="width: 100%; align-items: center; justify-content: center; display: flex; ">
+                                                    <span
+                                                        style="cursor: pointer; display: flex; border:1px solid #20a120; justify-content: center; align-items: center;width: 100%; height: 39px; border-radius: 4px; "
+                                                        (click)="openApprovePopup(dt.cardNo)">
+                                                        Approve
+                                                    </span>
+                                                </div>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="approverbox p-0">
                                     <ng-container *ngIf="dt.approvedBy; else approveButton">
                                         <div class="heading-box">
-                                            <h4>approver by</h4>
+                                            <h4>Approver by</h4>
                                         </div>
                                         <div class="surveyobox-details">
-                                            <h4 class="m-0 mb-1">{{dt.approvedBy}}</h4>
+                                            <h4 class="m-0 ">{{dt.approvedBy}}</h4>
                                             <p class="m-0">{{dt.approvedDate}}</p>
                                         </div>
                                     </ng-container>
@@ -604,9 +628,15 @@
                                         </span>
                                         </div>
                                     </ng-template>
+                                </div> -->
                                 </div>
                             </div>
+
+
                         </div>
+                        <!-- <div class="card-footer cards-footers p-0">
+
+                        </div> -->
                     </div>
                 </div>
             </div>
