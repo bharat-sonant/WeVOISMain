@@ -571,7 +571,7 @@
                                         </span> -->
                                         <div class="surveyobox-details">
                                             <h4 class="m-0  ">{{dt.surveyorName}}</h4>
-                                            <p class="m-0">( {{dt.surveyDate}} )</p>
+                                            <p class="m-0">,{{dt.surveyDate}}</p>
                                         </div>
                                         <span type="button" class=" position-relative Count-numbersur"
                                             [hidden]="dt.houseHoldCount==0">
@@ -591,7 +591,7 @@
                                                 </h4>
                                                 <div class="surveyobox-details">
                                                     <h4 class="m-0 ">{{dt.approvedBy}}</h4>
-                                                    <p class="m-0">({{dt.approvedDate}})</p>
+                                                    <p class="m-0">,{{dt.approvedDate}}</p>
                                                 </div>
                                             </ng-container>
                                             <ng-template #approveButton>
