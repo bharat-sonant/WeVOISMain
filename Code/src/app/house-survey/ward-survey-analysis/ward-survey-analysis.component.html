@@ -523,31 +523,28 @@
                             <div class="datashow mb-2">
                                 <div class="d-flex">
                                     <div class="detailsurvey2">
-                                        <div class="d-flex align-items: center justify-content-between   gap-1 mb-2 ">
+                                        <div class="d-flex align-items: center justify-content-between   gap-1 mb-1 ">
                                             <!-- <p class="m-0">Name <span>:</span></p> -->
                                             <h4 class="m-0">{{dt.name}}</h4>
                                             <img src="../../../assets/icons/edit-solid.svg" alt="Edit"
                                                 class="solid-edit" style="margin-right: 10px;"
                                                 (click)="openHouseDetailPopup(i);" />
                                         </div>
-                                        <div class="d-flex mb-2 gap-1">
+                                        <div class="d-flex mb-1 gap-1">
                                             <!-- <p class="m-0">Mobile No. <span>:</span></p> -->
                                             <h4 class="m-0">{{dt.mobile}}</h4>
                                         </div>
-                                        <div class="d-flex gap-1">
-                                            <!-- <p class="m-0">Address <span>:</span></p> -->
-                                            <h4 class="m-0">{{dt.address}}</h4>
-                                        </div>
+
                                     </div>
                                     <div class="detailsurvey">
-                                        <div class="d-flex  gap-1 mb-2">
+                                        <div class="d-flex  gap-1 mb-1">
                                             <!-- <p class="m-0">Card No. <span>:</span></p> -->
                                             <h4 class="m-0">{{dt.cardNo}}</h4>
 
                                         </div>
                                         <div class="d-flex   gap-1">
                                             <!-- <p class="m-0">Entity Type <span>:</span></p> -->
-                                            <h4 class="m-0">{{dt.entityType}} <Span class="editentity"><b
+                                            <h4 class="m-0" style="font-size: 10px;">{{dt.entityType}} <Span class="editentity"><b
                                                         [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b><img
                                                         src="../../../assets/icons/edit-solid.svg" alt="Edit"
                                                         class="solid-edit" [hidden]="isActionShow==true"
@@ -555,20 +552,18 @@
 
                                         </div>
                                     </div>
+
+                                </div>
+                                <div class="detailsurve">
+                                    <div class="d-flex gap-1">
+                                        <h4 class="m-0" style="font-size: 12px;" >{{dt.address}}</h4>
+                                    </div>
                                 </div>
                                 <div class="surveyobox ">
-                                    <div class="heading-box mb-3">
+                                    <!-- <div class="heading-box mb-3">
                                         <h4 class="heading">
                                             Survey by <span style="color: #707070;">:</span>
                                         </h4>
-
-                                        <!-- <span style="float: right !important; "><b>{{dt.houseHoldCount}}</b>&nbsp;
-                                            <i class="far fa-eye eye-icon"
-                                                style="float: right !important; cursor: pointer;"
-                                                (click)="showEntity(dt.cardNo);"></i>
-                                            <img src="../../../assets/icons/eye-regular.svg" alt="Eye" style="width: 12px;"
-                                                class="cursor-pointer" (click)="showEntity(dt.cardNo);" />
-                                        </span> -->
                                         <div class="surveyobox-details">
                                             <h4 class="m-0  ">{{dt.surveyorName}}</h4>
                                             <p class="m-0">,{{dt.surveyDate}}</p>
@@ -583,29 +578,71 @@
                                             </span>
                                         </span>
                                     </div>
+                                    <div class="heading-box ">
+                                        <ng-container *ngIf="dt.approvedBy; else approveButton">
+                                            <h4 class="heading">Approver by <span style="color: #707070;">:</span>
+                                            </h4>
+                                            <div class="surveyobox-details">
+                                                <h4 class="m-0 ">{{dt.approvedBy}}</h4>
+                                                <p class="m-0">,{{dt.approvedDate}}</p>
+                                            </div>
+                                        </ng-container>
+                                        <ng-template #approveButton>
+                                            <div class="Btn-approv"
+                                                style="width: 100%; align-items: center; justify-content: center; display: flex; ">
+                                                <span
+                                                    style="cursor: pointer; display: flex; border:1px solid #20a120; justify-content: center; align-items: center;width: 100%; height: 39px; border-radius: 4px; "
+                                                    (click)="openApprovePopup(dt.cardNo)">
+                                                    Approve
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                    </div> -->
 
-                                    <div>
-                                        <div class="heading-box ">
-                                            <ng-container *ngIf="dt.approvedBy; else approveButton">
-                                                <h4 class="heading">Approver by <span style="color: #707070;">:</span>
-                                                </h4>
-                                                <div class="surveyobox-details">
-                                                    <h4 class="m-0 ">{{dt.approvedBy}}</h4>
-                                                    <p class="m-0">,{{dt.approvedDate}}</p>
-                                                </div>
-                                            </ng-container>
-                                            <ng-template #approveButton>
-                                                <div class="Btn-approv"
-                                                    style="width: 100%; align-items: center; justify-content: center; display: flex; ">
-                                                    <span
-                                                        style="cursor: pointer; display: flex; border:1px solid #20a120; justify-content: center; align-items: center;width: 100%; height: 39px; border-radius: 4px; "
-                                                        (click)="openApprovePopup(dt.cardNo)">
-                                                        Approve
-                                                    </span>
-                                                </div>
-                                            </ng-template>
+                                    <!-- <div style="width: 50%;"> -->
+                                    <div class="heading-box  pe-3">
+                                        <h4 class="heading">
+                                            Survey by
+                                            <span type="button" class=" position-relative Count-numbersur "
+                                                style="padding-right: 15px; padding-top: 10px;"
+                                                [hidden]="dt.houseHoldCount==0">
+                                                <img src="../../../assets/icons/eye-regular.svg" alt="Eye"
+                                                    class="eyeregular" (click)="showEntity(dt.cardNo);" />
+                                                <span
+                                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge-text ">
+                                                    {{dt.houseHoldCount}}
+                                                </span>
+                                            </span>
+                                        </h4>
+                                        <div class="surveyobox-details">
+                                            <h4 class="m-0  ">{{dt.surveyorName}}</h4>
+                                            <p class="m-0">({{dt.surveyDate}})</p>
                                         </div>
+
                                     </div>
+                                    <div class="heading-box ">
+                                        <ng-container *ngIf="dt.approvedBy; else approveButton">
+                                            <h4 class="heading">Approver by
+                                            </h4>
+                                            <div class="surveyobox-details">
+                                                <h4 class="m-0 ">{{dt.approvedBy}}</h4>
+                                                <p class="m-0">({{dt.approvedDate}})</p>
+                                            </div>
+                                        </ng-container>
+                                        <ng-template #approveButton>
+                                            <div class="Btn-approv"
+                                                style="width: 100%; align-items: center; justify-content: center; display: flex; ">
+                                                <span
+                                                    style="cursor: pointer; display: flex; border:1px solid #20a120; justify-content: center; align-items: center;width: 100%; height: 39px; border-radius: 4px; "
+                                                    (click)="openApprovePopup(dt.cardNo)">
+                                                    Approve
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+
+
+
                                     <!-- <div class="approverbox p-0">
                                     <ng-container *ngIf="dt.approvedBy; else approveButton">
                                         <div class="heading-box">

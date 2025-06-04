@@ -1425,9 +1425,10 @@ button:focus {
 }
 .surveyobox{
     width: 100%;
-    margin-top: 16px;
-    padding: 12px 4px;
+    margin-top: 10px;
+    padding: 8px 4px 0px;
     border-top: 1px dotted #e3e3e3;
+    display: flex;
   
 }
 .eyeregular{
@@ -1437,28 +1438,28 @@ button:focus {
 
 .heading{
     margin: 0px;
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 500;
     color: #000;
-    // padding: 4px 16px;
-    width: 120px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    // padding: 4px 16px;
   
 
 }  
 .surveyobox-details{
- padding: 0px 16px;
+//  padding: 0px 16px;
  display: flex;
  align-items: center;
  gap: 2px;
 
 }
 .heading-box{
+    width: 50%;
     // border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
+    // display: flex;
+    // align-items: center;
     // justify-content: space-between;
     // padding: 6px 16px 6px 0px;
 
@@ -1483,11 +1484,9 @@ button:focus {
 }
 
 .surveyobox-details h4{
-// color: ;
-
    margin: 0px;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 500;
     color: #000;
    
 }
@@ -1504,6 +1503,10 @@ button:focus {
 .detailsurvey{
     width: 50%;
 }
+.detailsurve{
+    width: 100%;
+    padding-left: 5px;
+}
 .detailsurvey2 p{
     font-size: 12px;
     color: #000;
@@ -1516,7 +1519,7 @@ button:focus {
 .detailsurvey2 h4{
     font-size: 12px;
     color: #000;
-    font-weight: 600;
+    font-weight: 500;
     // width: calc(100% - 100px);
     padding-left: 5px;
     
@@ -1539,9 +1542,9 @@ button:focus {
     justify-content: space-between;
 }
 .detailsurvey h4{
-    font-size: 13px;
+    font-size: 12px;
     color: #000;
-    font-weight: 600;
+    font-weight: 500;
     // width: calc(100% - 100px);
     padding-left: 5px;
     
@@ -1571,7 +1574,7 @@ cursor: pointer;
     
 }
 .image-carousel img {
-  height: 160px;
+  height: 200px;
   object-fit: cover;
   border-radius: 8px;
   width: 100%;
