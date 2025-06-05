@@ -31,29 +31,29 @@
                     <h6>Houses</h6>
                 </div>
 
-                <div class="float-first fix-home-iner" style="padding-top: 5px;" [hidden]="isShowEntityExport==false">
+                <div class="float-first fix-home-iner" [hidden]="isShowEntityExport==false">
                     <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
                         (click)="getAllZoneHouseTypeList();"></i> -->
                     <img src="../../../assets/icons/file-export-solid.svg" alt="File"
-                        (click)="getAllZoneHouseTypeList();" class="cursor-pointer" width="22px" />
+                        (click)="getAllZoneHouseTypeList();" class="cursor-pointer" width="22px" style="margin-bottom: 6px;" />
                     <br>
                     <h6>Export Entity Types</h6>
                 </div>
 
-                <div class="float-first fix-home-iner" style="padding-top: 5px;" [hidden]="isShowEntityExport==false">
+                <div class="float-first fix-home-iner" [hidden]="isShowEntityExport==false">
                     <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;"
                         (click)="openExportMarkerData(contentExportMarkers);"></i> -->
                     <img src="../../../assets/icons/file-export-solid.svg" alt="File" class="cursor-pointer"
-                        (click)="openExportMarkerData(contentExportMarkers);" width="22px" />
+                        (click)="openExportMarkerData(contentExportMarkers);" width="22px" style="margin-bottom: 6px;" />
                     <br>
                     <h6>Export Markers</h6>
                 </div>
 
                 <div class="float-first fix-home-iner" style="padding-top: 0px;" [hidden]="isActionShow==false">
-                    <button class="refresh" (click)="updateMarkerCounts();">
+                    <button class="refresh" (click)="updateMarkerCounts();" style="all:unset">
                         <!-- <i class="fas fa-redo-alt"></i> -->
-                        <img src="../../../assets/icons/rotate-right-solid.svg" alt="Rotate" class="cursor-pointer"
-                            width="14" />
+                        <img src="../../../assets/icons/rotate-right-solid.svg" alt="Rotate" class="cursor-pointer icon-green"
+                            width="20" style="margin-bottom: 6px;margin-top: 2px;" />
                     </button><br>
                     <h6>{{markerData.lastUpdate}}</h6>
                 </div>
