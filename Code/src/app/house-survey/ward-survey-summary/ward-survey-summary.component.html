@@ -72,26 +72,26 @@
                         <h6>Total Houses</h6>
                     </div>
 
-                    <div class="float-fourth float-second2" style="padding-top: 5px;">
+                    <div class="float-fourth float-second2" >
                         <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="getAllZoneHouseTypeList();"></i> -->
-                        <img src="../../../assets/icons/file-export-solid.svg" alt="File" width="24"
+                        <img src="../../../assets/icons/file-export-solid.svg" alt="File" width="24" style="margin-bottom: 4px;"
                             class="icon-green cursor-pointer" (click)="getAllZoneHouseTypeList();" />
                         <br>
                         <h6>Entity Types</h6>
                     </div>
 
-                    <div class="float-fourth float-second2" style="padding-top: 5px;">
+                    <div class="float-fourth float-second2" >
                         <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #1fda2f;" (click)="openExportHouseData(contentExportHouses);"></i> -->
-                        <img src="../../../assets/icons/file-export-solid.svg" alt="File" width="24"
+                        <img src="../../../assets/icons/file-export-solid.svg" alt="File" width="24" style="margin-bottom: 4px;"
                             class="icon-green cursor-pointer" (click)="openExportHouseData(contentExportHouses);" />
                         <br>
                         <h6>Cards</h6>
                     </div>
 
                     <div class="float-first fix-home-iner" style="padding-top: 0px;" [hidden]="isActionShow==false">
-                        <button class="refresh" (click)="updateSurveyCounts();">
+                        <button class="refresh" (click)="updateSurveyCounts();" style="all:unset">
                             <!-- <i class="fas fa-redo-alt"></i> -->
-                            <img src="../../../assets/icons/rotate-right-solid.svg" alt="rotate-right" width="16" />
+                            <img src="../../../assets/icons/rotate-right-solid.svg" class="icon-green" alt="rotate-right" width="20" style="margin-bottom: 5px;margin-top: 3px;"/>
                         </button>
                         <br>
                         <h6>{{surveyData.lastUpdate}}</h6>
@@ -212,8 +212,7 @@
                                         <!-- <i class="fa-solid fa-table-list"></i> -->
                                         <img src="../../../assets/icons/table-list-solid.svg" alt="sync" width="24"
                                             class="icon-green" />
-                                    </span> <br> Entity
-                                    Types
+                                    </span> <br> Entity Types
                                 </h3>
                             </div>
                         </div>
@@ -480,8 +479,7 @@
         <h5 class="modal-title text-center" (click)="exportHouseTypeList('0');" style="color: green; cursor: pointer;">
             <!-- <i class="fa-solid fa-file-export"></i> -->
             <img src="../../../assets/icons/file-export-solid.svg" alt="file" width="18"/>&nbsp;
-            <span style="color: #000; font-size: 12px;">Export Entity
-                Type</span>
+            <span style="color: #000; font-size: 12px;">Export Entity Type</span>
         </h5>
         <button type="button" class="close" (click)="closeModel();" style="border: none;">
             <span aria-hidden="true">&times;</span>

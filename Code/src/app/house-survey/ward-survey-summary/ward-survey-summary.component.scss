@@ -599,12 +599,12 @@ label {
 }
 
 .float-first {
-    width: 125px;
+    width: 100px;
     float: left;
 }
 
 .float-second {
-    width: 110px;
+    width: 100px;
     float: left;
 }
 
@@ -614,7 +614,7 @@ label {
 }
 
 .float-fourth {
-    width: 102px;
+    width: 100px;
     float: left;
 }
 
@@ -1116,7 +1116,7 @@ label {
     .fix-home-outer {
         min-width: 50%;
         margin-left: auto;
-        margin-top: -30px !important;
+        // margin-top: -30px !important;
     }
 }
 
