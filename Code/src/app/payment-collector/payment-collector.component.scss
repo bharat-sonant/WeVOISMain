@@ -85,8 +85,19 @@ button:focus {
 
 .card-header {
     background: #fff !important;
-    padding: 15px 0px 15px 15px !important;
-    box-shadow: 0px 4px 4px #0e0e0e1a;
+    padding: 10px 16px 10px 16px !important;
+    // box-shadow: 0px 4px 4px #0e0e0e1a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eeee;
+}
+
+.card-header h5 {
+    font-size: 15px;
+    color: #000;
+    font-weight: 500;
+    margin-bottom: 0px;
 }
 
 //   .card-body{
@@ -117,7 +128,7 @@ button:focus {
 
 table td {
     font-size: 12px;
-    padding: 12px 7px;
+    padding: 10px 12px;
 }
 
 table th {
@@ -125,12 +136,17 @@ table th {
     color: #0ba118;
 }
 
+// .table-one-iner thead th {
+//     border-bottom: none !important;
+// }
+
 .table-wrapper th {
     position: sticky;
     top: 0;
     background-color: #f1f1f1 !important;
     color: #000;
     z-index: 11;
+    border: 1px solid #dee2e6;
 }
 
 tbody {
@@ -146,7 +162,7 @@ tbody {
 .main-panel .main-content {
     padding: 0 15px 15px;
     min-height: calc(100vh - 123px);
-    margin-top: -30px;
+    // margin-top: -30px;
 }
 
 .scrollbar-on.main-panel {
@@ -448,13 +464,16 @@ textarea:focus-visible {
     margin-top: 14px;
 }
 
-.table-heading .tbl-points {
+.tbl-points {
     font-weight: bold;
-    border-radius: 10px;
-    background: #0ba11714;
     color: #0ba118;
-    padding: 7px 20px;
-    font-size: 24px;
+    font-size: 20px;
+}
+.Point-table{
+   font-weight: 500;
+    color: #707070;
+    font-size: 13px; 
+    margin-bottom: 0px;
 }
 
 .mb-15 {
@@ -477,17 +496,16 @@ textarea:focus-visible {
     padding-right: 0px !important;
 }
 
-.table-one {
-    height: 88vh;
-    overflow: hidden;
-    overflow-y: scroll;
+
+.table-wrapper-one {
+  height: calc(100vh - 90px);
+    overflow: auto;
 }
 
 .table-scroll {
     padding: 0px;
-    height: 72vh;
-    overflow: hidden;
-    overflow-y: scroll;
+   height: calc(100vh - 257px);
+    overflow: auto;
 }
 
 
@@ -532,13 +550,13 @@ table tr:hover {
     padding-right: 7px;
 }
 
-.card-main-iner {
-    margin-top: -6px;
-}
+// .card-main-iner {
+//     margin-top: -6px;
+// }
 
 .card-body2 {
-    height: 90vh !important;
-    padding: 0px 10px 0px 0px;
+    // height: 90vh !important;
+    padding: 0px 0px 0px 0px;
     overflow: hidden;
 }
 
@@ -551,27 +569,22 @@ table tr:hover {
 
 .table-head1 {
     border-right: 1px solid #dee2e6;
-    width: 8%;
 }
 
 .table-head2 {
     border-right: 1px solid #dee2e6;
-    width: 25%;
 }
 
 .table-head3 {
     border-right: 1px solid #dee2e6;
-    width: 15%;
 }
 
 .table-head4 {
     border-right: 1px solid #dee2e6;
-    width: 15%;
 }
 
 .table-head5 {
     border-right: 1px solid #dee2e6;
-    width: 17%;
     padding-right: 20px;
 }
 
@@ -599,14 +612,14 @@ table tr:hover {
     cursor: pointer !important;
     font-size: 14px;
     color: #0ba118;
-    margin-right: 8px;
+    // margin-right: 8px;
 }
 
 .circle-icon {
     cursor: pointer !important;
     font-size: 14px;
     color: red;
-    margin-right: 8px;
+    // margin-right: 8px;
 }
 
 .edit-icon {
@@ -659,7 +672,8 @@ table tr:hover {
 .table-scroll-iner {
     border-bottom: 1px solid #dee2e6;
     border-left: 1px solid #dee2e6;
-    padding-bottom: 0px !important
+    padding-bottom: 0px !important;
+    margin-bottom: 0px;
 }
 
 .table-heading-1 {
@@ -668,7 +682,7 @@ table tr:hover {
 }
 
 .table-heading-2 {
-    padding-right: 20px;
+    // padding-right: 20px;
     border-right: 1px solid #dee2e6;
 }
 
@@ -746,6 +760,33 @@ table tr:hover {
     height: 45px;
 }
 
+
+// new css start payment collector page
+
+.collection-day-maine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.points-document {
+    width: 50%;
+    border: 1px solid #eee;
+    padding: 10px 16px;
+    border-radius: 4px;
+}
+
+.table>:not(:first-child) {
+    border-top: none;
+}
+.download-icon{
+    width: 15px;
+}
+
+
+
 @media only screen and (min-width:270px) and (max-width:576px) {
     .Surveyor-box {
         display: none;
@@ -816,6 +857,8 @@ table tr:hover {
 
 .export-span-iner {
     font-weight: normal;
+    margin-bottom: 0px;
+    font-size: 12px;
 
 }
 
@@ -828,6 +871,7 @@ table tr:hover {
     cursor: pointer;
     color: green;
     font-size: 20px;
+    width: 16px;
 }
 
 .cursor-pointer {
@@ -837,4 +881,11 @@ table tr:hover {
 // SVG icon color
 .icon-green {
     filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
+}
+
+.actionbttn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
