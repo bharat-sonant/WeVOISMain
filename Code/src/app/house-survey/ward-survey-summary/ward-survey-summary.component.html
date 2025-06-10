@@ -87,7 +87,8 @@
       </div>
       <div
         class="ward-summary-card"
-        (click)="showDateWiseDetail(contentDateWise, 'Cards')"
+        data-bs-toggle="modal"
+        data-bs-target="#contentDateWise"
       >
         <div class="ward-summary-card-img">
           <img
@@ -240,7 +241,8 @@
           <div
             class="table-line-info"
             style="cursor: pointer"
-            (click)="getZoneHouseTypeList(contentHouseType)"
+            data-bs-toggle="modal"
+            data-bs-target="#contentHouseType"
           >
             Entity Types
             <span class="tbl-info-count">
@@ -723,11 +725,9 @@
 <!--Survey Line End-->
 
 <!--Survey Line Start-->
-<ng-template #contentDateWise>
+<!-- <ng-template #contentDateWise>
   <span style="width: 50%; margin: 10px">
     Export
-    <!-- <i class="fa-solid fa-file-export" style="font-size: 20px; cursor: pointer; color: #0ba118;"
-            (click)="exportDateWiseCards();"></i> -->
     <img
       src="../../../assets/icons/file-export-solid.svg"
       alt="file"
@@ -766,47 +766,84 @@
       </table>
     </div>
   </div>
-</ng-template>
+</ng-template> -->
+
+<div
+  class="modal fade"
+  id="contentDateWise"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="showDateWiseDetail(contentDateWise, 'Cards')"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Export</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="table-survey" id="tblSurvey">
+          <table class="table">
+            <thead>
+              <th>Date</th>
+              <th class="text-right">
+                <span id="surveyType"></span>
+              </th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of surveyDateList; let i = index">
+                <td>
+                  {{ data.date }}
+                </td>
+                <td class="text-right">
+                  {{ data.count }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-default-success" (click)="exportDateWiseCards()">
+          Export
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Survey Line End-->
 
 <!--House Type  Start-->
-<ng-template #contentHouseType>
-  <div class="modal-header">
-    <h5
-      class="modal-title text-center"
-      (click)="exportHouseTypeList('0')"
-      style="color: green; cursor: pointer"
-    >
-      <!-- <i class="fa-solid fa-file-export"></i> -->
-      <img
-        src="../../../assets/icons/file-export-solid.svg"
-        alt="file"
-        width="18"
-      />&nbsp;
-      <span style="color: #000; font-size: 12px">Export Entity Type</span>
-    </h5>
-    <button
-      type="button"
-      class="close"
-      (click)="closeModel()"
-      style="border: none"
-    >
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div
-    class="modal-body content-scroll-outer"
-    style="padding-top: 20px; margin-left: -15px; margin-right: -15px"
-  >
-    <div id="divHouseStatus" class="content-scroll">
-      <div class="row">
-        <div class="table-wrapper table-one">
-          <table class="table table-one-iner">
+<!-- <ng-template #contentHouseType> -->
+<div
+  class="modal fade"
+  id="contentHouseType"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="getZoneHouseTypeList(contentHouseType)"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Export Entity Type</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="table-survey" id="divHouseStatus">
+          <table class="table">
             <thead>
-              <th class="ward-table-heading" style="width: 75%">Entity Type</th>
-              <th class="text-right Markers-table-heading" style="width: 25%">
-                Counts
-              </th>
+              <th style="width: 75%">Entity Type</th>
+              <th class="text-right" style="width: 25%">Counts</th>
             </thead>
             <tbody>
               <tr
@@ -814,20 +851,24 @@
                 id="tr{{ i }}"
                 *ngFor="let data of zoneHouseTypeList; let i = index"
               >
-                <td class="table-data" style="width: 75%">
+                <td style="width: 75%">
                   {{ data.houseType }}
                 </td>
-                <td class="text-right table-data" style="width: 25%">
+                <td class="text-right" style="width: 25%">
                   {{ data.counts }}
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+        <button class="btn-default-success" (click)="exportHouseTypeList('0')">
+          Export entity type
+        </button>
       </div>
     </div>
   </div>
-</ng-template>
+</div>
+<!-- </ng-template> -->
 <!--House Type End-->
 
 <!--Export House Start-->
@@ -843,14 +884,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-center">Export Cards</h5>
-        <!-- <button
-      type="button"
-      class="close"
-      (click)="closeModel()"
-      style="border: none"
-    >
-      <span aria-hidden="true">&times;</span>
-    </button> -->
         <button
           type="button"
           class="btn-close"
