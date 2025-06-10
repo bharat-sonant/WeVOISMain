@@ -41,7 +41,8 @@
 
       <div
         class="btn-default btn-export"
-        (click)="openExportHouseData(contentExportHouses)"
+        data-bs-toggle="modal"
+        data-bs-target="#contentExportHouses"
       >
         Cards
         <img
@@ -51,6 +52,7 @@
           width="24"
         />
       </div>
+
       <div
         class="btn-default btn-export"
         [hidden]="isActionShow == false"
@@ -829,47 +831,98 @@
 <!--House Type End-->
 
 <!--Export House Start-->
-<ng-template #contentExportHouses>
-  <div class="modal-header">
-    <h5 class="modal-title text-center">Export Cards</h5>
-    <button
+<!-- <ng-template #contentExportHouses> -->
+<div
+  class="modal fade"
+  id="contentExportHouses"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Export Cards</h5>
+        <!-- <button
       type="button"
       class="close"
       (click)="closeModel()"
       style="border: none"
     >
       <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div
-    class="modal-body content-scroll-outer"
-    style="padding-top: 20px; margin-left: -15px; margin-right: -15px"
-  >
-    <div id="divHouseStatus">
-      <div class="row">
-        <div class="col-md-12">
-          <select id="ddlZone" class="caret-select-vehicle">
-            <option *ngFor="let dt of wardList" value="{{ dt.zoneNo }}">
-              {{ dt.zoneNo }}
-            </option>
-          </select>
-        </div>
-        <div class="col-md-6" style="text-align: center; margin-top: 5px">
-          <button class="btn btn-success" (click)="exportCards()">
-            Export
-          </button>
-        </div>
-        <div class="col-md-6" style="text-align: center; margin-top: 5px">
-          <button
-            class="btn btn-danger"
-            (click)="closeModel()"
-            style="text-transform: uppercase"
-          >
-            Cancel
-          </button>
+    </button> -->
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body custom-modal-body">
+        <div id="divHouseStatus">
+          <div class="row">
+            <div class="col-md-12">
+              <select id="ddlZone" class="caret-select-vehicle w-100 mb-3">
+                <option *ngFor="let dt of wardList" value="{{ dt.zoneNo }}">
+                  {{ dt.zoneNo }}
+                </option>
+              </select>
+              <div class="dropdown">
+                <button
+                  class="custom-dropdown-btn"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  --All--
+                </button>
+
+                <ul class="dropdown-menu">
+                  <li *ngFor="let dt of wardList">
+                    <button class="dropdown-item" href="#">
+                      {{ dt.zoneNo }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-12 mt-3">
+              <div class="btn-footer-group">
+                <button class="btn-success btn-footer" (click)="exportCards()">
+                  Export
+                </button>
+                <button
+                  class="btn-cancel btn-footer"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</ng-template>
+</div>
+<!-- </ng-template> -->
+<!-- Modal -->
+<!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
 <!--Export House End-->
