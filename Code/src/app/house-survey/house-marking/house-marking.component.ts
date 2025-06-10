@@ -43,6 +43,8 @@ export class HouseMarkingComponent {
   public isAlreadyShow = false;
   isShowWardAndLine: any;
   houseTypeList: any[] = [];
+  markerUpdateHistoryList: any[] = [];
+  userId: any;
   divHouseType = "#divHouseType";
   divEditMarkerRemark = "#divEditMarkerRemark";
   divEntityCount = "#divEntityCount";
@@ -66,6 +68,8 @@ export class HouseMarkingComponent {
   approveLineNo = "#approveLineNo";
   deleteZoneNo = "#deleteZoneNo";
   deletelineNo = "#deleteLineNo";
+  txtMarkerMobileNo = "#txtMarkerMobileNo";
+  txtMarkerAddress = "#txtMarkerAddress";
   btnRemoveIncludedLines = "#btnRemoveIncludedLines";
   serviceName = "marker-approval";
   markerData: markerDetail = {
@@ -113,6 +117,8 @@ export class HouseMarkingComponent {
 
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.userId = localStorage.getItem("userID");
+    this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     this.commonService.savePageLoadHistory("Survey-Management", "Marker-Approval", localStorage.getItem("userID"));
     this.isActionShow = true;
     this.isShowWardAndLine = false;
@@ -507,7 +513,7 @@ export class HouseMarkingComponent {
               const totalHouses = data[index]['totalHouses'] || ''
               const totalPerson = data[index]['totalPerson'] || ''
               const wardNumber = data[index]['wardNumber'] || ''
-              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber });
+              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '' });
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
@@ -551,7 +557,7 @@ export class HouseMarkingComponent {
     })
   }
   getApproveUsername(ApproveId: any, index: any, zoneNo: any, lineNo: any) {
-    this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
+    
     let userDetail = this.userList.find(item => item.userId == ApproveId);
     if (userDetail != undefined) {
       let detail;
@@ -711,7 +717,7 @@ export class HouseMarkingComponent {
               const totalPerson = data[index]['totalPerson'] || ''
               const wardNumber = data[index]['wardNumber'] || ''
 
-              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber });
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '' });
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
@@ -810,8 +816,77 @@ export class HouseMarkingComponent {
       $(this.txtOwnerName).val(detail.ownerName);
       $(this.txtNoOfEntities).val(detail.servingCount);
       $(this.txtNoOfPerson).val(detail.persons);
+      $(this.txtMarkerMobileNo).val(detail.mobileNo);
+      $(this.txtMarkerAddress).val(detail.address);
+
     }
   }
+
+  divMarkerUpdateHistory="#divMarkerUpdateHistory";
+
+  showMarkerUpdateHistory(markerUpdateId: any) {
+    this.markerUpdateHistoryList=[];
+    let list = markerUpdateId.split(",");
+    const promises = [];
+    for (let i = 0; i < list.length; i++) {
+      promises.push(Promise.resolve(this.getMarkerUpdateHistory(list[i])));
+    }
+
+    Promise.all(promises).then((results) => {
+      for (let i = 0; i < results.length; i++) {
+        let userDetail=this.userList.find(item=>item.userId==results[i]["updatedById"]);
+        if(userDetail!=undefined){
+          results[i]["updatedById"]=userDetail.name;
+        }
+        let preEntityDetail=this.houseTypeList.find(item=>item.id==results[i]["preHouseTypeId"]);
+        if(preEntityDetail!=undefined){
+          results[i]["preHouseTypeId"]=preEntityDetail.houseType;
+        }
+        let entityDetail=this.houseTypeList.find(item=>item.id==results[i]["newHouseTypeId"]);
+        if(entityDetail!=undefined){
+          results[i]["newHouseTypeId"]=entityDetail.houseType;
+        }
+
+        this.markerUpdateHistoryList.push(results[i]);
+      }
+      $(this.divMarkerUpdateHistory).show();
+
+    });
+  }
+
+  getMarkerUpdateHistory(id: any) {
+    return new Promise((resolve) => {
+      let dbPath = "EntityMarkingData/MarkerUpdateHistory/" + id;
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let obj = {
+            address: data["address"],
+            mobileNo: data["mobileNo"],
+            newHouseTypeId: data["newHouseTypeId"],
+            ownerName: data["ownerName"],
+            persons: data["persons"],
+            preAddress: data["preAddress"],
+            preHouseTypeId: data["preHouseTypeId"],
+            preMobileNo: data["preMobileNo"],
+            preOwnerName: data["preOwnerName"],
+            prePersons: data["prePersons"],
+            preServingCount: data["preServingCount"],
+            servingCount: data["servingCount"],
+            updateDate: data["updateDate"],
+            updatedById: data["updatedById"],
+
+          }
+          resolve(obj);
+        }
+        else{
+          resolve(null);
+        }
+      })
+    });
+  }
+
+
 
   setEntitiesCounts(entityType: any) {
     if (entityType == "19" || entityType == "20") {
@@ -833,6 +908,7 @@ export class HouseMarkingComponent {
     }
   }
 
+
   updateHouseType() {
     let index = $(this.houseIndex).val();
     let zoneNo = $(this.houseWardNo).val();
@@ -841,6 +917,8 @@ export class HouseMarkingComponent {
     let ownerName = $(this.txtOwnerName).val();
     let servingCount = $(this.txtNoOfEntities).val().toString();
     let totalPerson = $(this.txtNoOfPerson).val();
+    let mobileNo = $(this.txtMarkerMobileNo).val();
+    let address = $(this.txtMarkerAddress).val();
 
     let type = $("#type").val();
     let detail;
@@ -853,6 +931,11 @@ export class HouseMarkingComponent {
     if (detail != undefined) {
       let preHouseTypeId = detail.houseTypeId;
       let modifiedHouseTypeHistoryId = detail.modifiedHouseTypeHistoryId;
+      let preOwnerName = detail.ownerName;
+      let preServingCount = detail.servingCount;
+      let prePersons = detail.persons;
+      let preMobileNo = detail.mobileNo;
+      let preAddress = detail.address;
       detail.houseTypeId = houseTypeId;
       let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
       if (houseTypeDetail != undefined) {
@@ -861,11 +944,13 @@ export class HouseMarkingComponent {
         detail.ownerName = ownerName;
         detail.servingCount = servingCount;
         detail.persons = totalPerson;
+        detail.mobileNo = mobileNo;
+        detail.address = address;
         let zoneNo = detail.zoneNo;
         let lineNo = detail.lineNo;
         if (detail.cardNumber != "") {
           if (houseTypeDetail.entityType == "residential") {
-            cardType = "आवासीय"
+            cardType = "आवासीय";
           }
           else {
             cardType = "व्यावसायिक";
@@ -878,20 +963,65 @@ export class HouseMarkingComponent {
           let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
             houseInstance.unsubscribe();
             if (data != null) {
-              this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, ownerName: ownerName, servingCount: houseServingCount, totalPerson: totalPerson });
+              this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, name: ownerName, mobile: mobileNo, address: address, servingCount: houseServingCount, totalPerson: totalPerson });
             }
           });
-
         }
         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-        this.db.object(dbPath).update({ houseType: houseTypeId, ownerName: ownerName, totalHouses: servingCount, totalPerson: totalPerson });
-        this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId, type);
+        this.db.object(dbPath).update({ houseType: houseTypeId, ownerName: ownerName, mobileNumber: mobileNo, address: address, totalHouses: servingCount, totalPerson: totalPerson });
+        let obj = {
+          preHouseTypeId: preHouseTypeId,
+          preOwnerName: preOwnerName,
+          preServingCount: preServingCount,
+          prePersons: prePersons,
+          preMobileNo: preMobileNo,
+          preAddress: preAddress,
+          newHouseTypeId: detail.houseTypeId,
+          ownerName: detail.ownerName,
+          servingCount: detail.servingCount,
+          persons: detail.persons,
+          mobileNo: detail.mobileNo,
+          address: detail.address,
+          updatedById: this.userId,
+          updateDate: this.commonService.getTodayDateTime()
+        }
+        this.saveUpdateHistory(obj, zoneNo, lineNo, index);
+
+        if (preHouseTypeId != houseTypeId) {
+          this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId, type);
+        }
       }
     }
     $(this.houseIndex).val("0");
     $(this.divHouseType).hide();
     this.commonService.setAlertMessage("success", "House Type updated successfully !!!");
   }
+
+
+  saveUpdateHistory(obj: any, zoneNo: any, lineNo: any, index: any) {
+    let lastKey = 1;
+    let dbPath = "EntityMarkingData/MarkerUpdateHistory";
+    let lastKeyInstance = this.db.object(dbPath + "/lastKey").valueChanges().subscribe(data => {
+      lastKeyInstance.unsubscribe();
+      if (data != null) {
+        lastKey = Number(data) + 1;
+      }
+      this.db.object(dbPath + "/" + lastKey).update(obj);
+      this.db.object(dbPath).update({ lastKey: lastKey });
+      dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
+      let markerUpdateId = lastKey.toString();
+      let markerUpdateInstance = this.db.object(dbPath + "/markerUpdateId").valueChanges().subscribe(updateId => {
+        markerUpdateInstance.unsubscribe();
+        if (updateId != null) {
+          markerUpdateId = updateId + "," + lastKey;
+        }
+        this.db.object(dbPath).update({ markerUpdateId });
+      });
+
+    })
+
+  }
+
 
   saveModifiedHouseTypeHistory(index: any, zoneNo: any, lineNo: any, modifiedHouseTypeHistoryId: any, preHouseTypeId: any, houseTypeId: any, type: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "saveModifiedHouseTypeHistory");
@@ -993,7 +1123,7 @@ export class HouseMarkingComponent {
     let windowWidth = $(window).width();
     let height = 870;
 
-    let width = windowWidth - 300;
+    let width = windowWidth - 100;
     height = (windowHeight * 90) / 100;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
 

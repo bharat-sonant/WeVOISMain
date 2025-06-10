@@ -539,16 +539,27 @@
                                     <div class="detailsurvey">
                                         <div class="d-flex  gap-1 mb-1">
                                             <!-- <p class="m-0">Card No. <span>:</span></p> -->
-                                            <h4 class="m-0">{{dt.cardNo}}</h4>
+                                            <h4 class="m-0" style="width: 100%;">{{dt.cardNo}} 
+                                                <span type="button" class=" position-relative "
+                                                style="padding-right: 15px; padding-top: 10px; z-index: 999; float: right;"
+                                                [hidden]="dt.houseHoldCount==0">
+                                                <img src="../../../assets/icons/eye-regular.svg" alt="Eye" style="margin-top:-25px;margin-right: 0px;"
+                                                     (click)="showEntity(dt.cardNo);" />
+                                                <span
+                                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge-text " style="margin-left: -10px;">
+                                                    {{dt.houseHoldCount}}
+                                                </span>
+                                            </span>
+                                            </h4>
 
                                         </div>
                                         <div class="d-flex   gap-1">
                                             <!-- <p class="m-0">Entity Type <span>:</span></p> -->
-                                            <h4 class="m-0" style="font-size: 10px;">{{dt.entityType}} <Span class="editentity"><b
-                                                        [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b><img
+                                            <h4 class="m-0" style="font-size: 10px;">{{dt.entityType}} <b
+                                                        [hidden]="dt.isCommercial==false">({{dt.servingCount}})</b> <span class="editentity"><img
                                                         src="../../../assets/icons/edit-solid.svg" alt="Edit"
                                                         class="solid-edit" [hidden]="isActionShow==true"
-                                                        (click)="openHouseTypePopup(i);" /></Span></h4>
+                                                        (click)="openHouseTypePopup(i);" /></span></h4>
 
                                         </div>
                                     </div>
@@ -603,16 +614,6 @@
                                     <div class="heading-box  pe-3">
                                         <h4 class="heading">
                                             Survey by
-                                            <span type="button" class=" position-relative Count-numbersur "
-                                                style="padding-right: 15px; padding-top: 10px;"
-                                                [hidden]="dt.houseHoldCount==0">
-                                                <img src="../../../assets/icons/eye-regular.svg" alt="Eye"
-                                                    class="eyeregular" (click)="showEntity(dt.cardNo);" />
-                                                <span
-                                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge-text ">
-                                                    {{dt.houseHoldCount}}
-                                                </span>
-                                            </span>
                                         </h4>
                                         <div class="surveyobox-details">
                                             <h4 class="m-0  ">{{dt.surveyorName}}</h4>

@@ -950,33 +950,23 @@ export class WardSurveyAnalysisComponent {
                     imageURL = this.commonService.fireStoragePath + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                   }
                 }
+                
                 let houseImageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["houseImage"] != null) {
                   if (data[i]["surveyorId"] == "-1") {
                     houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
                   }
                   else {
-
-                    let url1 = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
-                    let url2 = this.commonService.fireStoragePath + "Sikar" + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
-                    // if (city == "Sikar-Survey") {
-
-                    //   let isImageExist = await this.imageExists(url1);
-                    //    console.log(isImageExist)
-                    //   if (isImageExist == false) {
-                    //      houseImageURL = url2;
-                    //    }
-                    //    else {
-                    //     houseImageURL = url1;
-                    //    }
-                    //    console.log(houseImageURL);
-                    //  }
-                    //   else {
-                    houseImageURL = url1;
-                    //   }
+                    if (city == "Sikar-Survey") {
+                      this.getSikarHouseImages(data[i]["cardNo"], data[i]["houseImage"]);
+                    }
+                    else {
+                      houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+                    }
 
                   }
                 }
+
                 if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
                   className = "commercial-list";
                   isCommercial = true;
@@ -1035,28 +1025,24 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  async imageExists(url: string): Promise<boolean> {
-    try {
-      const response = await fetch(url, { method: 'HEAD' });
-      return response.ok && response.headers.get('Content-Type') && response.headers.get('Content-Type').startsWith('image/');
-      //return response.ok && response.headers.get('Content-Type')?.startsWith('image/')===true;
-      //return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  getHouseImageFromURL(url1: any, url2: any) {
-    return new Promise((resolve) => {
-      const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(url1);
-      ref.getDownloadURL()
-        .then((url) => {
-          resolve(url1)
-        })
-        .catch((error) => {
-          resolve(url2)
-        });
-    });
+  
+  getSikarHouseImages(cardNo: any, houseImage: any) {
+    let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + houseImage;
+    let urlSikar = "Sikar/SurveyHouseImage/" + houseImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.houseImageURL = this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.houseImageURL = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+        }
+      });
   }
 
   cancelHouseDetail() {
