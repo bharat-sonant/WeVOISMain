@@ -1586,6 +1586,109 @@ cursor: pointer;
 border-radius: 6px;
 }
 
+// css for udpate history
+
+.img-close-outer3 {
+    width: 100%;
+    text-align: right;
+    float: left;
+    // margin-top: 28px;
+    margin: -28px;
+}
 
 
 
+
+
+
+
+table td {
+    font-size: 12px;
+    padding: 12px 12px;
+}
+
+table th {
+    font-size: 14px;
+    color: #0ba118;
+}
+
+.table-wrapper th {
+    position: sticky;
+    top: 0;
+    background-color: #f1f1f1 !important;
+    color: #000;
+    z-index: 11;
+}
+
+tbody {
+    overflow-y: scroll;
+    // height: 80vh;
+}
+
+.table-one {
+    height: 70vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.table-scroll {
+    padding: 0px;
+    height: 70vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+table tr:hover {
+    background: #f3f3f3;
+}
+
+.table-one-iner {
+    border-bottom: 1px solid #dee2e6;
+    border-left: 1px solid #dee2e6;
+    margin-bottom: 0px !important
+}
+
+.table-heading1 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading2 {
+    border-right: 1px solid #dee2e6;
+    width: 25%;
+}
+
+.table-heading3 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading4 {
+    border-right: 1px solid #dee2e6;
+    width: 20%;
+}
+
+.table-heading5 {
+    border-right: 1px solid #dee2e6;
+    width: 15%;
+}
+
+.table-data1 {
+    border-right: 1px solid #dee2e6;
+}
+
+.table-data2 {
+    border-right: 1px solid #dee2e6;
+}
+
+.table-data3 {
+    border-right: 1px solid #dee2e6;
+}
+
+.table-data4 {
+    border-right: 1px solid #dee2e6;
+}
+
+.table-data5 {
+    border-right: 1px solid #dee2e6;
+}

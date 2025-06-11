@@ -315,6 +315,39 @@
                 </div>
             </div>
         </div>
+        <div id="divMarkerUpdateHistory"
+            style="display: none; position: absolute;z-index: 9999;background-color: #fff;  width: 80%; margin-left: 10%; margin-top: 20px; border: 1px solid lightgray;">
+            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Marker Update History</h5>
+            <div class="img-close-outer3">
+                <img src="../../../assets/img/close-grey.png" class="img-close"
+                    (click)="closeSubModel('#divMarkerUpdateHistory')">
+        
+            </div>
+            <div class="row" style="border-top: 1px solid lightgray; margin-right: 10px; margin-left: 10px;">
+                <div class="table-wrapper table-one">
+                    <table class="table table-one-iner">
+                        <thead>
+                            <th>Date</th>
+                            <th>Updated By</th>
+                            <th>Pre Name</th>
+                            <th>Name</th>
+                            <th>Pre-Mobile No</th>
+                            <th>Mobile No</th>
+                        </thead>
+                        <tbody>
+                            <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let dt of markerUpdateHistoryList; let i=index">
+                                <td>{{dt.date}}</td>
+                                <td>{{dt.updatedBy}}</td>
+                                <td>{{dt.preName}}</td>
+                                <td>{{dt.name}}</td>
+                                <td>{{dt.preMobile}}</td>
+                                <td>{{dt.mobile}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         <!-- popup for approve -->
         <div class="modal-body divStatus">
             <div id="divApprovePopup"
@@ -526,9 +559,16 @@
                                         <div class="d-flex align-items: center justify-content-between   gap-1 mb-1 ">
                                             <!-- <p class="m-0">Name <span>:</span></p> -->
                                             <h4 class="m-0">{{dt.name}}</h4>
-                                            <img src="../../../assets/icons/edit-solid.svg" alt="Edit"
-                                                class="solid-edit" style="margin-right: 10px;"
+                                            <div>
+                                                <img src="../../../assets/icons/edit-solid.svg" alt="Edit" class="solid-edit" style="margin-right: 10px;"
                                                 (click)="openHouseDetailPopup(i);" />
+                                                
+                                            <img src="../../../assets/icons/updateIcon.svg" alt="show history"
+                                                class="cursor-pointer solid-edit"
+                                                style="max-width: 25px;border: none;height: 15px;width: 15px;"
+                                                (click)="showMarkerUpdateHistory(dt.cardNo);" />
+
+                                            </div>
                                         </div>
                                         <div class="d-flex mb-1 gap-1">
                                             <!-- <p class="m-0">Mobile No. <span>:</span></p> -->
