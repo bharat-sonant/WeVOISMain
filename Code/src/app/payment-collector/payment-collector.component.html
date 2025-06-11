@@ -24,8 +24,6 @@
             <div class="card card-main-iner">
                 <div class="card-body card-body2">
                     <form>
-                        <!-- <div class="row">
-                            <div class="col-md-12 pr-1"> -->
                         <div class="table-wrapper table-one table-wrapper-one">
                             <table class="table table-one-iner">
                                 <thead>
@@ -37,7 +35,7 @@
                                         Assigned</th>
                                     <th class="text-center table-head3" style="width: 80px;">
                                         Status</th>
-                                    <th class="text-center table-head2" style="width: 140px;" >
+                                    <th class="text-center table-head2" style="width: 140px;">
                                         Action</th>
                                 </thead>
                                 <tbody>
@@ -56,7 +54,6 @@
                                             <span [hidden]="data.collectedAmount==0"><b> Collection :
                                                     {{data.collectedAmount}}</b></span>
                                         </td>
-
                                         <td class="text-center table-data-4">
                                             <span [hidden]="data.empId=='100'">
                                                 <span class="actives" [hidden]="data.isActive==false">
@@ -82,14 +79,11 @@
                                                     class="circle-icon cursor-pointer" alt="delete"
                                                     (click)="openModel(contentConfirmation,data.empId,'delete')"
                                                     title="Remove Assignment">
-
-
                                                 <a href="{{data.docImageUrl}}" target="blank" title="Document">
                                                     <!-- <i class="fa fa-download download-icon"
                                                                 style="color: green;padding-right: 10px;cursor: pointer;"></i> -->
-                                                    <img src="../../assets/icons/download-solid.svg" 
-                                                        class="download-icon cursor-pointer  icon-green"
-                                                        alt="download">
+                                                    <img src="../../assets/icons/download-solid.svg"
+                                                        class="download-icon cursor-pointer  icon-green" alt="download">
 
                                                 </a>
                                                 <a href="{{data.qrCodeImageUrl}}" target="blank" title="Qr Code">
@@ -107,12 +101,9 @@
                                             </span>
                                         </td>
                                     </tr>
-
                                 </tbody>
                             </table>
                         </div>
-                        <!-- </div>
-                        </div> -->
                     </form>
                 </div>
             </div>
@@ -198,11 +189,13 @@
                 <div class="card-body  ">
                     <div class="collection-day-maine">
                         <div class="points-document">
-                            <span class="tbl-points">{{collectionData.totalCollection}} </span><p class="Point-table">Total
-                            Collection</p>
+                            <span class="tbl-points">{{collectionData.totalCollection}} </span>
+                            <p class="Point-table">Total
+                                Collection</p>
                         </div>
                         <div class="points-document">
-                            <span class="tbl-points">{{collectionData.totalDays}}</span> <p class="Point-table">Working Days</p>
+                            <span class="tbl-points">{{collectionData.totalDays}}</span>
+                            <p class="Point-table">Working Days</p>
                         </div>
                     </div>
                     <form>
@@ -212,7 +205,6 @@
                                     <th class="table-heading-1">Date</th>
                                     <th class="text-right table-heading-2">
                                         Collection</th>
-
                                     <th class="text-right table-heading-2">
                                         Details</th>
                                 </thead>
@@ -223,19 +215,15 @@
                                         <td class="text-right markers-details">
                                             {{data.collection}}</td>
                                         <td class="text-right markers-details">
-
                                             <img src="../../assets/icons/eye-regular.svg" class="cursor-pointer"
                                                 (click)="openCollectionDetail(contentCollectionDetail,data.date);"
                                                 alt="eye">
                                         </td>
                                     </tr>
-
-
                                 </tbody>
                             </table>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
@@ -245,21 +233,32 @@
 
 <!--Delete Confirmation Start-->
 <ng-template #contentConfirmation>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-width" role="document" >
+        <div class="modal-content modal-content-width">
             <div class="modal-header">
-                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
-                    assignment ?</h5>
+                <!-- <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
+                    assignment ?</h5> -->
+                <h5 class="modal-title" id="exampleModalLongTitle">Delete Assignment</h5>
+                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
             </div>
             <div class="modal-body">
+
+                <div class="Delete-device">
+                    <img class="deleteImg" src="../../assets/img/deleteImg.png" >
+                    <p class="title-assignment">
+                        Are you sure you want to remove assignment ?
+                    </p>
+
+                </div>
+
                 <input type="hidden" id="deleteId" value="0" />
-                <div class="row">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="removeAssignment()">
+                <div class="buttonAss">
+                    <div class="Confirm">
+                        <button type="button" class="btn  w-100 submit-btn assignment-btn" (click)="removeAssignment()">
                             Confirm</button>
                     </div>
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                    <div class="cancel-btn-popup">
+                        <button type="button" class="btn  w-100 cancel-btn ass-cancel-btn" (click)="closeModel()">
                             Cancel</button>
                     </div>
                 </div>
@@ -269,20 +268,18 @@
 </ng-template>
 <!--Delete Confirmation End-->
 
-
 <!--ward assign  Start-->
 <ng-template #contentWard>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+    <!-- <div class="modal "> -->
+    <div class="modal-dialog modal-dialog-centered  modal-dialog-width" role="document">
+        <div class="modal-content modal-content-width">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward & Device</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
             </div>
             <div class="modal-body">
                 <input id="empID" type="hidden" value="0" />
-                <label>Device Serial No.</label>
+                <label class="label-title">Device Serial No.</label>
                 <div class="wrap-input-effects" required>
                     <select id="ddlDevice" class="input-green">
                         <option value="0">--Select Device--</option>
@@ -295,7 +292,7 @@
                         <img src="../../assets/icons/file-invoice-dollar-solid.svg" alt="file" aria-hidden="true">
                     </span>
                 </div>
-                <label [hidden]="isWardShow=='0'">Ward</label>
+                <label [hidden]="isWardShow=='0'" class="label-title">Ward</label>
                 <div class="wrap-input-effects" required [hidden]="isWardShow=='0'">
                     <select id="ddlWard" class="input-green" (change)="getLines($event.target.value);">
                         <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
@@ -307,13 +304,21 @@
                         <img src="../../assets/icons/map-location-dot-solid.svg" alt="marker" aria-hidden="true" />
                     </span>
                 </div>
-                <label [hidden]="isWardShow=='0'">Select Lines</label>
+                <label [hidden]="isWardShow=='0'" class="label-title">Select Lines</label>
                 <div class="wrap-input-effects" required [hidden]="isWardShow=='0'">
                     <div class="checkbox-scroll">
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-2 checkbox-div" *ngFor="let line of lineList">
                                 <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" />
                                 {{line.lineNo}}
+                            </div>
+                        </div> -->
+                        <div class="line-container">
+                            <div *ngFor="let line of lineList" class="line-box">
+                                <label class="line-count" for="chk{{line.lineNo}}">
+                                    <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" />
+                                    {{ line.lineNo }}
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -321,24 +326,27 @@
                 <div class="wrap-input-effects" required style="display: none;">
                     <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
                 </div>
-                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT"
-                    (click)="saveWard();" />
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success submit-btn click-input"
+                        (click)="saveWard();">SUBMIT</button>
+                </div>
             </div>
+
         </div>
     </div>
+    <!-- </div> -->
 </ng-template>
 <!--ward assign End-->
 
 
 <!--employee  Start-->
 <ng-template #contentEmployee>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-width  modal-dialog-centered" role="document">
+        <div class="modal-content modal-content-width">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
             </div>
             <div class="modal-body">
                 <input id="key" type="hidden" value="0" />
@@ -369,65 +377,67 @@
 
                     </span>
                 </div>
-                <div class="wrap-input-effects" required>
+                <div class="wrap-input-effects fileUploading" required>
                     <input id="fileUpload" type="file" (change)="getFileName();" accept="image/*">
+
                 </div>
                 <div class="wrap-input-effects" required>
                     <input class="active-input" type="checkbox" id="chkAcive"> Is Active
 
                 </div>
-                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
-                    (click)="saveEmployee();" />
+                <!-- <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" 
+                    (click)="saveEmployee();" /> -->
+                <div class="modal-footer ">
+                    <button type="button" class="btn btn-success submit-btn saveEmployee-input"
+                        (click)="saveEmployee();">SUBMIT</button>
+                </div>
             </div>
+
         </div>
     </div>
 </ng-template>
 <!--employee End-->
 
-
 <!--ward assign  Start-->
 <ng-template #contentCollectionDetail>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-width modal-dialog-centered" role="document">
+        <div class="modal-content modal-content-width">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Collection Detail</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <!-- <button type="button" class="close" (click)="closeModel();"> -->
+
+                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
+                <!-- </button> -->
             </div>
             <div class="modal-body">
-                <div class="col-md-12">
-                    <div class="table-wrapper table-scroll-popup table-scroll-2">
-                        <table class="table table-scroll-iner">
-                            <thead>
-                                <th>Card No</th>
-                                <th>
-                                    Payment Method</th>
-                                <th>
-                                    Merchant Transaction Id</th>
-                                <th>
-                                    Reference No</th>
-                                <th class="text-right">
-                                    Amount</th>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let data of collectionDetailList; let i=index">
-                                    <td class="date-details">
-                                        {{data.cardNo}}</td>
-                                    <td class="markers-details">
-                                        {{data.payMethod}}</td>
-                                    <td class="markers-details">
-                                        {{data.merchantTransactionId}}</td>
-                                    <td class="markers-details">
-                                        {{data.retrievalReferenceNo}}</td>
-                                    <td class="text-right markers-details">
-                                        {{data.transactionAmount}}</td>
-                                </tr>
-
-
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-wrapper table-scroll-popup table-scroll-2">
+                    <table class="table table-scroll-iner">
+                        <thead>
+                            <th>Card No</th>
+                            <th>
+                                Payment Method</th>
+                            <th>
+                                Merchant Transaction Id</th>
+                            <th>
+                                Reference No</th>
+                            <th class="text-right">
+                                Amount</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of collectionDetailList; let i=index">
+                                <td class="date-details">
+                                    {{data.cardNo}}</td>
+                                <td class="markers-details">
+                                    {{data.payMethod}}</td>
+                                <td class="markers-details">
+                                    {{data.merchantTransactionId}}</td>
+                                <td class="markers-details">
+                                    {{data.retrievalReferenceNo}}</td>
+                                <td class="text-right markers-details">
+                                    {{data.transactionAmount}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

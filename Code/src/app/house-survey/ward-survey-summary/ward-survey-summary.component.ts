@@ -1406,31 +1406,48 @@ export class WardSurveySummaryComponent implements OnInit {
     $(this.divEntityList).hide();
   }
 
+  // showDateWiseDetail(content: any, type: any) {
+  //   this.surveyDateList = [];
+  //   this.modalService.open(content, { size: "lg" });
+  //   let windowHeight = $(window).height();
+  //   let windowWidth = $(window).width();
+  //   let height = 870;
+  //   let width = 400;
+  //   height = (windowHeight * 90) / 100;
+  //   let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  //   let divHeight = height - 50 + "px";
+  //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+  //   $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+  //   $("div .modal-dialog-centered").css("margin-top", marginTop);
+  //   $("#tblSurvey").css("height", divHeight);
+  //   $('#surveyType').html(type);
+  //   if (type == "RFID Not Matched") {
+  //     this.getRFIDNotFound();
+  //   }
+  //   else if (type == "Revisit Requests") {
+  //     this.getRevisitRequests();
+  //   }
+  //   else {
+  //     this.getHouses();
+  //   }
+  // }
+
+// New function for the showDateWiseDetail Modal starts here //
   showDateWiseDetail(content: any, type: any) {
-    this.surveyDateList = [];
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let windowWidth = $(window).width();
-    let height = 870;
-    let width = 400;
-    height = (windowHeight * 90) / 100;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 50 + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#tblSurvey").css("height", divHeight);
-    $('#surveyType').html(type);
-    if (type == "RFID Not Matched") {
-      this.getRFIDNotFound();
-    }
-    else if (type == "Revisit Requests") {
-      this.getRevisitRequests();
-    }
-    else {
-      this.getHouses();
-    }
+  this.surveyDateList = [];
+  
+  $('#surveyType').html(type);
+  
+  if (type == "RFID Not Matched") {
+    this.getRFIDNotFound();
   }
+  else if (type == "Revisit Requests") {
+    this.getRevisitRequests();
+  }
+  else {
+    this.getHouses();
+  }
+}
 
   getHouses() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHouses");
@@ -1547,71 +1564,75 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
 
-  getZoneHouseTypeList(content: any) {
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
-    this.zoneHouseTypeList = [];
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 870;
-    let width = 400;
-    height = (windowHeight * 70) / 100;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 75 + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#divHouseStatus").css("height", divHeight);
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData:any) => {
-        markerInstance.unsubscribe();
-        if (markerData == null) {
-          this.closeModel();
-        }
-        else {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseTypeList", markerData);
-          let keyArray = Object.keys(markerData);
-          for (let i = 0; i < keyArray.length; i++) {
-            let lineNo = keyArray[i];
-            let lineData = markerData[lineNo];
-            let markerKeyArray = Object.keys(lineData);
-            for (let j = 0; j < markerKeyArray.length; j++) {
-              let markerNo = markerKeyArray[j];
-              const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;//condition for excluding data if external user
-              if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
-                let houseTypeId = lineData[markerNo]["houseType"];
-                let detail = this.houseTypeList.find(item => item.id == houseTypeId);
-                if (detail != undefined) {
-                  let houseType = detail.houseType;
-                  if (this.zoneHouseTypeList.length == 0) {
-                    let count = 0;
-                    if (lineData[markerNo]["cardNumber"] != null) {
-                      count = 1;
-                    }
-                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+getZoneHouseTypeList(content: any) {
+  this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
+  this.zoneHouseTypeList = [];
+  
+  // Remove this line - ye NgBootstrap modal open kar raha hai
+  // this.modalService.open(content, { size: "lg" });
+  
+  // Custom styling ko CSS mein move kar dein ya remove kar dein
+  // let windowHeight = $(window).height();
+  // let height = 870;
+  // let width = 400;
+  // height = (windowHeight * 70) / 100;
+  // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  // let divHeight = height - 75 + "px";
+  // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+  // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+  // $("div .modal-dialog-centered").css("margin-top", marginTop);
+  // $("#divHouseStatus").css("height", divHeight);
+  
+  let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
+  let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
+    markerInstance.unsubscribe();
+    if (markerData == null) {
+      this.closeModel();
+    }
+    else {
+      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseTypeList", markerData);
+      let keyArray = Object.keys(markerData);
+      for (let i = 0; i < keyArray.length; i++) {
+        let lineNo = keyArray[i];
+        let lineData = markerData[lineNo];
+        let markerKeyArray = Object.keys(lineData);
+        for (let j = 0; j < markerKeyArray.length; j++) {
+          let markerNo = markerKeyArray[j];
+          const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
+          if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
+            let houseTypeId = lineData[markerNo]["houseType"];
+            let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+            if (detail != undefined) {
+              let houseType = detail.houseType;
+              if (this.zoneHouseTypeList.length == 0) {
+                let count = 0;
+                if (lineData[markerNo]["cardNumber"] != null) {
+                  count = 1;
+                }
+                this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+              }
+              else {
+                let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                if (listDetail != undefined) {
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    listDetail.counts = listDetail.counts + 1;
                   }
-                  else {
-                    let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
-                    if (listDetail != undefined) {
-                      if (lineData[markerNo]["cardNumber"] != null) {
-                        listDetail.counts = listDetail.counts + 1;
-                      }
-                    }
-                    else {
-                      let count = 0;
-                      if (lineData[markerNo]["cardNumber"] != null) {
-                        count = 1;
-                      }
-                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
-                    }
+                }
+                else {
+                  let count = 0;
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    count = 1;
                   }
+                  this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                 }
               }
             }
           }
         }
       }
-    );
-  }
+    }
+  });
+}
 
   exportDateWiseCards() {
     if (this.surveyDateList.length > 0) {

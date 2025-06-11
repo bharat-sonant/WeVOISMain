@@ -1,3 +1,6 @@
+@import '../../assets/scss/variable';
+@import '../../assets//scss/fonts';
+
 .header {
     height: 57px;
     width: 100%;
@@ -127,13 +130,16 @@ button:focus {
 }
 
 table td {
-    font-size: 12px;
+    font-size: 13px;
     padding: 10px 12px;
+    font-family: $fontGraphik;
 }
 
 table th {
-    font-size: 14px;
+    font-size: 13px;
     color: #0ba118;
+    font-family: $fontGraphikMedium;
+    font-weight: normal;
 }
 
 // .table-one-iner thead th {
@@ -280,6 +286,9 @@ tbody {
     position: relative;
     width: 100%;
     margin-bottom: 10px;
+
+    display: flex;
+    gap: 10px;
 }
 
 .input-green {
@@ -288,11 +297,13 @@ tbody {
     color: #666666;
     display: block;
     width: 100%;
-    background: #fff;
+    background: $white;
     height: 40px;
     border-radius: 2px;
     padding: 0 12px 0 45px;
     border: 1px solid lightgray;
+    border-radius: 4px;
+    font-family: $fontGraphik;
 }
 
 .input-green::before {
@@ -301,11 +312,12 @@ tbody {
     color: #666666;
     display: block;
     width: 100%;
-    background: #fff;
+    background: $white;
     height: 40px;
     border-radius: 2px;
     padding: 0 25px 0 25px;
     border: 1px solid lightgray;
+    border-radius: 4px;
 }
 
 .input-green:focus {
@@ -316,6 +328,7 @@ tbody {
     color: #0ba118;
     padding-left: 12px;
     border: 1px solid #0ba118;
+    border-radius: 4px;
 
     img {
         filter: brightness(0) saturate(100%) invert(38%) sepia(94%) saturate(2178%) hue-rotate(90deg) brightness(100%) contrast(101%);
@@ -375,7 +388,7 @@ textarea {
 
 textarea {
     font-size: 12px;
-    color: #707070;
+    color: $black70;
 }
 
 textarea:focus-visible {
@@ -422,6 +435,10 @@ textarea:focus-visible {
 
 .submit-btn {
     background: #0ba118 !important;
+    height: 48px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0px;
 }
 
 .custom-header {
@@ -445,7 +462,8 @@ textarea:focus-visible {
 
 .modal-title {
     font-size: 18px;
-    font-weight: bold;
+    font-family: $fontGraphikSemibold;
+    color: $darkBlack;
 }
 
 .table-heading {
@@ -459,21 +477,24 @@ textarea:focus-visible {
     line-height: 32px;
     font-size: 12px;
     font-weight: normal;
-    color: #707070;
+    color: $black70;
     margin-bottom: 0px;
     margin-top: 14px;
 }
 
 .tbl-points {
-    font-weight: bold;
     color: #0ba118;
     font-size: 20px;
+    font-family: $fontGraphikMedium;
 }
-.Point-table{
-   font-weight: 500;
-    color: #707070;
-    font-size: 13px; 
+
+.Point-table {
+    font-weight: 500;
+    color: $black70;
+    font-size: 13px;
     margin-bottom: 0px;
+    font-family: $fontGraphik;
+
 }
 
 .mb-15 {
@@ -498,13 +519,13 @@ textarea:focus-visible {
 
 
 .table-wrapper-one {
-  height: calc(100vh - 90px);
+    height: calc(100vh - 90px);
     overflow: auto;
 }
 
 .table-scroll {
     padding: 0px;
-   height: calc(100vh - 257px);
+    height: calc(100vh - 257px);
     overflow: auto;
 }
 
@@ -522,11 +543,11 @@ table tr:hover {
 
 .active-tr {
     background: #0ba118;
-    color: #fff;
+    color: $white;
 }
 
 .active-tr i {
-    color: #fff !important;
+    color: $white !important;
 }
 
 .no-gutters-iner {
@@ -753,6 +774,8 @@ table tr:hover {
 
 .active-input {
     vertical-align: middle;
+    font-family: $fontGraphik;
+    font-size: 11px;
 }
 
 .saveEmployee-input {
@@ -781,11 +804,170 @@ table tr:hover {
 .table>:not(:first-child) {
     border-top: none;
 }
-.download-icon{
+
+.download-icon {
     width: 15px;
 }
 
 
+// Payment collection page css end
+
+.modal-header {
+    align-items: center;
+    border-radius: 0px;
+    padding: 16px 16px;
+    box-shadow: 0 8px 20px 0 #0000000a;
+    border-bottom: none;
+}
+
+.modal-dialog {
+    margin-top: 0px !important;
+}
+
+.modal-content {
+    border: none;
+}
+
+.close {
+    filter: brightness(0) saturate(100%) invert(36%) sepia(52%) saturate(0%) hue-rotate(8deg) brightness(94%) contrast(90%);
+    width: 52px;
+}
+
+.close:hover {
+    filter: brightness(0) saturate(100%) invert(29%) sepia(61%) saturate(2080%) hue-rotate(347deg) brightness(87%) contrast(91%);
+}
+
+.label-title {
+    margin-bottom: 4px;
+    font-size: 11px;
+    font-family: $fontGraphik;
+    color: $black70;
+}
+
+.line-container {
+    display: flex;
+    flex-wrap: wrap;
+    /* boxes will wrap to next line if needed */
+    gap: 12px;
+    /* spacing between boxes */
+
+}
+
+.line-box {
+    padding: 4px 12px;
+    background-color: $whitef5;
+    color: #000000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    position: relative;
+}
+
+.lineNo-checkbox {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 12px;
+    cursor: pointer;
+
+}
+
+.line-count {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 0px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.modal-content-width {
+    height: auto !important;
+}
+
+.modal {
+    display: flex;
+    align-items: center;
+    margin: 0px;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+
+.modal-footer {
+    padding: 0px;
+    margin-top: 30px;
+    border-top: 0px;
+}
+
+.fileUploading {
+    border: 1px solid $lightGray;
+    height: 40px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.Delete-device {
+    flex-direction: column !important;
+    display: flex;
+    align-items: center;
+}
+
+.deleteImg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+}
+
+.cancel-btn {
+    height: 48px;
+}
+
+.title-assignment {
+    font-size: 14px;
+    color: $darkBlack;
+    font-family: $fontGraphik;
+}
+.buttonAss{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.assignment-btn{
+    background-color: #f06548 !important;
+    font-family: $fontGraphikMedium;
+     font-weight: normal !important;
+     height: 40px !important;
+
+}
+.assignment-btn:hover{
+    background-color: #db4b2e !important;
+    
+    
+}
+.ass-cancel-btn{
+    background-color: $white;
+    border: 1px solid $borderColor;
+    color:$black70;
+    font-family: $fontGraphikSemibold;
+    font-weight: normal !important;
+      height: 40px !important;
+;
+    
+}
+.ass-cancel-btn:hover{
+    box-shadow: none;
+}
+.ass-cancel-btn:focus{
+    background-color: $white !important;
+    color:$black70;
+}
 
 @media only screen and (min-width:270px) and (max-width:576px) {
     .Surveyor-box {
@@ -842,9 +1024,10 @@ table tr:hover {
     height: 270px;
     overflow: hidden;
     overflow-y: scroll;
-    border: 1px solid lightgray;
+    border: 1px solid $lightGray;
     border-radius: 2px;
     padding: 10px;
+    width: 100%;
 }
 
 .export-span {
@@ -859,6 +1042,7 @@ table tr:hover {
     font-weight: normal;
     margin-bottom: 0px;
     font-size: 12px;
+    font-family: $fontGraphik;
 
 }
 
