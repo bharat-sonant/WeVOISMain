@@ -1735,3 +1735,13 @@ table tr:hover {
     border-top: 0px solid currentColor;
 }
 
+.table-height-control::-webkit-scrollbar-thumb{
+    border-radius: 6px;
+    height: 4px;
+    width: 4px;
+}
+.table-height-control::-webkit-scrollbar-track{
+    border-radius: 6px;
+     height: 4px;
+    width: 4px;
+}

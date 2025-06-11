@@ -29,7 +29,7 @@
                                 <thead>
                                     <th class="table-head1" style="width: 10px;">S.No.</th>
                                     <th class="table-head2" style="width: 220px;">Name</th>
-                                    <th class="table-head3" style="width: 50px;">Login ID
+                                    <th class="table-head3" style="width: 80px;">Login ID
                                     </th>
                                     <th class="text-left table-head3" style="width: 180px;">
                                         Assigned</th>
@@ -233,7 +233,7 @@
 
 <!--Delete Confirmation Start-->
 <ng-template #contentConfirmation>
-    <div class="modal-dialog modal-dialog-centered modal-dialog-width" role="document" >
+    <div class="modal-dialog modal-dialog-centered modal-dialog-width" role="document">
         <div class="modal-content modal-content-width">
             <div class="modal-header">
                 <!-- <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
@@ -244,7 +244,7 @@
             <div class="modal-body">
 
                 <div class="Delete-device">
-                    <img class="deleteImg" src="../../assets/img/deleteImg.png" >
+                    <img class="deleteImg" src="../../assets/img/deleteImg.png">
                     <p class="title-assignment">
                         Are you sure you want to remove assignment ?
                     </p>
@@ -286,11 +286,25 @@
                         <option value={{dt.device}} *ngFor="let dt of deviceList">
                             {{dt.device}}</option>
                     </select>
+
                     <span class="focus-input"></span>
                     <span class="symbol-input">
                         <!-- <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> -->
                         <img src="../../assets/icons/file-invoice-dollar-solid.svg" alt="file" aria-hidden="true">
                     </span>
+                </div>
+                <div class="dropdown">
+                    <button class="custom-dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        --Select Device--
+                    </button>
+
+                    <ul class="dropdown-menu">
+                        <li *ngFor="let dt of deviceList">
+                            <button class="dropdown-item" (click)="selectDevice(dt.device)">
+                                {{dt.device}}
+                            </button>
+                        </li>
+                    </ul>
                 </div>
                 <label [hidden]="isWardShow=='0'" class="label-title">Ward</label>
                 <div class="wrap-input-effects" required [hidden]="isWardShow=='0'">
