@@ -233,21 +233,32 @@
 
 <!--Delete Confirmation Start-->
 <ng-template #contentConfirmation>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-width" role="document" >
+        <div class="modal-content modal-content-width">
             <div class="modal-header">
-                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
-                    assignment ?</h5>
+                <!-- <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
+                    assignment ?</h5> -->
+                <h5 class="modal-title" id="exampleModalLongTitle">Delete Assignment</h5>
+                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
             </div>
             <div class="modal-body">
+
+                <div class="Delete-device">
+                    <img class="deleteImg" src="../../assets/img/deleteImg.png" >
+                    <p class="title-assignment">
+                        Are you sure you want to remove assignment ?
+                    </p>
+
+                </div>
+
                 <input type="hidden" id="deleteId" value="0" />
-                <div class="row">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="removeAssignment()">
+                <div class="buttonAss">
+                    <div class="Confirm">
+                        <button type="button" class="btn  w-100 submit-btn assignment-btn" (click)="removeAssignment()">
                             Confirm</button>
                     </div>
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                    <div class="cancel-btn-popup">
+                        <button type="button" class="btn  w-100 cancel-btn ass-cancel-btn" (click)="closeModel()">
                             Cancel</button>
                     </div>
                 </div>
@@ -367,7 +378,7 @@
                     </span>
                 </div>
                 <div class="wrap-input-effects fileUploading" required>
-                    <input  id="fileUpload" type="file" (change)="getFileName();" accept="image/*">
+                    <input id="fileUpload" type="file" (change)="getFileName();" accept="image/*">
 
                 </div>
                 <div class="wrap-input-effects" required>

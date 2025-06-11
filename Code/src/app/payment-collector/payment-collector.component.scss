@@ -912,6 +912,62 @@ table tr:hover {
     padding: 10px;
 }
 
+.Delete-device {
+    flex-direction: column !important;
+    display: flex;
+    align-items: center;
+}
+
+.deleteImg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+}
+
+.cancel-btn {
+    height: 48px;
+}
+
+.title-assignment {
+    font-size: 14px;
+    color: $darkBlack;
+    font-family: $fontGraphik;
+}
+.buttonAss{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.assignment-btn{
+    background-color: #f06548 !important;
+    font-family: $fontGraphikMedium;
+     font-weight: normal !important;
+     height: 40px !important;
+
+}
+.assignment-btn:hover{
+    background-color: #db4b2e !important;
+    
+    
+}
+.ass-cancel-btn{
+    background-color: $white;
+    border: 1px solid $borderColor;
+    color:$black70;
+    font-family: $fontGraphikSemibold;
+    font-weight: normal !important;
+      height: 40px !important;
+;
+    
+}
+.ass-cancel-btn:hover{
+    box-shadow: none;
+}
+.ass-cancel-btn:focus{
+    background-color: $white !important;
+    color:$black70;
+}
 
 @media only screen and (min-width:270px) and (max-width:576px) {
     .Surveyor-box {
