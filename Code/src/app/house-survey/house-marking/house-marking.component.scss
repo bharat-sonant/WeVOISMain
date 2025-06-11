@@ -1734,14 +1734,15 @@ table tr:hover {
 .table>:not(:first-child) {
     border-top: 0px solid currentColor;
 }
+.table-height-control::-webkit-scrollbar {
+    height: 10px !important;
+}
 
-.table-height-control::-webkit-scrollbar-thumb{
+.table-height-control::-webkit-scrollbar-thumb {
     border-radius: 6px;
-    height: 4px;
-    width: 4px;
 }
-.table-height-control::-webkit-scrollbar-track{
+
+.table-height-control::-webkit-scrollbar-track {
     border-radius: 6px;
-     height: 4px;
-    width: 4px;
 }
+
