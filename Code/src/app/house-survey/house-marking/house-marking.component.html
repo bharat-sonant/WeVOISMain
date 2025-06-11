@@ -431,83 +431,85 @@
                 </div>
             </div>
         </div>
-        
-    <div id="divMarkerUpdateHistory"
-        style="display: none; position: absolute;z-index: 9999;background-color: #fff;  width: 80%; margin-left: 10%; margin-top: 20px; border: 1px solid lightgray;">
-        <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Marker Update History</h5>
-        <div class="img-close-outer">
-            <img src="../../../assets/img/close-grey.png" class="img-close"
-                (click)="closeSubModel('#divMarkerUpdateHistory')">
 
-        </div>
-        <div class="row" style="border-top: 1px solid lightgray; margin-right: 10px; margin-left: 10px;">
-            <div class="table-wrapper table-one">
-                <table class="table table-one-iner">
-                    <thead>
-                        <th >Date</th>
-                        <th >
-                            User Name</th>
-                        <th >
-                            Pre-House Type</th>
-                        <th>
-                            House Type</th>
-                        <th >
-                            Pre-Owner Name</th>
-                        <th >
-                           Owner Name</th>
-                        <th >
-                            Pre-Mobile No</th>
-                        <th >
-                           Mobile No</th>
-                        <th >
-                            Pre-Address</th>
-                        <th >
-                           Address</th>
-                        <th >
-                            Pre-No of Persons</th>
-                        <th >
-                           No of Persons</th>
-                        <th >
-                            Pre-Serving Counts</th>
-                        <th >
-                           Serving Counts</th>
-                    </thead>
-                    <tbody>
-                        <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let dt of markerUpdateHistoryList; let i=index">
-                            <td >
-                                {{dt.updateDate}}</td>
-                            <td >
-                                {{dt.updatedById}}</td>
-                            <td >
-                                {{dt.preHouseTypeId}}</td>
-                            <td>
-                                {{dt.newHouseTypeId}}</td>
-                            <td >
-                                {{dt.preOwnerName}}</td>
-                            <td>
-                                {{dt.ownerName}}</td>
-                            <td >
-                                {{dt.preMobileNo}}</td>
-                            <td >
-                                {{dt.mobileNo}}</td>
-                            <td >
-                                {{dt.preAddress}}</td>
-                            <td >
-                                {{dt.address}}</td>
-                            <td >
-                                {{dt.prePersons}}</td>
-                            <td >
-                                {{dt.persons}}</td>
-                            <td >
-                                {{dt.preServingCount}}</td>
-                            <td >
-                                {{dt.servingCount}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div id="divMarkerUpdateHistory" class="modal-maine" >
+            <div class="modal-header show-modal-header">
+                <h5 class="modal-title title-marker">Marker Update History</h5>
+                <img src="../../../assets/icons/iconClose.png" class="img-close-btn"
+                    (click)="closeSubModel('#divMarkerUpdateHistory')">
+
+            </div>
+            <div class="modal-body modal-bodytable">
+                <div class="table-wrapper table-one table-height-control">
+                    <table class="table table-one-iner table-th">
+                        <thead>
+                            <th>Date</th>
+                            <th>
+                                User Name</th>
+                            <th>
+                                Pre-House Type</th>
+                            <th>
+                                House Type</th>
+                            <th>
+                                Pre-Owner Name</th>
+                            <th>
+                                Owner Name</th>
+                            <th>
+                                Pre-Mobile No</th>
+                            <th>
+                                Mobile No</th>
+                            <th>
+                                Pre-Address</th>
+                            <th>
+                                Address</th>
+                            <th>
+                                Pre-No of Persons</th>
+                            <th>
+                                No of Persons</th>
+                            <th>
+                                Pre-Serving Counts</th>
+                            <th>
+                                Serving Counts</th>
+                        </thead>
+                        <tbody>
+                            <tr style="cursor: pointer;" id="tr{{i}}"
+                                *ngFor="let dt of markerUpdateHistoryList; let i=index">
+                                <td>
+                                    {{dt.updateDate}}</td>
+                                <td>
+                                    {{dt.updatedById}}</td>
+                                <td>
+                                    {{dt.preHouseTypeId}}</td>
+                                <td>
+                                    {{dt.newHouseTypeId}}</td>
+                                <td>
+                                    {{dt.preOwnerName}}</td>
+                                <td>
+                                    {{dt.ownerName}}</td>
+                                <td>
+                                    {{dt.preMobileNo}}</td>
+                                <td>
+                                    {{dt.mobileNo}}</td>
+                                <td>
+                                    {{dt.preAddress}}</td>
+                                <td>
+                                    {{dt.address}}</td>
+                                <td>
+                                    {{dt.prePersons}}</td>
+                                <td>
+                                    {{dt.persons}}</td>
+                                <td>
+                                    {{dt.preServingCount}}</td>
+                                <td>
+                                    {{dt.servingCount}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+
+
         <div id="divConfirmApprove"
             style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width:550px">
             <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Confirm</h5>
@@ -572,7 +574,8 @@
                                 <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
                                     (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
                                     style="max-width: 25px;border: none;" />
-                                <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''" alt="show history" class="cursor-pointer"
+                                <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''"
+                                    alt="show history" class="cursor-pointer"
                                     (click)="showMarkerUpdateHistory(dt.markerUpdateId);"
                                     style="max-width: 25px;border: none;" />
                             </h3><br />
@@ -692,9 +695,10 @@
                                     <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
                                         (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
                                         [hidden]="isActionShow==false" style="max-width: 25px;border: none;" />
-                                <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''" alt="show history" class="cursor-pointer"
-                                    (click)="showMarkerUpdateHistory(dt.markerUpdateId);"
-                                    style="max-width: 25px;border: none;" />
+                                    <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''"
+                                        alt="show history" class="cursor-pointer"
+                                        (click)="showMarkerUpdateHistory(dt.markerUpdateId);"
+                                        style="max-width: 25px;border: none;" />
                                 </h3><br />
                                 <span [hidden]="dt.status==''">
                                     <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
@@ -816,9 +820,10 @@
                                     <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
                                         (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');"
                                         [hidden]="isActionShow==false" style="max-width: 25px;border: none;" />
-                                <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''" alt="show history" class="cursor-pointer"
-                                    (click)="showMarkerUpdateHistory(dt.markerUpdateId);"
-                                    style="max-width: 25px;border: none;" />
+                                    <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''"
+                                        alt="show history" class="cursor-pointer"
+                                        (click)="showMarkerUpdateHistory(dt.markerUpdateId);"
+                                        style="max-width: 25px;border: none;" />
                                 </h3><br />
                                 <span [hidden]="dt.status==''">
                                     <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
@@ -1049,7 +1054,7 @@
         </div>
     </div>
 
-    
+
 
     <div class="modal-body divStatus">
         <div id="divStatus" class="content-scroll">
