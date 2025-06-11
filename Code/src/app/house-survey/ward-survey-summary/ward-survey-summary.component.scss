@@ -242,7 +242,8 @@
     }
 
     &:nth-last-child(2) {
-            color: $themeColor;
+        color: $themeColor;
+
         &:hover {
             cursor: pointer;
             color: $themeColorDark;
@@ -292,6 +293,133 @@
     &:hover {
         background-color: $themeColorDark;
     }
+}
+
+.survey-data {
+    height: calc(100vh - 180px);
+    overflow: auto;
+}
+
+.servey-image-group {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.servey-image-card {
+    width: calc(100% / 3 - 11px);
+    border-radius: 6px;
+    transition: 0.2s;
+    &:hover {
+        box-shadow: 0 10px 20px 0 #0000000f;
+    }
+
+}
+
+.servey-image-header {
+    height: 200px;
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+}
+
+.servey-image-inner-box {
+    position: relative;
+    width: calc(100% / 3);
+    background-color: $whitef5;
+}
+
+.servey-image-label {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background-color: $themeColor;
+    color: $white;
+    border-radius: 3px;
+    padding: 3px 6px;
+    font-size: 10px;
+    font-family: $fontGraphikMedium;
+    letter-spacing: 0.3px;
+}
+
+.survey-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.survey-img-1 {
+    border-top-left-radius: 6px;
+}
+
+.survey-img-3 {
+    border-top-right-radius: 6px;
+}
+
+.servey-image-inner-box-1 {
+    border-right: 1px solid $borderColor;
+
+}
+
+.servey-image-inner-box-3 {
+    border-left: 1px solid $borderColor;
+
+}
+
+.servey-image-body {
+    display: flex;
+    width: 100%;
+    background-color: $whitefa;
+}
+
+.servey-body-left {
+    padding: 10px;
+    border-right: 1px solid $borderColor;
+    width: 50%;
+}
+
+.servey-body-right {
+    padding: 10px;
+    width: 50%;
+}
+
+.survey-info-text {
+    font-size: 12px;
+    margin-bottom: 3px;
+    color: $lightBlack;
+    font-family: $fontGraphik;
+
+    &:nth-last-child(1) {
+        margin-bottom: 0px;
+    }
+}
+
+.survey-text-bold {
+    font-size: 12px;
+    color: $darkBlack;
+    font-family: $fontGraphikMedium;
+}
+
+.icon-edit {
+    width: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        filter: brightness(0) saturate(100%) invert(67%) sepia(15%) saturate(1915%) hue-rotate(71deg) brightness(88%) contrast(85%);
+    }
+}
+
+.icon-eye {
+    width: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        filter: brightness(0) saturate(100%) invert(67%) sepia(15%) saturate(1915%) hue-rotate(71deg) brightness(88%) contrast(85%);
+    }
+
 }
 
 /*** Table CSS Starts here ***/
@@ -350,6 +478,15 @@
 /*** Table CSS Ends here ***/
 
 /*** Custom Modal CSS Starts here ***/
+.modal-survey {
+    max-width: 85%;
+    height: 90vh;
+}
+
+.modal-survey .modal-content {
+    height: 100%;
+}
+
 .modal-content {
     border: none;
 }
@@ -1627,19 +1764,21 @@ label {
 }
 
 .house-list {
-    border: 1px solid lightgray;
-    border-radius: 5px;
-    padding: 5px;
-    margin-bottom: 10px !important;
-    background-color: #f1f1f1;
+    border-style: solid;
+    border-width: 1px;
+    border-color: $borderColor;
+    background-color: $whitefa;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 .commercial-list {
-    border: 1px solid lightgray;
-    border-radius: 5px;
-    padding: 5px;
-    margin-bottom: 10px !important;
-    background-color: #b5f8c6;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #0ab39c;
+    background-color: #0ab39c25;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 .cursor-pointer {

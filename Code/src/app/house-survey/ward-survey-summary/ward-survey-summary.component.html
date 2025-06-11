@@ -18,10 +18,13 @@
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <ul class="ul-breadcrumb">
           <li class="li-breadcrumb">
-            <a class="link-breadcrumb" href="#">Survey Management</a>
+            <a class="link-breadcrumb"  [routerLink]="['/', cityId, 'home']">Home</a>
           </li>
           <li class="li-breadcrumb">
-            <a class="link-breadcrumb" href="#">Surveyor Management</a>
+            <a class="link-breadcrumb" href="">Survey Management</a>
+          </li>
+          <li class="li-breadcrumb">
+            <a class="link-breadcrumb" href="">Surveyor Management</a>
           </li>
           <li class="li-breadcrumb">Ward Survey Summary</li>
         </ul>
@@ -303,10 +306,11 @@
                 </td>
                 <td class="text-center">
                   <img
-                    src="../../../assets/icons/eye-regular.svg"
-                    style="max-width: 25px"
-                    class="cursor-pointer"
+                    src="../../../assets/img/iconEye.png"
+                    class="cursor-pointer icon-eye"
                     [hidden]="data.survyed == 0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#contentLineSurveyed"
                     (click)="
                       showLineDetail(
                         contentLineSurveyed,
@@ -328,551 +332,9 @@
       </div>
     </div>
   </div>
-  <!-- <section class="header">
-    <div class="row no-gutters">
-      <div class="col-md-3 no-gutters-iner">Ward Survey Summary</div>
-      <div class="col-md-9 text-right total-house fix-home-outer">
-        <div class="display" id="popup">
-          <div class="fix-home">
-            <div class="float-first">
-              <img
-                src="../../../assets/icons/house-solid.svg"
-                alt="House"
-                width="20"
-                class="icon-blue"
-              />
-              <span class="house" style="top: 3px; position: relative">
-                {{ surveyData.totalMarkers }}</span
-              ><br />
-              <h6>Total Marker</h6>
-            </div>
-            <div
-              class="float-second float-second2"
-              (click)="showDateWiseDetail(contentDateWise, 'Cards')"
-            >
-              <img
-                src="../../../assets/icons/house-chimney-crack-solid.svg"
-                alt="Chimney"
-                width="20"
-                class="green-filter"
-              />
-              <span class="house" style="top: 3px; position: relative">
-                {{ surveyData.totalSurveyed }}</span
-              ><br />
-              <h6>Cards</h6>
-            </div>
-            <div class="float-third float-second2" style="display: none">
-              <img
-                src="../../../assets/icons/house-chimney-crack-solid.svg"
-                alt="Chimney"
-                width="20"
-                class="green-filter"
-              />
-              <span class="house" style="top: 3px; position: relative">
-                {{ surveyData.totalRevisit }}</span
-              ><br />
-              <h6>Revisit Request</h6>
-            </div>
-            <div
-              class="float-fourth float-second2"
-              style="display: none"
-              (click)="showDateWiseDetail(contentDateWise, 'RFID Not Matched')"
-            >
-              <img
-                src="../../../assets/icons/house-chimney-crack-solid.svg"
-                alt="Chimney"
-                width="20"
-                class="green-filter"
-              />
-              <span class="house" style="top: 3px; position: relative">
-                {{ surveyData.totalOldCards }}</span
-              ><br />
-              <h6>RFID not matched</h6>
-            </div>
-            <div class="float-fourth float-second2">
-              <img
-                src="../../../assets/icons/house-chimney-crack-solid.svg"
-                alt="Chimney"
-                width="20"
-                class="green-filter"
-              />
-              <span class="house" style="top: 3px; position: relative">
-                {{ surveyData.totalResidential }}</span
-              ><br />
-              <h6>Residential</h6>
-            </div>
-            <div class="float-fourth float-second2">
-              <img
-                src="../../../assets/icons/house-chimney-crack-solid.svg"
-                alt="Chimney"
-                width="20"
-                class="green-filter"
-              />
-              <span class="house" style="top: 3px; position: relative">
-                {{ surveyData.totalCommercial }}</span
-              ><br />
-              <h6>Commercial</h6>
-            </div>
-            <div class="float-fourth float-second2">
-              <img
-                src="../../../assets/icons/house-chimney-crack-solid.svg"
-                alt="Chimney"
-                width="20"
-                class="green-filter"
-              />
-              <span class="house" style="top: 3px; position: relative">
-                {{ surveyData.totalHouses }}</span
-              ><br />
-              <h6>Total Houses</h6>
-            </div>
-
-            <div class="float-fourth float-second2">
-              <img
-                src="../../../assets/icons/file-export-solid.svg"
-                alt="File"
-                width="24"
-                style="margin-bottom: 4px"
-                class="icon-green cursor-pointer"
-                (click)="getAllZoneHouseTypeList()"
-              />
-              <br />
-              <h6>Entity Types</h6>
-            </div>
-
-            <div class="float-fourth float-second2">
-              <img
-                src="../../../assets/icons/file-export-solid.svg"
-                alt="File"
-                width="24"
-                style="margin-bottom: 4px"
-                class="icon-green cursor-pointer"
-                (click)="openExportHouseData(contentExportHouses)"
-              />
-              <br />
-              <h6>Cards</h6>
-            </div>
-
-            <div
-              class="float-first fix-home-iner"
-              style="padding-top: 0px"
-              [hidden]="isActionShow == false"
-            >
-              <button
-                class="refresh"
-                (click)="updateSurveyCounts()"
-                style="all: unset"
-              >
-                <img
-                  src="../../../assets/icons/rotate-right-solid.svg"
-                  class="icon-green"
-                  alt="rotate-right"
-                  width="20"
-                  style="margin-bottom: 5px; margin-top: 3px"
-                />
-              </button>
-              <br />
-              <h6>{{ surveyData.lastUpdate }}</h6>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="arrow" onclick="show()">
-        <i class="bi bi-chevron-down"></i>
-      </div>
-    </div>
-  </section> -->
 </div>
-<!--Survey Line Start-->
-<ng-template #contentLineSurveyed>
-  <div class="close-grey-imgbox">
-    <img
-      src="../../../assets/img/close-grey.png"
-      class="img-close"
-      (click)="closeModel()"
-    />
-  </div>
-  <div class="modal-body divStatus-outer">
-    <div
-      id="divHouseType"
-      style="
-        display: none;
-        position: absolute;
-        z-index: 9999;
-        width: 300px;
-        background-color: #fff;
-        margin-top: 15%;
-        margin-left: 40%;
-        padding: 20px;
-        border: 1px solid lightgray;
-      "
-    >
-      <input type="hidden" id="houseWardNo" value="0" />
-      <input type="hidden" id="houseLineNo" value="0" />
-      <input type="hidden" id="houseIndex" value="0" />
-      <h5 class="modal-title" style="text-align: center; padding-bottom: 20px">
-        Change House Type
-      </h5>
-      <div
-        class="row"
-        style="border-top: 1px solid lightgray; padding-top: 10px"
-      >
-        <div class="col-md-12">
-          Entity Type
-          <select
-            id="ddlHouseType"
-            class="caret-select-vehicle"
-            (change)="setServingCount()"
-          >
-            <option *ngFor="let dt of houseTypeList" value="{{ dt.id }}">
-              {{ dt.houseType }}
-            </option>
-          </select>
-        </div>
-        <div id="divServingCount" class="col-md-12">
-          Serving Count
-          <input
-            id="txtServingCount"
-            type="number"
-            class="caret-select-vehicle"
-          />
-        </div>
-        <div class="col-md-6" style="text-align: center; margin-top: 5px">
-          <button class="btn btn-success" (click)="updateHouseType()">
-            Save
-          </button>
-        </div>
-        <div class="col-md-6" style="text-align: center; margin-top: 5px">
-          <button
-            class="btn btn-danger"
-            (click)="cancelHouseType()"
-            style="text-transform: uppercase"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-    <div
-      id="divEntityList"
-      style="
-        display: none;
-        position: absolute;
-        z-index: 9999;
-        width: 80%;
-        height: 80%;
-        background-color: #fff;
-        padding: 20px;
-        border: 1px solid lightgray;
-        overflow-y: scroll;
-        margin-top: 5%;
-        margin-left: 10%;
-      "
-    >
-      <img
-        src="../../../assets/img/close-grey.png"
-        style="float: right"
-        class="img-close"
-        (click)="hideEntity()"
-      />
-      <div class="row">
-        <div
-          class="col-md-3"
-          *ngFor="let data of entityList"
-          style="margin-right: -10px"
-        >
-          <div class="row" style="margin: 0px">
-            <div
-              style="
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 5px;
-                margin-bottom: 10px !important;
-                background-color: #f1f1f1;
-              "
-            >
-              <div style="width: 96%; float: left; margin-left: 5px">
-                <div class="content-scroll-iner">
-                  <a href="{{ data.entityImageURL }}" target="_blank">
-                    <img [src]="data.entityImageURL" class="imageurl" />
-                  </a>
-                </div>
-                <div class="main-tag">
-                  <div class="f-left">
-                    <h3 class="f-left-heading">{{ data.name }}</h3>
-                    <br />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="divStatus" class="content-scroll">
-      <div class="row">
-        <div
-          class="col-md-4"
-          *ngFor="let dt of surveyedDetailList; let i = index"
-          style="margin-right: -10px"
-        >
-          <div class="row" style="margin: 0px">
-            <div class="{{ dt.class }}">
-              <div
-                style="
-                  width: 30%;
-                  float: left;
-                  margin-left: 5px;
-                  border: 1px solid lightgray;
-                "
-              >
-                <div class="content-scroll-iner">
-                  <div
-                    style="
-                      text-align: center;
-                      width: 27% !important;
-                      background-color: lightgray;
-                      font-size: 10px;
-                      z-index: 99;
-                      position: absolute;
-                    "
-                  >
-                    Marker Image
-                  </div>
-
-                  <a href="{{ dt.markerImageURL }}" target="_blank">
-                    <img [src]="dt.markerImageURL" class="imageurl" />
-                  </a>
-                </div>
-              </div>
-              <div style="width: 30%; float: left; margin-left: 5px">
-                <div class="content-scroll-iner">
-                  <a href="{{ dt.imageUrl }}" target="_blank">
-                    <img [src]="dt.imageUrl" class="imageurl" />
-                  </a>
-                </div>
-              </div>
-              <div style="width: 30%; float: left; margin-left: 5px">
-                <div class="content-scroll-iner">
-                  <a href="{{ dt.houseImageUrl }}" target="_blank">
-                    <img [src]="dt.houseImageUrl" class="imageurl" />
-                  </a>
-                </div>
-              </div>
-              <div style="width: 48%; float: left; margin-left: 5px">
-                <div class="main-tag">
-                  <div class="f-left">
-                    <h3 class="f-left-heading">
-                      {{ dt.name }} <b>({{ dt.cardNo }})</b>
-                    </h3>
-                    <br />
-                    <h3>
-                      {{ dt.entityType }}
-                      <b [hidden]="dt.isCommercial == false"
-                        >({{ dt.servingCount }})</b
-                      >&nbsp;&nbsp;&nbsp;
-                      <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
-                                                (click)="openHouseTypePopup(dt.wardNo,dt.lineNo,i);"
-                                                [hidden]="isActionShow==false"></i> -->
-                      <img
-                        src="../../../assets/icons/edit-solid.svg"
-                        alt="edit"
-                        width="24"
-                        class="cursor-pointer"
-                        style="border: none"
-                        (click)="openHouseTypePopup(dt.wardNo, dt.lineNo, i)"
-                        [hidden]="isActionShow == false"
-                      />
-                    </h3>
-                    <br />
-                  </div>
-                </div>
-              </div>
-              <div style="width: 48%; float: right">
-                <div class="main-tag">
-                  <div class="f-left">
-                    <h3>
-                      {{ dt.surveyorName }}
-                    </h3>
-                    <br />
-                    <h3>{{ dt.surveyDate }}</h3>
-                    <span
-                      [hidden]="dt.houseHoldCount == 0"
-                      style="float: right !important"
-                      ><b>{{ dt.houseHoldCount }}</b
-                      >&nbsp;
-                      <!-- <i
-                                                class="far fa-eye eye-icon"
-                                                style="float: right !important; cursor: pointer;"
-                                                (click)="showEntity(dt.cardNo);"></i> -->
-                      <img
-                        src="../../../assets/icons/eye-regular.svg"
-                        alt="Eye"
-                        style="max-width: 20px; float: right"
-                        class="cursor-pointer"
-                        (click)="showEntity(dt.cardNo)"
-                      /> </span
-                    ><br />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-template>
-<!--Survey Line End-->
-
-<!--Survey Line Start-->
-<!-- <ng-template #contentDateWise>
-  <span style="width: 50%; margin: 10px">
-    Export
-    <img
-      src="../../../assets/icons/file-export-solid.svg"
-      alt="file"
-      color="icon-green cursor-pointer"
-      width="20"
-      (click)="exportDateWiseCards()"
-    />
-  </span>
-
-  <div class="img-close-box">
-    <img
-      src="../../../assets/img/close-grey.png"
-      class="img-close"
-      (click)="closeModel()"
-    />
-  </div>
-  <div class="modal-body table-wrapper-outer">
-    <div id="tblSurvey" class="table-wrapper table-scroll modal-body-iner">
-      <table class="table table-scroll-iner">
-        <thead>
-          <th class="datetable">Date</th>
-          <th class="text-right surveyTypetable">
-            <span id="surveyType"></span>
-          </th>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of surveyDateList; let i = index">
-            <td class="datedata">
-              {{ data.date }}
-            </td>
-            <td class="text-right datedata">
-              {{ data.count }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</ng-template> -->
-
-<div
-  class="modal fade"
-  id="contentDateWise"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
-  (shown.bs.modal)="showDateWiseDetail(contentDateWise, 'Cards')"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-center">Export</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="custom-modal-body">
-        <div class="table-survey" id="tblSurvey">
-          <table class="table">
-            <thead>
-              <th>Date</th>
-              <th class="text-right">
-                <span id="surveyType"></span>
-              </th>
-            </thead>
-            <tbody>
-              <tr *ngFor="let data of surveyDateList; let i = index">
-                <td>
-                  {{ data.date }}
-                </td>
-                <td class="text-right">
-                  {{ data.count }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <button class="btn-default-success" (click)="exportDateWiseCards()">
-          Export
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<!--Survey Line End-->
-
-<!--House Type  Start-->
-<!-- <ng-template #contentHouseType> -->
-<div
-  class="modal fade"
-  id="contentHouseType"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
-  (shown.bs.modal)="getZoneHouseTypeList(contentHouseType)"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Export Entity Type</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="custom-modal-body">
-        <div class="table-survey" id="divHouseStatus">
-          <table class="table">
-            <thead>
-              <th style="width: 75%">Entity Type</th>
-              <th class="text-right" style="width: 25%">Counts</th>
-            </thead>
-            <tbody>
-              <tr
-                class="table-row"
-                id="tr{{ i }}"
-                *ngFor="let data of zoneHouseTypeList; let i = index"
-              >
-                <td style="width: 75%">
-                  {{ data.houseType }}
-                </td>
-                <td class="text-right" style="width: 25%">
-                  {{ data.counts }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <button class="btn-default-success" (click)="exportHouseTypeList('0')">
-          Export entity type
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- </ng-template> -->
-<!--House Type End-->
 
 <!--Export House Start-->
-<!-- <ng-template #contentExportHouses> -->
 <div
   class="modal fade"
   id="contentExportHouses"
@@ -939,23 +401,435 @@
     </div>
   </div>
 </div>
-<!-- </ng-template> -->
-<!-- Modal -->
-<!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<!--Export House End-->
+
+<!--Export Modal Start-->
+<div
+  class="modal fade"
+  id="contentDateWise"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="showDateWiseDetail(contentDateWise, 'Cards')"
+>
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title text-center">Export</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+      <div class="custom-modal-body">
+        <div class="table-survey" id="tblSurvey">
+          <table class="table">
+            <thead>
+              <th>Date</th>
+              <th class="text-right">
+                <span id="surveyType"></span>
+              </th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of surveyDateList; let i = index">
+                <td>
+                  {{ data.date }}
+                </td>
+                <td class="text-right">
+                  {{ data.count }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-default-success" (click)="exportDateWiseCards()">
+          Export
+        </button>
       </div>
     </div>
   </div>
-</div> -->
-<!--Export House End-->
+</div>
+<!--Export Modal End-->
+
+<!--House Type Start-->
+<div
+  class="modal fade"
+  id="contentHouseType"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="getZoneHouseTypeList(contentHouseType)"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Export Entity Type</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="table-survey" id="divHouseStatus">
+          <table class="table">
+            <thead>
+              <th style="width: 75%">Entity Type</th>
+              <th class="text-right" style="width: 25%">Counts</th>
+            </thead>
+            <tbody>
+              <tr
+                class="table-row"
+                id="tr{{ i }}"
+                *ngFor="let data of zoneHouseTypeList; let i = index"
+              >
+                <td style="width: 75%">
+                  {{ data.houseType }}
+                </td>
+                <td class="text-right" style="width: 25%">
+                  {{ data.counts }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-default-success" (click)="exportHouseTypeList('0')">
+          Export entity type
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--House Type End-->
+
+<!--Survey Line Start-->
+<div
+  class="modal fade"
+  id="contentLineSurveyed"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="
+    showLineDetail(contentLineSurveyed, data.wardNo, data.lineNo)
+  "
+>
+  <div class="modal-dialog modal-dialog-centered modal-survey">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Survey Images</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="custom-modal-body">
+        <div
+          id="divHouseType"
+          style="
+            display: none;
+            position: absolute;
+            z-index: 9999;
+            width: 300px;
+            background-color: #fff;
+            margin-top: 15%;
+            margin-left: 40%;
+            padding: 20px;
+            border: 1px solid lightgray;
+          "
+        >
+          <input type="hidden" id="houseWardNo" value="0" />
+          <input type="hidden" id="houseLineNo" value="0" />
+          <input type="hidden" id="houseIndex" value="0" />
+          <h5
+            class="modal-title"
+            style="text-align: center; padding-bottom: 20px"
+          >
+            Change House Type
+          </h5>
+          <div
+            class="row"
+            style="border-top: 1px solid lightgray; padding-top: 10px"
+          >
+            <div class="col-md-12">
+              Entity Type
+              <select
+                id="ddlHouseType"
+                class="caret-select-vehicle"
+                (change)="setServingCount()"
+              >
+                <option *ngFor="let dt of houseTypeList" value="{{ dt.id }}">
+                  {{ dt.houseType }}
+                </option>
+              </select>
+            </div>
+            <div id="divServingCount" class="col-md-12">
+              Serving Count
+              <input
+                id="txtServingCount"
+                type="number"
+                class="caret-select-vehicle"
+              />
+            </div>
+            <div class="col-md-6" style="text-align: center; margin-top: 5px">
+              <button class="btn btn-success" (click)="updateHouseType()">
+                Save
+              </button>
+            </div>
+            <div class="col-md-6" style="text-align: center; margin-top: 5px">
+              <button
+                class="btn btn-danger"
+                (click)="cancelHouseType()"
+                style="text-transform: uppercase"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          id="divEntityList"
+          style="
+            display: none;
+            position: absolute;
+            z-index: 9999;
+            width: 80%;
+            height: 80%;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid lightgray;
+            overflow-y: scroll;
+            margin-top: 5%;
+            margin-left: 10%;
+          "
+        >
+          <img
+            src="../../../assets/img/close-grey.png"
+            style="float: right"
+            class="img-close"
+            (click)="hideEntity()"
+          />
+          <div class="row">
+            <div
+              class="col-md-3"
+              *ngFor="let data of entityList"
+              style="margin-right: -10px"
+            >
+              <div class="row" style="margin: 0px">
+                <div
+                  style="
+                    border: 1px solid lightgray;
+                    border-radius: 5px;
+                    padding: 5px;
+                    margin-bottom: 10px !important;
+                    background-color: #f1f1f1;
+                  "
+                >
+                  <div style="width: 96%; float: left; margin-left: 5px">
+                    <div class="content-scroll-iner">
+                      <a href="{{ data.entityImageURL }}" target="_blank">
+                        <img [src]="data.entityImageURL" class="imageurl" />
+                      </a>
+                    </div>
+                    <div class="main-tag">
+                      <div class="f-left">
+                        <h3 class="f-left-heading">{{ data.name }}</h3>
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="survey-data" id="divStatus">
+          <div class="servey-image-group">
+            <div
+              class="servey-image-card"
+              *ngFor="let dt of surveyedDetailList; let i = index"
+            >
+              <div class="servey-image-header">
+                <div class="servey-image-inner-box servey-image-inner-box-1">
+                  <div class="servey-image-label">Marker Image</div>
+
+                  <a href="{{ dt.markerImageURL }}" target="_blank">
+                    <img
+                      [src]="dt.markerImageURL"
+                      class="survey-img survey-img-1"
+                    />
+                  </a>
+                </div>
+                <div class="servey-image-inner-box">
+                  <a href="{{ dt.imageUrl }}" target="_blank">
+                    <img [src]="dt.imageUrl" class="survey-img survey-img-2" />
+                  </a>
+                </div>
+                <div class="servey-image-inner-box servey-image-inner-box-3">
+                  <a href="{{ dt.houseImageUrl }}" target="_blank">
+                    <img
+                      [src]="dt.houseImageUrl"
+                      class="survey-img survey-img-3"
+                    />
+                  </a>
+                </div>
+              </div>
+                <div class="servey-image-body {{ dt.class }}">
+                  <div class="servey-body-left">
+                    <div class="survey-info-text">
+                      {{ dt.name }}
+                      <span class="survey-text-bold">({{ dt.cardNo }})</span>
+                    </div>
+                    <div class="survey-info-text d-flex">
+                      {{ dt.entityType }}
+                      <div class="d-flex align-items-center">
+                      <span
+                        class="survey-text-bold"
+                        [hidden]="dt.isCommercial == false"
+                        >({{ dt.servingCount }})</span
+                      > &nbsp;
+                      <img
+                        src="../../../assets/img/iconEdit.png"
+                        alt="edit"
+                        width="24"
+                        class="icon-edit"
+                        (click)="openHouseTypePopup(dt.wardNo, dt.lineNo, i)"
+                        [hidden]="isActionShow == false"
+                      />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="servey-body-right">
+                    <div class="survey-info-text">
+                      {{ dt.surveyorName }}
+                    </div>
+                    <div class="survey-info-text">
+                      <div class="d-flex justify-content-between align-items-center">
+                        {{ dt.surveyDate }}
+                        <div [hidden]="dt.houseHoldCount == 0">
+                        <span class="d-flex align-items-center">
+                          <span class="survey-text-bold">{{ dt.houseHoldCount }}</span> &nbsp;
+                          <img
+                            src="../../../assets/img/iconEye.png"
+                            alt="Eye"
+                            class="icon-eye"
+                            (click)="showEntity(dt.cardNo)"
+                          />
+                        </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+     
+
+              <!-- <div class="row" style="margin: 0px">
+                <div class="{{ dt.class }}"> -->
+                  <!-- <div
+                    style="
+                      width: 30%;
+                      float: left;
+                      margin-left: 5px;
+                      border: 1px solid lightgray;
+                    "
+                  >
+                    <div class="content-scroll-iner">
+                      <div
+                        style="
+                          text-align: center;
+                          width: 27% !important;
+                          background-color: lightgray;
+                          font-size: 10px;
+                          z-index: 99;
+                          position: absolute;
+                        "
+                      >
+                        Marker Image
+                      </div>
+
+                      <a href="{{ dt.markerImageURL }}" target="_blank">
+                        <img [src]="dt.markerImageURL" class="imageurl" />
+                      </a>
+                    </div>
+                  </div> -->
+                  <!-- <div style="width: 30%; float: left; margin-left: 5px">
+                    <div class="content-scroll-iner">
+                      <a href="{{ dt.imageUrl }}" target="_blank">
+                        <img [src]="dt.imageUrl" class="imageurl" />
+                      </a>
+                    </div>
+                  </div>
+                  <div style="width: 30%; float: left; margin-left: 5px">
+                    <div class="content-scroll-iner">
+                      <a href="{{ dt.houseImageUrl }}" target="_blank">
+                        <img [src]="dt.houseImageUrl" class="imageurl" />
+                      </a>
+                    </div>
+                  </div> -->
+                  <!-- <div style="width: 48%; float: left; margin-left: 5px">
+                    <div class="main-tag">
+                      <div class="f-left">
+                        <h3 class="f-left-heading">
+                          {{ dt.name }} <b>({{ dt.cardNo }})</b>
+                        </h3>
+                        <br />
+                        <h3>
+                          {{ dt.entityType }}
+                          <b [hidden]="dt.isCommercial == false"
+                            >({{ dt.servingCount }})</b
+                          >&nbsp;&nbsp;&nbsp;
+                          <img
+                            src="../../../assets/icons/edit-solid.svg"
+                            alt="edit"
+                            width="24"
+                            class="cursor-pointer"
+                            style="border: none"
+                            (click)="
+                              openHouseTypePopup(dt.wardNo, dt.lineNo, i)
+                            "
+                            [hidden]="isActionShow == false"
+                          />
+                        </h3>
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                  <div style="width: 48%; float: right">
+                    <div class="main-tag">
+                      <div class="f-left">
+                        <h3>
+                          {{ dt.surveyorName }}
+                        </h3>
+                        <br />
+                        <h3>{{ dt.surveyDate }}</h3>
+                        <span
+                          [hidden]="dt.houseHoldCount == 0"
+                          style="float: right !important"
+                          ><b>{{ dt.houseHoldCount }}</b
+                          >&nbsp;
+                          <img
+                            src="../../../assets/img/iconEye.png"
+                            alt="Eye"
+                            style="max-width: 20px; float: right"
+                            class="cursor-pointer"
+                            (click)="showEntity(dt.cardNo)"
+                          /> </span
+                        ><br />
+                      </div>
+                    </div>
+                  </div> -->
+                <!-- </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Survey Line End-->

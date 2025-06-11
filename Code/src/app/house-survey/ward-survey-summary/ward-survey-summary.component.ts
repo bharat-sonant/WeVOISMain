@@ -1176,24 +1176,47 @@ export class WardSurveySummaryComponent implements OnInit {
     }
   }
 
-  showLineDetail(content: any, wardNo: any, lineNo: any) {
-    this.surveyedDetailList = [];
-    this.getLineDetail(wardNo, lineNo);
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let windowWidth = $(window).width();
-    let height = 870;
-    let width = windowWidth - 300;
+  // showLineDetail(content: any, wardNo: any, lineNo: any) {
+  //   this.surveyedDetailList = [];
+  //   this.getLineDetail(wardNo, lineNo);
+  //   this.modalService.open(content, { size: "lg" });
+  //   let windowHeight = $(window).height();
+  //   let windowWidth = $(window).width();
+  //   let height = 870;
+  //   let width = windowWidth - 300;
 
-    height = (windowHeight * 90) / 100;
-    width = (windowWidth * 90) / 100;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 50 + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#divStatus").css("height", divHeight);
-  }
+  //   height = (windowHeight * 90) / 100;
+  //   width = (windowWidth * 90) / 100;
+  //   let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  //   let divHeight = height - 50 + "px";
+  //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+  //   $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+  //   $("div .modal-dialog-centered").css("margin-top", marginTop);
+  //   $("#divStatus").css("height", divHeight);
+  // }
+
+  //New showLineDetail function without this modal service
+  showLineDetail(content: any, wardNo: any, lineNo: any) {
+  this.surveyedDetailList = [];
+  this.getLineDetail(wardNo, lineNo);
+  
+  // Remove this line - ye NgBootstrap modal open kar raha hai
+  // this.modalService.open(content, { size: "lg" });
+  
+  // Custom styling ko CSS mein move kar dein ya comment out kar dein
+  // let windowHeight = $(window).height();
+  // let windowWidth = $(window).width();
+  // let height = 870;
+  // let width = windowWidth - 300;
+  // height = (windowHeight * 90) / 100;
+  // width = (windowWidth * 90) / 100;
+  // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  // let divHeight = height - 50 + "px";
+  // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+  // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+  // $("div .modal-dialog-centered").css("margin-top", marginTop);
+  // $("#divStatus").css("height", divHeight);
+}
 
   closeModel() {
     this.modalService.dismissAll();
