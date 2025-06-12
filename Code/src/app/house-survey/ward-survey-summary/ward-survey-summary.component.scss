@@ -856,6 +856,35 @@
 /** Custom Scrollbar css Ends here **/
 
 /**** Media Query CSS Starts Here ****/
+@media (max-width: 1198px){
+      .table-line-header {
+        display: flex;
+        position: relative;
+        overflow-x: scroll;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        justify-content: center;
+    }
+
+    .table-line-info {
+        min-width: 20px;
+        flex-shrink: 0;
+
+        &:nth-child(1) {
+            padding-left: 80px;
+        }
+    }
+
+    .fixed-item {
+        position: sticky;
+        right: -20px;
+        z-index: 2;
+        min-width: 23px;
+        flex-shrink: 0;
+        background: #ffffff;
+        padding-right: 16px;
+    }
+}
 @media (max-width: 991.98px) {
     .header {
         height: auto;
@@ -898,18 +927,6 @@
         width: 100%;
     }
 
-
-
-
-    .table-line-header {
-        display: flex;
-        position: relative;
-        overflow-x: scroll;
-        scroll-behavior: smooth;
-        scrollbar-width: thin;
-        justify-content: center;
-    }
-
     .table-line-info {
         min-width: 20px;
         flex-shrink: 0;
@@ -919,15 +936,8 @@
         }
     }
 
-    .fixed-item {
-        position: sticky;
-        right: -20px;
-        z-index: 2;
-        min-width: 23px;
-        flex-shrink: 0;
-        background: #ffffff;
-        padding-right: 16px;
-    }
+
+  
 
     .breadcrumb {
         overflow-x: scroll;
