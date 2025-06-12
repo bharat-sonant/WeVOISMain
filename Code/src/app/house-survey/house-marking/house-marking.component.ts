@@ -557,7 +557,7 @@ export class HouseMarkingComponent {
     })
   }
   getApproveUsername(ApproveId: any, index: any, zoneNo: any, lineNo: any) {
-    
+
     let userDetail = this.userList.find(item => item.userId == ApproveId);
     if (userDetail != undefined) {
       let detail;
@@ -822,10 +822,10 @@ export class HouseMarkingComponent {
     }
   }
 
-  divMarkerUpdateHistory="#divMarkerUpdateHistory";
+  divMarkerUpdateHistory = "#divMarkerUpdateHistory";
 
   showMarkerUpdateHistory(markerUpdateId: any) {
-    this.markerUpdateHistoryList=[];
+    this.markerUpdateHistoryList = [];
     let list = markerUpdateId.split(",");
     const promises = [];
     for (let i = 0; i < list.length; i++) {
@@ -834,19 +834,21 @@ export class HouseMarkingComponent {
 
     Promise.all(promises).then((results) => {
       for (let i = 0; i < results.length; i++) {
-        let userDetail=this.userList.find(item=>item.userId==results[i]["updatedById"]);
-        if(userDetail!=undefined){
-          results[i]["updatedById"]=userDetail.name;
+        let userDetail = this.userList.find(item => item.userId == results[i]["updatedById"]);
+        if (userDetail != undefined) {
+          results[i]["updatedById"] = userDetail.name;
         }
-        let preEntityDetail=this.houseTypeList.find(item=>item.id==results[i]["preHouseTypeId"]);
-        if(preEntityDetail!=undefined){
-          results[i]["preHouseTypeId"]=preEntityDetail.houseType;
+        let preEntityDetail = this.houseTypeList.find(item => item.id == results[i]["preHouseTypeId"]);
+        if (preEntityDetail != undefined) {
+          results[i]["preHouseTypeId"] = preEntityDetail.houseType;
         }
-        let entityDetail=this.houseTypeList.find(item=>item.id==results[i]["newHouseTypeId"]);
-        if(entityDetail!=undefined){
-          results[i]["newHouseTypeId"]=entityDetail.houseType;
+        let entityDetail = this.houseTypeList.find(item => item.id == results[i]["newHouseTypeId"]);
+        if (entityDetail != undefined) {
+          results[i]["newHouseTypeId"] = entityDetail.houseType;
         }
-
+        const date = results[i]["updateDate"].split(' ')[0];
+        const time = results[i]["updateDate"].split(' ')[1];
+        results[i]["updateDate"] = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
         this.markerUpdateHistoryList.push(results[i]);
       }
       $(this.divMarkerUpdateHistory).show();
@@ -879,7 +881,7 @@ export class HouseMarkingComponent {
           }
           resolve(obj);
         }
-        else{
+        else {
           resolve(null);
         }
       })

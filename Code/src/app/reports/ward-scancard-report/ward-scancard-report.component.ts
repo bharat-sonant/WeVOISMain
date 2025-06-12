@@ -29,7 +29,7 @@ export class WardScancardReportComponent implements OnInit {
   wardDataList: any[] = [];
   wardScaanedList: any[] = [];
   wardScanedListFiltered: any[] = [];
-  totalScanedCards:any;
+  totalScanedCards: any;
   isFirst = true;
   db: any;
   public cityName: any;
@@ -47,7 +47,7 @@ export class WardScancardReportComponent implements OnInit {
     if (this.cityName == "test" || this.cityName == "ecogram") {
       this.isEcogram = "1";
       $("#divEcogram").show();
-      this.totalScanedCards=0;
+      this.totalScanedCards = 0;
     }
     else {
       this.isEcogram = "0";
@@ -325,14 +325,14 @@ export class WardScancardReportComponent implements OnInit {
     else {
       this.wardScanedListFiltered = this.wardScaanedList.filter(item => item.wasteCategory == value);
     }
-    this.totalScanedCards=this.wardScanedListFiltered.length;
+    this.totalScanedCards = this.wardScanedListFiltered.length;
 
   }
 
-  clearScanCardDetail(){
+  clearScanCardDetail() {
     this.wardScaanedList = [];
     this.wardScanedListFiltered = [];
-    this.totalScanedCards=0;
+    this.totalScanedCards = 0;
   }
 
   getScanDetail(wardNo: any, index: any) {
@@ -357,6 +357,10 @@ export class WardScancardReportComponent implements OnInit {
 
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", data);
         let employeePath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/helperName";
+        if (this.cityName == "ecogram") {
+          employeePath = "WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/driverName";
+        }
+
         let employeeInstance = this.db.object(employeePath).valueChanges().subscribe((empData) => {
           employeeInstance.unsubscribe();
           if (empData != null) {
@@ -366,7 +370,7 @@ export class WardScancardReportComponent implements OnInit {
             let keyArray = Object.keys(data);
             for (let i = 0; i < keyArray.length; i++) {
               let cardNo = keyArray[i];
-              let cardNumber="";
+              let cardNumber = "";
               if (cardNo != "ImagesData" && cardNo != "recentScanned" && cardNo != "totalScanned") {
                 let cardNoList = cardNo.split("~");
                 if (cardNoList.length > 1) {
@@ -379,8 +383,8 @@ export class WardScancardReportComponent implements OnInit {
                     }
                   }
                 }
-                else{
-                  cardNumber=cardNo;
+                else {
+                  cardNumber = cardNo;
                 }
                 let scanTime = data[cardNo]["scanTime"].split(":")[0] + ":" + data[cardNo]["scanTime"].split(":")[1];
                 let date = Number(new Date(this.selectedDate + " " + scanTime).getTime()) / 10000;
@@ -406,7 +410,7 @@ export class WardScancardReportComponent implements OnInit {
                       Number(b.sno) < Number(a.sno) ? 1 : -1
                     );
                     this.wardScanedListFiltered = this.wardScaanedList;
-                    this.totalScanedCards=this.wardScanedListFiltered.length;
+                    this.totalScanedCards = this.wardScanedListFiltered.length;
                   }
                   else {
 
@@ -443,7 +447,7 @@ export class WardScancardReportComponent implements OnInit {
                               Number(b.sno) < Number(a.sno) ? 1 : -1
                             );
                             this.wardScanedListFiltered = this.wardScaanedList;
-                            this.totalScanedCards=this.wardScanedListFiltered.length;
+                            this.totalScanedCards = this.wardScanedListFiltered.length;
                           }
 
                         });
@@ -474,7 +478,7 @@ export class WardScancardReportComponent implements OnInit {
                         Number(b.sno) < Number(a.sno) ? 1 : -1
                       );
                       this.wardScanedListFiltered = this.wardScaanedList;
-                      this.totalScanedCards=this.wardScanedListFiltered.length;
+                      this.totalScanedCards = this.wardScanedListFiltered.length;
                     }
                     else {
                       let dbPath = "CardWardMapping/" + cardNo;
@@ -508,7 +512,7 @@ export class WardScancardReportComponent implements OnInit {
                                 Number(b.sno) < Number(a.sno) ? 1 : -1
                               );
                               this.wardScanedListFiltered = this.wardScaanedList;
-                              this.totalScanedCards=this.wardScanedListFiltered.length;
+                              this.totalScanedCards = this.wardScanedListFiltered.length;
                             }
 
                           });
