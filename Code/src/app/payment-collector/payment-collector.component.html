@@ -293,19 +293,7 @@
                         <img src="../../assets/icons/file-invoice-dollar-solid.svg" alt="file" aria-hidden="true">
                     </span>
                 </div>
-                <div class="dropdown">
-                    <button class="custom-dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        --Select Device--
-                    </button>
-
-                    <ul class="dropdown-menu">
-                        <li *ngFor="let dt of deviceList">
-                            <button class="dropdown-item" (click)="selectDevice(dt.device)">
-                                {{dt.device}}
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+              
                 <label [hidden]="isWardShow=='0'" class="label-title">Ward</label>
                 <div class="wrap-input-effects" required [hidden]="isWardShow=='0'">
                     <select id="ddlWard" class="input-green" (change)="getLines($event.target.value);">
