@@ -8,6 +8,69 @@
     padding: 10px 16px;
 }
 
+.page-content {
+    padding: 0px;
+    border-radius: 6px;
+    height: calc(100vh - 110px);
+
+}
+
+.active {
+    background-color: #0ab39c25;
+}
+
+.not-matched {
+    background-color: #ff000014;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/*** Loader css starts here ****/
+.spanLoader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    text-align: center;
+    font-weight: bold;
+    color: #000000;
+    font-size: 24px;
+    transform: translate(-50%, -50%);
+}
+
+.loaderClass {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: lightgray;
+    opacity: 0.5;
+    margin-left: -11px;
+    margin-top: -10px;
+}
+
+.loaderClassMain {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #000000;
+    opacity: 0.8;
+    margin-bottom: 15px;
+}
+
+.imgLoader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/*** Loader css ends here ****/
+
 /*** header css starts here ****/
 .header {
     width: 100%;
@@ -106,13 +169,8 @@
 /*** Breadcrumb CSS Ends Here ***/
 /*** header css Ends here ****/
 
-.page-content {
-    padding: 0px;
-    border-radius: 6px;
-    height: calc(100vh - 110px);
 
-}
-
+/*** header card css starts here ****/
 .ward-summary-data {
     width: 100%;
     display: flex;
@@ -172,6 +230,9 @@
     filter: brightness(0) saturate(100%) invert(59%) sepia(32%) saturate(796%) hue-rotate(71deg) brightness(94%) contrast(95%);
 }
 
+/*** header card css Ends here ****/
+
+/*** page body css starts here ****/
 .table-group {
     display: flex;
     width: 100%;
@@ -300,6 +361,9 @@
     overflow: auto;
 }
 
+/*** page body css Ends here ****/
+
+/*** survey image modal css starts here ****/
 .servey-image-group {
     width: 100%;
     display: flex;
@@ -311,6 +375,10 @@
     width: calc(100% / 3 - 11px);
     border-radius: 6px;
     transition: 0.2s;
+    border-style: solid;
+    border-width: 1px 1px 0px 1px;
+    border-color: $borderColor;
+
     &:hover {
         box-shadow: 0 10px 20px 0 #0000000f;
     }
@@ -422,6 +490,70 @@
 
 }
 
+.house-list {
+    border-style: solid;
+    border-width: 1px;
+    border-color: $borderColor;
+    background-color: $whitefa;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.commercial-list {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #0ab39c;
+    background-color: #0ab39c25;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+/*** survey image modal css ends here ****/
+
+/*** inner survey image modal css starts here ****/
+.survey-box-scroll {
+    height: calc(100vh - 180px);
+    overflow: auto;
+}
+
+.survey-box-outer {
+    width: 100%;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.survey-box {
+    width: calc(100% / 5);
+    border-radius: 4px;
+    border: 1px solid $borderColor;
+    background-color: $whitefa;
+    width: calc(100% / 5 - 13px);
+    padding: 10px;
+}
+
+.survey-box-header {
+    height: 200px;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    background-color: $white;
+}
+
+.survey-box-img {
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.survey-box-footer {
+    font-size: 13px;
+    color: $lightBlack;
+    font-family: $fontGraphik;
+    padding: 10px 10px 0px;
+}
+
+/*** inner survey image modal css ends here ****/
+
 /*** Table CSS Starts here ***/
 .table {
     width: 100%;
@@ -478,9 +610,37 @@
 /*** Table CSS Ends here ***/
 
 /*** Custom Modal CSS Starts here ***/
+.modal-overlay {
+    width: 100%;
+    height: 100%;
+    background-color: $transparentBlack;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: none;
+}
+
+.modal-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.custom-modal {
+    background-color: $white;
+    width: 400px;
+    border-radius: 6px;
+}
+
 .modal-survey {
     max-width: 85%;
     height: 90vh;
+    width: 100%;
 }
 
 .modal-survey .modal-content {
@@ -563,13 +723,37 @@
 
 /*** Custom Modal CSS Ends here ***/
 
-/*** Custom dropdown CSS Starts here ***/
+/*** Custom dropdown and textbox CSS Starts here ***/
+.custom-label {
+    font-size: 12px;
+    color: $darkBlack;
+    font-family: $fontGraphik;
+    margin-bottom: 5px;
+}
+
+.custom-input {
+    height: 40px;
+    width: 100%;
+    background: $white;
+    color: $darkBlack;
+    border: 1px solid $borderColor;
+    font-size: 13px;
+    font-family: $fontGraphik;
+    padding: 0px 16px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.custom-input::placeholder {
+    color: $black70;
+}
+
 .custom-dropdown-btn {
     height: 40px;
     width: 100%;
     background: $white;
+    color: $black70;
     border: 1px solid $borderColor;
-    color: $lightBlack;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -625,30 +809,141 @@
     }
 }
 
-/*** Custom dropdown CSS Ends here ***/
-
-// .header {
-//     height: 57px;
-//     width: 100%;
-//     background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
-//     color: #fff;
-//     font-size: 16px;
-//     font-weight: bold;
-//     text-transform: uppercase;
-//     padding-top: 15px;
-
-// }
-
-.spanLoader {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    text-align: center;
-    font-weight: bold;
-    color: #000000;
-    font-size: 24px;
-    transform: translate(-50%, -50%);
+/*** Custom dropdown and textbox CSS Ends here ***/
+/** Custom Scrollbar css starts here **/
+::-webkit-scrollbar {
+    width: 8px;
 }
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: transparent;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: transparent;
+    -webkit-box-shadow: transparent;
+}
+
+:hover::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+
+:hover::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+
+/* Handle */
+
+:hover::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: #20a120;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+/** Custom Scrollbar css Ends here **/
+
+/**** Media Query CSS Starts Here ****/
+@media (max-width: 991.98px) {
+    .header {
+        height: auto;
+        flex-flow: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .header-left {
+        width: 100%;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .ward-summary-data {
+        overflow-x: scroll;
+        padding: 0 0 5px;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+    }
+
+    .ward-summary-card {
+        min-width: 200px;
+        flex-shrink: 0;
+    }
+
+    .table-group {
+        flex-flow: column;
+    }
+
+    .table-ward {
+        width: 100%;
+    }
+
+    .table-line-group {
+        width: 100%;
+    }
+
+
+
+
+    .table-line-header {
+        display: flex;
+        position: relative;
+        overflow-x: scroll;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        justify-content: center;
+    }
+
+    .table-line-info {
+        min-width: 20px;
+        flex-shrink: 0;
+
+        &:nth-child(1) {
+            padding-left: 220px;
+        }
+    }
+
+    .fixed-item {
+        position: sticky;
+        right: -20px;
+        z-index: 2;
+        min-width: 23px;
+        flex-shrink: 0;
+        background: #ffffff;
+        padding-right: 16px;
+    }
+
+    .breadcrumb {
+        overflow-x: scroll;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+    }
+
+    .li-breadcrumb {
+        flex-shrink: 0;
+        min-width: 20px;
+    }
+}
+
+/**** Media Query CSS Ends Here ****/
+
+
 
 .card {
     border: 0;
@@ -730,17 +1025,10 @@ button:focus {
     box-shadow: 0px 4px 4px #0e0e0e1a;
 }
 
-//   .card-body{
-//     padding: 0px;
-//     height: 76vh;
-//     overflow: hidden;
-//     overflow-y: scroll;
-//  }
 .data {
     padding-top: 7px;
     float: right;
     font-size: 16px;
-    // font-weight: bold;
     font-family: cursive;
     color: #2c2c2c;
     margin-right: 10px;
@@ -784,12 +1072,6 @@ tbody {
     color: black;
 }
 
-// .main-panel .main-content {
-//     padding: 0 15px 15px;
-//     min-height: calc(100vh - 123px);
-//     margin-top: -30px;
-// }
-
 .fa-caret-left {
     font-size: 28px;
     color: #2c2c2c;
@@ -800,35 +1082,7 @@ tbody {
     background-color: #f3f3f3;
 }
 
-.loaderClass {
-    display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background-color: lightgray;
-    opacity: 0.5;
-    margin-left: -11px;
-    margin-top: -10px;
-}
 
-.loaderClassMain {
-    display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background-color: #000000;
-    opacity: 0.8;
-    margin-bottom: 15px;
-}
-
-.imgLoader {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
 
 .fa-expand-showgraph {
     cursor: pointer;
@@ -877,51 +1131,6 @@ tbody {
     cursor: pointer;
 }
 
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-
-/* Track */
-
-::-webkit-scrollbar-track {
-    -webkit-box-shadow: transparent;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-}
-
-
-/* Handle */
-
-::-webkit-scrollbar-thumb {
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    background: transparent;
-    -webkit-box-shadow: transparent;
-}
-
-:hover::-webkit-scrollbar {
-    width: 8px;
-}
-
-
-/* Track */
-
-:hover::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-}
-
-
-/* Handle */
-
-:hover::-webkit-scrollbar-thumb {
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    background: #20a120;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-}
 
 
 /* input css*/
@@ -1162,9 +1371,7 @@ label {
     font-size: 12px;
 }
 
-.active {
-    background-color: #0ab39c25;
-}
+
 
 .img-close {
     position: relative;
@@ -1639,9 +1846,8 @@ label {
         width: 105px;
     }
 
-    .header {
-        height: 58px !important;
-    }
+
+
 
     .fix-home-outer {
         margin-left: auto;
@@ -1689,9 +1895,8 @@ label {
         overflow-x: scroll
     }
 
-    .header {
-        height: 58px !important;
-    }
+
+
 
     .fix-home-outer {
         margin-left: auto;
@@ -1759,31 +1964,7 @@ label {
 }
 
 
-.not-matched {
-    background-color: #ff000014;
-}
 
-.house-list {
-    border-style: solid;
-    border-width: 1px;
-    border-color: $borderColor;
-    background-color: $whitefa;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-}
-
-.commercial-list {
-    border-style: solid;
-    border-width: 1px;
-    border-color: #0ab39c;
-    background-color: #0ab39c25;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
 
 // SVG icon color
 .icon-green {
