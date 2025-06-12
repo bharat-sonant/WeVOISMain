@@ -396,6 +396,7 @@
     position: relative;
     width: calc(100% / 3);
     background-color: $whitef5;
+    height: 200px;
 }
 
 .servey-image-label {
@@ -856,8 +857,14 @@
 /** Custom Scrollbar css Ends here **/
 
 /**** Media Query CSS Starts Here ****/
-@media (max-width: 1198px){
-      .table-line-header {
+@media (max-width: 1398px) {
+    .servey-image-card {
+        width: calc(100% / 2 - 11px);
+    }
+}
+
+@media (max-width: 1198px) {
+    .table-line-header {
         display: flex;
         position: relative;
         overflow-x: scroll;
@@ -885,6 +892,7 @@
         padding-right: 16px;
     }
 }
+
 @media (max-width: 991.98px) {
     .header {
         height: auto;
@@ -937,7 +945,7 @@
     }
 
 
-  
+
 
     .breadcrumb {
         overflow-x: scroll;
@@ -948,6 +956,10 @@
     .li-breadcrumb {
         flex-shrink: 0;
         min-width: 20px;
+    }
+
+    .survey-box {
+        width: calc(100% / 2 - 13px);
     }
 }
 
@@ -1088,9 +1100,9 @@ tbody {
     float: right;
 }
 
-.active {
-    background-color: #f3f3f3;
-}
+// .active {
+//     background-color: #f3f3f3;
+// }
 
 
 
