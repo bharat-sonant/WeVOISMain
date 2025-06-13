@@ -514,7 +514,373 @@
 /*** inner survey image modal css ends here ****/
 
 
+/*** Breadcrumb CSS Starts Here ***/
+.breadcrumb {
+    background-color: transparent;
+    padding: 0px;
+    margin: 0px;
+}
 
+.ul-breadcrumb {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    font-size: 10px;
+    font-family: $fontGraphik;
+}
+
+.breadcrumb .li-breadcrumb {
+    color: $black70;
+}
+
+.breadcrumb .li-breadcrumb::after {
+    content: '/';
+    margin-left: 8px;
+    color: $black70;
+}
+
+.breadcrumb .li-breadcrumb:last-child::after {
+    content: '';
+    margin: 0;
+}
+
+.breadcrumb .link-breadcrumb {
+    text-decoration: none;
+    color: $black70;
+
+    &:hover {
+        color: $themeColor
+    }
+}
+
+/*** Breadcrumb CSS Ends Here ***/
+
+/*** Table CSS Starts here ***/
+.table {
+    width: 100%;
+    margin: 0px;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0px;
+    background-color: $whitefa;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: $darkBlack;
+    font-family: $fontGraphikMedium;
+    font-weight: normal;
+    border-bottom: 1px solid $white;
+    z-index: 2;
+}
+
+.table tbody tr td {
+    padding: 12px 16px;
+    font-size: 13px;
+    color: $lightBlack;
+    font-family: $fontGraphik;
+    border-bottom: 1px solid $borderColor;
+    font-weight: normal
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+:global(.table-hover tbody tr:hover) {
+    background-color: $whitef5 !important;
+    color: $darkBlack !important;
+
+    .iconActionBtn {
+        filter: brightness(0) saturate(100%) invert(60%) sepia(27%) saturate(2982%) hue-rotate(176deg) brightness(104%) contrast(89%);
+    }
+
+    .btnDelete {
+        filter: brightness(0) saturate(100%) invert(53%) sepia(48%) saturate(2981%) hue-rotate(332deg) brightness(97%) contrast(93%);
+    }
+}
+
+.table :global(> :not(:first-child)) {
+    border-top: 0px solid currentColor;
+}
+
+.table>:not(:first-child) {
+    border-top: 0px solid currentColor;
+}
+
+/*** Table CSS Ends here ***/
+
+
+/*** Custom dropdown and textbox CSS Starts here ***/
+.custom-label {
+    font-size: 12px;
+    color: $darkBlack;
+    font-family: $fontGraphik;
+    margin-bottom: 5px;
+}
+
+.custom-input {
+    height: 40px;
+    width: 100%;
+    background: $white;
+    color: $darkBlack;
+    border: 1px solid $borderColor;
+    font-size: 13px;
+    font-family: $fontGraphik;
+    padding: 0px 16px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.custom-input::placeholder {
+    color: $black70;
+}
+
+.custom-dropdown-btn {
+    height: 40px;
+    width: 100%;
+    background: $white;
+    color: $black70;
+    border: 1px solid $borderColor;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-family: $fontGraphik;
+    padding: 0px 16px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    position: relative;
+
+    &:after {
+        content: "";
+        position: absolute;
+        right: 16px;
+        top: 12px;
+        width: 12px;
+        height: 12px;
+        background-image: url(../../assets//img/iconDown.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+}
+
+.dropdown-menu.show {
+    visibility: visible;
+    opacity: 1;
+    width: 100%;
+    background-color: var(--white);
+    box-shadow: 0 8px 20px 0 #0000000a;
+    padding: 0px;
+    border-radius: 6px;
+    margin: 0px;
+    border: 1px solid var(--borderColor);
+    transform: translate(0px, 8px) !important;
+    min-height: 50px;
+    max-height: 250px;
+    overflow: auto;
+}
+
+.dropdown-item {
+    font-size: 13px;
+    color: $black70;
+    font-family: $fontGraphik;
+    padding: 10px 16px;
+    width: 100%;
+    text-align: left;
+    outline: none;
+    border: none;
+    background: transparent;
+
+    &:hover {
+        color: $darkBlack;
+    }
+}
+
+/*** Custom dropdown and textbox CSS Ends here ***/
+
+/*** Custom Modal CSS Starts here ***/
+.modal-overlay {
+    width: 100%;
+    height: 100%;
+    background-color: $transparentBlack;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: none;
+}
+
+.modal-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.custom-modal {
+    background-color: $white;
+    width: 400px;
+    border-radius: 6px;
+}
+
+.modal-survey {
+    max-width: 85%;
+    height: 90vh;
+    width: 100%;
+}
+
+.modal-survey .modal-content {
+    height: 100%;
+}
+
+.modal-content {
+    border: none;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    box-shadow: 0 8px 20px 0 #0000000a;
+    border-bottom: none;
+}
+
+.modal-title {
+    font-size: 18px;
+    color: $darkBlack;
+    font-family: $fontGraphikSemibold;
+    word-break: break-word;
+}
+
+.modal-header .btn-close {
+    width: 12px;
+    padding: 0px;
+
+    &:hover {
+        filter: brightness(0) saturate(100%) invert(42%) sepia(82%) saturate(828%) hue-rotate(331deg) brightness(103%) contrast(88%);
+    }
+}
+
+.custom-modal-body {
+    padding: 30px !important;
+}
+
+.btn-footer-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.btn-footer {
+    width: calc(100% / 2 - 8px);
+    height: 42px;
+    color: $white;
+    font-size: 14px;
+    font-family: $fontGraphikSemibold;
+    padding: 0px 15px;
+    border-radius: 4px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: 0.3s;
+    text-transform: capitalize;
+}
+
+.btn-success {
+    background-color: $themeColor;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: $themeColorDark;
+    }
+}
+
+.btn-cancel {
+    border: 1px solid $borderColor;
+    background-color: $white;
+    color: $black70;
+    font-family: $fontGraphik;
+}
+
+/*** Custom Modal CSS Ends here ***/
+
+/** Custom Scrollbar css starts here **/
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: transparent;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: transparent;
+    -webkit-box-shadow: transparent;
+}
+
+:hover::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+
+:hover::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+
+/* Handle */
+
+:hover::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: #20a120;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+/** Custom Scrollbar css Ends here **/
+
+
+/** Media query CSS Starts here ****/
+
+@media (max-width: 1398px) {}
+
+@media (max-width: 1198px) {}
+
+@media (max-width: 991.98px) {
+
+    .breadcrumb {
+        overflow-x: scroll;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+    }
+
+    .li-breadcrumb {
+        flex-shrink: 0;
+        min-width: 20px;
+    }
+
+}
 
 
 
