@@ -32,6 +32,7 @@ export class WardTripAnalysisComponent implements OnInit {
     refreshTime: "00:00:00",
     driverName: "",
     driverMobile: "",
+    driverId: "",
     startTime: "00:00:00",
     analysisDetail: "",
     imageUrl: "",
@@ -43,7 +44,10 @@ export class WardTripAnalysisComponent implements OnInit {
     tripCount: 0,
     wasteCollection: 0,
     manualRemarks: "",
-    overLoad: ""
+    penaltyAmount: 0,
+    penaltyReason: '',
+    overLoad: "",
+    analysisStatus: 'Ok'
   };
   cityName: any;
   db: any;
@@ -101,7 +105,7 @@ export class WardTripAnalysisComponent implements OnInit {
       $("#slideImg1").removeClass((<HTMLElement>document.getElementById("slideImg1")).className);
       $("#slideImg1").addClass(this.imageCurrentRotation1);
     }
-    else if(type==2) {
+    else if (type == 2) {
       const currentIndex = rotations.indexOf(this.imageCurrentRotation2);
       const nextIndex = (currentIndex + 1) % rotations.length;
       this.imageCurrentRotation2 = rotations[nextIndex];
@@ -123,7 +127,7 @@ export class WardTripAnalysisComponent implements OnInit {
       $("#slideImg2").removeClass((<HTMLElement>document.getElementById("slideImg2")).className);
       $("#slideImg2").addClass(this.imageCurrentRotation2);
     }
-    else if(type==3) {
+    else if (type == 3) {
       const currentIndex = rotations.indexOf(this.imageCurrentRotation3);
       const nextIndex = (currentIndex + 1) % rotations.length;
       this.imageCurrentRotation3 = rotations[nextIndex];
@@ -145,7 +149,7 @@ export class WardTripAnalysisComponent implements OnInit {
       $("#slideImg3").removeClass((<HTMLElement>document.getElementById("slideImg3")).className);
       $("#slideImg3").addClass(this.imageCurrentRotation3);
     }
-    else{
+    else {
       const currentIndex = rotations.indexOf(this.imageCurrentRotation4);
       const nextIndex = (currentIndex + 1) % rotations.length;
       this.imageCurrentRotation4 = rotations[nextIndex];
@@ -245,6 +249,7 @@ export class WardTripAnalysisComponent implements OnInit {
                 let yardImageName2 = "";
                 let manualRemarks = "";
                 let overLoad = "";
+                let analysisStatus = "";
                 let vehicleType = data[tripID]["vehicle"].split('-')[0];
                 if (data[tripID]["filledStatus"] != null) {
                   filledStatus = data[tripID]["filledStatus"];
@@ -288,6 +293,7 @@ export class WardTripAnalysisComponent implements OnInit {
                     tripId: tripID,
                     tripName: "trip " + tripID,
                     driverName: driverName,
+                    driverId: driverId,
                     driverMobile: driverMobile,
                     time: time,
                     filledStatus: filledStatus,
@@ -300,7 +306,8 @@ export class WardTripAnalysisComponent implements OnInit {
                     yardImageName2: yardImageName2,
                     vehicleType: vehicleType,
                     manualRemarks: manualRemarks,
-                    overLoad: overLoad
+                    overLoad: overLoad,
+                    analysisStatus: analysisStatus
                   });
                 });
               }
@@ -339,6 +346,9 @@ export class WardTripAnalysisComponent implements OnInit {
                 this.getTripZoneData(tripFilter[0]["zoneNo"]);
                 this.tripList = tripFilter[0]["tripList"];
                 this.getTripData(this.tripList[0]["tripId"]);
+                this.getPenaltyData(this.tripList[0]["tripId"])
+              }else{
+                this.tripData.analysisStatus ='Ok'
               }
             }, 600);
 
@@ -483,6 +493,7 @@ export class WardTripAnalysisComponent implements OnInit {
               tripList.push({
                 tripId: tripID,
                 tripName: "trip " + tripID,
+                driverId: driverId,
                 driverName: driverName,
                 driverMobile: driverMobile,
                 time: time,
@@ -589,6 +600,21 @@ export class WardTripAnalysisComponent implements OnInit {
     }
   }
 
+  getPenaltyData(index: any) {
+    let tripDetails = this.tripList.find((item) => item.tripId == index);
+    let dbPath = `PenaltiesData/${this.currentYear}/${this.currentMonthName}/${this.selectedDate}/${tripDetails.driverId}/Trips/${tripDetails.tripId}`
+    let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      penaltyInstance.unsubscribe()
+      if (data !== null) {
+        this.tripData.penaltyAmount = data.amount;
+        this.tripData.penaltyReason = data.reason;
+      } else {
+        this.tripData.penaltyAmount = 0;
+        this.tripData.penaltyReason = '';
+      }
+    })
+  }
+
   getTripData(index: any) {
     this.selectedTrip = index;
     let tripCountForWard = this.tripData.tripCount;
@@ -612,7 +638,9 @@ export class WardTripAnalysisComponent implements OnInit {
       if (tripDetails.imageName != this.imageNotAvailablePath) {
         $("#ImageLoader").show();
       }
+     
       this.tripDetail = tripDetails;
+      this.tripData.driverId = tripDetails.driverId
       this.tripData.driverName = tripDetails.driverName;
       this.tripData.driverMobile = "+91 " + tripDetails.driverMobile;
       this.tripData.startTime = tripDetails.time;
@@ -627,10 +655,20 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.imageUrl1 = tripDetails.imageName2 != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName2 + "?alt=media" : this.imageNotAvailablePath;
       this.tripData.imageUrl2 = tripDetails.yardImageName != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.yardImageName + "?alt=media" : this.imageNotAvailablePath;
       this.tripData.imageUrl3 = tripDetails.yardImageName2 != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.yardImageName2 + "?alt=media" : this.imageNotAvailablePath;
+      if (tripDetails.filledStatus === 'yes' || tripDetails.overLoad === 'yes' || this.tripData.remark.trim() !== '') {
+        this.tripData.analysisStatus = 'Not Ok';
+      } else {
+        this.tripData.analysisStatus = 'Ok'
+      }
+
       this.setOverload();
-      this.setFilledStatus();
+      setTimeout(() => {
+        this.setFilledStatus();
+        this.setRemarkStatus();
+      }, 1000)
+
       this.setTripAnalysis();
-      this.setRemarkStatus();
+      this.getPenaltyData(index)
       setTimeout(function () {
         $("#ImageLoader").hide();
       }, 1000);
@@ -674,6 +712,7 @@ export class WardTripAnalysisComponent implements OnInit {
 
   getSelected(id: any) {
     let element = <HTMLInputElement>document.getElementById(id);
+
     if (id == "chkFilledStatus") {
       if (element.checked == true) {
         this.filledStatus = "yes";
@@ -699,6 +738,7 @@ export class WardTripAnalysisComponent implements OnInit {
 
   setOverload() {
     let element = <HTMLInputElement>document.getElementById("chkOverLoad");
+
     if (
       this.tripData.overLoad == undefined ||
       this.tripData.overLoad == ""
@@ -706,11 +746,14 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.overLoad = "";
       this.overLoad = "";
     }
-    if (this.tripData.overLoad == "yes") {
-      element.checked = true;
-    } else {
-      element.checked = false;
+    if (element !== null) {
+      if (this.tripData.overLoad == "yes") {
+        element.checked = true;
+      } else {
+        element.checked = false;
+      }
     }
+
   }
 
   setFilledStatus() {
@@ -722,11 +765,15 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.filledStatus = "";
       this.filledStatus = "";
     }
-    if (this.tripData.filledStatus == "yes") {
-      element.checked = true;
-    } else {
-      element.checked = false;
+    if (element !== null) {
+      if (this.tripData.filledStatus == "yes") {
+
+        element.checked = true;
+      } else {
+        element.checked = false;
+      }
     }
+
   }
 
   setRemarkStatus() {
@@ -735,36 +782,62 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.remark = "";
       this.remarkStatus = "";
     }
-    if (this.tripData.remark != "") {
-      element.checked = true;
-    } else {
-      element.checked = false;
+    if (element !== null) {
+      if (this.tripData.remark != "") {
+        element.checked = true;
+      } else {
+        element.checked = false;
+      }
     }
+
   }
 
   saveTripAnalysis() {
+    if (this.tripData.analysisStatus !== 'Ok') {
+      if (!(this.filledStatus === "yes" || this.remarkStatus.trim() !== "" || this.overLoad === "yes")) {
+        this.commonService.setAlertMessage("error", "Please select at least one reason if status is Not Ok.");
+        return;
+      }
+      let amount = this.tripData.penaltyAmount === null ? 0 : this.tripData.penaltyAmount;
+      const penaltyReason = this.tripData.penaltyReason.trim();
+      if ((amount > 0 && penaltyReason === '') || (amount === 0 && penaltyReason !== '')) {
+        let alertMessage = amount === 0 ? 'Please enter penalty amount' : 'Please enter penalty reason.'
+        this.commonService.setAlertMessage("error", alertMessage);
+        return;
+      }
+    }
+    if (this.tripData.analysisStatus === 'Ok') {
+      this.filledStatus = '';
+      this.remarkStatus = '';
+      this.overLoad = '';
+      this.tripData.penaltyAmount = 0;
+      this.tripData.penaltyReason = '';
+    }
+    let manualRemark = $(this.txtManualRemark).val() === undefined ? '' : $(this.txtManualRemark).val()
+
     let dbPath = "WardTrips/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedZone + "/" + this.selectedTrip + "";
     this.db.object(dbPath).update({
+      analysisStatus: this.tripData.analysisStatus,
       filledStatus: this.filledStatus,
       analysisAt: this.commonService.getTodayDateTime(),
       analysisBy: this.userId,
       remark: this.remarkStatus,
-      manualRemarks: $(this.txtManualRemark).val(),
+      manualRemarks: manualRemark,
       overLoad: this.overLoad
     });
     this.updatePendingAnalysis();
-    this.updateTripAndDetails();
+    this.updateTripAndDetails(manualRemark);
+    this.updatePenaltyAmount();
     this.setTripAnalysis();
     this.commonService.setAlertMessage("success", "Data has been added successfully.");
   }
-
-  updateTripAndDetails() {
+  updateTripAndDetails(manualRemark) {
     // set update values into the list
     let data = this.tripList.find((item) => item.tripId == this.selectedTrip);
     data.analysisAt = this.commonService.getTodayDateTime();
     data.analysisBy = this.userId;
     data.remark = this.remarkStatus;
-    data.manualRemarks = $(this.txtManualRemark).val();
+    data.manualRemarks = manualRemark;
     data.filledStatus = this.filledStatus;
     data.overLoad = this.overLoad;
     let zondDetail = this.zoneList.find(
@@ -788,12 +861,45 @@ export class WardTripAnalysisComponent implements OnInit {
     }
   }
 
+  updatePenaltyAmount() {
+    let penaltyPath = "PenaltiesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.tripData.driverId + "/" + 'Trips' + "/" + this.selectedTrip;
+    let response = this.db.object(penaltyPath).valueChanges().subscribe((penaltyAmount) => {
+      response.unsubscribe();
+      if ((penaltyAmount !== null && this.tripData.analysisStatus === 'Ok')) {
+        let dbPath = "PenaltiesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.tripData.driverId + "/" + 'Trips' + "/" + this.selectedTrip;
+        this.db.object(dbPath).remove()
+          .then(() => {
+            // console.log('Data deleted successfully.');
+          })
+          .catch(error => {
+            console.error('Error deleting data:', error);
+          });
+      } else {
+        let amount = this.tripData.penaltyAmount === null ? 0 : this.tripData.penaltyAmount;
+        const validPenalty = amount > 0 && (this.tripData.penaltyReason || '').trim() !== '';
+        if (validPenalty) {
+          let dbPath = "PenaltiesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.tripData.driverId + "/" + 'Trips' + "/" + this.selectedTrip;
+          this.db.object(dbPath).update({
+            panaltyType: '"Trip Analysis"',
+            amount: this.tripData.penaltyAmount,
+            _at: this.commonService.getTodayDateTime(),
+            _by: this.userId,
+            reason: this.tripData.penaltyReason
+          });
+        }
+      }
+    });
+  }
+
   clearAll() {
     this.tripData.analysisDetail = "";
     this.tripData.driverMobile = "";
     this.tripData.driverName = "";
+    this.tripData.driverId = "";
     this.tripData.filledStatus = "";
     this.tripData.manualRemarks = "";
+    this.tripData.penaltyAmount = 0;
+    this.tripData.penaltyReason = "";
     $(this.txtManualRemark).val("");
     this.tripData.imageUrl = this.imageNotAvailablePath;
     this.tripData.imageUrl1 = this.imageNotAvailablePath;
@@ -824,12 +930,20 @@ export class WardTripAnalysisComponent implements OnInit {
     (<HTMLElement>document.getElementById("slideImg3")).style.width = "";
     (<HTMLElement>document.getElementById("slideImg4")).style.height = "";
     (<HTMLElement>document.getElementById("slideImg4")).style.width = "";
-    let element = <HTMLInputElement>document.getElementById("chkFilledStatus");
-    element.checked = false;
-    element = <HTMLInputElement>document.getElementById("chkRemark");
-    element.checked = false;
-    element = <HTMLInputElement>document.getElementById("chkOverLoad");
-    element.checked = false;
+    let element = document.getElementById("chkFilledStatus") as HTMLInputElement;
+    if (element) {
+      element.checked = false;
+    }
+
+    element = document.getElementById("chkRemark") as HTMLInputElement;
+    if (element) {
+      element.checked = false;
+    }
+
+    element = document.getElementById("chkOverLoad") as HTMLInputElement;
+    if (element) {
+      element.checked = false;
+    }
     for (let i = 1; i <= 8; i++) {
       $('#tripDiv' + i).hide();
     }
@@ -841,6 +955,7 @@ export class tripDetail {
   refreshTime: string;
   driverName: string;
   driverMobile: string;
+  driverId: string;
   startTime: string;
   analysisDetail: string;
   imageUrl: string;
@@ -853,4 +968,7 @@ export class tripDetail {
   tripCount: number;
   wasteCollection: number;
   manualRemarks: string;
+  penaltyAmount: number;
+  penaltyReason: string;
+  analysisStatus: string;
 }

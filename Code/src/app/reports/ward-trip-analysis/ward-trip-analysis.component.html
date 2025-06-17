@@ -1,269 +1,523 @@
 <section class="dustbin-analysis">
-    <div id="divLoader" class="loaderClass">
-        <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-    </div>
-    <div id="ImageLoader" class="loaderClass-no-bg">
-        <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
-    </div>
-    <div class="container-fluid no-gutters">
-        <div class="row">
-
-            <div class="col-md-12 desk-hide">
-                <div class="header">
-                    <h3 class="header-text">Trip Analysis
-
-                    </h3>
-                </div>
-            </div>
-            <div class="col-md-12 mob-20 main1">
-                <div class="row">
-                    <div class="col-md-9">
-                        <div class="row">
-                            <div class="col-md-12 mob-hide mob-hide2">
-                                <div class="header">
-                                    <h3 class="header-text">Trip Analysis
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mob-hide-iner">
-                                <div class="top">
-                                    <div class="row mob-hide-iner2">
-                                        <div class="col-md-12 mob-hide-iner3">
-                                            <button class="btn btn-primary " (click)="setDate('','previous');">
-                                                << </button> <input id="txtDate" class="date-input" type="date"
-                                                        (change)="setDate($event.target.value,'current')">
-                                                    <button class="btn btn-primary" (click)="setDate('','next');"> >>
-                                                    </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 mob-mid mob-mid2">
-                                <div class="row">
-                                    <div class="col-md-3 mob-res pr-0 mob-res2">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="dustbin-card">
-                                                    <div class="float">
-                                                        <div class="fleft">
-                                                            <div class="img-left img-left2">
-                                                                <img src="../../../assets/img/man.png">
-                                                            </div>
-                                                            <h6 class="driver">
-                                                                &nbsp;{{tripData.driverName}}
-                                                            </h6>
-                                                        </div>
-                                                    </div>
-                                                    <div class="float float2">
-                                                        <div class="fleft">
-                                                            <div class="img-left fleft-iner">
-                                                                <!-- <i class="fas fa-mobile-alt mobile2"></i> -->
-                                                                 <img src="../../../assets/icons/mobile-screen-button-solid.svg" alt="mobile-icon" class="icon-green" width="18"/>
-                                                            </div>
-                                                            <h6 class="driverMobile2">
-                                                                {{tripData.driverMobile}}
-                                                            </h6>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="all-data">
-                                                    <div class="data-1 all-data-iner">
-                                                        <p class="remark-analysis">
-                                                            {{tripData.wasteCollection}} Kg
-                                                        <h5>Waste Collection</h5>
-                                                    </div>
-                                                    <div class="data-2">
-                                                        <p class="pen-analysis">
-                                                            {{tripData.pendingAnalysis}}</p>
-                                                        <h5>Pending Analysis</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="all-data">
-                                                    <div class="data-3">
-                                                        <p class="remark-analysis">
-                                                            {{tripData.startTime}}
-                                                        <h5>Time</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="review-page">
-                                                    <div class="col-12 radio-text radio-text2">
-                                                        <input class="Status2" type="checkbox" id="chkFilledStatus"
-                                                            value="0" (click)="getSelected('chkFilledStatus');">
-                                                        <label for="radio0">&nbsp;वाहन पूर्ण भरा हुआ है ?</label>
-                                                    </div>
-                                                    <div class="col-12 radio-text radio-text2"> <input class="Status2"
-                                                            type="checkbox" id="chkRemark" value="0"
-                                                            (click)="getSelected('chkRemark');">
-                                                        <label for="radio0">&nbsp;कचरा तिरपाल / ढक्कन से कवर है ?</label>
-                                                    </div>
-                                                    <div class="col-12 radio-text radio-text2"> <input class="Status2"
-                                                            type="checkbox" id="chkOverLoad" value="0"
-                                                            (click)="getSelected('chkOverLoad');">
-                                                        <label for="radio0">&nbsp;अधिक भार है ?</label>
-                                                    </div>
-                                                    <div class="col-12 radio-text">
-                                                        <textarea id="txtManualRemark" style="width:100%"
-                                                            placeholder="Remark"
-                                                            value="{{tripData.manualRemarks}}">{{tripData.manualRemarks}}</textarea>
-                                                    </div>
-                                                    <div class="dustbin-progress dustbin-progress2">
-                                                        <button type="button" class="btn w-100 btn-success btn2"
-                                                            (click)="saveTripAnalysis();">Save 
-                                                            <!-- <i
-                                                                class="fas fa-save"></i> -->
-                                                                <img src="../../../assets/icons/save-solid.svg" alt="save-file" width="12" class="icon-white"/>
-                                                            </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 mt-10">
-                                                <div class="remark-page remark-page2 remark-page2">
-                                                    <p class="align-self-center"><b
-                                                            [innerHTML]="tripData.analysisDetail"></b> </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-9 mob-res mob-res3">
-                                        <div class="row" >
-                                            <div class="col-md-6" >
-                                                <div style="background-color: #fff; padding: 10px; font-weight: bold;">
-                                                <div style="text-align: center;">बिना तिरपाल / ढक्कन के ऊपर से 
-                                                <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(1)"></i> -->
-                                                 <img src="../../../assets/icons/camera-rotate-solid.svg" alt="camera-rotate-1" width="22" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(1)"/>
-                                            </div>
-                                                <a href="{{tripData.imageUrl}}" target="_blank">
-                                                <img id="slideImg1" class="rotate0"
-                                                src="{{tripData.imageUrl}}"></a> </div>                                               
-                                            </div>                                            
-                                            <div class="col-md-6" >
-                                                <div style="background-color: #fff; padding: 10px; font-weight: bold;">
-                                                <div style="text-align: center;">तिरपाल / ढक्कन के साथ 
-                                                <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;"  (click)="rotateImage(2)"></i> -->
-                                                <img src="../../../assets/icons/camera-rotate-solid.svg" alt="camera-rotate-2" width="22" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(2)"/>
-                                            </div>
-                                                <a href="{{tripData.imageUrl1}}" target="_blank">
-                                                <img id="slideImg2" class="rotate0 d-block img-fluid"
-                                                src="{{tripData.imageUrl1}}"></a></div>
-                                            </div>
-                                            <div class="col-md-6" >
-                                                <div style="background-color: #fff; padding: 10px; font-weight: bold;">
-                                                <div style="text-align: center;">डंपिंग यार्ड मे भरा हुआ 
-                                                <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(3)"></i> -->
-                                                <img src="../../../assets/icons/camera-rotate-solid.svg" alt="camera-rotate-3" width="22" style="float:right; cursor: pointer;" (click)="rotateImage(3)"/>
-                                            </div>
-                                                <a href="{{tripData.imageUrl2}}" target="_blank">
-                                                <img id="slideImg3" class="rotate0"
-                                                src="{{tripData.imageUrl2}}"></a> </div>                                               
-                                            </div>                                           
-                                            <div class="col-md-6" >
-                                                <div style="background-color: #fff; padding: 10px; font-weight: bold;">
-                                                <div style="text-align: center;">डंपिंग यार्ड मे खाली हुआ 
-                                                <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;"  (click)="rotateImage(4)"></i> -->
-                                                <img src="../../../assets/icons/camera-rotate-solid.svg" alt="camera-rotate-4" width="22" style="float:right; cursor: pointer;" (click)="rotateImage(4)"/>
-                                            </div>
-                                                <a href="{{tripData.imageUrl3}}" target="_blank">
-                                                <img id="slideImg4" class="rotate0 d-block img-fluid"
-                                                src="{{tripData.imageUrl3}}"></a></div>
-                                            </div>            
-                                            
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-2 pr-0">
-                                                <div class="trip-data mt-10 trip-data2">
-                                                    <div class="data-3">
-                                                        <p class="remark-analysis remark-analysis2">
-                                                            {{tripData.tripCount}}
-                                                        <h5 class="trip2">Total Trip</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-10 main2">
-                                                <div class="row mt-10 main2-iner">
-                                                    <div id="tripDiv1"
-                                                        class="col-md-3 text-center trip-summary active-trip"
-                                                        (click)="getTripData(1)">
-                                                        TRIP 1
-                                                    </div>
-                                                    <div id="tripDiv2" class="col-md-3 text-center trip-summary"
-                                                        (click)="getTripData(2)">
-                                                        TRIP 2
-                                                    </div>
-                                                    <div id="tripDiv3" class="col-md-3 text-center trip-summary"
-                                                        (click)="getTripData(3)">
-                                                        TRIP 3
-                                                    </div>
-                                                    <div id="tripDiv4" class="col-md-3 text-center trip-summary"
-                                                        (click)="getTripData(4)">
-                                                        TRIP 4
-                                                    </div>
-                                                    <div id="tripDiv5" class="col-md-3 text-center trip-summary"
-                                                        (click)="getTripData(5)">
-                                                        TRIP 5
-                                                    </div>
-                                                    <div id="tripDiv6" class="col-md-3 text-center trip-summary"
-                                                        (click)="getTripData(6)">
-                                                        TRIP 6
-                                                    </div>
-                                                    <div id="tripDiv7" class="col-md-3 text-center trip-summary"
-                                                        (click)="getTripData(7)">
-                                                        TRIP 7
-                                                    </div>
-                                                    <div id="tripDiv8" class="col-md-3 text-center trip-summary"
-                                                        (click)="getTripData(8)">
-                                                        TRIP 8
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-3 desk-right mob-bottom">
-                        <div class="scroll-list">
-                            <div id="filter{{i}}" class="{{data.divClass}}" *ngFor="let data of zoneList ; let i=index"
-                                (click)="data.iconClass!='fas fa-ellipsis-h' && getTripZoneData(data.zoneNo);">
-                                <i class="{{data.iconClass}}"></i>
-                                <div class="address-text2">
-                                    <div class="address-text">
-                                        <h6>
-                                            {{data.zoneName}} 
-                                        </h6>
-                                    </div>
-                                </div>
-                                <div class="address-text3">
-                                    <div class="address-text">
-                                        <!-- <i class="fa-regular fa-trash-can" style="color: #0ba118;" [hidden]="data.isDustbin==0"></i> -->
-                                         <img src="../../../assets/icons/trash-alt-solid.svg" alt="trash" width="14" class="icon-green" [hidden]="data.isDustbin==0"/>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader" />
+  </div>
+  <div id="ImageLoader" class="loaderClass-no-bg">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader" />
+  </div>
+  <div class="container-fluid no-gutters">
+    <div class="row">
+      <div class="col-md-12 desk-hide">
+        <div class="header">
+          <h3 class="header-text">Trip Analysis</h3>
         </div>
+      </div>
+      <div class="col-md-12 mob-20 main1">
+        <div class="row">
+          <div class="col-md-9">
+            <div class="row">
+              <div class="col-md-12 mob-hide mob-hide2">
+                <div class="header">
+                  <h3 class="header-text">Trip Analysis</h3>
+                </div>
+              </div>
+              <div class="col-md-3 mob-hide-iner">
+                <div class="top">
+                  <div class="row mob-hide-iner2">
+                    <div class="col-md-12 mob-hide-iner3">
+                      <button
+                        class="btn btn-primary"
+                        (click)="setDate('', 'previous')"
+                      >
+                        <<
+                      </button>
+                      <input
+                        id="txtDate"
+                        class="date-input"
+                        type="date"
+                        (change)="setDate($event.target.value, 'current')"
+                      />
+                      <button
+                        class="btn btn-primary"
+                        (click)="setDate('', 'next')"
+                      >
+                        >>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mob-mid mob-mid2">
+                <div class="row">
+                  <div class="col-md-3 mob-res pr-0 mob-res2">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="dustbin-card">
+                          <div class="float">
+                            <div class="fleft">
+                              <div class="img-left img-left2">
+                                <img src="../../../assets/img/man.png" />
+                              </div>
+                              <h6 class="driver">
+                                &nbsp;{{ tripData.driverName }}
+                              </h6>
+                            </div>
+                          </div>
+                          <div class="float float2">
+                            <div class="fleft">
+                              <div class="img-left fleft-iner">
+                                <!-- <i class="fas fa-mobile-alt mobile2"></i> -->
+                                <img
+                                  src="../../../assets/icons/mobile-screen-button-solid.svg"
+                                  alt="mobile-icon"
+                                  class="icon-green"
+                                  width="18"
+                                />
+                              </div>
+                              <h6 class="driverMobile2">
+                                {{ tripData.driverMobile }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="all-data">
+                          <div class="data-1 all-data-iner">
+                            <p class="remark-analysis">
+                              {{ tripData.wasteCollection }} Kg
+                            </p>
+
+                            <h5>Waste Collection</h5>
+                          </div>
+                          <div class="data-2">
+                            <p class="pen-analysis">
+                              {{ tripData.pendingAnalysis }}
+                            </p>
+                            <h5>Pending Analysis</h5>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="all-data">
+                          <div class="data-3">
+                            <p class="remark-analysis">
+                              {{ tripData.startTime }}
+                            </p>
+                            <h5>Time</h5>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="review-page"
+                        
+                        >
+                          <div
+                            class="col-12 radio-text radio-text2"
+                            style="
+                              display: flex;
+                              align-items: center;
+                              gap: 30px;
+                            "
+                          >
+                            <!-- OK Option -->
+                            <label
+                              style="
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+                                cursor: pointer;
+                              "
+                            >
+                              <input
+                                type="radio"
+                                name="review"
+                                value="Ok"
+                                [(ngModel)]="tripData.analysisStatus"
+                                style="margin: 0; cursor: pointer"
+                                [disabled]="tripData.driverId === ''"
+                              />
+                              OK
+                            </label>
+
+                            <!-- Not OK Option -->
+                            <label
+                              style="
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+                                cursor: pointer;
+                              "
+                            >
+                              <input
+                                type="radio"
+                                name="review"
+                                value="Not Ok"
+                                [(ngModel)]="tripData.analysisStatus"
+                                style="margin: 0; cursor: pointer"
+                                 [disabled]="tripData.driverId === ''"
+                              />
+                              Not OK
+                            </label>
+                          </div>
+
+                          <div *ngIf="tripData.analysisStatus === 'Not Ok'">
+                            <div class="col-12 radio-text radio-text2">
+                              <input
+                                class="Status2"
+                                type="checkbox"
+                                id="chkFilledStatus"
+                                (click)="getSelected('chkFilledStatus')"
+                              />
+                              <label for="chkFilledStatus"
+                                >&nbsp;वाहन पूर्ण भरा हुआ है ?</label
+                              >
+                            </div>
+
+                            <div class="col-12 radio-text radio-text2">
+                              <input
+                                class="Status2"
+                                type="checkbox"
+                                id="chkRemark"
+                                (click)="getSelected('chkRemark')"
+                              />
+                              <label for="chkRemark"
+                                >&nbsp;कचरा तिरपाल / ढक्कन से कवर है ?</label
+                              >
+                            </div>
+
+                            <div class="col-12 radio-text radio-text2">
+                              <input
+                                class="Status2"
+                                type="checkbox"
+                                id="chkOverLoad"
+                                (click)="getSelected('chkOverLoad')"
+                              />
+                              <label for="chkOverLoad"
+                                >&nbsp;अधिक भार है ?</label
+                              >
+                            </div>
+
+                            <!-- Textarea -->
+                            <div class="col-12 radio-text">
+                              <textarea
+                                id="txtManualRemark"
+                                style="width: 100%"
+                                placeholder="Remark"
+                                [(ngModel)]="tripData.manualRemarks"
+                              ></textarea>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="review-page"
+                          *ngIf="tripData.analysisStatus === 'Not Ok'"
+                          style="margin-top: 5px"
+                        >
+                          <!-- Penalty Amount Input -->
+                          <div
+                            class="col-12 radio-text radio-text2"
+                            style="margin-bottom: 12px"
+                          >
+                            <input
+                              type="number"
+                              id="penaltyAmount"
+                              [(ngModel)]="tripData.penaltyAmount"
+                              style="
+                                width: 100%;
+                                padding: 8px;
+                                border: 1px solid #ccc;
+                                border-radius: 4px;
+                              "
+                              placeholder="Penalty amount"
+                            />
+                          </div>
+                          <!-- Remark Textarea -->
+                          <div class="col-12 radio-text">
+                            <textarea
+                              id="txtPenaltyReason"
+                              style="
+                                width: 100%;
+                                padding: 8px;
+                                border: 1px solid #ccc;
+                                border-radius: 4px;
+                                margin-top: -12px;
+                              "
+                              placeholder="Reason"
+                              [(ngModel)]="tripData.penaltyReason"
+                            ></textarea>
+                          </div>
+                        </div>
+                        <div class="review-page" >
+                          <div class="dustbin-progress dustbin-progress2">
+                            <button
+                              type="button"
+                              class="btn w-100 btn-success btn2"
+                              (click)="saveTripAnalysis()"
+                              [disabled]="tripData.driverId === ''"
+                            >
+                              Save
+
+                              <img
+                                src="../../../assets/icons/save-solid.svg"
+                                alt="save-file"
+                                width="12"
+                                class="icon-white"
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mt-10">
+                        <div class="remark-page remark-page2 remark-page2">
+                          <p class="align-self-center">
+                            <b [innerHTML]="tripData.analysisDetail"></b>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-9 mob-res mob-res3">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div
+                          style="
+                            background-color: #fff;
+                            padding: 10px;
+                            font-weight: bold;
+                          "
+                        >
+                          <div style="text-align: center">
+                            बिना तिरपाल / ढक्कन के ऊपर से
+                            <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(1)"></i> -->
+                            <img
+                              src="../../../assets/icons/camera-rotate-solid.svg"
+                              alt="camera-rotate-1"
+                              width="22"
+                              style="
+                                float: right;
+                                cursor: pointer;
+                                font-size: 18px;
+                              "
+                              (click)="rotateImage(1)"
+                            />
+                          </div>
+                          <a href="{{ tripData.imageUrl }}" target="_blank">
+                            <img
+                              id="slideImg1"
+                              class="rotate0"
+                              src="{{ tripData.imageUrl }}"
+                          /></a>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div
+                          style="
+                            background-color: #fff;
+                            padding: 10px;
+                            font-weight: bold;
+                          "
+                        >
+                          <div style="text-align: center">
+                            तिरपाल / ढक्कन के साथ
+                            <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;"  (click)="rotateImage(2)"></i> -->
+                            <img
+                              src="../../../assets/icons/camera-rotate-solid.svg"
+                              alt="camera-rotate-2"
+                              width="22"
+                              style="
+                                float: right;
+                                cursor: pointer;
+                                font-size: 18px;
+                              "
+                              (click)="rotateImage(2)"
+                            />
+                          </div>
+                          <a href="{{ tripData.imageUrl1 }}" target="_blank">
+                            <img
+                              id="slideImg2"
+                              class="rotate0 d-block img-fluid"
+                              src="{{ tripData.imageUrl1 }}"
+                          /></a>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div
+                          style="
+                            background-color: #fff;
+                            padding: 10px;
+                            font-weight: bold;
+                          "
+                        >
+                          <div style="text-align: center">
+                            डंपिंग यार्ड मे भरा हुआ
+                            <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(3)"></i> -->
+                            <img
+                              src="../../../assets/icons/camera-rotate-solid.svg"
+                              alt="camera-rotate-3"
+                              width="22"
+                              style="float: right; cursor: pointer"
+                              (click)="rotateImage(3)"
+                            />
+                          </div>
+                          <a href="{{ tripData.imageUrl2 }}" target="_blank">
+                            <img
+                              id="slideImg3"
+                              class="rotate0"
+                              src="{{ tripData.imageUrl2 }}"
+                          /></a>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div
+                          style="
+                            background-color: #fff;
+                            padding: 10px;
+                            font-weight: bold;
+                          "
+                        >
+                          <div style="text-align: center">
+                            डंपिंग यार्ड मे खाली हुआ
+                            <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;"  (click)="rotateImage(4)"></i> -->
+                            <img
+                              src="../../../assets/icons/camera-rotate-solid.svg"
+                              alt="camera-rotate-4"
+                              width="22"
+                              style="float: right; cursor: pointer"
+                              (click)="rotateImage(4)"
+                            />
+                          </div>
+                          <a href="{{ tripData.imageUrl3 }}" target="_blank">
+                            <img
+                              id="slideImg4"
+                              class="rotate0 d-block img-fluid"
+                              src="{{ tripData.imageUrl3 }}"
+                          /></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-2 pr-0">
+                        <div class="trip-data mt-10 trip-data2">
+                          <div class="data-3">
+                            <p class="remark-analysis remark-analysis2">
+                              {{ tripData.tripCount }}
+                            </p>
+
+                            <h5 class="trip2">Total Trip</h5>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-10 main2">
+                        <div class="row mt-10 main2-iner">
+                          <div
+                            id="tripDiv1"
+                            class="col-md-3 text-center trip-summary active-trip"
+                            (click)="getTripData(1)"
+                          >
+                            TRIP 1
+                          </div>
+                          <div
+                            id="tripDiv2"
+                            class="col-md-3 text-center trip-summary"
+                            (click)="getTripData(2)"
+                          >
+                            TRIP 2
+                          </div>
+                          <div
+                            id="tripDiv3"
+                            class="col-md-3 text-center trip-summary"
+                            (click)="getTripData(3)"
+                          >
+                            TRIP 3
+                          </div>
+                          <div
+                            id="tripDiv4"
+                            class="col-md-3 text-center trip-summary"
+                            (click)="getTripData(4)"
+                          >
+                            TRIP 4
+                          </div>
+                          <div
+                            id="tripDiv5"
+                            class="col-md-3 text-center trip-summary"
+                            (click)="getTripData(5)"
+                          >
+                            TRIP 5
+                          </div>
+                          <div
+                            id="tripDiv6"
+                            class="col-md-3 text-center trip-summary"
+                            (click)="getTripData(6)"
+                          >
+                            TRIP 6
+                          </div>
+                          <div
+                            id="tripDiv7"
+                            class="col-md-3 text-center trip-summary"
+                            (click)="getTripData(7)"
+                          >
+                            TRIP 7
+                          </div>
+                          <div
+                            id="tripDiv8"
+                            class="col-md-3 text-center trip-summary"
+                            (click)="getTripData(8)"
+                          >
+                            TRIP 8
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 desk-right mob-bottom">
+            <div class="scroll-list">
+              <div
+                id="filter{{ i }}"
+                class="{{ data.divClass }}"
+                *ngFor="let data of zoneList; let i = index"
+                (click)="
+                  data.iconClass != 'fas fa-ellipsis-h' &&
+                    getTripZoneData(data.zoneNo)
+                "
+              >
+                <i class="{{ data.iconClass }}"></i>
+                <div class="address-text2">
+                  <div class="address-text">
+                    <h6>
+                      {{ data.zoneName }}
+                    </h6>
+                  </div>
+                </div>
+                <div class="address-text3">
+                  <div class="address-text">
+                    <!-- <i class="fa-regular fa-trash-can" style="color: #0ba118;" [hidden]="data.isDustbin==0"></i> -->
+                    <img
+                      src="../../../assets/icons/trash-alt-solid.svg"
+                      alt="trash"
+                      width="14"
+                      class="icon-green"
+                      [hidden]="data.isDustbin == 0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
