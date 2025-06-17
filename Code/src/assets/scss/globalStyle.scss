@@ -47,7 +47,8 @@
     margin: 0px;
 }
 
-.table thead th {
+.table thead th,
+.table tfoot td {
     position: sticky;
     top: 0px;
     background-color: $whitefa;
@@ -60,7 +61,21 @@
     z-index: 2;
 }
 
-.table tbody tr td {
+
+.table tfoot,
+.table tfoot th,
+.table tfoot td {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: -1px;
+    z-index: 2;
+    top: auto;
+    background-color: #eaf5ea !important;
+    padding: 12px 16px !important;
+}
+
+.table tbody tr td,
+.table tfoot td {
     padding: 12px 16px;
     font-size: 13px;
     color: $lightBlack;

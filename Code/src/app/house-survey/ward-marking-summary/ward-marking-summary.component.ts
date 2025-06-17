@@ -873,16 +873,16 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
   openExportMarkerData(content: any) {
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 200;
-    let width = 400;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#divHouseStatus").css("height", divHeight);
+    // this.modalService.open(content, { size: "lg" });
+    // let windowHeight = $(window).height();
+    // let height = 200;
+    // let width = 400;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divHouseStatus").css("height", divHeight);
 
   }
 
@@ -890,17 +890,17 @@ export class WardMarkingSummaryComponent implements OnInit {
   getZoneHouseTypeList(content: any) {
     this.totalTypeCount = 0;
     this.zoneHouseTypeList = [];
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 870;
-    let width = 400;
-    height = (windowHeight * 70) / 100;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 75 + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#divHouseStatus").css("height", divHeight);
+    // this.modalService.open(content, { size: "lg" });
+    // let windowHeight = $(window).height();
+    // let height = 870;
+    // let width = 400;
+    // height = (windowHeight * 70) / 100;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height - 75 + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divHouseStatus").css("height", divHeight);
     let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       markerData => {
@@ -956,23 +956,34 @@ export class WardMarkingSummaryComponent implements OnInit {
     );
   }
 
-  showLineDetail(content: any, wardNo: any, lineNo: any, index: any, userId: any) {
-    this.markerDetailList = [];
-    this.markerData.lineNo = lineNo;
-    this.getLineDetail(wardNo, lineNo);
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let windowWidth = $(window).width();
-    let height = 870;
-    let width = windowWidth - 300;
-    height = (windowHeight * 90) / 100;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-    let divHeight = height - 130 + "px";
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#divStatus").css("height", divHeight);
-  }
+  // showLineDetail(content: any, wardNo: any, lineNo: any, index: any, userId: any) {
+  //   this.markerDetailList = [];
+  //   this.markerData.lineNo = lineNo;
+  //   this.getLineDetail(wardNo, lineNo);
+  //   this.modalService.open(content, { size: "lg" });
+  //   let windowHeight = $(window).height();
+  //   let windowWidth = $(window).width();
+  //   let height = 870;
+  //   let width = windowWidth - 300;
+  //   height = (windowHeight * 90) / 100;
+  //   let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  //   let divHeight = height - 130 + "px";
+  //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+  //   $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+  //   $("div .modal-dialog-centered").css("margin-top", marginTop);
+  //   $("#divStatus").css("height", divHeight);
+  // }
+showLineDetail(wardNo: any, lineNo: any) {
+  this.markerDetailList = [];
+  this.markerData.wardNo = wardNo;
+  this.markerData.lineNo = lineNo;
+
+  this.getLineDetail(wardNo, lineNo);
+
+
+}
+
+
   closeModel() {
     this.modalService.dismissAll();
   }
