@@ -168,13 +168,14 @@
                             </label>
                           </div>
 
-                          <div *ngIf="tripData.analysisStatus === 'Not Ok'">
+                          <div >
                             <div class="col-12 radio-text radio-text2">
                               <input
                                 class="Status2"
                                 type="checkbox"
                                 id="chkFilledStatus"
                                 (click)="getSelected('chkFilledStatus')"
+                                [disabled]="tripData.driverId === ''"
                               />
                               <label for="chkFilledStatus"
                                 >&nbsp;वाहन पूर्ण भरा हुआ है ?</label
@@ -187,6 +188,7 @@
                                 type="checkbox"
                                 id="chkRemark"
                                 (click)="getSelected('chkRemark')"
+                                [disabled]="tripData.driverId === ''"
                               />
                               <label for="chkRemark"
                                 >&nbsp;कचरा तिरपाल / ढक्कन से कवर है ?</label
@@ -199,6 +201,7 @@
                                 type="checkbox"
                                 id="chkOverLoad"
                                 (click)="getSelected('chkOverLoad')"
+                                [disabled]="tripData.driverId === ''"
                               />
                               <label for="chkOverLoad"
                                 >&nbsp;अधिक भार है ?</label
