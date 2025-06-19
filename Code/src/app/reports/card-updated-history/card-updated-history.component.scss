@@ -1,13 +1,190 @@
-.header {
-    height: 57px;
-    width: 100%;
-    background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding-top: 15px;
+@import '../../../assets/scss/variable';
+@import '../../../assets/scss/fonts';
+
+
+.main-page {
+    background-color: #f3f3f9;
+    padding: 10px 16px;
 }
+.page-content {
+    padding: 0px;
+    border-radius: 6px;
+    height: calc(100vh - 110px);
+
+}
+/*** header css starts here ****/
+.header {
+    width: 100%;
+    background: $white;
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+.header-left {
+    font-size: 18px;
+    font-family: $fontGraphikSemibold;
+    color: $darkBlack;
+    width: 480px;
+}
+
+.header-right {
+    display: flex;
+    width: calc(100% - 480px);
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-default {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    font-family: $fontGraphikMedium;
+    font-size: 10px;
+    gap: 5px;
+    padding: 5px 10px;
+    background-color: $white;
+    border: 1px solid $themeColor;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: .3s;
+
+    &:hover {
+        background-color: $themeColorDark;
+        color: $white;
+
+        .icon-default {
+            filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(54deg) brightness(102%) contrast(101%);
+        }
+    }
+}
+
+.icon-default {
+    width: 12px;
+}
+
+
+/*** Breadcrumb CSS Starts Here ***/
+.breadcrumb {
+    background-color: transparent;
+    padding: 0px;
+    margin: 0px;
+}
+
+.ul-breadcrumb {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    font-size: 10px;
+    font-family: $fontGraphik;
+}
+
+.breadcrumb .li-breadcrumb {
+    color: $black70;
+}
+
+.breadcrumb .li-breadcrumb::after {
+    content: '/';
+    margin-left: 8px;
+    color: $black70;
+}
+
+.breadcrumb .li-breadcrumb:last-child::after {
+    content: '';
+    margin: 0;
+}
+
+.breadcrumb .link-breadcrumb {
+    text-decoration: none;
+    color: $black70;
+
+    &:hover {
+        color: $themeColor
+    }
+}
+
+// .header {
+//     height: 57px;
+//     width: 100%;
+//     background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+//     color: #fff;
+//     font-size: 16px;
+//     font-weight: bold;
+//     text-transform: uppercase;
+//     padding-top: 15px;
+// }
+
+
+
+/*** Table CSS Starts here ***/
+.table-group {
+    display: flex;
+    width: 100%;
+    padding: 0px 0px;
+    gap: 10px;
+}
+
+.table-ward {
+    width: 30%;
+    background: $white;
+    height: calc(100vh - 104px);
+    border-radius: 6px;
+    overflow: auto;
+}
+.table-line-group {
+    background: $white;
+    width: 70%;
+    border-radius: 6px;
+}
+.table-line {
+    background-color: $white;
+    width: 100%;
+    height: calc(100vh - 104px);
+    overflow: auto;
+}
+.table thead th {
+    position: sticky;
+    top: 0px;
+    background-color: $whitefa;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: $darkBlack;
+    font-family: $fontGraphikMedium;
+    font-weight: normal;
+    border: 1px solid $borderColor;
+    z-index: 2;
+}
+.table tbody td{
+ border : 1px solid $borderColor;
+}
+.divNot-data{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.center-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70vh; // ya jis hisab ki height chaho
+    color: $black70;
+    font-style: $fontGraphik;
+    font-size: 13px;
+    flex-direction: column;
+}
+.iconcard-number{
+   filter: brightness(0) saturate(100%) invert(70%) sepia(68%) saturate(3%) hue-rotate(315deg) brightness(88%) contrast(91%);
+}
+
+
 
 .card {
     border: 0;
@@ -115,15 +292,15 @@ button:focus {
     font-size: 15px;
 }
 
-table td {
-    font-size: 12px;
-    padding: 12px 7px;
-}
+// table td {
+//     font-size: 12px;
+//     padding: 12px 7px;
+// }
 
-table th {
-    font-size: 14px;
-    color: #0ba118;
-}
+// table th {
+//     font-size: 14px;
+//     color: #0ba118;
+// }
 
 .table-wrapper th {
     position: sticky;

@@ -7,7 +7,7 @@
 <div id="divLoaderGet" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
-<section class="header">
+<!-- <section class="header">
     <div class="row no-gutters">
         <div class="col-md-4 no-gutters-iner">
         </div>
@@ -16,18 +16,128 @@
         </div>
         <div class="col-md-4" style="color:#fff; text-align: right; padding-right: 10px;">
             <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;">
-                <!-- <i class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="exportToExcel();"></i> -->
-                <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export" class="cursor-pointer" (click)="exportToExcel();">
-                <span style="font-size: 8px;"><br /> Export to Excel</span></div>
+                <img src="../../../assets/icons/file-export-solid.svg" height="24" width="24" alt="export"
+                    class="cursor-pointer" (click)="exportToExcel();">
+                <span style="font-size: 8px;"><br /> Export to Excel</span>
+            </div>
             <div style="float: right; margin-right: 20px;margin-top: -10px; text-align: center;width: 140px;">
-                <!-- <i class="fas fa-redo-alt" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; " (click)="updateCardHistoryJSON();"></i> -->
-                <img src="../../../assets/icons/rotate-right-solid.svg" height="24" width="24" alt="sync" class="cursor-pointer icon-green" (click)="updateCardHistoryJSON();"/>
-                <br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span> </div>
+                
+                <img src="../../../assets/icons/rotate-right-solid.svg" height="24" width="24" alt="sync"
+                    class="cursor-pointer icon-green" (click)="updateCardHistoryJSON();" />
+                <br /><span style="font-size: 8px; font-weight: none;">Last Update {{lastUpdateDate}}</span>
+            </div>
         </div>
     </div>
-</section>
-<div class="main-content">
-    <div class="row">
+</section> -->
+<div class="main-page">
+    <header class="header">
+        <div class="header-left">
+            Card Update History
+            <!-- Breadcrumb starts -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ul class="ul-breadcrumb">
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']">Home</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="">Collection Management</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="">Card Update History</a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Breadcrumb ends -->
+        </div>
+        <div class="header-right">
+            <div class="btn-default btn-export" (click)="exportToExcel();">
+                Entity Types
+                <img src="../../../assets/img/iconExport.png" class="img-fluid icon-default" alt="File" width="24" />
+            </div>
+
+            <div class="btn-default btn-export" (click)="updateCardHistoryJSON();">
+                Last Update {{lastUpdateDate}}
+                <img src="../../../assets/img/iconRefresh.png" class="img-fluid icon-default" alt="File" width="24" />
+            </div>
+        </div>
+    </header>
+
+    <div class="page-content">
+        <div class="table-group">
+            <div class="table-ward">
+                <table class="table">
+                    <thead>
+                        <th style="width: 5%;">S.No.</th>
+                        <th class="text-right">Card Number</th>
+                        <th class="text-right">Counts</th>
+                    </thead>
+                    <tbody>
+                        <tr id="tr{{i}}" *ngFor="let data of cardUpdateFilterList; let i=index" class="{{data.trClass}}"
+                            (click)="showCardUpdateDetail(data.cardNo,i);" style="cursor: pointer;">
+                            <td>{{i+1}}</td>
+                            <td class="text-right">
+                                {{data.cardNo}}</td>
+                            <td class="text-right">
+                                {{data.counts}}</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+                <div class="center-message" [hidden]="cardUpdateFilterList.length!==0">No data available</div>
+            </div>
+
+
+            <div class="table-line-group">
+                <div class="table-line">
+                    <table class="table">
+                        <thead>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Address</th>
+                            <th>Pre Entity Type</th>
+                            <th>Entity Type</th>
+                            <th>Updated By</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of updateCardDetailList; let i=index">
+                                <td>
+                                    {{data.date}}</td>
+                                <td>
+                                    {{data.name}}</td>
+                                <td>
+                                    {{data.mobile}}</td>
+                                <td>
+                                    {{data.address}}</td>
+                                <td>
+                                    {{data.preEntityType}}</td>
+                                <td>
+                                    {{data.entityType}}</td>
+                                <td>
+                                    {{data.entityUpdateByName}}</td>
+                            </tr>
+                        </tbody>
+                        <!-- <ng-template #noData>
+                        
+                                   
+                               
+                        </ng-template> -->
+
+
+                    </table>
+                    <div class="center-message" [hidden]="updateCardDetailList.length!==0">
+                         <img src="../../../assets/img/iconCard.png" class="img-fluid iconcard-number" alt="File" width="38" />
+                        Please click on the card number
+                    </div>
+              
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- <div class="row">
         <div class="col-md-4 card-main">
             <div class="card card-main-iner">
                 <div class="card-body card-body2">
@@ -104,6 +214,11 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center divMessage">
+                                        <div class="form-group">
+                                            <h5>No data available</h5>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -111,5 +226,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
