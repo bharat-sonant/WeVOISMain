@@ -187,7 +187,7 @@
         <div class="tbl-wardDetailsHeader">
           <div class="wardName-Main">
             <div class="wardName">
-              {{ this.markerData.wardNo }}
+             Ward : {{ this.markerData.wardNo }}
             </div>
             <span class="ward-label">
               Last scan time -
@@ -348,7 +348,7 @@
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
-  (shown.bs.modal)="getZoneHouseTypeList(contentHouseType)"
+  (shown.bs.modal)="getZoneHouseTypeList()"
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -417,7 +417,7 @@
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
-  (shown.bs.modal)="openExportMarkerData(contentExportMarkers)"
+  (shown.bs.modal)="openExportMarkerData()"
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -444,7 +444,8 @@
               <button class="btn-success btn-footer" (click)="exportMarkers()">
                 Export
               </button>
-              <button class="btn-cancel btn-footer" (click)="closeModel()">
+              <button class="btn-cancel btn-footer" data-bs-dismiss="modal"
+          aria-label="Close" >
                 Cancel
               </button>
             </div>
