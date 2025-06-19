@@ -30,7 +30,14 @@
 .cursor-pointer {
     cursor: pointer;
 }
+.not-start {
+    color: red!important;
+}
 
+.marking-done {
+    color: green!important;
+    font-weight: bold;
+}
 /*** Laoder css starts here ****/
 .loaderClass {
     display: none;
@@ -285,7 +292,7 @@
 }
 
 .survey-box-header {
-    height: 200px;
+    height: 370px;
     width: 100%;
     display: block;
     overflow: hidden;
@@ -747,14 +754,7 @@
 
 
 
-.not-start {
-    color: red;
-}
 
-.marking-done {
-    color: green;
-    font-weight: bold;
-}
 
 .in-progress {
     color: #000;
