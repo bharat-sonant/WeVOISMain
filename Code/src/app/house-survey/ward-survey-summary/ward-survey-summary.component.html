@@ -15,7 +15,7 @@
     <div class="header-left">
       Ward Survey Summary
       <!-- Breadcrumb starts -->
-      <nav class="breadcrumb" aria-label="Breadcrumb">
+     <!-- <nav class="breadcrumb" aria-label="Breadcrumb">
         <ul class="ul-breadcrumb">
           <li class="li-breadcrumb">
             <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']"
@@ -30,7 +30,7 @@
           </li>
           <li class="li-breadcrumb">Ward Survey Summary</li>
         </ul>
-      </nav>
+      </nav> -->
       <!-- Breadcrumb ends -->
     </div>
     <div class="header-right">
@@ -315,7 +315,6 @@
                     data-bs-target="#contentLineSurveyed"
                     (click)="
                       showLineDetail(
-                        contentLineSurveyed,
                         data.wardNo,
                         data.lineNo
                       )
@@ -412,7 +411,7 @@
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
-  (shown.bs.modal)="showDateWiseDetail(contentDateWise, 'Cards')"
+  (shown.bs.modal)="showDateWiseDetail('Cards')"
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -462,7 +461,7 @@
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
-  (shown.bs.modal)="getZoneHouseTypeList(contentHouseType)"
+  
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -514,9 +513,7 @@
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
-  (shown.bs.modal)="
-    showLineDetail(contentLineSurveyed, data.wardNo, data.lineNo)
-  "
+  
 >
   <div class="modal-dialog modal-dialog-centered modal-survey">
     <div class="modal-content">

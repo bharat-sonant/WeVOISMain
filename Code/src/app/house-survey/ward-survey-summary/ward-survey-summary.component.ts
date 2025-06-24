@@ -4,6 +4,7 @@ import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { AngularFireStorage } from "angularfire2/storage";
 
 @Component({
   selector: "app-ward-survey-summary",
@@ -11,7 +12,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
   styleUrls: ["./ward-survey-summary.component.scss"],
 })
 export class WardSurveySummaryComponent implements OnInit {
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
 
   selectedCircle: any;
   wardList: any[];
@@ -65,14 +66,14 @@ export class WardSurveySummaryComponent implements OnInit {
   lineuptoLoop: any;
   wardLineMarkerImageList: any[] = [];
   isActionShow: any;
-  userIsExternal:any;
+  userIsExternal: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.savePageLoadHistory("Survey-Management", "Survey-Summary", localStorage.getItem("userID"));
     this.isActionShow = true;
-    this.userIsExternal = localStorage.getItem("userType") == "External User"?true:false;
+    this.userIsExternal = localStorage.getItem("userType") == "External User" ? true : false;
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       this.isActionShow = false;
     }
@@ -285,151 +286,151 @@ export class WardSurveySummaryComponent implements OnInit {
       let zoneNo = this.wardList[index]["zoneNo"];
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
 
-      let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData:any) => {
-          markerInstance.unsubscribe();
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
+        markerInstance.unsubscribe();
 
-          if (markerData != null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts_Bharat", markerData);
+        if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts_Bharat", markerData);
 
-            let keyArray = Object.keys(markerData);
+          let keyArray = Object.keys(markerData);
 
-            if (keyArray.length > 0) {
+          if (keyArray.length > 0) {
 
-              let totalMarkerCount = 0;
-              let totalCardCount = 0;
-              let totalRevisit = 0;
-              let actualTotalMarkerCount = 0;//count variable to actual data
-              let actualTotalCardCount = 0;//count variable to actual data
-              let actualTotalRevisit = 0; //count variable to actual data
-
-
-
-              for (let i = 0; i < keyArray.length; i++) {
-                let markerCount = 0;
-                let cardCount = 0;
-                let revisitCount = 0;
-                let actualMarkerCount = 0;//count variable to actual data
-                let actualCardCount = 0;//count variable to actual data
-                let actualRevisitCount = 0;//count variable to actual data
+            let totalMarkerCount = 0;
+            let totalCardCount = 0;
+            let totalRevisit = 0;
+            let actualTotalMarkerCount = 0;//count variable to actual data
+            let actualTotalCardCount = 0;//count variable to actual data
+            let actualTotalRevisit = 0; //count variable to actual data
 
 
-                let lineNo = keyArray[i];
-                let lineData = markerData[lineNo];
-                let lastMarkerKey = 0;
-                let markerKeyArray = Object.keys(lineData);
-                let isMarker = false;
 
-                for (let j = 0; j < markerKeyArray.length; j++) {
-                  let markerNo = markerKeyArray[j];
-                  if (parseInt(markerNo)) {
-                    isMarker = true;
+            for (let i = 0; i < keyArray.length; i++) {
+              let markerCount = 0;
+              let cardCount = 0;
+              let revisitCount = 0;
+              let actualMarkerCount = 0;//count variable to actual data
+              let actualCardCount = 0;//count variable to actual data
+              let actualRevisitCount = 0;//count variable to actual data
 
-                    let userId = lineData[markerNo]["userId"]?parseInt(lineData[markerNo]["userId"]):null;
-                    let internalUser = userId != -4 ? true:false;
 
-                    markerCount = markerCount + 1;
-                    actualMarkerCount += internalUser?1:0; // to upate actual count data
-                    lastMarkerKey = Number(markerNo);
-                    if (lineData[markerNo]["cardNumber"] != null) {
-                      if (lineData[markerNo]["houseType"] == null) {
-                        // console.log(zoneNo + " " + lineNo + " " + markerNo);
-                      }
-                      cardCount = cardCount + 1;
-                      actualCardCount += internalUser?1:0; // to upate actual count data
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              let lastMarkerKey = 0;
+              let markerKeyArray = Object.keys(lineData);
+              let isMarker = false;
 
-                      // if (lineData[markerNo]["isVirtualAssign"] != null) {
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                if (parseInt(markerNo)) {
+                  isMarker = true;
 
-                      //  let newCard=Number(lineData[markerNo]["cardNumber"].replace("MPZ", ""));
-                      // if(newCard<200000)
-                      // {
-                      //   console.log(lineData[markerNo]["cardNumber"]);
-                      //this.updateVirtualCards(zoneNo, lineNo, markerNo, lineData[markerNo]["cardNumber"]);
-                      // }
+                  let userId = lineData[markerNo]["userId"] ? parseInt(lineData[markerNo]["userId"]) : null;
+                  let internalUser = userId != -4 ? true : false;
 
-                      //}
-                      /*
-                                            let detail = this.cardNumberList.find(item => item.cardNo == lineData[markerNo]["cardNumber"]);
-                                            if (detail != undefined) {
-                                              detail.count = detail.count + 1;
-                                              detail.zoneNo = detail.zoneNo + ", " + zoneNo;
-                                              detail.lineNo = detail.lineNo + ", " + lineNo;
-                      
-                                              console.log(detail.zoneNo + " " + detail.lineNo + " " + lineData[markerNo]["cardNumber"] + " " + detail.count);
-                                            }
-                                            else {
-                                              this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: lineData[markerNo]["cardNumber"], count: 1 });
-                                            }
-                      */
-
-                    } else if (lineData[markerNo]["revisitKey"] != null) {
-                      revisitCount = revisitCount + 1;
-                      actualRevisitCount += internalUser?1:0; // to upate actual count data
+                  markerCount = markerCount + 1;
+                  actualMarkerCount += internalUser ? 1 : 0; // to upate actual count data
+                  lastMarkerKey = Number(markerNo);
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    if (lineData[markerNo]["houseType"] == null) {
+                      // console.log(zoneNo + " " + lineNo + " " + markerNo);
                     }
+                    cardCount = cardCount + 1;
+                    actualCardCount += internalUser ? 1 : 0; // to upate actual count data
+
+                    // if (lineData[markerNo]["isVirtualAssign"] != null) {
+
+                    //  let newCard=Number(lineData[markerNo]["cardNumber"].replace("MPZ", ""));
+                    // if(newCard<200000)
+                    // {
+                    //   console.log(lineData[markerNo]["cardNumber"]);
+                    //this.updateVirtualCards(zoneNo, lineNo, markerNo, lineData[markerNo]["cardNumber"]);
+                    // }
+
+                    //}
+                    /*
+                                          let detail = this.cardNumberList.find(item => item.cardNo == lineData[markerNo]["cardNumber"]);
+                                          if (detail != undefined) {
+                                            detail.count = detail.count + 1;
+                                            detail.zoneNo = detail.zoneNo + ", " + zoneNo;
+                                            detail.lineNo = detail.lineNo + ", " + lineNo;
+                    
+                                            console.log(detail.zoneNo + " " + detail.lineNo + " " + lineData[markerNo]["cardNumber"] + " " + detail.count);
+                                          }
+                                          else {
+                                            this.cardNumberList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: lineData[markerNo]["cardNumber"], count: 1 });
+                                          }
+                    */
+
+                  } else if (lineData[markerNo]["revisitKey"] != null) {
+                    revisitCount = revisitCount + 1;
+                    actualRevisitCount += internalUser ? 1 : 0; // to upate actual count data
                   }
                 }
-
-                if (isMarker == false) {
-                  let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-                  //this.db.object(dbPath).remove();
-                }
-                else {
-                  let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-                  this.db.object(dbPath).update({
-                    marksCount: markerCount,
-                    surveyedCount: cardCount,
-                    lineRevisitCount: revisitCount,
-                    actualMarksCount: actualMarkerCount,       // to update actual count in marking data
-                    actualSurveyedCount: actualCardCount,      // to update actual count in marking data
-                    actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
-                  });
-                }
-
-                totalMarkerCount = totalMarkerCount + markerCount;
-                totalCardCount = totalCardCount + cardCount;
-                totalRevisit = totalRevisit + revisitCount;
-
-                actualTotalMarkerCount +=  actualMarkerCount;// to upate actual count data
-                actualTotalCardCount +=  actualCardCount;    // to upate actual count data
-                actualTotalRevisit +=   actualRevisitCount;  // to upate actual count data
-
-                if (lastMarkerKey > 0) {
-                  let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-                  this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
-                }
-
               }
 
-              let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
-              this.db.object(dbPath).update({ 
-                marked: totalMarkerCount,
-                actualMarked:actualTotalMarkerCount  // to update actual count in WardSurveyData
-              });
+              if (isMarker == false) {
+                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                //this.db.object(dbPath).remove();
+              }
+              else {
+                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                this.db.object(dbPath).update({
+                  marksCount: markerCount,
+                  surveyedCount: cardCount,
+                  lineRevisitCount: revisitCount,
+                  actualMarksCount: actualMarkerCount,       // to update actual count in marking data
+                  actualSurveyedCount: actualCardCount,      // to update actual count in marking data
+                  actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
+                });
+              }
 
-              dbPath = "EntitySurveyData/TotalHouseCount/" + zoneNo;
-              this.db.object(dbPath).set(totalCardCount.toString());
+              totalMarkerCount = totalMarkerCount + markerCount;
+              totalCardCount = totalCardCount + cardCount;
+              totalRevisit = totalRevisit + revisitCount;
 
-              dbPath = "EntitySurveyData/TotalRevisitRequest/" + zoneNo;
-              this.db.object(dbPath).set(totalRevisit.toString());
+              actualTotalMarkerCount += actualMarkerCount;// to upate actual count data
+              actualTotalCardCount += actualCardCount;    // to upate actual count data
+              actualTotalRevisit += actualRevisitCount;  // to upate actual count data
 
-              
-              this.db.object(`EntitySurveyData/ActualTotalHouseCount/${zoneNo}`).set(actualTotalCardCount.toString());// to update actual count in EntitySurveyData
-              this.db.object(`EntitySurveyData/ActualTotalRevisitRequest/${zoneNo}`).set(actualTotalRevisit.toString());// to update actual count in EntitySurveyData
+              if (lastMarkerKey > 0) {
+                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+              }
 
-              index++;
-              this.updateCounts_Bharat(index);
-
-              this.updateSurveyComplexCount_Bharat(zoneNo);
             }
-            else {
-              index++;
-              this.updateCounts_Bharat(index);
-            }
+
+            let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
+            this.db.object(dbPath).update({
+              marked: totalMarkerCount,
+              actualMarked: actualTotalMarkerCount  // to update actual count in WardSurveyData
+            });
+
+            dbPath = "EntitySurveyData/TotalHouseCount/" + zoneNo;
+            this.db.object(dbPath).set(totalCardCount.toString());
+
+            dbPath = "EntitySurveyData/TotalRevisitRequest/" + zoneNo;
+            this.db.object(dbPath).set(totalRevisit.toString());
+
+
+            this.db.object(`EntitySurveyData/ActualTotalHouseCount/${zoneNo}`).set(actualTotalCardCount.toString());// to update actual count in EntitySurveyData
+            this.db.object(`EntitySurveyData/ActualTotalRevisitRequest/${zoneNo}`).set(actualTotalRevisit.toString());// to update actual count in EntitySurveyData
+
+            index++;
+            this.updateCounts_Bharat(index);
+
+            this.updateSurveyComplexCount_Bharat(zoneNo);
           }
           else {
             index++;
             this.updateCounts_Bharat(index);
           }
-        });
+        }
+        else {
+          index++;
+          this.updateCounts_Bharat(index);
+        }
+      });
     }
   }
 
@@ -458,180 +459,180 @@ export class WardSurveySummaryComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSurveyComplexCount_Bharat");
 
     let dbPath = "Houses/" + zoneNo;
-    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData:any) => {
-        houseInstance.unsubscribe();
-        let totalHouseHoldCount = 0;
-        let totalComplexCount = 0;
-        let totalHouseCount = 0;
-        let totalResidencialCount = 0;
-        let totalCommercialCount = 0;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData: any) => {
+      houseInstance.unsubscribe();
+      let totalHouseHoldCount = 0;
+      let totalComplexCount = 0;
+      let totalHouseCount = 0;
+      let totalResidencialCount = 0;
+      let totalCommercialCount = 0;
 
-        let actualTotalHouseHoldCount = 0;   //variable to hold actual data counts
-        let actualTotalComplexCount = 0;     //variable to hold actual data counts
-        let actualTotalHouseCount = 0;       //variable to hold actual data counts
-        let actualTotalResidencialCount = 0; //variable to hold actual data counts
-        let actualTotalCommercialCount = 0;  //variable to hold actual data counts
-
-
+      let actualTotalHouseHoldCount = 0;   //variable to hold actual data counts
+      let actualTotalComplexCount = 0;     //variable to hold actual data counts
+      let actualTotalHouseCount = 0;       //variable to hold actual data counts
+      let actualTotalResidencialCount = 0; //variable to hold actual data counts
+      let actualTotalCommercialCount = 0;  //variable to hold actual data counts
 
 
 
-        if (houseData != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyComplexCount_Bharat", houseData);
-          let keyArray = Object.keys(houseData);
-          if (keyArray.length > 0) {
-            let cardsCount = 0;
 
-            let wardLastLineNo = keyArray[keyArray.length - 1];
-            for (let i = 1; i <= parseInt(wardLastLineNo); i++) {
-              let line = i;
-              let houseCount = 0;
-              let houseHoldCount = 0;
-              let complexCount = 0;
-              let residencialCount = 0;
-              let commercialCount = 0;
 
-              let actualHouseCount = 0;       //variable to hold actual data counts
-              let actualHouseHoldCount = 0;   //variable to hold actual data counts
-              let actualComplexCount = 0;     //variable to hold actual data counts
-              let actualResidencialCount = 0; //variable to hold actual data counts
-              let actualCommercialCount = 0;  //variable to hold actual data counts
+      if (houseData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyComplexCount_Bharat", houseData);
+        let keyArray = Object.keys(houseData);
+        if (keyArray.length > 0) {
+          let cardsCount = 0;
 
-              let cardObj = houseData[line];
-              if (cardObj != undefined) {
-                let cardKeyArray = Object.keys(cardObj);
-                for (let j = 0; j < cardKeyArray.length; j++) {
-                  let cardNo = cardKeyArray[j];
-                  //if (cardObj[cardNo]["houseType"] == null || cardObj[cardNo]["houseType"] == "") {
-                  //  console.log(zoneNo + " >> " + line + " >> " + cardNo);
-                  //this.updateHousesDataHouseType(zoneNo, line, cardNo, cardObj[cardNo]["cardType"]);
-                  // }
-                  let surveyorId = cardObj[cardNo]["surveyorId"]?parseInt(cardObj[cardNo]["surveyorId"]):null;
-                  let internalUser = surveyorId != -4 ? true:false;
+          let wardLastLineNo = keyArray[keyArray.length - 1];
+          for (let i = 1; i <= parseInt(wardLastLineNo); i++) {
+            let line = i;
+            let houseCount = 0;
+            let houseHoldCount = 0;
+            let complexCount = 0;
+            let residencialCount = 0;
+            let commercialCount = 0;
 
-                  if (cardObj[cardNo]["latLng"] != null) {
-                    let duplicateDetail = this.duplicateHouseCardList.find(item => item.cardNo == cardNo);
-                    if (duplicateDetail != undefined) {
-                      console.log(cardNo, line);
+            let actualHouseCount = 0;       //variable to hold actual data counts
+            let actualHouseHoldCount = 0;   //variable to hold actual data counts
+            let actualComplexCount = 0;     //variable to hold actual data counts
+            let actualResidencialCount = 0; //variable to hold actual data counts
+            let actualCommercialCount = 0;  //variable to hold actual data counts
+
+            let cardObj = houseData[line];
+            if (cardObj != undefined) {
+              let cardKeyArray = Object.keys(cardObj);
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNo = cardKeyArray[j];
+                //if (cardObj[cardNo]["houseType"] == null || cardObj[cardNo]["houseType"] == "") {
+                //  console.log(zoneNo + " >> " + line + " >> " + cardNo);
+                //this.updateHousesDataHouseType(zoneNo, line, cardNo, cardObj[cardNo]["cardType"]);
+                // }
+                let surveyorId = cardObj[cardNo]["surveyorId"] ? parseInt(cardObj[cardNo]["surveyorId"]) : null;
+                let internalUser = surveyorId != -4 ? true : false;
+
+                if (cardObj[cardNo]["latLng"] != null) {
+                  let duplicateDetail = this.duplicateHouseCardList.find(item => item.cardNo == cardNo);
+                  if (duplicateDetail != undefined) {
+                    console.log(cardNo, line);
+                  }
+                  else {
+                    this.duplicateHouseCardList.push({ cardNo: cardNo });
+                  }
+                  cardsCount++;
+                  if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
+                    complexCount = complexCount + 1;
+                    actualComplexCount += internalUser ? 1 : 0; //to update actual count data
+
+                    let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
+                    if (isNaN(servingCount)) {
+                      servingCount = 1;
+                    }
+                    houseHoldCount = houseHoldCount + servingCount;
+                    houseCount = houseCount + servingCount;
+
+                    actualHouseHoldCount += internalUser ? servingCount : 0; //to update actual count data
+                    actualHouseCount += internalUser ? servingCount : 0;     //to update actual count data
+
+
+                    if (cardObj[cardNo]["houseType"] == "19") {
+                      residencialCount = residencialCount + servingCount;
+                      actualResidencialCount += internalUser ? servingCount : 0;//to update actual count data
                     }
                     else {
-                      this.duplicateHouseCardList.push({ cardNo: cardNo });
+                      commercialCount = commercialCount + servingCount;
+                      actualCommercialCount += internalUser ? servingCount : 0;//to update actual count data
                     }
-                    cardsCount++;
-                    if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
-                      complexCount = complexCount + 1;
-                      actualComplexCount += internalUser?1:0; //to update actual count data
-
-                      let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
-                      if (isNaN(servingCount)) {
-                        servingCount = 1;
-                      }
-                      houseHoldCount = houseHoldCount + servingCount;
-                      houseCount = houseCount + servingCount;
-
-                      actualHouseHoldCount += internalUser? servingCount:0; //to update actual count data
-                      actualHouseCount += internalUser? servingCount:0;     //to update actual count data
-
-
-                      if (cardObj[cardNo]["houseType"] == "19") {
-                        residencialCount = residencialCount + servingCount;
-                        actualResidencialCount += internalUser? servingCount:0;//to update actual count data
+                  } else {
+                    houseCount = houseCount + 1;
+                    actualHouseCount += internalUser ? 1 : 0;  //to update actual count data
+                    if (cardObj[cardNo]["houseType"] == "1") {
+                      residencialCount = residencialCount + 1;
+                      actualResidencialCount += internalUser ? 1 : 0; //to update actual count data
+                    }
+                    else {
+                      commercialCount = commercialCount + 1;
+                      actualCommercialCount += internalUser ? 1 : 0; //to update actual count data
+                    }
+                  }
+                  /*
+                  let cardData=cardObj[cardNo];
+                  //console.log(cardData);
+                  cardData["line"]=line;
+                  cardData["ward"]=zoneNo;
+                  dbPath="Houses/"+zoneNo+"/"+line+"/"+cardNo;
+                  this.db.object(dbPath).update(cardData);
+                  */
+                  let cardCount = 1;
+                  let surveyorId = cardObj[cardNo]["surveyorId"];
+                  if (cardObj[cardNo]["createdDate"] != null) {
+                    let surveyDate = cardObj[cardNo]["createdDate"].split(" ")[0];
+                    if (this.dateSummaryList.length == 0) {
+                      this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                    }
+                    else {
+                      let summaryDetail = this.dateSummaryList.find(item => item.zoneNo == zoneNo && item.surveyorId == surveyorId && item.surveyDate == surveyDate);
+                      if (summaryDetail != undefined) {
+                        summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
                       }
                       else {
-                        commercialCount = commercialCount + servingCount;
-                        actualCommercialCount +=  internalUser? servingCount:0;//to update actual count data
-                      }
-                    } else {
-                      houseCount = houseCount + 1;
-                      actualHouseCount += internalUser?1:0;  //to update actual count data
-                      if (cardObj[cardNo]["houseType"] == "1") {
-                        residencialCount = residencialCount + 1;
-                        actualResidencialCount += internalUser?1:0; //to update actual count data
-                      }
-                      else {
-                        commercialCount = commercialCount + 1;
-                        actualCommercialCount += internalUser?1:0; //to update actual count data
-                      }
-                    }
-                    /*
-                    let cardData=cardObj[cardNo];
-                    //console.log(cardData);
-                    cardData["line"]=line;
-                    cardData["ward"]=zoneNo;
-                    dbPath="Houses/"+zoneNo+"/"+line+"/"+cardNo;
-                    this.db.object(dbPath).update(cardData);
-                    */
-                    let cardCount = 1;
-                    let surveyorId = cardObj[cardNo]["surveyorId"];
-                    if (cardObj[cardNo]["createdDate"] != null) {
-                      let surveyDate = cardObj[cardNo]["createdDate"].split(" ")[0];
-                      if (this.dateSummaryList.length == 0) {
                         this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
-                      }
-                      else {
-                        let summaryDetail = this.dateSummaryList.find(item => item.zoneNo == zoneNo && item.surveyorId == surveyorId && item.surveyDate == surveyDate);
-                        if (summaryDetail != undefined) {
-                          summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
-                        }
-                        else {
-                          this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
-                        }
                       }
                     }
                   }
                 }
               }
-
-
-              totalComplexCount = totalComplexCount + complexCount;
-              totalHouseHoldCount = totalHouseHoldCount + houseHoldCount;
-              totalHouseCount = totalHouseCount + houseCount;
-              totalCommercialCount = totalCommercialCount + commercialCount;
-              totalResidencialCount = totalResidencialCount + residencialCount;
-
-              actualTotalComplexCount +=  actualComplexCount;       //to update actual count data
-              actualTotalHouseHoldCount +=  actualHouseHoldCount;   //to update actual count data
-              actualTotalHouseCount += actualHouseCount;            //to update actual count data
-              actualTotalCommercialCount += actualCommercialCount;  //to update actual count data
-              actualTotalResidencialCount += actualResidencialCount;//to update actual count data
-
-              let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
-
-              this.db.object(dbHouseHoldPath).update({
-                houseHoldCount: houseHoldCount,
-                complexCount: complexCount,
-                houseCount: houseCount,
-                actualHouseHoldCount: actualHouseHoldCount,//save actual counts to marked houses data
-                actualComplexCount: actualComplexCount,    //save actual counts to marked houses data
-                actualHouseCount: actualHouseCount         //save actual counts to marked houses data
-              });
             }
 
-            // console.log(cardsCount);
+
+            totalComplexCount = totalComplexCount + complexCount;
+            totalHouseHoldCount = totalHouseHoldCount + houseHoldCount;
+            totalHouseCount = totalHouseCount + houseCount;
+            totalCommercialCount = totalCommercialCount + commercialCount;
+            totalResidencialCount = totalResidencialCount + residencialCount;
+
+            actualTotalComplexCount += actualComplexCount;       //to update actual count data
+            actualTotalHouseHoldCount += actualHouseHoldCount;   //to update actual count data
+            actualTotalHouseCount += actualHouseCount;            //to update actual count data
+            actualTotalCommercialCount += actualCommercialCount;  //to update actual count data
+            actualTotalResidencialCount += actualResidencialCount;//to update actual count data
+
+            let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
+
+            this.db.object(dbHouseHoldPath).update({
+              houseHoldCount: houseHoldCount,
+              complexCount: complexCount,
+              houseCount: houseCount,
+              actualHouseHoldCount: actualHouseHoldCount,//save actual counts to marked houses data
+              actualComplexCount: actualComplexCount,    //save actual counts to marked houses data
+              actualHouseCount: actualHouseCount         //save actual counts to marked houses data
+            });
           }
+
+          // console.log(cardsCount);
         }
-        dbPath = "EntitySurveyData/TotalHouseHoldCount/" + zoneNo;
-        this.db.object(dbPath).set(totalHouseHoldCount.toString());
-
-        dbPath = "EntitySurveyData/TotalComplexCount/" + zoneNo;
-        this.db.object(dbPath).set(totalComplexCount.toString());
-
-        dbPath = "EntitySurveyData/totalHouseWithComplexCount/" + zoneNo;
-        this.db.object(dbPath).set(totalHouseCount.toString());
-
-        dbPath = "EntitySurveyData/TotalResidentialCount/" + zoneNo;
-        this.db.object(dbPath).set(totalResidencialCount.toString());
-
-        dbPath = "EntitySurveyData/TotalCommercialCount/" + zoneNo;
-        this.db.object(dbPath).set(totalCommercialCount.toString());
-
-        ////
-        this.db.object(`EntitySurveyData/ActualTotalHouseHoldCount/${zoneNo}`).set(actualTotalHouseHoldCount.toString());
-        this.db.object(`EntitySurveyData/ActualTotalComplexCount/${zoneNo}`).set(actualTotalComplexCount.toString());
-        this.db.object(`EntitySurveyData/ActualTotalHouseWithComplexCount/${zoneNo}`).set(actualTotalHouseCount.toString());
-        this.db.object(`EntitySurveyData/ActualTotalResidentialCount/${zoneNo}`).set(actualTotalResidencialCount.toString());
-        this.db.object(`EntitySurveyData/ActualTotalCommercialCount/${zoneNo}`).set(actualTotalCommercialCount.toString());
       }
+      dbPath = "EntitySurveyData/TotalHouseHoldCount/" + zoneNo;
+      this.db.object(dbPath).set(totalHouseHoldCount.toString());
+
+      dbPath = "EntitySurveyData/TotalComplexCount/" + zoneNo;
+      this.db.object(dbPath).set(totalComplexCount.toString());
+
+      dbPath = "EntitySurveyData/totalHouseWithComplexCount/" + zoneNo;
+      this.db.object(dbPath).set(totalHouseCount.toString());
+
+      dbPath = "EntitySurveyData/TotalResidentialCount/" + zoneNo;
+      this.db.object(dbPath).set(totalResidencialCount.toString());
+
+      dbPath = "EntitySurveyData/TotalCommercialCount/" + zoneNo;
+      this.db.object(dbPath).set(totalCommercialCount.toString());
+
+      ////
+      this.db.object(`EntitySurveyData/ActualTotalHouseHoldCount/${zoneNo}`).set(actualTotalHouseHoldCount.toString());
+      this.db.object(`EntitySurveyData/ActualTotalComplexCount/${zoneNo}`).set(actualTotalComplexCount.toString());
+      this.db.object(`EntitySurveyData/ActualTotalHouseWithComplexCount/${zoneNo}`).set(actualTotalHouseCount.toString());
+      this.db.object(`EntitySurveyData/ActualTotalResidentialCount/${zoneNo}`).set(actualTotalResidencialCount.toString());
+      this.db.object(`EntitySurveyData/ActualTotalCommercialCount/${zoneNo}`).set(actualTotalCommercialCount.toString());
+    }
     );
 
   }
@@ -795,67 +796,59 @@ export class WardSurveySummaryComponent implements OnInit {
     else {
       let zoneNo = this.wardList[index]["zoneNo"];
       let dbPath = "Houses/" + zoneNo;
-      let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData:any) => {
-          houseInstance.unsubscribe();
-          if (houseData != null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getExportCardData", houseData);
-            let keyArray = Object.keys(houseData);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length; i++) {
-                let line = keyArray[i];
-                let cardObj = houseData[line];
-                let cardKeyArray = Object.keys(cardObj);
-                for (let j = 0; j < cardKeyArray.length; j++) {
-                  let cardNo = cardKeyArray[j];
-                  const isUserAllowed = this.userIsExternal ? parseInt(cardObj[cardNo]["surveyorId"]) !== -4 : true;//condition for excluding data if external user
-                  if (isUserAllowed) {
-                    let name = cardObj[cardNo]["name"];
-                    let address = cardObj[cardNo]["address"];
-                    let cardType = "";
-                    let latLng = cardObj[cardNo]["latLng"];
-                    let mobile = cardObj[cardNo]["mobile"];
-                    let date = "";
-                    let houseCount = 0;
-                    if (cardObj[cardNo]["createdDate"] != null) {
-                      date = cardObj[cardNo]["createdDate"].split(' ')[0];
-                    }
-                    let houseType = cardObj[cardNo]["houseType"];
-                    if (houseType == "19" || houseType == "20") {
-                      if (cardObj[cardNo]["servingCount"] != null) {
-                        let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
-                        if (isNaN(servingCount)) {
-                          servingCount = 1;
-                        }
-                        houseCount = servingCount;
+      let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData: any) => {
+        houseInstance.unsubscribe();
+        if (houseData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getExportCardData", houseData);
+          let keyArray = Object.keys(houseData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let line = keyArray[i];
+              let cardObj = houseData[line];
+              let cardKeyArray = Object.keys(cardObj);
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNo = cardKeyArray[j];
+                const isUserAllowed = this.userIsExternal ? parseInt(cardObj[cardNo]["surveyorId"]) !== -4 : true;//condition for excluding data if external user
+                if (isUserAllowed) {
+                  let name = cardObj[cardNo]["name"];
+                  let address = cardObj[cardNo]["address"];
+                  let cardType = "";
+                  let latLng = cardObj[cardNo]["latLng"];
+                  let mobile = cardObj[cardNo]["mobile"];
+                  let date = "";
+                  let houseCount = 0;
+                  if (cardObj[cardNo]["createdDate"] != null) {
+                    date = cardObj[cardNo]["createdDate"].split(' ')[0];
+                  }
+                  let houseType = cardObj[cardNo]["houseType"];
+                  if (houseType == "19" || houseType == "20") {
+                    if (cardObj[cardNo]["servingCount"] != null) {
+                      let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
+                      if (isNaN(servingCount)) {
+                        servingCount = 1;
                       }
-                      else {
-                        houseCount = 1;
-                      }
+                      houseCount = servingCount;
                     }
                     else {
                       houseCount = 1;
                     }
-                    let detail = this.houseTypeList.find(item => item.id == houseType);
-                    if (detail != undefined) {
-                      cardType = detail.houseType;
-                    }
-                    this.cardHousesList.push({ zoneNo: zoneNo, lineNo: line, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, date: date, houseCount: houseCount });
                   }
+                  else {
+                    houseCount = 1;
+                  }
+                  let detail = this.houseTypeList.find(item => item.id == houseType);
+                  if (detail != undefined) {
+                    cardType = detail.houseType;
+                  }
+                  this.cardHousesList.push({ zoneNo: zoneNo, lineNo: line, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, date: date, houseCount: houseCount });
                 }
               }
-              index++;
-              if (type != "All") {
-                index = this.wardList.length;
-              }
-              this.getExportCardData(index, type);
             }
-            else {
-              index++;
-              if (type != "All") {
-                index = this.wardList.length;
-              }
-              this.getExportCardData(index, type);
+            index++;
+            if (type != "All") {
+              index = this.wardList.length;
             }
+            this.getExportCardData(index, type);
           }
           else {
             index++;
@@ -865,6 +858,14 @@ export class WardSurveySummaryComponent implements OnInit {
             this.getExportCardData(index, type);
           }
         }
+        else {
+          index++;
+          if (type != "All") {
+            index = this.wardList.length;
+          }
+          this.getExportCardData(index, type);
+        }
+      }
       );
     }
   }
@@ -894,8 +895,8 @@ export class WardSurveySummaryComponent implements OnInit {
           }
         });
         dataKey = this.userIsExternal ? 'ActualTotalHouseWithComplexCount' : 'totalHouseWithComplexCount';//conditional path for actual count
-        dbPath =  `EntitySurveyData/${dataKey}/${wardNo}`;
-        let housesInstance = this.db.object(dbPath).valueChanges().subscribe((data:any) => {
+        dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+        let housesInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
           housesInstance.unsubscribe();
           if (data != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
@@ -907,7 +908,7 @@ export class WardSurveySummaryComponent implements OnInit {
     });
 
     dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/alreadyInstalled";
-    let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe((data:any) => {
+    let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       alreadyInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
@@ -915,9 +916,9 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     });
 
-    dataKey =  this.userIsExternal?'ActualTotalRevisitRequest':'TotalRevisitRequest';
+    dataKey = this.userIsExternal ? 'ActualTotalRevisitRequest' : 'TotalRevisitRequest';
     dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
-    let revisitInstance = this.db.object(dbPath).valueChanges().subscribe((data:any) => {
+    let revisitInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       revisitInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
@@ -927,7 +928,7 @@ export class WardSurveySummaryComponent implements OnInit {
     });
 
     dbPath = "EntitySurveyData/TotalRfidNotFoundCount/" + wardNo;
-    let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe((data:any) => {
+    let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       oldCardInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
@@ -936,9 +937,9 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     });
 
-    dataKey =  this.userIsExternal?'ActualTotalHouseHoldCount':'TotalHouseHoldCount';
+    dataKey = this.userIsExternal ? 'ActualTotalHouseHoldCount' : 'TotalHouseHoldCount';
     dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
-    let houseHoldInstance = this.db.object(dbPath).valueChanges().subscribe((data:any) => {
+    let houseHoldInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       houseHoldInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
@@ -946,9 +947,9 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     });
 
-    dataKey =  this.userIsExternal?'ActualTotalComplexCount':'TotalComplexCount';
+    dataKey = this.userIsExternal ? 'ActualTotalComplexCount' : 'TotalComplexCount';
     dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
-    let complexInstance = this.db.object(dbPath).valueChanges().subscribe((data:any) => {
+    let complexInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       complexInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
@@ -956,9 +957,9 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     });
 
-    dataKey =  this.userIsExternal?'ActualTotalResidentialCount':'TotalResidentialCount';
+    dataKey = this.userIsExternal ? 'ActualTotalResidentialCount' : 'TotalResidentialCount';
     dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
-    let residentailInstance = this.db.object(dbPath).valueChanges().subscribe((data:any) => {
+    let residentailInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       residentailInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
@@ -967,9 +968,9 @@ export class WardSurveySummaryComponent implements OnInit {
       }
     });
 
-    dataKey =  this.userIsExternal?'ActualTotalCommercialCount':'TotalCommercialCount';
+    dataKey = this.userIsExternal ? 'ActualTotalCommercialCount' : 'TotalCommercialCount';
     dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
-    let commercialInstance = this.db.object(dbPath).valueChanges().subscribe((data:any) => {
+    let commercialInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       commercialInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
@@ -1043,7 +1044,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
         let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
         let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
-          (markedHouseData:any) => {
+          (markedHouseData: any) => {
             markedHouseInstance.unsubscribe();
             if (markedHouseData != null) {
               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSurveyDetail", markedHouseData);
@@ -1060,8 +1061,8 @@ export class WardSurveySummaryComponent implements OnInit {
                   // let houseHoldCount = 0;
                   // let complexCount = 0;  
 
-                  const {marksCount=0,actualMarksCount=0,surveyedCount=0,actualSurveyedCount=0,houseCount=0,actualHouseCount=0,lineRevisitCount=0,actualLineRevisitCount=0,houseHoldCount=0,actualHouseHoldCount=0,complexCount=0,actualComplexCount=0,lineRfidNotFoundCount=0,alreadyInstalledCount=0} = markedHouseData[i] || {}
-                  
+                  const { marksCount = 0, actualMarksCount = 0, surveyedCount = 0, actualSurveyedCount = 0, houseCount = 0, actualHouseCount = 0, lineRevisitCount = 0, actualLineRevisitCount = 0, houseHoldCount = 0, actualHouseHoldCount = 0, complexCount = 0, actualComplexCount = 0, lineRfidNotFoundCount = 0, alreadyInstalledCount = 0 } = markedHouseData[i] || {}
+
                   // if (parseInt(markedHouseData[i]["marksCount"])) {
                   //   markedCount = markedHouseData[i]["marksCount"];
                   // }
@@ -1089,12 +1090,12 @@ export class WardSurveySummaryComponent implements OnInit {
 
                   let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
                   if (lineDetail != undefined) {
-                    lineDetail.markers = this.userIsExternal?parseInt(actualMarksCount):parseInt(marksCount); //conditioal variable for actual count
-                    lineDetail.survyed = this.userIsExternal?parseInt(actualSurveyedCount):parseInt(surveyedCount);//conditioal variable for actual count
-                    lineDetail.houses = this.userIsExternal?parseInt(actualHouseCount):parseInt(houseCount);//conditioal variable for actual count
-                    lineDetail.revisit = this.userIsExternal?parseInt(actualLineRevisitCount):parseInt(lineRevisitCount);//conditioal variable for actual count
-                    lineDetail.houseHoldCount =this.userIsExternal?parseInt(actualHouseHoldCount):parseInt(houseHoldCount);//conditioal variable for actual count
-                    lineDetail.complexCount = this.userIsExternal?parseInt(actualComplexCount):parseInt(complexCount);//conditioal variable for actual count
+                    lineDetail.markers = this.userIsExternal ? parseInt(actualMarksCount) : parseInt(marksCount); //conditioal variable for actual count
+                    lineDetail.survyed = this.userIsExternal ? parseInt(actualSurveyedCount) : parseInt(surveyedCount);//conditioal variable for actual count
+                    lineDetail.houses = this.userIsExternal ? parseInt(actualHouseCount) : parseInt(houseCount);//conditioal variable for actual count
+                    lineDetail.revisit = this.userIsExternal ? parseInt(actualLineRevisitCount) : parseInt(lineRevisitCount);//conditioal variable for actual count
+                    lineDetail.houseHoldCount = this.userIsExternal ? parseInt(actualHouseHoldCount) : parseInt(houseHoldCount);//conditioal variable for actual count
+                    lineDetail.complexCount = this.userIsExternal ? parseInt(actualComplexCount) : parseInt(complexCount);//conditioal variable for actual count
                     lineDetail.oldCard = parseInt(lineRfidNotFoundCount);
                     lineDetail.alreadyCard = parseInt(alreadyInstalledCount);
                     if (Number(lineDetail.markers != Number(lineDetail.survyed))) {
@@ -1196,27 +1197,27 @@ export class WardSurveySummaryComponent implements OnInit {
   // }
 
   //New showLineDetail function without this modal service
-  showLineDetail(content: any, wardNo: any, lineNo: any) {
-  this.surveyedDetailList = [];
-  this.getLineDetail(wardNo, lineNo);
-  
-  // Remove this line - ye NgBootstrap modal open kar raha hai
-  // this.modalService.open(content, { size: "lg" });
-  
-  // Custom styling ko CSS mein move kar dein ya comment out kar dein
-  // let windowHeight = $(window).height();
-  // let windowWidth = $(window).width();
-  // let height = 870;
-  // let width = windowWidth - 300;
-  // height = (windowHeight * 90) / 100;
-  // width = (windowWidth * 90) / 100;
-  // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-  // let divHeight = height - 50 + "px";
-  // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-  // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-  // $("div .modal-dialog-centered").css("margin-top", marginTop);
-  // $("#divStatus").css("height", divHeight);
-}
+  showLineDetail(wardNo: any, lineNo: any) {
+    this.surveyedDetailList = [];
+    this.getLineDetail(wardNo, lineNo);
+
+    // Remove this line - ye NgBootstrap modal open kar raha hai
+    // this.modalService.open(content, { size: "lg" });
+
+    // Custom styling ko CSS mein move kar dein ya comment out kar dein
+    // let windowHeight = $(window).height();
+    // let windowWidth = $(window).width();
+    // let height = 870;
+    // let width = windowWidth - 300;
+    // height = (windowHeight * 90) / 100;
+    // width = (windowWidth * 90) / 100;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height - 50 + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divStatus").css("height", divHeight);
+  }
 
   closeModel() {
     this.modalService.dismissAll();
@@ -1225,95 +1226,152 @@ export class WardSurveySummaryComponent implements OnInit {
   getLineDetail(wardNo: any, lineNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineDetail");
     let dbPath = "Houses/" + wardNo + "/" + lineNo;
-    let lineDetailInstance = this.db.list(dbPath).valueChanges().subscribe((data:any) => {
-        lineDetailInstance.unsubscribe();
-        if (data.length > 0) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineDetail", data);
-          for (let i = 0; i < data.length; i++) {
-            const isUserAllowed = this.userIsExternal ? parseInt(data[i]["surveyorId"]) !== -4 : true;//condition for excluding data if external user
-            if (data[i]["latLng"] != null && isUserAllowed) {
-              let city = this.commonService.getFireStoreCity();
-              if (this.cityName == "sikar") {
-                city = "Sikar-Survey";
+    let lineDetailInstance = this.db.list(dbPath).valueChanges().subscribe((data: any) => {
+      lineDetailInstance.unsubscribe();
+      if (data.length > 0) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineDetail", data);
+        for (let i = 0; i < data.length; i++) {
+          const isUserAllowed = this.userIsExternal ? parseInt(data[i]["surveyorId"]) !== -4 : true;//condition for excluding data if external user
+          if (data[i]["latLng"] != null && isUserAllowed) {
+            let city = this.commonService.getFireStoreCity();
+            if (this.cityName == "sikar") {
+              city = "Sikar-Survey";
+            }
+            let entityList = [];
+            let houseHoldCount = 0;
+            let surveyorName = "";
+            let surveyDate = "";
+            let isCommercial = false;
+            if (data[i]["surveyorId"] != null) {
+              let detail = this.surveyorList.find(item => item.surveyorId == data[i]["surveyorId"]);
+              if (detail != undefined) {
+                surveyorName = detail.name;
               }
-              let entityList = [];
-              let houseHoldCount = 0;
-              let surveyorName = "";
-              let surveyDate = "";
-              let isCommercial = false;
-              if (data[i]["surveyorId"] != null) {
-                let detail = this.surveyorList.find(item => item.surveyorId == data[i]["surveyorId"]);
-                if (detail != undefined) {
-                  surveyorName = detail.name;
-                }
+            }
+            if (data[i]["createdDate"] != null) {
+              let date = data[i]["createdDate"].split(' ')[0];
+              let time = data[i]["createdDate"].split(' ')[1];
+              surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+            }
+            let servingCount = 0;
+            if (data[i]["servingCount"] != null) {
+              if (data[i]["servingCount"] != "") {
+                servingCount = Number(data[i]["servingCount"]);
               }
-              if (data[i]["createdDate"] != null) {
-                let date = data[i]["createdDate"].split(' ')[0];
-                let time = data[i]["createdDate"].split(' ')[1];
-                surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+            }
+            let className = "house-list";
+            let imageURL = "../../../assets/img/system-generated-image.jpg";
+            if (data[i]["cardImage"] != null) {
+              if (data[i]["surveyorId"] == "-1") {
+                imageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
               }
-              let servingCount = 0;
-              if (data[i]["servingCount"] != null) {
-                if (data[i]["servingCount"] != "") {
-                  servingCount = Number(data[i]["servingCount"]);
-                }
+              else {
+                imageURL = this.commonService.fireStoragePath + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
               }
-              let className = "house-list";
-              let imageURL = "../../../assets/img/system-generated-image.jpg";
-              if (data[i]["cardImage"] != null) {
-                if (data[i]["surveyorId"] == "-1") {
-                  imageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
-                }
-                else {
-                  imageURL = this.commonService.fireStoragePath + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
-                }
+            }
+            let houseImageURL = "../../../assets/img/system-generated-image.jpg";
+            if (data[i]["houseImage"] != null) {
+              if (data[i]["surveyorId"] == "-1") {
+                houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
               }
-              let houseImageURL = "../../../assets/img/system-generated-image.jpg";
-              if (data[i]["houseImage"] != null) {
-                if (data[i]["surveyorId"] == "-1") {
-                  houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+              else {
+                if (city == "Sikar-Survey") {
+                  this.getSikarHouseImages(data[i]["cardNo"], data[i]["houseImage"]);
                 }
                 else {
                   houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
                 }
+                // houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
               }
-              if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
-                className = "commercial-list";
-                isCommercial = true;
-                if (data[i]["Entities"] != null) {
-                  let entityData = data[i]["Entities"];
-                  houseHoldCount = entityData.length - 1;
-                  for (let j = 1; j < entityData.length; j++) {
-                    let keyIndex = j;
-                    let entityImageURL = "../../../assets/img/system-generated-image.jpg";
-                    if (entityData[keyIndex]["house image"] != null) {
-                      entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["house image"] + "?alt=media";
-                    }
-                    entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL });
-                  }
-                }
-              }
-              let cardType = data[i]["cardType"];
-              let entityType = "";
-              let detail = this.houseTypeList.find(item => item.id == data[i]["houseType"]);
-              if (detail != undefined) {
-                entityType = detail.houseType;
-              }
-              let markerImageURL = "../../../assets/img/system-generated-image.jpg";
-              detail = this.wardLineMarkerImageList.find(item => item.cardNo == data[i]["cardNo"]);
-              if (detail != undefined) {
-                if (detail.image != "") {
-                  markerImageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + detail.image + "?alt=media";
-                }
-              }
-
-              this.surveyedDetailList.push({ wardNo: wardNo, lineNo: lineNo, cardType: cardType, entityType: entityType, cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"], houseImageUrl: houseImageURL, markerImageURL: markerImageURL, entityList: entityList, houseHoldCount: houseHoldCount, surveyorName: surveyorName, surveyDate: surveyDate, houseType: data[i]["houseType"], servingCount: servingCount, isCommercial: isCommercial, class: className });
             }
+            if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
+              className = "commercial-list";
+              isCommercial = true;
+              if (data[i]["Entities"] != null) {
+                let entityData = data[i]["Entities"];
+                houseHoldCount = entityData.length - 1;
+                for (let j = 1; j < entityData.length; j++) {
+                  let keyIndex = j;
+                  let entityImageURL = "../../../assets/img/system-generated-image.jpg";
+                  let houseImage = "";
+                  if (entityData[keyIndex]["house image"] != null) {
+                    houseImage = entityData[keyIndex]["house image"];
+                  }
+                  else if (entityData[keyIndex]["houseImage"] != null) {
+                    houseImage = entityData[keyIndex]["houseImage"];
+                  }
+                  if (city == "Sikar-Survey") {
+                    this.getSikarHouseEntityImages(data[i]["cardNo"], houseImage, j - 1);
+                  }
+                  else {
+                    entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + houseImage + "?alt=media";
+                  }
+                  entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL });
+                }
+              }
+            }
+            let cardType = data[i]["cardType"];
+            let entityType = "";
+            let detail = this.houseTypeList.find(item => item.id == data[i]["houseType"]);
+            if (detail != undefined) {
+              entityType = detail.houseType;
+            }
+            let markerImageURL = "../../../assets/img/system-generated-image.jpg";
+            detail = this.wardLineMarkerImageList.find(item => item.cardNo == data[i]["cardNo"]);
+            if (detail != undefined) {
+              if (detail.image != "") {
+                markerImageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + detail.image + "?alt=media";
+              }
+            }
+            this.surveyedDetailList.push({ wardNo: wardNo, lineNo: lineNo, cardType: cardType, entityType: entityType, cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"], houseImageUrl: houseImageURL, markerImageURL: markerImageURL, entityList: entityList, houseHoldCount: houseHoldCount, surveyorName: surveyorName, surveyDate: surveyDate, houseType: data[i]["houseType"], servingCount: servingCount, isCommercial: isCommercial, class: className });
           }
         }
       }
+    }
     );
   }
+
+  getSikarHouseEntityImages(cardNo: any, houseImage: any, index: any) {
+    let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage;
+    let urlSikar = "Sikar/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          // detail.cardNo="AAAAA";
+          detail.entityList[index]["entityImageURL"] = this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.entityList[index]["entityImageURL"] = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+        }
+      });
+  }
+
+
+  getSikarHouseImages(cardNo: any, houseImage: any) {
+    let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + houseImage;
+    let urlSikar = "Sikar/SurveyHouseImage/" + houseImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          // detail.cardNo="AAAAA";
+          detail.houseImageUrl = this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.houseImageUrl = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+        }
+      });
+  }
+
 
   getMarkerImage() {
 
@@ -1455,22 +1513,22 @@ export class WardSurveySummaryComponent implements OnInit {
   //   }
   // }
 
-// New function for the showDateWiseDetail Modal starts here //
-  showDateWiseDetail(content: any, type: any) {
-  this.surveyDateList = [];
-  
-  $('#surveyType').html(type);
-  
-  if (type == "RFID Not Matched") {
-    this.getRFIDNotFound();
+  // New function for the showDateWiseDetail Modal starts here //
+  showDateWiseDetail(type: any) {
+    this.surveyDateList = [];
+
+    $('#surveyType').html(type);
+
+    if (type == "RFID Not Matched") {
+      this.getRFIDNotFound();
+    }
+    else if (type == "Revisit Requests") {
+      this.getRevisitRequests();
+    }
+    else {
+      this.getHouses();
+    }
   }
-  else if (type == "Revisit Requests") {
-    this.getRevisitRequests();
-  }
-  else {
-    this.getHouses();
-  }
-}
 
   getHouses() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHouses");
@@ -1587,75 +1645,75 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
 
-getZoneHouseTypeList(content: any) {
-  this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
-  this.zoneHouseTypeList = [];
-  
-  // Remove this line - ye NgBootstrap modal open kar raha hai
-  // this.modalService.open(content, { size: "lg" });
-  
-  // Custom styling ko CSS mein move kar dein ya remove kar dein
-  // let windowHeight = $(window).height();
-  // let height = 870;
-  // let width = 400;
-  // height = (windowHeight * 70) / 100;
-  // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-  // let divHeight = height - 75 + "px";
-  // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-  // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-  // $("div .modal-dialog-centered").css("margin-top", marginTop);
-  // $("#divHouseStatus").css("height", divHeight);
-  
-  let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
-  let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
-    markerInstance.unsubscribe();
-    if (markerData == null) {
-      this.closeModel();
-    }
-    else {
-      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseTypeList", markerData);
-      let keyArray = Object.keys(markerData);
-      for (let i = 0; i < keyArray.length; i++) {
-        let lineNo = keyArray[i];
-        let lineData = markerData[lineNo];
-        let markerKeyArray = Object.keys(lineData);
-        for (let j = 0; j < markerKeyArray.length; j++) {
-          let markerNo = markerKeyArray[j];
-          const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
-          if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
-            let houseTypeId = lineData[markerNo]["houseType"];
-            let detail = this.houseTypeList.find(item => item.id == houseTypeId);
-            if (detail != undefined) {
-              let houseType = detail.houseType;
-              if (this.zoneHouseTypeList.length == 0) {
-                let count = 0;
-                if (lineData[markerNo]["cardNumber"] != null) {
-                  count = 1;
-                }
-                this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
-              }
-              else {
-                let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
-                if (listDetail != undefined) {
-                  if (lineData[markerNo]["cardNumber"] != null) {
-                    listDetail.counts = listDetail.counts + 1;
-                  }
-                }
-                else {
+  getZoneHouseTypeList(content: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
+    this.zoneHouseTypeList = [];
+
+    // Remove this line - ye NgBootstrap modal open kar raha hai
+    // this.modalService.open(content, { size: "lg" });
+
+    // Custom styling ko CSS mein move kar dein ya remove kar dein
+    // let windowHeight = $(window).height();
+    // let height = 870;
+    // let width = 400;
+    // height = (windowHeight * 70) / 100;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height - 75 + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divHouseStatus").css("height", divHeight);
+
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
+      markerInstance.unsubscribe();
+      if (markerData == null) {
+        this.closeModel();
+      }
+      else {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseTypeList", markerData);
+        let keyArray = Object.keys(markerData);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          let lineData = markerData[lineNo];
+          let markerKeyArray = Object.keys(lineData);
+          for (let j = 0; j < markerKeyArray.length; j++) {
+            let markerNo = markerKeyArray[j];
+            const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
+            if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
+              let houseTypeId = lineData[markerNo]["houseType"];
+              let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+              if (detail != undefined) {
+                let houseType = detail.houseType;
+                if (this.zoneHouseTypeList.length == 0) {
                   let count = 0;
                   if (lineData[markerNo]["cardNumber"] != null) {
                     count = 1;
                   }
                   this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
                 }
+                else {
+                  let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                  if (listDetail != undefined) {
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      listDetail.counts = listDetail.counts + 1;
+                    }
+                  }
+                  else {
+                    let count = 0;
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      count = 1;
+                    }
+                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                  }
+                }
               }
             }
           }
         }
       }
-    }
-  });
-}
+    });
+  }
 
   exportDateWiseCards() {
     if (this.surveyDateList.length > 0) {
@@ -1745,78 +1803,78 @@ getZoneHouseTypeList(content: any) {
 
       let totalCounts = 0;
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
-      let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData:any) => {
-          markerInstance.unsubscribe();
-          if (markerData == null) {
-            if (this.wardProgressList[index] != null) {
-              let zoneNoNew = this.wardProgressList[index]["wardNo"];
-              this.getZoneHouseType(zoneNoNew, index);
-            }
-            else {
-              this.exportHouseTypeList("1");
-            }
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
+        markerInstance.unsubscribe();
+        if (markerData == null) {
+          if (this.wardProgressList[index] != null) {
+            let zoneNoNew = this.wardProgressList[index]["wardNo"];
+            this.getZoneHouseType(zoneNoNew, index);
           }
           else {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseType", markerData);
-            let keyArray = Object.keys(markerData);
-            for (let i = 0; i < keyArray.length; i++) {
-              let lineNo = keyArray[i];
-              let lineData = markerData[lineNo];
-              let markerKeyArray = Object.keys(lineData);
-              for (let j = 0; j < markerKeyArray.length; j++) {
-                let markerNo = markerKeyArray[j];
-                const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true; //condition for excluding data if external user
-                if (parseInt(markerNo) && isUserAllowed) {
-                  if (lineData[markerNo]["houseType"] != null) {
-                      let houseTypeId = lineData[markerNo]["houseType"];
-                      let detail = this.houseTypeList.find(item => item.id == houseTypeId);
-                      if (detail != undefined) {
-                        let houseType = detail.houseType;
-                        if (this.zoneHouseTypeList.length == 0) {
-                          let count = 0;
-                          if (lineData[markerNo]["cardNumber"] != null) {
-                            count = 1;
-                            totalCounts = totalCounts + 1;
-                          }
-                          this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
-                        }
-                        else {
-                          let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
-                          if (listDetail != undefined) {
-                            if (lineData[markerNo]["cardNumber"] != null) {
-                              listDetail.counts = listDetail.counts + 1;
-                              totalCounts = totalCounts + 1;
-                            }
-                          }
-                          else {
-                            let count = 0;
-                            if (lineData[markerNo]["cardNumber"] != null) {
-                              count = 1;
-                              totalCounts = totalCounts + 1;
-                            }
-                            this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
-                          }
+            this.exportHouseTypeList("1");
+          }
+        }
+        else {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseType", markerData);
+          let keyArray = Object.keys(markerData);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let lineData = markerData[lineNo];
+            let markerKeyArray = Object.keys(lineData);
+            for (let j = 0; j < markerKeyArray.length; j++) {
+              let markerNo = markerKeyArray[j];
+              const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true; //condition for excluding data if external user
+              if (parseInt(markerNo) && isUserAllowed) {
+                if (lineData[markerNo]["houseType"] != null) {
+                  let houseTypeId = lineData[markerNo]["houseType"];
+                  let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+                  if (detail != undefined) {
+                    let houseType = detail.houseType;
+                    if (this.zoneHouseTypeList.length == 0) {
+                      let count = 0;
+                      if (lineData[markerNo]["cardNumber"] != null) {
+                        count = 1;
+                        totalCounts = totalCounts + 1;
+                      }
+                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                    }
+                    else {
+                      let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                      if (listDetail != undefined) {
+                        if (lineData[markerNo]["cardNumber"] != null) {
+                          listDetail.counts = listDetail.counts + 1;
+                          totalCounts = totalCounts + 1;
                         }
                       }
-                  }
-                  else {
-                    if (lineData[markerNo]["cardNumber"] != null) {
-                      this.updateHousesType(zoneNo, lineNo, markerNo, lineData[markerNo]["cardNumber"]);
+                      else {
+                        let count = 0;
+                        if (lineData[markerNo]["cardNumber"] != null) {
+                          count = 1;
+                          totalCounts = totalCounts + 1;
+                        }
+                        this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                      }
                     }
+                  }
+                }
+                else {
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    this.updateHousesType(zoneNo, lineNo, markerNo, lineData[markerNo]["cardNumber"]);
                   }
                 }
               }
             }
-            if (this.wardProgressList[index] != null) {
-              let zoneNoNew = this.wardProgressList[index]["wardNo"];
-              this.getZoneHouseType(zoneNoNew, index);
-            }
-            else {
-              this.getZoneHouseType(zoneNo, index);
-            }
-
           }
+          if (this.wardProgressList[index] != null) {
+            let zoneNoNew = this.wardProgressList[index]["wardNo"];
+            this.getZoneHouseType(zoneNoNew, index);
+          }
+          else {
+            this.getZoneHouseType(zoneNo, index);
+          }
+
         }
+      }
       );
     }
   }
@@ -1824,37 +1882,37 @@ getZoneHouseTypeList(content: any) {
   updateHousesType(zoneNo: any, lineNo: any, markerNo: any, cardNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateHousesType");
     let dbPath = "CardWardMapping/" + cardNo;
-    let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe((mappingData:any) => {
-        cardWardInstance.unsubscribe();
-        if (mappingData != undefined) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHousesType", mappingData);
-          let line = mappingData["line"];
-          let ward = mappingData["ward"];
-          dbPath = "Houses/" + ward + "/" + line + "/" + cardNo + "/houseType";
-          let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe((houseTypeData:any) => {
-              let houseType = "1";
-              houseTypeInstance.unsubscribe();
-              if (houseTypeData != null) {
-                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHousesType", houseTypeData);
-                if (houseTypeData != "") {
-                  houseType = houseTypeData;
-                }
-              }
-              dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-              this.db.object(dbPath).update({ houseType: houseType });
-              let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseType);
-              if (listDetail != undefined) {
-                listDetail.counts = listDetail.counts + 1;
-              }
-              else {
-                let count = 0;
-                count = 1;
-                this.zoneHouseTypeList.push({ houseTypeId: houseType, houseType: houseType, counts: count });
-              }
+    let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe((mappingData: any) => {
+      cardWardInstance.unsubscribe();
+      if (mappingData != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHousesType", mappingData);
+        let line = mappingData["line"];
+        let ward = mappingData["ward"];
+        dbPath = "Houses/" + ward + "/" + line + "/" + cardNo + "/houseType";
+        let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe((houseTypeData: any) => {
+          let houseType = "1";
+          houseTypeInstance.unsubscribe();
+          if (houseTypeData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHousesType", houseTypeData);
+            if (houseTypeData != "") {
+              houseType = houseTypeData;
             }
-          );
+          }
+          dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+          this.db.object(dbPath).update({ houseType: houseType });
+          let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseType);
+          if (listDetail != undefined) {
+            listDetail.counts = listDetail.counts + 1;
+          }
+          else {
+            let count = 0;
+            count = 1;
+            this.zoneHouseTypeList.push({ houseTypeId: houseType, houseType: houseType, counts: count });
+          }
         }
+        );
       }
+    }
     );
   }
 }
