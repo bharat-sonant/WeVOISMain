@@ -1093,7 +1093,7 @@ export class HouseMarkingComponent {
         deleteCountInstance.unsubscribe();
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showLineDetail", data);
-          this.openPopUp(content, type);
+          // this.openPopUp(content, type);
           this.getDeletedMarkerData(data);
         }
         else {
@@ -1114,7 +1114,7 @@ export class HouseMarkingComponent {
         this.commonService.setAlertMessage("error", "No Marker Found !!!");
       }
       else {
-        this.openPopUp(content, type);
+        // this.openPopUp(content, type);
         this.markerApprovalStatus();
       }
     }
@@ -2115,7 +2115,7 @@ export class HouseMarkingComponent {
           }
         }
         if (this.modifiedMarkerList.length > 0) {
-          this.openPopUp(content, type);
+          // this.openPopUp(content, type);
         }
         else {
           this.commonService.setAlertMessage("error", "No Modified House Type marker found");

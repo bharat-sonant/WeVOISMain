@@ -1,1084 +1,1893 @@
 <div id="divLoader" class="loaderClass">
-    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+  <img src="../../../assets/img/loading.gif" width="50" class="imgLoader" />
 </div>
-<section class="header">
-    <div class="row no-gutters">
-        <div class="col-md-4">
-            <select class="caret-select" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
-                [(ngModel)]="selectedZone">
-                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
-                    {{zone.zoneName}}
-                </option>
-            </select>
-        </div>
-        <div class="col-md-4 ward-header-outer">
-            <h1 class="ward-header"> Marker Approval </h1>
-        </div>
 
-        <div class="col-md-4 text-right total-house extra-class" id="houseCount">
-
-            <div class="fix-home">
-                <div id="divLastUpdate" class="float-fourth fix-home-iner">
-                    <!-- <i class="far fa-clock"></i> -->
-                    <img src="../../../assets/icons/clock-regular.svg" class="icon-white" alt="clock" width="16"
-                        style="margin-bottom: 2px;" />
-                    <span class="house"><span class="clock-span">
-                            {{markerData.lastScanTime}}</span></span><br>
-                    <h6>Last Marked At</h6>
-                </div>
-                <div class="float-first cardboard-icon-main" [hidden]="isAlreadyShow==false">
-                    <!-- <i class="fas fa-vr-cardboard"></i> -->
-                    <img src="../../../assets/icons/vr-cardboard-solid.svg" alt="cardBoard" width="16"
-                        class="green-filter" style="margin-bottom: 4px;" />
-                    <span class="house"><span class="cardboard-span">
-                            {{markerData.alreadyCardCount}}</span></span><br>
-                    <h6>Already Card Count</h6>
-                </div>
-                <div class="float-second circle-icon-main">
-                    <!-- <i class="fas fa-check-circle"></i> -->
-                    <img src="../../../assets/icons/circle-check-solid.svg" alt="check" width="16" class="green-filter"
-                        style="margin-bottom: 2px;" />
-                    <span class="house"><span class="circle-span">
-                            {{markerData.approvedLines}}</span> / {{markerData.totalLines}}</span><br>
-                    <h6>Approved Lines</h6>
-                </div>
-                <div class="float-third" style="margin-top: 12px;">
-                    <!-- <i class="fas fa-house-damage"></i>  -->
-                    <img src="../../../assets/icons/house-chimney-crack-solid.svg" alt="house-chimney" width="18"
-                        class="green-filter" style="margin-bottom: 4px;" />
-                    <span class="house"> {{markerData.totalMarkers}}</span><br>
-                    <h6>Total Marker</h6>
-                </div>
-                <div class="arrow" onclick="show()">
-                    <i class="bi bi-chevron-down"></i>
-                </div>
-
-            </div>
-
-
-        </div>
-
-    </div>
-</section>
-
-<div #gmap class="divmap" id="divMap"></div>
-<div class="display" id="popup">
-    <div class="house-card-box">
-        <div id="divDetails" class="house-card-box-iner">
-            <div class="row house-card-box-iner2">
-                <div class="col-md-12 arrow-btn-div">
-                    <button (click)="getNextPrevious('pre');" class="btn-hvr arrow-btn">
-                        << </button>
-                            <input class="off-input" id="txtLineNo" type="text" (keyup)="getCurrentLineDetail($event);"
-                                autocomplete="off" value="1" />
-                            <button (click)="getNextPrevious('next');" class="btn-hvr arrow-btn2">
-                                >>
-                            </button>
-                </div>
-                <!--  <div class="col-md-12 text-left ml-10 markera-all">
-                    <span class="markera-allspan">
-                        <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
-                        All
-                        Markers</span> <span class="markera-allspan2" (click)="showLineDetail(contentLineMarkers);">
-                        <i class="fas fa-eye"></i> View Detail</span>
-                </div>-->
-
-                <div class="col-md-6 markers markers-heading-main">
-                    <h5> {{markerData.totalLineMarkers}} </h5>
-                    <p>Markers</p>
-                </div>
-                <div class="col-md-6 markers markers-heading-main">
-                    <h5> {{markerData.isApprovedCount}} </h5>
-                    <p style="margin-left:-19px;">Approved</p>
-                </div>
-                <div class="col-md-6 markers Already-heading-main" [hidden]="isAlreadyShow==false">
-                    <h5> {{markerData.alreadyCardLineCount}} </h5>
-                    <p>Already Card</p>
-                </div>
-                <div style="border-bottom: 1px solid lightgrey"></div>
-                <div class="col-md-12 text-left ml-10 markera-all" style="padding-top: 10px;">
-                    <span class="markera-allspan">
-                        <input type="checkbox" class="markera-allinput" id="chkAll" (change)="showAllMarkers();"> Show
-                        All
-                    </span> <span class="markera-allspan2"
-                        (click)="showLineDetail(contentLineMarkers,'approvedMarker');" style="margin-left: 35px;">
-                        <!-- <i class="fas fa-eye"> &nbsp;</i> -->
-                        <img src="../../../assets/icons/eye-regular.svg" alt="eye" class="cursor-pointer" />&nbsp;
-                        Approve Marker</span>
-                </div>
-                <div class="col-md-6 Confirm-main">
-                    <div class="row">
-                        <div class="col-md-12 rdoConfirm">
-                            <input id="rdoConfirm" type="radio" name="gender">&nbsp; Confirm
-                        </div>
-
-                        <div class="col-md-12 rdoReject">
-                            <input id="rdoReject" type="radio" name="gender">&nbsp; Reject
-                        </div>
-                        <div class="col-md-12 txtReamrk">
-                            <textarea id="txtReamrk" class="txtReamrk-iner" placeholder="Remark"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-12 pl-5 pr-46">
-
-                </div>
-            </div>
-        </div>
-
+<div class="main-page">
+  <div #gmap class="divmap" id="divMap"></div>
+  <header class="header">
+    <div class="header-left">
+      Marker Approval
+      <!-- Breadcrumb starts -->
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ul class="ul-breadcrumb">
+          <li class="li-breadcrumb">
+            <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']"
+              >Home</a
+            >
+          </li>
+          <li class="li-breadcrumb">
+            <a class="link-breadcrumb" href="">Survey Managment</a>
+          </li>
+          <li class="li-breadcrumb">Marker Approval</li>
+        </ul>
+      </nav>
+      <!-- Breadcrumb ends -->
     </div>
 
-    <div class="image-box" id="markerImageBox">
-        <div id="divLoader" class="loaderClass">
-            <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+    <div class="header-right">
+      <div class="total-info" id="divLastUpdate">
+        <span>{{ markerData.lastScanTime }}</span>
+        Last marked at
+      </div>
+      <div class="total-info">
+        <span
+          >{{ markerData.approvedLines }} / {{ markerData.totalLines }}</span
+        >
+        Approved Lines
+      </div>
+      <div class="total-info">
+        <span>{{ markerData.totalMarkers }}</span>
+        Total Marker
+      </div>
+    </div>
+  </header>
+  <div class="page-body">
+    <div class="map-left">
+      <select
+        class="custom-dropdown-btn"
+        id="ddlZone"
+        (change)="changeZoneSelection($event.target.value)"
+        [(ngModel)]="selectedZone"
+      >
+        <option
+          *ngFor="let zone of zoneList"
+          value="{{ zone.zoneNo }}"
+          ngSelected="zone.zoneNo == selectedZone?'selected':''"
+        >
+          {{ zone.zoneName }}
+        </option>
+      </select>
+    </div>
+
+    <div class="map-right" id="popup">
+      <div class="house-card-box" id="divDetails">
+        <div class="row-data">
+          <div class="line-textbox-main">
+            <button (click)="getNextPrevious('pre')" class="btn-prev-next">
+              <img
+                src="../../../assets/img/iconLeft.png"
+                class="iconLeftRight"
+                title="Previous"
+                alt="icon previous"
+              />
+            </button>
+            <input
+              class="input-line"
+              id="txtLineNo"
+              type="text"
+              (keyup)="getCurrentLineDetail($event)"
+              autocomplete="off"
+              value="1"
+            />
+            <button (click)="getNextPrevious('next')" class="btn-prev-next">
+              <img
+                src="../../../assets/img/iconRight.png"
+                class="iconLeftRight"
+                title="Next"
+                alt="icon next"
+              />
+            </button>
+          </div>
         </div>
+        <div class="row-data">
+          <p class="entity-label">Markers Approved</p>
+          <h5 class="entity-count">
+            {{ markerData.totalLineMarkers }} / {{ markerData.isApprovedCount }}
+          </h5>
+        </div>
+        <div class="row-data" [hidden]="isAlreadyShow == false">
+          <p class="entity-label">Already Card</p>
+          <h5 class="entity-count">{{ markerData.alreadyCardLineCount }}</h5>
+        </div>
+        <div class="row-data">
+          <label for="chkAll" class="label-show-all">
+            Show All
+            <input
+              type="checkbox"
+              class="markera-allinput"
+              id="chkAll"
+              (change)="showAllMarkers()"
+            />
+          </label>
+        </div>
+
+        <div id="divDetails">
+          <div
+            class="row-data"
+            data-bs-toggle="modal"
+            data-bs-target="#contentLineMarkers"
+          >
+            <p class="entity-label">Approve Marker</p>
+            <h5 class="entity-count">
+              <img
+                src="../../../assets/img/iconEye.png"
+                class="icon-eye"
+                title="View Marker"
+                alt="icon"
+              />
+            </h5>
+          </div>
+          <div
+            class="row-data"
+            data-bs-toggle="modal"
+            data-bs-target="#contentModifiedMarkers"
+          >
+            <p class="entity-label">Modified Entities</p>
+            <h5 class="entity-count">
+              {{ markerData.totalHouseTypeModifiedCount }}&nbsp;
+              <img
+                src="../../../assets/img/iconRight.png"
+                class="icon-eye"
+                title="View Modified Entities"
+                alt="icon"
+              />
+            </h5>
+          </div>
+          <div
+            class="row-data"
+            data-bs-toggle="modal"
+            data-bs-target="#contentDeletedMarkers"
+          >
+            <p class="entity-label">Deleted Entities</p>
+            <h5 class="entity-count">
+              {{ markerData.totalRemovedMarkersCount }}&nbsp;
+              <img
+                src="../../../assets/img/iconRight.png"
+                class="icon-eye"
+                title="View Deleted Entities"
+                alt="icon"
+              />
+            </h5>
+          </div>
+        </div>
+
+        <div class="col-md-6 Confirm-main">
+          <div class="row">
+            <div class="col-md-12 rdoConfirm">
+              <input id="rdoConfirm" type="radio" name="gender" />&nbsp; Confirm
+            </div>
+
+            <div class="col-md-12 rdoReject">
+              <input id="rdoReject" type="radio" name="gender" />&nbsp; Reject
+            </div>
+            <div class="col-md-12 txtReamrk">
+              <textarea
+                id="txtReamrk"
+                class="txtReamrk-iner"
+                placeholder="Remark"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 pl-5 pr-46"></div>
+      </div>
+      <!-- <button
+        class="btn btn-success assign-button Assign-btn"
+        style="right: 15px; top: 295px"
+      >
+        <span id="btnNearBy">Near By Wards</span
+        ><i
+          class="bi bi-caret-down-fill"
+          [hidden]="nearByStatus == 'show'"
+          style="margin-left: 5px"
+        ></i
+        ><i
+          class="bi bi-caret-right-fill"
+          [hidden]="nearByStatus == 'hide'"
+          style="margin-left: 5px"
+        ></i>
+      </button> -->
+
+      <div class="nearby-card">
+        <!-- Show when data is empty -->
+        <div *ngIf="!nearByWards || nearByWards.length === 0" class="noData">
+          <img
+            src="../../../assets/img/noData.png"
+            class="noDataImg"
+            title="no data available"
+            alt="no data available image"
+          />
+          No Data Available
+        </div>
+
+        <!-- Show when data exists -->
+        <div
+          class="nearby-ward-box"
+          *ngIf="nearByWards && nearByWards.length > 0"
+        >
+          <div class="nearby-ward-title">Near By Wards</div>
+          <div class="ward-scroll">
+            <div
+              class="ward-row"
+              *ngFor="let data of nearByWards; let i = index"
+              id="tr{{ i }}"
+            >
+              <label for="checkBox{{ i }}">
+                {{ data }}
+                <input
+                  type="checkbox"
+                  id="checkBox{{ i }}"
+                  class="custom-checkbox"
+                  (change)="showNearByWards(i, data)"
+                />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="entity-identity">
         <div class="row">
-            <div class="col-md-12 house-type">
-                <h3> {{markerData.houseType}}
-                    <br /> {{markerData.alreadyCard}}
-                    <img src="../../../assets/img/close-grey.png" class="img-close"
-                        (click)="closeSubModel('#markerImageBox')" style="float: right;">
-                </h3>
-                <!-- <div class="img-close-outer"> -->
-
-
-                <!-- </div> -->
-
+          <div class="col-md-12">
+            <div class="main-box">
+              <div class="designation">
+                <h5><img src="../assets/img/marking-house.svg" /></h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>आवासीय व आवासीय परिसर</p>
+                </h6>
+              </div>
             </div>
-            <div class="col-md-12">
-                <div class="main-box">
-                    <a href="{{markerData.markerImgURL}}" target="_blank">
-                        <img id="markingImg" class="markerdata-img" [src]="markerData.markerImgURL" />
-                    </a>
-                </div>
+            <div class="main-box">
+              <div class="designation">
+                <h5>
+                  <img
+                    src="../assets/img/marking-shop.svg"
+                    class="shop-svg-img"
+                  />
+                </h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>
+                    व्यसायिक दूकान, प्रतिष्ठान, खान-पान <br />
+                    के स्थान,व्यावसायिक परिसर
+                  </p>
+                </h6>
+              </div>
             </div>
-            <!-- <button id="btnAssign" class="btn btn-success assign-button Assign-btn" (click)="assignUrl();">Assign this
-                ward
-                <span><i class="far fa-hand-point-right"></i></span>
-            </button> -->
+            <div class="main-box">
+              <div class="designation warehouse-img-box">
+                <h5><img src="../assets/img/marking-warehouse.svg" /></h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>
+                    लघु एवं कुटीर उद्योग, गोदाम, कोल्ड<br />
+                    स्टोरेज
+                  </p>
+                </h6>
+              </div>
+            </div>
+
+            <div class="main-box">
+              <div class="designation">
+                <h5>
+                  <img
+                    src="../assets/img/marking-institute.svg"
+                    class="institute-svg-img"
+                  />
+                </h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>व्यसायिक कार्यालय, बैंक, कोचिंग आदि</p>
+                </h6>
+              </div>
+            </div>
+            <div class="main-box">
+              <div class="designation">
+                <h5>
+                  <img
+                    src="../assets/img/marking-hotel.svg"
+                    class="hotel-svg-img"
+                  />
+                </h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>
+                    गेस्ट हाउस, छात्रावास/हॉस्टल, होटल व <br />
+                    रेस्ट्रोरेंट
+                  </p>
+                </h6>
+              </div>
+            </div>
+            <div class="main-box">
+              <div class="designation">
+                <h5>
+                  <img
+                    src="../assets/img/marking-mela.svg"
+                    class="mela-svg-img"
+                  />
+                </h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>शादी हॉल/उत्सव व मेला</p>
+                </h6>
+              </div>
+            </div>
+            <div class="main-box">
+              <div class="designation">
+                <h5>
+                  <img
+                    src="../assets/img/marking-thela.svg"
+                    class="thela-svg-img"
+                  />
+                </h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>फल /सब्ज़ी ठेला, व्यसायिक ठेला व थड़ी</p>
+                </h6>
+              </div>
+            </div>
+            <div class="main-box">
+              <div class="designation">
+                <h5>
+                  <img
+                    src="../assets/img/marking-hospital.svg"
+                    class="hospital-svg-img"
+                  />
+                </h5>
+              </div>
+              <div class="all-details">
+                <h6>
+                  <p>क्लिनिक, डिस्पेंसरी व अस्पताल</p>
+                </h6>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-
-
-    <div class="modified-count-box" style="padding: 0px;">
-        <div id="divDetails" class="house-card-box-iner">
-            <div class="row house-card-box-iner2">
-                <div class="col-md-6 markers markers-heading-main">
-                    <h5 (click)="showLineDetail(contentModifiedMarkers,'modifiedMarker');" style="cursor: pointer;">
-                        {{markerData.totalHouseTypeModifiedCount}} </h5>
-                    <p>Modified Entities</p>
-                </div>
-
-                <div class="col-md-6 markers markers-heading-main">
-                    <h5 (click)="showLineDetail(contentDeletedMarkers,'deletedMarker');" style="cursor: pointer;">
-                        {{markerData.totalRemovedMarkersCount}} </h5>
-                    <p>Deleted Entities</p>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
-    <button class="btn btn-success assign-button Assign-btn" style="right: 15px;top: 295px;">
-        <span id="btnNearBy">Near By Wards</span><i class="bi bi-caret-down-fill" [hidden]="nearByStatus=='show'"
-            style="margin-left: 5px;"></i><i class="bi bi-caret-right-fill" [hidden]="nearByStatus=='hide'"
-            style="margin-left: 5px;"></i>
-        <!-- <span><i class="far fa-hand-point-right"></i></span> -->
-
-    </button>
-    <div class="div-nearByWards">
-        <h6 [hidden]="nearByWards[0]!=null"
-            style="margin-top: 25%;margin-left: 15%; font-size: 12px; font-weight: none!important;">No DATA AVAILABLE
-        </h6>
-        <table>
-            <tbody>
-                <tr class="table-row" *ngFor="let data of nearByWards;let i=index">
-                    <td class="table-data" id="tr{{i}}"><span><input type="checkbox" style="height:15px;width: 15px;"
-                                id="checkBox{{i}}" (change)="showNearByWards(i,data)">&nbsp;&nbsp; {{data}}</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-    </div>
-
-
-
-
-
-
-
-
+  </div>
 </div>
-<div class="driver-helper-box">
+
+<!-- <section class="header">
+  <div class="row no-gutters">
+    <div class="col-md-4">
+      <select
+        class="caret-select"
+        id="ddlZone"
+        (change)="changeZoneSelection($event.target.value)"
+        [(ngModel)]="selectedZone"
+      >
+        <option
+          *ngFor="let zone of zoneList"
+          value="{{ zone.zoneNo }}"
+          ngSelected="zone.zoneNo == selectedZone?'selected':''"
+        >
+          {{ zone.zoneName }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-4 ward-header-outer">
+      <h1 class="ward-header">Marker Approval</h1>
+    </div>
+
+    <div class="col-md-4 text-right total-house extra-class" id="houseCount">
+      <div class="fix-home">
+        <div id="divLastUpdate" class="float-fourth fix-home-iner">
+          <img
+            src="../../../assets/icons/clock-regular.svg"
+            class="icon-white"
+            alt="clock"
+            width="16"
+            style="margin-bottom: 2px"
+          />
+          <span class="house"
+            ><span class="clock-span">
+              {{ markerData.lastScanTime }}</span
+            ></span
+          ><br />
+          <h6>Last Marked At</h6>
+        </div>
+        <div
+          class="float-first cardboard-icon-main"
+          [hidden]="isAlreadyShow == false"
+        >
+          <img
+            src="../../../assets/icons/vr-cardboard-solid.svg"
+            alt="cardBoard"
+            width="16"
+            class="green-filter"
+            style="margin-bottom: 4px"
+          />
+          <span class="house"
+            ><span class="cardboard-span">
+              {{ markerData.alreadyCardCount }}</span
+            ></span
+          ><br />
+          <h6>Already Card Count</h6>
+        </div>
+        <div class="float-second circle-icon-main">
+          <img
+            src="../../../assets/icons/circle-check-solid.svg"
+            alt="check"
+            width="16"
+            class="green-filter"
+            style="margin-bottom: 2px"
+          />
+          <span class="house"
+            ><span class="circle-span"> {{ markerData.approvedLines }}</span> /
+            {{ markerData.totalLines }}</span
+          ><br />
+          <h6>Approved Lines</h6>
+        </div>
+        <div class="float-third" style="margin-top: 12px">
+          <img
+            src="../../../assets/icons/house-chimney-crack-solid.svg"
+            alt="house-chimney"
+            width="18"
+            class="green-filter"
+            style="margin-bottom: 4px"
+          />
+          <span class="house"> {{ markerData.totalMarkers }}</span
+          ><br />
+          <h6>Total Marker</h6>
+        </div>
+        <div class="arrow" onclick="show()">
+          <i class="bi bi-chevron-down"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<div class="display" id="popup">
+  <div class="image-box" id="markerImageBox">
+    <div id="divLoader" class="loaderClass">
+      <img src="../../../assets/img/loading.gif" width="50" class="imgLoader" />
+    </div>
     <div class="row">
-        <div class="col-md-12">
-
-            <div class="main-box">
-                <div class="designation">
-                    <h5> <img src="../assets/img/marking-house.svg"> </h5>
-                </div>
-                <div class="all-details">
-                    <h6>
-                        <p>आवासीय व आवासीय परिसर</p>
-                    </h6>
-                </div>
-            </div>
-            <div class="main-box">
-                <div class="designation">
-                    <h5> <img src="../assets/img/marking-shop.svg" class="shop-svg-img"> </h5>
-                </div>
-                <div class="all-details">
-                    <h6>
-                        <p>व्यसायिक दूकान, प्रतिष्ठान, खान-पान <br /> के स्थान,व्यावसायिक परिसर </p>
-                    </h6>
-                </div>
-            </div>
-            <div class="main-box">
-                <div class="designation warehouse-img-box">
-                    <h5> <img src="../assets/img/marking-warehouse.svg"> </h5>
-                </div>
-                <div class="all-details">
-                    <h6>
-                        <p>लघु एवं कुटीर उद्योग, गोदाम, कोल्ड<br /> स्टोरेज </p>
-                    </h6>
-                </div>
-            </div>
-
-            <div class="main-box">
-                <div class="designation">
-                    <h5> <img src="../assets/img/marking-institute.svg" class="institute-svg-img"> </h5>
-                </div>
-                <div class="all-details">
-                    <h6>
-                        <p>व्यसायिक कार्यालय, बैंक, कोचिंग आदि </p>
-                    </h6>
-                </div>
-            </div>
-            <div class="main-box">
-                <div class="designation">
-                    <h5> <img src="../assets/img/marking-hotel.svg" class="hotel-svg-img"> </h5>
-                </div>
-                <div class="all-details">
-                    <h6>
-                        <p>गेस्ट हाउस, छात्रावास/हॉस्टल, होटल व <br /> रेस्ट्रोरेंट</p>
-                    </h6>
-                </div>
-            </div>
-            <div class="main-box">
-                <div class="designation">
-                    <h5> <img src="../assets/img/marking-mela.svg" class="mela-svg-img"> </h5>
-                </div>
-                <div class="all-details">
-                    <h6>
-                        <p>शादी हॉल/उत्सव व मेला</p>
-                    </h6>
-                </div>
-            </div>
-            <div class="main-box">
-                <div class="designation">
-                    <h5> <img src="../assets/img/marking-thela.svg" class="thela-svg-img"> </h5>
-                </div>
-                <div class="all-details">
-                    <h6>
-                        <p>फल /सब्ज़ी ठेला, व्यसायिक ठेला व थड़ी</p>
-                    </h6>
-                </div>
-            </div>
-            <div class="main-box">
-                <div class="designation">
-                    <h5> <img src="../assets/img/marking-hospital.svg" class="hospital-svg-img"> </h5>
-                </div>
-                <div class="all-details">
-                    <h6>
-                        <p>क्लिनिक, डिस्पेंसरी व अस्पताल</p>
-                    </h6>
-                </div>
-            </div>
+      <div class="col-md-12 house-type">
+        <h3>
+          {{ markerData.houseType }} <br />
+          {{ markerData.alreadyCard }}
+          <img
+            src="../../../assets/img/close-grey.png"
+            class="img-close"
+            (click)="closeSubModel('#markerImageBox')"
+            style="float: right"
+          />
+        </h3>
+      </div>
+      <div class="col-md-12">
+        <div class="main-box">
+          <a href="{{ markerData.markerImgURL }}" target="_blank">
+            <img
+              id="markingImg"
+              class="markerdata-img"
+              [src]="markerData.markerImgURL"
+            />
+          </a>
         </div>
+      </div>
     </div>
-
+  </div>
 </div>
-
-
 
 <!--Vehicle Status Start-->
-<ng-template #contentLineMarkers>
-    <div class="header-12">
+<!-- <ng-template #contentLineMarkers> -->
+<div
+  class="modal fade modalMarker"
+  id="contentLineMarkers"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="showLineDetail(contentLineMarkers, 'approvedMarker')"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Ward {{ this.markerData.wardno }} [Line {{ this.markerData.lineno }}]
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="closeModel()"
+        ></button>
+      </div>
 
-        <input type="hidden" id="divStatusHeight" value="0">
-        <input type="hidden" id="type" value="0">
+      <!-- <div class="header-12">
+    <input type="hidden" id="divStatusHeight" value="0" />
+    <input type="hidden" id="type" value="0" />
 
-        <div class="pop-up-header">
-            <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}} [Line
-                {{this.markerData.lineno}}]
-            </h5>
+  </div> -->
 
-            <div class="img-close-outer">
-                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-body divStatus">
-        <div id="divEditMarkerRemark"
-            style="display: none; position: absolute; z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width: 400px;">
-            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Remark</h5>
-            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-                <div class="row">
-                    <div class="col-md-12">
-                        <input id="txtMarkerRemark" type="text" class="caret-select-vehicle"
-                            placeholder="Enter remark...">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6" style="text-align: center; margin-top: 10px;">
-                        <button class="btn btn-success" (click)="saveMarkerRemark()">Save</button>
-                    </div>
-                    <div class="col-md-6" style="text-align: center; margin-top: 10px;">
-                        <button class="btn btn-danger" (click)="cancelMarkerRemarkEdit()"
-                            style="text-transform: uppercase;">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="divHouseType"
-            style="display: none; position: absolute;z-index: 9999; width: 300px;background-color: #fff; margin-top: 15%; margin-left: 40%; padding: 20px; border: 1px solid lightgray;">
-            <input type="hidden" id="houseIndex" value="0">
-            <input type="hidden" id="houseWardNo" value="0">
-            <input type="hidden" id="houseLineNo" value="0">
-
-            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Change Marker Detail</h5>
-            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-                <div class="col-md-12">
-                    <select id="ddlHouseType" class="caret-select-vehicle"
-                        (change)="setEntitiesCounts($event.target.value);">
-                        <option *ngFor="let dt of houseTypeList" value={{dt.id}}>
-                            {{dt.houseType}}
-                        </option>
-                    </select>
-                </div>
-                <div class="col-md-12">
-                    Owner Name
-                    <input id="txtOwnerName" type="text" class="caret-select-vehicle" value="" />
-                </div>
-                <div id="divMobileNo" class="col-md-12">
-                    Mobile No.
-                    <input id="txtMarkerMobileNo" type="text" class="caret-select-vehicle" value="" />
-                </div>
-                <div id="divNoOfPersons" class="col-md-12">
-                    No. of Person
-                    <input id="txtNoOfPerson" type="text" class="caret-select-vehicle" value="" />
-                </div>
-                <div id="divEntityCount" class="col-md-12">
-                    No. of Entities
-                    <input id="txtNoOfEntities" type="text" class="caret-select-vehicle" value="" />
-                </div>
-                <div id="divAddress" class="col-md-12">
-                    Address
-                    <input id="txtMarkerAddress" type="text" class="caret-select-vehicle" value="" />
-                </div>
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-success " (click)="updateHouseType();" style="width: 100px;">
-                        Save</button>
-                </div>
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelHouseType();"
-                        style="text-transform: uppercase;width: 100px; margin-left: -20px!important;">
-                        Cancel</button>
-                </div>
-            </div>
-        </div>
-        <div id="divConfirm"
-            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 35%; padding: 20px; border: 1px solid lightgray;">
-            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Are you sure to delete?</h5>
-            <div class="col-md-12" style="padding-top: 10px; border-top: 1px solid rgba(128, 128, 128, 0.471);">
-                <label for="" style="font-weight: bold;">Delete Reason</label>
-                <select id="reasonSelect" class="caret-select-reason" [(ngModel)]="deleteReason"
-                    style="padding-top: 10px;">
-                    <option value="0">
-                        --Select--
-                    </option>
-                    <option value="Marking is not visible properly">
-                        Marking is not visible properly
-                    </option>
-                    <option value="Duplicate marking">
-                        Duplicate marking
-                    </option>
-                    <option value="Garbage data">
-                        Garbage data
-                    </option>
-                </select>
-            </div>
+      <div class="custom-modal-body divStatus">
+        <!--- Remark Modal -->
+        <div
+          id="divEditMarkerRemark"
+          style="
+            display: none;
+            position: absolute;
+            z-index: 9999;
+            background-color: #fff;
+            margin-top: 15%;
+            margin-left: 33%;
+            padding: 20px;
+            border: 1px solid lightgray;
+            width: 400px;
+          "
+        >
+          <h5
+            class="modal-title"
+            style="text-align: center; padding-bottom: 20px"
+          >
+            Remark
+          </h5>
+          <div
+            class="row"
+            style="border-top: 1px solid lightgray; padding-top: 10px"
+          >
             <div class="row">
-                <input type="hidden" id="deleteMarkerId" value="0">
-                <input type="hidden" id="deleteAlreadyCard" value="">
-                <input type="hidden" id="deleteZoneNo" value="">
-                <input type="hidden" id="deleteLineNo" value="">
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-success " (click)="deleteMarker();">
-                        Confirm</button>
-                </div>
-                <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                    <button class="btn btn-danger " (click)="cancelMarkerDelete();" style="text-transform: uppercase;">
-                        Cancel</button>
-                </div>
+              <div class="col-md-12">
+                <input
+                  id="txtMarkerRemark"
+                  type="text"
+                  class="caret-select-vehicle"
+                  placeholder="Enter remark..."
+                />
+              </div>
             </div>
+
+            <div class="row">
+              <div
+                class="col-md-6"
+                style="text-align: center; margin-top: 10px"
+              >
+                <button class="btn btn-success" (click)="saveMarkerRemark()">
+                  Save
+                </button>
+              </div>
+              <div
+                class="col-md-6"
+                style="text-align: center; margin-top: 10px"
+              >
+                <button
+                  class="btn btn-danger"
+                  (click)="cancelMarkerRemarkEdit()"
+                  style="text-transform: uppercase"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+        <!--- Remark Modal Ends Here -->
 
-        <div id="divMarkerUpdateHistory" class="modal-maine" >
-            <div class="modal-header show-modal-header">
-                <h5 class="modal-title title-marker">Marker Update History</h5>
-                <img src="../../../assets/icons/iconClose.png" class="img-close-btn"
-                    (click)="closeSubModel('#divMarkerUpdateHistory')">
+        <!---- Change Marker Detail -->
+        <div
+          id="divHouseType"
+          style="
+            display: none;
+            position: absolute;
+            z-index: 9999;
+            width: 300px;
+            background-color: #fff;
+            margin-top: 15%;
+            margin-left: 40%;
+            padding: 20px;
+            border: 1px solid lightgray;
+          "
+        >
+          <input type="hidden" id="houseIndex" value="0" />
+          <input type="hidden" id="houseWardNo" value="0" />
+          <input type="hidden" id="houseLineNo" value="0" />
 
-            </div>
-            <div class="modal-body modal-bodytable">
-                <div class="table-wrapper table-one table-height-control">
-                    <table class="table table-one-iner table-th">
-                        <thead>
-                            <th>Date</th>
-                            <th>
-                                User Name</th>
-                            <th>
-                                Pre-House Type</th>
-                            <th>
-                                House Type</th>
-                            <th>
-                                Pre-Owner Name</th>
-                            <th>
-                                Owner Name</th>
-                            <th>
-                                Pre-Mobile No</th>
-                            <th>
-                                Mobile No</th>
-                            <th>
-                                Pre-Address</th>
-                            <th>
-                                Address</th>
-                            <th>
-                                Pre-No of Persons</th>
-                            <th>
-                                No of Persons</th>
-                            <th>
-                                Pre-Serving Counts</th>
-                            <th>
-                                Serving Counts</th>
-                        </thead>
-                        <tbody>
-                            <tr style="cursor: pointer;" id="tr{{i}}"
-                                *ngFor="let dt of markerUpdateHistoryList; let i=index">
-                                <td>
-                                    {{dt.updateDate}}</td>
-                                <td>
-                                    {{dt.updatedById}}</td>
-                                <td>
-                                    {{dt.preHouseTypeId}}</td>
-                                <td>
-                                    {{dt.newHouseTypeId}}</td>
-                                <td>
-                                    {{dt.preOwnerName}}</td>
-                                <td>
-                                    {{dt.ownerName}}</td>
-                                <td>
-                                    {{dt.preMobileNo}}</td>
-                                <td>
-                                    {{dt.mobileNo}}</td>
-                                <td>
-                                    {{dt.preAddress}}</td>
-                                <td>
-                                    {{dt.address}}</td>
-                                <td>
-                                    {{dt.prePersons}}</td>
-                                <td>
-                                    {{dt.persons}}</td>
-                                <td>
-                                    {{dt.preServingCount}}</td>
-                                <td>
-                                    {{dt.servingCount}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-
-        <div id="divConfirmApprove"
-            style=" display: none; position: absolute;z-index: 9999; background-color: #fff; margin-top: 15%; margin-left: 33%; padding: 20px; border: 1px solid lightgray; width:550px">
-            <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Confirm</h5>
-            <div class="row" style="border-top: 1px solid lightgray; padding-top: 10px;">
-                <input type="hidden" id="approveMarkerId" value="0">
-                <input type="hidden" id="approveZoneNo" value="0">
-                <input type="hidden" id="approveLineNo" value="0">
-                <input type="hidden" id="approveAlreadyCard" value="">
-                <div class="row">
-                    <div class="col-md-12">
-                        <input type="checkbox" id="chkApprovedEntity">&nbsp;&nbsp;I have checked entity type carefully
-
-                    </div>
-                    <div class="col-md-12">
-                        <input type="checkbox" id="chkApprovedMarkar">&nbsp;&nbsp;I am sure, There is no other marker
-                        image same as this marker <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(No duplicate marker)
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                        <button class="btn btn-success" (click)="approveMarkerStatus()">
-                            Confirm</button>
-                    </div>
-                    <div class="col-md-6" style="text-align: center;margin-top: 5px;">
-                        <button class="btn btn-danger " (click)="cancelMarkerApproveDelete()"
-                            style="text-transform: uppercase;">
-                            Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div style="border-bottom: solid 1px lightgray;">
-            <select class="caret-select" id="ddlZoneMarker">
-                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}>
-                    {{zone.zoneName}}
+          <h5
+            class="modal-title"
+            style="text-align: center; padding-bottom: 20px"
+          >
+            Change Marker Detail
+          </h5>
+          <div
+            class="row"
+            style="border-top: 1px solid lightgray; padding-top: 10px"
+          >
+            <div class="col-md-12">
+              <select
+                id="ddlHouseType"
+                class="caret-select-vehicle"
+                (change)="setEntitiesCounts($event.target.value)"
+              >
+                <option *ngFor="let dt of houseTypeList" value="{{ dt.id }}">
+                  {{ dt.houseType }}
                 </option>
-            </select>&nbsp;&nbsp;
-            <input type="text" id="txtLine" class="caret-select" />&nbsp;&nbsp;
-            <button class="btn btn-success " (click)="getOtherMarkerData()">Include line</button>&nbsp;&nbsp;
-            <span id="btnRemoveIncludedLines" (click)="removeAddLines()"
-                style="cursor:pointer; text-decoration: underline;display: none;">Remove Included Lines</span>
-        </div>
-        <!-- ////////////////////////////////// -->
-
-        <div id="divStatus" class="content-scroll" [hidden]="markerListIncluded.length>0">
-
-            <div class="row">
-                <div class="col-md-2" *ngFor="let dt of markerList">
-                    <div class="markerList-iner">
-                        <a href="{{dt.imageUrl}}" target="_blank">
-                            <img class="markerList-iner-img" [src]="dt.imageUrl" />
-                        </a>
-                    </div>
-                    <div class="main-tag">
-                        <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
-                                    style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp;
-                                <!-- <i
-                                    class="fa-solid fa-pen-to-square" style="cursor: pointer;"
-                                    (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"></i> -->
-                                <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
-                                    (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
-                                    style="max-width: 25px;border: none;" />
-                                <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''"
-                                    alt="show history" class="cursor-pointer"
-                                    (click)="showMarkerUpdateHistory(dt.markerUpdateId);"
-                                    style="max-width: 25px;border: none;" />
-                            </h3><br />
-                            <span [hidden]="dt.status==''">
-                                <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
-                                            [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
-                            </span>
-                            <span [hidden]="dt.markerId==''">
-                                <h3>Marker ID : <b> {{dt.markerId}}</b></h3>
-                            </span>
-                            <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
-                                Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.ownerName==''">
-                                Owner Name : {{dt.ownerName}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.persons==''">
-                                No. of Persons : {{dt.persons}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
-                                No. of Entity : {{dt.totalEntity}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.mobileNo==''">
-                                Mobile No. : {{dt.mobileNo}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.houseNo==''">
-                                House Number : {{dt.houseNo}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.buildingName==''">
-                                Building Name : {{dt.buildingName}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.address==''">
-                                Address : {{dt.address}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.streetColony==''">
-                                Street/Colony : {{dt.streetColony}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px" [hidden]="dt.wardNumber==''">
-                                Ward : {{dt.wardNumber}}
-                                <br />
-                            </span>
-                            <span style="font-size:11px">
-                                Remark : {{dt.markerRemark}}
-                                <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
-                                    (click)="showUpdatePopupMarkerRemark(dt.markerRemark,dt.zoneNo,dt.lineNo,dt.index,'markerList');"
-                                    style="max-width: 25px;border: none;" />
-                                <br />
-                            </span>
-                            <span style="font-size:11px">
-                                Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
-                                <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
-                                    Date : {{dt.approveDate}}</span>
-
-                            </span>
-                        </div>
-                    </div>
-                    <div style="text-align: left; margin-bottom: 20px;">
-                        <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
-                            (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'marker');">
-                            <!-- <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove -->
-                            <img src="../../../assets/icons/a-solid.svg" alt="A" class="cursor-pointer icon-green"
-                                width="15" style="border: none;margin: 0;padding: 0;" />pprove
-
-                        </span>
-                        <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
-                            (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'marker');">&nbsp; &nbsp;
-                            <!-- <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject -->
-                            <img src="../../../assets/icons/r-solid.svg" alt="R" class="cursor-pointer icon-blue"
-                                width="15" style="border: none;margin: 0;padding: 0;" />eject
-                        </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
-                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
-                            &nbsp; &nbsp;
-                            <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
-                            <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
-                                width="15" style="border: none;margin: 0;padding: 0;" />elete
-                        </span>
-                        <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
-                            (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
-                            &nbsp; &nbsp;
-                            <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
-                            <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
-                                width="15" style="border: none;margin: 0;padding: 0;" />elete
-                        </span>
-                    </div>
-
-                </div>
+              </select>
             </div>
+            <div class="col-md-12">
+              Owner Name
+              <input
+                id="txtOwnerName"
+                type="text"
+                class="caret-select-vehicle"
+                value=""
+              />
+            </div>
+            <div id="divMobileNo" class="col-md-12">
+              Mobile No.
+              <input
+                id="txtMarkerMobileNo"
+                type="text"
+                class="caret-select-vehicle"
+                value=""
+              />
+            </div>
+            <div id="divNoOfPersons" class="col-md-12">
+              No. of Person
+              <input
+                id="txtNoOfPerson"
+                type="text"
+                class="caret-select-vehicle"
+                value=""
+              />
+            </div>
+            <div id="divEntityCount" class="col-md-12">
+              No. of Entities
+              <input
+                id="txtNoOfEntities"
+                type="text"
+                class="caret-select-vehicle"
+                value=""
+              />
+            </div>
+            <div id="divAddress" class="col-md-12">
+              Address
+              <input
+                id="txtMarkerAddress"
+                type="text"
+                class="caret-select-vehicle"
+                value=""
+              />
+            </div>
+            <div class="col-md-6" style="text-align: center; margin-top: 5px">
+              <button
+                class="btn btn-success"
+                (click)="updateHouseType()"
+                style="width: 100px"
+              >
+                Save
+              </button>
+            </div>
+            <div class="col-md-6" style="text-align: center; margin-top: 5px">
+              <button
+                class="btn btn-danger"
+                (click)="cancelHouseType()"
+                style="
+                  text-transform: uppercase;
+                  width: 100px;
+                  margin-left: -20px !important;
+                "
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        <!---- Change Marker Detail Ends -->
 
+        <!--- Delete Modal -->
+        <div
+          id="divConfirm"
+          style="
+            display: none;
+            position: absolute;
+            z-index: 9999;
+            background-color: #fff;
+            margin-top: 15%;
+            margin-left: 35%;
+            padding: 20px;
+            border: 1px solid lightgray;
+          "
+        >
+          <h5
+            class="modal-title"
+            style="text-align: center; padding-bottom: 20px"
+          >
+            Are you sure to delete?
+          </h5>
+          <div
+            class="col-md-12"
+            style="
+              padding-top: 10px;
+              border-top: 1px solid rgba(128, 128, 128, 0.471);
+            "
+          >
+            <label for="" style="font-weight: bold">Delete Reason</label>
+            <select
+              id="reasonSelect"
+              class="caret-select-reason"
+              [(ngModel)]="deleteReason"
+              style="padding-top: 10px"
+            >
+              <option value="0">--Select--</option>
+              <option value="Marking is not visible properly">
+                Marking is not visible properly
+              </option>
+              <option value="Duplicate marking">Duplicate marking</option>
+              <option value="Garbage data">Garbage data</option>
+            </select>
+          </div>
+          <div class="row">
+            <input type="hidden" id="deleteMarkerId" value="0" />
+            <input type="hidden" id="deleteAlreadyCard" value="" />
+            <input type="hidden" id="deleteZoneNo" value="" />
+            <input type="hidden" id="deleteLineNo" value="" />
+            <div class="col-md-6" style="text-align: center; margin-top: 5px">
+              <button class="btn btn-success" (click)="deleteMarker()">
+                Confirm
+              </button>
+            </div>
+            <div class="col-md-6" style="text-align: center; margin-top: 5px">
+              <button
+                class="btn btn-danger"
+                (click)="cancelMarkerDelete()"
+                style="text-transform: uppercase"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        <!--- Delete Modal Ends here -->
+
+        <!--- Marker Update History Modal -->
+        <div id="divMarkerUpdateHistory" class="modal-maine">
+          <div class="modal-header show-modal-header">
+            <h5 class="modal-title title-marker">Marker Update History</h5>
+            <img
+              src="../../../assets/icons/iconClose.png"
+              class="img-close-btn"
+              (click)="closeSubModel('#divMarkerUpdateHistory')"
+            />
+          </div>
+          <div class="modal-body modal-bodytable">
+            <div class="table-wrapper table-one table-height-control">
+              <table class="table table-one-iner table-th">
+                <thead>
+                  <th>Date</th>
+                  <th>User Name</th>
+                  <th>Pre-House Type</th>
+                  <th>House Type</th>
+                  <th>Pre-Owner Name</th>
+                  <th>Owner Name</th>
+                  <th>Pre-Mobile No</th>
+                  <th>Mobile No</th>
+                  <th>Pre-Address</th>
+                  <th>Address</th>
+                  <th>Pre-No of Persons</th>
+                  <th>No of Persons</th>
+                  <th>Pre-Serving Counts</th>
+                  <th>Serving Counts</th>
+                </thead>
+                <tbody>
+                  <tr
+                    style="cursor: pointer"
+                    id="tr{{ i }}"
+                    *ngFor="let dt of markerUpdateHistoryList; let i = index"
+                  >
+                    <td>
+                      {{ dt.updateDate }}
+                    </td>
+                    <td>
+                      {{ dt.updatedById }}
+                    </td>
+                    <td>
+                      {{ dt.preHouseTypeId }}
+                    </td>
+                    <td>
+                      {{ dt.newHouseTypeId }}
+                    </td>
+                    <td>
+                      {{ dt.preOwnerName }}
+                    </td>
+                    <td>
+                      {{ dt.ownerName }}
+                    </td>
+                    <td>
+                      {{ dt.preMobileNo }}
+                    </td>
+                    <td>
+                      {{ dt.mobileNo }}
+                    </td>
+                    <td>
+                      {{ dt.preAddress }}
+                    </td>
+                    <td>
+                      {{ dt.address }}
+                    </td>
+                    <td>
+                      {{ dt.prePersons }}
+                    </td>
+                    <td>
+                      {{ dt.persons }}
+                    </td>
+                    <td>
+                      {{ dt.preServingCount }}
+                    </td>
+                    <td>
+                      {{ dt.servingCount }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!--- Marker Update History Modal Ends here-->
+
+        <!--- Confirmation Modal -->
+        <div
+          id="divConfirmApprove"
+          style="
+            display: none;
+            position: absolute;
+            z-index: 9999;
+            background-color: #fff;
+            margin-top: 15%;
+            margin-left: 33%;
+            padding: 20px;
+            border: 1px solid lightgray;
+            width: 550px;
+          "
+        >
+          <h5
+            class="modal-title"
+            style="text-align: center; padding-bottom: 20px"
+          >
+            Confirm
+          </h5>
+          <div
+            class="row"
+            style="border-top: 1px solid lightgray; padding-top: 10px"
+          >
+            <input type="hidden" id="approveMarkerId" value="0" />
+            <input type="hidden" id="approveZoneNo" value="0" />
+            <input type="hidden" id="approveLineNo" value="0" />
+            <input type="hidden" id="approveAlreadyCard" value="" />
+            <div class="row">
+              <div class="col-md-12">
+                <input type="checkbox" id="chkApprovedEntity" />&nbsp;&nbsp;I
+                have checked entity type carefully
+              </div>
+              <div class="col-md-12">
+                <input type="checkbox" id="chkApprovedMarkar" />&nbsp;&nbsp;I am
+                sure, There is no other marker image same as this marker
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(No duplicate marker)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6" style="text-align: center; margin-top: 5px">
+                <button class="btn btn-success" (click)="approveMarkerStatus()">
+                  Confirm
+                </button>
+              </div>
+              <div class="col-md-6" style="text-align: center; margin-top: 5px">
+                <button
+                  class="btn btn-danger"
+                  (click)="cancelMarkerApproveDelete()"
+                  style="text-transform: uppercase"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--- Confirmation Modal Ends here-->
+        <!--- Modal Filter Starts here-->
+        <div class="modal-filter">
+          <select class="custom-dropdown-btn" id="ddlZoneMarker">
+            <option *ngFor="let zone of zoneList" value="{{ zone.zoneNo }}">
+              {{ zone.zoneName }}
+            </option>
+          </select>
+          <input type="text" id="txtLine" class="custom-dropdown-btn" />
+          <button class="btn btn-include" (click)="getOtherMarkerData()">
+            Include line
+          </button>
+          <span
+            id="btnRemoveIncludedLines"
+            (click)="removeAddLines()"
+            class="remove-include-line"
+            >Remove Included Lines</span
+          >
+        </div>
+        <!-- modal filter ends here -->
+
+        <div
+          id="divStatus"
+          class="survey-scroll"
+          [hidden]="markerListIncluded.length > 0"
+        >
+          <div class="survey-row">
+            <div class="survey-box" *ngFor="let dt of markerList">
+              <a
+                class="survey-img-box"
+                href="{{ dt.imageUrl }}"
+                target="_blank"
+              >
+                <img class="markerList-img" [src]="dt.imageUrl" />
+              </a>
+
+              <div class="survey-footer">
+                <div class="survey-info-row">
+                  <div class="survey-info-left">Entity type</div>
+                  <div class="survey-info-right">
+                    {{ dt.type }}
+                    <span [hidden]="dt.servingCount == 0">
+                      ({{ dt.servingCount }})</span
+                    >
+                    <img
+                      src="../../../assets/img/iconEdit.png"
+                      alt="edit"
+                      class="iconEdit"
+                      title="edit"
+                      (click)="
+                        setHouseType(dt.index, dt.zoneNo, dt.lineNo, 'marker')
+                      "
+                    />
+                    <img
+                      src="../../../assets/icons/updateIcon.svg"
+                      [hidden]="dt.markerUpdateId == ''"
+                      alt="show history"
+                      class="cursor-pointer"
+                      (click)="showMarkerUpdateHistory(dt.markerUpdateId)"
+                      style="max-width: 25px; border: none"
+                    />
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.status == ''">
+                  <div class="survey-info-left">Status</div>
+                  <div class="survey-info-right">
+                    {{ dt.status }}
+                    <span [hidden]="dt.cardNumber == ''"
+                      >({{ dt.cardNumber }})</span
+                    >
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.markerId == ''">
+                  <div class="survey-info-left">Marker ID</div>
+                  <div class="survey-info-right">
+                    {{ dt.markerId }}
+                  </div>
+                </div>
+                <div
+                  class="survey-info-row"
+                  [hidden]="this.isShowWardAndLine == false"
+                >
+                  <div class="survey-info-left">Ward</div>
+                  <div class="survey-info-right">
+                    {{ dt.zoneNo }} [Line {{ dt.lineNo }}]
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.ownerName == ''">
+                  <div class="survey-info-left">Owner Name</div>
+                  <div class="survey-info-right">
+                    {{ dt.ownerName }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.persons == ''">
+                  <div class="survey-info-left">No. of Persons</div>
+                  <div class="survey-info-right">
+                    {{ dt.persons }}
+                  </div>
+                </div>
+                <div
+                  class="survey-info-row"
+                  [hidden]="dt.totalEntity == '0' || dt.totalEntity == ''"
+                >
+                  <div class="survey-info-left">No. of Entity</div>
+                  <div class="survey-info-right">
+                    {{ dt.totalEntity }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.mobileNo == ''">
+                  <div class="survey-info-left">Mobile No.</div>
+                  <div class="survey-info-right">
+                    {{ dt.mobileNo }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.houseNo == ''">
+                  <div class="survey-info-left">House Number</div>
+                  <div class="survey-info-right">
+                    {{ dt.houseNo }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.buildingName == ''">
+                  <div class="survey-info-left">Building Name</div>
+                  <div class="survey-info-right">
+                    {{ dt.buildingName }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.address == ''">
+                  <div class="survey-info-left">Address</div>
+                  <div class="survey-info-right">
+                    {{ dt.address }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.streetColony == ''">
+                  <div class="survey-info-left">Street/Colony</div>
+                  <div class="survey-info-right">
+                    {{ dt.streetColony }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.wardNumber == ''">
+                  <div class="survey-info-left">Ward</div>
+                  <div class="survey-info-right">
+                    {{ dt.wardNumber }}
+                  </div>
+                </div>
+                <div class="survey-info-row">
+                  <div class="survey-info-left">Remark</div>
+                  <div class="survey-info-right">
+                    {{ dt.markerRemark }} &nbsp;
+                    <img
+                      src="../../../assets/img/iconEdit.png"
+                      class="iconEdit"
+                      alt="edit"
+                      title="edit"
+                      (click)="
+                        showUpdatePopupMarkerRemark(
+                          dt.markerRemark,
+                          dt.zoneNo,
+                          dt.lineNo,
+                          dt.index,
+                          'markerList'
+                        )
+                      "
+                    />
+                  </div>
+                </div>
+                <div class="survey-info-row">
+                  <div class="survey-info-left">Mkd By</div>
+                  <div class="survey-info-right">
+                    {{ dt.markingBy }}
+                  </div>
+                </div>
+                <div class="survey-info-row">
+                  <div class="survey-info-left">Mkd Date</div>
+                  <div class="survey-info-right">
+                    {{ dt.date }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.approveName == ''">
+                  <div class="survey-info-left">Appr By</div>
+                  <div class="survey-info-right">
+                    {{ dt.approveName }}
+                  </div>
+                </div>
+                <div class="survey-info-row" [hidden]="dt.approveName == ''">
+                  <div class="survey-info-left">Appr Date</div>
+                  <div class="survey-info-right">
+                    {{ dt.approveDate }}
+                  </div>
+                </div>
+
+                <div class="btn-review">
+                  <button
+                    [hidden]="dt.isApprove != '0'"
+                    (click)="
+                      confirmationMarkerApprove(
+                        dt.index,
+                        dt.alreadyCard,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'marker'
+                      )
+                    "
+                    class="btnDefault btnApprove"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    [hidden]="dt.status != ''"
+                    (click)="
+                      saveMarkerStatus(dt.index, dt.zoneNo, dt.lineNo, 'marker')
+                    "
+                    class="btnDefault btnDelete"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    [hidden]="dt.status != '' || isActionShow == false"
+                    (click)="
+                      confirmationMarkerDelete(
+                        dt.index,
+                        dt.alreadyInstalled,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'marker'
+                      )
+                    "
+                    class="btnDefault btnDelete"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    [hidden]="dt.isRevisit == '0' || isActionShow == false"
+                    (click)="
+                      confirmationMarkerDelete(
+                        dt.index,
+                        dt.alreadyInstalled,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'marker'
+                      )
+                    "
+                    class="btnDefault btnDelete"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- ////////////////////////////////////////// -->
-        <div id="divIncludedStatus" [hidden]="markerListIncluded.length==0">
-            <div id="divStatus1" class="content-scroll col-md-6" style="display: inline-block;">
-                <div class="row ">
-                    <div class="col-md-4" *ngFor="let dt of markerList">
-                        <div class="markerList-iner">
-                            <a href="{{dt.imageUrl}}" target="_blank">
-                                <img class="markerList-iner-img" [src]="dt.imageUrl" />
-                            </a>
-                        </div>
-                        <div class="main-tag">
-                            <div class="f-left">
-                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
-                                        style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp;
-                                    <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
+        <div id="divIncludedStatus" [hidden]="markerListIncluded.length == 0">
+          <div
+            id="divStatus1"
+            class="content-scroll col-md-6"
+            style="display: inline-block"
+          >
+            <div class="row">
+              <div class="col-md-4" *ngFor="let dt of markerList">
+                <div class="markerList-iner">
+                  <a href="{{ dt.imageUrl }}" target="_blank">
+                    <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                  </a>
+                </div>
+                <div class="main-tag">
+                  <div class="f-left">
+                    <h3 class="f-left-heading">
+                      {{ dt.type }}
+                      <span
+                        [hidden]="dt.servingCount == 0"
+                        style="font-weight: bold"
+                      >
+                        ({{ dt.servingCount }})</span
+                      >
+                      &nbsp;&nbsp;&nbsp;
+                      <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
                                         (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
                                         [hidden]="isActionShow==false"></i> -->
-                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
-                                        (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'marker');"
-                                        [hidden]="isActionShow==false" style="max-width: 25px;border: none;" />
-                                    <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''"
-                                        alt="show history" class="cursor-pointer"
-                                        (click)="showMarkerUpdateHistory(dt.markerUpdateId);"
-                                        style="max-width: 25px;border: none;" />
-                                </h3><br />
-                                <span [hidden]="dt.status==''">
-                                    <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
-                                                [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
-                                </span>
-                                <span [hidden]="dt.markerId==''">
-                                    <h3>Marker ID : <b> {{dt.markerId}}</b></h3>
-                                </span>
-                                <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
-                                    Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.ownerName==''">
-                                    Owner Name : {{dt.ownerName}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.persons==''">
-                                    No. of Persons : {{dt.persons}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
-                                    No. of Entity : {{dt.totalEntity}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.mobileNo==''">
-                                    Mobile No. : {{dt.mobileNo}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.houseNo==''">
-                                    House Number : {{dt.houseNo}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.buildingName==''">
-                                    Building Name : {{dt.buildingName}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.address==''">
-                                    Address : {{dt.address}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.streetColony==''">
-                                    Street/Colony : {{dt.streetColony}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.totalHouses==''">
-                                    Total Houses : {{dt.totalHouses}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.wardNumber==''">
-                                    Ward : {{dt.wardNumber}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px">
-                                    Remark: {{dt.markerRemark}}
-                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
-                                        (click)="showUpdatePopupMarkerRemark(dt.markerRemark,dt.zoneNo,dt.lineNo,dt.index,'markerList');"
-                                        style="max-width: 25px;border: none;" />
-                                    <br />
-                                </span>
-                                <span style="font-size:11px">
-                                    Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
-                                    <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
-                                        Date : {{dt.approveDate}}</span>
-
-                                </span>
-                            </div>
-                        </div>
-                        <div style="text-align: left; margin-bottom: 20px;">
-                            <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
-                                (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'marker');">
-                                <!-- <i class="fa-solid fa-a"
+                      <img
+                        src="../../../assets/icons/edit-solid.svg"
+                        alt="edit"
+                        class="cursor-pointer"
+                        (click)="
+                          setHouseType(dt.index, dt.zoneNo, dt.lineNo, 'marker')
+                        "
+                        [hidden]="isActionShow == false"
+                        style="max-width: 25px; border: none"
+                      />
+                      <img
+                        src="../../../assets/icons/updateIcon.svg"
+                        [hidden]="dt.markerUpdateId == ''"
+                        alt="show history"
+                        class="cursor-pointer"
+                        (click)="showMarkerUpdateHistory(dt.markerUpdateId)"
+                        style="max-width: 25px; border: none"
+                      />
+                    </h3>
+                    <br />
+                    <span [hidden]="dt.status == ''">
+                      <h3>
+                        Status :
+                        <span class="{{ dt.statusClass }}">
+                          {{ dt.status }}
+                          <b [hidden]="dt.cardNumber == ''"
+                            >({{ dt.cardNumber }})</b
+                          ></span
+                        >
+                      </h3>
+                    </span>
+                    <span [hidden]="dt.markerId == ''">
+                      <h3>
+                        Marker ID : <b> {{ dt.markerId }}</b>
+                      </h3>
+                    </span>
+                    <span
+                      style="font-weight: bold; font-size: 11px"
+                      [hidden]="this.isShowWardAndLine == false"
+                    >
+                      Ward {{ dt.zoneNo }} [Line {{ dt.lineNo }}]
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.ownerName == ''">
+                      Owner Name : {{ dt.ownerName }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.persons == ''">
+                      No. of Persons : {{ dt.persons }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.totalEntity == '0' || dt.totalEntity == ''"
+                    >
+                      No. of Entity : {{ dt.totalEntity }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.mobileNo == ''">
+                      Mobile No. : {{ dt.mobileNo }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.houseNo == ''">
+                      House Number : {{ dt.houseNo }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.buildingName == ''"
+                    >
+                      Building Name : {{ dt.buildingName }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.address == ''">
+                      Address : {{ dt.address }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.streetColony == ''"
+                    >
+                      Street/Colony : {{ dt.streetColony }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.totalHouses == ''"
+                    >
+                      Total Houses : {{ dt.totalHouses }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.wardNumber == ''"
+                    >
+                      Ward : {{ dt.wardNumber }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px">
+                      Remark: {{ dt.markerRemark }}
+                      <img
+                        src="../../../assets/icons/edit-solid.svg"
+                        alt="edit"
+                        class="cursor-pointer"
+                        (click)="
+                          showUpdatePopupMarkerRemark(
+                            dt.markerRemark,
+                            dt.zoneNo,
+                            dt.lineNo,
+                            dt.index,
+                            'markerList'
+                          )
+                        "
+                        style="max-width: 25px; border: none"
+                      />
+                      <br />
+                    </span>
+                    <span style="font-size: 11px">
+                      Marked By : {{ dt.markingBy }}<br />
+                      Marked Date : {{ dt.date }}<br />
+                      <span [hidden]="dt.approveName == ''">
+                        Approve By : {{ dt.approveName }} <br />
+                        Approved Date : {{ dt.approveDate }}</span
+                      >
+                    </span>
+                  </div>
+                </div>
+                <div style="text-align: left; margin-bottom: 20px">
+                  <span
+                    style="cursor: pointer"
+                    [hidden]="dt.isApprove != '0'"
+                    (click)="
+                      confirmationMarkerApprove(
+                        dt.index,
+                        dt.alreadyCard,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'marker'
+                      )
+                    "
+                  >
+                    <!-- <i class="fa-solid fa-a"
                                     style="color:green; font-size: 16px; cursor: pointer;"></i>pprove -->
-                                <img src="../../../assets/icons/a-solid.svg" alt="A" class="cursor-pointer icon-green"
-                                    width="15" style="border: none;margin: 0;padding: 0;" />pprove
-                            </span>
-                            <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
-                                (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'marker');">
-                                &nbsp; &nbsp;
-                                <!-- <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject -->
-                                <img src="../../../assets/icons/r-solid.svg" alt="R" class="cursor-pointer icon-blue"
-                                    width="15" style="border: none;margin: 0;padding: 0;" />eject
-                            </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
-                                (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
-                                &nbsp; &nbsp;
-                                <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
-                                <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
-                                    width="15" style="border: none;margin: 0;padding: 0;" />elete
-                            </span>
-                            <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
-                                (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'marker');">
-                                &nbsp; &nbsp;
-                                <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
-                                <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
-                                    width="15" style="border: none;margin: 0;padding: 0;" />elete
-                            </span>
-                        </div>
-
-                    </div>
+                    <img
+                      src="../../../assets/icons/a-solid.svg"
+                      alt="A"
+                      class="cursor-pointer icon-green"
+                      width="15"
+                      style="border: none; margin: 0; padding: 0"
+                    />pprove
+                  </span>
+                  <span
+                    style="cursor: pointer; display: none"
+                    [hidden]="dt.status != ''"
+                    (click)="
+                      saveMarkerStatus(dt.index, dt.zoneNo, dt.lineNo, 'marker')
+                    "
+                  >
+                    &nbsp; &nbsp;
+                    <!-- <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject -->
+                    <img
+                      src="../../../assets/icons/r-solid.svg"
+                      alt="R"
+                      class="cursor-pointer icon-blue"
+                      width="15"
+                      style="border: none; margin: 0; padding: 0"
+                    />eject
+                  </span>
+                  <span
+                    style="cursor: pointer"
+                    [hidden]="dt.status != '' || isActionShow == false"
+                    (click)="
+                      confirmationMarkerDelete(
+                        dt.index,
+                        dt.alreadyInstalled,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'marker'
+                      )
+                    "
+                  >
+                    &nbsp; &nbsp;
+                    <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                    <img
+                      src="../../../assets/icons/d-solid.svg"
+                      alt="D"
+                      class="cursor-pointer icon-red"
+                      width="15"
+                      style="border: none; margin: 0; padding: 0"
+                    />elete
+                  </span>
+                  <span
+                    style="cursor: pointer"
+                    [hidden]="dt.isRevisit == '0' || isActionShow == false"
+                    (click)="
+                      confirmationMarkerDelete(
+                        dt.index,
+                        dt.alreadyInstalled,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'marker'
+                      )
+                    "
+                  >
+                    &nbsp; &nbsp;
+                    <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                    <img
+                      src="../../../assets/icons/d-solid.svg"
+                      alt="D"
+                      class="cursor-pointer icon-red"
+                      width="15"
+                      style="border: none; margin: 0; padding: 0"
+                    />elete
+                  </span>
                 </div>
-
+              </div>
             </div>
-            <!-- //////////////// -->
-            <div id="divStatus2" class="content-scroll col-md-6" style="display: inline-block;">
-
-                <div class="row">
-                    <div class="col-md-4" *ngFor="let dt of markerListIncluded">
-                        <div class="markerList-iner">
-                            <a href="{{dt.imageUrl}}" target="_blank">
-                                <img class="markerList-iner-img" [src]="dt.imageUrl" />
-                            </a>
-                        </div>
-                        <div class="main-tag">
-                            <div class="f-left">
-                                <h3 class="f-left-heading"> {{dt.type}} <span [hidden]="dt.servingCount==0"
-                                        style="font-weight: bold;"> ({{dt.servingCount}})</span> &nbsp;&nbsp;&nbsp;
-                                    <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
+          </div>
+          <!-- //////////////// -->
+          <div
+            id="divStatus2"
+            class="content-scroll col-md-6"
+            style="display: inline-block"
+          >
+            <div class="row">
+              <div class="col-md-4" *ngFor="let dt of markerListIncluded">
+                <div class="markerList-iner">
+                  <a href="{{ dt.imageUrl }}" target="_blank">
+                    <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                  </a>
+                </div>
+                <div class="main-tag">
+                  <div class="f-left">
+                    <h3 class="f-left-heading">
+                      {{ dt.type }}
+                      <span
+                        [hidden]="dt.servingCount == 0"
+                        style="font-weight: bold"
+                      >
+                        ({{ dt.servingCount }})</span
+                      >
+                      &nbsp;&nbsp;&nbsp;
+                      <!-- <i class="fa-solid fa-pen-to-square" style="cursor: pointer;"
                                         (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');"
                                         [hidden]="isActionShow==false"></i> -->
-                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
-                                        (click)="setHouseType(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');"
-                                        [hidden]="isActionShow==false" style="max-width: 25px;border: none;" />
-                                    <img src="../../../assets/icons/updateIcon.svg" [hidden]="dt.markerUpdateId==''"
-                                        alt="show history" class="cursor-pointer"
-                                        (click)="showMarkerUpdateHistory(dt.markerUpdateId);"
-                                        style="max-width: 25px;border: none;" />
-                                </h3><br />
-                                <span [hidden]="dt.status==''">
-                                    <h3>Status : <span class="{{dt.statusClass}}"> {{dt.status}} <b
-                                                [hidden]="dt.cardNumber==''">({{dt.cardNumber}})</b></span></h3>
-                                </span>
-                                <span [hidden]="dt.markerId==''">
-                                    <h3>MarkerId : <b> {{dt.markerId}}</b></h3>
-                                </span>
-                                <span style="font-weight:bold;font-size:11px" [hidden]="this.isShowWardAndLine==false">
-                                    Ward {{dt.zoneNo}} [Line {{dt.lineNo}}]
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.ownerName==''">
-                                    Owner Name : {{dt.ownerName}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.persons==''">
-                                    No. of Persons : {{dt.persons}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.totalEntity=='0' || dt.totalEntity==''">
-                                    No. of Entity : {{dt.totalEntity}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.mobileNo==''">
-                                    Mobile No. : {{dt.mobileNo}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.houseNo==''">
-                                    House Number : {{dt.houseNo}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.buildingName==''">
-                                    Building Name : {{dt.buildingName}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.address==''">
-                                    Address : {{dt.address}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.streetColony==''">
-                                    Street/Colony : {{dt.streetColony}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px" [hidden]="dt.wardNumber==''">
-                                    Ward : {{dt.wardNumber}}
-                                    <br />
-                                </span>
-                                <span style="font-size:11px">
-                                    Remark: {{dt.markerRemark}}
-                                    <img src="../../../assets/icons/edit-solid.svg" alt="edit" class="cursor-pointer"
-                                        (click)="showUpdatePopupMarkerRemark(dt.markerRemark,dt.zoneNo,dt.lineNo,dt.index,'markerListIncluded');"
-                                        style="max-width: 25px;border: none;" />
-                                    <br />
-                                </span>
-                                <span style="font-size:11px">
-                                    Marked By : {{dt.markingBy}}<br /> Marked Date : {{dt.date}}<br />
-                                    <span [hidden]="dt.approveName==''"> Approve By : {{dt.approveName}} <br /> Approved
-                                        Date : {{dt.approveDate}}</span>
-
-                                </span>
-                            </div>
-                        </div>
-                        <div style="text-align: left; margin-bottom: 20px;">
-                            <span style="cursor: pointer;" [hidden]="dt.isApprove!='0'"
-                                (click)="confirmationMarkerApprove(dt.index,dt.alreadyCard,dt.zoneNo,dt.lineNo,'includedMarker');">
-                                <!-- <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove -->
-                                <img src="../../../assets/icons/a-solid.svg" alt="A" class="cursor-pointer icon-green"
-                                    width="15" style="border: none;margin: 0;padding: 0;" />pprove
-                            </span>
-                            <span style="cursor: pointer; display: none;" [hidden]="dt.status!=''"
-                                (click)="saveMarkerStatus(dt.index,dt.zoneNo,dt.lineNo,'includedMarker');">
-                                &nbsp; &nbsp;
-                                <!-- <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject -->
-                                <img src="../../../assets/icons/r-solid.svg" alt="R" class="cursor-pointer icon-blue"
-                                    width="15" style="border: none;margin: 0;padding: 0;" />eject
-                            </span> <span style="cursor: pointer;" [hidden]="dt.status!='' || isActionShow==false"
-                                (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'includedMarker');">
-                                &nbsp; &nbsp;
-                                <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
-                                <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
-                                    width="15" style="border: none;margin: 0;padding: 0;" />elete
-                            </span>
-                            <span style="cursor: pointer;" [hidden]="dt.isRevisit=='0' || isActionShow==false"
-                                (click)="confirmationMarkerDelete(dt.index,dt.alreadyInstalled,dt.zoneNo,dt.lineNo,'includedMarker');">
-                                &nbsp; &nbsp;
-                                <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
-                                <img src="../../../assets/icons/d-solid.svg" alt="D" class="cursor-pointer icon-red"
-                                    width="15" style="border: none;margin: 0;padding: 0;" />elete
-                            </span>
-                        </div>
-
-                    </div>
+                      <img
+                        src="../../../assets/icons/edit-solid.svg"
+                        alt="edit"
+                        class="cursor-pointer"
+                        (click)="
+                          setHouseType(
+                            dt.index,
+                            dt.zoneNo,
+                            dt.lineNo,
+                            'includedMarker'
+                          )
+                        "
+                        [hidden]="isActionShow == false"
+                        style="max-width: 25px; border: none"
+                      />
+                      <img
+                        src="../../../assets/icons/updateIcon.svg"
+                        [hidden]="dt.markerUpdateId == ''"
+                        alt="show history"
+                        class="cursor-pointer"
+                        (click)="showMarkerUpdateHistory(dt.markerUpdateId)"
+                        style="max-width: 25px; border: none"
+                      />
+                    </h3>
+                    <br />
+                    <span [hidden]="dt.status == ''">
+                      <h3>
+                        Status :
+                        <span class="{{ dt.statusClass }}">
+                          {{ dt.status }}
+                          <b [hidden]="dt.cardNumber == ''"
+                            >({{ dt.cardNumber }})</b
+                          ></span
+                        >
+                      </h3>
+                    </span>
+                    <span [hidden]="dt.markerId == ''">
+                      <h3>
+                        MarkerId : <b> {{ dt.markerId }}</b>
+                      </h3>
+                    </span>
+                    <span
+                      style="font-weight: bold; font-size: 11px"
+                      [hidden]="this.isShowWardAndLine == false"
+                    >
+                      Ward {{ dt.zoneNo }} [Line {{ dt.lineNo }}]
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.ownerName == ''">
+                      Owner Name : {{ dt.ownerName }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.persons == ''">
+                      No. of Persons : {{ dt.persons }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.totalEntity == '0' || dt.totalEntity == ''"
+                    >
+                      No. of Entity : {{ dt.totalEntity }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.mobileNo == ''">
+                      Mobile No. : {{ dt.mobileNo }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.houseNo == ''">
+                      House Number : {{ dt.houseNo }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.buildingName == ''"
+                    >
+                      Building Name : {{ dt.buildingName }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px" [hidden]="dt.address == ''">
+                      Address : {{ dt.address }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.streetColony == ''"
+                    >
+                      Street/Colony : {{ dt.streetColony }}
+                      <br />
+                    </span>
+                    <span
+                      style="font-size: 11px"
+                      [hidden]="dt.wardNumber == ''"
+                    >
+                      Ward : {{ dt.wardNumber }}
+                      <br />
+                    </span>
+                    <span style="font-size: 11px">
+                      Remark: {{ dt.markerRemark }}
+                      <img
+                        src="../../../assets/icons/edit-solid.svg"
+                        alt="edit"
+                        class="cursor-pointer"
+                        (click)="
+                          showUpdatePopupMarkerRemark(
+                            dt.markerRemark,
+                            dt.zoneNo,
+                            dt.lineNo,
+                            dt.index,
+                            'markerListIncluded'
+                          )
+                        "
+                        style="max-width: 25px; border: none"
+                      />
+                      <br />
+                    </span>
+                    <span style="font-size: 11px">
+                      Marked By : {{ dt.markingBy }}<br />
+                      Marked Date : {{ dt.date }}<br />
+                      <span [hidden]="dt.approveName == ''">
+                        Approve By : {{ dt.approveName }} <br />
+                        Approved Date : {{ dt.approveDate }}</span
+                      >
+                    </span>
+                  </div>
                 </div>
-
+                <div style="text-align: left; margin-bottom: 20px">
+                  <span
+                    style="cursor: pointer"
+                    [hidden]="dt.isApprove != '0'"
+                    (click)="
+                      confirmationMarkerApprove(
+                        dt.index,
+                        dt.alreadyCard,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'includedMarker'
+                      )
+                    "
+                  >
+                    <!-- <i class="fa-solid fa-a" style="color:green; font-size: 16px; cursor: pointer;"></i>pprove -->
+                    <img
+                      src="../../../assets/icons/a-solid.svg"
+                      alt="A"
+                      class="cursor-pointer icon-green"
+                      width="15"
+                      style="border: none; margin: 0; padding: 0"
+                    />pprove
+                  </span>
+                  <span
+                    style="cursor: pointer; display: none"
+                    [hidden]="dt.status != ''"
+                    (click)="
+                      saveMarkerStatus(
+                        dt.index,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'includedMarker'
+                      )
+                    "
+                  >
+                    &nbsp; &nbsp;
+                    <!-- <i class="fa-solid fa-r" style="color:blue; font-size: 16px;"></i>eject -->
+                    <img
+                      src="../../../assets/icons/r-solid.svg"
+                      alt="R"
+                      class="cursor-pointer icon-blue"
+                      width="15"
+                      style="border: none; margin: 0; padding: 0"
+                    />eject
+                  </span>
+                  <span
+                    style="cursor: pointer"
+                    [hidden]="dt.status != '' || isActionShow == false"
+                    (click)="
+                      confirmationMarkerDelete(
+                        dt.index,
+                        dt.alreadyInstalled,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'includedMarker'
+                      )
+                    "
+                  >
+                    &nbsp; &nbsp;
+                    <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                    <img
+                      src="../../../assets/icons/d-solid.svg"
+                      alt="D"
+                      class="cursor-pointer icon-red"
+                      width="15"
+                      style="border: none; margin: 0; padding: 0"
+                    />elete
+                  </span>
+                  <span
+                    style="cursor: pointer"
+                    [hidden]="dt.isRevisit == '0' || isActionShow == false"
+                    (click)="
+                      confirmationMarkerDelete(
+                        dt.index,
+                        dt.alreadyInstalled,
+                        dt.zoneNo,
+                        dt.lineNo,
+                        'includedMarker'
+                      )
+                    "
+                  >
+                    &nbsp; &nbsp;
+                    <!-- <i class="fa-solid fa-d" style="color:red; font-size: 16px;"></i>elete -->
+                    <img
+                      src="../../../assets/icons/d-solid.svg"
+                      alt="D"
+                      class="cursor-pointer icon-red"
+                      width="15"
+                      style="border: none; margin: 0; padding: 0"
+                    />elete
+                  </span>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
         <!-- //////////////////////////////////////////////// -->
-        <footer style="border-top: solid 1px grey;display:flex;justify-content: space-between;">
+      </div>
+      <div class="modal-footer">
+        <div class="modal-left">
+          <div class="modal-footer-label">Approved/Total Markers</div>
+          <div class="marker-count">
+            {{ markerData.isApprovedCount }}/{{ markerData.totalLineMarkers }}
+          </div>
+        </div>
 
-            <div class="markers" style="width:20%;padding:10px;">
-                <p>Approved/Total Markers</p>
-                <h5> {{markerData.isApprovedCount}}/{{markerData.totalLineMarkers}} </h5>
+        <div id="approveLineCheckDiv" class="modal-center">
+          <label class="modal-footer-label" for="approveCheck">
+            <input
+              type="checkbox"
+              id="approveCheck"
+              style="height: 15px; width: 15px"
+              (click)="checkvalue('approveCheck')"
+            />&nbsp;&nbsp; I have checked all markers carefully before approve
+            line.
+          </label>
+        </div>
+        <div
+          id="approveLineStatusDiv"
+          class="modal-center"
+          [hidden]="this.markerData.lineApprovedBy == ''"
+        >
+          <div class="modal-footer-label">
+            Approved By
+            <div class="modal-footer-remark">
+              <b>{{ this.markerData.lineApprovedBy }}</b> on
+              <b>{{ this.markerData.lineApprovedDate }}</b
+              >.
             </div>
-
-            <div id="approveLineCheckDiv" style="width:60%;text-align: center;padding-top: 25px;">
-                <input type="checkbox" id="approveCheck" style="height: 15px;width: 15px;"
-                    (click)="checkvalue('approveCheck')">&nbsp;&nbsp;
-                <p style="display: inline-block;">I have checked all markers carefully before approve line. </p>
-            </div>
-            <div id="approveLineStatusDiv" style="width:60%;text-align: center;padding-top: 25px;"
-                [hidden]="this.markerData.lineApprovedBy==''">
-                <p>Approved By <b>{{this.markerData.lineApprovedBy}}</b> on <b>{{this.markerData.lineApprovedDate}}</b>.
-                </p>
-
-            </div>
-            <div class="pr-46" style="padding-top: 5px;width:20%;">
-                <button id="btnSave" class="btn btn-success w-100 approve-btn" (click)="saveData();">Approve
-                    Line</button>
-            </div>
-
-
-        </footer>
+          </div>
+        </div>
+        <div id="approveLineCheckDiv" class="modal-right">
+          <button
+            id="btnSave"
+            class="btn btn-success w-100 approve-btn"
+            (click)="saveData()"
+          >
+            Approve Line
+          </button>
+        </div>
+      </div>
     </div>
-</ng-template>
+  </div>
+</div>
+<!-- </ng-template> -->
 <!--Vehicle Status End-->
 
-
 <!-- deleted Entities content -->
-<ng-template #contentDeletedMarkers>
-    <div class="header-12">
+<!-- <ng-template #contentDeletedMarkers> -->
+<div
+  class="modal fade modalMarker"
+  id="contentDeletedMarkers"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="showLineDetail(contentDeletedMarkers, 'deletedMarker')"
+>
+  <div class="modal-dialog modal-dialog-centered modal-survey">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ward {{ this.markerData.wardno }}</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="closeModel()"
+        ></button>
+      </div>
 
-
-        <div class="pop-up-header">
-            <h5 style="font-size: 18px;text-align:center">Ward {{this.markerData.wardno}}
-            </h5>
-
-            <div class="img-close-outer">
-                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-body divStatus">
-        <div id="divStatus" class="content-scroll">
-
-            <div class="row">
-                <div class="col-md-2" *ngFor="let dt of deletedMarkerList">
-                    <div class="markerList-iner">
-                        <a href="{{dt.imageUrl}}" target="_blank">
-                            <img class="markerList-iner-img" [src]="dt.imageUrl" />
-                        </a>
-                    </div>
-                    <div class="main-tag">
-                        <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.houseType}}
-                            </h3><br />
-                            <span style="font-weight:bold;font-size:11px">
-                                Line {{dt.lineNo}}
-
-                            </span><br />
-                            <span style="font-size:11px" [hidden]="dt.removedBy==''">
-                                Deleted By : {{dt.removedBy}}<br /> Deleted Date : {{dt.removedDate}}<br />
-                                <span [hidden]="dt.reason==undefined">Reason : {{dt.reason}}</span>
-                            </span>
-                        </div>
-                    </div>
+      <div class="custom-modal-body divStatus">
+        <div id="divStatus" class="entity-content-scroll">
+          <div class="row">
+            <div class="col-md-2" *ngFor="let dt of deletedMarkerList">
+              <div class="markerList-iner">
+                <a href="{{ dt.imageUrl }}" target="_blank">
+                  <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                </a>
+              </div>
+              <div class="main-tag">
+                <div class="f-left">
+                  <h3 class="f-left-heading">{{ dt.houseType }}</h3>
+                  <br />
+                  <span style="font-weight: bold; font-size: 11px">
+                    Line {{ dt.lineNo }} </span
+                  ><br />
+                  <span style="font-size: 11px" [hidden]="dt.removedBy == ''">
+                    Deleted By : {{ dt.removedBy }}<br />
+                    Deleted Date : {{ dt.removedDate }}<br />
+                    <span [hidden]="dt.reason == undefined"
+                      >Reason : {{ dt.reason }}</span
+                    >
+                  </span>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</ng-template>
-
+  </div>
+</div>
+<!-- </ng-template> -->
 
 <!-- modifies Entities content -->
-<ng-template #contentModifiedMarkers>
-    <div class="header-12">
-        <div class="pop-up-header">
-            <h5 style="font-size: 18px;text-align:center">Modified Entity Types [Ward {{this.markerData.wardno}}]
-            </h5>
+<!-- <ng-template #contentModifiedMarkers> -->
+<div
+  class="modal fade modalMarker"
+  id="contentModifiedMarkers"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="showLineDetail(contentModifiedMarkers, 'modifiedMarker')"
+>
+  <div class="modal-dialog modal-dialog-centered modal-survey">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Modified Entity Types [Ward {{ this.markerData.wardno }}]
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="closeModel()"
+        ></button>
+      </div>
 
-            <div class="img-close-outer">
-                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeModel();">
-
-            </div>
-        </div>
-    </div>
-
-    <div id="divModifiedEntities"
-        style="display: none; position: absolute;z-index: 9999;background-color: #fff;  width: 80%; margin-left: 10%; margin-top: 20px; border: 1px solid lightgray;">
-        <h5 class="modal-title" style="text-align: center; padding-bottom: 20px;">Modified Entities</h5>
+      <div
+        id="divModifiedEntities"
+        style="
+          display: none;
+          position: absolute;
+          z-index: 9999;
+          background-color: #fff;
+          width: 80%;
+          margin-left: 10%;
+          margin-top: 20px;
+          border: 1px solid lightgray;
+        "
+      >
+        <h5
+          class="modal-title"
+          style="text-align: center; padding-bottom: 20px"
+        >
+          Modified Entities
+        </h5>
         <div class="img-close-outer">
-            <img src="../../../assets/img/close-grey.png" class="img-close"
-                (click)="closeSubModel('#divModifiedEntities')">
-
+          <img
+            src="../../../assets/img/close-grey.png"
+            class="img-close"
+            (click)="closeSubModel('#divModifiedEntities')"
+          />
         </div>
-        <div class="row" style="border-top: 1px solid lightgray; margin-right: 10px; margin-left: 10px;">
-            <div class="table-wrapper table-one">
-                <table class="table table-one-iner">
-                    <thead>
-                        <th class="table-heading1">Date</th>
-                        <th class="table-heading2">
-                            User Name</th>
-                        <th class="table-heading3">
-                            Pre-House Type</th>
-                        <th class="table-heading3">
-                            New-House Type</th>
-                        <th class="table-heading4">
-                            Line No</th>
-                    </thead>
-                    <tbody>
-                        <tr style="cursor: pointer;" id="tr{{i}}" *ngFor="let dt of modificationDataList; let i=index">
-                            <td class="table-data1">
-                                {{dt.updateDate}}</td>
-                            <td class="table-data2">
-                                {{dt.updatedBy}}</td>
-                            <td class="table-data3">
-                                {{dt.preHouseType}}</td>
-                            <td class="table-data3">
-                                {{dt.newHouseType}}</td>
-                            <td class="table-data4">
-                                {{dt.lineNo}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div
+          class="row"
+          style="
+            border-top: 1px solid lightgray;
+            margin-right: 10px;
+            margin-left: 10px;
+          "
+        >
+          <div class="table-wrapper table-one">
+            <table class="table table-one-iner">
+              <thead>
+                <th class="table-heading1">Date</th>
+                <th class="table-heading2">User Name</th>
+                <th class="table-heading3">Pre-House Type</th>
+                <th class="table-heading3">New-House Type</th>
+                <th class="table-heading4">Line No</th>
+              </thead>
+              <tbody>
+                <tr
+                  style="cursor: pointer"
+                  id="tr{{ i }}"
+                  *ngFor="let dt of modificationDataList; let i = index"
+                >
+                  <td class="table-data1">
+                    {{ dt.updateDate }}
+                  </td>
+                  <td class="table-data2">
+                    {{ dt.updatedBy }}
+                  </td>
+                  <td class="table-data3">
+                    {{ dt.preHouseType }}
+                  </td>
+                  <td class="table-data3">
+                    {{ dt.newHouseType }}
+                  </td>
+                  <td class="table-data4">
+                    {{ dt.lineNo }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-    </div>
+      </div>
 
-
-
-    <div class="modal-body divStatus">
-        <div id="divStatus" class="content-scroll">
-
-            <div class="row">
-                <div class="col-md-2" *ngFor="let dt of modifiedMarkerList">
-                    <div class="markerList-iner">
-                        <a href="{{dt.imageUrl}}" target="_blank">
-                            <img class="markerList-iner-img" [src]="dt.imageUrl" />
-                        </a>
-                    </div>
-                    <div class="main-tag">
-                        <div class="f-left">
-                            <h3 class="f-left-heading"> {{dt.houseType}} &nbsp;&nbsp;&nbsp;
-                                <!-- <i class="fas fa-eye"
+      <div class="modal-body divStatus">
+        <div id="divStatus" class="entity-content-scroll">
+          <div class="row">
+            <div class="col-md-2" *ngFor="let dt of modifiedMarkerList">
+              <div class="markerList-iner">
+                <a href="{{ dt.imageUrl }}" target="_blank">
+                  <img class="markerList-iner-img" [src]="dt.imageUrl" />
+                </a>
+              </div>
+              <div class="main-tag">
+                <div class="f-left">
+                  <h3 class="f-left-heading">
+                    {{ dt.houseType }} &nbsp;&nbsp;&nbsp;
+                    <!-- <i class="fas fa-eye"
                                     style="cursor: pointer;"
                                     (click)="getModifiedMarkersList(dt.modifiedHouseTypeHistoryId,dt.lineNo)"></i> -->
-                                <img src="../../../assets/icons/eye-regular.svg" alt="eye" class="cursor-pointer"
-                                    (click)="getModifiedMarkersList(dt.modifiedHouseTypeHistoryId,dt.lineNo)" />
-                            </h3>
-                        </div>
-                    </div>
+                    <img
+                      src="../../../assets/icons/eye-regular.svg"
+                      alt="eye"
+                      class="cursor-pointer"
+                      (click)="
+                        getModifiedMarkersList(
+                          dt.modifiedHouseTypeHistoryId,
+                          dt.lineNo
+                        )
+                      "
+                    />
+                  </h3>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</ng-template>
+  </div>
+</div>
+<!-- </ng-template> -->
