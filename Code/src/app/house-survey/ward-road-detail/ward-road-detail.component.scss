@@ -254,7 +254,7 @@
 
 .table-ward {
     background: $white;
-    height: calc(100vh - 175px);
+    height: calc(100vh - 195px);
     border-radius: 6px;
     overflow: auto;
 }
@@ -309,8 +309,21 @@
 .image-tatle {
     font-size: 13px;
     color: $lightBlack;
-    font-family:$fontGraphikMedium;
+    font-family: $fontGraphikMedium;
     margin-bottom: 10px;
+}
+
+.filter-radius {
+    height: 40px;
+    width: auto !important;
+    background: $white;
+    color: $darkBlack;
+    border: 1px solid $borderColor;
+    font-size: 13px;
+    font-family: $fontGraphik;
+    padding: 0px 16px;
+    margin-bottom: 10px;
+    border-radius: 4px;
 }
 
 .card {
@@ -2164,10 +2177,11 @@ input {
 }
 
 @media (max-width: 992px) {
-    .page-body{
+    .page-body {
         display: grid;
     }
-    .page-body-inner{
+
+    .page-body-inner {
         width: 100%;
     }
 }

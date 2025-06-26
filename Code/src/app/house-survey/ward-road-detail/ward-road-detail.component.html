@@ -36,7 +36,7 @@
         <div class="page-body-inner">
             <div class="main-page-table">
                 <div class="header-table-page">
-                    <select class="filter-select filter-input" id="ddlZone"
+                    <select class="filter-select  filter-radius" id="ddlZone"
                         (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
                         <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
                             ngSelected="zone.zoneNo == selectedZone?'selected':''">
