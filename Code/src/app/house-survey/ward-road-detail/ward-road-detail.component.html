@@ -1,92 +1,101 @@
 <div id="divLoader" class="loaderClass">
     <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
 </div>
-<section class="header">
-    <div class="row no-gutters">
-        <div class="col-md-3 main-headers" style="text-align: left;">
-            <select class="filter-select filter-input" id="ddlZone" (change)="changeZoneSelection($event.target.value)"
-                [(ngModel)]="selectedZone">
-                <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
-                    ngSelected="zone.zoneNo == selectedZone?'selected':''">
-                    {{zone.zoneName}}
-                </option>
-            </select>
-        </div>
-        <div class="col-md-6 main-headers" style="text-align: center;">
+<div class="main-page">
+    <header class="header">
+        <div class="header-left">
             Ward Line Road Detail
+            <!-- Breadcrumb starts -->
+            <nav class="breadcrumb">
+                <ul class="ul-breadcrumb">
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']">Home</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Survey Management</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Marking Management</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Ward Road Detail</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Breadcrumb ends -->
         </div>
-        <div class="col-md-3 main-headers" style="text-align: center;">
-            <div style="float: right; margin-right: 20px; text-align: center;">
-                <!-- <i
-                class="fa-solid fa-file-export" style="cursor:pointer; color:#0ba118 !important;  font-size: 24px; "
-                (click)="exportToExcel();"></i> -->
-                <img src="../../../assets/icons/file-export-solid.svg" alt="File" class="cursor-pointer icon-green"
-                    (click)="exportToExcel();" width="24" />
-                <p style="font-size: 8px;"> Export to Excel</p>
+        <div class="header-right">
+            <div class="btn-default btn-export" (click)="exportToExcel();">
+                Entity Types
+                <img src="../../../assets/img/iconExport.png" class="img-fluid icon-default" alt="File" width="24" />
             </div>
         </div>
-    </div>
-</section>
-<div class="main-content">
-    <div class="row">
-        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
-            <div class="card" style="margin-top:-6px;  height: 88vh!important">
-                <div class="card-body">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-12 pr-1">
-                                <div id="divList" class="table-wrapper table-one">
-                                    <table class="table table-line">
-                                        <thead>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Sno.</th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Line No</th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Road Type</th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Road Width
-                                            </th>
-                                        </thead>
-                                        <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of roadList; let i=index"
-                                                style="cursor: pointer;" (click)="getWardRoadDetail(i)">
-                                                <td class="text-left br-1">
-                                                    {{i+1}}
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    {{data.lineNo}}
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    {{data.roadType}}
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    {{data.roadWidth}}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+    </header>
+    <div class="page-body">
+        <div class="page-body-inner">
+            <div class="main-page-table">
+                <div class="header-table-page">
+                    <select class="filter-select filter-input" id="ddlZone"
+                        (change)="changeZoneSelection($event.target.value)" [(ngModel)]="selectedZone">
+                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                            ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                            {{zone.zoneName}}
+                        </option>
+                    </select>
+                </div>
+                <div class="table-ward">
+                    <table class="table">
+                        <thead>
+                            <th class="text-left " style="width: 8%;">
+                                Sno.</th>
+                            <th class="text-left ">
+                                Line No</th>
+                            <th class="text-left ">
+                                Road Type</th>
+                            <th class="text-left">
+                                Road Width
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr id="tr{{i}}" *ngFor="let data of roadList; let i=index" style="cursor: pointer;"
+                                (click)="getWardRoadDetail(i)">
+                                <td class="text-left ">
+                                    {{i+1}}
+                                </td>
+                                <td class="text-left ">
+                                    {{data.lineNo}}
+                                </td>
+                                <td class="text-left ">
+                                    {{data.roadType}}
+                                </td>
+                                <td class="text-left ">
+                                    {{data.roadWidth}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <div class="col-md-7" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px; height: 88vh!important;">
-                <div #gmap class="gmap" id="divMap"></div>
+
+
+        <div class="page-body-inner ">
+            <div class="table-ward2">
+                <div #gmap class="gmap" id="divMap" style="height: 800px;"></div>
+
+                <div id="divCardDetail" class="maine-img-box">
+                    <div class="box-image-bg">
+                        <div class="image-tatle">Road Image</div>
+                        <div
+                            style="width:180px; min-height:180px; display: flex; align-items: center; justify-content: center;">
+                            <a href="{{imageURL}}" target="_blank">
+                                <img [src]="imageURL" style="width:100%;height:auto; display: block;" /></a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div id="divCardDetail" class="row"
-    style="right:30px;width:200px; display: block; height:auto;border: 1px solid gray;border-radius: 5px; padding: 10px; z-index: 999; position: absolute; top:65px; background-color: #fff;">
-    <div class="col-md-12">
-        <div>Road Image</div>
-        <div style="width:100%; min-height:180px;">
-            <a href="{{imageURL}}" target="_blank">
-                <img [src]="imageURL" style="width:100%;height:auto; display: block;" /></a>
-        </div>
-    </div>
+
 </div>
