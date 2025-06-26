@@ -644,6 +644,7 @@
 .entity-content-scroll {
     height: calc(100vh - 110px);
     overflow: auto;
+    overflow-x: hidden;
 }
 
 /*** Custom Modal CSS Starts here ***/
