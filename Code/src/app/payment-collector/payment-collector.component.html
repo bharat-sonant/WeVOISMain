@@ -1,9 +1,8 @@
-<section class="header">
+<!-- <section class="header">
     <div class="row no-gutters">
         <div class="col-md-2 no-gutters-iner">
             <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentEmployee,0,'add');">
                 <span class="text-bg"><span class="icon">
-                        <!-- <i class="fas fa-plus"></i> -->
                         <img src="../../assets/icons/plus-solid.svg" class="icon-green" alt="add">
                     </span> &nbsp;
                     NEW</span></button>
@@ -17,9 +16,42 @@
             <div style="font-size: 8px; width: 100%; ">Total Collection</div>
         </div>
     </div>
-</section>
-<div class="main-content">
-    <div class="row">
+</section> -->
+
+<div class="main-page">
+ <header class="header">
+        <div class="header-left">
+         Manage Payment Collector
+            <!-- Breadcrumb starts -->
+            <nav class="breadcrumb">
+                <ul class="ul-breadcrumb">
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']">Home</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Collection Management </a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Payment Collector</a>
+                   
+                </ul>
+            </nav>
+
+            <!-- Breadcrumb ends -->
+        </div>
+        <div class="header-right">
+              <div class="btn-default2 btn-export2">
+                <h4 class="Total-amount">{{collectionData.sumTotalCollection}}</h4>
+                <p class="total-amount-tatile">Total Collection</p>
+            </div>
+            <button type="button" class="user-button no-gutters-btn"  (click)="openModel(contentEmployee,0,'add');">
+                <span>+</span>New</button>
+        </div>
+    </header>
+
+
+<div class="page-content">
+    <div class="row m-0">
         <div class="col-md-8 ps-0">
             <div class="card card-main-iner">
                 <div class="card-body card-body2">
@@ -238,7 +270,7 @@
             <div class="modal-header">
                 <!-- <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
                     assignment ?</h5> -->
-                <h5 class="modal-title" id="exampleModalLongTitle">Delete Assignment</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Remove Assignment</h5>
                 <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
             </div>
             <div class="modal-body">
@@ -446,3 +478,4 @@
     </div>
 </ng-template>
 <!--ward assign End-->
+</div>
