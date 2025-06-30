@@ -978,13 +978,21 @@ export class WardSurveyAnalysisComponent {
                     for (let j = 1; j < entityData.length; j++) {
                       let keyIndex = j;
                       let entityImageURL = "../../../assets/img/system-generated-image.jpg";
+                      let entityHouseImage = "";
                       if (entityData[keyIndex]["house image"] != null) {
-                        entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["house image"] + "?alt=media";
+                        entityHouseImage = entityData[keyIndex]["house image"];
                       }
                       if (entityData[keyIndex]["houseImage"] != null) {
+                        entityHouseImage = entityData[keyIndex]["houseImage"];
+                      }
+                      if (city == "Sikar-Survey") {
+                        this.getSikarEntityHouseImages(data[i]["cardNo"], entityHouseImage,keyIndex);
+                      }
+                      else {
                         entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["houseImage"] + "?alt=media";
                       }
-                      entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL });
+
+                      entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL,keyIndex:keyIndex });
                     }
                   }
                 }
@@ -1025,6 +1033,27 @@ export class WardSurveyAnalysisComponent {
         }
       );
     }
+  }
+
+
+  getSikarEntityHouseImages(cardNo: any, houseImage: any, entityKey: any) {
+    let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage + "?alt=media";
+    let urlSikar = "Sikar/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage + "?alt=media";
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.entityList[entityKey-1]["entityImageURL"]=this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          console.log(detail)
+           detail.entityList[entityKey-1]["entityImageURL"]=this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+        }
+      });
   }
 
 
@@ -1109,7 +1138,6 @@ export class WardSurveyAnalysisComponent {
         _by: localStorage.getItem("userID"),
         _at: this.commonService.getTodayDateTime()
       }
-      console.log(obj);
       this.db.object(dbPath).update(obj);
       dbPath = "EntitySurveyData/HouseDetailUpdateHistory/" + cardNo;
       this.db.object(dbPath).update({ lastKey: lastKey });

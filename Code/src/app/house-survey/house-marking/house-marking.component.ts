@@ -418,10 +418,13 @@ export class HouseMarkingComponent {
                 persons = data[index]["totalPerson"];
               }
 
-              if (data[index]["date"] != null) {
-                date = data[index]["date"].split(" ")[0];
+               if (data[index]["date"] != null) {
+                date = data[index]["date"].split(" ")[0].split("-")[2]+" "+ this.commonService.getCurrentMonthShortName(Number(data[index]["date"].split(" ")[0].split("-")[1]))+" "+data[index]["date"].split(" ")[0].split("-")[0] +" "+data[index]["date"].split(" ")[1];
               }
-              let approveDate = data[index]["approveDate"];
+              let approveDate = "";
+              if(data[index]["approveDate"]!=null){
+                approveDate=data[index]["approveDate"].split(" ")[0].split("-")[2]+" "+ this.commonService.getCurrentMonthShortName(Number(data[index]["approveDate"].split(" ")[0].split("-")[1]))+" "+data[index]["approveDate"].split(" ")[0].split("-")[0] +" "+data[index]["approveDate"].split(" ")[1];
+              }
               let status = "";
               let markerId = "";
               let statusClass = "";
@@ -625,9 +628,12 @@ export class HouseMarkingComponent {
               }
 
               if (data[index]["date"] != null) {
-                date = data[index]["date"].split(" ")[0];
+                date = data[index]["date"].split(" ")[0].split("-")[2]+" "+ this.commonService.getCurrentMonthShortName(Number(data[index]["date"].split(" ")[0].split("-")[1]))+" "+data[index]["date"].split(" ")[0].split("-")[0] +" "+data[index]["date"].split(" ")[1];
               }
-              let approveDate = data[index]["approveDate"];
+              let approveDate = "";
+              if(data[index]["approveDate"]!=null){
+                approveDate=data[index]["approveDate"].split(" ")[0].split("-")[2]+" "+ this.commonService.getCurrentMonthShortName(Number(data[index]["approveDate"].split(" ")[0].split("-")[1]))+" "+data[index]["approveDate"].split(" ")[0].split("-")[0] +" "+data[index]["approveDate"].split(" ")[1];
+              }
               let status = "";
               let markerId = "";
               let statusClass = "";
