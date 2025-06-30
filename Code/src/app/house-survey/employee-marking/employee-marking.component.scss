@@ -1,13 +1,311 @@
-.header {
-    height: 57px;
-    width: 100%;
-    background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding-top: 15px;
+@import '../../../assets/scss/variable';
+@import '../../../assets/scss/fonts';
+
+
+// .header {
+//     height: 57px;
+//     width: 100%;
+//     background: linear-gradient(160deg, #2c2c2c 0%, #1f1f1f 100%);
+//     color: #fff;
+//     font-size: 16px;
+//     font-weight: bold;
+//     text-transform: uppercase;
+//     padding-top: 15px;
+// }
+
+
+.main-page {
+    background-color: #f3f3f9;
+    padding: 10px 16px;
 }
+
+.page-body {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+/*** header css starts here ****/
+.header {
+    width: 100%;
+    background: $white;
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+.header-left {
+    font-size: 18px;
+    font-family: $fontGraphikSemibold;
+    color: $darkBlack;
+    width: 480px;
+}
+
+.header-right {
+    display: flex;
+    width: calc(100% - 480px);
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+}
+.user-button span{
+      font-size: 18px;
+    font-family: $fontGraphikSemibold;
+}
+
+/*** Breadcrumb CSS Starts Here ***/
+.breadcrumb {
+    background-color: transparent;
+    padding: 0px;
+    margin: 0px;
+}
+
+.ul-breadcrumb {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    font-size: 10px;
+    font-family: $fontGraphik;
+}
+
+.breadcrumb .li-breadcrumb {
+    color: $black70;
+}
+
+.breadcrumb .li-breadcrumb::after {
+    content: '/';
+    margin-left: 8px;
+    color: $black70;
+}
+
+.breadcrumb .li-breadcrumb:last-child::after {
+    content: '';
+    margin: 0;
+}
+
+.breadcrumb .link-breadcrumb {
+    text-decoration: none;
+    color: $black70;
+
+    &:hover {
+        color: $themeColor
+    }
+}
+
+
+/*** Table CSS Starts here ***/
+
+.table-ward {
+    background: $white;
+    height: calc(100vh - 110px);
+    border-radius: 6px;
+    overflow: auto;
+}
+
+.table-maine {
+    background-color: $white;
+    border-radius: 6px;
+    // width: 50%;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0px;
+    background-color: $whitefa;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: $darkBlack;
+    font-family: $fontGraphikMedium;
+    font-weight: normal;
+    border: 1px solid $borderColor;
+    z-index: 2;
+}
+
+.table tbody tr td {
+    padding: 12px 16px;
+    font-size: 13px;
+    color: $lightBlack;
+    font-family: $fontGraphik;
+    border: 1px solid $borderColor;
+    font-weight: normal;
+}
+
+.page-body-inner {
+    width: calc(100% / 2 - 5px);
+}
+
+.card-working {
+    background-color: $white;
+    border-radius: 6px;
+    width: 100%;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.workdetails-Box {
+    padding: 10px 16px;
+    border-right: 1px solid $borderColor;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    width: calc(100% / 4);
+    font-size: 12px;
+    font-family: $fontGraphik;
+    color: $black70;
+}
+
+.working-count {
+    color: $darkBlack;
+    font-family: $fontGraphikBold;
+    font-size: 18px;
+}
+
+.tbl-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+padding: 0px 10px;
+}
+
+.table-workDetails-main {
+    background-color: $white;
+    border-radius: 6px;
+    position: relative;
+
+}
+
+.tbl-WorkDetailsHeader {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 16px;
+    align-items: center;
+}
+
+.table-wardDetails-scroll {
+    width: calc(100% / 2);
+    height: calc(100vh - 240px);
+    overflow: auto;
+}
+
+.marker-name {
+    font-size: 13px;
+    font-family: $fontGraphikMedium;
+    color: $darkBlack;
+}
+
+.marker-last {
+    font-size: 13px;
+    font-family: $fontGraphikMedium;
+    color: $darkBlack;
+    text-align: end;
+}
+
+.marker-last p {
+    font-size: 11px;
+    font-family: $fontGraphik;
+    color: $black70;
+    margin:0px;
+}
+
+
+
+
+// modal css//
+
+.custom-modal-body {
+    padding: 30px !important;
+}
+.modal-title {
+    font-size: 18px;
+    color: $darkBlack;
+    font-family: $fontGraphikSemibold;
+    word-break: break-word;
+}
+.input-green{
+    font-size: 13px !important; 
+    font-family: $fontGraphik !important;
+    color: $darkBlack !important;
+    border-radius: 4px !important;
+}
+
+.btn-sumit{
+  background-color: $themeColor;
+  color: $white;
+  font-size: 14px;
+  font-family: $fontGraphikSemibold;
+  padding: 0px 15px;
+  border-radius: 4px;
+  width: 100%;
+  height: 42px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  &:hover {
+    background-color: $themeColorDark;
+  }
+}
+
+.deleteImg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+}
+.title-assignment {
+    font-size: 14px;
+    color: $darkBlack;
+    font-family: $fontGraphik;
+}
+.Delete-device {
+    flex-direction: column !important;
+    display: flex;
+    align-items: center;
+}
+.btn-success {
+    background-color: $themeColor;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: $themeColorDark;
+    }
+}
+.check-tatile{
+    font-size: 13px;
+    color: $black70;
+    font-family: $fontGraphikMedium;
+    margin-left: 10px;
+}
+
+
+@media (max-width: 991.98px) {
+    .page-body{
+        display: block;
+    }
+    .page-body-inner{
+        width: 100%;
+    }
+    .table-ward{
+        margin-bottom: 10px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 .card {
     border: 0;
@@ -39,29 +337,36 @@
 }
 
 .user-button {
-    padding: 7px 10px 10px 0px !important;
-    background-color: rgb(38, 167, 6);
+    padding: 11px 10px 10px 10px !important;
+    // background-color: rgb(38, 167, 6);
+    background-color: $white;
+    font-family: $fontGraphikMedium;
     border-radius: 4px;
-    color: #ffffff;
-    border: 1px solid lightgray;
+    color: $themeColor;
+    border: 1px solid $themeColor;
     cursor: cell;
     margin-top: 0px;
     height: 33px !important;
-    font-size: 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
 .user-button:hover {
-    background-color: #16c03b;
+    background-color: $themeColor;
+    color: $white;
 }
 
-.user-button .icon {
-    background: #fff;
-    padding: 9px 10px 9px 10px !important;
-    transition: 0.5s;
-    cursor: cell;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
+// .user-button .icon {
+//     background: #fff;
+//     padding: 9px 10px 9px 10px !important;
+//     transition: 0.5s;
+//     cursor: cell;
+//     border-top-left-radius: 4px;
+//     border-bottom-left-radius: 4px;
+// }
 
 select:focus {
     outline: none !important;
@@ -300,6 +605,8 @@ tbody {
     color: #0ba118;
     padding-left: 12px;
     border: 1px solid #0ba118;
+    border-radius: 4px;
+
     //  border-radius: 15px;
     img {
         filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
@@ -341,6 +648,7 @@ tbody {
     -o-transition: all 0.4s;
     -moz-transition: all 0.4s;
     transition: all 0.4s;
+
     img {
         filter: invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
     }
@@ -789,5 +1097,3 @@ table tr:hover {
 .icon-green {
     filter: brightness(0) saturate(100%) invert(47%) sepia(95%) saturate(362%) hue-rotate(81deg) brightness(96%) contrast(89%);
 }
-
-
