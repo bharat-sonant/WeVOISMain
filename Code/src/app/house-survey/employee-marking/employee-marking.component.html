@@ -1,315 +1,315 @@
-<section class="header">
-    <div class="row no-gutters">
-        <div class="col-md-2 no-gutters-iner">
-            <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentEmployee,0,'add');">
-                <span class="text-bg"><span class="icon">
-                        <!-- <i class="fas fa-plus"></i> -->
-                        <img src="../../../assets/icons/plus-solid.svg" alt="Plus" class="icon-green">
-                    </span> &nbsp;
-                    NEW</span></button>
-
-        </div>
-        <div class="col-md-8 Surveyor-box">
+<div class="main-page">
+    <header class="header">
+        <div class="header-left">
             Manage Surveyor [For Marking]
-        </div>
-        <div class="col-md-2"></div>
-    </div>
-</section>
-<div class="main-content">
-    <div class="row">
-        <div class="col-md-6 card-main">
-            <div class="card card-main-iner">
-                <div class="card-body card-body2">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-12 pr-1">
-                                <div class="table-wrapper table-one">
-                                    <table class="table table-one-iner">
-                                        <thead>
-                                            <th class="table-head1">S.No.</th>
-                                            <th class="table-head2">Name</th>
-                                            <th class="table-head3">Login ID/Password
-                                            </th>
-                                            <th class="text-right table-head4">
-                                                Assigned</th>
-                                            <th class="text-right table-head5">
-                                                Action</th>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="table-row" id="tr{{i}}"
-                                                *ngFor="let data of userList; let i=index" class="{{data.trClass}}"
-                                                (click)="getMarkerDetail(data.empId, data.wardNo,i);"
-                                                style="cursor: pointer;">
-                                                <td class="table-data-1">{{i+1}}</td>
-                                                <td class="table-data-2">
-                                                    {{data.name}}</td>
-                                                <td class="table-data-3">
-                                                    {{data.empId}} / {{data.password}}</td>
-                                                <td class="text-right table-data-4">
-                                                    {{data.wardNo}}</td>
-                                                <td class="text-center">
-                                                    <span [hidden]="data.isActive==false">
-                                                        <!-- <i class="fas fa-map-marked-alt marked-icon"
-                                                            (click)="openModel(contentWard,data.empId,'ward');"
-                                                            title="Assign Ward"></i> -->
-                                                        <img src="../../../assets/icons/map-location-dot-solid.svg"
-                                                            alt="Map"
-                                                            (click)="openModel(contentWard,data.empId,'ward');"
-                                                            title="Assign Ward" class="icon-green"
-                                                            style="margin-right: 4px; vertical-align: middle;">
-                                                        <!-- <i class="far fa-times-circle circle-icon"
-                                                            (click)="openModel(contentConfirmation,data.empId,'delete')"
-                                                            title="Remove Assignment"></i> -->
-                                                        <img src="../../../assets/icons/circle-xmark-regular.svg"
-                                                            alt="Circle"
-                                                            (click)="openModel(contentConfirmation,data.empId,'delete')"
-                                                            title="Remove Assignment"
-                                                            style="margin-right: 4px; vertical-align: middle;">
-                                                        <!-- <i class="far fa-edit edit-icon"
-                                                            (click)="openModel(contentEmployee,data.empId,'update');"
-                                                            title="Edit Entry"></i> -->
-                                                        <img src="../../../assets/icons/pen-to-square-regular.svg"
-                                                            alt="Edit"
-                                                            (click)="openModel(contentEmployee,data.empId,'update');"
-                                                            title="Edit Entry"
-                                                            style="margin-right: 4px; vertical-align: middle;">
-                                                    </span>
-                                                    <span class="inactive"
-                                                        [hidden]="data.isActive==true">Inactive</span>
-                                                </td>
-                                            </tr>
+            <!-- Breadcrumb starts -->
+            <nav class="breadcrumb">
+                <ul class="ul-breadcrumb">
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']">Home</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Survey Management</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Marking Management</a>
+                    </li>
+                           <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Manage Surveyor</a>
+                    </li>
+                </ul>
+            </nav>
 
-                                        </tbody>
-                                    </table>
-                                </div>
+            <!-- Breadcrumb ends -->
+        </div>
+        <div class="header-right">
+            <button type="button" class="user-button no-gutters-btn" data-bs-target="#contentEmployee"
+                data-bs-toggle="modal">
+                <span>+</span>New</button>
+        </div>
+    </header>
+    <div class="page-body">
+        <div class="page-body-inner">
+            <div class="table-maine">
+                <div class="table-body">
+                    <div class="table-group">
+                        <form>
+                            <div class="table-ward">
+                                <table class="table">
+                                    <thead>
+                                        <th style="width: 5%;">S.No.</th>
+                                        <th>Name</th>
+                                        <th>Login ID/Password
+                                        </th>
+                                        <th class="text-end">
+                                            Assigned</th>
+                                        <th class="text-center">
+                                            Action</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index"
+                                            class="{{data.trClass}}"
+                                            (click)="getMarkerDetail(data.empId, data.wardNo,i);"
+                                            style="cursor: pointer;">
+                                            <td>{{i+1}}</td>
+                                            <td>
+                                                {{data.name}}</td>
+                                            <td>
+                                                {{data.empId}} / {{data.password}}</td>
+                                            <td class="text-end">
+                                                {{data.wardNo}}</td>
+                                            <td class="text-center">
+                                                <span [hidden]="data.isActive==false"
+                                                    style="gap: 10px; display: flex; justify-content: center;align-items: center;">
+                                                    <img src="../../../assets/icons/map-location-dot-solid.svg"
+                                                        alt="Map" data-bs-toggle="modal" data-bs-target="#contentWard"
+                                                        (click)="openModel(contentWard,data.empId,'ward');"
+                                                        title="Assign Ward" class="icon-green"
+                                                        style="margin-right: 4px; vertical-align: middle;">
+                                                    <img src="../../../assets/icons/circle-xmark-regular.svg"
+                                                        alt="Circle" data-bs-toggle="modal"
+                                                        data-bs-target="#contentConfirmation"
+                                                        (click)="openModel(contentConfirmation,data.empId,'delete')"
+                                                        title="Remove Assignment"
+                                                        style="margin-right: 4px; vertical-align: middle;">
+                                                    <img src="../../../assets/icons/pen-to-square-regular.svg"
+                                                        alt="Edit" data-bs-toggle="modal"
+                                                        data-bs-target="#contentEmployee"
+                                                        (click)="openModel(contentEmployee,data.empId,'update');"
+                                                        title="Edit Entry"
+                                                        style="margin-right: 4px; vertical-align: middle;">
+                                                </span>
+                                                <span class="inactive" [hidden]="data.isActive==true">Inactive</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 cards-main">
-            <div class="card custom-header-outer">
-                <div class="card-header custom-header">
-                    <div class="row">
-                        <div class="col-md-6 text-center">
-                            <h5 style="text-align: left; font-size:15px; padding: 6px 3px;"><b>{{markerData.name}}</b>
-                            </h5>
-                        </div>
-                        <div class="col-md-6 text-center">
-
-                            <h5 style="text-align: end; padding: 0px 18px;">{{this.markerData.lastScan}}
-                                <p style="font-size:9px;">Last Scan Time</p>
-                            </h5>
-
-
-
-                        </div>
-                    </div>
-
+        <div class="page-body-inner">
+            <div class="card-working">
+                <div class="workdetails-Box">
+                    <div class="working-count">{{markerData.totalDays}}</div>
+                    Total Marker
                 </div>
-                <div class="card-body card-body-2">
-                    <div class="row ml-0 mr-10">
-                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> {{markerData.totalMarking}}</span><br /> Total Marker
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> {{markerData.totalDays}}</span><br /> Working Days
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points"> {{markerData.average}}</span><br /> Avg. Per Day
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3 pl-0 pr-0 mb-15  text-center table-heading-main">
-                            <div class="table-heading current-heading">
-                                <h3>
-                                    <span class="tbl-points"> {{markerData.totalWardMarking}}</span> <br />Current Ward
-                                    Markers
-                                </h3>
-                            </div>
-                        </div>
+                <div class="workdetails-Box">
+                    <div class="working-count">{{markerData.totalDays}}</div>
+                    Working Days
+                </div>
+                <div class="workdetails-Box">
+                    <div class="working-count">{{markerData.average}}</div>
+                    Avg. Per Day
+                </div>
+                <div class="workdetails-Box">
+                    <div class="working-count">{{markerData.totalWardMarking}}</div>
+                    Current Ward Markers
+                </div>
+            </div>
+            <div class="table-workDetails-main">
+                <div class="tbl-WorkDetailsHeader">
+                    <div class="marker-name">{{markerData.name}}</div>
+                    <div class="marker-last">
+                        {{this.markerData.lastScan}}
+                        <p>Last Scan Time</p>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-12 pr-1 table-outer">
-                                        <div class="table-wrapper table-scroll table-scroll-2">
-                                            <table class="table table-scroll-iner">
-                                                <thead>
-                                                    <th class="table-heading-1">Date</th>
-                                                    <th class="text-right table-heading-2">
-                                                        Markers</th>
-                                                </thead>
-                                                <tbody>
-                                                    <tr *ngFor="let data of markerList; let i=index">
-                                                        <td class="date-details">
-                                                            {{data.date}}</td>
-                                                        <td class="text-right markers-details">
-                                                            {{data.markers}}</td>
-                                                    </tr>
+                </div>
+                <div class="tbl-flex">
+                    <div class="table-wardDetails-scroll">
+                        <table class="table">
+                            <thead>
+                                <th>Date</th>
+                                <th class="text-right"> Markers</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let data of markerList; let i=index">
+                                    <td>
+                                        {{data.date}}</td>
+                                    <td class="text-right"> {{data.markers}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-wardDetails-scroll">
+                        <table class="table">
+                            <thead>
+                                <th>Ward No.
+                                </th>
+                                <th class="text-right ">
+                                    Markers</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let data of markerWardList; let i=index">
+                                    <td>
+                                        {{data.wardNo}}</td>
+                                    <td class="text-right ">
+                                        {{data.markers}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Delete Confirmation Start-->
+    <div class="modal fade" id="contentConfirmation" tabindex="-1" aria-hidden="true"
+        (shown.bs.modal)="openModel(contentConfirmation,data.empId,'ward');">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Remove Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="custom-modal-body">
+                    <div class="Delete-device">
+                        <img class="deleteImg" src="../../assets/img/deleteImg.png">
+                        <p class="title-assignment">
+                            Are you sure you want to remove assignment ?
+                        </p>
+                    </div>
+                    <input type="hidden" id="deleteId" value="0" />
 
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="col-md-6 main-div">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-12 pr-1">
-                                        <div class="table-wrapper table-scroll table-main">
-                                            <table class="table table-main-iner">
-                                                <thead>
-                                                    <th class="ward-heading">Ward No.
-                                                    </th>
-                                                    <th class="text-right markers-heading">
-                                                        Markers</th>
-                                                </thead>
-                                                <tbody>
-                                                    <tr *ngFor="let data of markerWardList; let i=index">
-                                                        <td class="ward-data">
-                                                            {{data.wardNo}}</td>
-                                                        <td class="text-right markers-data">
-                                                            {{data.markers}}</td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                    <div class="col-md-12 mt-3">
+                        <div class="btn-footer-group">
+                            <button class="btn-success  btn-footer" (click)="removeAssignment()">
+                                Confirm
+                            </button>
+                            <button class="btn-cancel btn-footer" data-bs-dismiss="modal" aria-label="Close">
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!--Delete Confirmation End-->
+
+    <!--ward assign  Start-->
+
+    <div class="modal fade" id="contentWard" tabindex="-1" aria-hidden="true"
+        (shown.bs.modal)="openModel(contentConfirmation,data.empId,'delete')">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="custom-modal-body">
+                    <input id="empID" type="hidden" value="0" />
+                    <div class="wrap-input-effects" required>
+                        <select id="ddlWard" class="input-green">
+                            <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
+                                {{zone.zoneName}}</option>
+                        </select>
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <img src="../../../assets/icons/map-location-dot-solid.svg" alt="Map" aria-hidden="true">
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required style="display: none;">
+                        <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
+                    </div>
+                    <button class="btn-sumit mt-4 mb-0" (click)="saveWard();">
+                        SUBMIT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--ward assign End-->
+
+    <!--employee  Start-->
+    <div class="modal fade" id="contentEmployee" tabindex="-1" aria-hidden="true"
+        (shown.bs.modal)="openModel(contentEmployee,0,'add');">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Employee</h5>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetForm()"></button>
+                </div>
+                <div class="custom-modal-body">
+                    <input id="key" type="hidden" value="0" />
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtName" class="input-green" placeholder="Name" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <img src="../../../assets/icons/user-solid.svg" alt="User" aria-hidden="true" />
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <img src="../../../assets/icons/mobile-screen-button-solid.svg" alt="Mobile"
+                                aria-hidden="true" />
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtPassword" class="input-green" placeholder="Password" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <img src="../../../assets/icons/key-solid.svg" alt="Key" aria-hidden="true" />
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input class="active-input" type="checkbox" id="chkAcive" checked> <span class="check-tatile">Is Active</span>
+                    </div>
+                    <button class="btn-sumit mt-4 mb-0" (click)="saveEmployee();">
+                        SUBMIT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <ng-template #contentEmployee>
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
+                    <button type="button" class="close" (click)="closeModel();">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="key" type="hidden" value="0" />
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtName" class="input-green" placeholder="Name" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <img src="../../../assets/icons/user-solid.svg" alt="User" aria-hidden="true" />
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <img src="../../../assets/icons/mobile-screen-button-solid.svg" alt="Mobile"
+                                aria-hidden="true" />
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtPassword" class="input-green" placeholder="Password" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <img src="../../../assets/icons/key-solid.svg" alt="Key" aria-hidden="true" />
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input class="active-input" type="checkbox" id="chkAcive" checked> Is Active
+
+                    </div>
+                    <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
+                        (click)="saveEmployee();" />
+                </div>
+            </div>
+        </div>
+    </ng-template> -->
+    <!--employee End-->
 </div>
-
-
-<!--Delete Confirmation Start-->
-<ng-template #contentConfirmation>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
-                    assignment ?</h5>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="deleteId" value="0" />
-                <div class="row">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="removeAssignment()">
-                            Confirm</button>
-                    </div>
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
-                            Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</ng-template>
-<!--Delete Confirmation End-->
-
-
-<!--ward assign  Start-->
-<ng-template #contentWard>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input id="empID" type="hidden" value="0" />
-                <div class="wrap-input-effects" required>
-                    <select id="ddlWard" class="input-green">
-                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
-                            {{zone.zoneName}}</option>
-                    </select>
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
-                        <img src="../../../assets/icons/map-location-dot-solid.svg" alt="Map" aria-hidden="true">
-                    </span>
-                </div>
-                <div class="wrap-input-effects" required style="display: none;">
-                    <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
-                </div>
-                <input type="button" class="btn btn-success submit-btn click-input" value="SUBMIT"
-                    (click)="saveWard();" />
-            </div>
-        </div>
-    </div>
-</ng-template>
-<!--ward assign End-->
-
-<!--employee  Start-->
-<ng-template #contentEmployee>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input id="key" type="hidden" value="0" />
-                <div class="wrap-input-effects" required>
-                    <input type="text" id="txtName" class="input-green" placeholder="Name" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
-                        <img src="../../../assets/icons/user-solid.svg" alt="User" aria-hidden="true" />
-                    </span>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fas fa-mobile-alt" aria-hidden="true"></i> -->
-                        <img src="../../../assets/icons/mobile-screen-button-solid.svg" alt="Mobile"
-                            aria-hidden="true" />
-                    </span>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <input type="text" id="txtPassword" class="input-green" placeholder="Password" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fas fa-key" aria-hidden="true"></i> -->
-                        <img src="../../../assets/icons/key-solid.svg" alt="Key" aria-hidden="true" />
-                    </span>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <input class="active-input" type="checkbox" id="chkAcive" checked> Is Active
-
-                </div>
-                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
-                    (click)="saveEmployee();" />
-            </div>
-        </div>
-    </div>
-</ng-template>
-<!--employee End-->
