@@ -1099,7 +1099,7 @@ export class HouseMarkingComponent {
         deleteCountInstance.unsubscribe();
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showLineDetail", data);
-          // this.openPopUp(content, type);
+          this.openPopUp(content, type);
           this.getDeletedMarkerData(data);
         }
         else {
@@ -1120,32 +1120,43 @@ export class HouseMarkingComponent {
         this.commonService.setAlertMessage("error", "No Marker Found !!!");
       }
       else {
-        // this.openPopUp(content, type);
+        this.openPopUp(content, type);
         this.markerApprovalStatus();
       }
     }
   }
-  openPopUp(content: any, type: any) {
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let windowWidth = $(window).width();
-    let height = 870;
+openPopUp(content: any, type: any) {
+  const modalRef = this.modalService.open(content, {
+    size: 'lg',
+    windowClass: 'marker-approval-modal',
+  });
 
-    let width = windowWidth - 100;
-    height = (windowHeight * 90) / 100;
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  const windowHeight = $(window).height();
+  const windowWidth = $(window).width();
+  const width = windowWidth - 100;
+  const height = (windowHeight * 90) / 100;
+  const marginTop = Math.max(0, (windowHeight - height) / 2) + 'px';
+  const divHeight = (height - (type === 'approvedMarker' ? 200 : 100)) + 'px';
 
-    let divHeight = height - 100 + "px";
-    if (type == "approvedMarker") {
-      divHeight = height - 200 + "px";
-    }
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", marginTop);
-    $("#divStatus").css("height", divHeight);
-    $("#divStatusHeight").val(divHeight);
+  setTimeout(() => {
+    const $modal = $('.marker-approval-modal .modal-content');
 
-  }
+    $modal.parent().css({
+      'max-width': width + 'px',
+      'margin-top': marginTop
+    });
+
+    $modal.css({
+      height: height + 'px',
+      width: width + 'px'
+    });
+
+    $('.marker-approval-modal .modal-dialog-centered').css('margin-top', marginTop);
+    $('#divStatus').css('height', divHeight);
+    $('#divStatusHeight').val(divHeight);
+  }, 0);
+}
+
 
   closeModel() {
     this.modalService.dismissAll();
