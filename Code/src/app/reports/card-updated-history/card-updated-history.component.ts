@@ -64,6 +64,7 @@ export class CardUpdatedHistoryComponent implements OnInit {
         this.lastUpdateDate = cardJsonData["lastUpdateDate"];
         this.cardUpdateList = JSON.parse(JSON.stringify(cardJsonData["cards"]));
         this.cardUpdateFilterList = this.cardUpdateList;
+        console.log(this.cardUpdateFilterList);
       }
     });
   }
@@ -134,9 +135,10 @@ export class CardUpdatedHistoryComponent implements OnInit {
               //date = day + " " + monthName + " " + year;
               list.push({ date: date, preEntityType: preEntityType, entityType: entityType, name: cardData[key]["name"], address: cardData[key]["address"], mobile: cardData[key]["mobile"], entityUpdateByName: cardData[key]["entityUpdateByName"] });
 
-              cardUpdateListJSON.push({ cardNo: cardNo, counts: keyArray.length, list: list });
+              
             }
           }
+          cardUpdateListJSON.push({ cardNo: cardNo, counts: keyArray.length, list: list });
         }
         this.lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
         this.cardUpdateList = cardUpdateListJSON;

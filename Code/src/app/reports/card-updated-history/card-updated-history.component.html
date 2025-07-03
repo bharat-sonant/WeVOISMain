@@ -33,7 +33,7 @@
     <header class="header">
         <div class="header-left">
             Card Update History
-            <!-- Breadcrumb starts -->
+            <!-- Breadcrumb starts 
             <nav class="breadcrumb" aria-label="Breadcrumb">
                 <ul class="ul-breadcrumb">
                     <li class="li-breadcrumb">
@@ -46,12 +46,12 @@
                         <a class="link-breadcrumb" href="">Card Update History</a>
                     </li>
                 </ul>
-            </nav>
+            </nav>-->
             <!-- Breadcrumb ends -->
         </div>
         <div class="header-right">
             <div class="btn-default btn-export" (click)="exportToExcel();">
-                Entity Types
+                Export
                 <img src="../../../assets/img/iconExport.png" class="img-fluid icon-default" alt="File" width="24" />
             </div>
 
@@ -68,14 +68,14 @@
                 <table class="table">
                     <thead>
                         <th style="width: 5%;">S.No.</th>
-                        <th class="text-right">Card Number</th>
+                        <th class="text-left">Card Number</th>
                         <th class="text-right">Counts</th>
                     </thead>
                     <tbody>
                         <tr id="tr{{i}}" *ngFor="let data of cardUpdateFilterList; let i=index" class="{{data.trClass}}"
                             (click)="showCardUpdateDetail(data.cardNo,i);" style="cursor: pointer;">
                             <td>{{i+1}}</td>
-                            <td class="text-right">
+                            <td class="text-left">
                                 {{data.cardNo}}</td>
                             <td class="text-right">
                                 {{data.counts}}</td>

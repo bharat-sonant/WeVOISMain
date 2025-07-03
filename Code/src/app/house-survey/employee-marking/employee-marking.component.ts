@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { MapService } from "../../services/map/map.service";
 import { FirebaseService } from "../../firebase.service";
+import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
@@ -13,7 +14,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
   styleUrls: ["./employee-marking.component.scss"],
 })
 export class EmployeeMarkingComponent implements OnInit {
-  constructor(private router: Router, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
+  constructor(private router: Router, public httpService: HttpClient, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private commonService: CommonService, private modalService: NgbModal, private mapService: MapService) { }
 
   userList: any[];
   markerList: any[];
@@ -33,18 +34,34 @@ export class EmployeeMarkingComponent implements OnInit {
   db: any;
   fireStoragePath = this.commonService.fireStoragePath;
   serviceName = "manage-surveyor";
+  public cityEmpCode: any;
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     this.commonService.savePageLoadHistory("Survey-Management","Manage-Surveyor",localStorage.getItem("userID"));
     this.getZoneList();
-    this.getEmployee();
+    this.getCityEmpCode();
   }
 
   getZoneList() {
     this.zoneList = [];
     this.commonService.getAllowMarkingWards().then((wardData: any) => {
       this.zoneList = wardData;
+    });
+  }
+  
+  getCityEmpCode() {
+    const path = this.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    let fuelInstance = this.httpService.get(path).subscribe(data => {
+      fuelInstance.unsubscribe();
+      if (data != null) {
+        let list = JSON.parse(JSON.stringify(data));
+        let detail = list.find(item => item.cityName == this.commonService.getFireStoreCity());
+        if (detail != undefined) {
+          this.cityEmpCode = detail.empCode;
+        }
+      }
+      this.getEmployee();
     });
   }
 
