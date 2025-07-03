@@ -52,13 +52,22 @@
 
 <div class="main-content">
     <div class="row main-row">
-        <div class="col-md-12 col-lg-12 col-xl-7 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
+        <div class="col-md-12 col-lg-12 col-xl-12 pl-0 pr-6 pad-mob-b-10 pad-pr-0" style="padding-right:10px;">
             <div class="card" style="margin-top:-6px;  height: 90vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
                         <div class="col-md-12 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                    <select class="filter-select filter-input" id="ddlPenaltyType" (change)="filterData();">
+                                        <option value="0">
+                                            All Penalty Types
+                                        </option>
+                                        <option *ngFor="let dt of penaltyTypeList" value={{dt.penaltyType}}>
+                                            {{dt.penaltyType}}
+                                        </option>
+                                    </select>
+                                    
                                     <select class="filter-select filter-input" id="ddlUser" (change)="filterData();">
                                         <option value="0">
                                             All Users
@@ -92,23 +101,23 @@
                                 <div id="divList" class="table-wrapper table-one">
                                     <table id="tblPenalty" class="table table-line">
                                         <thead>
-                                            <th class="br-1 td-1" style="width:12%;border:none!important;">Date</th>
-                                            <th class="text-left br-1" style="width:15%;border:none!important;">
+                                            <th class="br-1 td-1" style="width:100px;border:none!important;">Date</th>
+                                            <th class="text-left br-1" style="width:150px;border:none!important;">
                                                 Type</th>
-                                            <th class="text-right br-1" style="width:10%;border:none!important;">
+                                            <th class="text-right br-1" style="width:100px;border:none!important;">
                                                 Penalty</th>
-                                            <th class="text-left br-1" style="width:20%;border:none!important;">
+                                            <th class="text-left br-1" style="width:200px;border:none!important;">
                                                 Name</th>
-                                            <th class="text-left br-1" style="width:25%;border:none!important;">
+                                            <th class="text-left br-1" style="border:none!important;">
                                                 Reason</th>
-                                            <th class="text-left br-1" style="width:15%;border:none!important;">
+                                            <th class="text-left br-1" style="width:200px;border:none!important;">
                                                 Penalty by</th>
-                                            <th class="text-left br-1" style="width:15%;border:none!important;">
+                                            <th class="text-left br-1" style="width:100px;border:none!important;">
                                                 Penalty on</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of penalityList; let i=index">
-                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                <td class="td-1" style="width:100px; border-right:1px solid #dee2e6">
                                                     {{data.date}}
                                                 </td>
                                                 <td class="text-left br-1">
@@ -122,30 +131,17 @@
                                                 <td class="text-left br-1">
                                                     {{data.createdBy}}
                                                 </td>
-                                                <td class="td-1" style="width:12%; border-right:1px solid #dee2e6">
+                                                <td class="td-1" style="width:100px; border-right:1px solid #dee2e6">
                                                     {{data.createdOn}}
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-        <!-----NeW Work Start------->
-        <div class="col-md-12 col-lg-12 col-xl-5 pr-13 mob-pr-10 mob-res pad-pl-0">
-            <div class="fix-h">
-                <div class="row right-scroll">
                 </div>
             </div>
         </div>

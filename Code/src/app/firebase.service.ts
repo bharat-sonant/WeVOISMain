@@ -818,6 +818,54 @@ export class FirebaseService {
       databaseName = "dtdecogram";
       databaseURL = "https://dtdecogram.firebaseio.com";
     }
+    else if (city == 'jaipur-textile-recycling-facility') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://jaipur-textile-recycling-facility.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdecogram";
+      databaseURL = "https://jaipur-textile-recycling-facility.firebaseio.com";
+    }
+    else if (city == 'chennai') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdchennai.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdchennai";
+      databaseURL = "https://dtdchennai.firebaseio.com";
+    }
+    else if (city == 'dausa') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtddausa.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtddausa";
+      databaseURL = "https://dtddausa.firebaseio.com";
+    }
+    else if (city == 'dei-bundi') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtddei-bundi.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtddei-bundi";
+      databaseURL = "https://dtddei-bundi.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),

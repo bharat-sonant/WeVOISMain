@@ -312,6 +312,15 @@ export class CommonService {
     else if (cityName == "mapusa-goa") {
       cardPrefix = "MAP";
     }
+    else if (cityName == "chennai") {
+      cardPrefix = "CHE";
+    }
+    else if (cityName == "dausa") {
+      cardPrefix = "DAU";
+    }
+    else if (cityName == "dei-bundi") {
+      cardPrefix = "DEI";
+    }
     return cardPrefix;
   }
 
@@ -512,6 +521,18 @@ export class CommonService {
     }
     else if (cityName == "ecogram") {
       latLng.push({ lat: 13.1836585, lng: 77.569515 });
+    }
+    else if (cityName == "jaipur-textile-recycling-facility") {
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
+    else if (cityName == "chennai") {
+      latLng.push({ lat: 13.0841297, lng: 80.2680208 });
+    }
+    else if (cityName == "dausa") {
+      latLng.push({ lat: 26.9006581, lng: 76.3283162 });
+    }
+    else if (cityName == "dei-bundi") {
+      latLng.push({ lat: 25.6761984, lng: 75.9133425 });
     }
     return latLng;
   }
@@ -1282,7 +1303,7 @@ export class CommonService {
               let isDisabled = "no";
               let disabledBy = "";
               let isBroken = false;
-              let disabledDate="";
+              let disabledDate = "";
               if (dustbin[index]["pickFrequency"] != null) {
                 pickFrequency = Number(dustbin[index]["pickFrequency"]);
               }
@@ -1313,7 +1334,7 @@ export class CommonService {
                   isDisabled: isDisabled,
                   isBroken: isBroken,
                   disabledBy: disabledBy,
-                  disabledDate:disabledDate
+                  disabledDate: disabledDate
                 });
                 if (dustbin[index]["dustbinType"] == "Open Depot") {
                   openDepotList.push({
@@ -1330,7 +1351,7 @@ export class CommonService {
                     isDisabled: isDisabled,
                     isBroken: isBroken,
                     disabledBy: disabledBy,
-                    disabledDate:disabledDate
+                    disabledDate: disabledDate
                   });
                 }
                 else {
@@ -1348,7 +1369,7 @@ export class CommonService {
                     isDisabled: isDisabled,
                     isBroken: isBroken,
                     disabledBy: disabledBy,
-                    disabledDate:disabledDate
+                    disabledDate: disabledDate
                   });
                 }
 
@@ -1368,7 +1389,7 @@ export class CommonService {
                   isDisabled: isDisabled,
                   isBroken: isBroken,
                   disabledBy: disabledBy,
-                  disabledDate:disabledDate
+                  disabledDate: disabledDate
                 });
               }
             }
@@ -1389,8 +1410,8 @@ export class CommonService {
     });
   }
 
-  setAllZones(newDb:any) {
-    let zoneList=[];
+  setAllZones(newDb: any) {
+    let zoneList = [];
     let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }, { zone: "QRT" }];
     zoneList.push({ zoneNo: "0", zoneName: "-- Select --" });
     let dbPath = "Tasks";
@@ -1399,10 +1420,10 @@ export class CommonService {
       if (data != null) {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
-          let zone=keyArray[i];
-          let detail = hiddenList.find(item =>zone.toString().includes(item.zone.toString()));
+          let zone = keyArray[i];
+          let detail = hiddenList.find(item => zone.toString().includes(item.zone.toString()));
           if (detail == undefined) {
-            zoneList.push({ zoneNo: zone, zoneName: "Zone " +zone });
+            zoneList.push({ zoneNo: zone, zoneName: "Zone " + zone });
           }
         }
       }
@@ -1415,9 +1436,9 @@ export class CommonService {
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
     let cityName = localStorage.getItem("cityName");
     let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-     if (cityName == "jodhpur") {
-       path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
-     }
+    if (cityName == "jodhpur") {
+      path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
+    }
     let markingWardInstance = this.httpService.get(path).subscribe(data => {
       markingWardInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
@@ -2340,20 +2361,20 @@ export class CommonService {
     return '';
   }
 
-  
-  checkImageExist(imagePath:any){
+
+  checkImageExist(imagePath: any) {
     return new Promise((resolve) => {
-      const ref = this.storage.storage.app.storage(this.fireStoragePath).ref(imagePath); 
+      const ref = this.storage.storage.app.storage(this.fireStoragePath).ref(imagePath);
       ref.getDownloadURL()
-      .then(() => resolve(true)).catch((error) => {
-        if (error.code === 'storage/object-not-found') {
-          resolve(false); // Image does not exist
-        } else {
-          console.error('Firebase error:', error);
-          throw error; // Some other error
-        }
-      });
-    
+        .then(() => resolve(true)).catch((error) => {
+          if (error.code === 'storage/object-not-found') {
+            resolve(false); // Image does not exist
+          } else {
+            console.error('Firebase error:', error);
+            throw error; // Some other error
+          }
+        });
+
     });
   }
 }

@@ -249,7 +249,7 @@ export class WardTripAnalysisComponent implements OnInit {
                 let yardImageName2 = "";
                 let manualRemarks = "";
                 let overLoad = "";
-                let analysisStatus = "";
+                let analysisStatus = "Ok";
                 let vehicleType = data[tripID]["vehicle"].split('-')[0];
                 if (data[tripID]["filledStatus"] != null) {
                   filledStatus = data[tripID]["filledStatus"];
@@ -260,6 +260,9 @@ export class WardTripAnalysisComponent implements OnInit {
                 if (data[tripID]["analysisBy"] != null) {
                   analysisBy = data[tripID]["analysisBy"];
                   tripAnalysisCount++;
+                }
+                if (data[tripID]["analysisStatus"] != null) {
+                  analysisStatus = data[tripID]["analysisStatus"];
                 }
                 if (data[tripID]["remark"] != null) {
                   remark = data[tripID]["remark"];
@@ -347,8 +350,8 @@ export class WardTripAnalysisComponent implements OnInit {
                 this.tripList = tripFilter[0]["tripList"];
                 this.getTripData(this.tripList[0]["tripId"]);
                 this.getPenaltyData(this.tripList[0]["tripId"])
-              }else{
-                this.tripData.analysisStatus ='Ok'
+              } else {
+                this.tripData.analysisStatus = 'Ok'
               }
             }, 600);
 
@@ -451,6 +454,7 @@ export class WardTripAnalysisComponent implements OnInit {
             let yardImageName2 = "";
             let manualRemarks = "";
             let overLoad = "";
+            let analysisStatus = "Ok";
             let vehicleType = data[tripID]["vehicle"].split('-')[0];
             if (data[tripID]["filledStatus"] != null) {
               filledStatus = data[tripID]["filledStatus"];
@@ -461,6 +465,9 @@ export class WardTripAnalysisComponent implements OnInit {
             if (data[tripID]["analysisBy"] != null) {
               analysisBy = data[tripID]["analysisBy"];
               tripAnalysisCount++;
+            }
+            if (data[tripID]["analysisStatus"] != null) {
+              analysisStatus = data[tripID]["analysisStatus"];
             }
             if (data[tripID]["remark"] != null) {
               remark = data[tripID]["remark"];
@@ -507,7 +514,8 @@ export class WardTripAnalysisComponent implements OnInit {
                 yardImageName2: yardImageName2,
                 vehicleType: vehicleType,
                 manualRemarks: manualRemarks,
-                overLoad: overLoad
+                overLoad: overLoad,
+                analysisStatus: analysisStatus
               });
             });
           }
@@ -638,7 +646,7 @@ export class WardTripAnalysisComponent implements OnInit {
       if (tripDetails.imageName != this.imageNotAvailablePath) {
         $("#ImageLoader").show();
       }
-     
+
       this.tripDetail = tripDetails;
       this.tripData.driverId = tripDetails.driverId
       this.tripData.driverName = tripDetails.driverName;
@@ -655,11 +663,11 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.imageUrl1 = tripDetails.imageName2 != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.imageName2 + "?alt=media" : this.imageNotAvailablePath;
       this.tripData.imageUrl2 = tripDetails.yardImageName != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.yardImageName + "?alt=media" : this.imageNotAvailablePath;
       this.tripData.imageUrl3 = tripDetails.yardImageName2 != "" ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedZone + "%2F" + this.selectedTrip + "%2F" + tripDetails.yardImageName2 + "?alt=media" : this.imageNotAvailablePath;
-      if (tripDetails.filledStatus === 'yes' || tripDetails.overLoad === 'yes' || this.tripData.remark.trim() !== '') {
-        this.tripData.analysisStatus = 'Not Ok';
-      } else {
-        this.tripData.analysisStatus = 'Ok'
-      }
+      // if (tripDetails.filledStatus === 'yes' || tripDetails.overLoad === 'yes' || this.tripData.remark.trim() !== '') {
+      this.tripData.analysisStatus = tripDetails.analysisStatus;
+      // } else {
+      //    this.tripData.analysisStatus = 'Ok'
+      //  }
 
       this.setOverload();
       setTimeout(() => {
@@ -794,10 +802,10 @@ export class WardTripAnalysisComponent implements OnInit {
 
   saveTripAnalysis() {
     if (this.tripData.analysisStatus !== 'Ok') {
-      if (!(this.filledStatus === "yes" || this.remarkStatus.trim() !== "" || this.overLoad === "yes")) {
-        this.commonService.setAlertMessage("error", "Please select at least one reason if status is Not Ok.");
-        return;
-      }
+      // if (!(this.filledStatus === "yes" || this.remarkStatus.trim() !== "" || this.overLoad === "yes")) {
+      //   this.commonService.setAlertMessage("error", "Please select at least one reason if status is Not Ok.");
+      //     return;
+      //   }
       let amount = this.tripData.penaltyAmount === null ? 0 : this.tripData.penaltyAmount;
       const penaltyReason = this.tripData.penaltyReason.trim();
       if ((amount > 0 && penaltyReason === '') || (amount === 0 && penaltyReason !== '')) {
@@ -807,9 +815,9 @@ export class WardTripAnalysisComponent implements OnInit {
       }
     }
     if (this.tripData.analysisStatus === 'Ok') {
-      this.filledStatus = '';
-      this.remarkStatus = '';
-      this.overLoad = '';
+      //  this.filledStatus = '';
+      // this.remarkStatus = '';
+      // this.overLoad = '';
       this.tripData.penaltyAmount = 0;
       this.tripData.penaltyReason = '';
     }
@@ -840,6 +848,7 @@ export class WardTripAnalysisComponent implements OnInit {
     data.manualRemarks = manualRemark;
     data.filledStatus = this.filledStatus;
     data.overLoad = this.overLoad;
+    data.analysisStatus = this.tripData.analysisStatus;
     let zondDetail = this.zoneList.find(
       (item) => item.zoneNo == this.selectedZone
     );

@@ -365,7 +365,7 @@ export class WardScancardReportComponent implements OnInit {
           employeeInstance.unsubscribe();
           if (empData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", empData);
-            let name = empData.split(',')[0];
+            let name = empData.split(',')[empData.split(',').length-1];
 
             let keyArray = Object.keys(data);
             for (let i = 0; i < keyArray.length; i++) {

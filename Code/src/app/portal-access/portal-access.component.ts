@@ -178,6 +178,18 @@ export class PortalAccessComponent implements OnInit {
       }else if (this.accessCity[i]["city"] == "ecogram") {
         $("#ecogramBox").show();
         isBaseCity = true;
+      }else if (this.accessCity[i]["city"] == "jaipur-textile-recycling-facility") {
+        $("#jaipurRecyclingBox").show();
+        isBaseCity = true;
+      }else if (this.accessCity[i]["city"] == "chennai") {
+        $("#chennaiBox").show();
+        isBaseCity = true;
+      }else if (this.accessCity[i]["city"] == "dausa") {
+        $("#dausaBox").show();
+        isBaseCity = true;
+      }else if (this.accessCity[i]["city"] == "dei-bundi") {
+        $("#deibundiBox").show();
+        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar" || this.accessCity[i]["city"] == "jaipur-civil-line" || this.accessCity[i]["city"] == "jaipur-kishanpole") {
         $("#jaipurBox").show();
       }
