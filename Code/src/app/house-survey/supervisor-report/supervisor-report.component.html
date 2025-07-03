@@ -1,108 +1,178 @@
 <div id="divLoaderCounts" class="loaderClassMain">
-    <span class="spanLoader" id="spLoader">
-        <img src="../../../assets/img/loading.gif" width="50"><br /><span
-            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting data<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
+  <span class="spanLoader" id="spLoader">
+    <img src="../../../assets/img/loading.gif" width="50" /><br /><span
+      style="color: #fff; font-weight: normal; font-size: 18px"
+    >
+      We are collecting data<br /></span
+    ><span style="color: #0ba118; font-size: 24px"> Please wait...</span></span
+  >
 </div>
 <div id="divLoaderMain" class="loaderClass">
-    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+  <img src="../../../assets/img/loading.gif" width="50" class="imgLoader" />
 </div>
 
-<section class="header">
-    <div class="row no-gutters">
-        <div class="col-md-3 Ward-Marking-heading">
-            Supervisor Report
-        </div>
-        <div class="col-md-9 text-right total-house fix-home-outer">
-            <div class="fix-home">
-                <div class="float-first fix-home-iner" style="padding-top: 0px;">
-                    <button class="refresh" (click)="updateSupervisorReport();">
-                        <!-- <i class="fas fa-redo-alt"></i> -->
-                        <img src="../../../assets/icons/rotate-right-solid.svg" alt="Rotate" class="cursor-pointer"
-                        width="14" />
-                    </button><br>
-                    <h6>Last updated on {{lastUpdatedTime}}</h6>
-                </div>
-            </div>
-        </div>
+<div class="main-page">
+  <header class="header">
+    <div class="header-left">
+      Supervisor Report
+      <!-- Breadcrumb starts -->
+      <!-- <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ul class="ul-breadcrumb">
+          <li class="li-breadcrumb">
+            <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']"
+              >Home</a
+            >
+          </li>
+          <li class="li-breadcrumb">
+            <a class="link-breadcrumb" href="">Marking Managment</a>
+          </li>
+          <li class="li-breadcrumb">Supervisor Report</li>
+        </ul>
+      </nav> -->
+      <!-- Breadcrumb ends -->
     </div>
-</section>
-<div class="main-content">
-    <div class="row">
-        <div class="col-md-6 card-outer">
 
-            <div class="card card-body-outer">
-                <div class="card-body card-body2">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-12 pr-1">
-                                <div id="divList" class="table-wrapper table-one">
-                                    <table class="table table-line">
-                                        <thead>
-                                            <th class="text-left br-1 table-heading1">
-                                                Supervisor Name</th>
-                                            <th class="text-left br-1 table-heading1">
-                                                Approved Markers</th>
-
-                                        </thead>
-                                        <tbody>
-                                            <tr id="tr{{i}}" style="cursor: pointer;" *ngFor="let data of supervisorList; let i=index" (click)="showSurviorDetail(data.supervisorId,i)">
-                                                <td class="text-left br-1">
-                                                    {{data.supervisorName}}
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    {{data.counts}}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <div class="header-right">
+      <button class="info-card" (click)="updateSupervisorReport()">
+        <div class="info-card-left">
+          <span>{{ lastUpdatedTime }}</span>
+          Last updated on
         </div>
-        <div class="col-md-6 loaderClass-outer">
-            <div class="card custom-header-outer">
-                <div class="card-header custom-header">
-                    <div class="row">
-                        <div class="col-md-12 text-keft">
-                            <h5>{{supervisorName}}</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body card-body3">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-12 pr-1">
-                                        <div class="table-wrapper table-scroll table-outer table-one">
-                                            <table class="table table-outer-iner">
-                                                <thead>
-                                                    <th class="ward-table-heading" style="width:50%">Approve Date</th>
-                                                    <th class="ward-table-heading" style="width:50%">Approve Markers</th>
-                                                </thead>
-                                                <tbody>
-                                                    <tr class="table-row" id="tr{{i}}" *ngFor="let data of superviosorDetailList; let i=index">
-                                                        <td class="table-data" style="width:50%">
-                                                            {{data.date}}</td>
-                                                        <td class="table-data" style="width:50%">
-                                                            {{data.counts}}</td>
-
-
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="info-card-right">
+          <img
+            src="../../../assets/img/iconRefresh.png"
+            class="iconRefresh"
+            alt="Refresh"
+            title="Refresh"
+          />
         </div>
+      </button>
     </div>
+  </header>
+  <div class="page-body">
+    <!-- Clickable header -->
+    <div class="mob-surveyorList-btn" (click)="isListVisible = !isListVisible">
+      <p class="supervisor-name">
+        {{ this.supervisorName || "Select Supervisor" }}
+      </p>
+      <span class="marker-count">
+        {{ this.supervisorCount || 0 }}
+        <img
+          src="../../../assets/img/iconRight.png"
+          class="iconNext"
+          title="View"
+          alt="icon"
+        />
+      </span>
+    </div>
+
+    <!-- List with conditional class -->
+    <div class="surveyor-list" [ngClass]="{ 'show-list': isListVisible }">
+      <form id="divList">
+                  <div class="surveyor-row surveyor-row-header">
+            <p class="supervisor-name">Supervisor Name</p>
+            <span class="marker-count"> App. Markers </span>
+          </div>
+        <div
+          id="tr{{ i }}"
+          style="cursor: pointer"
+          *ngFor="let data of supervisorList; let i = index"
+          (click)="
+            showSurviorDetail(data.supervisorId, i); isListVisible = false
+          "
+        >
+
+          <div class="surveyor-row">
+            <p class="supervisor-name">
+              {{ data.supervisorName }}
+            </p>
+            <span class="marker-count">
+              {{ data.counts }}
+            </span>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="surveyor-details">
+      <div class="surveyor-details-header">
+        {{ supervisorName }}
+
+        <div class="btnGridBox">
+          <div
+            class="btnToggle"
+            (click)="isGridView = false"
+            [class.activeToggle]="!isGridView"
+          >
+            <img
+              src="../../../assets/img/iconGrid.png"
+              class="gridView"
+              width="20"
+              height="20"
+              title="List View"
+              alt="icon"
+            />
+          </div>
+          <div
+            class="btnToggle"
+            (click)="isGridView = true"
+            [class.activeToggle]="isGridView"
+          >
+            <img
+              src="../../../assets/img/iconList.png"
+              class="listView"
+              width="20"
+              height="20"
+              title="Grid View"
+              alt="icon"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="surveyor-details-body"
+        [ngClass]="{ gridViewTable: isGridView }"
+      >
+        <div class="surveyor-tHead">
+          <div class="surveyor-th">Approve Date</div>
+          <div class="surveyor-th">Approve Markers</div>
+        </div>
+        <div class="surveyor-tBody-scroll">
+          <div
+            class="surveyor-tBody"
+            id="tr{{ i }}"
+            *ngFor="let data of superviosorDetailList; let i = index"
+          >
+            <div class="surveyor-td td1">
+              {{ data.date }}
+            </div>
+            <div class="surveyor-td td2">
+              {{ data.counts }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <section class="header">
+  <div class="row no-gutters">
+    <div class="col-md-3 Ward-Marking-heading">Supervisor Report</div>
+    <div class="col-md-9 text-right total-house fix-home-outer">
+      <div class="fix-home">
+        <div class="float-first fix-home-iner" style="padding-top: 0px">
+          <button class="refresh" (click)="updateSupervisorReport()">
+            <img
+              src="../../../assets/icons/rotate-right-solid.svg"
+              alt="Rotate"
+              class="cursor-pointer"
+              width="14"
+            /></button
+          ><br />
+          <h6>Last updated on {{ lastUpdatedTime }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
 </div>

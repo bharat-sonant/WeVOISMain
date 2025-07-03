@@ -4,6 +4,8 @@ import { CommonService } from "../../services/common/common.service";
 import { HttpClient } from "@angular/common/http";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+
+
 @Component({
   selector: 'app-supervisor-report',
   templateUrl: './supervisor-report.component.html',
@@ -18,8 +20,14 @@ export class SupervisorReportComponent implements OnInit {
   currentDateList: any[] = [];
   lastUpdatedTime: any;
   supervisorName: any;
+  supervisorCount: any;
   divLoaderCounts = "#divLoaderCounts";
   serviceName = "supervisor-report";
+
+    // grid and list view
+  isGridView: boolean = false;
+
+
   constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal) { }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -86,6 +94,7 @@ export class SupervisorReportComponent implements OnInit {
     let detail = this.supervisorList.find(item => item.supervisorId == supervisorId);
     if (detail != undefined) {
       this.supervisorName = detail.supervisorName;
+      this.supervisorCount = detail.counts
       let list = detail.detailList;
       for (let i = 0; i < list.length; i++) {
         if (list[i]["approveDate"] != null) {
@@ -174,3 +183,5 @@ export class SupervisorReportComponent implements OnInit {
     });
   }
 }
+
+

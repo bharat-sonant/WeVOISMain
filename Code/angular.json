@@ -22,7 +22,8 @@
               "node_modules/ngx-toastr/toastr.css",
               "src/assets/scss/now-ui-dashboard.scss",
               "src/assets/demo/demo.css",
-              "src/assets/scss/style.scss"
+              "src/assets/scss/style.scss",
+              "src/assets/scss/globalStyle.scss"
             ],
             "scripts": [
               "node_modules/chart.js/dist/Chart.min.js",
