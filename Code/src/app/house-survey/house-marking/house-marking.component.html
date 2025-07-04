@@ -25,7 +25,7 @@
     </div>
 
     <div class="header-right">
-      <div class="total-info" id="divLastUpdate">
+      <div class="total-info" id="divLastUpdate" style="display: none;">
         <span>{{ markerData.lastScanTime }}</span>
         Last marked at
       </div>
@@ -971,7 +971,7 @@
               </div>
             </div>
             <div class="survey-info-row" [hidden]="dt.houseNo == ''">
-              <div class="survey-info-left">House Number</div>
+              <div class="survey-info-left">House No.</div>
               <div class="survey-info-right">
                 {{ dt.houseNo }}
               </div>
@@ -1214,7 +1214,7 @@
                 </div>
               </div>
               <div class="include-info-row" [hidden]="dt.houseNo == ''">
-                <div class="include-info-left">House Number</div>
+                <div class="include-info-left">House No.</div>
                 <div class="include-info-right">
                   {{ dt.houseNo }}
                 </div>
@@ -1460,7 +1460,7 @@
                 </div>
               </div>
               <div class="include-info-row" [hidden]="dt.houseNo == ''">
-                <div class="include-info-left">House Number</div>
+                <div class="include-info-left">House No.</div>
                 <div class="include-info-right">
                   {{ dt.houseNo }}
                 </div>
