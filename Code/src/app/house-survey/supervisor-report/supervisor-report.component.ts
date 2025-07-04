@@ -24,7 +24,7 @@ export class SupervisorReportComponent implements OnInit {
   divLoaderCounts = "#divLoaderCounts";
   serviceName = "supervisor-report";
 
-    // grid and list view
+  // grid and list view
   isGridView: boolean = false;
 
 
@@ -32,7 +32,7 @@ export class SupervisorReportComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
-    this.commonService.savePageLoadHistory("Survey-Management","Supervisor-Report",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Survey-Management", "Supervisor-Report", localStorage.getItem("userID"));
     this.getLastUpdate();
     this.getSurviorSummary();
   }
@@ -50,7 +50,7 @@ export class SupervisorReportComponent implements OnInit {
 
   getSurviorSummary() {
     this.supervisorList = [];
-   
+
     const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FMarkingSurviorSummary%2FmarkingSurviorDetail.json?alt=media"
     let surviorInstance = this.httpService.get(path).subscribe((surviordata) => {
       surviorInstance.unsubscribe();
@@ -99,10 +99,11 @@ export class SupervisorReportComponent implements OnInit {
       for (let i = 0; i < list.length; i++) {
         if (list[i]["approveDate"] != null) {
           let date = list[i]["approveDate"].split(" ")[0];
-          let timeStemp=new Date(date).getTime();
+          let showDate = date.split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split("-")[1])) + " " + date.split("-")[0];
+          let timeStemp = new Date(date).getTime();
           let supervisordetail = this.superviosorDetailList.find(item => item.date == date);
           if (supervisordetail == undefined) {
-            this.superviosorDetailList.push({ date: date, counts: 1,timeStemp });
+            this.superviosorDetailList.push({ date: date, showDate: showDate, counts: 1, timeStemp });
             this.superviosorDetailList.sort((a, b) => Number(b.timeStemp) < Number(a.timeStemp) ? 1 : -1);
           }
           else {
