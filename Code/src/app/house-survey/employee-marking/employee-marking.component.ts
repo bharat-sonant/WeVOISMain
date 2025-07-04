@@ -233,14 +233,14 @@ export class EmployeeMarkingComponent implements OnInit {
           return;
         }
       }
-      // this.modalService.open(content, { size: "lg" });
-      // let windowHeight = $(window).height();
-      // let height = 190;
-      // let width = 400;
-      // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-      // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-      // $("div .modal-dialog-centered").css("margin-top", "26px");
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 230;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#empID").val(id);
       userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
@@ -261,26 +261,26 @@ export class EmployeeMarkingComponent implements OnInit {
           return;
         }
       }
-      // this.modalService.open(content, { size: "lg" });
-      // let windowHeight = $(window).height();
-      // let height = 170;
-      // let width = 400;
-      // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-      // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-      // $("div .modal-dialog-centered").css("margin-top", "26px");
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 320;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
       if (id != "0") {
         $("#deleteId").val(id);
       }
     } else {
-      // this.modalService.open(content, { size: "lg" });
-      // let windowHeight = $(window).height();
-      // let height = 335;
-      // let width = 400;
-      // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-      // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
-      // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-      // $("div .modal-dialog-centered").css("margin-top", "26px");
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 355;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
       if (id != "0") {
         $("#key").val(id);
         let userDetail = this.userList.find((item) => item.empId == id);
@@ -382,13 +382,7 @@ export class EmployeeMarkingComponent implements OnInit {
     this.closeModel();
     this.getEmployee();
   }
-   resetForm = ()=>{
-    $("#txtName").val('');
-          $("#txtPhone").val('');
-          $("#txtPassword").val('');
-          let element = <HTMLInputElement>document.getElementById("chkAcive");
-            element.checked = true;
-  }
+  
 }
 
 export class markerDatail {

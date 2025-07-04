@@ -14,7 +14,7 @@
                     <li class="li-breadcrumb">
                         <a class="link-breadcrumb" href="#">Marking Management</a>
                     </li>
-                           <li class="li-breadcrumb">
+                    <li class="li-breadcrumb">
                         <a class="link-breadcrumb" href="#">Manage Surveyor</a>
                     </li>
                 </ul>
@@ -23,8 +23,7 @@
             <!-- Breadcrumb ends -->
         </div>
         <div class="header-right">
-            <button type="button" class="user-button no-gutters-btn" data-bs-target="#contentEmployee"
-                data-bs-toggle="modal">
+            <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentEmployee,0,'add');">
                 <span>+</span>New</button>
         </div>
     </header>
@@ -62,19 +61,16 @@
                                                 <span [hidden]="data.isActive==false"
                                                     style="gap: 10px; display: flex; justify-content: center;align-items: center;">
                                                     <img src="../../../assets/icons/map-location-dot-solid.svg"
-                                                        alt="Map" data-bs-toggle="modal" data-bs-target="#contentWard"
-                                                        (click)="openModel(contentWard,data.empId,'ward');"
+                                                        alt="Map" (click)="openModel(contentWard,data.empId,'ward');"
                                                         title="Assign Ward" class="icon-green"
                                                         style="margin-right: 4px; vertical-align: middle;">
                                                     <img src="../../../assets/icons/circle-xmark-regular.svg"
-                                                        alt="Circle" data-bs-toggle="modal"
-                                                        data-bs-target="#contentConfirmation"
+                                                        alt="Circle"
                                                         (click)="openModel(contentConfirmation,data.empId,'delete')"
                                                         title="Remove Assignment"
                                                         style="margin-right: 4px; vertical-align: middle;">
                                                     <img src="../../../assets/icons/pen-to-square-regular.svg"
-                                                        alt="Edit" data-bs-toggle="modal"
-                                                        data-bs-target="#contentEmployee"
+                                                        alt="Edit"
                                                         (click)="openModel(contentEmployee,data.empId,'update');"
                                                         title="Edit Entry"
                                                         style="margin-right: 4px; vertical-align: middle;">
@@ -156,13 +152,13 @@
         </div>
     </div>
     <!--Delete Confirmation Start-->
-    <div class="modal fade" id="contentConfirmation" tabindex="-1" aria-hidden="true"
-        (shown.bs.modal)="openModel(contentConfirmation,data.empId,'ward');">
+    <ng-template #contentConfirmation>
+        <!-- <div class="modal fade"> -->
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Remove Assignment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" (click)="closeModel();"></button>
                 </div>
                 <div class="custom-modal-body">
                     <div class="Delete-device">
@@ -178,7 +174,7 @@
                             <button class="btn-success  btn-footer" (click)="removeAssignment()">
                                 Confirm
                             </button>
-                            <button class="btn-cancel btn-footer" data-bs-dismiss="modal" aria-label="Close">
+                            <button class="btn-cancel btn-footer" (click)="closeModel()">
                                 Cancel
                             </button>
                         </div>
@@ -186,18 +182,18 @@
                 </div>
             </div>
         </div>
-    </div>
+        <!-- </div> -->
+    </ng-template>
     <!--Delete Confirmation End-->
 
     <!--ward assign  Start-->
 
-    <div class="modal fade" id="contentWard" tabindex="-1" aria-hidden="true"
-        (shown.bs.modal)="openModel(contentConfirmation,data.empId,'delete')">
-        <div class="modal-dialog modal-dialog-centered">
+    <ng-template #contentWard>
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" (click)="closeModel();"></button>
                 </div>
                 <div class="custom-modal-body">
                     <input id="empID" type="hidden" value="0" />
@@ -220,11 +216,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </ng-template>
     <!--ward assign End-->
 
     <!--employee  Start-->
-    <div class="modal fade" id="contentEmployee" tabindex="-1" aria-hidden="true"
+    <!-- <div class="modal fade" id="contentEmployee" tabindex="-1" aria-hidden="true"
         (shown.bs.modal)="openModel(contentEmployee,0,'add');">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -265,19 +261,17 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
-    <!-- <ng-template #contentEmployee>
+    <ng-template #contentEmployee>
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
-                    <button type="button" class="close" (click)="closeModel();">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" (click)="closeModel();"></button>
                 </div>
-                <div class="modal-body">
+                <div class="custom-modal-body">
                     <input id="key" type="hidden" value="0" />
                     <div class="wrap-input-effects" required>
                         <input type="text" id="txtName" class="input-green" placeholder="Name" />
@@ -302,14 +296,15 @@
                         </span>
                     </div>
                     <div class="wrap-input-effects" required>
-                        <input class="active-input" type="checkbox" id="chkAcive" checked> Is Active
-
+                        <input class="active-input" type="checkbox" id="chkAcive" checked> <span class="check-tatile">Is
+                            Active</span>
                     </div>
-                    <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
-                        (click)="saveEmployee();" />
+                    <button class="btn-sumit mt-3 mb-0" (click)="saveEmployee();">
+                        SUBMIT
+                    </button>
                 </div>
             </div>
         </div>
-    </ng-template> -->
+    </ng-template>
     <!--employee End-->
 </div>
