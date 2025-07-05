@@ -418,12 +418,12 @@ export class HouseMarkingComponent {
                 persons = data[index]["totalPerson"];
               }
 
-               if (data[index]["date"] != null) {
-                date = data[index]["date"].split(" ")[0].split("-")[2]+" "+ this.commonService.getCurrentMonthShortName(Number(data[index]["date"].split(" ")[0].split("-")[1]))+" "+data[index]["date"].split(" ")[0].split("-")[0] +" "+data[index]["date"].split(" ")[1];
+              if (data[index]["date"] != null) {
+                date = data[index]["date"].split(" ")[0].split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(data[index]["date"].split(" ")[0].split("-")[1])) + " " + data[index]["date"].split(" ")[0].split("-")[0] + " " + data[index]["date"].split(" ")[1];
               }
               let approveDate = "";
-              if(data[index]["approveDate"]!=null){
-                approveDate=data[index]["approveDate"].split(" ")[0].split("-")[2]+" "+ this.commonService.getCurrentMonthShortName(Number(data[index]["approveDate"].split(" ")[0].split("-")[1]))+" "+data[index]["approveDate"].split(" ")[0].split("-")[0] +" "+data[index]["approveDate"].split(" ")[1];
+              if (data[index]["approveDate"] != null) {
+                approveDate = data[index]["approveDate"].split(" ")[0].split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(data[index]["approveDate"].split(" ")[0].split("-")[1])) + " " + data[index]["approveDate"].split(" ")[0].split("-")[0] + " " + data[index]["approveDate"].split(" ")[1];
               }
               let status = "";
               let markerId = "";
@@ -461,7 +461,7 @@ export class HouseMarkingComponent {
                 cardNumber = data[index]["cardNumber"];
                 status = "Surveyed";
               }
-              
+
               if (data[index]["revisitKey"] != null) {
                 status = "Revisit";
               }
@@ -518,6 +518,17 @@ export class HouseMarkingComponent {
               const totalPerson = data[index]['totalPerson'] || ''
               const wardNumber = data[index]['wardNumber'] || ''
               this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '' });
+              if (this.cityName == "sikar") {
+                if (cardNumber == "") {
+                  let detail = this.markerList.find(item => item.index == index);
+                  if (detail != undefined) {
+                    detail.status = "";
+                  }
+                }
+                else {
+                  this.getCardPaymentStatus(cardNumber, index, "markerList");
+                }
+              }
               let markerURL = this.getMarkerIcon(type);
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
@@ -538,6 +549,31 @@ export class HouseMarkingComponent {
 
     });
   }
+
+  getCardPaymentStatus(cardNumber: any, index: any, type: any) {
+    let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNumber;
+    let paymentInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      paymentInstance.unsubscribe();
+      if (data == null) {
+        if (type == "markerList") {
+          let detail = this.markerList.find(item => item.index == index);
+          if (detail != undefined) {
+            detail.status = "";
+          }
+        }
+        else {
+          if (type == "otherMarkerList") {
+            let detail = this.markerListIncluded.find(item => item.index == index);
+            if (detail != undefined) {
+              detail.status = "";
+            }
+          }
+        }
+      }
+    })
+  }
+
+
   getUsername(index: any, userId: any, zoneNo: any, lineNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getUsername");
     let path = "EntityMarkingData/MarkerAppAccess" + "/" + userId + "/" + "name";
@@ -629,11 +665,11 @@ export class HouseMarkingComponent {
               }
 
               if (data[index]["date"] != null) {
-                date = data[index]["date"].split(" ")[0].split("-")[2]+" "+ this.commonService.getCurrentMonthShortName(Number(data[index]["date"].split(" ")[0].split("-")[1]))+" "+data[index]["date"].split(" ")[0].split("-")[0] +" "+data[index]["date"].split(" ")[1];
+                date = data[index]["date"].split(" ")[0].split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(data[index]["date"].split(" ")[0].split("-")[1])) + " " + data[index]["date"].split(" ")[0].split("-")[0] + " " + data[index]["date"].split(" ")[1];
               }
               let approveDate = "";
-              if(data[index]["approveDate"]!=null){
-                approveDate=data[index]["approveDate"].split(" ")[0].split("-")[2]+" "+ this.commonService.getCurrentMonthShortName(Number(data[index]["approveDate"].split(" ")[0].split("-")[1]))+" "+data[index]["approveDate"].split(" ")[0].split("-")[0] +" "+data[index]["approveDate"].split(" ")[1];
+              if (data[index]["approveDate"] != null) {
+                approveDate = data[index]["approveDate"].split(" ")[0].split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(data[index]["approveDate"].split(" ")[0].split("-")[1])) + " " + data[index]["approveDate"].split(" ")[0].split("-")[0] + " " + data[index]["approveDate"].split(" ")[1];
               }
               let status = "";
               let markerId = "";
@@ -725,6 +761,18 @@ export class HouseMarkingComponent {
               const wardNumber = data[index]['wardNumber'] || ''
 
               this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '' });
+               if (this.cityName == "sikar") {
+                if (cardNumber == "") {
+                  let detail = this.markerListIncluded.find(item => item.index == index);
+                  if (detail != undefined) {
+                    detail.status = "";
+                  }
+                }
+                else {
+                  this.getCardPaymentStatus(cardNumber, index, "otherMarkerList");
+                }
+              }
+              
               this.getUsername(index, userId, zoneNo, lineNo);
               this.getApproveUsername(ApproveId, index, zoneNo, lineNo);
             }
@@ -1111,7 +1159,7 @@ export class HouseMarkingComponent {
 
     }
     else if (type == "modifiedMarker") {
-       this.openPopUp(content,type);
+      this.openPopUp(content, type);
       this.getMarkersList(content, type);
     }
 
@@ -1126,37 +1174,37 @@ export class HouseMarkingComponent {
       }
     }
   }
-openPopUp(content: any, type: any) {
-  const modalRef = this.modalService.open(content, {
-    size: 'lg',
-    windowClass: 'marker-approval-modal',
-  });
-
-  const windowHeight = $(window).height();
-  const windowWidth = $(window).width();
-  const width = windowWidth - 100;
-  const height = (windowHeight * 90) / 100;
-  const marginTop = Math.max(0, (windowHeight - height) / 2) + 'px';
-  const divHeight = (height - (type === 'approvedMarker' ? 200 : 100)) + 'px';
-
-  setTimeout(() => {
-    const $modal = $('.marker-approval-modal .modal-content');
-
-    $modal.parent().css({
-      'max-width': width + 'px',
-      'margin-top': marginTop
+  openPopUp(content: any, type: any) {
+    const modalRef = this.modalService.open(content, {
+      size: 'lg',
+      windowClass: 'marker-approval-modal',
     });
 
-    $modal.css({
-      height: height + 'px',
-      width: width + 'px'
-    });
+    const windowHeight = $(window).height();
+    const windowWidth = $(window).width();
+    const width = windowWidth - 100;
+    const height = (windowHeight * 90) / 100;
+    const marginTop = Math.max(0, (windowHeight - height) / 2) + 'px';
+    const divHeight = (height - (type === 'approvedMarker' ? 200 : 100)) + 'px';
 
-    $('.marker-approval-modal .modal-dialog-centered').css('margin-top', marginTop);
-    $('#divStatus').css('height', divHeight);
-    $('#divStatusHeight').val(divHeight);
-  }, 0);
-}
+    setTimeout(() => {
+      const $modal = $('.marker-approval-modal .modal-content');
+
+      $modal.parent().css({
+        'max-width': width + 'px',
+        'margin-top': marginTop
+      });
+
+      $modal.css({
+        height: height + 'px',
+        width: width + 'px'
+      });
+
+      $('.marker-approval-modal .modal-dialog-centered').css('margin-top', marginTop);
+      $('#divStatus').css('height', divHeight);
+      $('#divStatusHeight').val(divHeight);
+    }, 0);
+  }
 
 
   closeModel() {
@@ -1318,7 +1366,7 @@ openPopUp(content: any, type: any) {
                   }
                 }
                 else {
-                   newMarkerList.push({ zoneNo: key["zoneNo"], lineNo: key["lineNo"], index: key["index"], lat: key["lat"], lng: key["lng"], alreadyInstalled: key["alreadyInstalled"], imageName: key["imageName"], type: key["type"], imageUrl: key["imageUrl"], status: key, markerId: key["markerId"], userId: key["userId"], date: key["date"], statusClass: key["statusClass"], isRevisit: key["isRevisit"], cardNumber: key["cardNumber"], houseTypeId: key["houseTypeId"], isApprove: key["isApprove"], servingCount: key["servingCount"], approveDate: key["approveDate"], markingBy: key["markingBy"], ApproveId: key["ApproveId"], approveName: key["approveName"], modifiedHouseTypeHistoryId: key["modifiedHouseTypeHistoryId"], ownerName: key["ownerName"], persons: key["persons"], totalEntity: key["totalEntity"], markerRemark: key["markerRemark"], mobileNo: key["mobileNo"], houseNo: key["houseNo"], address: key["address"], streetColony: key["streetColony"], buildingName: key["buildingName"], totalHouses: key["totalHouses"], totalPerson: key["totalPerson"], wardNumber: key["wardNumber"], markerUpdateId: key["markerUpdateId"] })
+                  newMarkerList.push({ zoneNo: key["zoneNo"], lineNo: key["lineNo"], index: key["index"], lat: key["lat"], lng: key["lng"], alreadyInstalled: key["alreadyInstalled"], imageName: key["imageName"], type: key["type"], imageUrl: key["imageUrl"], status: key, markerId: key["markerId"], userId: key["userId"], date: key["date"], statusClass: key["statusClass"], isRevisit: key["isRevisit"], cardNumber: key["cardNumber"], houseTypeId: key["houseTypeId"], isApprove: key["isApprove"], servingCount: key["servingCount"], approveDate: key["approveDate"], markingBy: key["markingBy"], ApproveId: key["ApproveId"], approveName: key["approveName"], modifiedHouseTypeHistoryId: key["modifiedHouseTypeHistoryId"], ownerName: key["ownerName"], persons: key["persons"], totalEntity: key["totalEntity"], markerRemark: key["markerRemark"], mobileNo: key["mobileNo"], houseNo: key["houseNo"], address: key["address"], streetColony: key["streetColony"], buildingName: key["buildingName"], totalHouses: key["totalHouses"], totalPerson: key["totalPerson"], wardNumber: key["wardNumber"], markerUpdateId: key["markerUpdateId"] })
                 }
               }
               this.markerListIncluded = newMarkerList;
