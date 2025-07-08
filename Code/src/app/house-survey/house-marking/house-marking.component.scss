@@ -14,7 +14,7 @@
     position: fixed;
     left: 90px;
     top: 10px;
-    z-index: 1;
+    //z-index: 1;
     overflow: hidden;
     box-shadow: 0 4px 30px #0000001a;
 
@@ -538,6 +538,7 @@
     display: flex;
     width: 100%;
     gap: 10px;
+    justify-content: space-between;
 
     span {
         font-family: $fontGraphikMedium;
@@ -548,15 +549,16 @@
     font-size: 11px;
     color: $lightBlack;
     font-family: $fontGraphik;
-    width: 72px;
+    width: 77px;
 }
 
 .survey-info-right {
     font-size: 11px;
-    color: $black70;
-    font-family: $fontGraphik;
-    width: calc(100% - 72px);
+    color: $darkBlack;
+    font-family: $fontGraphikMedium;
+    width: calc(100% - 77px);
     display: flex;
+
 }
 
 .data-left {
@@ -738,14 +740,14 @@
     font-size: 11px;
     color: $lightBlack;
     font-family: $fontGraphik;
-    width: 65px;
+    width: 77px;
 }
 
 .include-info-right {
     font-size: 11px;
-    color: $black70;
-    font-family: $fontGraphik;
-    width: calc(100% - 65px);
+    color: $darkBlack;
+    font-family: $fontGraphikMedium;
+    width: calc(100% - 77px);
     display: flex;
 }
 

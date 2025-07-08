@@ -102,8 +102,8 @@ export class WardMarkingSummaryComponent implements OnInit {
         markerSummaryInstance.unsubscribe();
         if (data != null) {
           this.markerData.lastUpdate = data["markerSummarylastUpdate"];
-          this.markerData.totalHouses = this.userIsExternal ? data["actualTotalHouses"]?data["actualTotalHouses"]:data["totalHouses"] : data["totalHouses"];
-          this.markerData.totalMarkers = this.userIsExternal ? data["actualTotalMarkers"]?data["actualTotalMarkers"]:data["totalMarkers"] : data["totalMarkers"];
+          this.markerData.totalHouses = this.userIsExternal ? data["actualTotalHouses"] ? data["actualTotalHouses"] : data["totalHouses"] : data["totalHouses"];
+          this.markerData.totalMarkers = this.userIsExternal ? data["actualTotalMarkers"] ? data["actualTotalMarkers"] : data["totalMarkers"] : data["totalMarkers"];
 
         }
       }
@@ -239,50 +239,42 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Ward";
       htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Total Area of the plot";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Vacant Area";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Plinth Area";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Total Build-Up Area";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "No of Floors/Stories";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Land Type";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Under Ground (In Square Feet)";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Ground Floor (In Square Feet)";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "First Floor ((In Square Feet)";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Second Floor (In Square Feet)";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Third Floor (In Square Feet)";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Total Area";
-      htmlString += "</td>";
-      // if (this.cityName == "jodhpur") {
-      //   htmlString += "<td>";
-      //   htmlString += "Owner Name";
-      //   htmlString += "</td>";
-      //   htmlString += "<td>";
-      //   htmlString += "No. of Persons";
-      //   htmlString += "</td>";
-      // }
+      if (this.cityName == "ajmer") {
+        htmlString += "<td>";
+        htmlString += "Land Type";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Plot Length";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Plot Breadth";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Total Area of the plot";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Vacant Area";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Plinth Area";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Total Build-Up Area";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Under Ground (In Square Feet)";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Ground Floor (In Square Feet)";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "No of Floors/Stories";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Total Area";
+        htmlString += "</td>";
+      }
+
       htmlString += "<td>";
       htmlString += "</tr>";
       for (let i = 0; i < this.markerExportList.length; i++) {
@@ -332,50 +324,41 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["wardNumber"];
         htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["totalAreaOfPlot"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["vacantArea"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["plinthArea"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["totalBuildupArea"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["totalFloor"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["landType"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["underGroundArea"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["groundFloorArea"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["firstFloorArea"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["secondFloorArea"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["thirdFloorArea"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.markerExportList[i]["totalArea"];
-        htmlString += "</td>";
-        // if (this.cityName == "jodhpur") {
-        //   htmlString += "<td>";
-        //   htmlString += this.markerExportList[i]["ownerName"];
-        //   htmlString += "</td>";
-        //   htmlString += "<td>";
-        //   htmlString += this.markerExportList[i]["persons"];
-        //   htmlString += "</td>";
-        // }
+        if (this.cityName == "ajmer") {
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["landType"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["plotLength"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["plotDepth"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["totalAreaOfPlot"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["vacantArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["plinthArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["totalBuildupArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["underGroundArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["groundFloorArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["totalFloor"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["totalArea"];
+          htmlString += "</td>";
+        }
         htmlString += "</tr>";
       }
       htmlString += "<table>";
@@ -420,18 +403,34 @@ export class WardMarkingSummaryComponent implements OnInit {
                     const buildingName = lineData[markerNo]['buildingName'] || '';
                     const totalHouses = lineData[markerNo]['totalHouses'] || '';
                     const wardNumber = lineData[markerNo]['wardNumber'] || '';
-                    const totalAreaOfPlot = lineData[markerNo]['totalAreaOfPlot'] || '';
-                    const vacantArea = lineData[markerNo]['vacantArea'] || '';
-                    const plinthArea = lineData[markerNo]['plinthArea'] || '';
-                    const totalBuildupArea = lineData[markerNo]['totalBuildupArea'] || '';
-                    const totalFloor = lineData[markerNo]['totalFloor'] || '';
-                    const landType = lineData[markerNo]['landType'] || '';
-                    const underGroundArea = lineData[markerNo]['underGroundArea'] || '';
-                    const groundFloorArea = lineData[markerNo]['groundFloorArea'] || '';
-                    const firstFloorArea = lineData[markerNo]['firstFloorArea'] || '';
-                    const secondFloorArea = lineData[markerNo]['secondFloorArea'] || '';
-                    const thirdFloorArea = lineData[markerNo]['thirdFloorArea'] || '';
-                    const totalArea = lineData[markerNo]['totalArea'] || '';
+                    let totalAreaOfPlot = lineData[markerNo]['totalAreaOfPlot'] || '';
+                    let vacantArea = lineData[markerNo]['vacantArea'] || '';
+                    let plinthArea = lineData[markerNo]['plinthArea'] || '';
+                    let totalBuildupArea = lineData[markerNo]['totalBuildupArea'] || '';
+                    let totalFloor = lineData[markerNo]['totalFloor'] || '';
+                    let landType = lineData[markerNo]['landType'] || '';
+                    let underGroundArea = lineData[markerNo]['underGroundArea'] || '';
+                    let groundFloorArea = lineData[markerNo]['groundFloorArea'] || '';
+                    let plotLength = lineData[markerNo]["plotLength"] || '';
+                    let plotDepth = lineData[markerNo]["plotDepth"] || '';
+
+                    let totalArea = lineData[markerNo]['totalArea'] || '';
+                    if (lineData[markerNo]["BuildingDetails"] != null) {
+                      totalAreaOfPlot = lineData[markerNo]["BuildingDetails"]["totalAreaOfPlot"] ? lineData[markerNo]["BuildingDetails"]["totalAreaOfPlot"] : "";
+                      landType = lineData[markerNo]["BuildingDetails"]["landType"] ? lineData[markerNo]["BuildingDetails"]["landType"] : "";
+                      totalFloor = lineData[markerNo]["BuildingDetails"]["noOfFloors"] ? lineData[markerNo]["BuildingDetails"]["noOfFloors"] : "";
+                      plinthArea = lineData[markerNo]["BuildingDetails"]["plinthArea"] ? lineData[markerNo]["BuildingDetails"]["plinthArea"] : "";
+                      totalBuildupArea = lineData[markerNo]["BuildingDetails"]["totalBuildUpArea"] ? lineData[markerNo]["BuildingDetails"]["totalBuildUpArea"] : "";
+                      vacantArea = lineData[markerNo]["BuildingDetails"]["vacantArea"] ? lineData[markerNo]["BuildingDetails"]["vacantArea"] : "";
+                      underGroundArea = lineData[markerNo]["BuildingDetails"]["underGroundArea"] ? lineData[markerNo]["BuildingDetails"]["underGroundArea"] : "";
+                      groundFloorArea = lineData[markerNo]["BuildingDetails"]["groundFloorArea"] ? lineData[markerNo]["BuildingDetails"]["groundFloorArea"] : "";
+                      totalArea = lineData[markerNo]["BuildingDetails"]["totalArea"] ? lineData[markerNo]["BuildingDetails"]["totalArea"] : "";
+                      plotLength = lineData[markerNo]["BuildingDetails"]["plotLength"] ? lineData[markerNo]["BuildingDetails"]["plotLength"] : "";
+                      plotDepth = lineData[markerNo]["BuildingDetails"]["plotDepth"] ? lineData[markerNo]["BuildingDetails"]["plotDepth"] : "";
+                    }
+
+
+
                     let cardNumber = "";
                     let vertualMarkerID = "";
                     if (lineData[markerNo]["cardNumber"] != null) {
@@ -473,7 +472,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                               dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                               this.db.object(dbPath).update({ address: address });
                             }
-                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, totalAreaOfPlot, vacantArea, plinthArea, totalBuildupArea, totalFloor, landType, underGroundArea, groundFloorArea, firstFloorArea, secondFloorArea, thirdFloorArea, totalArea });
+                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
                           }
                         );
                       }
@@ -481,11 +480,11 @@ export class WardMarkingSummaryComponent implements OnInit {
                         address = this.markerCityName;
                         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                         this.db.object(dbPath).update({ address: address });
-                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, totalAreaOfPlot, vacantArea, plinthArea, totalBuildupArea, totalFloor, landType, underGroundArea, groundFloorArea, firstFloorArea, secondFloorArea, thirdFloorArea, totalArea });
+                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
                       }
                     }
                     else {
-                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, totalAreaOfPlot, vacantArea, plinthArea, totalBuildupArea, totalFloor, landType, underGroundArea, groundFloorArea, firstFloorArea, secondFloorArea, thirdFloorArea, totalArea });
+                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
                     }
                   }
                 }
@@ -540,9 +539,9 @@ export class WardMarkingSummaryComponent implements OnInit {
             this.wardProgressList[index]["cssClass"] = "marking-done";
           }
 
-          if(this.cityName=="jaipur-malviyanagar"){
-            this.markerData.totalMarkers=Number(this.markerData.totalMarkers)+Number(this.wardProgressList[index]["markers"]);
-            this.markerData.totalHouses=Number(this.markerData.totalHouses)+Number(this.wardProgressList[index]["houses"]);
+          if (this.cityName == "jaipur-malviyanagar") {
+            this.markerData.totalMarkers = Number(this.markerData.totalMarkers) + Number(this.wardProgressList[index]["markers"]);
+            this.markerData.totalHouses = Number(this.markerData.totalHouses) + Number(this.wardProgressList[index]["houses"]);
           }
 
 

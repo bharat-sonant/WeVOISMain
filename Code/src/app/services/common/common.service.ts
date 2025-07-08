@@ -547,7 +547,7 @@ export class CommonService {
       backgroundColor: "none",
       mapTypeControl: true,
       fullscreenControl: false,
-      streetViewControl: false,
+      streetViewControl: true,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
 
     };
