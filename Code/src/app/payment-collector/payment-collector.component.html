@@ -23,7 +23,7 @@
         <div class="header-left">
          Manage Payment Collector
             <!-- Breadcrumb starts -->
-            <nav class="breadcrumb">
+            <!-- <nav class="breadcrumb">
                 <ul class="ul-breadcrumb">
                     <li class="li-breadcrumb">
                         <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']">Home</a>
@@ -35,7 +35,7 @@
                         <a class="link-breadcrumb" href="#">Payment Collector</a>
                    
                 </ul>
-            </nav>
+            </nav> -->
 
             <!-- Breadcrumb ends -->
         </div>
@@ -376,13 +376,15 @@
 
 <!--employee  Start-->
 <ng-template #contentEmployee>
-    <div class="modal-dialog modal-dialog-width  modal-dialog-centered" role="document">
-        <div class="modal-content modal-content-width">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
-                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
+                <button type="button" class="close" (click)="closeModel();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body pb-0">
                 <input id="key" type="hidden" value="0" />
                 <div class="wrap-input-effects" required>
                     <input type="text" id="txtName" class="input-green" placeholder="Name" autocomplete="off" />
@@ -411,22 +413,16 @@
 
                     </span>
                 </div>
-                <div class="wrap-input-effects fileUploading" required>
+                <div class="wrap-input-effects" required>
                     <input id="fileUpload" type="file" (change)="getFileName();" accept="image/*">
-
                 </div>
                 <div class="wrap-input-effects" required>
                     <input class="active-input" type="checkbox" id="chkAcive"> Is Active
 
                 </div>
-                <!-- <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" 
-                    (click)="saveEmployee();" /> -->
-                <div class="modal-footer ">
-                    <button type="button" class="btn btn-success submit-btn saveEmployee-input"
-                        (click)="saveEmployee();">SUBMIT</button>
-                </div>
+                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
+                    (click)="saveEmployee();" />
             </div>
-
         </div>
     </div>
 </ng-template>
