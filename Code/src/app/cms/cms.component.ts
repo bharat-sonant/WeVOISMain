@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Renderer2 } from "@angular/core";
 import { AngularFireDatabase } from "angularfire2/database";
 import { CommonService } from "../services/common/common.service";
 import { FirebaseService } from "../firebase.service";
@@ -20,7 +20,8 @@ export class CmsComponent implements OnInit {
     public fs: FirebaseService,
     private commonService: CommonService,
     public actRoute: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    private renderer: Renderer2
   ) { }
 
   isShow = false;
@@ -30,6 +31,7 @@ export class CmsComponent implements OnInit {
   cityName: any;
   db: any;
   isDehradun: boolean;
+  pageList: any[] = [];
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
@@ -50,8 +52,8 @@ export class CmsComponent implements OnInit {
   }
 
   getPages(pageId: any) {
-    this.clearAll();
     this.accessList = [];
+    this.pageList=[];
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       if (this.cityName == "dehradun" || this.cityName == "test") {
@@ -65,66 +67,31 @@ export class CmsComponent implements OnInit {
       let k = 0;
       for (let i = 0; i < userAccessList.length; i++) {
         if (userAccessList[i]["parentId"] == pageId && userAccessList[i]["userId"] == this.userid && userAccessList[i]["city"] == this.cityName) {
-          k = k + 1;
-          this.setLink(k, userAccessList, i);
+          this.pageList.push({ name: userAccessList[i]["name"], img: userAccessList[i]["img"], url: userAccessList[i]["url"], pageId: userAccessList[i]["pageId"] });
         }
       }
     }
   }
 
-  setLink(k: any, userAccessList: any, i: any) {
-    let element = <HTMLElement>document.getElementById("div" + k);
-    if (element != undefined) {
-      $("#div" + k).show();
-      $("#span" + k).html(userAccessList[i]["name"]);
-      // let className = $("#icon" + k).attr("class");
-      // $("#icon" + k).addClass(className);
-      let imgElement = <HTMLImageElement>document.getElementById("icon" + k);
-      imgElement.src = userAccessList[i]["img"];
-      // $("#icon" + k).addClass(userAccessList[i]["img"]);
-      if (element != null) {
-        element.addEventListener("click", (e) => {
-          if (userAccessList[i]["url"].toString().includes("https")) {
-            if (localStorage.getItem("cityName") == "ajmer" && userAccessList[i]["pageId"] == "10A19") {
-              this.goToOuterURL(userAccessList[i]["url"]+"s");
-            }
-            else {
-              this.goToOuterURL(userAccessList[i]["url"]);
-            }
-          }
-          else {
-            if (localStorage.getItem("cityName") == "ajmer" && userAccessList[i]["pageId"] == "2Y" && localStorage.getItem("userType") == "External User") {
-              let url = "/ward-route-tracking";
-              this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + url);
-            }
-            else {
-              this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
-            }
-          }
-        });
+  goToURL(url: any, pageId: any) {
+    if (url.toString().includes("https")) {
+      if (localStorage.getItem("cityName") == "ajmer" && pageId == "10A19") {
+        this.goToOuterURL(url + "s");
+      }
+      else {
+        this.goToOuterURL(url);
+      }
+    }
+    else {
+      if (localStorage.getItem("cityName") == "ajmer" && pageId == "2Y" && localStorage.getItem("userType") == "External User") {
+        let url1 = "/ward-route-tracking";
+        this.getPage("/" + this.cityName + "/" +pageId + url1);
+      }
+      else {
+        this.getPage("/" + this.cityName + "/" + pageId + url);
       }
     }
 
-    element = <HTMLElement>document.getElementById("divMob" + k);
-    if (element != undefined) {
-      $("#divMob" + k).show();
-      $("#spanMob" + k).html(userAccessList[i]["name"]);
-      // let className = $("#iconMob" + k).attr("class");
-      // $("#iconMob" + k).removeClass(className);
-      let imgElement = <HTMLImageElement>document.getElementById("iconMob" + k);
-      imgElement.src = userAccessList[i]["img"];
-      // $("#iconMob" + k).addClass(userAccessList[i]["img"]);
-      if (element != null) {
-        element.addEventListener("click", (e) => {
-          if (userAccessList[i]["url"].toString().includes("https")) {
-            this.goToOuterURL(userAccessList[i]["url"]);
-          }
-          else {
-            this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
-          }
-        });
-      }
-    }
   }
 
   goToOuterURL(url: any) {
@@ -147,13 +114,6 @@ export class CmsComponent implements OnInit {
       const id = list[list.length - 1];
       let pageList = id.split("-");
       this.getPages(pageList[pageList.length - 1]);
-    }
-  }
-
-  clearAll() {
-    for (let k = 1; k <= 30; k++) {
-      $("#div" + k).hide();
-      $("#divMob" + k).hide();
     }
   }
 }
