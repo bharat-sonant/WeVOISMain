@@ -323,7 +323,7 @@ export class WardSurveySummaryComponent implements OnInit {
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
                 if (parseInt(markerNo)) {
-                  isMarker = true;
+                  isMarker = true;                 
 
                   let userId = lineData[markerNo]["userId"] ? parseInt(lineData[markerNo]["userId"]) : null;
                   let internalUser = userId != -4 ? true : false;
@@ -519,6 +519,15 @@ export class WardSurveySummaryComponent implements OnInit {
                     this.duplicateHouseCardList.push({ cardNo: cardNo });
                   }
                   cardsCount++;
+
+                  let entityTypeForCheck = "";
+                  let houseTypeDetail = this.houseTypeList.find(item => item.id == cardObj[cardNo]["houseType"]);
+                  if (houseTypeDetail != undefined) {
+                    entityTypeForCheck = houseTypeDetail.entityType;
+                  }
+
+
+
                   if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
                     complexCount = complexCount + 1;
                     actualComplexCount += internalUser ? 1 : 0; //to update actual count data
@@ -545,7 +554,7 @@ export class WardSurveySummaryComponent implements OnInit {
                   } else {
                     houseCount = houseCount + 1;
                     actualHouseCount += internalUser ? 1 : 0;  //to update actual count data
-                    if (cardObj[cardNo]["houseType"] == "1") {
+                    if (entityTypeForCheck == "residential") {
                       residencialCount = residencialCount + 1;
                       actualResidencialCount += internalUser ? 1 : 0; //to update actual count data
                     }
@@ -1645,7 +1654,7 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
 
-  getZoneHouseTypeList(content: any) {
+  getZoneHouseTypeList() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
     this.zoneHouseTypeList = [];
 

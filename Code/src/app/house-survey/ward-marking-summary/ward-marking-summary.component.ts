@@ -102,9 +102,6 @@ export class WardMarkingSummaryComponent implements OnInit {
         markerSummaryInstance.unsubscribe();
         if (data != null) {
           this.markerData.lastUpdate = data["markerSummarylastUpdate"];
-          this.markerData.totalHouses = this.userIsExternal ? data["actualTotalHouses"] ? data["actualTotalHouses"] : data["totalHouses"] : data["totalHouses"];
-          this.markerData.totalMarkers = this.userIsExternal ? data["actualTotalMarkers"] ? data["actualTotalMarkers"] : data["totalMarkers"] : data["totalMarkers"];
-
         }
       }
     );
@@ -539,10 +536,10 @@ export class WardMarkingSummaryComponent implements OnInit {
             this.wardProgressList[index]["cssClass"] = "marking-done";
           }
 
-          if (this.cityName == "jaipur-malviyanagar") {
+         // if (this.cityName == "jaipur-malviyanagar") {
             this.markerData.totalMarkers = Number(this.markerData.totalMarkers) + Number(this.wardProgressList[index]["markers"]);
             this.markerData.totalHouses = Number(this.markerData.totalHouses) + Number(this.wardProgressList[index]["houses"]);
-          }
+         // }
 
 
 
