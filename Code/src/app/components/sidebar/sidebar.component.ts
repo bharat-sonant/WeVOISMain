@@ -622,8 +622,6 @@ export class SidebarComponent implements OnInit {
 
   getPage(value: any) {
     this.checkLoginDate();
-    this.userid = localStorage.getItem("userID");
-    CmsComponent.prototype.userid = this.userid;
     let list = value.split("/");
     if (list.length <= 2) {
       this.router.navigate([value], { replaceUrl: true });
@@ -633,11 +631,16 @@ export class SidebarComponent implements OnInit {
       const id = list[list.length - 1];
       let pageList = id.split("-");
       this.getPages(pageList[pageList.length - 1]);
+     // CmsComponent.prototype.ngOnInit();
     }
   }
 
   getPages(pageId: any) {
     CmsComponent.prototype.accessList = [];
+    CmsComponent.prototype.pageList=[];
+   // CmsComponent.prototype.getPages(pageId);
+
+    
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       let detail = userAccessList.find((item) => item.pageId == pageId);
@@ -653,10 +656,11 @@ export class SidebarComponent implements OnInit {
           userAccessList[i]["userId"] == this.userid &&
           userAccessList[i]["city"] == this.cityName
         ) {
+          CmsComponent.prototype.pageList.push({ name: userAccessList[i]["name"], img: userAccessList[i]["img"], url: userAccessList[i]["url"], pageId: userAccessList[i]["pageId"] });
           if (userAccessList[i]["url"].toString().includes("https")) {
             if (this.cityName == "test") {
               k = k + 1;
-              this.setLink(k, userAccessList, i);
+             // this.setLink(k, userAccessList, i);
             }
             else if (this.cityName == "dehradun") {
               let url = userAccessList[i]["url"];
@@ -668,24 +672,23 @@ export class SidebarComponent implements OnInit {
               }
               if (isLink == true) {
                 k = k + 1;
-                this.setLink(k, userAccessList, i);
+              //  this.setLink(k, userAccessList, i);
               }
-              /*
-              k = k + 1;
-              this.setLink(k, userAccessList, i);*/
+             
             }
             else {
               k = k + 1;
-              this.setLink(k, userAccessList, i);
+             // this.setLink(k, userAccessList, i);
             }
           }
           else {
             k = k + 1;
-            this.setLink(k, userAccessList, i);
+           // this.setLink(k, userAccessList, i);
           }
         }
       }
     }
+    
   }
 
   setLink(k: any, userAccessList: any, i: any) {

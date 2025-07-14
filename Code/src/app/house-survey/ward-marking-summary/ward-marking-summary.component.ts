@@ -85,7 +85,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.isShowEntityExport = false;
     }
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
-      this.isActionShow = false;
+      //this.isActionShow = false;
     }
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.getMarkerSummary();

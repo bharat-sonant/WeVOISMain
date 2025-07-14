@@ -215,6 +215,7 @@ export class WardWorkTrackingComponent {
         return "#F14723";
     }
   }
+  
 
   showHideNearByWard() {
     localStorage.setItem("wardWorkTrackingNearByWardShow", (<HTMLInputElement>document.getElementById("chkIsNearByWard")).checked.toString());

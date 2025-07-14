@@ -75,7 +75,7 @@ export class WardSurveySummaryComponent implements OnInit {
     this.isActionShow = true;
     this.userIsExternal = localStorage.getItem("userType") == "External User" ? true : false;
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
-      this.isActionShow = false;
+      //this.isActionShow = false;
     }
 
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);

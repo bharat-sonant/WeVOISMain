@@ -185,6 +185,7 @@ export class PaymentCollectorComponent implements OnInit {
             }
           });
           Promise.all(promise).then(resp => {
+            collectionList = collectionList.sort((a, b) => b.timeStamp > a.timeStamp ? -1 : 1);
             this.getEntityCollection(empId, collectionList, totalCollectionAmount);
           });
         }
@@ -205,6 +206,7 @@ export class PaymentCollectorComponent implements OnInit {
           let dateArray = Object.keys(dateData);
           for (let n = 0; n < dateArray.length; n++) {
             let date = dateArray[n];
+            let timeStamp = new Date(date).getTime();
             let totalAmount = 0;
             let detail = collectionList.find(item => item.date == date);
             if (detail != undefined) {
@@ -240,7 +242,7 @@ export class PaymentCollectorComponent implements OnInit {
                     detailArray.push({ cardNo: dateData[date][key]["cardNo"], merchantTransactionId: dateData[date][key]["merchantTransactionId"], payMethod: dateData[date][key]["payMethod"], retrievalReferenceNo: dateData[date][key]["retrievalReferenceNo"], transactionAmount: dateData[date][key]["transactionAmount"] });
                   }
                 }
-                collectionList.push({ date: date, displayDate: this.commonService.convertDateWithMonthName(date), collection: totalAmount.toFixed(2), detailArray: detailArray });
+                collectionList.push({ date: date, displayDate: this.commonService.convertDateWithMonthName(date), collection: totalAmount.toFixed(2), detailArray: detailArray, timeStamp: timeStamp });
               }
             }
           }
@@ -250,6 +252,7 @@ export class PaymentCollectorComponent implements OnInit {
       let detail = this.userList.find(item => item.empId == empId);
       if (detail != undefined) {
         detail.collectedAmount = totalCollectionAmount.toFixed(2);
+        collectionList = collectionList.sort((a, b) => b.timeStamp > a.timeStamp ? -1 : 1);
         detail.collectionList = collectionList;
         this.collectionData.sumTotalCollection = (Number(this.collectionData.sumTotalCollection) + totalCollectionAmount).toFixed(2);
       }
