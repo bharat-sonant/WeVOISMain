@@ -5,7 +5,11 @@
   z-index: 1000;
   transition: 0.5s;
 }
-
+.custom-sidebar-scroll{
+  height: calc(100vh - 30px);
+    overflow: auto !important;
+    overflow-x: hidden !important;
+}
 .sidebar-wrapper:hover {
   width: 250px;
   overflow: visible;
