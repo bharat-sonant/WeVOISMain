@@ -321,6 +321,9 @@ export class CommonService {
     else if (cityName == "dei-bundi") {
       cardPrefix = "DEI";
     }
+    else if (cityName == "biofics-surat") {
+      cardPrefix = "BIO";
+    }
     return cardPrefix;
   }
 
@@ -533,6 +536,9 @@ export class CommonService {
     }
     else if (cityName == "dei-bundi") {
       latLng.push({ lat: 25.6761984, lng: 75.9133425 });
+    }
+    else if (cityName == "biofics-surat") {
+      latLng.push({ lat: 21.1544467, lng: 72.8075473 });
     }
     return latLng;
   }

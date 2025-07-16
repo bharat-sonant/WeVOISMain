@@ -41,31 +41,11 @@ export class PortalAccessComponent implements OnInit {
       } else if (this.accessCity[i]["city"] == "kishangarh") {
         $("#kishangarhBox").show();
         isBaseCity = true;
-      } else if (this.accessCity[i]["city"] == "niwai") {
-        $("#niwaiBox").show();
-        isBaseCity = true;
-      } else if (this.accessCity[i]["city"] == "jaisalmer") {
-        $("#jaisalmerBox").show();
-        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "salasar") {
         $("#salasarBox").show();
         //isBaseCity = true;
-      } else if (this.accessCity[i]["city"] == "behror") {
-        $("#behrorBox").show();
-        isBaseCity = true;
-      } else if (this.accessCity[i]["city"] == "bhiwadi") {
-        $("#bhiwadiBox").show();
-      } else if (this.accessCity[i]["city"] == "chhapar") {
-        $("#chhaparBox").show();
-        isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "chirawa") {
         $("#chirawaBox").show();
-        isBaseCity = true;
-      } else if (this.accessCity[i]["city"] == "churu") {
-        $("#churuBox").show();
-        isBaseCity = true;
-      } else if (this.accessCity[i]["city"] == "gwalior") {
-        $("#gwaliorBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "tonk") {
         $("#tonkBox").show();
@@ -102,9 +82,6 @@ export class PortalAccessComponent implements OnInit {
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "pali") {
         $("#paliBox").show();
-        isBaseCity = true;
-      } else if (this.accessCity[i]["city"] == "phulwari-sharif") {
-        $("#phulwariBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "sujangarh") {
         $("#sujangarhBox").show();
@@ -189,6 +166,9 @@ export class PortalAccessComponent implements OnInit {
         isBaseCity = true;
       }else if (this.accessCity[i]["city"] == "dei-bundi") {
         $("#deibundiBox").show();
+        isBaseCity = true;
+      }else if (this.accessCity[i]["city"] == "biofics-surat") {
+        $("#bioficsSuratBox").show();
         isBaseCity = true;
       } else if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar" || this.accessCity[i]["city"] == "jaipur-civil-line" || this.accessCity[i]["city"] == "jaipur-kishanpole") {
         $("#jaipurBox").show();

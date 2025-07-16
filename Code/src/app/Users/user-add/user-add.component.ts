@@ -189,8 +189,11 @@ export class UserAddComponent implements OnInit {
         for (let i = 0; i < list.length; i++) {
           let city = list[i].trim();
           if (city != "") {
-            let chkCity = "chkCity" + city;
-            (<HTMLInputElement>(document.getElementById(chkCity))).checked = true;
+            let detail = this.cityList.find(item => item.city == city);
+            if (detail != undefined) {
+              let chkCity = "chkCity" + city;
+              (<HTMLInputElement>(document.getElementById(chkCity))).checked = true;
+            }
           }
         }
       }
@@ -281,12 +284,12 @@ export class UserAddComponent implements OnInit {
     let isAttendanceApprover: any = 0;
     let canUpdateEmployeeDetail: any = 0;
     let canUpdateOpendepotPickDetail: any = 0;
-    let canUpdateLeaveBalance:any=0;
-    let canViewAttendance:any=0;
-    let canUpdateDustbinPickDetail:any=0;
-    let canRemoveNotPickedDustbin:any=0;
-    let canAccessBIDashboard:any=0;
-    let canAddWardDutyOn:any=0;
+    let canUpdateLeaveBalance: any = 0;
+    let canViewAttendance: any = 0;
+    let canUpdateDustbinPickDetail: any = 0;
+    let canRemoveNotPickedDustbin: any = 0;
+    let canAccessBIDashboard: any = 0;
+    let canAddWardDutyOn: any = 0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -382,13 +385,13 @@ export class UserAddComponent implements OnInit {
       accessCities: accessCities,
       isAttendanceApprover: isAttendanceApprover,
       canUpdateEmployeeDetail: canUpdateEmployeeDetail,
-      canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
-      canUpdateLeaveBalance:canUpdateLeaveBalance,
-      canViewAttendance:canViewAttendance,
-      canUpdateDustbinPickDetail:canUpdateDustbinPickDetail,
-      canRemoveNotPickedDustbin:canRemoveNotPickedDustbin,
-      canAccessBIDashboard:canAccessBIDashboard,
-      canAddWardDutyOn:canAddWardDutyOn
+      canUpdateOpendepotPickDetail: canUpdateOpendepotPickDetail,
+      canUpdateLeaveBalance: canUpdateLeaveBalance,
+      canViewAttendance: canViewAttendance,
+      canUpdateDustbinPickDetail: canUpdateDustbinPickDetail,
+      canRemoveNotPickedDustbin: canRemoveNotPickedDustbin,
+      canAccessBIDashboard: canAccessBIDashboard,
+      canAddWardDutyOn: canAddWardDutyOn
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

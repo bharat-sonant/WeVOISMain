@@ -164,9 +164,10 @@ export class HouseMarkingComponent {
         for (let i = 1; i < keyArray.length; i++) {
           let id = keyArray[i];
           let houseType = data[id]["name"].toString().split("(")[0];
-          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"] });
+          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"],icon:data[id]["iconImage"]?data[id]["iconImage"]:"" });
         }
       }
+      console.log(this.houseTypeList)
     });
   }
 
@@ -544,9 +545,11 @@ export class HouseMarkingComponent {
                 alreadyCard = "(कार्ड पहले से लगा हुआ है) ";
               }
               let houseType = "";
+              let iconImage="";
               let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
               if (houseTypeDetail != undefined) {
                 houseType = houseTypeDetail.houseType;
+                iconImage=houseTypeDetail.icon;
               }
               const mobileNo = data[index]['mobileNumber'] || ''
               const houseNo = data[index]['houseNumber'] || ''
@@ -569,6 +572,9 @@ export class HouseMarkingComponent {
                 }
               }
               let markerURL = this.getMarkerIcon(type);
+              if(iconImage!=""){
+                markerURL="../assets/img/"+iconImage;
+              }
               this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
               this.getUsername(index, userId, this.selectedZone, lineNo);
               this.getApproveUsername(ApproveId, index, this.selectedZone, lineNo);
@@ -587,6 +593,29 @@ export class HouseMarkingComponent {
       }
 
     });
+  }
+
+  
+  getMarkerIcon(type: any) {
+    let url = "../assets/img/marking-house.png";
+    if (type == 1 || type == 19 || type == 25) {
+      url = "../assets/img/marking-house.png";
+    } else if (type == 2 || type == 3 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 20) {
+      url = "../assets/img/marking-shop.png";
+    } else if (type == 14 || type == 15) {
+      url = "../assets/img/marking-warehouse.png";
+    } else if (type == 21 || type == 22) {
+      url = "../assets/img/marking-institute.png";
+    } else if (type == 4 || type == 5) {
+      url = "../assets/img/marking-hotel.png";
+    } else if (type == 16 || type == 17) {
+      url = "../assets/img/marking-mela.png";
+    } else if (type == 18) {
+      url = "../assets/img/marking-thela.png";
+    } else if (type == 11 || type == 12 || type == 13) {
+      url = "../assets/img/marking-hospital.png";
+    }
+    return url;
   }
 
   getCardPaymentStatus(cardNumber: any, index: any, type: any) {
@@ -2038,27 +2067,6 @@ export class HouseMarkingComponent {
     }
   }
 
-  getMarkerIcon(type: any) {
-    let url = "../assets/img/marking-house.png";
-    if (type == 1 || type == 19 || type == 25) {
-      url = "../assets/img/marking-house.png";
-    } else if (type == 2 || type == 3 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 20) {
-      url = "../assets/img/marking-shop.png";
-    } else if (type == 14 || type == 15) {
-      url = "../assets/img/marking-warehouse.png";
-    } else if (type == 21 || type == 22) {
-      url = "../assets/img/marking-institute.png";
-    } else if (type == 4 || type == 5) {
-      url = "../assets/img/marking-hotel.png";
-    } else if (type == 16 || type == 17) {
-      url = "../assets/img/marking-mela.png";
-    } else if (type == 18) {
-      url = "../assets/img/marking-thela.png";
-    } else if (type == 11 || type == 12 || type == 13) {
-      url = "../assets/img/marking-hospital.png";
-    }
-    return url;
-  }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any, lineApproveStatus: any) {
 

@@ -7,14 +7,14 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-9" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-12" style="padding-left: 0px;padding-right:7px;">
             <div id="divLoader" class="loaderClass">
                 <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
             </div>
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-header custom-header">
                     <div class="row align">
-                        <div class="col-md-5 text-left" style="padding-right:0px!important;">
+                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
                             <div class="row">
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <span id="spMessage"
@@ -30,22 +30,34 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-7 text-center" style="padding-right:0px!important;">
+                        <div class="col-md-9 text-center" style="padding-right:0px!important;">
                             <div class="row">
-                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <div class="col-md-1 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                    <b> {{fuelDetail.totalCNG}}</b>
+                                    <br /><span style="font-size: 10px;"> CNG</span>
+                                </div>
+                                <div class="col-md-1 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                    <b> {{fuelDetail.totalPetrol}}</b>
+                                    <br /><span style="font-size: 10px;"> Petrol</span>
+                                </div>
+                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                    <b> {{fuelDetail.totalDiesel}}</b>
+                                    <br /><span style="font-size: 10px;"> Diesel Qty</span>
+                                </div>
+                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
                                     <b> {{fuelDetail.totalFuel}}</b>
-                                    <br /><span style="font-size: 10px;"> Diesel</span>
+                                    <br /><span style="font-size: 10px;"> Total Fuel</span>
                                 </div>
-                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
                                     <b> {{fuelDetail.totalAmount}}</b>
-                                    <br /><span style="font-size: 10px;"> Diesel Amount</span>
+                                    <br /><span style="font-size: 10px;"> Fuel Amount</span>
                                 </div>
-                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
                                     <b> {{fuelDetail.totalKm}}</b> <br /><span style="font-size: 10px;"> Km
                                         Running</span>
 
                                 </div>
-                                <div class="col-md-3 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
                                     <!-- <i class="fa-solid fa-file-export"
                                         style="cursor:pointer; color:green;  font-size: 24px; "
                                         (click)="exportToExcel();"></i> -->
@@ -69,11 +81,14 @@
                                                 Sr. No.</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Vehicle Number</th>
-                                            <th class="text-right br-1" style="border:none!important;">
-                                                Diesel Qty
+                                            <th class="text-left br-1" style="border:none!important;">
+                                                Fuel Type
                                             </th>
                                             <th class="text-right br-1" style="border:none!important;">
-                                                Diesel Amount
+                                                Fuel Qty
+                                            </th>
+                                            <th class="text-right br-1" style="border:none!important;">
+                                                Fuel Amount
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Ward No.
@@ -96,6 +111,11 @@
                                                 <td class="text-left br-1">
                                                     {{data.vehicle}}
                                                 </td>
+                                                <td class="text-left br-1">
+                                                    <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                                        {{diesel.fuelType}}
+                                                    </div>
+                                                </td>
                                                 <td class="text-right br-1">
                                                     <div style="width:100% " *ngFor="let diesel of data.diesel ">
                                                         {{diesel.qty}}
@@ -116,7 +136,8 @@
                                                                 style="color:#000">
                                                                 <!-- <i class="fa-solid fa-file-invoice"
                                                                     style="font-size: 20px;"></i> -->
-                                                                    <img src="../../../assets/icons/file-invoice-solid.svg" alt="file-invoice-solid" width="20"/>
+                                                                <img src="../../../assets/icons/file-invoice-solid.svg"
+                                                                    alt="file-invoice-solid" width="20" />
                                                             </a>
                                                             &nbsp;
                                                             <a href="{{diesel.meterImageUrl}}" target="_blank"

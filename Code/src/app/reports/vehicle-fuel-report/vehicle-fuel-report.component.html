@@ -104,6 +104,9 @@
                                                             Meter Reading
                                                         </th>
                                                         <th class="text-right" scope="col">
+                                                            Fuel Type
+                                                        </th>
+                                                        <th class="text-right" scope="col">
                                                             Quantity
                                                         </th>
                                                         <th class="text-right" scope="col">
@@ -116,11 +119,15 @@
                                                     <tr *ngFor="let data of vehicleFuelList, let i=index">
                                                         <td class="text-left"
                                                             style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                            {{data.date}}
+                                                            {{data.showDate}}
                                                         </td>
                                                         <td class="text-right"
                                                             style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                             {{data.meterReading}}
+                                                        </td>
+                                                        <td class="text-left"
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            {{data.fuelType}}
                                                         </td>
                                                         <td class="text-right"
                                                             style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
@@ -216,7 +223,7 @@
                                                                 <tr *ngFor="let data of vehicleTrackList, let i=index">
                                                                     <td class="text-left"
                                                                         style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; width: 100px!important;">
-                                                                        {{data.date}}
+                                                                        {{data.showDate}}
                                                                     </td>
                                                                     <td class="text-left"
                                                                         style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">

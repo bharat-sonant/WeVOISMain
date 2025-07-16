@@ -27,11 +27,17 @@ export class MonthlyFuelReportComponent implements OnInit {
   divLoader = "#divLoader";
   isFileSaved: any;
   totalQtyJSON: any;
+  totalCNGQtyJSON: any;
+  totalPetrolQtyJSON: any;
+  totalDieselQtyJSON: any;
   totalAmountJSON: any;
   serviceName = "monthly-fuel-report";
 
   fuelDetail: fuelDetail = {
     totalFuel: "0.00",
+    totalCNGFuel: "0.00",
+    totalPetrolFuel: "0.00",
+    totalDieselFuel: "0.00",
     totalKm: "0.000",
     totalAmount: "0.00",
     lastUpdateDate: "---"
@@ -72,7 +78,7 @@ export class MonthlyFuelReportComponent implements OnInit {
   getVehicles() {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
     for (let i = 3; i < vehicles.length; i++) {
-      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], qty: "0.00", km: "0.000", amount: "0.00", avg: "" });
+      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], qty: "0.00", km: "0.000", amount: "0.00", avg: "", fuelList: [] });
     }
     this.getFuelData();
   }
@@ -103,6 +109,28 @@ export class MonthlyFuelReportComponent implements OnInit {
           this.getVehicleGPSKM(vehicle);
           let vehicleFuelList = list.filter(item => item.vehicle == vehicle);
           if (vehicleFuelList.length > 0) {
+            let fuelList = [];
+            for (let i = 0; i < vehicleFuelList.length; i++) {
+              let fuelType = "";
+              if (vehicleFuelList[i]["fuelType"] != undefined) {
+                fuelType = vehicleFuelList[i]["fuelType"];
+                if (fuelType != "") {
+                  if (fuelList.length == 0) {
+                    fuelList.push({ fuelType: fuelType, qty: Number(vehicleFuelList[i]["quantity"]) });
+                  }
+                  else {
+                    let detail = fuelList.find(item => item.fuelType == fuelType);
+                    if (detail == undefined) {
+                      fuelList.push({ fuelType: fuelType, qty: Number(vehicleFuelList[i]["quantity"]) });
+                    }
+                    else {
+                      detail.qty = Number(detail.qty) + Number(vehicleFuelList[i]["quantity"]);
+                    }
+                  }
+                }
+              }
+            }
+
             let sumQty: number = vehicleFuelList.map(a => Number(a.quantity)).reduce(function (a, b) {
               return a + b;
             });
@@ -111,6 +139,7 @@ export class MonthlyFuelReportComponent implements OnInit {
               return a + b;
             });
             this.vehicleList[i]["amount"] = sumAmount.toFixed(2);
+            this.vehicleList[i]["fuelList"] = fuelList;
           }
         }
         let totalAmount: number = this.vehicleList.map(a => Number(a.amount)).reduce(function (a, b) {
@@ -183,7 +212,10 @@ export class MonthlyFuelReportComponent implements OnInit {
       htmlString += "Vehicle Number";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Diesel Quantity";
+      htmlString += "Fuel Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Fuel Quantity";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Amount";
@@ -199,11 +231,33 @@ export class MonthlyFuelReportComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "</tr>";
 
+
+
       for (let i = 0; i < this.vehicleList.length; i++) {
         htmlString += "<tr>";
         htmlString += "<td>";
         htmlString += this.vehicleList[i]["vehicle"];
         htmlString += "</td>";
+        let list = this.vehicleList[i]["fuelList"];
+        if (list.length > 0) {
+          htmlString += "<td>";
+          let fuelType = "";
+          for (let j = 0; j < list.length; j++) {
+            if (fuelType == "") {
+              fuelType = list[j]["fuelType"] +"-"+ list[j]["qty"];
+            }
+            else {
+              fuelType = fuelType + ", " + list[j]["fuelType"] +"-"+ list[j]["qty"];
+            }
+          }
+          htmlString += fuelType;
+          htmlString += "</td>";
+        }
+        else {
+          htmlString += "<td>";
+          htmlString += "</td>";
+        }
+
         htmlString += "<td>";
         htmlString += this.vehicleList[i]["qty"];
         htmlString += "</td>";
@@ -304,9 +358,6 @@ export class MonthlyFuelReportComponent implements OnInit {
         index++
         this.updateVehicleGPSKMJSON(index, days, vehicle, list);
       });
-
-
-
     }
   }
 
@@ -315,6 +366,9 @@ export class MonthlyFuelReportComponent implements OnInit {
   updateJSONForDieselEntry() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateJSONForDieselEntry");
     this.totalQtyJSON = 0;
+    this.totalCNGQtyJSON = 0;
+    this.totalDieselQtyJSON = 0;
+    this.totalPetrolQtyJSON = 0;
     this.totalAmountJSON = 0;
     let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName;
     let fuelInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -326,6 +380,9 @@ export class MonthlyFuelReportComponent implements OnInit {
           let keyArray = Object.keys(data);
           let totalAmount = 0;
           let totalQuantity = 0;
+          let totalCNGQuantity = 0;
+          let totalPetrolQuantity = 0;
+          let totalDieselQuantity = 0;
           for (let i = 0; i < keyArray.length; i++) {
             let date = keyArray[i];
             let obj = data[date];
@@ -334,11 +391,27 @@ export class MonthlyFuelReportComponent implements OnInit {
               let index = objKeys[j];
               let amount = 0;
               let quantity = 0;
+              let cngQty = 0;
+              let fuelType = "";
+
               let vehicle = obj[index]["vehicle"];
               if (obj[index]["amount"] != null) {
                 amount = Number(obj[index]["amount"]);
               }
               if (obj[index]["quantity"] != null) {
+                if (obj[index]["fuelType"] != null) {
+                  fuelType = obj[index]["fuelType"];
+                  if (obj[index]["fuelType"] == "CNG") {
+
+                    totalCNGQuantity += Number(obj[index]["quantity"]);
+                  }
+                  else if (obj[index]["fuelType"] == "Petrol") {
+                    totalPetrolQuantity += Number(obj[index]["quantity"]);
+                  }
+                  else if (obj[index]["fuelType"] == "Diesel") {
+                    totalDieselQuantity += Number(obj[index]["quantity"]);
+                  }
+                }
                 quantity = Number(obj[index]["quantity"]);
               }
               let meterReading = "00";
@@ -348,13 +421,16 @@ export class MonthlyFuelReportComponent implements OnInit {
               totalAmount = totalAmount + amount;
               totalQuantity = totalQuantity + quantity;
               let orderBy = new Date(date).getTime();
-              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), fuelType: fuelType, quantity: quantity.toFixed(2), meterReading: meterReading });
 
             }
             fuelList = fuelList.sort((a, b) => b.orderBy > a.orderBy ? -1 : 1);
           }
           this.totalAmountJSON = totalAmount;
           this.totalQtyJSON = totalQuantity;
+          this.totalCNGQtyJSON = totalCNGQuantity;
+          this.totalDieselQtyJSON = totalDieselQuantity;
+          this.totalPetrolQtyJSON = totalPetrolQuantity;
           let filePath = "/VehicleFuelJSONData/" + this.selectedYear + "/" + this.selectedMonthName + "/";
           this.commonService.saveJsonFile(fuelList, "VehicleFuel.json", filePath);
         }
@@ -503,7 +579,7 @@ export class MonthlyFuelReportComponent implements OnInit {
           this.fuelDetail.totalFuel = this.totalQtyJSON.toFixed(2);
           let lastUpdateDate = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
           this.fuelDetail.lastUpdateDate = lastUpdateDate;
-          const obj = { "totalKM": totalKM.toFixed(3), "qty": this.totalQtyJSON.toFixed(2), "amount": this.totalAmountJSON.toFixed(2), "lastUpdateDate": lastUpdateDate };
+          const obj = { "totalKM": totalKM.toFixed(3), "qty": this.totalQtyJSON.toFixed(2), "cngQty": this.totalCNGQtyJSON.toFixed(2), "petralQty": this.totalPetrolQtyJSON.toFixed(2), "dieselQty": this.totalDieselQtyJSON.toFixed(2), "amount": this.totalAmountJSON.toFixed(2), "lastUpdateDate": lastUpdateDate };
           this.commonService.saveJsonFile(obj, "MonthSummary.json", filePath);
           this.commonService.setAlertMessage("success", "Data updated successfully !!!");
           this.getMonthDays();
@@ -530,7 +606,7 @@ export class MonthlyFuelReportComponent implements OnInit {
       else {
         dbLocationPath = "LocationHistory/" + zone + "/" + year + "/" + monthName + "/" + date;
       }
-      this.commonService.getStorageLocationHistory(dbLocationPath).then((response)=>{
+      this.commonService.getStorageLocationHistory(dbLocationPath).then((response) => {
         if (response["status"] == "Fail") {
           let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
             locationData => {
@@ -570,9 +646,9 @@ export class MonthlyFuelReportComponent implements OnInit {
               this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
             });
         }
-        else{
+        else {
           let distance = "0";
-          let locationData=response["data"];
+          let locationData = response["data"];
           if (locationData != null) {
             let keyArray = Object.keys(locationData);
             if (keyArray.length > 0) {
@@ -607,13 +683,16 @@ export class MonthlyFuelReportComponent implements OnInit {
 
         }
       });
-      
+
     }
   }
 }
 
 export class fuelDetail {
   totalFuel: string;
+  totalCNGFuel: string;
+  totalPetrolFuel: string;
+  totalDieselFuel: string;
   totalKm: string;
   totalAmount: string;
   lastUpdateDate: string;

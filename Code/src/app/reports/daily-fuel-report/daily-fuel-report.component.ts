@@ -30,9 +30,12 @@ export class DailyFuelReportComponent implements OnInit {
 
   fuelDetail: fuelDetail = {
     date: "-- --- ----",
-    totalFuel: "0.00",
+    totalDiesel: "0.00",
+    totalCNG: "0.00",
+    totalPetrol: "0.00",
     totalKm: "0.000",
-    totalAmount: "0.00"
+    totalAmount: "0.00",
+    totalFuel:"0.00"
   }
 
   ngOnInit() {
@@ -49,9 +52,12 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   clearList() {
-    this.fuelDetail.totalFuel = "0.00";
+    this.fuelDetail.totalDiesel = "0.00";
+    this.fuelDetail.totalCNG = "0.00";
+    this.fuelDetail.totalPetrol = "0.00";
     this.fuelDetail.totalAmount = "0.00";
     this.fuelDetail.totalKm = "0.000";
+    this.fuelDetail.totalFuel="0.00";
     if (this.vehicleList.length > 0) {
       for (let i = 0; i < this.vehicleList.length; i++) {
         this.vehicleList[i]["diesel"] = [];
@@ -153,8 +159,11 @@ export class DailyFuelReportComponent implements OnInit {
   getDieselQty() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDieselQty");
     $('#divLoader').show();
-    let totalFuel = 0;
+    let totalDiesel = 0;
+    let totalPetrol = 0;
+    let totalCNG = 0;
     let totalAmount = 0;
+    let totalFuel=0;
     let dbPath = "DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let dieselInstance = this.db.object(dbPath).valueChanges().subscribe(
       dieselData => {
@@ -170,10 +179,7 @@ export class DailyFuelReportComponent implements OnInit {
                 let qty = "";
                 let amount = "";
                 let isUpdate = 0;
-                if (dieselData[key]["quantity"] != null) {
-                  qty = dieselData[key]["quantity"];
-                  totalFuel += Number(dieselData[key]["quantity"]);
-                }
+                let fuelType = "";
                 if (dieselData[key]["isUpdate"] != null) {
                   isUpdate = 1;
                 }
@@ -181,14 +187,37 @@ export class DailyFuelReportComponent implements OnInit {
                   amount = dieselData[key]["amount"];
                   totalAmount += Number(dieselData[key]["amount"]);
                 }
+                if (dieselData[key]["fuelType"] != null) {
+                  fuelType = dieselData[key]["fuelType"];
+                }
+                if (dieselData[key]["quantity"] != null) {
+                  qty = dieselData[key]["quantity"];
+                  if (fuelType == "Diesel") {
+                    totalDiesel += Number(dieselData[key]["quantity"]);
+                  }
+                  else if (fuelType == "CNG") {
+                    totalCNG += Number(dieselData[key]["quantity"]);
+                  }
+                  else {
+                    totalPetrol += Number(dieselData[key]["quantity"]);
+                  }
+                  totalFuel+= Number(dieselData[key]["quantity"]);
+                }
                 let meterImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FmeterReadingImage?alt=media";
                 let slipImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FamountSlipImage?alt=media";
-                detail.diesel.push({ key: key, qty: qty, amount: amount, meterImageUrl: meterImageUrl, slipImageUrl: slipImageUrl, isUpdate: isUpdate });
+                let dieselDetail = detail.diesel.find(item => item.fuelType == fuelType);
+                //if (dieselDetail != undefined) {
+                //    fuelType = "";
+                //  }
+                detail.diesel.push({ key: key, fuelType: fuelType, qty: qty, amount: amount, meterImageUrl: meterImageUrl, slipImageUrl: slipImageUrl, isUpdate: isUpdate });
               }
             }
           }
-          this.fuelDetail.totalFuel = totalFuel.toFixed(2);
+          this.fuelDetail.totalDiesel = totalDiesel.toFixed(2);
+          this.fuelDetail.totalCNG = totalCNG.toFixed(2);
+          this.fuelDetail.totalPetrol = totalPetrol.toFixed(2);
           this.fuelDetail.totalAmount = totalAmount.toFixed(2);
+          this.fuelDetail.totalFuel = totalFuel.toFixed(2);
         }
       }
     );
@@ -359,7 +388,7 @@ export class DailyFuelReportComponent implements OnInit {
           if (workerData != null) {
             let driverList = workerData["driver"].split(",");
             let vehicleList = workerData["vehicle"].split(",");
-            let driverNameList=workerData["driverName"].split(",");
+            let driverNameList = workerData["driverName"].split(",");
             for (let i = 0; i < driverList.length; i++) {
               if (empId == driverList[i].trim() && vehicle == vehicleList[i].trim()) {
                 driverName = driverNameList[i];
@@ -550,7 +579,7 @@ export class DailyFuelReportComponent implements OnInit {
         let diesel = this.vehicleList[i]["diesel"];
         if (diesel.length > 0) {
           for (let j = 0; j < diesel.length; j++) {
-            list.push({ vehicle: vehicle, gpsKM: "", dieselQty: diesel[j]["qty"], amount: diesel[j]["amount"], zone: "", km: "", driver: "" });
+            list.push({ vehicle: vehicle, gpsKM: "",fuelType:diesel[j]["fuelType"], dieselQty: diesel[j]["qty"], amount: diesel[j]["amount"], zone: "", km: "", driver: "" });
           }
         }
         let wardDetailList = this.vehicleList[i]["wardList"];
@@ -576,7 +605,7 @@ export class DailyFuelReportComponent implements OnInit {
         }
         if (list.length > 0) {
           for (let j = 0; j < list.length; j++) {
-            exportList.push({ vehicle: vehicle, gpsKM: list[j]["gpsKM"], dieselQty: list[j]["dieselQty"], amount: list[j]["amount"], zone: list[j]["zone"], km: list[j]["km"], driver: list[j]["driver"] })
+            exportList.push({ vehicle: vehicle, gpsKM: list[j]["gpsKM"],fuelType:list[j]["fuelType"]?list[j]["fuelType"]:"", dieselQty: list[j]["dieselQty"], amount: list[j]["amount"], zone: list[j]["zone"], km: list[j]["km"], driver: list[j]["driver"] })
           }
         }
       }
@@ -586,6 +615,9 @@ export class DailyFuelReportComponent implements OnInit {
       htmlString += "<tr>";
       htmlString += "<td>";
       htmlString += "Vehicle Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Diesel Quantity";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Diesel Quantity";
@@ -611,6 +643,9 @@ export class DailyFuelReportComponent implements OnInit {
           htmlString += "<tr>";
           htmlString += "<td>";
           htmlString += exportList[i]["vehicle"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["fuelType"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["dieselQty"];
@@ -643,7 +678,10 @@ export class DailyFuelReportComponent implements OnInit {
 
 export class fuelDetail {
   date: string;
-  totalFuel: string;
+  totalDiesel: string;
+  totalCNG: string;
+  totalPetrol: string;
   totalKm: string;
   totalAmount: string;
+  totalFuel:string;
 }

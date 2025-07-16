@@ -79,14 +79,16 @@ export class VehicleFuelReportComponent implements OnInit {
         let list = JSON.parse(JSON.stringify(data));
         for (let i = 0; i < list.length; i++) {
           let date = list[i]["date"];
+          let showDate = this.commonService.convertDateWithMonthName(date);
           let vehicle = list[i]["vehicle"];
           let amount = Number(list[i]["amount"]);
           let quantity = Number(list[i]["quantity"]);
           let meterReading = list[i]["meterReading"];
+          let fuelType = list[i]["fuelType"] ? list[i]["fuelType"] : "";
           totalAmount += amount;
           totalQuantity += quantity;
           let orderBy = new Date(date).getTime();
-          this.fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+          this.fuelList.push({ vehicle: vehicle, date: date, showDate: showDate, fuelType: fuelType, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
           let detail = this.vehicleList.find(item => item.vehicle == vehicle);
           if (detail != undefined) {
             detail.isEntry = 1;
@@ -227,6 +229,7 @@ export class VehicleFuelReportComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let date = keyArray[i];
+            let showDate = date ? this.commonService.convertDateWithMonthName(date) : "";
             let list = data[date];
             if (list.length > 0) {
               for (let k = 0; k < list.length; k++) {
@@ -236,7 +239,7 @@ export class VehicleFuelReportComponent implements OnInit {
                 if (list[k]["ward"].includes("BinLifting")) {
                   let detail = this.vehicleTrackList.find(item => item.date == date && item.ward.includes("BinLifting"));
                   if (detail == undefined) {
-                    this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage, portalKm: list[k].portalKm, gps_km: list[k].gps_km });
+                    this.vehicleTrackList.push({ date: date, showDate: showDate, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage, portalKm: list[k].portalKm, gps_km: list[k].gps_km });
                   }
                   else {
                     detail.ward = detail.ward + ", " + list[k]["ward"];
@@ -247,7 +250,7 @@ export class VehicleFuelReportComponent implements OnInit {
                   }
                 }
                 else {
-                  this.vehicleTrackList.push({ date: date, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage, portalKm: list[k].portalKm, gps_km: list[k].gps_km });
+                  this.vehicleTrackList.push({ date: date, showDate: showDate, ward: list[k]["ward"], distance: distance, name: list[k]["name"], orderBy: orderBy, driver: list[k]["driver"], distanceInMeter: Number(list[k]["distance"]), dutyInTime: list[k].dutyInTime, dutyOutTime: list[k].dutyOutTime, workPercentage: list[k].workPercentage, portalKm: list[k].portalKm, gps_km: list[k].gps_km });
                 }
               }
             }
@@ -722,6 +725,7 @@ export class VehicleFuelReportComponent implements OnInit {
               let index = objKeys[j];
               let amount = 0;
               let quantity = 0;
+              let fuelType = "";
               let vehicle = obj[index]["vehicle"];
               if (obj[index]["amount"] != null) {
                 amount = Number(obj[index]["amount"]);
@@ -733,10 +737,14 @@ export class VehicleFuelReportComponent implements OnInit {
               if (obj[index]["meterReading"] != null) {
                 meterReading = obj[index]["meterReading"];
               }
+              if (obj[index]["fuelType"] != null) {
+                fuelType = obj[index]["fuelType"];
+              }
+
               totalAmount = totalAmount + amount;
               totalQuantity = totalQuantity + quantity;
               let orderBy = new Date(date).getTime();
-              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+              fuelList.push({ vehicle: vehicle, date: date, fuelType: fuelType, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
 
             }
             fuelList = fuelList.sort((a, b) => b.orderBy > a.orderBy ? -1 : 1);
@@ -751,25 +759,41 @@ export class VehicleFuelReportComponent implements OnInit {
 
   exportToExcel() {
     const exportData = [];
-    const days = new Date(this.selectedYear, this.selectedMonth, 0).getDate()
-
-    // loop through all days of month
+    const days = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+    let dateArray = [];
     for (let day: any = 1; day <= days; day++) {
       day = day < 10 ? `0${day}` : day;
       const date = `${this.selectedYear}-${this.selectedMonth}-${day}`;
-      const vehicleFuel = this.vehicleFuelList.find(data => data.date === date)  // find vehicle fuel details
-      const vehicleTracks = this.vehicleTrackList.filter(data => data.date === date)  //find list of vehicle tracks of the date
+      dateArray.push({ date: date });
+    }
+    let fuelList = [];
+    let trackList = [];
+    for (let i = 0; i < this.vehicleFuelList.length; i++) {
+      fuelList.push({ date: this.vehicleFuelList[i]["date"],showDate:this.vehicleFuelList[i]["showDate"], meterReading: this.vehicleFuelList[i]["meterReading"], fuelType: this.vehicleFuelList[i]["fuelType"], quantity: this.vehicleFuelList[i]["quantity"], amount: this.vehicleFuelList[i]["amount"], name: "", ward: "", dutyInTime: "", dutyOutTime: "", workPercentage: "", portalKm: "", gps_km: "", distance: "" });
+    }
+    for (let i = 0; i < this.vehicleTrackList.length; i++) {
+      trackList.push({ date: this.vehicleTrackList[i]["date"],showDate:this.vehicleTrackList[i]["showDate"], meterReading: "", fuelType: "", quantity: "", amount: "", name: this.vehicleTrackList[i]["name"], ward: this.vehicleTrackList[i]["ward"], dutyInTime: this.vehicleTrackList[i]["dutyInTime"], dutyOutTime: this.vehicleTrackList[i]["dutyOutTime"], workPercentage: this.vehicleTrackList[i]["workPercentage"], portalKm: this.vehicleTrackList[i]["portalKm"], gps_km: this.vehicleTrackList[i]["gps_km"], distance: this.vehicleTrackList[i]["distance"] });
+    }
 
-      // if only vehicle fuel details found then add it to export data
-      if (vehicleTracks.length === 0 && vehicleFuel) {
-        exportData.push(vehicleFuel)
+    for (let i = 0; i < dateArray.length; i++) {
+      let date = dateArray[i]["date"];
+      let fuelDateList = fuelList.filter(item => item.date == date);
+      let trackDateList = trackList.filter(item => item.date == date);
+      if (fuelDateList.length > trackDateList.length) {
+        for (let j = 0; j < fuelDateList.length; j++) {
+          exportData.push({ date: fuelDateList[j]["date"],showDate:fuelDateList[j]["showDate"], meterReading: fuelDateList[j]["meterReading"], fuelType: fuelDateList[j]["fuelType"], quantity: fuelDateList[j]["quantity"], amount: fuelDateList[j]["amount"], name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["gps_km"] : "" });
+        }
       }
-
-      // if vehicle tracks are found then add them to export data along with vehicle fuel details if available
-      vehicleTracks.forEach((track, idx) => {
-        exportData.push({ ...(idx === 0 ? vehicleFuel : {}), ...track })  //add vehicleFuel only for first track on that date
-      });
-
+      else if (trackDateList.length > fuelDateList.length) {
+        for (let j = 0; j < trackDateList.length; j++) {
+          exportData.push({ date: trackDateList[j]["date"],showDate:trackDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["gps_km"] : "" });
+        }
+      }
+      else {
+        for (let j = 0; j < fuelDateList.length; j++) {
+          exportData.push({ date: fuelDateList[j]["date"],showDate:fuelDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["gps_km"] : "" });
+        }
+      }
     }
 
     if (exportData.length > 0) {
@@ -779,6 +803,7 @@ export class VehicleFuelReportComponent implements OnInit {
       htmlString += "<tr>";
       htmlString += "<td>Date</td>";
       htmlString += "<td>Meter Reading</td>";
+      htmlString += "<td>Fuel Type</td>";
       htmlString += "<td>Quantity</td>";
       htmlString += "<td>Amount</td>";
       htmlString += "<td>Driver</td>";
@@ -795,8 +820,9 @@ export class VehicleFuelReportComponent implements OnInit {
       for (let i = 0; i < exportData.length; i++) {
         let data = exportData[i];
         htmlString += "<tr>";
-        htmlString += `<td>${data.date || ''}</td>`;
+        htmlString += `<td t=s>${data.showDate || ''}</td>`;
         htmlString += `<td>${data.meterReading || ''}</td>`;
+        htmlString += `<td>${data.fuelType || ''}</td>`;
         htmlString += `<td>${data.quantity || ''}</td>`;
         htmlString += `<td>${data.amount || ''}</td>`;
         htmlString += `<td>${data.name || ''}</td>`;
@@ -813,7 +839,7 @@ export class VehicleFuelReportComponent implements OnInit {
       htmlString += "</table>";
 
       // Generate the file name dynamically
-      let fileName = this.commonService.getFireStoreCity() + `-Vehicle-Fuel-Report[${this.selectedMonthName} ${this.selectedYear}].xlsx`;
+      let fileName = this.commonService.getFireStoreCity() + `-Vehicle-Fuel-Report-${this.selectedVehicle}-[${this.selectedMonthName} ${this.selectedYear}].xlsx`;
       this.commonService.exportExcel(htmlString, fileName);
     }
   }
