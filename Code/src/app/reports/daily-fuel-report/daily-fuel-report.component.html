@@ -1,192 +1,363 @@
-<section class="header">
+<!-- <section class="header">
     <div class="row no-gutters">
         <div class="col-md-12 col-lg-12 col-xl-12 main-headers" style="text-align: center;">
             Daily Fuel Report [{{fuelDetail.date}}]
         </div>
     </div>
-</section>
-<div class="main-content">
-    <div class="row">
-        <div class="col-md-12" style="padding-left: 0px;padding-right:7px;">
-            <div id="divLoader" class="loaderClass">
-                <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</section> -->
+<div class="main-page">
+    <header class="header">
+        <div class="header-left">
+            Daily Fuel Report [{{fuelDetail.date}}]
+            <!-- Breadcrumb starts
+            <nav class="breadcrumb">
+                <ul class="ul-breadcrumb">
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']">Home</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Collection Management</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Collected Amount Report</a>
+                    </li>
+                </ul>
+            </nav> -->
+            <!-- Breadcrumb ends -->
+        </div>
+        <div class="header-right">
+            <div class="btn-default btn-export">
+                Export to Excel
+                <img src="../../../assets/img/iconExport.png" class="img-fluid icon-default" alt="File" width="24" />
             </div>
-            <div class="card" style="margin-top:-6px;  height: 88vh!important">
-                <div class="card-header custom-header">
-                    <div class="row align">
-                        <div class="col-md-3 text-left" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
-                                    <span id="spMessage"
-                                        style="color:red; margin-left: 10px; position: absolute; z-index: 999; margin-top: -15px; ">Please
-                                        select date for analysis data</span>
-                                    <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
-                                        << </button>
-                                            <input id="txtDate" class="filter-select filter-input" type="date"
-                                                (change)="setDate($event.target.value,'current');" />
-                                            <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
-                                                >>
-                                            </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-9 text-center" style="padding-right:0px!important;">
-                            <div class="row">
-                                <div class="col-md-1 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <b> {{fuelDetail.totalCNG}}</b>
-                                    <br /><span style="font-size: 10px;"> CNG</span>
-                                </div>
-                                <div class="col-md-1 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <b> {{fuelDetail.totalPetrol}}</b>
-                                    <br /><span style="font-size: 10px;"> Petrol</span>
-                                </div>
-                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <b> {{fuelDetail.totalDiesel}}</b>
-                                    <br /><span style="font-size: 10px;"> Diesel Qty</span>
-                                </div>
-                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <b> {{fuelDetail.totalFuel}}</b>
-                                    <br /><span style="font-size: 10px;"> Total Fuel</span>
-                                </div>
-                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <b> {{fuelDetail.totalAmount}}</b>
-                                    <br /><span style="font-size: 10px;"> Fuel Amount</span>
-                                </div>
-                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <b> {{fuelDetail.totalKm}}</b> <br /><span style="font-size: 10px;"> Km
-                                        Running</span>
+        </div>
+    </header>
 
-                                </div>
-                                <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
-                                    <!-- <i class="fa-solid fa-file-export"
-                                        style="cursor:pointer; color:green;  font-size: 24px; "
-                                        (click)="exportToExcel();"></i> -->
-                                    <img src="../../../assets/icons/file-export-solid.svg" alt="file-export-solid"
-                                        (click)="exportToExcel();" class="cursor-pointer icon-green" width="24" />
-                                    <br />
-                                    <span style="font-size: 10px;"> Export to Excel </span>
-                                </div>
+
+
+
+
+
+
+
+    <div class="page-content">
+        <!-- <div class="row">
+            <div class="col-md-12" > -->
+        <div id="divLoader" class="loaderClass">
+            <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+        </div>
+        <!-- <div class="card" style="margin-top:-6px;  height: 88vh!important">
+            <div class="card-header custom-header">
+                <div class="row align">
+                    <div class="col-md-3 text-left" style="padding-right:0px!important;">
+                        <div class="row">
+                            <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
+                                <span id="spMessage"
+                                    style="color:red; margin-left: 10px; position: absolute; z-index: 999; margin-top: -15px; ">Please
+                                    select date for analysis data</span>
+                                <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
+                                    << </button>
+                                        <input id="txtDate" class="filter-select filter-input" type="date"
+                                            (change)="setDate($event.target.value,'current');" />
+                                        <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
+                                            >>
+                                        </button>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <form>
+                    <div class="col-md-9 text-center" style="padding-right:0px!important;">
                         <div class="row">
-                            <div class="col-md-12 pr-1">
-                                <div id="divList" class="table-wrapper table-one">
-                                    <table class="table table-line">
-                                        <thead>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Sr. No.</th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Vehicle Number</th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Fuel Type
-                                            </th>
-                                            <th class="text-right br-1" style="border:none!important;">
-                                                Fuel Qty
-                                            </th>
-                                            <th class="text-right br-1" style="border:none!important;">
-                                                Fuel Amount
-                                            </th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Ward No.
-                                            </th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                KM
-                                            </th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                GPS KM
-                                            </th>
-                                            <th class="text-left br-1" style="border:none!important;">
-                                                Driver Name
-                                            </th>
-                                        </thead>
-                                        <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of vehicleList; let i=index">
-                                                <td class="text-left br-1">
-                                                    {{i+1}}
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    {{data.vehicle}}
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    <div style="width:100% " *ngFor="let diesel of data.diesel ">
-                                                        {{diesel.fuelType}}
-                                                    </div>
-                                                </td>
-                                                <td class="text-right br-1">
-                                                    <div style="width:100% " *ngFor="let diesel of data.diesel ">
-                                                        {{diesel.qty}}
-                                                        <!-- <i class="far fa-eye eye-icon"
-                                                            [hidden]="diesel.isUpdate==0"
-                                                            (click)="showHistory(contentHistory,diesel.key)"
-                                                            style="color: red; cursor: pointer;"></i> -->
-                                                        <img src="../../../assets/icons/eye-regular.svg"
-                                                            alt="eye-regular" class="icon-red cursor-pointer"
-                                                            width="25%" [hidden]="diesel.isUpdate==0"
-                                                            (click)="showHistory(contentHistory,diesel.key)" />
-                                                    </div>
-                                                </td>
-                                                <td class="text-right br-1">
-                                                    <div style="width:100% " *ngFor="let diesel of data.diesel ">
-                                                        <span style="float:left;">
-                                                            <a href="{{diesel.slipImageUrl}}" target="_blank"
-                                                                style="color:#000">
-                                                                <!-- <i class="fa-solid fa-file-invoice"
-                                                                    style="font-size: 20px;"></i> -->
-                                                                <img src="../../../assets/icons/file-invoice-solid.svg"
-                                                                    alt="file-invoice-solid" width="20" />
-                                                            </a>
-                                                            &nbsp;
-                                                            <a href="{{diesel.meterImageUrl}}" target="_blank"
-                                                                style="color:#000">
-                                                                <i class="bi bi-speedometer"
-                                                                    style="font-size: 20px;"></i></a>
-                                                        </span>
-                                                        {{diesel.amount}}
+                            <div class="col-md-1 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <b> {{fuelDetail.totalCNG}}</b>
+                                <br /><span style="font-size: 10px;"> CNG</span>
+                            </div>
+                            <div class="col-md-1 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <b> {{fuelDetail.totalPetrol}}</b>
+                                <br /><span style="font-size: 10px;"> Petrol</span>
+                            </div>
+                            <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <b> {{fuelDetail.totalDiesel}}</b>
+                                <br /><span style="font-size: 10px;"> Diesel Qty</span>
+                            </div>
+                            <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <b> {{fuelDetail.totalFuel}}</b>
+                                <br /><span style="font-size: 10px;"> Total Fuel</span>
+                            </div>
+                            <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <b> {{fuelDetail.totalAmount}}</b>
+                                <br /><span style="font-size: 10px;"> Fuel Amount</span>
+                            </div>
+                            <div class="col-md-2 text-center p-r ml-20" style="padding-left: 20px!important;">
+                                <b> {{fuelDetail.totalKm}}</b> <br /><span style="font-size: 10px;"> Km
+                                    Running</span>
 
-                                                    </div>
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    <div style="width:100% " *ngFor="let dt of data.wardList "
-                                                        [innerHTML]="dt.zone">
-                                                    </div>
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    <div style="width:100% " *ngFor="let dt of data.wardList ">
-                                                        {{dt.km}}
-                                                    </div>
+                            </div>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-12 pr-1">
+                            <div id="divList" class="table-wrapper table-one">
+                                <table class="table table-line">
+                                    <thead>
+                                        <th class="text-left br-1" style="border:none!important;">
+                                            Sr. No.</th>
+                                        <th class="text-left br-1" style="border:none!important;">
+                                            Vehicle Number</th>
+                                        <th class="text-left br-1" style="border:none!important;">
+                                            Fuel Type
+                                        </th>
+                                        <th class="text-right br-1" style="border:none!important;">
+                                            Fuel Qty
+                                        </th>
+                                        <th class="text-right br-1" style="border:none!important;">
+                                            Fuel Amount
+                                        </th>
+                                        <th class="text-left br-1" style="border:none!important;">
+                                            Ward No.
+                                        </th>
+                                        <th class="text-left br-1" style="border:none!important;">
+                                            KM
+                                        </th>
+                                        <th class="text-left br-1" style="border:none!important;">
+                                            GPS KM
+                                        </th>
+                                        <th class="text-left br-1" style="border:none!important;">
+                                            Driver Name
+                                        </th>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="tr{{i}}" *ngFor="let data of vehicleList; let i=index">
+                                            <td class="text-left br-1">
+                                                {{i+1}}
+                                            </td>
+                                            <td class="text-left br-1">
+                                                {{data.vehicle}}
+                                            </td>
+                                            <td class="text-left br-1">
+                                                <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                                    {{diesel.fuelType}}
+                                                </div>
+                                            </td>
+                                            <td class="text-right br-1">
+                                                <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                                    {{diesel.qty}}
+                                                    <img src="../../../assets/icons/eye-regular.svg" alt="eye-regular"
+                                                        class="icon-red cursor-pointer" width="25%"
+                                                        [hidden]="diesel.isUpdate==0"
+                                                        (click)="showHistory(contentHistory,diesel.key)" />
+                                                </div>
+                                            </td>
+                                            <td class="text-right br-1">
+                                                <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                                    <span style="float:left;">
+                                                        <a href="{{diesel.slipImageUrl}}" target="_blank"
+                                                            style="color:#000">
+                                                            <img src="../../../assets/icons/file-invoice-solid.svg"
+                                                                alt="file-invoice-solid" width="20" />
+                                                        </a>
+                                                        &nbsp;
+                                                        <a href="{{diesel.meterImageUrl}}" target="_blank"
+                                                            style="color:#000">
+                                                            <i class="bi bi-speedometer"
+                                                                style="font-size: 20px;"></i></a>
+                                                    </span>
+                                                    {{diesel.amount}}
 
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    {{data.gpsKM}}
-                                                </td>
-                                                <td class="text-left br-1">
-                                                    <div style="width:100% " *ngFor="let dt of data.wardList "
-                                                        [innerHTML]="dt.driver">
-                                                    </div>
-                                                    <div style="width:100% " *ngFor="let dt of data.wardList "
-                                                        [innerHTML]="dt.empId">
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
-                                        style="padding-top: 20vh; display: none;">
-                                        <div class="form-group">
-                                            <h5>No data available</h5>
-                                        </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-left br-1">
+                                                <div style="width:100% " *ngFor="let dt of data.wardList "
+                                                    [innerHTML]="dt.zone">
+                                                </div>
+                                            </td>
+                                            <td class="text-left br-1">
+                                                <div style="width:100% " *ngFor="let dt of data.wardList ">
+                                                    {{dt.km}}
+                                                </div>
+
+                                            </td>
+                                            <td class="text-left br-1">
+                                                {{data.gpsKM}}
+                                            </td>
+                                            <td class="text-left br-1">
+                                                <div style="width:100% " *ngFor="let dt of data.wardList "
+                                                    [innerHTML]="dt.driver">
+                                                </div>
+                                                <div style="width:100% " *ngFor="let dt of data.wardList "
+                                                    [innerHTML]="dt.empId">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                    style="padding-top: 20vh; display: none;">
+                                    <div class="form-group">
+                                        <h5>No data available</h5>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                </form>
+            </div>
+        </div> -->
+
+
+        <div class="table-maine">
+            <div class="header-table">
+
+<div class="maine-input-filter">
+                <button (click)="setDate('','previous');" class="btn-prev-next">
+                    <img src="../../../assets/img/iconLeft.png" class="iconLeftRight" title="Previous"
+                        alt="icon previous" />
+                </button>
+                <input id="txtDate" class="input-line " type="date"
+                    (change)="setDate($event.target.value,'current');" />
+                <button (click)="setDate('','next');" class="btn-prev-next">
+                    <img src="../../../assets/img/iconRight.png" class="iconLeftRight" title="Next" alt="icon next" />
+                </button>
+                </div>
+                <div class=" count-fuel-table">
+            
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalCNG}}</h4>
+                        <p class="title-heading"> CNG</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalPetrol}}</h4>
+                        <p class="title-heading"> Petrol</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalDiesel}}</h4>
+                        <p class="title-heading"> Diesel Qty</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalFuel}}</h4>
+                        <p class="title-heading"> Total Fuel</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalAmount}}</h4>
+                        <p class="title-heading"> Fuel Amount</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalKm}}</h4>
+                        <p class="title-heading"> KM
+                            Running</p>
+                    </div>
+                </div>
+            </div>
+            <div class="table-body">
+                <div class="table-group">
+                    <div id="divList" class="table-ward" (scroll)="onContainerScroll();">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Sr.No</th>
+                                    <th scope="col" class="text-left">Vehicle Number</th>
+                                    <th scope="col" class="text-left">Fuel Type</th>
+                                    <th scope="col" class="text-right">Fuel Qty</th>
+                                    <th scope="col" class="text-right">Fuel Amount</th>
+                                    <th scope="col" class="text-left">Ward No.</th>
+                                    <th scope="col" class="text-left">KM</th>
+                                    <th scope="col" class="text-left">GPS KM</th>
+                                    <th scope="col" class="text-left">Driver Name</th>
+
+                                </tr>
+                            </thead>
+                            <tbody style="height: 73vh;">
+                                <tr id="tr{{i}}" *ngFor="let data of vehicleList; let i=index">
+                                    <td class="text-left ">
+                                        {{i+1}}
+                                    </td>
+                                    <td class="text-left ">
+                                        {{data.vehicle}}
+                                    </td>
+                                    <td class="text-left ">
+                                        <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                            {{diesel.fuelType}}
+                                        </div>
+                                    </td>
+                                    <td class="text-right ">
+                                        <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                            {{diesel.qty}}
+                                            <!-- <i class="far fa-eye eye-icon"
+                                                            [hidden]="diesel.isUpdate==0"
+                                                            (click)="showHistory(contentHistory,diesel.key)"
+                                                            style="color: red; cursor: pointer;"></i> -->
+                                            <img src="../../../assets/icons/eye-regular.svg" alt="eye-regular"
+                                                class="icon-red cursor-pointer" width="25%"
+                                                [hidden]="diesel.isUpdate==0"
+                                                (click)="showHistory(contentHistory,diesel.key)" />
+                                        </div>
+                                    </td>
+                                    <td class="text-right ">
+                                        <!-- <div  > -->
+                                        <!-- <span style="float:left;">
+                                                <a href="{{diesel.slipImageUrl}}" target="_blank" style="color:#000">
+                                                    <img src="../../../assets/icons/file-invoice-solid.svg"
+                                                        alt="file-invoice-solid" width="20" />
+                                                </a>
+                                                &nbsp;
+                                                <a href="{{diesel.meterImageUrl}}" target="_blank" style="color:#000">
+                                                    <i class="bi bi-speedometer" style="font-size: 20px;"></i></a>
+                                            </span>
+                                            {{diesel.amount}} -->
+                                        <div class="diesel-icon" *ngFor="let diesel of data.diesel ">
+                                            <div class="d-flex align-items-center mb-1 gap-1"
+                                                style="width: calc(100% - 40px);">
+                                                <a href="{{diesel.slipImageUrl}}" target="_blank">
+                                                    <img src="../../../assets/icons/file-invoice-solid.svg"
+                                                        alt="file-invoice-solid" width="12" />
+                                                </a>
+                                                &nbsp;
+                                                <a href="{{diesel.meterImageUrl}}" target="_blank"
+                                                    style="height: 14px;">
+                                                    <i class="bi bi-speedometer"
+                                                        style="font-size: 13x; color: #000;"></i></a>
+                                            </div>
+                                            {{diesel.amount}}
+                                        </div>
+
+                                        <!-- </div> -->
+                                    </td>
+                                    <td class="text-left ">
+                                        <div style="width:100% " *ngFor="let dt of data.wardList "
+                                            [innerHTML]="dt.zone">
+                                        </div>
+                                    </td>
+                                    <td class="text-left">
+                                        <div style="width:100% " *ngFor="let dt of data.wardList ">
+                                            {{dt.km}}
+                                        </div>
+
+                                    </td>
+                                    <td class="text-left ">
+                                        {{data.gpsKM}}
+                                    </td>
+                                    <td class="text-left ">
+                                        <div style="width:100% " *ngFor="let dt of data.wardList "
+                                            [innerHTML]="dt.driver">
+                                        </div>
+                                        <div style="width:100% " *ngFor="let dt of data.wardList "
+                                            [innerHTML]="dt.empId">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
+
         <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
                 <div id="content" #content class="card-body"
@@ -213,46 +384,49 @@
             </div>
         </div>
     </div>
-</div>
+    <!-- </div>
+    </div> -->
 
-<ng-template #contentHistory>
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">History :
-                </h5>
-                <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="dth">
-                            <div>
-                                <div class="table-wrapper table-two">
-                                    <table class="table table-line">
-                                        <tbody style="border: 1px solid lightgray!important;">
-                                            <tr *ngFor="let data of dieselHistoryList, let i=index">
-                                                <td class="text-left"
-                                                    style="width:210px; vertical-align: top; font-weight: normal!important;">
-                                                    <a href="{{data.meterImageUrl}}" target="_blank">
-                                                        <img [src]="data.meterImageUrl"
-                                                            style="max-width: 100px;max-height: 100px;" /></a>
-                                                    <a href="{{data.slipImageUrl}}" target="_blank">
-                                                        <img [src]="data.slipImageUrl"
-                                                            style="max-width: 100px;max-height: 100px; float: right;" /></a>
-                                                </td>
-                                                <td class="text-left"
-                                                    style="vertical-align: top;  font-weight: normal!important;">
-                                                    <b>Vehicle :</b> {{data.vehicle}}<br />
-                                                    <b> Quantity :</b> {{data.quantity}}<br />
-                                                    <b> Amount :</b> {{data.amount}}<br />
-                                                    <b> Meter Reading :</b> {{data.meterReading}}<br />
-                                                    <b> By </b> {{data.createdBy}} <b>on </b> {{data.creationDate}}
-                                                    {{data.time}}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+    <ng-template #contentHistory>
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">History :
+                    </h5>
+                    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="dth">
+                                <div>
+                                    <div class="table-wrapper table-two">
+                                        <table class="table table-line">
+                                            <tbody style="border: 1px solid lightgray!important;">
+                                                <tr *ngFor="let data of dieselHistoryList, let i=index">
+                                                    <td class="text-left"
+                                                        style="width:210px; vertical-align: top; font-weight: normal!important;">
+                                                        <a href="{{data.meterImageUrl}}" target="_blank">
+                                                            <img [src]="data.meterImageUrl"
+                                                                style="max-width: 100px;max-height: 100px;" /></a>
+                                                        <a href="{{data.slipImageUrl}}" target="_blank">
+                                                            <img [src]="data.slipImageUrl"
+                                                                style="max-width: 100px;max-height: 100px; float: right;" /></a>
+                                                    </td>
+                                                    <td class="text-left"
+                                                        style="vertical-align: top;  font-weight: normal!important;">
+                                                        <b>Vehicle :</b> {{data.vehicle}}<br />
+                                                        <b> Quantity :</b> {{data.quantity}}<br />
+                                                        <b> Amount :</b> {{data.amount}}<br />
+                                                        <b> Meter Reading :</b> {{data.meterReading}}<br />
+                                                        <b> By </b> {{data.createdBy}} <b>on </b>
+                                                        {{data.creationDate}}
+                                                        {{data.time}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -260,5 +434,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</ng-template>
+    </ng-template>
+
+</div>
