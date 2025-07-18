@@ -428,6 +428,9 @@
     line-height: 1.625rem;
 }
 
+.sidebar .nav li a:hover{
+     filter: brightness(0) saturate(100%) invert(83%) sepia(43%) saturate(526%) hue-rotate(18deg) brightness(109%) contrast(105%);
+}
 .sidebar .nav li.active>a,
 .sidebar .nav li.active-pro>a,
 .off-canvas-sidebar .nav li.active>a,
@@ -437,4 +440,5 @@
     border-left: 5px solid #efff65!important;
     padding-left: 15px;
     margin-left: 0px;
+    filter: brightness(0) saturate(100%) invert(83%) sepia(43%) saturate(526%) hue-rotate(18deg) brightness(109%) contrast(105%);
 }
