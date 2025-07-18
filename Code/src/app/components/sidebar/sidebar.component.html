@@ -13,8 +13,16 @@
   </a>
 </div>
 
+ <a
+    [routerLink]="[userDetail.homeLink]"
+    class="homeLink"
+  >
+    Home
+  </a>
+
 <!------Shubham 1 Style Start---------->
 <div class="sidebarNav">
+ 
   <div class="sidebarHeader" id="liCity" style="display: none">
     <div (click)="openCityModel(contentCity)" style="cursor: pointer">
       <img
@@ -49,26 +57,6 @@
     </div>
   </div>
   <ul class="sidebarUL nav">
-        <li routerLinkActive="active">
-      <a
-        [routerLink]="[userDetail.homeLink]"
-        style="
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          text-decoration: none;
-        "
-      >
-        <img
-          src="../../../assets/icons/iconHome.svg"
-          alt="Home"
-          width="18"
-          style="margin-left: 12px"
-          class="icon-white icon-home"
-        />
-        <p class="sidebarText" style="margin: 0">Home</p>
-      </a>
-    </li>
     <li routerLinkActive="active" *ngFor="let usr of accessList">
       <a
         [routerLink]="[usr.url]"
