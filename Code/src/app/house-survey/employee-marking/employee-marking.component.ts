@@ -28,7 +28,7 @@ export class EmployeeMarkingComponent implements OnInit {
     average: "0",
     name: "",
     wardNo: "",
-    lastScan:""
+    lastScan: ""
   };
   isFirst = true;
   db: any;
@@ -38,7 +38,7 @@ export class EmployeeMarkingComponent implements OnInit {
 
   ngOnInit() {
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.commonService.savePageLoadHistory("Survey-Management","Manage-Surveyor",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Survey-Management", "Manage-Surveyor", localStorage.getItem("userID"));
     this.getZoneList();
     this.getCityEmpCode();
   }
@@ -49,7 +49,7 @@ export class EmployeeMarkingComponent implements OnInit {
       this.zoneList = wardData;
     });
   }
-  
+
   getCityEmpCode() {
     const path = this.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
@@ -137,14 +137,14 @@ export class EmployeeMarkingComponent implements OnInit {
         this.markerData.totalMarking = data.toString();
       }
     });
-    dbPath="EntityMarkingData/LastScanTime/Surveyor/"+ empId;
-    let totalmarkingInstance=this.db.object(dbPath).valueChanges().subscribe((data)=>{
+    dbPath = "EntityMarkingData/LastScanTime/Surveyor/" + empId;
+    let totalmarkingInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       totalmarkingInstance.unsubscribe();
-      if(data!=null){
-      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkerDetail", data);
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkerDetail", data);
       }
-      let lastscandata=data.split(":");
-      let scandata=lastscandata[0]+":"+lastscandata[1]
+      let lastscandata = data.split(":");
+      let scandata = lastscandata[0] + ":" + lastscandata[1]
       this.markerData.lastScan = scandata;
     })
     dbPath = "EntityMarkingData/MarkingSurveyData/Employee/EmployeeWise/" + empId;
@@ -158,10 +158,12 @@ export class EmployeeMarkingComponent implements OnInit {
           for (let i = 0; i < keyArray.length - 1; i++) {
             let index = keyArray[i];
             if (data[index]["marked"] != null) {
-              if (index == wardNo) {
-                this.markerData.totalWardMarking=data[index]["marked"];
+              if (Number(data[index]["marked"] >= 0)) {
+                if (index == wardNo) {
+                  this.markerData.totalWardMarking = data[index]["marked"];
+                }
+                this.markerWardList.push({ wardNo: index, markers: data[index]["marked"] });
               }
-              this.markerWardList.push({ wardNo: index, markers: data[index]["marked"] });
             }
           }
         }
@@ -177,20 +179,22 @@ export class EmployeeMarkingComponent implements OnInit {
         if (keyArray.length > 0) {
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
-            let list = Object.keys(data[index]);
-            if (list.length > 0) {
-              for (let j = 0; j < list.length; j++) {
-                if (list[j] == empId) {
-                  if (data[index][list[j]]["marked"] != null) {
-                    this.markerData.totalDays = Number(this.markerData.totalDays) + 1;
-                    let timstemp = new Date(index).getTime();
-                    this.markerList.push({ date: index, markers: data[index][list[j]]["marked"], timstemp: timstemp });
+            if (index.toString().includes("-")) {
+              let list = Object.keys(data[index]);
+              if (list.length > 0) {
+                for (let j = 0; j < list.length; j++) {
+                  if (list[j] == empId) {
+                    if (data[index][list[j]]["marked"] != null) {
+                      this.markerData.totalDays = Number(this.markerData.totalDays) + 1;
+                      let timstemp = new Date(index).getTime();
+                      this.markerList.push({ date: index, markers: data[index][list[j]]["marked"], timstemp: timstemp });
+                    }
                   }
                 }
+                this.markerList = this.markerList.sort((a, b) =>
+                  b.timstemp > a.timstemp ? 1 : -1
+                );
               }
-              this.markerList = this.markerList.sort((a, b) =>
-                b.timstemp > a.timstemp ? 1 : -1
-              );
             }
           }
           if (this.markerData.totalDays != 0) {
@@ -382,7 +386,7 @@ export class EmployeeMarkingComponent implements OnInit {
     this.closeModel();
     this.getEmployee();
   }
-  
+
 }
 
 export class markerDatail {
@@ -392,5 +396,5 @@ export class markerDatail {
   average: string;
   name: string;
   wardNo: string;
-  lastScan:string;
+  lastScan: string;
 }
