@@ -292,8 +292,7 @@
                                     </td>
                                     <td class="text-right ">
                                         <div class="diesel-icon" *ngFor="let diesel of data.diesel ">
-                                            <div class="d-flex align-items-center mb-1 gap-1"
-                                                style="width: calc(100% - 40px);">
+                                            <div class="d-flex align-items-center mb-1 gap-1">
                                                 <a href="{{diesel.slipImageUrl}}" target="_blank">
                                                     <img src="../../../assets/icons/file-invoice-solid.svg"
                                                         alt="file-invoice-solid" width="12" />
@@ -309,7 +308,9 @@
                                                     [hidden]="diesel.isUpdate==0"
                                                     (click)="showHistory(contentHistory,diesel.key)" />
                                             </div>
-                                            {{diesel.amount}}
+                                            <div>
+                                                {{diesel.amount}}
+                                            </div>
                                         </div>
 
                                         <!-- </div> -->
