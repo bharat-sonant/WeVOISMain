@@ -171,23 +171,11 @@ export class CommonService {
     else if (cityName == "reengus") {
       cardPrefix = "RENA";
     }
-    else if (cityName == "shahpura") {
-      cardPrefix = "SHAH";
-    }
     else if (cityName == "kishangarh") {
       cardPrefix = "KNGH";
     }
-    else if (cityName == "niwai") {
-      cardPrefix = "NWI";
-    }
-    else if (cityName == "jaisalmer") {
-      cardPrefix = "JAIS";
-    }
     else if (cityName == "salasar") {
       cardPrefix = "SALA";
-    }
-    else if (cityName == "behror") {
-      cardPrefix = "BEHR";
     }
     else if (cityName == "jaipur-malviyanagar") {
       cardPrefix = "MNZ";
@@ -200,18 +188,6 @@ export class CommonService {
     }
     else if (cityName == "mpz-test") {
       cardPrefix = "MPZ";
-    }
-    else if (cityName == "bhiwadi") {
-      cardPrefix = "BHIW";
-    }
-    else if (cityName == "chhapar") {
-      cardPrefix = "CHPR";
-    }
-    else if (cityName == "churu") {
-      cardPrefix = "CHUR";
-    }
-    else if (cityName == "gwalior") {
-      cardPrefix = "GWR";
     }
     else if (cityName == "wevois-others") {
       cardPrefix = "WEVO";
@@ -234,17 +210,11 @@ export class CommonService {
     else if (cityName == "khandela") {
       cardPrefix = "KHL";
     }
-    else if (cityName == "watteye-office") {
-      cardPrefix = "WEY";
-    }
     else if (cityName == "dehradun") {
       cardPrefix = "DEH";
     }
     else if (cityName == "pali") {
       cardPrefix = "PAL";
-    }
-    else if (cityName == "phulwari-sharif") {
-      cardPrefix = "PWS";
     }
     else if (cityName == "sujangarh") {
       cardPrefix = "SUG";
@@ -257,9 +227,6 @@ export class CommonService {
     }
     else if (cityName == "kuchaman") {
       cardPrefix = "KUMN";
-    }
-    else if (cityName == "manesar") {
-      cardPrefix = "MAN";
     }
     else if (cityName == "jodhpur-bwg") {
       cardPrefix = "JODBWG";
@@ -354,23 +321,11 @@ export class CommonService {
     else if (cityName == "reengus") {
       latLng.push({ lat: 27.369301, lng: 75.566200 });
     }
-    else if (cityName == "shahpura") {
-      latLng.push({ lat: 27.385250, lng: 75.963074 });
-    }
     else if (cityName == "kishangarh") {
       latLng.push({ lat: 26.5948983, lng: 74.8162661 });
     }
-    else if (cityName == "niwai") {
-      latLng.push({ lat: 26.361448, lng: 75.92712041 });
-    }
-    else if (cityName == "jaisalmer") {
-      latLng.push({ lat: 26.9183907, lng: 70.9052773 });
-    }
     else if (cityName == "salasar") {
       latLng.push({ lat: 27.7186438, lng: 74.7206506 });
-    }
-    else if (cityName == "behror") {
-      latLng.push({ lat: 27.8952227, lng: 76.28591559 });
     }
     else if (cityName == "jaipur-jagatpura") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
@@ -399,18 +354,6 @@ export class CommonService {
     else if (cityName == "jaipur-vidhyadhar") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
-    else if (cityName == "bhiwadi") {
-      latLng.push({ lat: 28.205247, lng: 76.838164 });
-    }
-    else if (cityName == "chhapar") {
-      latLng.push({ lat: 27.817035, lng: 74.436620 });
-    }
-    else if (cityName == "churu") {
-      latLng.push({ lat: 25.885411, lng: 74.958944 });
-    }
-    else if (cityName == "gwalior") {
-      latLng.push({ lat: 26.232397, lng: 78.1794748 });
-    }
     else if (cityName == "wevois-others") {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
@@ -432,17 +375,11 @@ export class CommonService {
     else if (cityName == "khandela") {
       latLng.push({ lat: 27.6041575, lng: 75.4998704 });
     }
-    else if (cityName == "watteye-office") {
-      latLng.push({ lat: 26.912434, lng: 75.787270 });
-    }
     else if (cityName == "dehradun") {
       latLng.push({ lat: 30.3164945, lng: 78.0321918 });
     }
     else if (cityName == "pali") {
       latLng.push({ lat: 25.7794331, lng: 73.3779516 });
-    }
-    else if (cityName == "phulwari-sharif") {
-      latLng.push({ lat: 25.57114118014974, lng: 85.07024975142416 });
     }
     else if (cityName == "sujangarh") {
       latLng.push({ lat: 27.7066465, lng: 74.4631898 });
@@ -455,9 +392,6 @@ export class CommonService {
     }
     else if (cityName == "kuchaman") {
       latLng.push({ lat: 27.150367, lng: 74.85469 });
-    }
-    else if (cityName == "manesar") {
-      latLng.push({ lat: 28.3503731, lng: 76.9379959 });
     }
     else if (cityName == "jodhpur-bwg") {
       latLng.push({ lat: 26.2405459, lng: 73.0197328 });

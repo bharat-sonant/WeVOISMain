@@ -212,19 +212,20 @@
         <div class="table-maine">
             <div class="header-table">
 
-<div class="maine-input-filter">
-                <button (click)="setDate('','previous');" class="btn-prev-next">
-                    <img src="../../../assets/img/iconLeft.png" class="iconLeftRight" title="Previous"
-                        alt="icon previous" />
-                </button>
-                <input id="txtDate" class="input-line " type="date"
-                    (change)="setDate($event.target.value,'current');" />
-                <button (click)="setDate('','next');" class="btn-prev-next">
-                    <img src="../../../assets/img/iconRight.png" class="iconLeftRight" title="Next" alt="icon next" />
-                </button>
+                <div class="maine-input-filter">
+                    <button (click)="setDate('','previous');" class="btn-prev-next">
+                        <img src="../../../assets/img/iconLeft.png" class="iconLeftRight" title="Previous"
+                            alt="icon previous" />
+                    </button>
+                    <input id="txtDate" class="input-line " type="date"
+                        (change)="setDate($event.target.value,'current');" />
+                    <button (click)="setDate('','next');" class="btn-prev-next">
+                        <img src="../../../assets/img/iconRight.png" class="iconLeftRight" title="Next"
+                            alt="icon next" />
+                    </button>
                 </div>
                 <div class=" count-fuel-table">
-            
+
                     <div class="text-center">
                         <h4 class="amount-fuel"> {{fuelDetail.totalCNG}}</h4>
                         <p class="title-heading"> CNG</p>
@@ -287,28 +288,9 @@
                                     <td class="text-right ">
                                         <div style="width:100% " *ngFor="let diesel of data.diesel ">
                                             {{diesel.qty}}
-                                            <!-- <i class="far fa-eye eye-icon"
-                                                            [hidden]="diesel.isUpdate==0"
-                                                            (click)="showHistory(contentHistory,diesel.key)"
-                                                            style="color: red; cursor: pointer;"></i> -->
-                                            <img src="../../../assets/icons/eye-regular.svg" alt="eye-regular"
-                                                class="icon-red cursor-pointer" width="25%"
-                                                [hidden]="diesel.isUpdate==0"
-                                                (click)="showHistory(contentHistory,diesel.key)" />
                                         </div>
                                     </td>
                                     <td class="text-right ">
-                                        <!-- <div  > -->
-                                        <!-- <span style="float:left;">
-                                                <a href="{{diesel.slipImageUrl}}" target="_blank" style="color:#000">
-                                                    <img src="../../../assets/icons/file-invoice-solid.svg"
-                                                        alt="file-invoice-solid" width="20" />
-                                                </a>
-                                                &nbsp;
-                                                <a href="{{diesel.meterImageUrl}}" target="_blank" style="color:#000">
-                                                    <i class="bi bi-speedometer" style="font-size: 20px;"></i></a>
-                                            </span>
-                                            {{diesel.amount}} -->
                                         <div class="diesel-icon" *ngFor="let diesel of data.diesel ">
                                             <div class="d-flex align-items-center mb-1 gap-1"
                                                 style="width: calc(100% - 40px);">
@@ -321,6 +303,11 @@
                                                     style="height: 14px;">
                                                     <i class="bi bi-speedometer"
                                                         style="font-size: 13x; color: #000;"></i></a>
+                                                &nbsp;
+                                                <img src="../../../assets/icons/eye-regular.svg" alt="eye-regular"
+                                                    class="icon-red cursor-pointer" width="15px"
+                                                    [hidden]="diesel.isUpdate==0"
+                                                    (click)="showHistory(contentHistory,diesel.key)" />
                                             </div>
                                             {{diesel.amount}}
                                         </div>

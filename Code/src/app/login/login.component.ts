@@ -81,7 +81,6 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "jaipur-mansarovar", name: "Mansarovar", storagePath: "Jaipur-Mansarovar" });
     this.cityList.push({ city: "jaipur-murlipura", name: "Murlipura", storagePath: "Jaipur-Murlipura" });
     this.cityList.push({ city: "jaipur-sanganer", name: "Sanganer", storagePath: "Jaipur-Sanganer" });
-    this.cityList.push({ city: "jaipur-vidhyadhar", name: "Vidhyadhar", storagePath: "Jaipur-Vidhyadhar" });
     this.cityList.push({ city: "jaipur-civil-line", name: "Civil Line", storagePath: "Jaipur-Civil-Line" });
     this.cityList.push({ city: "jaipur-kishanpole", name: "Kishanpole", storagePath: "Jaipur-Kishanpole" });
     this.cityList.push({ city: "jaipur-textile-recycling-facility", name: "Textile Recycling Facility-Jaipur", storagePath: "Jaipur-Textile-Recycling-Facility" });
@@ -93,7 +92,6 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "kuchaman", name: "Kuchaman", storagePath: "Kuchaman" });
     this.cityList.push({ city: "losal", name: "Losal", storagePath: "Losal" });
     this.cityList.push({ city: "mapusa-goa", name: "Mapusa Goa", storagePath: "Mapusa-Goa" });
-    this.cityList.push({ city: "manesar", name: "Manesar", storagePath: "Manesar" });
     this.cityList.push({ city: "mnz-test", name: "MNZ-Test", storagePath: "Jaipur-Malviyanagar" });
     this.cityList.push({ city: "mpz-test", name: "MPZ-Test", storagePath: "Jaipur-Murlipura" });
     this.cityList.push({ city: "nawa", name: "Nawa", storagePath: "Nawa" });
@@ -105,7 +103,6 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "rajsamand", name: "Rajsamand", storagePath: "Rajsamand" });
     this.cityList.push({ city: "sanchore", name: "Sanchore", storagePath: "Sanchore" });
     this.cityList.push({ city: "salasar", name: "Salasar Balaji", storagePath: "Salasar" });
-    this.cityList.push({ city: "shahpura", name: "Shahpura", storagePath: "Shahpura" });
     this.cityList.push({ city: "sikar", name: "Sikar", storagePath: "Sikar" });
     this.cityList.push({ city: "sikar-survey", name: "Sikar Survey", storagePath: "Sikar-Survey" });
     this.cityList.push({ city: "sonipat", name: "Sonipat", storagePath: "Sonipat" });
@@ -117,7 +114,6 @@ export class LoginComponent implements OnInit {
     this.cityList.push({ city: "test", name: "Test", storagePath: "Test" });
     this.cityList.push({ city: "uniara", name: "Uniara", storagePath: "Uniara" });
     this.cityList.push({ city: "wevois-others", name: "WeVOIS-Others", storagePath: "WeVOIS-Others" });
-    this.cityList.push({ city: "watteye-office", name: "WattEye Office", storagePath: "WattEye-Office" });
     localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
