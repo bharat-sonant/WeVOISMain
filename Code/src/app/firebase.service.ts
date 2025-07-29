@@ -734,6 +734,18 @@ export class FirebaseService {
       databaseName = "dtdbiofics-surat";
       databaseURL = "https://dtdbiofics-surat.firebaseio.com";
     }
+    else if (city == 'nainwa') {
+      this.fireBase = {
+        apiKey: "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
+        authDomain: "dtdnavigator.firebaseapp.com",
+        databaseURL: "https://dtdnainwan.firebaseio.com",
+        projectId: "dtdnavigator",
+        storageBucket: "dtdnavigator.appspot.com",
+        messagingSenderId: "381118272786",
+      };
+      databaseName = "dtdnainwan";
+      databaseURL = "https://dtdnainwan.firebaseio.com";
+    }
 
     return new AngularFireDatabase(
       _firebaseAppFactory(this.fireBase, databaseName),

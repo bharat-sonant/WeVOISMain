@@ -34,7 +34,7 @@ export class WardSurveyAnalysisComponent {
   zoneKMLRevisit: any;
   allMarkers: any[] = [];
   lineNo: any;
-  cityName: any;
+  public cityName: any;
   previousLine: any;
   centerPoint: any;
   houseMarker: any[] = [];
@@ -986,13 +986,13 @@ export class WardSurveyAnalysisComponent {
                         entityHouseImage = entityData[keyIndex]["houseImage"];
                       }
                       if (city == "Sikar-Survey") {
-                        this.getSikarEntityHouseImages(data[i]["cardNo"], entityHouseImage,keyIndex);
+                        this.getSikarEntityHouseImages(data[i]["cardNo"], entityHouseImage, keyIndex);
                       }
                       else {
                         entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["houseImage"] + "?alt=media";
                       }
 
-                      entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL,keyIndex:keyIndex });
+                      entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL, keyIndex: keyIndex });
                     }
                   }
                 }
@@ -1025,14 +1025,51 @@ export class WardSurveyAnalysisComponent {
                   const time = approvedDate.split(' ')[1];
                   formattedApprovedDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
                 }
-
-                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, markerImageURL: markerImageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], address: data[i]["address"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"], approvedBy: approvedByName, approvedDate: formattedApprovedDate });
+                this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, markerImageURL: markerImageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], address: data[i]["address"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"], approvedBy: approvedByName, approvedDate: formattedApprovedDate, length: "---", breadth: "---", landType: "---", underGroundArea: "---", groundFloorArea: "---", noOfFloors: "---" });
+                
               }
+            }
+            if(this.scannedCardList.length>0){
+              this.getBuildingDetail();
             }
           }
         }
       );
     }
+  }
+
+  getBuildingDetail() {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
+    let insetance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      insetance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let markerId = keyArray[i];
+          if (data[markerId]["cardNumber"] != null) {
+            let cardNo=data[markerId]["cardNumber"];
+            if (data[markerId]["BuildingDetails"] != null) {
+              let length = data[markerId]["BuildingDetails"]["plotLength"] ? data[markerId]["BuildingDetails"]["plotLength"] : "---";
+              let breadth = data[markerId]["BuildingDetails"]["plotDepth"] ? data[markerId]["BuildingDetails"]["plotDepth"] : "---";
+              let landType = data[markerId]["BuildingDetails"]["landType"] ? data[markerId]["BuildingDetails"]["landType"] : "---";
+              let underGroundArea = data[markerId]["BuildingDetails"]["underGroundArea"] ? data[markerId]["BuildingDetails"]["underGroundArea"] : "---";
+              let groundFloorArea = data[markerId]["BuildingDetails"]["groundFloorArea"] ? data[markerId]["BuildingDetails"]["groundFloorArea"] : "---";
+              let noOfFloors = data[markerId]["BuildingDetails"]["noOfFloors"] ? data[markerId]["BuildingDetails"]["noOfFloors"] : "---";
+              let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+              if (detail != undefined) {
+                detail.length = length;
+                detail.breadth = breadth;
+                detail.landType = landType;
+                detail.underGroundArea = underGroundArea;
+                detail.groundFloorArea = groundFloorArea;
+                detail.noOfFloors = noOfFloors;
+              }
+            }
+          }
+        }
+      }
+    })
+
   }
 
 
@@ -1044,14 +1081,14 @@ export class WardSurveyAnalysisComponent {
       .then((url) => {
         let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
         if (detail != undefined) {
-          detail.entityList[entityKey-1]["entityImageURL"]=this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+          detail.entityList[entityKey - 1]["entityImageURL"] = this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
         }
       })
       .catch((error) => {
         let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
         if (detail != undefined) {
           console.log(detail)
-           detail.entityList[entityKey-1]["entityImageURL"]=this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+          detail.entityList[entityKey - 1]["entityImageURL"] = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
         }
       });
   }

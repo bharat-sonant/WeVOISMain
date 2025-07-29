@@ -176,12 +176,9 @@ export class CmsComponent implements OnInit {
 
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
-    if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
-    }
-    else {
+    
       url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
-    }
+    
     window.open(url, "_blank");
   }
 

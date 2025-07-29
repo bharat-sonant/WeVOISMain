@@ -372,7 +372,7 @@ export class PaymentViaNeftComponent implements OnInit {
         let month = monthYearList[i].split('-')[0];
         let year = monthYearList[i].split('-')[1];
         let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
-        this.db.object(dbPath).update({ status: "Paid" });
+        this.db.object(dbPath).update({ status: "Paid",payMethod:"NEFT" });
       }
 
       const transData = {

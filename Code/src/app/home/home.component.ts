@@ -78,12 +78,9 @@ export class HomeComponent implements OnInit {
           if (userAccessList[i]["url"].includes("https")) {
             isOuterUrl = "yes";
             let newUrl = userAccessList[i]["url"].split("https://mainportal-react.web.app/userId/")[1];
-            if (this.cityName == "test") {
-              url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + newUrl;
-            }
-            else {
+            
               url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
-            }
+            
             if (userAccessList[i]["url"].includes("dehradun-pmc")) {
               if (this.isDehradun == true) {
                 let userType = "1";

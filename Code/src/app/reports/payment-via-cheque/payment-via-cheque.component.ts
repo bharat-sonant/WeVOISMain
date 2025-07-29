@@ -366,7 +366,7 @@ export class PaymentViaChequeComponent implements OnInit {
         let month = monthYearList[i].split('-')[0];
         let year = monthYearList[i].split('-')[1];
         let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
-        this.db.object(dbPath).update({ status: "Paid" });
+        this.db.object(dbPath).update({ status: "Paid",payMethod:"CHEQUE" });
       }
 
       const transData = {

@@ -192,14 +192,14 @@ export class DailyFuelReportComponent implements OnInit {
                 }
                 if (dieselData[key]["quantity"] != null) {
                   qty = dieselData[key]["quantity"];
-                  if (fuelType == "Diesel") {
-                    totalDiesel += Number(dieselData[key]["quantity"]);
+                  if (fuelType == "Petrol") {
+                    totalPetrol += Number(dieselData[key]["quantity"]);
                   }
                   else if (fuelType == "CNG") {
                     totalCNG += Number(dieselData[key]["quantity"]);
                   }
-                  else {
-                    totalPetrol += Number(dieselData[key]["quantity"]);
+                  else if (fuelType == "Diesel"){
+                    totalDiesel += Number(dieselData[key]["quantity"]);
                   }
                   totalFuel+= Number(dieselData[key]["quantity"]);
                 }

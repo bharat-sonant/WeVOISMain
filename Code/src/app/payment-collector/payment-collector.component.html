@@ -78,7 +78,7 @@
                                         <td class="table-data-2">
                                             {{data.name}}</td>
                                         <td class="table-data-3">
-                                            <span [hidden]="data.empId=='100'">
+                                            <span [hidden]="data.empId=='100' || data.empId=='99'">
                                                 {{data.empId}}</span>
                                         </td>
                                         <td class="table-data-3">
@@ -87,7 +87,7 @@
                                                     {{data.collectedAmount}}</b></span>
                                         </td>
                                         <td class="text-center table-data-4">
-                                            <span [hidden]="data.empId=='100'">
+                                            <span [hidden]="data.empId=='100' || data.empId=='99'">
                                                 <span class="actives" [hidden]="data.isActive==false">
                                                     Active
                                                 </span>
@@ -95,7 +95,7 @@
                                             </span>
                                         </td>
                                         <td class="text-center table-data-2">
-                                            <span class="actionbttn" [hidden]="data.empId=='100'">
+                                            <span class="actionbttn" [hidden]="data.empId=='100' || data.empId=='99'">
                                                 <!-- <i class="fas fa-map-marked-alt marked-icon"
                                                             (click)="openModel(contentWard,data.empId,'ward');"
                                                             title="Assign Ward"></i> -->

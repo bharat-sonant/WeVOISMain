@@ -291,6 +291,9 @@ export class CommonService {
     else if (cityName == "biofics-surat") {
       cardPrefix = "BIO";
     }
+    else if (cityName == "nainwa") {
+      cardPrefix = "NAI";
+    }
     return cardPrefix;
   }
 
@@ -473,6 +476,9 @@ export class CommonService {
     }
     else if (cityName == "biofics-surat") {
       latLng.push({ lat: 21.1544467, lng: 72.8075473 });
+    }
+    else if (cityName == "nainwa") {
+      latLng.push({ lat: 25.773878, lng: 75.8630841 });
     }
     return latLng;
   }
@@ -1367,6 +1373,7 @@ export class CommonService {
           }
         }
       }
+      console.log(zoneList);
       localStorage.setItem("allZoneList", JSON.stringify(zoneList));
     })
   }
@@ -1376,6 +1383,7 @@ export class CommonService {
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
     let cityName = localStorage.getItem("cityName");
     let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
+    console.log(path)
     if (cityName == "jodhpur") {
       path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
     }
@@ -1508,6 +1516,7 @@ export class CommonService {
             }
           }
         }
+        console.log(letestZone)
         localStorage.setItem("latest-zones", JSON.stringify(letestZone));
       }
     }, error => {

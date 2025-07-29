@@ -148,17 +148,17 @@ export class Cms1Component implements OnInit {
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice = lastDevice + 1;
-    if (index <= 12) {
+    if (index <= 10) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
-        lastActive: "07/07/2025 08:10",
-        name: "DEI-" + (lastDevice < 10 ? '0' : '') + lastDevice,
+        lastActive: "24/07/2025 08:10",
+        name: "NAI-" + (lastDevice < 10 ? '0' : '') + lastDevice,
         readerAppVersion: "1.0.3.7",
         status: "1"
       }
-      console.log("DEI-" + lastDevice);
-      let dbPath = "Devices/Dei-Bundi/" + key;
+      console.log("NAI-" + lastDevice);
+      let dbPath = "Devices/Nainwa/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }

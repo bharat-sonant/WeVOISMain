@@ -26,7 +26,7 @@
             <!-- Breadcrumb ends -->
         </div>
         <div class="header-right">
-            <div class="btn-default btn-export">
+            <div class="btn-default btn-export" (click)="exportToExcel();" >
                 Export to Excel
                 <img src="../../../assets/img/iconExport.png" class="img-fluid icon-default" alt="File" width="24" />
             </div>
@@ -255,7 +255,7 @@
             </div>
             <div class="table-body">
                 <div class="table-group">
-                    <div id="divList" class="table-ward" (scroll)="onContainerScroll();">
+                    <div id="divList" class="table-ward">
                         <table class="table">
                             <thead>
                                 <tr>
