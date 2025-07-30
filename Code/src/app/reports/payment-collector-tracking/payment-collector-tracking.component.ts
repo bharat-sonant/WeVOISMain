@@ -1084,11 +1084,11 @@ export class PaymentCollectorTrackingComponent {
     this.lineDataList = [];
     this.lineIndex = 0;
     this.isPreviousTime = false;
-    this.selectedDate = $('#txtDate').val();
+   // this.selectedDate = $('#txtDate').val();
     this.lineDataList = [];
     this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
       $("#txtDate").val(newDate);
-      if (newDate != this.selectedDate) {
+      if (newDate!="") {
         this.selectedDate = newDate;
         this.selectedYear = this.selectedDate.split('-')[0];
         this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);

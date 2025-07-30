@@ -137,7 +137,7 @@ export class PaymentViaChequeReportComponent implements OnInit {
                       day = checkDateFormat.split("-")[2];
                       monthName = this.commonService.getCurrentMonthShortName(Number(month));
                       checkDateFormat = day + " " + monthName + " " + year;
-                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + dateData[key]["chequeDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2FEntities%2F" + entityKey + "%2F" + entityCollectedDate + "%2F" + dateData[key]["image"] + "?alt=media";
                       let transactionId = "NA";
                       if (dateData[key]["transactionId"] != null) {
                         transactionId = dateData[key]["transactionId"];
@@ -155,6 +155,7 @@ export class PaymentViaChequeReportComponent implements OnInit {
                 let key = keyArray[k];
                 if (dateData[key]["status"] != "Pending") {
                   let timeStemp = new Date(collectedDate).getTime();
+                  let collectionDateImage=collectedDate;
                   let month = collectedDate.split("-")[1];
                   let year = collectedDate.split("-")[0];
                   let day = collectedDate.split("-")[2];
@@ -172,7 +173,7 @@ export class PaymentViaChequeReportComponent implements OnInit {
                   day = checkDateFormat.split("-")[2];
                   monthName = this.commonService.getCurrentMonthShortName(Number(month));
                   checkDateFormat = day + " " + monthName + " " + year;
-                  let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + dateData[key]["chequeDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                  let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + collectionDateImage + "%2F" + dateData[key]["image"] + "?alt=media";
                   let transactionId = "NA";
                   if (dateData[key]["transactionId"] != null) {
                     transactionId = dateData[key]["transactionId"];
