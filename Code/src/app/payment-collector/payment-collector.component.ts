@@ -28,7 +28,9 @@ export class PaymentCollectorComponent implements OnInit {
   db: any;
   fileName: any;
   cityName: any;
+  public empCodePrefix: any;
   public isWardShow: any;
+  lblEmpCodePrefix = "#lblEmpCodePrefix";
   serviceName = "collection-management-payment-collector";
   collectionData: collectionDatail = {
     totalCollection: "0",
@@ -46,9 +48,25 @@ export class PaymentCollectorComponent implements OnInit {
       this.isWardShow = "1";
     }
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.getEmpCodePrefix();
     this.getDevices();
     this.getZoneList();
     this.getEmployee();
+  }
+
+  getEmpCodePrefix() {
+    this.empCodePrefix = "";
+    const path = this.commonService.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    let fuelInstance = this.httpService.get(path).subscribe(data => {
+      fuelInstance.unsubscribe();
+      if (data != null) {
+        let list = JSON.parse(JSON.stringify(data));
+        let detail = list.find(item => item.cityName == this.commonService.getFireStoreCity());
+        if (detail != undefined) {
+          this.empCodePrefix = detail.empCode;
+        }
+      }
+    });
   }
 
   getDevices() {
@@ -88,6 +106,7 @@ export class PaymentCollectorComponent implements OnInit {
               let wardNo = "";
               let deviceNo = "";
               let lines = "";
+              let officeEmpID = "";
               if (userJsonData[empId]["assignedWard"] != null) {
                 wardNo = userJsonData[empId]["assignedWard"];
               }
@@ -96,6 +115,9 @@ export class PaymentCollectorComponent implements OnInit {
               }
               if (userJsonData[empId]["assignedLines"] != null) {
                 lines = userJsonData[empId]["assignedLines"];
+              }
+              if (userJsonData[empId]["empId"] != null) {
+                officeEmpID = userJsonData[empId]["empId"];
               }
               this.userList.push({
                 empId: empId,
@@ -106,6 +128,7 @@ export class PaymentCollectorComponent implements OnInit {
                 fileName: userJsonData[empId]["fileName"],
                 wardNo: wardNo,
                 deviceNo: deviceNo,
+                officeEmpID: officeEmpID,
                 qrCodeImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["qrImage"] + "?alt=media",
                 docImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["fileName"] + "?alt=media",
                 collectedAmount: 0,
@@ -160,7 +183,6 @@ export class PaymentCollectorComponent implements OnInit {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCollectionDetail", data);
 
           let totalCollectionAmount = 0;
-
           let dateArray = Object.keys(data);
           let promise = dateArray.map(async (date) => {
             let timeStamp = new Date(date).getTime();
@@ -315,6 +337,7 @@ export class PaymentCollectorComponent implements OnInit {
     let name = $("#txtName").val();
     let mobile = $("#txtPhone").val();
     let password = $("#txtPassword").val();
+    let empId = $("#txtEmpId").val();
     let isActive = false;
     let element = <HTMLInputElement>document.getElementById("chkAcive");
     if (element.checked == true) {
@@ -322,6 +345,10 @@ export class PaymentCollectorComponent implements OnInit {
     }
     if (name == "") {
       this.commonService.setAlertMessage("error", "Please enter name !!!");
+      return;
+    }
+    if (empId == "") {
+      this.commonService.setAlertMessage("error", "Please enter Employee ID !!!");
       return;
     }
     if (mobile == "") {
@@ -334,23 +361,39 @@ export class PaymentCollectorComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Mobile no already exist !!!");
       return;
     }
+    detail = mobileFilterList.find(item => item.officeEmpID == empId);
+    if (detail != undefined) {
+      this.commonService.setAlertMessage("error", "Employee ID already exist !!!");
+      return;
+    }
+    let employeeInstance = this.db.object("Employees/" + empId).valueChanges().subscribe(empData => {
+      employeeInstance.unsubscribe();
+      if (empData != null) {
 
-    let jsonData = {};
+        let jsonData = {};
 
-    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
-    let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
-      userJSONInstance.unsubscribe();
-      if (userJsonData != null) {
-        jsonData = userJsonData;
-        this.lastEmpId = Number(userJsonData["lastKey"]);
-        this.saveDataInJSON(id, jsonData, name, mobile, password, isActive);
+        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
+        let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
+          userJSONInstance.unsubscribe();
+          if (userJsonData != null) {
+            jsonData = userJsonData;
+            this.lastEmpId = Number(userJsonData["lastKey"]);
+            this.saveDataInJSON(id, jsonData, name, mobile, password, empId, isActive);
+          }
+        }, error => {
+          this.saveDataInJSON(id, jsonData, name, mobile, password, empId, isActive);
+        });
       }
-    }, error => {
-      this.saveDataInJSON(id, jsonData, name, mobile, password, isActive);
-    });
+      else {
+        this.commonService.setAlertMessage("error", "Incorrect Employee ID !!!");
+        return;
+      }
+    })
+
+
   }
 
-  saveDataInJSON(id: any, jsonData: any, name: any, mobile: any, password: any, isActive: any) {
+  saveDataInJSON(id: any, jsonData: any, name: any, mobile: any, password: any, empId: any, isActive: any) {
     if (id == "0") {
       this.lastEmpId++;
       if ((<HTMLInputElement>document.getElementById("fileUpload")).value == "") {
@@ -387,7 +430,8 @@ export class PaymentCollectorComponent implements OnInit {
       password: password,
       isActive: isActive,
       fileName: this.fileName,
-      qrImage: "qrCode.png"
+      qrImage: "qrCode.png",
+      empId: empId
     };
     jsonData[this.lastEmpId.toString()] = data;
     let url = "https://jaipurgreaterd2d.web.app/payment-receiver-detail/" + this.lastEmpId + "~" + this.commonService.getFireStoreCity();
@@ -513,9 +557,10 @@ export class PaymentCollectorComponent implements OnInit {
         $("#deleteId").val(id);
       }
     } else {
+
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let height = 380;
+      let height = 420;
       let width = 400;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -528,12 +573,19 @@ export class PaymentCollectorComponent implements OnInit {
           $("#txtName").val(userDetail.name);
           $("#txtPhone").val(userDetail.mobile);
           $("#txtPassword").val(userDetail.password);
+          $("#txtEmpId").val(userDetail.officeEmpID);
           this.fileName = userDetail.fileName;
           if (userDetail.isActive == true) {
             let element = <HTMLInputElement>document.getElementById("chkAcive");
             element.checked = true;
           }
         }
+      }
+      else {
+        $("#txtName").val("");
+        $("#txtPhone").val("");
+        $("#txtPassword").val("");
+        $("#txtEmpId").val("");
       }
     }
   }
