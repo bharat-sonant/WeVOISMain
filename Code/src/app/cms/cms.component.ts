@@ -34,59 +34,46 @@ export class CmsComponent implements OnInit {
   isDehradun: boolean;
   pageList: any[] = [];
 
-isMonitoringPage: boolean = false;  // 👈 Add this at the top
+  isMonitoringPage: boolean = false;  // 👈 Add this at the top
 
-ngOnInit() {
-  this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-  this.cityName = localStorage.getItem("cityName");
-  this.userid = localStorage.getItem("userID");
-
-  this.userType = localStorage.getItem("userType") === "External User" ? "1" : "2";
-  this.isActual = localStorage.getItem("isActual");
-
-  // ❌ REMOVE THIS BLOCK — not needed anymore
-  // const id = this.actRoute.snapshot.paramMap.get("id");
-  // let pageList = id.split("-");
-  // this.getPages(pageList[pageList.length - 1]);
-
-  this.isMonitoringPage = this.router.url.includes("/cms/2");
-this.router.events
-  .pipe(filter(event => event instanceof NavigationEnd))
-  .subscribe(() => {
-    const id1 = this.actRoute.snapshot.paramMap.get("id");
-    let pageList = id1.split("-");
+  ngOnInit() {
+    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    this.cityName = localStorage.getItem("cityName");
+    this.userid = localStorage.getItem("userID");
+    if (localStorage.getItem("userType") == "External User") {
+      this.userType = "1";
+    }
+    else {
+      this.userType = "2";
+    }
+    this.isActual = localStorage.getItem("isActual");
+    const id = this.actRoute.snapshot.paramMap.get("id");
+    if (id == "2") {
+      this.isMonitoringPage = true;
+    }
+    else {
+      this.isMonitoringPage = false;
+    }
+    let pageList = id.split("-");
     this.getPages(pageList[pageList.length - 1]);
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        const id1 = this.actRoute.snapshot.paramMap.get("id");
+        if (id1 == "2") {
+          this.isMonitoringPage = true;
+        }
+        else {
+          this.isMonitoringPage = false;
+        }
+        let pageList = id1.split("-");
+        this.getPages(pageList[pageList.length - 1]);
+      });
 
-    const cmsId = pageList[pageList.length - 1];
-    this.isMonitoringPage = cmsId === "2"; // ✅ exact match only
-  });
-}
+    // this.setDesign();
+  }
 
 
-  // ngOnInit() {
-  //   this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-  //   this.cityName = localStorage.getItem("cityName");
-  //   this.userid = localStorage.getItem("userID");
-  //   if (localStorage.getItem("userType") == "External User") {
-  //     this.userType = "1";
-  //   }
-  //   else {
-  //     this.userType = "2";
-  //   }
-  //   this.isActual = localStorage.getItem("isActual");
-  //   const id = this.actRoute.snapshot.paramMap.get("id");
-  //   let pageList = id.split("-");
-  //   this.getPages(pageList[pageList.length - 1]);
-  //   this.router.events
-  //     .pipe(filter(event => event instanceof NavigationEnd))
-  //     .subscribe(() => {
-  //       const id1 = this.actRoute.snapshot.paramMap.get("id");
-  //       let pageList = id1.split("-");
-  //       this.getPages(pageList[pageList.length - 1]);
-  //     });
-
-  //   // this.setDesign();
-  // }
 
   public getPages(pageId: any) {
     this.clearAll();
@@ -223,7 +210,7 @@ this.router.events
       this.router.navigate([value], { replaceUrl: true });
       //const id = list[list.length - 1];
       //let pageList = id.split("-");
-     // this.getPages(pageList[pageList.length - 1]);
+      // this.getPages(pageList[pageList.length - 1]);
     }
   }
 
