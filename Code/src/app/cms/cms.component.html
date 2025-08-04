@@ -313,14 +313,64 @@
       <div class="row mob-responsive"
         style="display: flex; justify-content: center;padding-left: 8px; padding-right: 8px;">
 
-        <div class="col-md-2 mt-15" *ngFor="let data of pageList; let i=index" (click)="goToURL(data.url,data.pageId)">
+        <!-- <div class="col-md-2 mt-15" *ngFor="let data of pageList; let i=index" (click)="goToURL(data.url,data.pageId)">
           <div class="more-cards rainbow">
             <div class="vertical">
               <img id="icon1" [src]="data.img" alt="no image" class="bbb icon-green" style="font-weight: bold;height:30px;" /> <br>
               <h3 id="span1">{{data.name}}</h3>
             </div>
           </div>
+        </div> -->
+<!-- MONITORING VIEW (Wrap All in One Row) -->
+<ng-container *ngIf="isMonitoringPage">
+  <div class="col-md-12 monitoring-card">
+    <div class="monitoring-card-row">
+      <div 
+        class="monitoring-card-item" 
+        *ngFor="let data of pageList; let i = index" 
+        (click)="goToURL(data.url, data.pageId)"
+      >
+        <div class="vertical">
+          <div class="imgbg">
+            <img 
+              [src]="data.img" 
+              alt="no image" 
+              class="bbb icon-green" 
+              style="font-weight: bold; height: 30px;" 
+            />
+          </div>
+         
+          <div class="infoRight">
+          <h3>{{ data.name }}</h3>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- NORMAL VIEW (each card separate col-md-2) -->
+<ng-container *ngIf="!isMonitoringPage">
+  <div 
+    class="col-md-2 mt-15" 
+    *ngFor="let data of pageList; let i = index" 
+    (click)="goToURL(data.url, data.pageId)"
+  >
+    <div class="more-cards rainbow">
+      <div class="vertical">
+        <img 
+          [src]="data.img" 
+          alt="no image" 
+          class="bbb icon-green" 
+          style="font-weight: bold; height: 30px;" 
+        />
+        <br />
+        <h3>{{ data.name }}</h3>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
         <div id="div1" class="col-md-2 mt-15">
           <div class="more-cards rainbow" >
             <div class="vertical">

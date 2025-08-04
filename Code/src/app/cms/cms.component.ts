@@ -34,30 +34,59 @@ export class CmsComponent implements OnInit {
   isDehradun: boolean;
   pageList: any[] = [];
 
-  ngOnInit() {
-    this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    this.cityName = localStorage.getItem("cityName");
-    this.userid = localStorage.getItem("userID");
-    if (localStorage.getItem("userType") == "External User") {
-      this.userType = "1";
-    }
-    else {
-      this.userType = "2";
-    }
-    this.isActual = localStorage.getItem("isActual");
-    const id = this.actRoute.snapshot.paramMap.get("id");
-    let pageList = id.split("-");
-    this.getPages(pageList[pageList.length - 1]);
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        const id1 = this.actRoute.snapshot.paramMap.get("id");
-        let pageList = id1.split("-");
-        this.getPages(pageList[pageList.length - 1]);
-      });
+isMonitoringPage: boolean = false;  // 👈 Add this at the top
 
-    // this.setDesign();
-  }
+ngOnInit() {
+  this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+  this.cityName = localStorage.getItem("cityName");
+  this.userid = localStorage.getItem("userID");
+
+  this.userType = localStorage.getItem("userType") === "External User" ? "1" : "2";
+  this.isActual = localStorage.getItem("isActual");
+
+  // ❌ REMOVE THIS BLOCK — not needed anymore
+  // const id = this.actRoute.snapshot.paramMap.get("id");
+  // let pageList = id.split("-");
+  // this.getPages(pageList[pageList.length - 1]);
+
+  this.isMonitoringPage = this.router.url.includes("/cms/2");
+this.router.events
+  .pipe(filter(event => event instanceof NavigationEnd))
+  .subscribe(() => {
+    const id1 = this.actRoute.snapshot.paramMap.get("id");
+    let pageList = id1.split("-");
+    this.getPages(pageList[pageList.length - 1]);
+
+    const cmsId = pageList[pageList.length - 1];
+    this.isMonitoringPage = cmsId === "2"; // ✅ exact match only
+  });
+}
+
+
+  // ngOnInit() {
+  //   this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+  //   this.cityName = localStorage.getItem("cityName");
+  //   this.userid = localStorage.getItem("userID");
+  //   if (localStorage.getItem("userType") == "External User") {
+  //     this.userType = "1";
+  //   }
+  //   else {
+  //     this.userType = "2";
+  //   }
+  //   this.isActual = localStorage.getItem("isActual");
+  //   const id = this.actRoute.snapshot.paramMap.get("id");
+  //   let pageList = id.split("-");
+  //   this.getPages(pageList[pageList.length - 1]);
+  //   this.router.events
+  //     .pipe(filter(event => event instanceof NavigationEnd))
+  //     .subscribe(() => {
+  //       const id1 = this.actRoute.snapshot.paramMap.get("id");
+  //       let pageList = id1.split("-");
+  //       this.getPages(pageList[pageList.length - 1]);
+  //     });
+
+  //   // this.setDesign();
+  // }
 
   public getPages(pageId: any) {
     this.clearAll();
@@ -176,9 +205,12 @@ export class CmsComponent implements OnInit {
 
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
-    
+    if (this.cityName == "test") {
+      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
+    }
+    else {
       url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
-    
+    }
     window.open(url, "_blank");
   }
 
