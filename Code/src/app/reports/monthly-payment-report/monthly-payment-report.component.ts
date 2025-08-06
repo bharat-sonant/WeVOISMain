@@ -127,7 +127,7 @@ export class MonthlyPaymentReportComponent implements OnInit {
   }
 
   updatePaymentData() {
-    $(this.divLoaderMain).show();
+    // $(this.divLoaderMain).show();
     this.list = [];
     this.wardPaymentList = [];
     this.collectorPaymentList = [];
@@ -308,11 +308,93 @@ export class MonthlyPaymentReportComponent implements OnInit {
           }
         }
       }
-      this.getCardWardMapping();
+
+     // this.getActualCollectorAmount();
+
+
+
+
+       this.getCardWardMapping();
     }, error => {
       this.commonService.setAlertMessage("error", "Sorry! No data found !!!");
       $(this.divLoaderMain).hide();
     });
+  }
+
+  getActualCollectorAmount() {
+    let year = this.selectedYear;
+    let month = this.selectedMonth;
+    let days = new Date(year, month, 0).getDate();
+    let totalAmount = 0;
+    for (let i = 0; i < this.collectorList.length; i++) {
+      let collectorId = this.collectorList[i]["collectorId"];
+      for (let j = 10; j <= 10; j++) {
+        let monthDate = year + '-' + month + '-' + (j < 10 ? '0' : '') + j;
+        let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + collectorId + "/" + monthDate;
+        let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+          instance.unsubscribe();
+          if (data != null) {
+            let keyArray = Object.keys(data);
+            let transactionList = [];
+            for (let k = 0; k < keyArray.length; k++) {
+              let key = keyArray[k];
+              if (data[key]["transactionAmount"] != null) {
+                let detail = transactionList.find(item => item.id == data[key]["merchantTransactionId"]);
+                if (detail == undefined) {
+                  transactionList.push({ id: data[key]["merchantTransactionId"] });
+                  totalAmount += Number(data[key]["transactionAmount"]);
+                  console.log("card");
+                  console.log(data[key]["cardNo"]);
+                  console.log(data[key]["transactionAmount"]);
+                }
+              }
+            }
+          }
+          console.log(totalAmount);
+        })
+      }
+
+      //Entity Payment
+
+      let dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + collectorId + "/Entities";
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        if (data != null) {
+          let entityArray = Object.keys(data);
+          for (let i = 0; i < entityArray.length; i++) {
+            let entityId = entityArray[i];
+            let dateArray = Object.keys(data[entityId]);
+            for (let j = 10; j <= 10; j++) {
+              let monthDate = year + '-' + month + '-' + (j < 10 ? '0' : '') + j;
+              for (let k = 0; k < dateArray.length; k++) {
+                if (monthDate == dateArray[k]) {
+                  let keyArray = Object.keys(data[entityId][monthDate]);
+                  let transactionList = [];
+                  for (let l = 0; l < keyArray.length; l++) {
+                    let key = keyArray[l];
+                    if (data[entityId][monthDate][key]["transactionAmount"] != null) {
+                      let detail = transactionList.find(item => item.id == data[entityId][monthDate][key]["merchantTransactionId"]);
+                      if (detail == undefined) {
+                        transactionList.push({ id: data[entityId][monthDate][key]["merchantTransactionId"] });
+                        totalAmount += Number(data[entityId][monthDate][key]["transactionAmount"]);
+                        console.log("card");
+                        console.log(data[entityId][monthDate][key]["cardNo"]);
+                        console.log(data[entityId][monthDate][key]["transactionAmount"]);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          console.log(totalAmount);
+        }
+      })
+
+    }
+
+
+
   }
 
   getZones() {
