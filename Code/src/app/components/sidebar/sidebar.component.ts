@@ -776,7 +776,7 @@ export class SidebarComponent implements OnInit {
 
     if (windowwidth >= 1350) {
       width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "5%");
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "3%");
 
     } else if (windowwidth <= 1349 && windowwidth >= 1201) {
       width = 767;

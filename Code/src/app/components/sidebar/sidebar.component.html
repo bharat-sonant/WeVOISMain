@@ -214,7 +214,9 @@
             </div>
 
             <!-- <div class="login-body" style="margin-top: 50px;"> -->
-            <div class="row row2" style="display: flex; justify-content: center">
+            <div class="row row2" style="display: flex; justify-content: center;     min-height: 100px;
+    max-height: calc(95vh - 100px);
+    overflow: auto;">
               <div id="ajmerBox" class="login-box" style="display: none; margin-right: 30px"
                 (click)="changeCity('ajmer')">
                 <img src="../../assets/images/ajmer.png" alt="" />
@@ -474,8 +476,10 @@
             </div>
 
             <div class="login-body" style="margin-top: 50px">
-              <div class="row row2" style="display: flex; justify-content: center">
-                <div id="jaipurCivilLineBox" class="login-box" style="display: none; margin-right: 30px"
+              <div class="row row2" style="display: flex; justify-content: center;     min-height: 100px;
+    max-height: calc(95vh - 100px);
+    overflow: auto;">
+                <div id="jaipurCivilLineBox" class="login-box" style="display: none; margin-right: 30px;"
                   (click)="changeCity('jaipur-civil-line')">
                   <img src="../../../assets/images/civilline.png" alt="" />
                   <p>Civil Line</p>

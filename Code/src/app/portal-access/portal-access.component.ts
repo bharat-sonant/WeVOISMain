@@ -12,9 +12,9 @@ export class PortalAccessComponent implements OnInit {
   constructor(private commonService: CommonService, private modalService: NgbModal, public router: Router) { }
   accessCity: any[] = [];
   ngOnInit() {
-   // $(".navbar-toggler").hide();
-    //$("#divSideMenus").hide();
-   // $("#divMainContent").css("width", "calc(100% - 1px)");
+   $(".navbar-toggler").hide();
+    $("#divSideMenus").hide();
+   $("#divMainContent").css("width", "calc(100% - 1px)");
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     this.getCityAccess();
 
