@@ -6,7 +6,7 @@
 .monitoring-card-row {
     display: flex;
     gap: 10px;
-    width: 100%;
+    width: 60%;
     flex-wrap: wrap;
 }
 
@@ -23,7 +23,7 @@
     padding: 16px 16px;
     transition: 0.3s;
     cursor: pointer;
-    width: calc(100% / 5 - 8px);
+    width: calc(100% / 6 - 8px);
     overflow: hidden;
 
 }

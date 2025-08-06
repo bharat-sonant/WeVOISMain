@@ -200,9 +200,22 @@ export class SidebarComponent implements OnInit {
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.setDefault();
+
     this.closeMapModel();
     this.router.navigate(["/" + cityName + "/home"]);
   }
+
+// changeCity(cityName: any) {
+//   localStorage.removeItem("mapUpdateHistory");
+//   localStorage.setItem("cityName", cityName);
+//   localStorage.setItem("isCityChange", "yes");
+
+//   $("#contentCity").modal("hide"); // Hide first modal
+//   $("#contentSecondCity").modal("hide"); // Hide second modal
+
+//   this.setDefault();
+//   this.router.navigate(["/" + cityName + "/home"]);
+// }
 
   getGeoSurfing() {
     if (this.zoneList.length > 0) {
@@ -768,49 +781,49 @@ export class SidebarComponent implements OnInit {
   }
 
   openCityModel(content: any) {
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 500;
-    let width = 767;
+    // this.modalService.open(content, { size: "lg" });
+    // let windowHeight = $(window).height();
+    // let height = 500;
+    // let width = 767;
 
 
 
-    let windowwidth = $(window).width();
+    // let windowwidth = $(window).width();
 
-    if (windowwidth >= 1350) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "5%");
+    // if (windowwidth >= 1350) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "5%");
 
-    } else if (windowwidth <= 1349 && windowwidth >= 1201) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1349 && windowwidth >= 1201) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 1200 && windowwidth >= 1025) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1200 && windowwidth >= 1025) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 1024 && windowwidth >= 768) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1024 && windowwidth >= 768) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 767 && windowwidth >= 577) {
-      width = 575;
-
-
-    } else if (windowwidth <= 576 && windowwidth >= 410) {
-      width = 400;
-
-    } else if (windowwidth <= 413 && windowwidth >= 270) {
-      width = 265;
-
-    }
+    // } else if (windowwidth <= 767 && windowwidth >= 577) {
+    //   width = 575;
 
 
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // } else if (windowwidth <= 576 && windowwidth >= 410) {
+    //   width = 400;
 
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", "26px");
+    // } else if (windowwidth <= 413 && windowwidth >= 270) {
+    //   width = 265;
+
+    // }
+
+
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", "26px");
     if (this.cityName == "jaipur") {
       $("#popUpCityName").html("jaipur D2D");
     }
@@ -3787,48 +3800,48 @@ export class SidebarComponent implements OnInit {
 
 
   openSecondCityModel(content: any) {
-    this.closeMapModel();
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 300;
-    let width = 767;
+    // this.closeMapModel();
+    // this.modalService.open(content, { size: "lg" });
+    // let windowHeight = $(window).height();
+    // let height = 300;
+    // let width = 767;
 
-    let windowwidth = $(window).width();
+    // let windowwidth = $(window).width();
 
-    if (windowwidth >= 1350) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "20%");
+    // if (windowwidth >= 1350) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "20%");
 
-    } else if (windowwidth <= 1349 && windowwidth >= 1201) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1349 && windowwidth >= 1201) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 1200 && windowwidth >= 1025) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1200 && windowwidth >= 1025) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 1024 && windowwidth >= 768) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1024 && windowwidth >= 768) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 767 && windowwidth >= 577) {
-      width = 575;
-
-
-    } else if (windowwidth <= 576 && windowwidth >= 410) {
-      width = 400;
-
-    } else if (windowwidth <= 413 && windowwidth >= 270) {
-      width = 265;
-
-    }
+    // } else if (windowwidth <= 767 && windowwidth >= 577) {
+    //   width = 575;
 
 
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // } else if (windowwidth <= 576 && windowwidth >= 410) {
+    //   width = 400;
 
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", "26px");
+    // } else if (windowwidth <= 413 && windowwidth >= 270) {
+    //   width = 265;
+
+    // }
+
+
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", "26px");
 
     $("#jaipurJagatpuraBox").removeClass((<HTMLElement>document.getElementById("jaipurJagatpuraBox")).className);
     $("#jaipurJhotwaraBox").removeClass((<HTMLElement>document.getElementById("jaipurJhotwaraBox")).className);
@@ -4014,7 +4027,19 @@ export class SidebarComponent implements OnInit {
   }
 
   closeMapModel() {
-    this.modalService.dismissAll();
+    // $("#contentCity").removeClass('show'),
+    // $("#contentSecondCity").removeClass('show'),
+    //     $("#contentCity").addClass('hide'),
+    // $("#contentSecondCity").addClass('hide'),
+    $("#contentCity").hide(),
+    $("#contentSecondCity").hide()
+    // let element=<HTMLButtonElement>document.getElementById("btnClose");
+    // console.log(element)
+    // element.click();
+    
+    //$("#btnClose").click();
+
+    //this.modalService.dismissAll();
   }
 }
 
