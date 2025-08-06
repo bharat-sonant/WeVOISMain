@@ -6,7 +6,7 @@
 .monitoring-card-row {
     display: flex;
     gap: 10px;
-    width: 60%;
+    width: 75%;
     flex-wrap: wrap;
 }
 
@@ -20,18 +20,19 @@
     transition: all 0.3s ease;
     border: 1px solid #e1e1e1;
     border-radius: 10px;
-    padding: 16px 16px;
+    padding: 10px 14px;
     transition: 0.3s;
     cursor: pointer;
-    width: calc(100% / 6 - 8px);
+    width: calc(100% / 6 - 9px);
     overflow: hidden;
 
 }
 
 .monitoring-card-item:hover {
-    background: linear-gradient(to left, white, #f1fff2);
+    background: linear-gradient(to left, white, #d5ffd8);
 }
-.monitoring-card-item:hover h3{
+
+.monitoring-card-item:hover h3 {
     color: $darkBlack;
 }
 
@@ -69,7 +70,7 @@
 .monitoring-card .icon-green {
     transition: 0.2s;
     height: 24px !important;
-    filter: brightness(0) saturate(100%) invert(41%) sepia(76%) saturate(9%) hue-rotate(79deg) brightness(90%) contrast(83%);
+    // filter: brightness(0) saturate(100%) invert(41%) sepia(76%) saturate(9%) hue-rotate(79deg) brightness(90%) contrast(83%);
 }
 
 .infoRight {
@@ -81,7 +82,7 @@
 .infoRight::after {
     content: "";
     position: absolute;
-    right: 10px;
+    right: 0px;
     top: 10px;
     transform: translateY(-50%) rotate(270deg);
     background-image: url(../../assets/img/iconDown.png);
@@ -95,10 +96,10 @@
 
 .monitoring-card h3 {
     font-size: 13px;
-    color:  $black70;
+    color: $black70;
     font-family: $fontGraphik;
     margin: 0px;
-    width: calc(100% - 20px);
+    width: calc(100% - 22px);
 }
 
 
@@ -511,6 +512,20 @@ i {
 .more-pages {
     display: none;
 }
+
+@media (max-width: 1680px) {
+    .monitoring-card-item {
+        width: calc(100% / 5 - 9px);
+
+    }
+}
+@media (max-width: 1400px) {
+    .monitoring-card-item {
+        width: calc(100% / 4 - 9px);
+
+    }
+}
+
 
 // Small devices (landscape phones, 576px and up)
 @media (max-width: 360px) {
