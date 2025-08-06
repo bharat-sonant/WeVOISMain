@@ -12,9 +12,9 @@ export class PortalAccessComponent implements OnInit {
   constructor(private commonService: CommonService, private modalService: NgbModal, public router: Router) { }
   accessCity: any[] = [];
   ngOnInit() {
-    $(".navbar-toggler").hide();
-    $("#divSideMenus").hide();
-    $("#divMainContent").css("width", "calc(100% - 1px)");
+   // $(".navbar-toggler").hide();
+    //$("#divSideMenus").hide();
+   // $("#divMainContent").css("width", "calc(100% - 1px)");
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     this.getCityAccess();
 
@@ -22,6 +22,7 @@ export class PortalAccessComponent implements OnInit {
 
   getCityAccess() {
     let isBaseCity = false;
+    console.log(this.accessCity)
     for (let i = 0; i < this.accessCity.length; i++) {
       if (this.accessCity[i]["city"] == "sikar") {
         $("#sikarBox").show();

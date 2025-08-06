@@ -200,22 +200,9 @@ export class SidebarComponent implements OnInit {
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.setDefault();
-
     this.closeMapModel();
     this.router.navigate(["/" + cityName + "/home"]);
   }
-
-// changeCity(cityName: any) {
-//   localStorage.removeItem("mapUpdateHistory");
-//   localStorage.setItem("cityName", cityName);
-//   localStorage.setItem("isCityChange", "yes");
-
-//   $("#contentCity").modal("hide"); // Hide first modal
-//   $("#contentSecondCity").modal("hide"); // Hide second modal
-
-//   this.setDefault();
-//   this.router.navigate(["/" + cityName + "/home"]);
-// }
 
   getGeoSurfing() {
     if (this.zoneList.length > 0) {
@@ -344,9 +331,9 @@ export class SidebarComponent implements OnInit {
             if (userAccessList[i]["url"].includes("https")) {
               isOuterUrl = "yes";
               let newUrl = userAccessList[i]["url"].split("https://mainportal-react.web.app/userId/")[1];
-              
-                url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
-              
+
+              url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
+
               if (userAccessList[i]["url"].includes("dehradun-pmc")) {
                 if (this.isDehradun == true) {
                   let userType = "1";
@@ -746,12 +733,9 @@ export class SidebarComponent implements OnInit {
 
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
-    if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
-    }
-    else {
-      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
-    }
+
+    url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
+
     window.open(url, "_blank");
   }
 
@@ -781,49 +765,49 @@ export class SidebarComponent implements OnInit {
   }
 
   openCityModel(content: any) {
-    // this.modalService.open(content, { size: "lg" });
-    // let windowHeight = $(window).height();
-    // let height = 500;
-    // let width = 767;
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 500;
+    let width = 767;
 
 
 
-    // let windowwidth = $(window).width();
+    let windowwidth = $(window).width();
 
-    // if (windowwidth >= 1350) {
-    //   width = 767;
-    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "5%");
+    if (windowwidth >= 1350) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "5%");
 
-    // } else if (windowwidth <= 1349 && windowwidth >= 1201) {
-    //   width = 767;
-    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    } else if (windowwidth <= 1349 && windowwidth >= 1201) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    // } else if (windowwidth <= 1200 && windowwidth >= 1025) {
-    //   width = 767;
-    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    } else if (windowwidth <= 1200 && windowwidth >= 1025) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    // } else if (windowwidth <= 1024 && windowwidth >= 768) {
-    //   width = 767;
-    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    } else if (windowwidth <= 1024 && windowwidth >= 768) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    // } else if (windowwidth <= 767 && windowwidth >= 577) {
-    //   width = 575;
-
-
-    // } else if (windowwidth <= 576 && windowwidth >= 410) {
-    //   width = 400;
-
-    // } else if (windowwidth <= 413 && windowwidth >= 270) {
-    //   width = 265;
-
-    // }
+    } else if (windowwidth <= 767 && windowwidth >= 577) {
+      width = 575;
 
 
-    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    } else if (windowwidth <= 576 && windowwidth >= 410) {
+      width = 400;
 
-    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
-    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    // $("div .modal-dialog-centered").css("margin-top", "26px");
+    } else if (windowwidth <= 413 && windowwidth >= 270) {
+      width = 265;
+
+    }
+
+
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
     if (this.cityName == "jaipur") {
       $("#popUpCityName").html("jaipur D2D");
     }
@@ -895,7 +879,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -933,7 +917,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "reengus") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box active-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -952,7 +936,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -990,7 +974,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "jaipur-office") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box active-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1009,7 +993,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1047,7 +1031,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "test") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1066,7 +1050,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1104,7 +1088,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "jaipur-greater") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box active-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1123,7 +1107,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1161,7 +1145,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "kishangarh") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box active-box");
@@ -1180,7 +1164,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1218,7 +1202,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "salasar") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1237,7 +1221,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1275,7 +1259,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "wevois-others") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1294,7 +1278,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1332,7 +1316,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "tonk") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1352,7 +1336,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1390,7 +1374,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "ratangarh") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1410,7 +1394,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1448,7 +1432,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "nokha") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1468,7 +1452,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1506,7 +1490,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "losal") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1526,7 +1510,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1564,7 +1548,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "jaipur-test") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1584,7 +1568,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box active-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1622,7 +1606,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "jammu-survey") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1642,7 +1626,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box active-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1680,7 +1664,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "khandela") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1700,7 +1684,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box active-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1738,7 +1722,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "dehradun") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1758,7 +1742,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box  active-box");
       $("#paliBox").addClass("login-box");
 
@@ -1796,7 +1780,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "pali") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1816,7 +1800,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box  active-box");
 
@@ -1854,7 +1838,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "pali") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1874,7 +1858,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
       $("#sujangarhBox").addClass("login-box");
@@ -1911,7 +1895,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "sujangarh") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1931,7 +1915,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -1969,7 +1953,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "noida") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -1989,7 +1973,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2027,7 +2011,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "sikar-survey") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2047,7 +2031,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2085,7 +2069,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "jodhpur") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2105,7 +2089,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2143,7 +2127,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "kuchaman") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2163,7 +2147,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2201,7 +2185,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "chirawa") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2221,7 +2205,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2259,7 +2243,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "iit-roorkee") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2279,7 +2263,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2317,7 +2301,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "nawa") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2337,7 +2321,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2375,7 +2359,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "sonipat") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2395,7 +2379,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2433,7 +2417,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "tonk-raj") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2453,7 +2437,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2491,7 +2475,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "jaipur-bwg") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2511,7 +2495,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2549,7 +2533,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "bharatpur") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2569,7 +2553,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2607,7 +2591,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "etmadpur") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2627,7 +2611,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2665,7 +2649,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "ajmer") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2685,7 +2669,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2723,7 +2707,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "sujalpur") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2743,7 +2727,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2781,7 +2765,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "uniara") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2801,7 +2785,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2839,7 +2823,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "rajsamand") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2859,7 +2843,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2897,7 +2881,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "sultanpur") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2917,7 +2901,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -2955,7 +2939,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "khairabad") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -2975,7 +2959,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3013,7 +2997,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "sanchore") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3033,7 +3017,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3071,7 +3055,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "jaunpur") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3091,7 +3075,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3129,7 +3113,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "mapusa-goa") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3149,7 +3133,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3187,7 +3171,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "ecogram") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3207,7 +3191,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3245,7 +3229,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "jaipur-textile-recycling-facility") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3265,7 +3249,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3303,7 +3287,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "chennai") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3323,7 +3307,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3361,7 +3345,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "dausa") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3381,7 +3365,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3419,7 +3403,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "dei-bundi") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3439,7 +3423,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3477,7 +3461,7 @@ export class SidebarComponent implements OnInit {
     } else if (this.cityName == "biofics-surat") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3497,7 +3481,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3532,10 +3516,10 @@ export class SidebarComponent implements OnInit {
       $("#deibundiBox").addClass("login-box");
       $("#bioficsSuratBox").addClass("login-box active-box");
       $("#nainwaBox").addClass("login-box");
-    }else if (this.cityName == "nainwa") {
+    } else if (this.cityName == "nainwa") {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3555,7 +3539,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3593,7 +3577,7 @@ export class SidebarComponent implements OnInit {
     } else {
       $("#sikarBox").addClass("login-box");
       $("#reengusBox").addClass("login-box");
-      
+
       $("#jaipurOfficeBox").addClass("login-box");
       $("#jaipurGreaterBox").addClass("login-box");
       $("#kishangarhBox").addClass("login-box");
@@ -3613,7 +3597,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurTestBox").addClass("login-box");
       $("#jammuSurveyBox").addClass("login-box");
       $("#khandelaBox").addClass("login-box");
-      
+
       $("#dehradunBox").addClass("login-box");
       $("#paliBox").addClass("login-box");
 
@@ -3800,48 +3784,48 @@ export class SidebarComponent implements OnInit {
 
 
   openSecondCityModel(content: any) {
-    // this.closeMapModel();
-    // this.modalService.open(content, { size: "lg" });
-    // let windowHeight = $(window).height();
-    // let height = 300;
-    // let width = 767;
+    this.closeMapModel();
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 300;
+    let width = 767;
 
-    // let windowwidth = $(window).width();
+    let windowwidth = $(window).width();
 
-    // if (windowwidth >= 1350) {
-    //   width = 767;
-    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "20%");
+    if (windowwidth >= 1350) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "20%");
 
-    // } else if (windowwidth <= 1349 && windowwidth >= 1201) {
-    //   width = 767;
-    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    } else if (windowwidth <= 1349 && windowwidth >= 1201) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    // } else if (windowwidth <= 1200 && windowwidth >= 1025) {
-    //   width = 767;
-    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    } else if (windowwidth <= 1200 && windowwidth >= 1025) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    // } else if (windowwidth <= 1024 && windowwidth >= 768) {
-    //   width = 767;
-    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    } else if (windowwidth <= 1024 && windowwidth >= 768) {
+      width = 767;
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    // } else if (windowwidth <= 767 && windowwidth >= 577) {
-    //   width = 575;
-
-
-    // } else if (windowwidth <= 576 && windowwidth >= 410) {
-    //   width = 400;
-
-    // } else if (windowwidth <= 413 && windowwidth >= 270) {
-    //   width = 265;
-
-    // }
+    } else if (windowwidth <= 767 && windowwidth >= 577) {
+      width = 575;
 
 
-    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    } else if (windowwidth <= 576 && windowwidth >= 410) {
+      width = 400;
 
-    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
-    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    // $("div .modal-dialog-centered").css("margin-top", "26px");
+    } else if (windowwidth <= 413 && windowwidth >= 270) {
+      width = 265;
+
+    }
+
+
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
 
     $("#jaipurJagatpuraBox").removeClass((<HTMLElement>document.getElementById("jaipurJagatpuraBox")).className);
     $("#jaipurJhotwaraBox").removeClass((<HTMLElement>document.getElementById("jaipurJhotwaraBox")).className);
@@ -3861,7 +3845,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurMansarovarBox").addClass("login-box");
       $("#jaipurMurlipuraBox").addClass("login-box");
       $("#jaipurSanganerBox").addClass("login-box");
-      
+
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
       $("#jaipurKishanpoleBox").addClass("login-box");
@@ -3874,7 +3858,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurMansarovarBox").addClass("login-box");
       $("#jaipurMurlipuraBox").addClass("login-box");
       $("#jaipurSanganerBox").addClass("login-box");
-      
+
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
       $("#jaipurKishanpoleBox").addClass("login-box");
@@ -3887,7 +3871,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurMansarovarBox").addClass("login-box");
       $("#jaipurMurlipuraBox").addClass("login-box");
       $("#jaipurSanganerBox").addClass("login-box");
-      
+
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
       $("#jaipurKishanpoleBox").addClass("login-box");
@@ -3900,7 +3884,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurMansarovarBox").addClass("login-box active-box");
       $("#jaipurMurlipuraBox").addClass("login-box");
       $("#jaipurSanganerBox").addClass("login-box");
-      
+
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
       $("#jaipurKishanpoleBox").addClass("login-box");
@@ -3913,7 +3897,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurMansarovarBox").addClass("login-box");
       $("#jaipurMurlipuraBox").addClass("login-box active-box");
       $("#jaipurSanganerBox").addClass("login-box");
-      
+
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
       $("#jaipurKishanpoleBox").addClass("login-box");
@@ -3926,7 +3910,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurMansarovarBox").addClass("login-box");
       $("#jaipurMurlipuraBox").addClass("login-box");
       $("#jaipurSanganerBox").addClass("login-box active-box");
-      
+
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
       $("#jaipurKishanpoleBox").addClass("login-box");
@@ -3941,7 +3925,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurSanganerBox").addClass("login-box");
       $("#jaipurMNZBox").addClass("login-box  active-box");
       $("#jaipurMPZBox").addClass("login-box");
-      
+
       $("#jaipurKishanpoleBox").addClass("login-box");
       $("#jaipurCivilLineBox").addClass("login-box");
       $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
@@ -3954,7 +3938,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurSanganerBox").addClass("login-box");
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box  active-box");
-      
+
       $("#jaipurKishanpoleBox").addClass("login-box");
       $("#jaipurCivilLineBox").addClass("login-box");
       $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
@@ -3967,7 +3951,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurSanganerBox").addClass("login-box");
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
-      
+
       $("#jaipurKishanpoleBox").addClass("login-box  active-box");
       $("#jaipurCivilLineBox").addClass("login-box");
       $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
@@ -3980,7 +3964,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurSanganerBox").addClass("login-box");
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
-      
+
       $("#jaipurKishanpoleBox").addClass("login-box");
       $("#jaipurCivilLineBox").addClass("login-box active-box");
       $("#secondCityHeader").html(this.commonService.getCityName(this.cityName));
@@ -3991,7 +3975,7 @@ export class SidebarComponent implements OnInit {
       $("#jaipurMansarovarBox").addClass("login-box");
       $("#jaipurMurlipuraBox").addClass("login-box");
       $("#jaipurSanganerBox").addClass("login-box");
-      
+
       $("#jaipurMNZBox").addClass("login-box");
       $("#jaipurMPZBox").addClass("login-box");
       $("#jaipurKishanpoleBox").addClass("login-box");
@@ -4027,19 +4011,7 @@ export class SidebarComponent implements OnInit {
   }
 
   closeMapModel() {
-    // $("#contentCity").removeClass('show'),
-    // $("#contentSecondCity").removeClass('show'),
-    //     $("#contentCity").addClass('hide'),
-    // $("#contentSecondCity").addClass('hide'),
-    $("#contentCity").hide(),
-    $("#contentSecondCity").hide()
-    // let element=<HTMLButtonElement>document.getElementById("btnClose");
-    // console.log(element)
-    // element.click();
-    
-    //$("#btnClose").click();
-
-    //this.modalService.dismissAll();
+    this.modalService.dismissAll();
   }
 }
 
