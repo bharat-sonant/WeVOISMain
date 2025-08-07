@@ -2,78 +2,130 @@
   <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-mini">
     <div class="logo-img">
       <img src="./assets/img/wevois-logo-white.png" style="display: none" />
-    </div>
-  </a><br />
-  <a [routerLink]="[userDetail.homeLink]" class="simple-text logo-noraml" style="display: none">
+    </div> </a
+  ><br />
+  <a
+    [routerLink]="[userDetail.homeLink]"
+    class="simple-text logo-noraml"
+    style="display: none"
+  >
     WeVOIS
   </a>
 </div>
 
-<a [routerLink]="[userDetail.homeLink]" class="homeLink">
-  Home
-</a>
+<a [routerLink]="[userDetail.homeLink]" class="homeLink"> Home </a>
 
 <!------Shubham 1 Style Start---------->
 <div class="sidebarNav">
-
   <div class="sidebarHeader" id="liCity" style="display: none">
     <div (click)="openCityModel(contentCity)" style="cursor: pointer">
-      <img id="cityImage" src="./assets/img/sikar.svg" class="img-fluid" alt="" title="" style="width: 22px" />
-      <p class="sidebarHeaderRow" style="
+      <img
+        id="cityImage"
+        src="./assets/img/sikar.svg"
+        class="img-fluid"
+        alt=""
+        title=""
+        style="width: 22px"
+      />
+      <p
+        class="sidebarHeaderRow"
+        style="
           margin-top: -27px;
           margin-left: 45px;
           color: #fff;
           text-transform: uppercase;
           font-size: 12px;
-        ">
-        <span class="sidebarText" id="cityName" style="font-size: 12px">Sikar</span>
-        <img src="../../../assets/icons/caret-down-solid.svg" alt="caret-down-solid" width="12px"
-          style="float: right; margin-right: 15px; margin-top: 4px" class="icon-white" />
+        "
+      >
+        <span class="sidebarText" id="cityName" style="font-size: 12px"
+          >Sikar</span
+        >
+        <img
+          src="../../../assets/icons/caret-down-solid.svg"
+          alt="caret-down-solid"
+          width="12px"
+          style="float: right; margin-right: 15px; margin-top: 4px"
+          class="icon-white"
+        />
       </p>
     </div>
   </div>
   <ul class="sidebarUL nav">
     <li routerLinkActive="active" *ngFor="let usr of accessList">
-      <a [routerLink]="[usr.url]" (click)="getPage(usr.url)" [hidden]="usr.isOuterUrl == 'yes'" style="
+      <a
+        [routerLink]="[usr.url]"
+        (click)="getPage(usr.url)"
+        [hidden]="usr.isOuterUrl == 'yes'"
+        style="
           display: flex;
           align-items: center;
           gap: 10px;
           text-decoration: none;
-        ">
-        <img [src]="usr.img" style="height: 19px; margin-left: 10px" class="icon-white" />
+        "
+      >
+        <img
+          [src]="usr.img"
+          style="height: 19px; margin-left: 10px"
+          class="icon-white"
+        />
         <p class="sidebarText" style="margin: 0">{{ usr.name }}</p>
       </a>
-      <a [attr.href]="usr.url" target="_blank" [hidden]="usr.isOuterUrl == 'no'" style="
+      <a
+        [attr.href]="usr.url"
+        target="_blank"
+        [hidden]="usr.isOuterUrl == 'no'"
+        style="
           display: flex;
           align-items: center;
           gap: 10px;
           text-decoration: none;
-        ">
-        <img [src]="usr.img" style="height: 19px; margin-left: 10px" class="icon-white" />
+        "
+      >
+        <img
+          [src]="usr.img"
+          style="height: 19px; margin-left: 10px"
+          class="icon-white"
+        />
         <p class="sidebarText" style="margin: 0">{{ usr.name }}</p>
       </a>
     </li>
     <li>
-      <a [routerLink]="[userDetail.changePasswordLink]" style="
+      <a
+        [routerLink]="[userDetail.changePasswordLink]"
+        style="
           display: flex;
           align-items: center;
           gap: 10px;
           text-decoration: none;
-        ">
-        <img src="../../../assets/icons/user-regular.svg" alt="user-regular" width="18" style="margin-left: 10px"
-          class="icon-white" />
+        "
+      >
+        <img
+          src="../../../assets/icons/user-regular.svg"
+          alt="user-regular"
+          width="18"
+          style="margin-left: 10px"
+          class="icon-white"
+        />
         <p class="sidebarText" style="margin: 0">Change Password</p>
       </a>
     </li>
     <li>
-      <a href="/logout" style="
+      <a
+        href="/logout"
+        style="
           display: flex;
           align-items: center;
           gap: 10px;
           text-decoration: none;
-        ">
-        <img src="../../../assets/icons/right-from-bracket-solid.svg" alt="right-from-bracket-solid" width="18"
-          style="margin-left: 10px" class="icon-white" />
+        "
+      >
+        <img
+          src="../../../assets/icons/right-from-bracket-solid.svg"
+          alt="right-from-bracket-solid"
+          width="18"
+          style="margin-left: 10px"
+          class="icon-white"
+        />
         <p class="sidebarText" style="margin: 0">Log Out</p>
       </a>
     </li>
@@ -194,353 +246,685 @@
 
 <!-- Login city Start -->
 <ng-template #contentCity>
-  <div class="modal-dialog modal-dialog-centered main" role="document">
-    <div class="modal-content modal-content2">
-      <div class="modal-body">
-        <section class="login">
-          <div class="container login-container">
-            <div class="row">
-              <div class="col-md-2 login-header back blanck"></div>
-              <div class="col-md-8 login-header text-center">
-                <p style="padding-top: 5px; cursor: pointer" (click)="changeCity('test')">
-                  <span class="welcome-text" id="popUpCityName">Sikar</span>
-                </p>
-              </div>
-              <div class="col-md-2 back login-header close-icon">
-                <button type="button" class="close" (click)="closeMapModel()">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            </div>
+  <div class="login-container">
+    <div class="login-header">
+      <p style=" cursor: pointer" (click)="changeCity('test')">
+        <span class="welcome-text" id="popUpCityName">Sikar</span>
+      </p>
+      <button type="button" class="close" (click)="closeMapModel()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
 
-            <!-- <div class="login-body" style="margin-top: 50px;"> -->
-            <div class="row row2" style="display: flex; justify-content: center;     min-height: 100px;
-    max-height: calc(95vh - 100px);
-    overflow: auto;">
-              <div id="ajmerBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('ajmer')">
-                <img src="../../assets/images/ajmer.png" alt="" />
-                <p>Ajmer</p>
-              </div>
-              <div id="bharatpurBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('bharatpur')">
-                <img src="../../assets/images/bharatpur.png" alt="" />
-                <p>Bharatpur</p>
-              </div>
-              <div id="bioficsSuratBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('biofics-surat')">
-                <img src="../../assets/images/bioficsSurat.png" alt="" />
-                <p>Biofics Surat</p>
-              </div>
-              <div id="chennaiBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('chennai')">
-                <img src="../../assets/images/GreaterChennaiCorporation.png" alt="" />
-                <p>Chennai</p>
-              </div>
-              <div id="chirawaBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('chirawa')">
-                <img src="../../assets/images/chirawa.png" alt="" />
-                <p>Chirawa</p>
-              </div>
-              <div id="dausaBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('dausa')">
-                <img src="../../assets/images/dausa-logo.png" alt="" />
-                <p>Dausa</p>
-              </div>
-              <div id="deibundiBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('dei-bundi')">
-                <img src="../../assets/images/dei-logo.png" alt="" />
-                <p>Dei Bundi</p>
-              </div>
-              <div id="dehradunBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('dehradun')">
-                <img src="../../assets/images/dehradun-logo-nagar-nigam.png" alt="" />
-                <p>Dehradun</p>
-              </div>
-              <div id="ecogramBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('ecogram')">
-                <img src="../../assets/images/EG-Logo.png" alt="" />
-                <p>Ecogram</p>
-              </div>
-              <div id="etmadpurBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('etmadpur')">
-                <img src="../../assets/images/etmadpur.png" alt="" />
-                <p>Etmadpur</p>
-              </div>
-              <div id="iitRoorkeeBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('iit-roorkee')">
-                <img src="../../../assets/images/iitre_logo.png" alt="" />
-                <p>IIT Roorkee</p>
-              </div>
-              <div id="jaipurBWGBox" class="login-box" style="margin-right: 30px" (click)="changeCity('jaipur-bwg')">
-                <img src="../../../assets/images/jaipur-BWG.png" alt="" />
-                <p>Jaipur BWG</p>
-              </div>
-              <div id="jaipurBox" class="login-box" style="margin-right: 30px"
-                (click)="openSecondCityModel(contentSecondCity)">
-                <img src="../../../assets/images/jaipur icon.png" alt="" />
-                <p>Jaipur D2D</p>
-              </div>
-              <div id="jaipurGreaterBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('jaipur-greater')">
-                <img src="../../../assets/images/jaipur greater .png" alt="" />
-                <p>Jaipur Greater</p>
-              </div>
-              <div id="jammuSurveyBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('jammu-survey')">
-                <img src="../../../assets/images/jummu-logo.png" alt="" />
-                <p>Jammu Survey</p>
-              </div>
-              <div id="jaunpurBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('jaunpur')">
-                <img src="../../../assets/images/jaunpur.png" alt="" />
-                <p>Jaunpur</p>
-              </div>
-              <div id="jodhpurBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('jodhpur')">
-                <img src="../../../assets/images/jodhpur.png" alt="" />
-                <p>Jodhpur</p>
-              </div>
-              <div id="jodhpurBwgBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('jodhpur-bwg')">
-                <img src="../../../assets/images/jodhpur-bwg.png" alt="" />
-                <p>Jodhpur BWG</p>
-              </div>
-              <div id="khairabadBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('khairabad')">
-                <img src="../../../assets/images/khandela-logo.png" alt="" />
-                <p>Khairabad</p>
-              </div>
-              <div id="khandelaBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('khandela')">
-                <img src="../../../assets/images/khandela-logo.png" alt="" />
-                <p>Khandela</p>
-              </div>
-              <div id="kishangarhBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('kishangarh')">
-                <img src="../../../assets/images/kishangarh logo.png" alt="" />
-                <p>Kishangarh</p>
-              </div>
-              <div id="kuchamanBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('kuchaman')">
-                <img src="../../../assets/images/kuchaman-logo.png" alt="" />
-                <p>Kuchaman</p>
-              </div>
-              <div id="losalBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('losal')">
-                <img src="../../../assets/images/losal-logo.jpg" alt="" />
-                <p>Losal</p>
-              </div>
-              <div id="mapusaBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('mapusa-goa')">
-                <img src="../../../assets/images/mapusa-goa.png" alt="" />
-                <p>Mapusa (Goa)</p>
-              </div>
-              <div id="nainwaBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('nainwa')">
-                <img src="../../../assets/images/nainwa-city.png" alt="" />
-                <p>Nainwa</p>
-              </div>
-              <div id="nawaBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('nawa')">
-                <img src="../../../assets/images/nawa-city.png" alt="" />
-                <p>Nawa</p>
-              </div>
-              <div id="noidaBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('noida')">
-                <img src="../../../assets/images/noida.png" alt="" />
-                <p>Noida</p>
-              </div>
-              <div id="nokhaBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('nokha')">
-                <img src="../../../assets/images/nokha-logo.png" alt="" />
-                <p>Nokha</p>
-              </div>
-              <div id="paliBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('pali')">
-                <img src="../../../assets/images/pali-logo.png" alt="" />
-                <p>Pali</p>
-              </div>
-              <div id="reengusBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('reengus')">
-                <img src="../../../assets/images/reengus logo.png" alt="" />
-                <p>Reengus</p>
-              </div>
-              <div id="ratangarhBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('ratangarh')">
-                <img src="../../../assets/images/ratangarh logo.png" alt="" />
-                <p>Ratangarh</p>
-              </div>
-              <div id="rajsamandBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('rajsamand')">
-                <img src="../../../assets/images/ratangarh logo.png" alt="" />
-                <p>Rajsamand</p>
-              </div>
-              <div id="salasarBox" style="display: none; margin-right: 30px" (click)="changeCity('salasar')">
-                <img src="../../../assets/images/salasar balaji logo.png" alt="" />
-                <p>Salasar Balaji</p>
-              </div>
-              <div id="sanchoreBox" style="display: none; margin-right: 30px" (click)="changeCity('sanchore')">
-                <img src="../../../assets/images/Sanchore.png" alt="" />
-                <p>Sanchore</p>
-              </div>
-              <div id="sikarBox" style="display: none; margin-right: 30px" (click)="changeCity('sikar')">
-                <img src="../../../assets/images/sikar logo_2x2.png" alt="" />
-                <p>Sikar</p>
-              </div>
-              <div id="sikarSurveyBox" style="display: none; margin-right: 30px" (click)="changeCity('sikar-survey')">
-                <img src="../../../assets/images/sikar logo_2x2.png" alt="" />
-                <p>Sikar Survey</p>
-              </div>
-              <div id="sonipatBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('sonipat')">
-                <img src="../../../assets/images/sonipat.png" alt="" />
-                <p>Sonipat</p>
-              </div>
-              <div id="sujangarhBox" style="display: none; margin-right: 30px" (click)="changeCity('sujangarh')">
-                <img src="../../../assets/images/sujangarh.logo.png" alt="" />
-                <p>Sujangarh</p>
-              </div>
-              <div id="sujalpurBox" style="display: none; margin-right: 30px" (click)="changeCity('sujalpur')">
-                <img src="../../../assets/images/sujalpur.png" alt="" />
-                <p>Sujalpur</p>
-              </div>
-              <div id="sultanpurBox" style="display: none; margin-right: 30px" (click)="changeCity('sultanpur')">
-                <img src="../../../assets/images/sujalpur.png" alt="" />
-                <p>Sultanpur</p>
-              </div>
-              <div id="tonkBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('tonk')">
-                <img src="../../../assets/images/tonk logo.png" alt="" />
-                <p>Tonk</p>
-              </div>
-              <div id="tonkRajBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('tonk-raj')">
-                <img src="../../../assets/images/tnk.png" alt="" />
-                <p>Tonk Raj</p>
-              </div>
-              <div id="uniaraBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('uniara')">
-                <img src="../../../assets/images/uniara.png" alt="" />
-                <p>Uniara</p>
-              </div>
-              <div id="wevoisBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('wevois-others')">
-                <img src="../../../assets/images/wevois other logo.png" alt="" />
-                <p>WeVOIS-Others</p>
-              </div>
-              <div id="jaipurOfficeBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('jaipur-office')">
-                <img src="../../../assets/images/wevois office.png" alt="" />
-                <p>Jaipur Office</p>
-              </div>
-              <div id="jaipurRecyclingBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('jaipur-textile-recycling-facility')">
-                <img src="../../../assets/images/wevois office.png" alt="" />
-                <p>Textile Recycling Facility-Jaipur</p>
-              </div>
-              <div id="jaipurTestBox" class="login-box" style="display: none; margin-right: 30px"
-                (click)="changeCity('jaipur-test')">
-                <img src="../../../assets/images/wevois office.png" alt="" />
-                <p>Jaipur Test</p>
-              </div>
-            </div>
-            <!-- </div> -->
-          </div>
-        </section>
+    <div class="city-selection-group">
+      <div
+        id="ajmerBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('ajmer')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/ajmer.png" alt="" />
+        </div>
+        <p>Ajmer</p>
+      </div>
+      <div
+        id="bharatpurBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('bharatpur')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/bharatpur.png" alt="" />
+        </div>
+        <p>Bharatpur</p>
+      </div>
+      <div
+        id="bioficsSuratBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('biofics-surat')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/bioficsSurat.png" alt="" />
+        </div>
+        <p>Biofics Surat</p>
+      </div>
+      <div
+        id="chennaiBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('chennai')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/GreaterChennaiCorporation.png" alt="" />
+        </div>
+        <p>Chennai</p>
+      </div>
+      <div
+        id="chirawaBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('chirawa')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/chirawa.png" alt="" />
+        </div>
+        <p>Chirawa</p>
+      </div>
+      <div
+        id="dausaBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('dausa')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/dausa-logo.png" alt="" />
+        </div>
+        <p>Dausa</p>
+      </div>
+      <div
+        id="deibundiBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('dei-bundi')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/dei-logo.png" alt="" />
+        </div>
+        <p>Dei Bundi</p>
+      </div>
+      <div
+        id="dehradunBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('dehradun')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/dehradun-logo-nagar-nigam.png" alt="" />
+        </div>
+        <p>Dehradun</p>
+      </div>
+      <div
+        id="ecogramBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('ecogram')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/EG-Logo.png" alt="" />
+        </div>
+        <p>Ecogram</p>
+      </div>
+      <div
+        id="etmadpurBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('etmadpur')"
+      >
+        <div class="imgBG">
+          <img src="../../assets/images/etmadpur.png" alt="" />
+        </div>
+        <p>Etmadpur</p>
+      </div>
+      <div
+        id="iitRoorkeeBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('iit-roorkee')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/iitre_logo.png" alt="" />
+        </div>
+        <p>IIT Roorkee</p>
+      </div>
+      <div
+        id="jaipurBWGBox"
+        class="login-box"
+        (click)="changeCity('jaipur-bwg')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/jaipur-BWG.png" alt="" />
+        </div>
+        <p>Jaipur BWG</p>
+      </div>
+      <div
+        id="jaipurBox"
+        class="login-box"
+        (click)="openSecondCityModel(contentSecondCity)"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/jaipur icon.png" alt="" />
+        </div>
+        <p>Jaipur D2D</p>
+      </div>
+      <div
+        id="jaipurGreaterBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('jaipur-greater')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/jaipur greater .png" alt="" />
+        </div>
+        <p>Jaipur Greater</p>
+      </div>
+      <div
+        id="jammuSurveyBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('jammu-survey')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/jummu-logo.png" alt="" />
+        </div>
+        <p>Jammu Survey</p>
+      </div>
+      <div
+        id="jaunpurBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('jaunpur')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/jaunpur.png" alt="" />
+        </div>
+        <p>Jaunpur</p>
+      </div>
+      <div
+        id="jodhpurBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('jodhpur')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/jodhpur.png" alt="" />
+        </div>
+        <p>Jodhpur</p>
+      </div>
+      <div
+        id="jodhpurBwgBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('jodhpur-bwg')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/jodhpur-bwg.png" alt="" />
+        </div>
+        <p>Jodhpur BWG</p>
+      </div>
+      <div
+        id="khairabadBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('khairabad')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/khandela-logo.png" alt="" />
+        </div>
+        <p>Khairabad</p>
+      </div>
+      <div
+        id="khandelaBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('khandela')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/khandela-logo.png" alt="" />
+        </div>
+        <p>Khandela</p>
+      </div>
+      <div
+        id="kishangarhBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('kishangarh')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/kishangarh logo.png" alt="" />
+        </div>
+        <p>Kishangarh</p>
+      </div>
+      <div
+        id="kuchamanBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('kuchaman')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/kuchaman-logo.png" alt="" />
+        </div>
+        <p>Kuchaman</p>
+      </div>
+      <div
+        id="losalBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('losal')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/losal-logo.jpg" alt="" />
+        </div>
+        <p>Losal</p>
+      </div>
+      <div
+        id="mapusaBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('mapusa-goa')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/mapusa-goa.png" alt="" />
+        </div>
+        <p>Mapusa (Goa)</p>
+      </div>
+      <div
+        id="nainwaBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('nainwa')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/nainwa-city.png" alt="" />
+        </div>
+        <p>Nainwa</p>
+      </div>
+      <div
+        id="nawaBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('nawa')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/nawa-city.png" alt="" />
+        </div>
+        <p>Nawa</p>
+      </div>
+      <div
+        id="noidaBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('noida')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/noida.png" alt="" />
+        </div>
+        <p>Noida</p>
+      </div>
+      <div
+        id="nokhaBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('nokha')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/nokha-logo.png" alt="" />
+        </div>
+        <p>Nokha</p>
+      </div>
+      <div
+        id="paliBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('pali')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/pali-logo.png" alt="" />
+        </div>
+        <p>Pali</p>
+      </div>
+      <div
+        id="reengusBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('reengus')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/reengus logo.png" alt="" />
+        </div>
+        <p>Reengus</p>
+      </div>
+      <div
+        id="ratangarhBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('ratangarh')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/ratangarh logo.png" alt="" />
+        </div>
+        <p>Ratangarh</p>
+      </div>
+      <div
+        id="rajsamandBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('rajsamand')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/ratangarh logo.png" alt="" />
+        </div>
+        <p>Rajsamand</p>
+      </div>
+      <div
+        id="salasarBox"
+        style="display: none"
+        (click)="changeCity('salasar')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/salasar balaji logo.png" alt="" />
+        </div>
+        <p>Salasar Balaji</p>
+      </div>
+      <div
+        id="sanchoreBox"
+        style="display: none"
+        (click)="changeCity('sanchore')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/Sanchore.png" alt="" />
+        </div>
+        <p>Sanchore</p>
+      </div>
+      <div id="sikarBox" style="display: none" (click)="changeCity('sikar')">
+        <div class="imgBG">
+          <img src="../../../assets/images/sikar logo_2x2.png" alt="" />
+        </div>
+        <p>Sikar</p>
+      </div>
+      <div
+        id="sikarSurveyBox"
+        style="display: none"
+        (click)="changeCity('sikar-survey')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/sikar logo_2x2.png" alt="" />
+        </div>
+        <p>Sikar Survey</p>
+      </div>
+      <div
+        id="sonipatBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('sonipat')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/sonipat.png" alt="" />
+        </div>
+        <p>Sonipat</p>
+      </div>
+      <div
+        id="sujangarhBox"
+        style="display: none"
+        (click)="changeCity('sujangarh')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/sujangarh.logo.png" alt="" />
+        </div>
+        <p>Sujangarh</p>
+      </div>
+      <div
+        id="sujalpurBox"
+        style="display: none"
+        (click)="changeCity('sujalpur')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/sujalpur.png" alt="" />
+        </div>
+        <p>Sujalpur</p>
+      </div>
+      <div
+        id="sultanpurBox"
+        style="display: none"
+        (click)="changeCity('sultanpur')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/sujalpur.png" alt="" />
+        </div>
+        <p>Sultanpur</p>
+      </div>
+      <div
+        id="tonkBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('tonk')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/tonk logo.png" alt="" />
+        </div>
+        <p>Tonk</p>
+      </div>
+      <div
+        id="tonkRajBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('tonk-raj')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/tnk.png" alt="" />
+        </div>
+        <p>Tonk Raj</p>
+      </div>
+      <div
+        id="uniaraBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('uniara')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/uniara.png" alt="" />
+        </div>
+        <p>Uniara</p>
+      </div>
+      <div
+        id="wevoisBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('wevois-others')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/wevois other logo.png" alt="" />
+        </div>
+        <p>WeVOIS-Others</p>
+      </div>
+      <div
+        id="jaipurOfficeBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('jaipur-office')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/wevois office.png" alt="" />
+        </div>
+        <p>Jaipur Office</p>
+      </div>
+      <div
+        id="jaipurRecyclingBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('jaipur-textile-recycling-facility')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/wevois office.png" alt="" />
+        </div>
+        <p>Textile Recycling Facility-Jaipur</p>
+      </div>
+      <div
+        id="jaipurTestBox"
+        class="login-box"
+        style="display: none"
+        (click)="changeCity('jaipur-test')"
+      >
+        <div class="imgBG">
+          <img src="../../../assets/images/wevois office.png" alt="" />
+        </div>
+        <p>Jaipur Test</p>
       </div>
     </div>
+    <!-- </div> -->
   </div>
 </ng-template>
 <!--city Status End-->
 
 <!--Login city  Start-->
 <ng-template #contentSecondCity>
-  <div class="modal-dialog modal-dialog-centered main" role="document">
-    <div class="modal-content modal-content2">
-      <div class="modal-body">
-        <section class="login">
-          <div class="container login-container">
-            <div class="row">
-              <div class="col-md-2 login-header back blanck"></div>
-              <div class="col-md-8 login-header text-center">
-                <p style="padding-top: 5px">
-                  <span id="secondCityHeader" class="welcome-text" (click)="changeCity('jaipur')">Jaipur D2D</span>
-                </p>
-              </div>
-              <div class="col-md-2 back login-header close-icon">
-                <button type="button" class="close" (click)="closeMapModel()">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
+    <div class="contentCityModal">
+          <div class="login-container">
+            <div class="login-header">
+              <span
+                id="secondCityHeader"
+                class="welcome-text"
+                (click)="changeCity('jaipur')"
+                >Jaipur D2D</span
+              >
+              <button type="button" class="close" (click)="closeMapModel()">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
 
-            <div class="login-body" style="margin-top: 50px">
-              <div class="row row2" style="display: flex; justify-content: center;     min-height: 100px;
-    max-height: calc(95vh - 100px);
-    overflow: auto;">
-                <div id="jaipurCivilLineBox" class="login-box" style="display: none; margin-right: 30px;"
-                  (click)="changeCity('jaipur-civil-line')">
+            <div
+              class="city-selection-group"
+              style="display: flex; justify-content: center"
+            >
+              <div
+                id="jaipurCivilLineBox"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('jaipur-civil-line')"
+              >
+                <div class="imgBG">
                   <img src="../../../assets/images/civilline.png" alt="" />
-                  <p>Civil Line</p>
                 </div>
+                <p>Civil Line</p>
+              </div>
 
-                <div id="jaipurKishanpoleBox" class="login-box" style="display: none; margin-right: 30px"
-                  (click)="changeCity('jaipur-kishanpole')">
+              <div
+                id="jaipurKishanpoleBox"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('jaipur-kishanpole')"
+              >
+                <div class="imgBG">
                   <img src="../../../assets/images/kishanpole.png" alt="" />
-                  <p>Kishanpole</p>
                 </div>
-                <div id="jaipurJagatpuraBox" class="login-box active-box" style="display: none; margin-right: 30px"
-                  (click)="changeCity('jaipur-jagatpura')">
-                  <img src="../../../assets/images/jagatpura .logo.png" alt="" />
-                  <p>Jagatpura</p>
+                <p>Kishanpole</p>
+              </div>
+              <div
+                id="jaipurJagatpuraBox"
+                class="login-box active-box"
+                style="display: none"
+                (click)="changeCity('jaipur-jagatpura')"
+              >
+                <div class="imgBG">
+                  <img
+                    src="../../../assets/images/jagatpura .logo.png"
+                    alt=""
+                  />
                 </div>
-                <div id="jaipurJhotwaraBox" class="login-box" style="display: none; margin-right: 30px"
-                  (click)="changeCity('jaipur-jhotwara')">
+                <p>Jagatpura</p>
+              </div>
+              <div
+                id="jaipurJhotwaraBox"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('jaipur-jhotwara')"
+              >
+                <div class="imgBG">
                   <img src="../../../assets/images/jhotwara.logo.png" alt="" />
-                  <p>Jhotwara</p>
                 </div>
-                <div id="jaipurMalviyanagarBox" class="login-box" style="display: none; margin-right: 30px"
-                  (click)="changeCity('jaipur-malviyanagar')">
-                  <img src="../../../assets/images/malviyanagar. logo.png" alt="" />
-                  <p>Malviyanagar</p>
+                <p>Jhotwara</p>
+              </div>
+              <div
+                id="jaipurMalviyanagarBox"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('jaipur-malviyanagar')"
+              >
+                <div class="imgBG">
+                  <img
+                    src="../../../assets/images/malviyanagar. logo.png"
+                    alt=""
+                  />
                 </div>
-                <div id="jaipurMansarovarBox" style="display: none" class="login-box"
-                  style="display: none; margin-right: 30px" (click)="changeCity('jaipur-mansarovar')">
-                  <img src="../../../assets/images/mansarovar.logo.png" alt="" />
-                  <p>Mansarovar</p>
+                <p>Malviyanagar</p>
+              </div>
+              <div
+                id="jaipurMansarovarBox"
+                style="display: none"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('jaipur-mansarovar')"
+              >
+                <div class="imgBG">
+                  <img
+                    src="../../../assets/images/mansarovar.logo.png"
+                    alt=""
+                  />
                 </div>
-                <div id="jaipurMurlipuraBox" class="login-box" style="display: none; margin-right: 30px"
-                  (click)="changeCity('jaipur-murlipura')">
-                  <img src="../../../assets/images/murlipura .logo.png" alt="" />
-                  <p>Murlipura</p>
+                <p>Mansarovar</p>
+              </div>
+              <div
+                id="jaipurMurlipuraBox"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('jaipur-murlipura')"
+              >
+                <div class="imgBG">
+                  <img
+                    src="../../../assets/images/murlipura .logo.png"
+                    alt=""
+                  />
                 </div>
-                <div id="jaipurMNZBox" class="login-box" style="display: none; margin-right: 30px"
-                  (click)="changeCity('mnz-test')">
-                  <img src="../../../assets/images/malviyanagar. logo.png" alt="" />
-                  <p>MNZ Test</p>
+                <p>Murlipura</p>
+              </div>
+              <div
+                id="jaipurMNZBox"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('mnz-test')"
+              >
+                <div class="imgBG">
+                  <img
+                    src="../../../assets/images/malviyanagar. logo.png"
+                    alt=""
+                  />
                 </div>
-                <div id="jaipurMPZBox" class="login-box" style="display: none; margin-right: 30px"
-                  (click)="changeCity('mpz-test')">
-                  <img src="../../../assets/images/murlipura .logo.png" alt="" />
-                  <p>MPZ Test</p>
+                <p>MNZ Test</p>
+              </div>
+              <div
+                id="jaipurMPZBox"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('mpz-test')"
+              >
+                <div class="imgBG">
+                  <img
+                    src="../../../assets/images/murlipura .logo.png"
+                    alt=""
+                  />
                 </div>
-                <div id="jaipurSanganerBox" class="login-box" style="display: none; margin-right: 30px"
-                  (click)="changeCity('jaipur-sanganer')">
+                <p>MPZ Test</p>
+              </div>
+              <div
+                id="jaipurSanganerBox"
+                class="login-box"
+                style="display: none"
+                (click)="changeCity('jaipur-sanganer')"
+              >
+                <div class="imgBG">
                   <img src="../../../assets/images/sanganer.logo.png" alt="" />
-                  <p>Sanganer</p>
                 </div>
+                <p>Sanganer</p>
               </div>
             </div>
           </div>
-        </section>
-      </div>
-    </div>
-  </div>
+          </div>
 </ng-template>
 <!--city Status End-->
 
 <!--No internet start-->
+<div class="login-container-two">
 <ng-template #contentInternetCheck>
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content modal-content2">
@@ -552,7 +936,11 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div id="divMessage" class="col-md-12" style="text-align: center; font-size: 16px">
+          <div
+            id="divMessage"
+            class="col-md-12"
+            style="text-align: center; font-size: 16px"
+          >
             Sorry No Internet Available. Please check internet !!!!
           </div>
         </div>
@@ -560,4 +948,5 @@
     </div>
   </div>
 </ng-template>
+</div>
 <!--No internet end-->
