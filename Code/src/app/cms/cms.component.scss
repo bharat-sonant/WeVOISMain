@@ -6,8 +6,9 @@
 .monitoring-card-row {
     display: flex;
     gap: 10px;
-    width: 75%;
+    width: 80%;
     flex-wrap: wrap;
+    margin-top: 20px;
 }
 
 .monitoring-card {
@@ -15,33 +16,40 @@
 }
 
 .monitoring-card-item {
-    background: linear-gradient(to right, #f9f9f9, white);
+    background: transparent;
     background-size: 200% 100%;
     transition: all 0.3s ease;
-    border: 1px solid #e1e1e1;
+    // border: 1px solid #e1e1e1;
     border-radius: 10px;
-    padding: 10px 14px;
+    padding: 12px 14px;
     transition: 0.3s;
     cursor: pointer;
-    width: calc(100% / 6 - 9px);
+    width: calc(100% / 5 - 9px);
     overflow: hidden;
+// background: linear-gradient(to left, #fafafa, #f5fff5);
+//       background: rgba(255, 255, 255, 0.2); /* semi-transparent white */
+//   backdrop-filter: blur(10px);
+//   -webkit-backdrop-filter: blur(10px); /* for Safari */
+//   border: 1px solid rgba(255, 255, 255, 0.3);
+//   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
 
 }
 
 .monitoring-card-item:hover {
     background: linear-gradient(to left, white, #d5ffd8);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
 }
 
 .monitoring-card-item:hover h3 {
     color: $darkBlack;
 }
-
 .monitoring-card-item:hover .imgbg {
     background-color: #00a000;
 }
 
 .monitoring-card-item:hover .icon-green {
     filter: brightness(0) saturate(100%) invert(100%) sepia(67%) saturate(1169%) hue-rotate(235deg) brightness(117%) contrast(112%);
+        transform: scale(1.5);
 }
 
 .monitoring-card-item:hover .infoRight::after {
@@ -58,8 +66,8 @@
 .imgbg {
     background: #099f1610;
     text-align: left;
-    width: 45px;
-    height: 45px;
+    width: 36px;
+    height: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -69,7 +77,7 @@
 
 .monitoring-card .icon-green {
     transition: 0.2s;
-    height: 24px !important;
+    height: 18px !important;
     // filter: brightness(0) saturate(100%) invert(41%) sepia(76%) saturate(9%) hue-rotate(79deg) brightness(90%) contrast(83%);
 }
 
@@ -95,7 +103,7 @@
 }
 
 .monitoring-card h3 {
-    font-size: 13px;
+    font-size: 12px;
     color: $black70;
     font-family: $fontGraphik;
     margin: 0px;
