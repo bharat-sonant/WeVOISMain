@@ -189,45 +189,45 @@ export class PortalAccessComponent implements OnInit {
 
   openCityModel(content: any) {
     this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let height = 300;
-    let width = 767;
+    // let windowHeight = $(window).height();
+    // let height = 300;
+    // let width = 767;
 
 
 
-    let windowwidth = $(window).width();
+    // let windowwidth = $(window).width();
 
-    if (windowwidth >= 1350) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "15%");
+    // if (windowwidth >= 1350) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "15%");
 
-    } else if (windowwidth <= 1349 && windowwidth >= 1201) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1349 && windowwidth >= 1201) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 1200 && windowwidth >= 1025) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1200 && windowwidth >= 1025) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 1024 && windowwidth >= 768) {
-      width = 767;
-      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
+    // } else if (windowwidth <= 1024 && windowwidth >= 768) {
+    //   width = 767;
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", "50px");
 
-    } else if (windowwidth <= 767 && windowwidth >= 577) {
-      width = 575;
+    // } else if (windowwidth <= 767 && windowwidth >= 577) {
+    //   width = 575;
 
 
-    } else if (windowwidth <= 576 && windowwidth >= 410) {
-      width = 400;
+    // } else if (windowwidth <= 576 && windowwidth >= 410) {
+    //   width = 400;
 
-    } else if (windowwidth <= 413 && windowwidth >= 270) {
-      width = 265;
+    // } else if (windowwidth <= 413 && windowwidth >= 270) {
+    //   width = 265;
 
-    }
+    // }
 
-    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
-    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", "50px");
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top");
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", "50px");
 
     for (let i = 0; i < this.accessCity.length; i++) {
       if (this.accessCity[i]["city"] == "jaipur-civil-line") {
