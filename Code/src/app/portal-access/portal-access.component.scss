@@ -119,7 +119,11 @@
   transform: scale(1.1);
 }
 
-
+.close2:focus-visible{
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
 /*************** Custom CSS Start **************/
 
 /*******************Mediaquery Start*****************/
