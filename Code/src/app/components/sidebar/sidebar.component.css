@@ -286,9 +286,9 @@ transition: 0.5s;
 }
 
 /*******************Login Start*****************/
-::ng-deep  .modal-content {
+/* ::ng-deep  .modal-content {
   background-color: transparent !important;
-}
+} */
 .contentCityModal {
   height: 100vh;
   width: 100%;

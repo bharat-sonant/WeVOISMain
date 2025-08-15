@@ -16,16 +16,19 @@
 }
 
 .monitoring-card-item {
-    background: transparent;
+    // background: transparent;
     background-size: 200% 100%;
     transition: all 0.3s ease;
     // border: 1px solid #e1e1e1;
-    border-radius: 10px;
+    border-radius: 100px;
     padding: 12px 14px;
     transition: 0.3s;
     cursor: pointer;
     width: calc(100% / 5 - 9px);
     overflow: hidden;
+    background-color: #fafafa;
+        // background: linear-gradient(63.73deg, #ffffff 10.85%, #f3fff4 90.67%);
+        // background: linear-gradient(63.73deg, rgb(242 249 242) 10.85%, rgb(234 255 236) 90.67%);
 // background: linear-gradient(to left, #fafafa, #f5fff5);
 //       background: rgba(255, 255, 255, 0.2); /* semi-transparent white */
 //   backdrop-filter: blur(10px);
@@ -71,7 +74,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 6px;
+    border-radius: 100px;
     transition: 0.3s ease-in;
 }
 
