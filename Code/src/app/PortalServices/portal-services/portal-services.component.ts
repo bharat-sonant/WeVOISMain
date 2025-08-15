@@ -34,7 +34,6 @@ export class PortalServicesComponent implements OnInit {
   }
 
   getUserAccess() {
-    console.log(localStorage.getItem("canAddWardDutyOn"));
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
       for (let i = 0; i < userAccessList.length; i++) {
@@ -98,10 +97,13 @@ export class PortalServicesComponent implements OnInit {
           $("#divWebPortalSettings").show();
         }
         if (userAccessList[i]["pageId"] == "8A6" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          
+
           if (localStorage.getItem("canAddWardDutyOn") == "1") {
             $("#divWardDutyOn").show();
           }
+        }
+        if (userAccessList[i]["pageId"] == "8A7" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divFreeAssignment").show();
         }
       }
     }
@@ -114,23 +116,16 @@ export class PortalServicesComponent implements OnInit {
 
   goToURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
-    if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + localStorage.getItem("userID") + "/" + newUrl;
-    }
-    else {
-      url = "https://main-wevois.firebaseapp.com/" + localStorage.getItem("userID") + "/" + newUrl;
-    }
+
+    url = "https://main-wevois.firebaseapp.com/" + localStorage.getItem("userID") + "/" + newUrl;
     window.open(url, "_blank");
   }
 
   goToOuterURL(url: any) {
     let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
-    if (this.cityName == "test") {
-      url = "https://mainportal-react.web.app/" + this.cityName + "/" + this.userId + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
-    }
-    else {
-      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userId + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
-    }
+
+    url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userId + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
+
     window.open(url, "_blank");
   }
 }
