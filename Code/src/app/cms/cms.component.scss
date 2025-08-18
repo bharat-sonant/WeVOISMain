@@ -52,7 +52,11 @@
 
 .monitoring-card-item:hover .icon-green {
     filter: brightness(0) saturate(100%) invert(100%) sepia(67%) saturate(1169%) hue-rotate(235deg) brightness(117%) contrast(112%);
-        transform: scale(1.4);
+            // transform: rotate(35deg);
+}
+.monitoring-card-item:hover  {
+        transform: scale(1.04);
+            // transform: rotate(35deg);
 }
 
 .monitoring-card-item:hover .infoRight::after {
