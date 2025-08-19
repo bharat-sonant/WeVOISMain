@@ -189,6 +189,7 @@ export class PortalAccessComponent implements OnInit {
 
   openCityModel(content: any) {
     this.modalService.open(content, { size: "lg" });
+    $("div .modal-content").css("background", "transparent").css("box-shadow", "none").css("border", "none");
     // let windowHeight = $(window).height();
     // let height = 300;
     // let width = 767;

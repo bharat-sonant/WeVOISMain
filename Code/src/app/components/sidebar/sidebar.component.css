@@ -289,6 +289,9 @@ transition: 0.5s;
 /* ::ng-deep  .modal-content {
   background-color: transparent !important;
 } */
+  .modal-content {
+  background-color: transparent !important;
+} 
 .contentCityModal {
   height: 100vh;
   width: 100%;
@@ -404,6 +407,7 @@ transition: 0.5s;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: 600;
 }
 
 .login-box:hover img {
