@@ -36,7 +36,8 @@ export class LoginComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.setCityList();
+    this.setCityDetailList();
+    //this.setCityList();
     this.getRoles();
     this.getMessage();
     this.getRendomBackground();
@@ -46,6 +47,21 @@ export class LoginComponent implements OnInit {
     $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
     $("#divMainContent").css("width", "calc(100% - 1px)");
+  }
+
+  setCityDetailList() {
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FCityDetails.json?alt=media";
+    let cityDetailJSONInstance = this.httpService.get(path).subscribe(cityDetailJsonData => {
+      cityDetailJSONInstance.unsubscribe();
+      let list = JSON.parse(JSON.stringify(cityDetailJsonData));
+      this.cityList = list.sort((a, b) => b.cityName > a.cityName ? 1 : -1);;
+      console.log(this.cityList);
+      localStorage.setItem("CityDetailList", JSON.stringify(cityDetailJsonData));
+      localStorage.setItem("cityList", JSON.stringify(this.cityList));
+    }, error => {
+
+    });
+
   }
 
   getRoles() {

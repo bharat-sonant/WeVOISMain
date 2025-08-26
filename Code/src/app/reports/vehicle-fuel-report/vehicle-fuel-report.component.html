@@ -103,8 +103,13 @@
                                                         <th class="text-right" scope="col">
                                                             Meter Reading
                                                         </th>
-                                                        <th class="text-right" scope="col">
+                                                        <th class="text-right" scope="col"
+                                                            [hidden]="isPetrolPumpDetail==true">
                                                             Fuel Type
+                                                        </th>
+                                                        <th class="text-left" scope="col"
+                                                            [hidden]="isPetrolPumpDetail==false">
+                                                            Fuel Detail
                                                         </th>
                                                         <th class="text-right" scope="col">
                                                             Quantity
@@ -118,23 +123,38 @@
                                                     <!---->
                                                     <tr *ngFor="let data of vehicleFuelList, let i=index">
                                                         <td class="text-left"
-                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; vertical-align:top;">
                                                             {{data.showDate}}
                                                         </td>
                                                         <td class="text-right"
-                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; vertical-align:top;">
                                                             {{data.meterReading}}
                                                         </td>
-                                                        <td class="text-left"
-                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                        <td class="text-left" [hidden]="isPetrolPumpDetail==true"
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; vertical-align:top;">
                                                             {{data.fuelType}}
                                                         </td>
+                                                        <td class="text-left" [hidden]="isPetrolPumpDetail==false"
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; vertical-align:top;">
+                                                            <div style="width:100%" [hidden]="data.fuelType==''">-
+                                                                {{data.fuelType}}</div>
+                                                            <div style="width:100%" [hidden]="data.fuelVehicle==''">-
+                                                                {{data.fuelVehicle}}</div>
+                                                            <div style="width:100%" [hidden]="data.petrolPump==''">-
+                                                                {{data.petrolPump}}</div>
+                                                            <div style="width:100%" [hidden]="data.payMethod==''">-
+                                                                {{data.payMethod}}</div>
+                                                            <div style="width:100%" [hidden]="data.remark==''">-
+                                                                {{data.remark}}</div>
+
+
+                                                        </td>
                                                         <td class="text-right"
-                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; vertical-align:top;">
                                                             {{data.quantity}}
                                                         </td>
                                                         <td class="text-right"
-                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                            style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; vertical-align:top;">
                                                             {{data.amount}}
                                                         </td>
                                                     </tr>

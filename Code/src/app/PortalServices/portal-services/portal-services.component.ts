@@ -97,13 +97,18 @@ export class PortalServicesComponent implements OnInit {
           $("#divWebPortalSettings").show();
         }
         if (userAccessList[i]["pageId"] == "8A6" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-
           if (localStorage.getItem("canAddWardDutyOn") == "1") {
             $("#divWardDutyOn").show();
           }
         }
         if (userAccessList[i]["pageId"] == "8A7" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divFreeAssignment").show();
+        }
+        if (userAccessList[i]["pageId"] == "8A8" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divDeleteCard").show();
+        }
+        if (userAccessList[i]["pageId"] == "8A9" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divDummyHeplerDevice").show();
         }
       }
     }

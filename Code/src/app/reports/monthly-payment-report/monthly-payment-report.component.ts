@@ -161,41 +161,47 @@ export class MonthlyPaymentReportComponent implements OnInit {
             for (let i = 0; i < dateArray.length; i++) {
               let date = dateArray[i];
               if (this.selectedYear == date.split('-')[0] && this.selectedMonth == date.split('-')[1]) {
-                let dateData = data[date];
-                let keyArray = Object.keys(dateData);
-                for (let j = 0; j < keyArray.length; j++) {
-                  let key = keyArray[j];
-                  if (dateData[key]["cardNo"] != null) {
-                    let cardNo = dateData[key]["cardNo"];
-                    let amount = dateData[key]["transactionAmount"];
-                    let wardNo = "";
-                    let cardDetail = this.cardWardList.find(item => item.cardNo == cardNo);
-                    if (cardDetail != undefined) {
-                      wardNo = cardDetail.ward;
-                    }
-                    let name = "";
-                    let nameDetail = this.collectorList.find(item => item.collectorId == collectorId);
-                    if (nameDetail != undefined) {
-                      name = nameDetail.name;
-                    }
-                    this.list.push({ cardNo: cardNo, wardNo: wardNo, name: name, amount: amount });
-                    let wardDetail = this.wardPaymentList.find(item => item.name == wardNo);
-                    if (wardDetail == undefined) {
-                      this.wardPaymentList.push({ name: wardNo, amount: Number(amount) });
-                    }
-                    else {
-                      wardDetail.amount += Number(amount);
-                    }
-                    let collectorDetail = this.collectorPaymentList.find(item => item.collectorId == collectorId);
-                    if (collectorDetail == undefined) {
-                      this.collectorPaymentList.push({ collectorId: collectorId, name: name, amount: Number(amount) });
-                    }
-                    else {
-                      collectorDetail.amount += Number(amount);
+                if (date == "2025-08-18") {
+                  console.log(date)
+                  let dateData = data[date];
+                  let keyArray = Object.keys(dateData);
+                  for (let j = 0; j < keyArray.length; j++) {
+                    let key = keyArray[j];
+                    if (dateData[key]["cardNo"] != null) {
+                      let cardNo = dateData[key]["cardNo"];
+                      let amount = dateData[key]["transactionAmount"];
+                      let wardNo = "";
+                      let cardDetail = this.cardWardList.find(item => item.cardNo == cardNo);
+                      if (cardDetail != undefined) {
+                        wardNo = cardDetail.ward;
+                      }
+                      let name = "";
+                      let nameDetail = this.collectorList.find(item => item.collectorId == collectorId);
+                      if (nameDetail != undefined) {
+                        name = nameDetail.name;
+                      }
+                      this.list.push({ cardNo: cardNo, wardNo: wardNo, name: name, amount: amount });
+                      let wardDetail = this.wardPaymentList.find(item => item.name == wardNo);
+                      if (wardDetail == undefined) {
+                        this.wardPaymentList.push({ name: wardNo, amount: Number(amount) });
+                      }
+                      else {
+                        wardDetail.amount += Number(amount);
+                      }
+                      let collectorDetail = this.collectorPaymentList.find(item => item.collectorId == collectorId);
+                      if (collectorDetail == undefined) {
+                        this.collectorPaymentList.push({ collectorId: collectorId, name: name, amount: Number(amount) });
+                      }
+                      else {
+                        collectorDetail.amount += Number(amount);
+                      }
                     }
                   }
                 }
+
               }
+
+
             }
           }
           index++;
@@ -242,40 +248,45 @@ export class MonthlyPaymentReportComponent implements OnInit {
               for (let i = 0; i < dateArray.length; i++) {
                 let date = dateArray[i];
                 if (this.selectedYear == date.split('-')[0] && this.selectedMonth == date.split('-')[1]) {
-                  let dateData = entityData[date];
-                  let keyArray = Object.keys(dateData);
-                  for (let j = 0; j < keyArray.length; j++) {
-                    let key = keyArray[j];
-                    if (dateData[key]["cardNo"] != null) {
-                      let cardNo = dateData[key]["cardNo"];
-                      let amount = dateData[key]["transactionAmount"];
-                      let wardNo = "";
-                      let cardDetail = this.cardWardList.find(item => item.cardNo == cardNo);
-                      if (cardDetail != undefined) {
-                        wardNo = cardDetail.ward;
-                      }
-                      let name = "";
-                      let nameDetail = this.collectorList.find(item => item.collectorId == collectorId);
-                      if (nameDetail != undefined) {
-                        name = nameDetail.name;
-                      }
-                      this.list.push({ cardNo: cardNo, wardNo: wardNo, name: name, amount: amount });
-                      let wardDetail = this.wardPaymentList.find(item => item.name == wardNo);
-                      if (wardDetail == undefined) {
-                        this.wardPaymentList.push({ name: wardNo, amount: Number(amount) });
-                      }
-                      else {
-                        wardDetail.amount += Number(amount);
-                      }
-                      let collectorDetail = this.collectorPaymentList.find(item => item.collectorId == collectorId);
-                      if (collectorDetail == undefined) {
-                        this.collectorPaymentList.push({ collectorId: collectorId, name: name, amount: Number(amount) });
-                      }
-                      else {
-                        collectorDetail.amount += Number(amount);
+
+                  if (date == "2025-08-18") {
+                    console.log(date)
+                    let dateData = entityData[date];
+                    let keyArray = Object.keys(dateData);
+                    for (let j = 0; j < keyArray.length; j++) {
+                      let key = keyArray[j];
+                      if (dateData[key]["cardNo"] != null) {
+                        let cardNo = dateData[key]["cardNo"];
+                        let amount = dateData[key]["transactionAmount"];
+                        let wardNo = "";
+                        let cardDetail = this.cardWardList.find(item => item.cardNo == cardNo);
+                        if (cardDetail != undefined) {
+                          wardNo = cardDetail.ward;
+                        }
+                        let name = "";
+                        let nameDetail = this.collectorList.find(item => item.collectorId == collectorId);
+                        if (nameDetail != undefined) {
+                          name = nameDetail.name;
+                        }
+                        this.list.push({ cardNo: cardNo, wardNo: wardNo, name: name, amount: amount });
+                        let wardDetail = this.wardPaymentList.find(item => item.name == wardNo);
+                        if (wardDetail == undefined) {
+                          this.wardPaymentList.push({ name: wardNo, amount: Number(amount) });
+                        }
+                        else {
+                          wardDetail.amount += Number(amount);
+                        }
+                        let collectorDetail = this.collectorPaymentList.find(item => item.collectorId == collectorId);
+                        if (collectorDetail == undefined) {
+                          this.collectorPaymentList.push({ collectorId: collectorId, name: name, amount: Number(amount) });
+                        }
+                        else {
+                          collectorDetail.amount += Number(amount);
+                        }
                       }
                     }
                   }
+
                 }
               }
             }
@@ -309,12 +320,12 @@ export class MonthlyPaymentReportComponent implements OnInit {
         }
       }
 
-     // this.getActualCollectorAmount();
+      // this.getActualCollectorAmount();
 
 
 
 
-       this.getCardWardMapping();
+      this.getCardWardMapping();
     }, error => {
       this.commonService.setAlertMessage("error", "Sorry! No data found !!!");
       $(this.divLoaderMain).hide();

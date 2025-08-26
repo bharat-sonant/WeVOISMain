@@ -43,11 +43,13 @@ export class VehicleFuelReportComponent implements OnInit {
   totalAmountJSON: any;
   totalRunningKMJSON: any;
   serviceName = "vehicle-fuel-report";
+  isPetrolPumpDetail: any = false;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.checkPetrolPumpDetail();
     this.commonService.savePageLoadHistory("General-Reports", "Vehicle-Fuel-Report", localStorage.getItem("userID"));
     this.setDefault();
   }
@@ -68,6 +70,18 @@ export class VehicleFuelReportComponent implements OnInit {
     this.getVehicles();
   }
 
+  checkPetrolPumpDetail() {
+    let dbPath = "Settings/FuelEntry/isApplyPetrolPumpDetail";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      instance.unsubscribe();
+      if (data != null) {
+        if (data == "yes") {
+          this.isPetrolPumpDetail = true;
+        }
+      }
+    })
+  }
+
   getFuelMonthData() {
     $('#divLoader').show();
     const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVehicleFuelJSONData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2FVehicleFuel.json?alt=media";
@@ -85,10 +99,14 @@ export class VehicleFuelReportComponent implements OnInit {
           let quantity = Number(list[i]["quantity"]);
           let meterReading = list[i]["meterReading"];
           let fuelType = list[i]["fuelType"] ? list[i]["fuelType"] : "";
+          let fuelVehicle = list[i]["fuelVehicle"] ? list[i]["fuelVehicle"] : "";
+          let petrolPump = list[i]["petrolPump"] ? list[i]["petrolPump"] : "";
+          let payMethod = list[i]["payMethod"] ? list[i]["payMethod"] : "";
+          let remark = list[i]["remark"] ? list[i]["remark"] : "";
           totalAmount += amount;
           totalQuantity += quantity;
           let orderBy = new Date(date).getTime();
-          this.fuelList.push({ vehicle: vehicle, date: date, showDate: showDate, fuelType: fuelType, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+          this.fuelList.push({ vehicle: vehicle, date: date, showDate: showDate, fuelType: fuelType, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading, fuelVehicle: fuelVehicle, petrolPump: petrolPump, payMethod: payMethod, remark: remark });
           let detail = this.vehicleList.find(item => item.vehicle == vehicle);
           if (detail != undefined) {
             detail.isEntry = 1;
@@ -726,6 +744,10 @@ export class VehicleFuelReportComponent implements OnInit {
               let amount = 0;
               let quantity = 0;
               let fuelType = "";
+              let fuelVehicle = "";
+              let petrolPump = "";
+              let payMethod = "";
+              let remark = "";
               let vehicle = obj[index]["vehicle"];
               if (obj[index]["amount"] != null) {
                 amount = Number(obj[index]["amount"]);
@@ -740,11 +762,26 @@ export class VehicleFuelReportComponent implements OnInit {
               if (obj[index]["fuelType"] != null) {
                 fuelType = obj[index]["fuelType"];
               }
+              if (obj[index]["fuelVehicle"] != null) {
+                fuelVehicle = obj[index]["fuelVehicle"];
+              }
+              if (obj[index]["petrolPump"] != null) {
+                petrolPump = obj[index]["petrolPump"];
+              }
+              if (obj[index]["petrolPump"] != null) {
+                petrolPump = obj[index]["petrolPump"];
+              }
+              if (obj[index]["payMethod"] != null) {
+                payMethod = obj[index]["payMethod"];
+              }
+              if (obj[index]["remark"] != null) {
+                remark = obj[index]["remark"];
+              }
 
               totalAmount = totalAmount + amount;
               totalQuantity = totalQuantity + quantity;
               let orderBy = new Date(date).getTime();
-              fuelList.push({ vehicle: vehicle, date: date, fuelType: fuelType, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading });
+              fuelList.push({ vehicle: vehicle, date: date, fuelType: fuelType, orderBy: orderBy, amount: amount.toFixed(2), quantity: quantity.toFixed(2), meterReading: meterReading, fuelVehicle: fuelVehicle, petrolPump: petrolPump, payMethod: payMethod, remark: remark });
 
             }
             fuelList = fuelList.sort((a, b) => b.orderBy > a.orderBy ? -1 : 1);
@@ -769,10 +806,10 @@ export class VehicleFuelReportComponent implements OnInit {
     let fuelList = [];
     let trackList = [];
     for (let i = 0; i < this.vehicleFuelList.length; i++) {
-      fuelList.push({ date: this.vehicleFuelList[i]["date"],showDate:this.vehicleFuelList[i]["showDate"], meterReading: this.vehicleFuelList[i]["meterReading"], fuelType: this.vehicleFuelList[i]["fuelType"], quantity: this.vehicleFuelList[i]["quantity"], amount: this.vehicleFuelList[i]["amount"], name: "", ward: "", dutyInTime: "", dutyOutTime: "", workPercentage: "", portalKm: "", gps_km: "", distance: "" });
+      fuelList.push({ date: this.vehicleFuelList[i]["date"], showDate: this.vehicleFuelList[i]["showDate"], meterReading: this.vehicleFuelList[i]["meterReading"], fuelType: this.vehicleFuelList[i]["fuelType"], fuelVehicle: this.vehicleFuelList[i]["fuelVehicle"], petrolPump: this.vehicleFuelList[i]["petrolPump"], payMethod: this.vehicleFuelList[i]["payMethod"], remark: this.vehicleFuelList[i]["remark"], quantity: this.vehicleFuelList[i]["quantity"], amount: this.vehicleFuelList[i]["amount"], name: "", ward: "", dutyInTime: "", dutyOutTime: "", workPercentage: "", portalKm: "", gps_km: "", distance: "" });
     }
     for (let i = 0; i < this.vehicleTrackList.length; i++) {
-      trackList.push({ date: this.vehicleTrackList[i]["date"],showDate:this.vehicleTrackList[i]["showDate"], meterReading: "", fuelType: "", quantity: "", amount: "", name: this.vehicleTrackList[i]["name"], ward: this.vehicleTrackList[i]["ward"], dutyInTime: this.vehicleTrackList[i]["dutyInTime"], dutyOutTime: this.vehicleTrackList[i]["dutyOutTime"], workPercentage: this.vehicleTrackList[i]["workPercentage"], portalKm: this.vehicleTrackList[i]["portalKm"], gps_km: this.vehicleTrackList[i]["gps_km"], distance: this.vehicleTrackList[i]["distance"] });
+      trackList.push({ date: this.vehicleTrackList[i]["date"], showDate: this.vehicleTrackList[i]["showDate"], meterReading: "", fuelType: "", fuelVehicle: "", petrolPump: "", payMethod: "", remark: "", quantity: "", amount: "", name: this.vehicleTrackList[i]["name"], ward: this.vehicleTrackList[i]["ward"], dutyInTime: this.vehicleTrackList[i]["dutyInTime"], dutyOutTime: this.vehicleTrackList[i]["dutyOutTime"], workPercentage: this.vehicleTrackList[i]["workPercentage"], portalKm: this.vehicleTrackList[i]["portalKm"], gps_km: this.vehicleTrackList[i]["gps_km"], distance: this.vehicleTrackList[i]["distance"] });
     }
 
     for (let i = 0; i < dateArray.length; i++) {
@@ -781,17 +818,17 @@ export class VehicleFuelReportComponent implements OnInit {
       let trackDateList = trackList.filter(item => item.date == date);
       if (fuelDateList.length > trackDateList.length) {
         for (let j = 0; j < fuelDateList.length; j++) {
-          exportData.push({ date: fuelDateList[j]["date"],showDate:fuelDateList[j]["showDate"], meterReading: fuelDateList[j]["meterReading"], fuelType: fuelDateList[j]["fuelType"], quantity: fuelDateList[j]["quantity"], amount: fuelDateList[j]["amount"], name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
+          exportData.push({ date: fuelDateList[j]["date"], showDate: fuelDateList[j]["showDate"], meterReading: fuelDateList[j]["meterReading"], fuelType: fuelDateList[j]["fuelType"], fuelVehicle: fuelDateList[j]["fuelVehicle"], petrolPump: fuelDateList[j]["petrolPump"], payMethod: fuelDateList[j]["payMethod"], remark: fuelDateList[j]["remark"], quantity: fuelDateList[j]["quantity"], amount: fuelDateList[j]["amount"], name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
         }
       }
       else if (trackDateList.length > fuelDateList.length) {
         for (let j = 0; j < trackDateList.length; j++) {
-          exportData.push({ date: trackDateList[j]["date"],showDate:trackDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
+          exportData.push({ date: trackDateList[j]["date"], showDate: trackDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", fuelVehicle: fuelDateList[j] ? fuelDateList[j]["fuelVehicle"] : "", petrolPump: fuelDateList[j] ? fuelDateList[j]["petrolPump"] : "", payMethod: fuelDateList[j] ? fuelDateList[j]["payMethod"] : "", remark: fuelDateList[j] ? fuelDateList[j]["remark"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
         }
       }
       else {
         for (let j = 0; j < fuelDateList.length; j++) {
-          exportData.push({ date: fuelDateList[j]["date"],showDate:fuelDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
+          exportData.push({ date: fuelDateList[j]["date"], showDate: fuelDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", fuelVehicle: fuelDateList[j] ? fuelDateList[j]["fuelVehicle"] : "", petrolPump: fuelDateList[j] ? fuelDateList[j]["petrolPump"] : "", payMethod: fuelDateList[j] ? fuelDateList[j]["payMethod"] : "", remark: fuelDateList[j] ? fuelDateList[j]["remark"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
         }
       }
     }
@@ -804,6 +841,12 @@ export class VehicleFuelReportComponent implements OnInit {
       htmlString += "<td>Date</td>";
       htmlString += "<td>Meter Reading</td>";
       htmlString += "<td>Fuel Type</td>";
+      if (this.isPetrolPumpDetail == true) {
+        htmlString += "<td>Fuel Vehicle</td>";
+        htmlString += "<td>Petrol Pump</td>";
+        htmlString += "<td>Pay Method</td>";
+        htmlString += "<td>Remark</td>";
+      }
       htmlString += "<td>Quantity</td>";
       htmlString += "<td>Amount</td>";
       htmlString += "<td>Driver</td>";
@@ -823,6 +866,12 @@ export class VehicleFuelReportComponent implements OnInit {
         htmlString += `<td t=s>${data.showDate || ''}</td>`;
         htmlString += `<td>${data.meterReading || ''}</td>`;
         htmlString += `<td>${data.fuelType || ''}</td>`;
+        if (this.isPetrolPumpDetail == true) {
+          htmlString += `<td>${data.fuelVehicle || ''}</td>`;
+          htmlString += `<td>${data.petrolPump || ''}</td>`;
+          htmlString += `<td>${data.payMethod || ''}</td>`;
+          htmlString += `<td>${data.remark || ''}</td>`;
+        }
         htmlString += `<td>${data.quantity || ''}</td>`;
         htmlString += `<td>${data.amount || ''}</td>`;
         htmlString += `<td>${data.name || ''}</td>`;

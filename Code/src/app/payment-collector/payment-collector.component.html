@@ -19,9 +19,9 @@
 </section> -->
 
 <div class="main-page">
- <header class="header">
+    <header class="header">
         <div class="header-left">
-         Manage Payment Collector
+            Manage Payment Collector
             <!-- Breadcrumb starts -->
             <!-- <nav class="breadcrumb">
                 <ul class="ul-breadcrumb">
@@ -40,446 +40,465 @@
             <!-- Breadcrumb ends -->
         </div>
         <div class="header-right">
-              <div class="btn-default2 btn-export2">
+            <div class="btn-default2 btn-export2">
                 <h4 class="Total-amount">{{collectionData.sumTotalCollection}}</h4>
                 <p class="total-amount-tatile">Total Collection</p>
             </div>
-            <button type="button" class="user-button no-gutters-btn"  (click)="openModel(contentEmployee,0,'add');">
+            <button type="button" class="user-button no-gutters-btn" (click)="openModel(contentEmployee,0,'add');">
                 <span>+</span>New</button>
         </div>
     </header>
 
 
-<div class="page-content">
-    <div class="row m-0">
-        <div class="col-md-8 ps-0">
-            <div class="card card-main-iner">
-                <div class="card-body card-body2">
-                    <form>
-                        <div class="table-wrapper table-one table-wrapper-one">
-                            <table class="table table-one-iner">
-                                <thead>
-                                    <th class="table-head1" style="width: 10px;">S.No.</th>
-                                    <th class="table-head2" style="width: 220px;">Name</th>
-                                    <th class="table-head3" style="width: 80px;">Login ID
-                                    </th>
-                                    <th class="text-left table-head3" style="width: 180px;">
-                                        Assigned</th>
-                                    <th class="text-center table-head3" style="width: 80px;">
-                                        Status</th>
-                                    <th class="text-center table-head2" style="width: 140px;">
-                                        Action</th>
-                                </thead>
-                                <tbody>
-                                    <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index"
-                                        class="{{data.trClass}}" (click)="showCollectionDetail(data.empId,i);"
-                                        style="cursor: pointer;">
-                                        <td class="table-data-1">{{i+1}}</td>
-                                        <td class="table-data-2">
-                                            {{data.name}}</td>
-                                        <td class="table-data-3">
-                                            <span [hidden]="data.empId=='100' || data.empId=='99'">
-                                                {{empCodePrefix}}{{data.empId}}</span>
-                                        </td>
-                                        <td class="table-data-3">
-                                            <span [hidden]="data.deviceNo==''">{{data.deviceNo}}</span><br />
-                                            <span [hidden]="data.collectedAmount==0"><b> Collection :
-                                                    {{data.collectedAmount}}</b></span>
-                                        </td>
-                                        <td class="text-center table-data-4">
-                                            <span [hidden]="data.empId=='100' || data.empId=='99'">
-                                                <span class="actives" [hidden]="data.isActive==false">
-                                                    Active
+    <div class="page-content">
+        <div class="row m-0">
+            <div class="col-md-8 ps-0">
+                <div class="card card-main-iner">
+                    <div class="card-body card-body2">
+                        <form>
+                            <div class="table-wrapper table-one table-wrapper-one">
+                                <table class="table table-one-iner">
+                                    <thead>
+                                        <th class="table-head1" style="width: 10px;">S.No.</th>
+                                        <th class="table-head2" style="width: 220px;">Name</th>
+                                        <th class="table-head3" style="width: 80px;">Login ID
+                                        </th>
+                                        <th class="text-left table-head3" style="width: 180px;">
+                                            Assigned</th>
+                                        <th class="text-center table-head3" style="width: 80px;">
+                                            Status</th>
+                                        <th class="text-center table-head2" style="width: 140px;">
+                                            Action</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index"
+                                            class="{{data.trClass}}" (click)="showCollectionDetail(data.empId,i);"
+                                            style="cursor: pointer;">
+                                            <td class="table-data-1">{{i+1}}</td>
+                                            <td class="table-data-2">
+                                                {{data.name}}</td>
+                                            <td class="table-data-3">
+                                                <span [hidden]="data.empId=='100' || data.empId=='99'">
+                                                    {{empCodePrefix}}{{data.empId}}</span>
+                                            </td>
+                                            <td class="table-data-3">
+                                                <span [hidden]="data.deviceNo==''">{{data.deviceNo}}</span><br />
+                                                <span [hidden]="data.collectedAmount==0"><b> Collection :
+                                                        {{data.collectedAmount}}</b></span>
+                                            </td>
+                                            <td class="text-center table-data-4">
+                                                <span [hidden]="data.empId=='100' || data.empId=='99'">
+                                                    <span class="actives" [hidden]="data.isActive==false">
+                                                        Active
+                                                    </span>
+                                                    <span class="inactive"
+                                                        [hidden]="data.isActive==true">Inactive</span>
                                                 </span>
-                                                <span class="inactive" [hidden]="data.isActive==true">Inactive</span>
-                                            </span>
-                                        </td>
-                                        <td class="text-center table-data-2">
-                                            <span class="actionbttn" [hidden]="data.empId=='100' || data.empId=='99'">
-                                                <!-- <i class="fas fa-map-marked-alt marked-icon"
+                                            </td>
+                                            <td class="text-center table-data-2">
+                                                <span class="actionbttn"
+                                                    [hidden]="data.empId=='100' || data.empId=='99'">
+                                                    <!-- <i class="fas fa-map-marked-alt marked-icon"
                                                             (click)="openModel(contentWard,data.empId,'ward');"
                                                             title="Assign Ward"></i> -->
-                                                <img src="../../assets/icons/map-location-dot-solid.svg"
-                                                    class="marked-icon cursor-pointer icon-green" alt="location"
-                                                    (click)="openModel(contentWard,data.empId,'ward');"
-                                                    title="Assign Ward">
-                                                <!-- 
+                                                    <img src="../../assets/icons/map-location-dot-solid.svg"
+                                                        class="marked-icon cursor-pointer icon-green" alt="location"
+                                                        (click)="openModel(contentWard,data.empId,'ward');"
+                                                        title="Assign Ward">
+                                                    <!-- 
                                                         <i class="far fa-times-circle circle-icon"
                                                             (click)="openModel(contentConfirmation,data.empId,'delete')"
                                                             title="Remove Assignment"></i> -->
-                                                <img src="../../assets/icons/circle-xmark-regular.svg"
-                                                    class="circle-icon cursor-pointer" alt="delete"
-                                                    (click)="openModel(contentConfirmation,data.empId,'delete')"
-                                                    title="Remove Assignment">
-                                                <a href="{{data.docImageUrl}}" target="blank" title="Document">
-                                                    <!-- <i class="fa fa-download download-icon"
+                                                    <img src="../../assets/icons/circle-xmark-regular.svg"
+                                                        class="circle-icon cursor-pointer" alt="delete"
+                                                        (click)="openModel(contentConfirmation,data.empId,'delete')"
+                                                        title="Remove Assignment">
+                                                    <a href="{{data.docImageUrl}}" target="blank" title="Document">
+                                                        <!-- <i class="fa fa-download download-icon"
                                                                 style="color: green;padding-right: 10px;cursor: pointer;"></i> -->
-                                                    <img src="../../assets/icons/download-solid.svg"
-                                                        class="download-icon cursor-pointer  icon-green" alt="download">
+                                                        <img src="../../assets/icons/download-solid.svg"
+                                                            class="download-icon cursor-pointer  icon-green"
+                                                            alt="download">
 
-                                                </a>
-                                                <a href="{{data.qrCodeImageUrl}}" target="blank" title="Qr Code">
-                                                    <!-- <i class="fa-solid fa-qrcode" style="padding-right: 10px;cursor: pointer;"></i> -->
-                                                    <img src="../../assets/icons/qrcode-solid.svg"
-                                                        class="cursor-pointer " alt="qr code">
-                                                </a>
-                                                <!-- <i class="far fa-edit edit-icon"
+                                                    </a>
+                                                    <a href="{{data.qrCodeImageUrl}}" target="blank" title="Qr Code">
+                                                        <!-- <i class="fa-solid fa-qrcode" style="padding-right: 10px;cursor: pointer;"></i> -->
+                                                        <img src="../../assets/icons/qrcode-solid.svg"
+                                                            class="cursor-pointer " alt="qr code">
+                                                    </a>
+                                                    <!-- <i class="far fa-edit edit-icon"
                                                             (click)="openModel(contentEmployee,data.empId,'update');"
                                                             title="Edit Entry"></i> -->
-                                                <img src="../../assets/icons/pen-to-square-regular.svg"
-                                                    class="edit-icon cursor-pointer" alt="edit"
-                                                    (click)="openModel(contentEmployee,data.empId,'update');"
-                                                    title="Edit Entry">
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- <div class="col-md-4 cards-main">
-
-            <div class="card ">
-                <div class="card-header">
-
-                    <h5> <b>{{collectionData.name}}</b></h5>
-
-                   
-                    <div class="text-center">
-                        <img src="../../assets/icons/file-export-solid.svg" class="export-icon cursor-pointer"
-                            alt="export" (click)="exportToExcel();" title="Export collection report">
-                        <p class="export-span-iner">Export</p>
-                    </div>
-
-                </div>
-                <div class="card-body card-body-2">
-                    <div class="row ml-0 mr-10">
-                        <div class="col-md-6 pl-0 pr-0 mb-15  text-center table-heading-main">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points">{{collectionData.totalCollection}} </span><br /> Total
-                                    Collection
-                                </h3>
+                                                    <img src="../../assets/icons/pen-to-square-regular.svg"
+                                                        class="edit-icon cursor-pointer" alt="edit"
+                                                        (click)="openModel(contentEmployee,data.empId,'update');"
+                                                        title="Edit Entry">
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                        <div class="col-md-6 pl-0 pr-0 mb-15  text-center table-heading-main">
-                            <div class="table-heading">
-                                <h3>
-                                    <span class="tbl-points">{{collectionData.totalDays}}</span><br /> Working Days
-                                </h3>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-                    <form>
-                        <div class="table-wrapper table-scroll table-scroll-2">
-                            <table class="table table-scroll-iner">
-                                <thead>
-                                    <th class="table-heading-1">Date</th>
-                                    <th class="text-right table-heading-2">
-                                        Collection</th>
-
-                                    <th class="text-right table-heading-2">
-                                        Details</th>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let data of collectionList; let i=index">
-                                        <td class="date-details">
-                                            {{data.displayDate}}</td>
-                                        <td class="text-right markers-details">
-                                            {{data.collection}}</td>
-                                        <td class="text-right markers-details">
-                                           
-                                            <img src="../../assets/icons/eye-regular.svg" class="cursor-pointer"
-                                                (click)="openCollectionDetail(contentCollectionDetail,data.date);"
-                                                alt="eye">
-                                        </td>
-                                    </tr>
-
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </form>
                 </div>
             </div>
 
-        </div> -->
 
-        <div class="col-md-4 p-0">
-            <div class="card">
-                <div class="card-header">
-                    <h5> <b>{{collectionData.name}}</b></h5>
-                    <div class="text-center">
-                        <img src="../../assets/icons/file-export-solid.svg" class="export-icon cursor-pointer"
-                            alt="export" (click)="exportToExcel();" title="Export collection report">
-                        <p class="export-span-iner">Export</p>
-                    </div>
-                </div>
-                <div class="card-body  ">
-                    <div class="collection-day-maine">
-                        <div class="points-document">
-                            <span class="tbl-points">{{collectionData.totalCollection}} </span>
-                            <p class="Point-table">Total
-                                Collection</p>
-                        </div>
-                        <div class="points-document">
-                            <span class="tbl-points">{{collectionData.totalDays}}</span>
-                            <p class="Point-table">Working Days</p>
+            <div class="col-md-4 p-0">
+                <div class="card">
+                    <div class="card-header">
+                        <h5> <b>{{collectionData.name}}</b></h5>
+                        <div class="text-center">
+                            <img src="../../assets/icons/file-export-solid.svg" class="export-icon cursor-pointer"
+                                alt="export" (click)="exportToExcel();" title="Export collection report">
+                            <p class="export-span-iner">Export</p>
                         </div>
                     </div>
-                    <form>
-                        <div class="table-wrapper table-scroll table-scroll-2">
-                            <table class="table table-scroll-iner">
-                                <thead>
-                                    <th class="table-heading-1">Date</th>
-                                    <th class="text-right table-heading-2">
-                                        Collection</th>
-                                    <th class="text-right table-heading-2">
-                                        Details</th>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let data of collectionList; let i=index">
-                                        <td class="date-details">
-                                            {{data.displayDate}}</td>
-                                        <td class="text-right markers-details">
-                                            {{data.collection}}</td>
-                                        <td class="text-right markers-details">
-                                            <img src="../../assets/icons/eye-regular.svg" class="cursor-pointer"
-                                                (click)="openCollectionDetail(contentCollectionDetail,data.date);"
-                                                alt="eye">
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div class="card-body  ">
+                        <div class="collection-day-maine">
+                            <div class="points-document">
+                                <span class="tbl-points">{{collectionData.totalCollection}} </span>
+                                <p class="Point-table">Total
+                                    Collection</p>
+                            </div>
+                            <div class="points-document">
+                                <span class="tbl-points">{{collectionData.totalDays}}</span>
+                                <p class="Point-table">Working Days</p>
+                            </div>
                         </div>
-                    </form>
+                        <form>
+                            <div class="table-wrapper table-scroll table-scroll-2">
+                                <table class="table table-scroll-iner">
+                                    <thead>
+                                        <th class="table-heading-1">Date</th>
+                                        <th class="text-right table-heading-2">
+                                            Collection</th>
+                                        <th class="text-right table-heading-2">
+                                            Details</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let data of collectionList; let i=index">
+                                            <td class="date-details">
+                                                {{data.displayDate}}</td>
+                                            <td class="text-right markers-details">
+                                                {{data.collection}}</td>
+                                            <td class="text-right markers-details">
+                                                <img src="../../assets/icons/eye-regular.svg" class="cursor-pointer"
+                                                    (click)="openCollectionDetail(contentCollectionDetail,data.date);"
+                                                    alt="eye">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<!--Delete Confirmation Start-->
-<ng-template #contentConfirmation>
-    <div class="modal-dialog modal-dialog-centered modal-dialog-width" role="document">
-        <div class="modal-content modal-content-width">
-            <div class="modal-header">
-                <!-- <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
+    <!--Delete Confirmation Start-->
+    <ng-template #contentConfirmation>
+        <div class="modal-dialog modal-dialog-centered modal-dialog-width" role="document">
+            <div class="modal-content modal-content-width">
+                <div class="modal-header">
+                    <!-- <h5 class="modal-title modal-heading" id="exampleModalLongTitle">Are you sure you want to remove
                     assignment ?</h5> -->
-                <h5 class="modal-title" id="exampleModalLongTitle">Remove Assignment</h5>
-                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
-            </div>
-            <div class="modal-body">
-
-                <div class="Delete-device">
-                    <img class="deleteImg" src="../../assets/img/deleteImg.png">
-                    <p class="title-assignment">
-                        Are you sure you want to remove assignment ?
-                    </p>
-
+                    <h5 class="modal-title" id="exampleModalLongTitle">Remove Assignment</h5>
+                    <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
                 </div>
+                <div class="modal-body">
 
-                <input type="hidden" id="deleteId" value="0" />
-                <div class="buttonAss">
-                    <div class="Confirm">
-                        <button type="button" class="btn  w-100 submit-btn assignment-btn" (click)="removeAssignment()">
-                            Confirm</button>
+                    <div class="Delete-device">
+                        <img class="deleteImg" src="../../assets/img/deleteImg.png">
+                        <p class="title-assignment">
+                            Are you sure you want to remove assignment ?
+                        </p>
+
                     </div>
-                    <div class="cancel-btn-popup">
-                        <button type="button" class="btn  w-100 cancel-btn ass-cancel-btn" (click)="closeModel()">
-                            Cancel</button>
+
+                    <input type="hidden" id="deleteId" value="0" />
+                    <div class="buttonAss">
+                        <div class="Confirm">
+                            <button type="button" class="btn  w-100 submit-btn assignment-btn"
+                                (click)="removeAssignment()">
+                                Confirm</button>
+                        </div>
+                        <div class="cancel-btn-popup">
+                            <button type="button" class="btn  w-100 cancel-btn ass-cancel-btn" (click)="closeModel()">
+                                Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</ng-template>
-<!--Delete Confirmation End-->
+    </ng-template>
+    <!--Delete Confirmation End-->
 
-<!--ward assign  Start-->
-<ng-template #contentWard>
-    <!-- <div class="modal "> -->
-    <div class="modal-dialog modal-dialog-centered  modal-dialog-width" role="document">
-        <div class="modal-content modal-content-width">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward & Device</h5>
-                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
-            </div>
-            <div class="modal-body">
-                <input id="empID" type="hidden" value="0" />
-                <label class="label-title">Device Serial No.</label>
-                <div class="wrap-input-effects" required>
-                    <select id="ddlDevice" class="input-green">
-                        <option value="0">--Select Device--</option>
-                        <option value={{dt.device}} *ngFor="let dt of deviceList">
-                            {{dt.device}}</option>
-                    </select>
+    <!--ward assign  Start-->
+    <ng-template #contentWard>
+        <!-- <div class="modal "> -->
+        <div class="modal-dialog modal-dialog-centered  modal-dialog-width" role="document">
+            <div class="modal-content modal-content-width">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Assign Ward & Device</h5>
+                    <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
+                </div>
+                <div class="modal-body">
+                    <input id="empID" type="hidden" value="0" />
+                    <label class="label-title">Device Serial No.</label>
+                    <div class="wrap-input-effects" required>
+                        <select id="ddlDevice" class="input-green">
+                            <option value="0">--Select Device--</option>
+                            <option value={{dt.device}} *ngFor="let dt of deviceList">
+                                {{dt.device}}</option>
+                        </select>
 
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> -->
-                        <img src="../../assets/icons/file-invoice-dollar-solid.svg" alt="file" aria-hidden="true">
-                    </span>
-                </div>
-              
-                <label [hidden]="isWardShow=='0'" class="label-title">Ward</label>
-                <div class="wrap-input-effects" required [hidden]="isWardShow=='0'">
-                    <select id="ddlWard" class="input-green" (change)="getLines($event.target.value);">
-                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
-                            {{zone.zoneName}}</option>
-                    </select>
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
-                        <img src="../../assets/icons/map-location-dot-solid.svg" alt="marker" aria-hidden="true" />
-                    </span>
-                </div>
-                <label [hidden]="isWardShow=='0'" class="label-title">Select Lines</label>
-                <div class="wrap-input-effects" required [hidden]="isWardShow=='0'">
-                    <div class="checkbox-scroll">
-                        <!-- <div class="row">
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <!-- <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> -->
+                            <img src="../../assets/icons/file-invoice-dollar-solid.svg" alt="file" aria-hidden="true">
+                        </span>
+                    </div>
+
+                    <div class="label-title">
+                        <label class="label-title"><b>Assignment For</b></label><br />
+                        <input id="rdoSingle" type="radio" checked value="Single Ward"
+                            (click)="setWardAssignType('Single');" /> Single Ward
+                        <input id="rdoMultiple" type="radio" value="Multiple Ward"
+                            (click)="setWardAssignType('Multiple');" style="margin-left: 20px;" /> Multiple Ward
+
+                    </div>
+                    <div id="divSingleWard">
+                        <label  class="label-title">Ward</label>
+                        <div class="wrap-input-effects" required >
+                            <select id="ddlWard" class="input-green" (change)="getLines($event.target.value);">
+                                <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
+                                    {{zone.zoneName}}</option>
+                            </select>
+                            <span class="focus-input"></span>
+                            <span class="symbol-input">
+                                <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
+                                <img src="../../assets/icons/map-location-dot-solid.svg" alt="marker"
+                                    aria-hidden="true" />
+                            </span>
+                        </div>
+                        <label  class="label-title">Select Lines</label>
+                        <div class="wrap-input-effects" required >
+                            <div class="checkbox-scroll">
+                                <!-- <div class="row">
                             <div class="col-md-2 checkbox-div" *ngFor="let line of lineList">
                                 <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" />
                                 {{line.lineNo}}
                             </div>
                         </div> -->
-                        <div class="line-container">
-                            <div *ngFor="let line of lineList" class="line-box">
-                                <label class="line-count" for="chk{{line.lineNo}}">
-                                    <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" />
-                                    {{ line.lineNo }}
-                                </label>
+                                <div class="line-container">
+                                    <div *ngFor="let line of lineList" class="line-box">
+                                        <label class="line-count" for="chk{{line.lineNo}}">
+                                            <input class="lineNo-checkbox" type="checkbox" id="chk{{line.lineNo}}" />
+                                            {{ line.lineNo }}
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <div class="wrap-input-effects" required style="display: none;">
+                            <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
+                        </div>
+                    </div>
+                    <div id="divMultipleWard" style="display: none;">
+                        <label class="label-title">Ward</label>
+                        <div style="width:100%;display: flex;">
+                            <div style="width:70%; ">
+                                <div class="wrap-input-effects" required>
+                                    <select id="ddlWardMultiple" class="input-green"
+                                        (change)="getWardLines($event.target.value);">
+                                        <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
+                                            {{zone.zoneName}}</option>
+                                    </select>
+                                    <span class="focus-input"></span>
+                                    <span class="symbol-input">
+                                        <!-- <i class="fas fa-map-marked-alt" aria-hidden="true"></i> -->
+                                        <img src="../../assets/icons/map-location-dot-solid.svg" alt="marker"
+                                            aria-hidden="true" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div style="width:30%">
+                                <button type="button" class="btn btn-success submit-btn click-input" style="height:40px;margin-left: 10px; width:150px"
+                                    (click)="addMultipleWard();">Add Ward</button>
+                            </div>
+                        </div>
+                        <label class="label-title">Select Lines</label>
+                        <div class="wrap-input-effects" required >
+                            <div class="checkboxMultiple-scroll">
+                                <div class="line-container">
+                                    <div *ngFor="let line of multipleLineList" class="line-box">
+                                        <label class="line-count" for="chkMultiple{{line.lineNo}}">
+                                            <input class="lineNo-checkbox" type="checkbox"
+                                                id="chkMultiple{{line.lineNo}}" />
+                                            {{ line.lineNo }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="table-wrapper table-multiple-scroll">
+                                <table class="table  table-scroll-iner">
+                                    <thead>
+                                        <th class="table-heading-1">Ward</th>
+                                        <th class="table-heading-2">
+                                            Lines</th>
+                                        <th class="text-center table-heading-1">
+                                            Action</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let data of wardLineList; let i=index">
+                                            <td class="date-details">
+                                                {{data.ward}}</td>
+                                            <td class="markers-details">
+                                                {{data.lines}}</td>
+                                            <td class="text-center markers-details">                                               
+                                                        <img src="../../assets/icons/dustbin.svg"
+                                                        class="delete-icon cursor-pointer" alt="delete"
+                                                        (click)="deleteMultipleLineList(data.ward,'delete');"
+                                                        title="Delete Ward">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="wrap-input-effects" required style="display: none;">
+                            <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success submit-btn click-input"
+                            (click)="saveWard();">SUBMIT</button>
                     </div>
                 </div>
-                <div class="wrap-input-effects" required style="display: none;">
-                    <input class="remove-input" type="checkbox" id="chkRemove"> Remove assigned ward
-                </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success submit-btn click-input"
-                        (click)="saveWard();">SUBMIT</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <!-- </div> -->
-</ng-template>
-<!--ward assign End-->
-
-
-<!--employee  Start-->
-<ng-template #contentEmployee >
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
-                <button type="button" class="close" (click)="closeModel();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body pb-0">
-                <input id="key" type="hidden" value="0" />
-                <div class="wrap-input-effects" required>
-                    <input type="text" id="txtName" class="input-green" placeholder="Name" autocomplete="off" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
-                        <img src="../../assets/icons/user-solid.svg" alt="user" aria-hidden="true" />
-                    </span>
-                </div>                
-                <div class="wrap-input-effects" required>
-                    <input type="text" id="txtEmpId" class="input-green" placeholder="Employee ID" autocomplete="off" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input" style="font-weight: bold; font-size: 12px!important;">
-                        {{empCodePrefix}}
-                    </span>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No." autocomplete="off" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fas fa-mobile-alt" aria-hidden="true"></i> -->
-                        <img src="../../assets/icons/mobile-screen-button-solid.svg" alt="mobile" aria-hidden="true" />
-
-                    </span>
-                </div>
-                
-                <div class="wrap-input-effects" required>
-                    <input type="password" id="txtPassword" class="input-green" placeholder="Password"
-                        autocomplete="off" />
-                    <span class="focus-input"></span>
-                    <span class="symbol-input">
-                        <!-- <i class="fas fa-key" aria-hidden="true"></i> -->
-                        <img src="../../assets/icons/key-solid.svg" alt="key" aria-hidden="true" />
-
-                    </span>
-                </div>
-                <div class="wrap-input-effects" required>
-                    <input id="fileUpload" type="file" (change)="getFileName();" accept="image/*">
-                </div>
-                <div class="wrap-input-effects" required>
-                    <input class="active-input" type="checkbox" id="chkAcive"> Is Active
-
-                </div>
-                <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
-                    (click)="saveEmployee();" />
             </div>
         </div>
-    </div>
-</ng-template>
-<!--employee End-->
+        <!-- </div> -->
+    </ng-template>
+    <!--ward assign End-->
 
-<!--ward assign  Start-->
-<ng-template #contentCollectionDetail>
-    <div class="modal-dialog modal-dialog-width modal-dialog-centered" role="document">
-        <div class="modal-content modal-content-width">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Collection Detail</h5>
-                <!-- <button type="button" class="close" (click)="closeModel();"> -->
 
-                <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
-                <!-- </button> -->
-            </div>
-            <div class="modal-body">
-                <div class="table-wrapper table-scroll-popup table-scroll-2">
-                    <table class="table table-scroll-iner">
-                        <thead>
-                            <th>Card No</th>
-                            <th>
-                                Payment Method</th>
-                            <th>
-                                Merchant Transaction Id</th>
-                            <th>
-                                Reference No</th>
-                            <th class="text-right">
-                                Amount</th>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let data of collectionDetailList; let i=index">
-                                <td class="date-details">
-                                    {{data.cardNo}}</td>
-                                <td class="markers-details">
-                                    {{data.payMethod}}</td>
-                                <td class="markers-details">
-                                    {{data.merchantTransactionId}}</td>
-                                <td class="markers-details">
-                                    {{data.retrievalReferenceNo}}</td>
-                                <td class="text-right markers-details">
-                                    {{data.transactionAmount}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <!--employee  Start-->
+    <ng-template #contentEmployee>
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Employee</h5>
+                    <button type="button" class="close" (click)="closeModel();">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body pb-0">
+                    <input id="key" type="hidden" value="0" />
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtName" class="input-green" placeholder="Name" autocomplete="off" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <!-- <i class="fas fa-user-alt" aria-hidden="true"></i> -->
+                            <img src="../../assets/icons/user-solid.svg" alt="user" aria-hidden="true" />
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtEmpId" class="input-green" placeholder="Employee ID"
+                            autocomplete="off" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input" style="font-weight: bold; font-size: 12px!important;">
+                            {{empCodePrefix}}
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input type="text" id="txtPhone" class="input-green" placeholder="Mobile No."
+                            autocomplete="off" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <!-- <i class="fas fa-mobile-alt" aria-hidden="true"></i> -->
+                            <img src="../../assets/icons/mobile-screen-button-solid.svg" alt="mobile"
+                                aria-hidden="true" />
+
+                        </span>
+                    </div>
+
+                    <div class="wrap-input-effects" required>
+                        <input type="password" id="txtPassword" class="input-green" placeholder="Password"
+                            autocomplete="off" />
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <!-- <i class="fas fa-key" aria-hidden="true"></i> -->
+                            <img src="../../assets/icons/key-solid.svg" alt="key" aria-hidden="true" />
+
+                        </span>
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input id="fileUpload" type="file" (change)="getFileName();" accept="image/*">
+                    </div>
+                    <div class="wrap-input-effects" required>
+                        <input class="active-input" type="checkbox" id="chkAcive"> Is Active
+
+                    </div>
+                    <input type="button" class="btn w-100 btn-success submit-btn saveEmployee-input" value="SUBMIT"
+                        (click)="saveEmployee();" />
                 </div>
             </div>
         </div>
-    </div>
-</ng-template>
-<!--ward assign End-->
+    </ng-template>
+    <!--employee End-->
+
+    <!--ward assign  Start-->
+    <ng-template #contentCollectionDetail>
+        <div class="modal-dialog modal-dialog-width modal-dialog-centered" role="document">
+            <div class="modal-content modal-content-width">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Collection Detail</h5>
+                    <!-- <button type="button" class="close" (click)="closeModel();"> -->
+
+                    <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
+                    <!-- </button> -->
+                </div>
+                <div class="modal-body">
+                    <div class="table-wrapper table-scroll-popup table-scroll-2">
+                        <table class="table table-scroll-iner">
+                            <thead>
+                                <th>Card No</th>
+                                <th>
+                                    Payment Method</th>
+                                <th>
+                                    Merchant Transaction Id</th>
+                                <th>
+                                    Reference No</th>
+                                <th class="text-right">
+                                    Amount</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let data of collectionDetailList; let i=index">
+                                    <td class="date-details">
+                                        {{data.cardNo}}</td>
+                                    <td class="markers-details">
+                                        {{data.payMethod}}</td>
+                                    <td class="markers-details">
+                                        {{data.merchantTransactionId}}</td>
+                                    <td class="markers-details">
+                                        {{data.retrievalReferenceNo}}</td>
+                                    <td class="text-right markers-details">
+                                        {{data.transactionAmount}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <!--ward assign End-->
 </div>

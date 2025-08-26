@@ -137,6 +137,9 @@
                                                                 [hidden]="data.isDisabled=='no'"
                                                                 (click)="updateDustbinStatus(data.dustbin,'no');"
                                                                 title="Enable Dustbin" />
+
+                                                                <img src="../../assets/icons/qrcode-solid.svg" (click)="uploadQRCodWithText(data.address,data.dustbin)" [hidden]="cityName!='biofics-surat'"
+                                                                class="cursor-pointer pr-1" style="margin-left: 10px;" alt="qr code">
                                                         </td>
                                                     </tr>
                                                 </tbody>

@@ -74,6 +74,7 @@ export class SidebarComponent implements OnInit {
   setDefault() {
     this.isDehradun = false;
     this.cityName = localStorage.getItem("cityName");
+    this.commonService.setStoragePath(this.cityName);
     this.db = this.fb.getDatabaseByCity(this.cityName);
     this.isActual = localStorage.getItem("isActual");
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
@@ -197,6 +198,7 @@ export class SidebarComponent implements OnInit {
 
   changeCity(cityName: any) {
     localStorage.removeItem("mapUpdateHistory");
+    this.commonService.setStoragePath(cityName);
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.setDefault();

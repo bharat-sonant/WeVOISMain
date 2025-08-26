@@ -121,9 +121,9 @@ export class PaymentViaNeftComponent implements OnInit {
                       day = neftDate.split("-")[2];
                       monthName = this.commonService.getCurrentMonthShortName(Number(month));
                       let neftDateFormat = day + " " + monthName + " " + year;
-                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2FEntities%2F"+entity +"%2F"+ dataKey[key]["neftDate"] + "%2F" + dataKey[key]["image"] + "?alt=media";
+                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2FEntities%2F"+entity +"%2F"+ collectedDate + "%2F" + dataKey[key]["image"] + "?alt=media";
 
-                     const houseImgUrl = dataKey[key]["houseImage"] ? `${this.commonService.fireStoragePath}${this.commonService.getFireStoreCity()}%2FPaymentCollectionHistory%2FPaymentHouseImage%2F${cardNo}%2FEntities%2F${entity}%2F${dataKey[key]["neftDate"]}%2F${dataKey[key]["houseImage"]}?alt=media` : '';
+                     const houseImgUrl = dataKey[key]["houseImage"] ? `${this.commonService.fireStoragePath}${this.commonService.getFireStoreCity()}%2FPaymentCollectionHistory%2FPaymentHouseImage%2F${cardNo}%2FEntities%2F${entity}%2F${collectedDate}%2F${dataKey[key]["houseImage"]}?alt=media` : '';
 
                       this.neftList.push({ key: key, cardNo: cardNo, zone: dataKey[key]["ward"], neftNo: dataKey[key]["neftNo"], neftDate: dataKey[key]["neftDate"], neftDateFormat: neftDateFormat, name: dataKey[key]["name"], bankName: dataKey[key]["bankName"], collectedBy: dataKey[key]["collectedById"], collectedByName: dataKey[key]["collectedByName"], collectedDate: date, collectedDateFormat: collectedDateFormat, amount: dataKey[key]["amount"], monthYear: dataKey[key]["monthYear"], merchantTransactionId: dataKey[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl,entityType:"subEntity",entityId:entity, houseImgUrl, houseImage: dataKey[key]["houseImage"] || '' });
                     }
@@ -151,9 +151,9 @@ export class PaymentViaNeftComponent implements OnInit {
                 day = neftDate.split("-")[2];
                 monthName = this.commonService.getCurrentMonthShortName(Number(month));
                 let neftDateFormat = day + " " + monthName + " " + year;
-                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + dateData[key]["neftDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + collectedDate + "%2F" + dateData[key]["image"] + "?alt=media";
                 
-                const houseImgUrl = dateData[key]["houseImage"] ? `${this.commonService.fireStoragePath}${this.commonService.getFireStoreCity()}%2FPaymentCollectionHistory%2FPaymentHouseImage%2F${cardNo}%2F${dateData[key]["neftDate"]}%2F${dateData[key]["houseImage"]}?alt=media` : ''
+                const houseImgUrl = dateData[key]["houseImage"] ? `${this.commonService.fireStoragePath}${this.commonService.getFireStoreCity()}%2FPaymentCollectionHistory%2FPaymentHouseImage%2F${cardNo}%2F${collectedDate}%2F${dateData[key]["houseImage"]}?alt=media` : ''
 
                 this.neftList.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], neftNo: dateData[key]["neftNo"], neftDate: dateData[key]["neftDate"], neftDateFormat: neftDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectedDateFormat: collectedDateFormat, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], merchantTransactionId: dateData[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl ,entityType:'mainEntity',houseImgUrl, houseImage: dateData[key]["houseImage"] || ''});
               }

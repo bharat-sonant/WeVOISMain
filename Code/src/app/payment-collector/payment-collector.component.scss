@@ -632,9 +632,16 @@ textarea:focus-visible {
     border-radius: 6px;
 }
 
+
 .table-scroll {
     padding: 0px;
-    height: calc(100vh - 276px);
+    height: calc(100vh - 275px);
+    overflow: auto;
+}
+
+.table-multiple-scroll {
+    padding: 0px;
+    height: 135px;
     overflow: auto;
 }
 
@@ -756,6 +763,12 @@ table tr:hover {
     cursor: pointer !important;
     font-size: 14px;
     color: royalblue;
+}
+
+.delete-icon {
+    cursor: pointer !important;
+    height: 14px;
+    filter: brightness(0) saturate(100%) invert(33%) sepia(80%) saturate(2665%) hue-rotate(339deg) brightness(95%) contrast(104%);
 }
 
 .current-heading {
@@ -1135,6 +1148,16 @@ table tr:hover {
 
 .checkbox-scroll {
     height: 270px;
+    overflow: hidden;
+    overflow-y: scroll;
+    border: 1px solid $lightGray;
+    border-radius: 2px;
+    padding: 10px;
+    width: 100%;
+}
+
+.checkboxMultiple-scroll{
+    height: 135px;
     overflow: hidden;
     overflow-y: scroll;
     border: 1px solid $lightGray;

@@ -142,23 +142,23 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(1, 0);
+    this.addDevices(4, 0);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice = lastDevice + 1;
-    if (index <= 10) {
+    if (index <= 11) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
-        lastActive: "24/07/2025 08:10",
-        name: "NAI-" + (lastDevice < 10 ? '0' : '') + lastDevice,
+        lastActive: "11/08/2025 08:10",
+        name: "CHE-" + (lastDevice < 10 ? '0' : '') + lastDevice,
         readerAppVersion: "1.0.3.7",
         status: "1"
       }
-      console.log("NAI-" + lastDevice);
-      let dbPath = "Devices/Nainwa/" + key;
+      console.log("CHE-" + lastDevice);
+      let dbPath = "Devices/Chennai/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }
@@ -926,21 +926,21 @@ export class Cms1Component implements OnInit {
       const jsonObj = {};
       for (let i = 0; i < fileList.length; i++) {
         let wardNo = fileList[i]["Ward No"];
-        let address = fileList[i]["Address"];
+        let address ="Ward-"+fileList[i]["Ward No"]+" "+ fileList[i]["Address"];
         let lat = fileList[i]["Lat"];
         let lng = fileList[i]["Long"];
-        let pickFrequency = fileList[i]["Frq"];
+        let pickFrequency = "1";
         let zone = fileList[i]["Zone"];
         const data = {
           address: address,
-          lat: lat,
-          lng: lng,
-          isApproved: false,
+          lat: lat.toString(),
+          lng: lng.toString(),
           pickFrequency: pickFrequency,
           type: "Rectangular",
-          ward: wardNo,
+          dustbinType:"Open Depot",
+          ward: wardNo.toString(),
           zone: zone,
-          createdDate: "2024-12-30"
+          createdDate: "2025-08-19"
         }
         this.db.object("DustbinData/DustbinDetails/" + key.toString()).update(data);
         jsonObj[key] = data;

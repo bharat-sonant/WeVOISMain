@@ -6,8 +6,10 @@ import { MapService } from "../services/map/map.service";
 import { FirebaseService } from "../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "@angular/fire/storage";
-//import * as QRCode from 'qrcode';
+import * as QRCode from 'qrcode';
 import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
+import { observable } from 'rxjs';
+import { userDetail } from '../home/home.component';
 
 @Component({
   selector: 'app-payment-collector',
@@ -23,13 +25,15 @@ export class PaymentCollectorComponent implements OnInit {
   userList: any[];
   collectionList: any[];
   collectionDetailList: any[];
+  wardLineList: any[] = [];
   lineList: any[] = [];
+  multipleLineList: any[] = [];
   lastEmpId: any;
+  selectedAssignType: any;
   db: any;
   fileName: any;
   cityName: any;
   public empCodePrefix: any;
-  public isWardShow: any;
   lblEmpCodePrefix = "#lblEmpCodePrefix";
   serviceName = "collection-management-payment-collector";
   collectionData: collectionDatail = {
@@ -41,17 +45,94 @@ export class PaymentCollectorComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
-      this.isWardShow = "0";
-    }
-    else {
-      this.isWardShow = "1";
-    }
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.selectedAssignType = "Single";
+    this.uploadQRCode("Harendra Singh");
     this.getEmpCodePrefix();
     this.getDevices();
     this.getZoneList();
     this.getEmployee();
+  }
+
+  setWardAssignType(type: any) {
+    let elementSingle = <HTMLInputElement>document.getElementById("rdoSingle");
+    let elementMultiple = <HTMLInputElement>document.getElementById("rdoMultiple");
+    elementSingle.checked = false;
+    elementMultiple.checked = false;
+    if (type == "Single") {
+      elementSingle.checked = true;
+      $("#divSingleWard").show();
+      $("#divMultipleWard").hide();
+    }
+    else {
+      elementMultiple.checked = true;
+      $("#divMultipleWard").show();
+      $("#divSingleWard").hide();
+    }
+    this.selectedAssignType = type;
+  }
+
+  addMultipleWard() {
+    let ward = $("#ddlWardMultiple").val();
+    if (ward == "0") {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
+      return;
+    }
+    let detail = this.wardLineList.find(item => item.ward == ward);
+    if (detail != undefined) {
+      this.commonService.setAlertMessage("error", "Selected ward already in list !!!");
+      return;
+    }
+    let isLine = false;
+    let lines = "";
+    if (this.multipleLineList.length > 0) {
+      for (let i = 0; i < this.multipleLineList.length; i++) {
+        let lineNo = this.multipleLineList[i]["lineNo"];
+        let chk = "chkMultiple" + lineNo;
+        let element = <HTMLInputElement>document.getElementById(chk);
+        if (element.checked == true) {
+          isLine = true;
+          if (lines != "") {
+            lines = lines + ", ";
+          }
+          lines = lines + lineNo;
+        }
+      }
+    }
+    if (isLine == false) {
+      this.commonService.setAlertMessage("error", "Plese select at least one line !!!");
+      return;
+    }
+    this.wardLineList.push({ ward, lines });
+    $("#ddlWardMultiple").val("0");
+    this.multipleLineList = [];
+  }
+
+  deleteMultipleLineList(ward: any, type: any) {
+    if (type == "delete") {
+      this.wardLineList = this.wardLineList.filter(item => item.ward != ward);
+    }
+  }
+
+  getWardLines(wardNo: any) {
+    return new Promise((resolve) => {
+      this.multipleLineList = [];
+      if (wardNo == "0") {
+        this.commonService.setAlertMessage("error", "Plese select ward !!!");
+        return;
+      }
+      this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((response: any) => {
+        let data = JSON.parse(response);
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          if (parseInt(lineNo)) {
+            this.multipleLineList.push({ lineNo: lineNo, isChecked: 0 });
+          }
+        }
+        resolve("success");
+      });
+    });
   }
 
   getEmpCodePrefix() {
@@ -133,7 +214,9 @@ export class PaymentCollectorComponent implements OnInit {
                 docImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["fileName"] + "?alt=media",
                 collectedAmount: 0,
                 collectionList: [],
-                lines: lines
+                lines: lines,
+                assignType: userJsonData[empId]["assignType"] ? userJsonData[empId]["assignType"] : "Single",
+                wardAssignmentList: userJsonData[empId]["wardAssignmentList"] ? userJsonData[empId]["wardAssignmentList"] : {}
               });
               this.getCollectionDetail(empId);
             }
@@ -389,8 +472,6 @@ export class PaymentCollectorComponent implements OnInit {
         return;
       }
     })
-
-
   }
 
   saveDataInJSON(id: any, jsonData: any, name: any, mobile: any, password: any, empId: any, isActive: any) {
@@ -445,37 +526,40 @@ export class PaymentCollectorComponent implements OnInit {
     });
   }
 
-  /*
-  
-    private async uploadQRCode(url: any) {
-      let qrData: string = url;
-      let qrCodeImage = await QRCode.toDataURL(qrData);
-      var byteString = atob(qrCodeImage.split(',')[1]);
-  
-      // separate out the mime component
-      var mimeString = qrCodeImage.split(',')[0].split(':')[1].split(';')[0]
-  
-      // write the bytes of the string to an ArrayBuffer
-      var ab = new ArrayBuffer(byteString.length);
-  
-      // create a view into the buffer
-      var ia = new Uint8Array(ab);
-  
-      // set the bytes of the buffer to the correct values
-      for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-  
-      // write the ArrayBuffer to a blob, and you're done
-      var blob = new Blob([ab], { type: mimeString });
-      let filePath = "/CollectionManagement/" + this.lastEmpId + "/";
-      const path = this.commonService.getFireStoreCity() + filePath + "qrCode.png";
-      const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(path);
-      const task = ref.put(blob);
+
+
+  private async uploadQRCode(url: any) {
+    let qrData: string = url;
+    let qrCodeImage = await QRCode.toDataURL(qrData);
+    var byteString = atob(qrCodeImage.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = qrCodeImage.split(',')[0].split(':')[1].split(';')[0]
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+
+    // create a view into the buffer
+    var ia = new Uint8Array(ab);
+
+    // set the bytes of the buffer to the correct values
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
     }
-    */
+
+    // write the ArrayBuffer to a blob, and you're done
+    var blob = new Blob([ab], { type: mimeString });
+    // let filePath = "/CollectionManagement/" + this.lastEmpId + "/";
+    let filePath = "/QRCode/";
+    const path = this.commonService.getFireStoreCity() + filePath + "qrCode.png";
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(path);
+    const task = ref.put(blob);
+  }
+
 
   openModel(content: any, id: any, type: any) {
+    this.wardLineList = [];
+    this.lineList = [];
     if (type == "ward") {
       let userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
@@ -486,12 +570,8 @@ export class PaymentCollectorComponent implements OnInit {
       }
       this.modalService.open(content, { size: "lg" });
       let windowHeight = $(window).height();
-      let height = 250;
-      let width = 400;
-      if (this.isWardShow == "1") {
-        height = 600;
-        width = 600;
-      }
+      let height = 600;
+      let width = 600;
       let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
       $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
       $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
@@ -499,21 +579,18 @@ export class PaymentCollectorComponent implements OnInit {
       $("#empID").val(id);
       userDetail = this.userList.find((item) => item.empId == id);
       if (userDetail != undefined) {
+        this.setWardAssignType(userDetail.assignType);
         if (userDetail.deviceNo != "") {
-          if (this.isWardShow == "0") {
-            setTimeout(() => {
-              if (userDetail.deviceNo != "") {
-                $("#ddlDevice").val(userDetail.deviceNo);
-              }
-            }, 100);
-          }
-          else {
-            setTimeout(() => {
+          setTimeout(() => {
+            if (userDetail.assignType == "Single") {
               if (userDetail.wardNo != "") {
                 if (userDetail.deviceNo != "") {
                   $("#ddlDevice").val(userDetail.deviceNo);
                 }
                 if (userDetail.wardNo != "") {
+
+                  $("#divSingleWard").show();
+                  $("#divMultipleWard").hide();
                   $("#ddlWard").val(userDetail.wardNo);
                   this.getLines(userDetail.wardNo).then((response) => {
                     setTimeout(() => {
@@ -528,13 +605,27 @@ export class PaymentCollectorComponent implements OnInit {
                         }
                       }
                     }, 200);
-
                   });
+
                 }
               }
-            }, 100);
+            }
+            else {
 
-          }
+              if (userDetail.deviceNo != "") {
+                $("#ddlDevice").val(userDetail.deviceNo);
+              }
+
+              $("#divSingleWard").hide();
+              $("#divMultipleWard").show();
+              let obj = userDetail.wardAssignmentList;
+              Object.keys(obj).map(key => {
+                let ward = key;
+                let lines = obj[key];
+                this.wardLineList.push({ ward, lines });
+              });
+            }
+          }, 100);
         }
       }
     } else if (type == "delete") {
@@ -597,98 +688,24 @@ export class PaymentCollectorComponent implements OnInit {
   saveWard() {
     let empID = $("#empID").val();
     let lines = "";
-    if (this.cityName != "jodhpur") {
-      if ($("#ddlDevice").val() == "0") {
-        this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
-        return;
-      }
-
-      if (this.isWardShow == "1") {
-        if ($("#ddlWard").val() == "0") {
-          this.commonService.setAlertMessage("error", "Please select ward !!!");
-          return;
-        }
-        let isLine = false;
-
-        if (this.lineList.length > 0) {
-          for (let i = 0; i < this.lineList.length; i++) {
-            let lineNo = this.lineList[i]["lineNo"];
-            let chk = "chk" + lineNo;
-            let element = <HTMLInputElement>document.getElementById(chk);
-            if (element.checked == true) {
-              isLine = true;
-              if (lines != "") {
-                lines = lines + ",";
-              }
-              lines = lines + lineNo;
-            }
-          }
-        }
-        if (isLine == false) {
-          this.commonService.setAlertMessage("error", "Plese select at least one line !!!");
-          return;
-        }
-      }
-
-      if (empID != "0") {
-        let deviceNo = $("#ddlDevice").val();
-        let wardNo = "";
-        if (this.isWardShow == "1") {
-          wardNo = $("#ddlWard").val().toString();
-        }
-        let list = this.userList.filter(item => item.empId != empID);
-        let detail = list.find(item => item.deviceNo == deviceNo);
-        if (detail != undefined) {
-          this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
-          return;
-        }
-        let element = <HTMLInputElement>document.getElementById("chkRemove");
-        if (element.checked == true) {
-          deviceNo = null;
-          wardNo = null;
-          lines = null;
-        }
-
-        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
-        let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
-          userJSONInstance.unsubscribe();
-          if (userJsonData != null) {
-            userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
-            userJsonData[empID.toString()]["assignedWard"] = wardNo;
-            userJsonData[empID.toString()]["assignedLines"] = lines;
-            let fileName = "paymentCollector.json";
-            let filePath = "/CollectionManagement/";
-            this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
-              this.commonService.setAlertMessage("success", "Device assigned successfully !!!");
-              $("#empID").val("0");
-              $("#ddlDevice").val("0");
-              $("#ddlWard").val("0");
-              this.lineList = [];
-              this.closeModel();
-              let userDetail = this.userList.find((item) => item.empId == empID);
-              if (userDetail != undefined) {
-                userDetail.deviceNo = deviceNo;
-                if (this.isWardShow == "1") {
-                  userDetail.wardNo = wardNo;
-                  userDetail.lines = lines;
-                }
-              }
-            });
-          }
-        });
-      }
+    let wardAssignmentList = {};
+    if ($("#ddlDevice").val() == "0") {
+      this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
+      return;
     }
-    else {
+    if (this.selectedAssignType == "Single") {
       if ($("#ddlWard").val() == "0") {
         this.commonService.setAlertMessage("error", "Please select ward !!!");
         return;
       }
+      let isLine = false;
       if (this.lineList.length > 0) {
         for (let i = 0; i < this.lineList.length; i++) {
           let lineNo = this.lineList[i]["lineNo"];
           let chk = "chk" + lineNo;
           let element = <HTMLInputElement>document.getElementById(chk);
           if (element.checked == true) {
+            isLine = true;
             if (lines != "") {
               lines = lines + ",";
             }
@@ -696,57 +713,90 @@ export class PaymentCollectorComponent implements OnInit {
           }
         }
       }
-
-      if (empID != "0") {
-        let deviceNo = $("#ddlDevice").val();
-        let wardNo = "";
-        if (this.isWardShow == "1") {
-          wardNo = $("#ddlWard").val().toString();
-        }
-        let list = this.userList.filter(item => item.empId != empID);
-        if (deviceNo != "0") {
-          let detail = list.find(item => item.deviceNo == deviceNo);
-          if (detail != undefined) {
-            this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
-            return;
-          }
-        }
-        let element = <HTMLInputElement>document.getElementById("chkRemove");
-        if (element.checked == true) {
-          deviceNo = null;
-          wardNo = null;
-          lines = null;
-        }
-
-        const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
-        let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
-          userJSONInstance.unsubscribe();
-          if (userJsonData != null) {
-            userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
-            userJsonData[empID.toString()]["assignedWard"] = wardNo;
-            userJsonData[empID.toString()]["assignedLines"] = lines;
-            let fileName = "paymentCollector.json";
-            let filePath = "/CollectionManagement/";
-            this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
-              this.commonService.setAlertMessage("success", "Device assigned successfully !!!");
-              $("#empID").val("0");
-              $("#ddlDevice").val("0");
-              $("#ddlWard").val("0");
-              this.lineList = [];
-              this.closeModel();
-              let userDetail = this.userList.find((item) => item.empId == empID);
-              if (userDetail != undefined) {
-                userDetail.deviceNo = deviceNo;
-                if (this.isWardShow == "1") {
-                  userDetail.wardNo = wardNo;
-                  userDetail.lines = lines;
-                }
-              }
-            });
-          }
-        });
+      if (isLine == false) {
+        this.commonService.setAlertMessage("error", "Plese select at least one line !!!");
+        return;
       }
     }
+    else {
+      if (this.wardLineList.length > 0) {
+        for (let i = 0; i < this.wardLineList.length; i++) {
+          wardAssignmentList[this.wardLineList[i]["ward"]] = this.wardLineList[i]["lines"]
+        }
+      }
+      else {
+        this.commonService.setAlertMessage("error", "Plese add at least one ward with lines !!!");
+        return;
+      }
+    }
+
+    if (empID != "0") {
+      let deviceNo = $("#ddlDevice").val();
+      let wardNo = "";
+
+      wardNo = $("#ddlWard").val().toString();
+
+      let list = this.userList.filter(item => item.empId != empID);
+      let detail = list.find(item => item.deviceNo == deviceNo);
+      if (detail != undefined) {
+        this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
+        return;
+      }
+      let element = <HTMLInputElement>document.getElementById("chkRemove");
+      if (element.checked == true) {
+        deviceNo = null;
+        wardNo = null;
+        lines = null;
+      }
+
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
+      let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
+        userJSONInstance.unsubscribe();
+        if (userJsonData != null) {
+          userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
+          userJsonData[empID.toString()]["assignType"] = this.selectedAssignType;
+          if (this.selectedAssignType == "Single") {
+            userJsonData[empID.toString()]["assignedWard"] = wardNo;
+            userJsonData[empID.toString()]["assignedLines"] = lines;
+            userJsonData[empID.toString()]["wardAssignmentList"] = {};
+          }
+          else {
+            userJsonData[empID.toString()]["assignedWard"] = "";
+            userJsonData[empID.toString()]["assignedLines"] = "";
+            userJsonData[empID.toString()]["wardAssignmentList"] = wardAssignmentList;
+          }
+          let fileName = "paymentCollector.json";
+          let filePath = "/CollectionManagement/";
+          this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
+            this.commonService.setAlertMessage("success", "Device assigned successfully !!!");
+            $("#empID").val("0");
+            $("#ddlDevice").val("0");
+            $("#ddlWard").val("0");
+            let userDetail = this.userList.find((item) => item.empId == empID);
+            if (userDetail != undefined) {
+              userDetail.deviceNo = deviceNo;
+              userDetail.assignType = this.selectedAssignType;
+              if (this.selectedAssignType == "Single") {
+                userDetail.wardNo = wardNo;
+                userDetail.lines = lines;
+                userDetail.wardAssignmentList = {};
+              }
+              else {
+                userDetail.wardNo = "";
+                userDetail.lines = "";
+                userDetail.wardAssignmentList = wardAssignmentList;
+              }
+            }
+            this.lineList = [];
+            this.multipleLineList = [];
+            this.wardLineList = [];
+            this.selectedAssignType = "Single";
+            this.closeModel();
+          });
+        }
+      });
+    }
+
   }
 
   removeAssignment() {
@@ -756,6 +806,11 @@ export class PaymentCollectorComponent implements OnInit {
       userJSONInstance.unsubscribe();
       if (userJsonData != null) {
         delete userJsonData[empID.toString()]["assignedDevice"];
+        userJsonData[empID.toString()]["assignedWard"] = "";
+        userJsonData[empID.toString()]["assignedLines"] = "";
+        userJsonData[empID.toString()]["wardAssignmentList"] = {};
+        userJsonData[empID.toString()]["assignType"] = "Single";
+
         let fileName = "paymentCollector.json";
         let filePath = "/CollectionManagement/";
         this.commonService.saveJsonFile(userJsonData, fileName, filePath).then(response => {
@@ -764,7 +819,11 @@ export class PaymentCollectorComponent implements OnInit {
           this.closeModel();
           let userDetail = this.userList.find((item) => item.empId == empID);
           if (userDetail != undefined) {
-            userDetail.deviceNo = null;
+            userDetail.deviceNo = "0";
+            userDetail.wardNo = "";
+            userDetail.lines = "";
+            userDetail.wardAssignmentList = {};
+            userDetail.assignType = "Single";
           }
         });
       }

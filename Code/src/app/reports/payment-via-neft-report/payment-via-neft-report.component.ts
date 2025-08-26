@@ -138,7 +138,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
                       day = neftDateFormat.split("-")[2];
                       monthName = this.commonService.getCurrentMonthShortName(Number(month));
                       neftDateFormat = day + " " + monthName + " " + year;
-                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + dateData[key]["neftDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + entityCollectedDate + "%2F" + dateData[key]["image"] + "?alt=media";
                       let transactionId = "NA";
                       if (dateData[key]["transactionId"] != null) {
                         transactionId = dateData[key]["transactionId"];
@@ -173,7 +173,7 @@ export class PaymentViaNeftReportComponent implements OnInit {
                   day = neftDateFormat.split("-")[2];
                   monthName = this.commonService.getCurrentMonthShortName(Number(month));
                   neftDateFormat = day + " " + monthName + " " + year;
-                  let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + dateData[key]["neftDate"] + "%2F" + dateData[key]["image"] + "?alt=media";
+                  let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + collectedDate + "%2F" + dateData[key]["image"] + "?alt=media";
                   let transactionId = "NA";
                   if (dateData[key]["transactionId"] != null) {
                     transactionId = dateData[key]["transactionId"];

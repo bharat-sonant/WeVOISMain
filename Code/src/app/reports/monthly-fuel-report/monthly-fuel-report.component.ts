@@ -393,6 +393,10 @@ export class MonthlyFuelReportComponent implements OnInit {
               let quantity = 0;
               let cngQty = 0;
               let fuelType = "";
+              let fuelVehicle="";
+              let petrolPump="";
+              let payMethod="";
+              let remark="";
 
               let vehicle = obj[index]["vehicle"];
               if (obj[index]["amount"] != null) {
@@ -418,10 +422,25 @@ export class MonthlyFuelReportComponent implements OnInit {
               if (obj[index]["meterReading"] != null) {
                 meterReading = obj[index]["meterReading"];
               }
+              if(obj[index]["fuelVehicle"]!=null){
+                fuelVehicle=obj[index]["fuelVehicle"];
+              }
+              if(obj[index]["petrolPump"]!=null){
+                petrolPump=obj[index]["petrolPump"];
+              }
+              if(obj[index]["petrolPump"]!=null){
+                petrolPump=obj[index]["petrolPump"];
+              }
+              if(obj[index]["payMethod"]!=null){
+                payMethod=obj[index]["payMethod"];
+              }
+              if(obj[index]["remark"]!=null){
+                remark=obj[index]["remark"];
+              }
               totalAmount = totalAmount + amount;
               totalQuantity = totalQuantity + quantity;
               let orderBy = new Date(date).getTime();
-              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), fuelType: fuelType, quantity: quantity.toFixed(2), meterReading: meterReading });
+              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), fuelType: fuelType, quantity: quantity.toFixed(2), meterReading: meterReading,fuelVehicle:fuelVehicle,petrolPump:petrolPump,payMethod:payMethod,remark:remark });
 
             }
             fuelList = fuelList.sort((a, b) => b.orderBy > a.orderBy ? -1 : 1);

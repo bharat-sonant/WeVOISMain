@@ -52,7 +52,7 @@ export class CardTransectionDetailComponent implements OnInit {
   }
 
   getHouseType() {
-    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
     let houseTypeInstance = this.httpService.get(path).subscribe(data => {
       houseTypeInstance.unsubscribe();
       if (data != null) {
@@ -100,7 +100,7 @@ export class CardTransectionDetailComponent implements OnInit {
               city = "Sikar-Survey";
             }
             let mainHouseImage = cardData["houseImage"];
-            this.imgHouseURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + mainHouseImage + "?alt=media";
+            this.imgHouseURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + mainHouseImage + "?alt=media";
             let element = <HTMLImageElement>document.getElementById("imgHouse");
             element.src = this.imgHouseURL;
 
@@ -125,10 +125,10 @@ export class CardTransectionDetailComponent implements OnInit {
                   let imagePath = city + "/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage;
                   this.commonService.checkImageExist(imagePath).then(resp => {
                     if (resp == true) {
-                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+                      houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
                     }
                     else {
-                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+                      houseImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
                     }
 
                     this.cardEntityList.push({ name: name, entity: entity, houseImageURL: houseImageURL });
@@ -159,7 +159,7 @@ export class CardTransectionDetailComponent implements OnInit {
                   if (this.cityName == "sikar") {
                     city = "Sikar-Survey";
                   }
-                  this.imgMarkerURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
+                  this.imgMarkerURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
                   let element = <HTMLImageElement>document.getElementById("imgMarker");
                   element.src = this.imgMarkerURL;
                 }
@@ -227,7 +227,7 @@ export class CardTransectionDetailComponent implements OnInit {
                     let houseImageURL = this.imageNotAvailablePath;
                     if (dateData[key]["houseImage"]) {
                       houseImage = dateData[key]["houseImage"];
-                      houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2F" + date + "%2F" + houseImage + "?alt=media";
+                      houseImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2F" + date + "%2F" + houseImage + "?alt=media";
                     }
                     let timestemp = new Date(date).getTime();
                     this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL });
@@ -302,7 +302,7 @@ export class CardTransectionDetailComponent implements OnInit {
                 let houseImageURL = this.imageNotAvailablePath;
                 if (dateData[key]["houseImage"]) {
                   houseImage = dateData[key]["houseImage"];
-                  houseImageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2FEntities%2F" + entityKey + "%2F" + date + "%2F" + houseImage + "?alt=media";
+                  houseImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2FEntities%2F" + entityKey + "%2F" + date + "%2F" + houseImage + "?alt=media";
                 }
 
                 let timestemp = new Date(date).getTime();

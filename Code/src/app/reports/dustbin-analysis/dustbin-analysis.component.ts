@@ -1495,7 +1495,7 @@ export class DustbinAnalysisComponent implements OnInit {
       const fileInput = imageElements[key];
       const file = fileInput.files ? fileInput.files[0] : null;
       if (file) {
-        const url = `https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/${storageCityName}%2FDustbinImages%2FDustbinPickHistory%2F${this.currentYear}%2F${this.currentMonthName}%2F${this.selectedDate}%2F${this.binDetail.binId}%2F${this.planDetail.planId}%2F${name}?alt=media&token=${token}`;
+        const url = `${this.commonService.fireStoragePath}${storageCityName}%2FDustbinImages%2FDustbinPickHistory%2F${this.currentYear}%2F${this.currentMonthName}%2F${this.selectedDate}%2F${this.binDetail.binId}%2F${this.planDetail.planId}%2F${name}?alt=media&token=${token}`;
         const filePath = `/${storageCityName}/DustbinImages/DustbinPickHistory/${this.currentYear}/${this.currentMonthName}/${this.selectedDate}/${this.binDetail.binId}/${this.planDetail.planId}/${name}`;
 
         urlObj[`${key}ImageUrl`] = url;

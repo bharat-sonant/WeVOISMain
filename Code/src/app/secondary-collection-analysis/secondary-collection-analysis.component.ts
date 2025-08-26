@@ -1002,7 +1002,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     let duration = (new Date(this.selectedDate + " " + endTime).getTime() - new Date(this.selectedDate + " " + startTime).getTime()) / 60000;
 
     if (file != null) {
-      filledFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FfilledFarFromImage.jpg?alt=media&token=" + token + "";
+      filledFarFromImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FfilledFarFromImage.jpg?alt=media&token=" + token + "";
       urlObj["filledFarFromImageUrl"] = filledFarFromImageUrl;
       let filePath = "/" + storageCityName + "/DustbinImages/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/filledFarFromImage.jpg";
       const fileRef = this.storage.ref(filePath);
@@ -1011,7 +1011,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
 
     if (file1 != null) {
-      emptyFarFromImageUrl = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FemptyFarFromImage.jpg?alt=media&token=" + token + "";
+      emptyFarFromImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FemptyFarFromImage.jpg?alt=media&token=" + token + "";
       urlObj["emptyFarFromImageUrl"] = emptyFarFromImageUrl;
       let filePath = "/" + storageCityName + "/DustbinImages/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/emptyFarFromImage.jpg";
       const fileRef = this.storage.ref(filePath);

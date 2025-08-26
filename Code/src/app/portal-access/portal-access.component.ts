@@ -15,6 +15,7 @@ export class PortalAccessComponent implements OnInit {
    $(".navbar-toggler").hide();
     $("#divSideMenus").hide();
    $("#divMainContent").css("width", "calc(100% - 1px)");
+   this.commonService.setStoragePath(localStorage.getItem("cityName"));
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
     this.getCityAccess();
 
@@ -179,7 +180,8 @@ export class PortalAccessComponent implements OnInit {
   }
 
   changeCity(cityName: any) {
-    localStorage.removeItem("mapUpdateHistory");
+    localStorage.removeItem("mapUpdateHistory");    
+    this.commonService.setStoragePath(cityName);
     localStorage.setItem("cityName", cityName);
     localStorage.setItem("isCityChange", "yes");
     this.closeMapModel();

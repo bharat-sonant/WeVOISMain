@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../services/common/common.service";
 import { DustbinService } from "../services/dustbin/dustbin.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { AngularFireStorage } from "@angular/fire/storage";
+import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-secondary-collection-manage',
@@ -9,7 +11,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ['./secondary-collection-manage.component.scss']
 })
 export class SecondaryCollectionManageComponent implements OnInit {
-  constructor(private dustbinService: DustbinService, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private dustbinService: DustbinService, private commonService: CommonService, private storage: AngularFireStorage, private modalService: NgbModal) { }
   selectedZone: any;
   selectedStatus: any;
   zoneList: any[] = [];
@@ -25,7 +27,8 @@ export class SecondaryCollectionManageComponent implements OnInit {
   txtLng = "#txtLng";
   txtFreq = "#txtFreq";
   ddlDustbinType = "#ddlDustbinType";
-  isShowDisabledBy:any;
+  isShowDisabledBy: any;
+ public cityName:any;
 
   dustbinSummary: dustbinSummary = {
     totalDustbin: 0,
@@ -35,14 +38,15 @@ export class SecondaryCollectionManageComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.cityName=localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
-    this.commonService.savePageLoadHistory("Secondary-Collection-Management","Manage-Secondary-Collection",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Manage-Secondary-Collection", localStorage.getItem("userID"));
     this.getZoneList();
   }
 
   getZoneList() {
     this.zoneList = [];
-    this.isShowDisabledBy="0";
+    this.isShowDisabledBy = "0";
     this.dustbinService.getDustbinZone().then((zones: any) => {
       if (zones != null) {
         let list = zones.toString().split(',');
@@ -79,34 +83,101 @@ export class SecondaryCollectionManageComponent implements OnInit {
   getDustbins() {
     this.dustbinList = [];
     let list = [];
-    let userList=JSON.parse(localStorage.getItem("webPortalUserList"));
+    let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     if (this.dustbinStorageList.length > 0) {
       list = this.dustbinStorageList.filter(item => item.zone.toString().trim() == this.selectedZone.toString().trim());
       this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
       if (this.selectedStatus == "enabled") {
         list = list.filter(item => item.isDisabled != "yes");
-        this.isShowDisabledBy="0";
+        this.isShowDisabledBy = "0";
       }
       else if (this.selectedStatus == "disabled") {
         list = list.filter(item => item.isDisabled == "yes");
-        this.isShowDisabledBy="1";
+        this.isShowDisabledBy = "1";
       }
       else {
-        this.isShowDisabledBy="1";
+        this.isShowDisabledBy = "1";
 
       }
       for (let i = 0; i < list.length; i++) {
-        let disabledByName="";        
-        if(list[i]["disabledBy"]!=""){
-          let detail=userList.find(item=>item.userId==list[i]["disabledBy"]);
-          if(detail!=undefined){
-            disabledByName=detail.name;
+        let disabledByName = "";
+        if (list[i]["disabledBy"] != "") {
+          let detail = userList.find(item => item.userId == list[i]["disabledBy"]);
+          if (detail != undefined) {
+            disabledByName = detail.name;
           }
 
         }
-        this.dustbinList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"], disabledBy: list[i]["disabledBy"],disabledByName:disabledByName });
+        this.dustbinList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"], disabledBy: list[i]["disabledBy"], disabledByName: disabledByName });
       }
     }
+  }
+
+  downloadQRCode(dustbinId: any) {
+    let fileName = dustbinId + ".png";
+    let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinData%2FQRcodes%2F" + fileName + "?alt=media&token";
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = fileName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+  }
+
+
+  async uploadQRCodWithText(url: any, dustbinId: any) {
+    let qrData: string = url;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    QRCode.toCanvas(canvas, qrData.trim(), { width: 400 }, (err) => {
+      if (err) throw err;
+
+      // Resize canvas for text space
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = canvas.width;
+      finalCanvas.height = canvas.height + 40; // extra space for text
+      const finalCtx = finalCanvas.getContext('2d');
+
+      // Draw QR
+      finalCtx.drawImage(canvas, 0, 0);
+
+      // Draw text
+      finalCtx.font = 'bold 16px Arial';
+      finalCtx.textAlign = 'center';
+      finalCtx.fillText(qrData.trim(), finalCanvas.width / 2, canvas.height + 25);
+
+      let qrCodeImage = finalCanvas.toDataURL('image/png');
+      //let qrCodeImage = await QRCode.toDataURL(qrData);
+      var byteString = atob(qrCodeImage.split(',')[1]);
+
+      // separate out the mime component
+      var mimeString = qrCodeImage.split(',')[0].split(':')[1].split(';')[0]
+
+      // write the bytes of the string to an ArrayBuffer
+      var ab = new ArrayBuffer(byteString.length);
+
+      // create a view into the buffer
+      var ia = new Uint8Array(ab);
+
+      // set the bytes of the buffer to the correct values
+      for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+
+      // write the ArrayBuffer to a blob, and you're done
+      var blob = new Blob([ab], { type: mimeString });
+      // let filePath = "/CollectionManagement/" + this.lastEmpId + "/";
+      let fileName = dustbinId + ".png";
+      let filePath = "/DustbinData/QRcodes/";
+      const path = this.commonService.getFireStoreCity() + filePath + fileName;
+      const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(path);
+      const task = ref.put(blob);
+      setTimeout(() => {
+        this.downloadQRCode(dustbinId);
+      }, 600);
+    });
   }
 
 
@@ -182,7 +253,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
       type: type,
       pickFrequency: pickFrequency,
       createdDate: this.commonService.setTodayDate(),
-      dustbinType:"Open Depot"
+      dustbinType: "Open Depot"
     }
     if (dustbinId == "0") {
       this.addDustbin(data);
@@ -202,9 +273,9 @@ export class SecondaryCollectionManageComponent implements OnInit {
       }
     }
     this.dustbinService.updateDustbinDetail(dustbin, data, 'add');
-    this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone,dustbinType:"Open Depot" });
+    this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone, dustbinType: "Open Depot" });
     localStorage.setItem("openDepot", JSON.stringify(this.dustbinStorageList));
-    this.dustbinAllStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone,dustbinType:"Open Depot" });
+    this.dustbinAllStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone, dustbinType: "Open Depot" });
     localStorage.setItem("allDustbin", JSON.stringify(this.dustbinAllStorageList));
     this.getDustbins();
     this.commonService.setAlertMessage("success", "Open depot detail added successfully !!!");
