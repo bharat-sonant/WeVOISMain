@@ -237,7 +237,7 @@ export class PenaltyReviewComponent implements OnInit {
   downloadTemplate() {
     let link = document.createElement("a");
     link.download = "sample";
-    link.href = this.commonService.fireStoragePath + "Common%2FPenaltySample.xlsx?alt=media";
+    link.href = this.commonService.fireStorageCommonPath + "Common%2FPenaltySample.xlsx?alt=media";
     link.click();
     link.remove();
     this.commonService.setAlertMessage("success","File downloaded successfully !!!");

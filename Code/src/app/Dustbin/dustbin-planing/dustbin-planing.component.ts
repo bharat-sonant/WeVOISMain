@@ -232,15 +232,70 @@ export class DustbinPlaningComponent implements OnInit {
       if (planData[planId]["isAssigned"] == "true") {
         this.dustbinService.movePlanToDustbinPlanHistory(planDate, planData[planId], planId);
       }
-
       this.dustbinService.deletePlan(planDate, planId);
-
     }
   }
 
   getDustbinePlanedStatus(planData: any, planType: any) {
     let dateKeyArray = Object.keys(planData);
     if (dateKeyArray.length > 0) {
+      for (let i = 0; i < dateKeyArray.length; i++) {
+        let offlinePlanList = [];
+        let planList = [];
+        let planDate = dateKeyArray[i];
+        let planDateData = planData[planDate];
+        let planKeyArray = Object.keys(planDateData);
+        for (let j = 0; j < planKeyArray.length; j++) {
+          let planId = planKeyArray[j];
+          if (planDateData[planId]["createdBy"] == "-1") {
+            offlinePlanList.push({ planDate: planDate, planId: planId, bins: planDateData[planId]["bins"], pickedDustbin: planDateData[planId]["pickedDustbin"] });
+          }
+          else {
+            planList.push({ planDate: planDate, planId: planId, bins: planDateData[planId]["bins"], pickedDustbin: planDateData[planId]["pickedDustbin"] });
+          }
+        }
+        //if (planDate == "2025-05-25") {
+        for (let j = 0; j < offlinePlanList.length; j++) {
+          let bin = offlinePlanList[j]["bins"];
+          //get bin in plan and not picked
+          for (let k = 0; k < planList.length; k++) {
+            let date = planList[k]["planDate"];
+            let plnId = planList[k]["planId"];
+            let binList = planList[k]["bins"].split(",");
+            let pickedList = planList[k]["pickedDustbin"].split(",");
+            for (let l = 0; l < binList.length; l++) {
+              if (bin == binList[l].trim()) {
+                let isPicked = false;
+                l = binList.length;
+                for (let m = 0; m < pickedList.length; m++) {
+                  if (bin == pickedList[m].trim()) {
+                    isPicked = true;
+                    m = pickedList.length;
+                  }
+
+                }
+                if (isPicked == false) {
+                  let finalBins = "";
+                  for (let n = 0; n < binList.length; n++) {
+                    if (bin.toString() != binList[n].trim().toString()) {
+                      if (finalBins == "") {
+                        finalBins = binList[n]
+                      }
+                      else {
+                        finalBins = finalBins + "," + binList[n];
+                      }
+                    }
+                  }
+                  planList[k]["bins"] = finalBins;
+                  planData[planDate][plnId]["bins"] = finalBins;
+                }
+              }
+            }
+          }
+        }
+        //}
+      }
+
       for (let indexDate = 0; indexDate < dateKeyArray.length; indexDate++) {
         let planDate = dateKeyArray[indexDate];
         if (planDate.split('-')[0] == this.selectedYear && planDate.split('-')[1] == this.selectedMonth) {
@@ -270,11 +325,13 @@ export class DustbinPlaningComponent implements OnInit {
                   }
                 }
               }
+
               this.setDustbinPickStatus(day, assignedBinList, pickedBinList, planDate, planId, planType);
             }
           }
         }
       }
+
     }
   }
 
@@ -295,6 +352,7 @@ export class DustbinPlaningComponent implements OnInit {
             }
           }
           if (isPicked == false) {
+
             let status = this.dustbinService.getIcon("assignedNotPicked") + " Assigned but not Picked";
             if (planType == "ward") {
               status = status + " <b>(W)</b>";

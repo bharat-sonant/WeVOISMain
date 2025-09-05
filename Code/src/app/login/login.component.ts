@@ -37,6 +37,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.setCityDetailList();
+    this.setCommonCityData();
     //this.setCityList();
     this.getRoles();
     this.getMessage();
@@ -54,14 +55,30 @@ export class LoginComponent implements OnInit {
     let cityDetailJSONInstance = this.httpService.get(path).subscribe(cityDetailJsonData => {
       cityDetailJSONInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(cityDetailJsonData));
-      this.cityList = list.sort((a, b) => b.cityName > a.cityName ? 1 : -1);;
-      console.log(this.cityList);
+      list = list.filter(item => item.isOuter == "no");
+      this.cityList = list.sort((a, b) => b.cityName > a.cityName ? 1 : -1);
       localStorage.setItem("CityDetailList", JSON.stringify(cityDetailJsonData));
       localStorage.setItem("cityList", JSON.stringify(this.cityList));
     }, error => {
 
     });
 
+  }
+
+  setCommonCityData() {
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FCityCommonData.json?alt=media";
+    let cityCommonDataJSONInstance = this.httpService.get(path).subscribe(cityCommonDataJsonData => {
+      cityCommonDataJSONInstance.unsubscribe();
+      let keyArray = Object.keys(cityCommonDataJsonData);
+      let list = [];
+      for (let i = 0; i < keyArray.length; i++) {
+        let key = keyArray[i];
+        list.push({ city: key, latLng: cityCommonDataJsonData[key]["latLng"] });
+        localStorage.setItem("CityCommonDataList", JSON.stringify(list));
+      }
+    }, error => {
+
+    });
   }
 
   getRoles() {

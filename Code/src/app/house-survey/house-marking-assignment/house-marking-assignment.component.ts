@@ -497,6 +497,17 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                 this.lineList.push({ lineNo: index, isChecked: 0 });
               }
             }
+/*
+            if(this.cityName=="ecogram"){
+              let obj={
+                approveById:"4",
+                approvedDate:"2025-06-25 10:45",
+                status:"Confirm"
+              }
+              let dbPath="EntityMarkingData/MarkedHouses/"+wardNo+"/"+index+"/ApproveStatus";
+              this.db.object(dbPath).update(obj);
+            }
+            */
           }
         }
       }

@@ -38,7 +38,7 @@ export class UserAddComponent implements OnInit {
     $(this.divLoader).show();
     this.cityName = localStorage.getItem("cityName");
     this.commonService.savePageLoadHistory("Users", "Add-Users", localStorage.getItem("userID"));
-    this.cityList = JSON.parse(localStorage.getItem("cityList")).sort((a, b) => b.name < a.name ? 1 : -1);
+    this.cityList = JSON.parse(localStorage.getItem("cityList")).sort((a, b) => b.cityName < a.cityName ? 1 : -1);;
    // this.cityList=this.cityList.sort((a, b) => b.name < a.name ? 1 : -1);
     this.toDayDate = this.commonService.setTodayDate();
     this.userid = this.actRoute.snapshot.paramMap.get("id");

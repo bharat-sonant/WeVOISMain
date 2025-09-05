@@ -108,7 +108,7 @@ export class EmployeesComponent implements OnInit {
             let designation = "";
             let empType = 1;
             if (this.designationUpdateList.length > 0) {
-              let detail = this.designationUpdateList.find(item => item.designationId == employeeDetail["designationId"]);
+              let detail = this.designationUpdateList.find(item =>Number(item.designationId) ==Number(employeeDetail["designationId"]));
               if (detail != undefined) {
                 designation = detail.designation;
                 if (detail.designation == "Transportation Executive") {

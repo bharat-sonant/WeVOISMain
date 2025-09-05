@@ -127,7 +127,7 @@ export class SettingsComponent implements OnInit {
 
   // Navigator
   getCommonNavigatorSetting() {
-    const path = this.firestotagePath + "Common%2FSettings%2FNavigatorSetting.json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "Common%2FSettings%2FNavigatorSetting.json?alt=media";
     let navigatorJsonInstance = this.httpService.get(path).subscribe(navigetorJsonData => {
       navigatorJsonInstance.unsubscribe();
       if (navigetorJsonData != null) {
@@ -269,7 +269,7 @@ export class SettingsComponent implements OnInit {
   //Reader
 
   getCommonReaderSetting() {
-    const path = this.firestotagePath + "Common%2FSettings%2FReaderSetting.json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "Common%2FSettings%2FReaderSetting.json?alt=media";
     let readerJsonInstance = this.httpService.get(path).subscribe(readerJsonData => {
       readerJsonInstance.unsubscribe();
       if (readerJsonData != null) {

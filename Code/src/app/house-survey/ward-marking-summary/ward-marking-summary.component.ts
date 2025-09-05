@@ -536,10 +536,10 @@ export class WardMarkingSummaryComponent implements OnInit {
             this.wardProgressList[index]["cssClass"] = "marking-done";
           }
 
-         // if (this.cityName == "jaipur-malviyanagar") {
-            this.markerData.totalMarkers = Number(this.markerData.totalMarkers) + Number(this.wardProgressList[index]["markers"]);
-            this.markerData.totalHouses = Number(this.markerData.totalHouses) + Number(this.wardProgressList[index]["houses"]);
-         // }
+          // if (this.cityName == "jaipur-malviyanagar") {
+          this.markerData.totalMarkers = Number(this.markerData.totalMarkers) + Number(this.wardProgressList[index]["markers"]);
+          this.markerData.totalHouses = Number(this.markerData.totalHouses) + Number(this.wardProgressList[index]["houses"]);
+          // }
 
 
 
@@ -1384,15 +1384,16 @@ export class WardMarkingSummaryComponent implements OnInit {
       data => {
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedWard", data);
-        }
-        assignWardInstance.unsubscribe();
-        let keyArray = Object.keys(data);
-        for (let i = 0; i < keyArray.length; i++) {
-          let key = keyArray[i];
-          if (data[key]["assignedWard"] != undefined) {
-            this.inProgressWards.push({ ward: data[key]["assignedWard"] });
+          assignWardInstance.unsubscribe();
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let key = keyArray[i];
+            if (data[key]["assignedWard"] != undefined) {
+              this.inProgressWards.push({ ward: data[key]["assignedWard"] });
+            }
           }
         }
+
         this.getWards();
       });
   }

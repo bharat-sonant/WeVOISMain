@@ -23,14 +23,28 @@ export class Cms1Component implements OnInit {
   cardTypeList: any[] = [];
   revisitKeyList: any[] = [];
   deletedKeyList: any[] = [];
+  entityTypeList: any[] = [];
   ngOnInit() {
 
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     //this.getNameList();
+    this.getEntityType();
     this.getCardTypeList();
     this.getAllRevisitRequests();
     //this.getDeletedRevisit();
+  }
+
+  getEntityType() {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let lastUpdateInstance = this.httpService.get(path).subscribe(data => {
+      lastUpdateInstance.unsubscribe();
+      let list = JSON.parse(JSON.stringify(data));
+      for (let i = 1; i < list.length; i++) {
+        this.entityTypeList.push({ id: i.toString(), name: list[i]["name"] });
+      }
+      console.log(this.entityTypeList);
+    });
   }
 
   removeVerifiedCards() {
@@ -142,36 +156,32 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(4, 0);
+    this.addDevices(131, 85);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice = lastDevice + 1;
-    if (index <= 11) {
+    if (index <= 115) {
       let key = "DummyHelper" + index;
       const data = {
         appType: "2",
-        lastActive: "11/08/2025 08:10",
-        name: "CHE-" + (lastDevice < 10 ? '0' : '') + lastDevice,
-        readerAppVersion: "1.0.3.7",
+        lastActive: "30/05/2025 08:10",
+        name: "JAI-" + (lastDevice < 10 ? '0' : '') + lastDevice,
+        readerAppVersion: "1.0.0.8",
         status: "1"
       }
-      console.log("CHE-" + lastDevice);
-      let dbPath = "Devices/Chennai/" + key;
+      console.log("JAI-" + lastDevice);
+      let dbPath = "Devices/Jaipur-Civil-Line/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }
     else {
       console.log("lastDevice=>" + lastDevice)
-      
       this.db.object("Devices").update({ LastConfigurationNo: lastDevice });
     }
   }
 
-
-
-  
   setSurveyorId() {
     let dbPath = "EntitySurveyData/HistoryRFIDNotFoundSurvey/1000";
     let dataInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -906,6 +916,84 @@ export class Cms1Component implements OnInit {
     }
   }
 
+  hisarMarkerUpload() {
+    let element = <HTMLInputElement>document.getElementById("fileUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      let marksCount = 0;
+      let lastMarkerKey = 0;
+
+      let key = 1;
+      let lineNo = 1;
+      let hundredCounts = 0;
+      let markerKey = 0;
+      for (let i = 0; i < fileList.length; i++) {
+        let pId = fileList[i]["Property Id (E)"] ? fileList[i]["Property Id (E)"] : "";
+        let propId = fileList[i]["Property Id (C)"];
+        let name = fileList[i]["Owner/  Occupier Name (D)"] ? fileList[i]["Owner/  Occupier Name (D)"] : "";
+        let lat = fileList[i]["Latitude (G)"] ? fileList[i]["Latitude (G)"] : "";
+        let lng = fileList[i]["Longitude (H)"] ? fileList[i]["Longitude (H)"] : "";
+        let address = fileList[i]["Address   of Property (K)"] ? fileList[i]["Address   of Property (K)"] : "";
+        let mobile = fileList[i]["Mobile   No. (L)"] ? fileList[i]["Mobile   No. (L)"] : "";
+        let caregory = fileList[i]["Category (M)"] ? fileList[i]["Category (M)"] : "";
+        let streetColony = fileList[i]["Name Of   the Colony (J)"] ? fileList[i]["Name Of   the Colony (J)"] : "";
+        let entity = fileList[i]["SubType (O)"] ? fileList[i]["SubType (O)"] : "";
+        let entityId = "";
+        let detail = this.entityTypeList.find(item => item.name == entity);
+        if (detail != undefined) {
+          entityId = detail.id;
+        }
+        let obj = {
+          address: address,
+          date: this.commonService.getTodayDateTime(),
+          houseType: entityId,
+          latLng: lat.toString() + "," + lng.toString(),
+          totalHouses: "",
+          userId: "100",
+          image: key + ".jpg",
+          mobileNumber: mobile,
+          ownerName: name,
+          streetColony: streetColony,
+          propId: propId,
+          pId: pId
+
+        }
+        if (hundredCounts == 100) {
+          hundredCounts = 0;
+          markerKey = 1;
+          lineNo++;
+        }
+        else {
+          markerKey++;
+          hundredCounts++;
+        }
+        let dbPath = "EntityMarkingData/MarkedHouses/15-R1/" + lineNo + "/" + markerKey;
+        this.db.object(dbPath).update(obj);
+        console.log(dbPath);
+        console.log(obj);
+        marksCount++;
+        key++;
+        lastMarkerKey = key;
+      }
+      let dbPath = "EntityMarkingData/MarkedHouses/15-R1/1/";
+      this.db.object(dbPath).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
+      console.log(marksCount);
+      console.log(lastMarkerKey);
+    }
+  }
+
+
   uploadDustbinData() {
     console.log(this.db);
     let element = <HTMLInputElement>document.getElementById("fileUpload");
@@ -926,21 +1014,21 @@ export class Cms1Component implements OnInit {
       const jsonObj = {};
       for (let i = 0; i < fileList.length; i++) {
         let wardNo = fileList[i]["Ward No"];
-        let address ="Ward-"+fileList[i]["Ward No"]+" "+ fileList[i]["Address"];
+        let address = fileList[i]["Address"];
         let lat = fileList[i]["Lat"];
         let lng = fileList[i]["Long"];
         let pickFrequency = "1";
         let zone = fileList[i]["Zone"];
         const data = {
-          address: address,
-          lat: lat.toString(),
-          lng: lng.toString(),
+          address: "Ward-" + wardNo + " " + address,
+          lat: lat,
+          lng: lng,
           pickFrequency: pickFrequency,
           type: "Rectangular",
-          dustbinType:"Open Depot",
-          ward: wardNo.toString(),
+          ward: wardNo,
           zone: zone,
-          createdDate: "2025-08-19"
+          dustbinType: "Open Depot",
+          createdDate: "2025-09-02"
         }
         this.db.object("DustbinData/DustbinDetails/" + key.toString()).update(data);
         jsonObj[key] = data;
@@ -2409,18 +2497,18 @@ export class Cms1Component implements OnInit {
             let cardImage = "";
             let latLng = "";
             let imageUrl = "";
-            let WasteGeneratorType="";
-            let areaCode="";
+            let WasteGeneratorType = "";
+            let areaCode = "";
             if (fileList[i]["PropertyID"] != undefined) {
               cardNo = fileList[i]["PropertyID"].toString().replaceAll(".", "~");
               if (fileList[i]["PropertyIMG"] != undefined) {
                 imageUrl = fileList[i]["PropertyIMG"];
                 if (fileList[i]["Lat"] != undefined && fileList[i]["Long"] != undefined) {
-                  if(fileList[i]["WasteGeneratorType"]!=undefined){
-                    WasteGeneratorType=fileList[i]["WasteGeneratorType"];
+                  if (fileList[i]["WasteGeneratorType"] != undefined) {
+                    WasteGeneratorType = fileList[i]["WasteGeneratorType"];
                   }
-                  if(fileList[i]["areacode"]!=undefined){
-                    areaCode=fileList[i]["areacode"];
+                  if (fileList[i]["areacode"] != undefined) {
+                    areaCode = fileList[i]["areacode"];
                   }
                   latLng = fileList[i]["Lat"] + "," + fileList[i]["Long"];
                   cardImage = fileList[i]["PropertyID"] + ".jpg";
@@ -2434,8 +2522,8 @@ export class Cms1Component implements OnInit {
                     houseType: 1,
                     latLng: latLng,
                     userId: "101",
-                    wasteGeneratorType:WasteGeneratorType,
-                    areaCode:areaCode
+                    wasteGeneratorType: WasteGeneratorType,
+                    areaCode: areaCode
                   }
                   let objCard = {
                     address: "",
@@ -2448,14 +2536,14 @@ export class Cms1Component implements OnInit {
                     line: "1",
                     ward: "1",
                     surveyorId: "4",
-                    wasteGeneratorType:WasteGeneratorType,
-                    areaCode:areaCode
+                    wasteGeneratorType: WasteGeneratorType,
+                    areaCode: areaCode
                   }
                   let objCardWardMapping = {
                     line: "1",
                     ward: wardNo
                   }
-                 // this.uploadCardImage(imageUrl, cardImage)
+                  // this.uploadCardImage(imageUrl, cardImage)
                   this.db.object("CardWardMapping/" + cardNo).update(objCardWardMapping);
                   this.db.object("EntityMarkingData/MarkedHouses/" + wardNo + "/1/" + markerKey).update(objMarker);
                   this.db.object("Houses/" + wardNo + "/1/" + cardNo).update(objCard);

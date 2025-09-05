@@ -3,6 +3,7 @@
 </div>
 <!----Desktop Navbar Start----->
 <section class="header">
+    
     <div class="row no-gutters">
         <div class="col-md-6 col-lg-6 col-xl-5 pl-18 ipad-pl-40">
             <div class="main1">
@@ -132,7 +133,7 @@
                                         <option value="0">
                                             All Users
                                         </option>
-                                        <option *ngFor="let user of userList" value={{user.userId}}>
+                                        <option *ngFor="let user of garbageUserList" value={{user.userId}}>
                                             {{user.name}}
                                         </option>
                                     </select>

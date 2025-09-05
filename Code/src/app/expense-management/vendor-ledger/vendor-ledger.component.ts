@@ -67,7 +67,7 @@ export class VendorLedgerComponent implements OnInit {
   }
 
   getVendorList() {
-    const path = this.firebaseStoragePath + "Common%2FVendorList.json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "Common%2FVendorList.json?alt=media";
     let vendorJsonInstance = this.httpService.get(path).subscribe(vendorJsonData => {
       vendorJsonInstance.unsubscribe();
       if (vendorJsonData != null) {
@@ -125,7 +125,7 @@ export class VendorLedgerComponent implements OnInit {
   }
 
   getExpenses() {
-    const path = this.firebaseStoragePath + "Common%2FExpenses%2F" + this.selectedVendorId + ".json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "Common%2FExpenses%2F" + this.selectedVendorId + ".json?alt=media";
     let expensesJsonInstance = this.httpService.get(path).subscribe(expenseJsonData => {
       expensesJsonInstance.unsubscribe();
       if (expenseJsonData != null) {

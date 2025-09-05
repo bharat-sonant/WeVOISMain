@@ -643,7 +643,7 @@ export class WardSurveyAnalysisComponent {
               $("#lblEntityTypeVirtual").html(entityType);
               $("#virtualImageName").val(imageName);
               $("#virtualAddress").val(address);
-              let imageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let element = <HTMLImageElement>document.getElementById("imgVertual");
               element.src = imageURL;
             });
@@ -1087,6 +1087,7 @@ export class WardSurveyAnalysisComponent {
       .catch((error) => {
         let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
         if (detail != undefined) {
+          console.log(detail)
           detail.entityList[entityKey - 1]["entityImageURL"] = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
         }
       });

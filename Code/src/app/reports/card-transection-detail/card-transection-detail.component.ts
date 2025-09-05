@@ -30,8 +30,8 @@ export class CardTransectionDetailComponent implements OnInit {
   serviceName = "collection-management-card-payment-report";
   imageNotAvailablePath = "../assets/img/image-not-found.jpg";
   cardEntityList: any[] = [];
-  imgMarkerURL="../assets/img/image-not-found.jpg";
-  imgHouseURL="../assets/img/image-not-found.jpg";
+  imgMarkerURL = "../assets/img/image-not-found.jpg";
+  imgHouseURL = "../assets/img/image-not-found.jpg";
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -99,12 +99,17 @@ export class CardTransectionDetailComponent implements OnInit {
             if (this.cityName == "sikar") {
               city = "Sikar-Survey";
             }
-            let mainHouseImage = cardData["houseImage"];
-            this.imgHouseURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + mainHouseImage + "?alt=media";
-            let element = <HTMLImageElement>document.getElementById("imgHouse");
-            element.src = this.imgHouseURL;
+            if (this.cityName == "sikar") {
+              this.getSikarHouseImages(cardData["houseImage"]);
+            }
+            else {
+              let mainHouseImage = cardData["houseImage"];
+              this.imgHouseURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + mainHouseImage + "?alt=media";
+              let element = <HTMLImageElement>document.getElementById("imgHouse");
+              element.src = this.imgHouseURL;
+            }
 
-            this.getMarkerImage(lineNo,cardNo);
+            this.getMarkerImage(lineNo, cardNo);
 
             if (Number(houseType) == 19 || Number(houseType) == 20) {
               if (cardData["Entities"] != undefined) {
@@ -140,6 +145,22 @@ export class CardTransectionDetailComponent implements OnInit {
         })
       }
     });
+  }
+
+  getSikarHouseImages(houseImage: any) {
+    let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + houseImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        this.imgHouseURL = this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+        let element = <HTMLImageElement>document.getElementById("imgHouse");
+        element.src = this.imgHouseURL;
+      })
+      .catch((error) => {
+        this.imgHouseURL = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+        let element = <HTMLImageElement>document.getElementById("imgHouse");
+        element.src = this.imgHouseURL;
+      });
   }
 
   getMarkerImage(lineNo: any, cardNo: any) {
@@ -401,7 +422,7 @@ export class CardTransectionDetailComponent implements OnInit {
   }
 
 
-  openHouseModel(content: any, url: any,type:any) {
+  openHouseModel(content: any, url: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let height = 520;
@@ -410,16 +431,16 @@ export class CardTransectionDetailComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-    if(type=="list"){
-    let element = <HTMLImageElement>document.getElementById("houseImage");
-    element.src = url;
+    if (type == "list") {
+      let element = <HTMLImageElement>document.getElementById("houseImage");
+      element.src = url;
     }
-    else if(type=="marker"){
+    else if (type == "marker") {
       let element = <HTMLImageElement>document.getElementById("houseImage");
       element.src = this.imgMarkerURL;
-    }else{
+    } else {
       let element = <HTMLImageElement>document.getElementById("houseImage");
-    element.src = this.imgHouseURL;
+      element.src = this.imgHouseURL;
     }
   }
 

@@ -12,7 +12,7 @@ export class UsersService {
 
   getRoles() {
     return new Promise((resolve) => {
-      const path = this.commonService.fireStoragePath + "Common%2FRoles.json?alt=media";
+      const path = this.commonService.fireStorageCommonPath + "Common%2FRoles.json?alt=media";
       let roleJSONInstance = this.httpService.get(path).subscribe(roleJsonData => {
         roleJSONInstance.unsubscribe();
         resolve(roleJsonData);
@@ -25,7 +25,7 @@ export class UsersService {
 
   getPortalPages() {
     return new Promise((resolve) => {
-      const path = this.commonService.fireStoragePath + "Common%2FPortalPages1.json?alt=media";
+      const path = this.commonService.fireStorageCommonPath + "Common%2FPortalPages1.json?alt=media";
       let portalPageJSONInstance = this.httpService.get(path).subscribe(portalPageJsonData => {
         portalPageJSONInstance.unsubscribe();
         resolve(portalPageJsonData);
@@ -38,7 +38,7 @@ export class UsersService {
 
   getPortalAccessPages() {
     return new Promise((resolve) => {
-      const path = this.commonService.fireStoragePath + "Common%2FRoles.json?alt=media";
+      const path = this.commonService.fireStorageCommonPath + "Common%2FRoles.json?alt=media";
       let roleJSONInstance = this.httpService.get(path).subscribe(roleJsonData => {
         roleJSONInstance.unsubscribe();
         resolve(roleJsonData);
@@ -55,7 +55,7 @@ export class UsersService {
 
   getPortalUsers() {
     return new Promise((resolve) => {
-      const path = this.commonService.fireStoragePath + "Common%2FPortalUsers.json?alt=media";
+      const path = this.commonService.fireStorageCommonPath + "Common%2FPortalUsers.json?alt=media";
       let portalUsersJSONInstance = this.httpService.get(path).subscribe(portalUsersJsonData => {
         portalUsersJSONInstance.unsubscribe();
         resolve(portalUsersJsonData);
@@ -73,7 +73,7 @@ export class UsersService {
   getUserLastLogin(userId:any){
     return new Promise((resolve) => {
       let lastLogin="---";
-      const path = this.commonService.fireStoragePath + "Common%2FEmployeeLastLogin%2F"+userId+".json?alt=media";
+      const path = this.commonService.fireStorageCommonPath + "Common%2FEmployeeLastLogin%2F"+userId+".json?alt=media";
       let lastLoginJSONInstance = this.httpService.get(path).subscribe(lastLoginJsonData => {
         lastLoginJSONInstance.unsubscribe();        
         if(lastLoginJsonData["lastLogin"]!=null){
@@ -215,7 +215,7 @@ export class UsersService {
 
   setPortalPages() {
     let portalAccessList = [];
-    const path = this.commonService.fireStoragePath + "Common%2FPortalPages1.json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "Common%2FPortalPages1.json?alt=media";
     let pageJSONInstance = this.httpService.get(path).subscribe(pageJsonData => {
       pageJSONInstance.unsubscribe();
       let pageList = JSON.parse(JSON.stringify(pageJsonData));

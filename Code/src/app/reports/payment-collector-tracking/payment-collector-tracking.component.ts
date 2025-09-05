@@ -578,13 +578,13 @@ export class PaymentCollectorTrackingComponent {
 
         const promises1 = [];
         for (let i = 0; i < this.cardList.length; i++) {
-          promises1.push(Promise.resolve(this.getCardPaymentTime(this.cardList[i].cardNo,this.cardList[i].merchantTransactionId)));
+          promises1.push(Promise.resolve(this.getCardPaymentTime(this.cardList[i].cardNo, this.cardList[i].merchantTransactionId)));
           promises1.push(Promise.resolve(this.getCardEntityPaymentTime(this.cardList[i].cardNo, this.cardList[i].entityId, this.cardList[i].merchantTransactionId)));
         }
         Promise.all(promises1).then((results) => {
           for (let i = 0; i < results.length; i++) {
             if (results[i]["status"] == "success") {
-              let cardDetail = this.cardList.find(item => item.cardNo == results[i].data.cardNo && item.merchantTransactionId==results[i].data.merchantTransactionId);
+              let cardDetail = this.cardList.find(item => item.cardNo == results[i].data.cardNo && item.merchantTransactionId == results[i].data.merchantTransactionId);
               if (cardDetail != undefined) {
                 cardDetail.time = results[i].data.time;
               }
@@ -594,7 +594,7 @@ export class PaymentCollectorTrackingComponent {
           let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
           if (detail != undefined) {
             detail.cardCount = this.cardList.length;
-            detail.cardList = this.cardList.sort((a,b)=>a.time>b.time?1:-1);
+            detail.cardList = this.cardList.sort((a, b) => a.time > b.time ? 1 : -1);
           }
           this.getPaymentCollectorRoute(paymentCollectorId);
         });
@@ -611,7 +611,7 @@ export class PaymentCollectorTrackingComponent {
   }
 
 
-  getCardPaymentTime(cardNo: any,merchantTransactionId:any) {
+  getCardPaymentTime(cardNo: any, merchantTransactionId: any) {
     return new Promise((resolve) => {
       let obj = {};
       let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate;
@@ -625,7 +625,7 @@ export class PaymentCollectorTrackingComponent {
             obj = {
               cardNo: cardNo,
               time: paymentTime,
-              merchantTransactionId:merchantTransactionId
+              merchantTransactionId: merchantTransactionId
             }
             resolve({ status: "success", data: obj });
           }
@@ -664,7 +664,7 @@ export class PaymentCollectorTrackingComponent {
                   obj = {
                     cardNo: cardNo,
                     time: paymentTime,
-                    merchantTransactionId:merchantTransactionId
+                    merchantTransactionId: merchantTransactionId
                   }
                   i = keyArray.length;
                 }
@@ -1084,25 +1084,53 @@ export class PaymentCollectorTrackingComponent {
     this.lineDataList = [];
     this.lineIndex = 0;
     this.isPreviousTime = false;
-   // this.selectedDate = $('#txtDate').val();
+    // this.selectedDate = $('#txtDate').val();
     this.lineDataList = [];
-    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+    let newDate = "";
+    if (type == 'current') {
+      newDate = filterVal;
+    } else if (type == 'next') {
+      let nextDate = this.commonService.getNextDate(this.selectedDate, 1);
+      newDate = nextDate;
+    } else if (type == 'previous') {
+      let previousDate = this.commonService.getPreviousDate(this.selectedDate, 1);
+      newDate = previousDate;
+    }
+    if (new Date(newDate) <= new Date(this.commonService.setTodayDate())) {
       $("#txtDate").val(newDate);
-      if (newDate!="") {
-        this.selectedDate = newDate;
-        this.selectedYear = this.selectedDate.split('-')[0];
-        this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-        this.setMaps();
-        this.resetDetail();
-        this.resetPaymentCollectorList();
-        for (let i = 0; i < this.paymentCollectorList.length; i++) {
-          this.getPaymentCollectorRouteStatus(this.paymentCollectorList[i]["paymentCollectorId"]);
-        }
+      this.selectedDate = newDate;
+      this.selectedYear = this.selectedDate.split('-')[0];
+      this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+      this.setMaps();
+      this.resetDetail();
+      this.resetPaymentCollectorList();
+      for (let i = 0; i < this.paymentCollectorList.length; i++) {
+        this.getPaymentCollectorRouteStatus(this.paymentCollectorList[i]["paymentCollectorId"]);
       }
-      else {
-        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
-      }
-    });
+    }
+    else {
+      $("#txtDate").val(this.selectedDate);
+      this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+    }
+    /*
+        this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
+          $("#txtDate").val(newDate);
+          if (newDate != this.selectedDate) {
+            this.selectedDate = newDate;
+            this.selectedYear = this.selectedDate.split('-')[0];
+            this.selectMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
+            this.setMaps();
+            this.resetDetail();
+            this.resetPaymentCollectorList();
+            for (let i = 0; i < this.paymentCollectorList.length; i++) {
+              this.getPaymentCollectorRouteStatus(this.paymentCollectorList[i]["paymentCollectorId"]);
+            }
+          }
+          else {
+            this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+          }
+        });
+        */
   }
 
   setHeight() {

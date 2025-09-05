@@ -44,7 +44,8 @@ export class WardScancardReportComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    if (this.cityName == "test" || this.cityName == "ecogram") {
+    console.log(this.cityName);
+    if (this.cityName == "test" || this.cityName == "ecogram" || this.cityName == "jaipur-civil-line" || this.cityName == "jaipur-kishanpol" || this.cityName=="chennai") {
       this.isEcogram = "1";
       $("#divEcogram").show();
       this.totalScanedCards = 0;
@@ -389,7 +390,7 @@ export class WardScancardReportComponent implements OnInit {
                 let scanTime = data[cardNo]["scanTime"].split(":")[0] + ":" + data[cardNo]["scanTime"].split(":")[1];
                 let date = Number(new Date(this.selectedDate + " " + scanTime).getTime()) / 10000;
                 if (this.userType == "External User") {
-                  if (this.cityName == "test" || this.cityName == "ecogram") {
+                  if (this.isEcogram == "1") {
                     let wasteCategory = "";
                     if (data[cardNo]["wasteCategory"] != undefined) {
                       wasteCategory = data[cardNo]["wasteCategory"];
@@ -459,7 +460,7 @@ export class WardScancardReportComponent implements OnInit {
                 else {
 
                   if (data[cardNo]["scanBy"] != "-1") {
-                    if (this.cityName == "test" || this.cityName == "ecogram") {
+                    if (this.isEcogram=="1") {
                       let wasteCategory = "";
                       if (data[cardNo]["wasteCategory"] != undefined) {
                         wasteCategory = data[cardNo]["wasteCategory"];

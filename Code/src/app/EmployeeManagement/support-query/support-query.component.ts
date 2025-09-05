@@ -36,7 +36,7 @@ export class SupportQueryComponent implements OnInit {
   detailDate = "#detailDate";
   detailDescription = "#detailDescription";
   public userType: any;
-  fireStoragePath = this.commonService.fireStoragePath;
+  fireStoragePath = this.commonService.fireStorageCommonPath;
   spShowAll = "#spShowAll";
   isShowAll: any;
   chkShowAll = "chkShowAll";
@@ -117,7 +117,7 @@ export class SupportQueryComponent implements OnInit {
     $(this.ddlCategory).val("0");
     this.allComplaintList = [];
     this.complaintList = [];
-    const path = this.fireStoragePath + "Common%2FComplaints%2F" + this.selectedYear + ".json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "Common%2FComplaints%2F" + this.selectedYear + ".json?alt=media";
     let complaintInstance = this.httpService.get(path).subscribe(data => {
       complaintInstance.unsubscribe();
       if (data != null) {

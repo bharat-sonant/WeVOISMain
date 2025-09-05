@@ -84,6 +84,7 @@ export class MonthlyAttendanceComponent implements OnInit {
           }
         }
         this.allEmployeeList = this.allEmployeeList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+        console.log(this.allEmployeeList)
         this.getFilterEmployee()
       }
     }, error => {

@@ -22,6 +22,7 @@ export class CommonService {
   wardBoundary: any;
   polylines = [];
   fireStoragePath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
+  fireStorageCommonPath = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/";
 
   setStoragePath(city: any) {
     let list = JSON.parse(localStorage.getItem("CityDetailList"));
@@ -44,7 +45,7 @@ export class CommonService {
     let cityList = JSON.parse(localStorage.getItem("cityList"));
     let detail = cityList.find(item => item.city == city);
     if (detail != undefined) {
-      cityName = detail.name;
+      cityName = detail.cityName;
     }
     return cityName;
   }
@@ -164,159 +165,13 @@ export class CommonService {
       cardPrefix=detail.key;
     }
 
-    /*
-    if (cityName == "test") {
-      cardPrefix = "TEST";
-    }
-    else if (cityName == "jaipur-test") {
-      cardPrefix = "JPT";
-    }
-    else if (cityName == "jaipur-office") {
-      cardPrefix = "TEST";
-    }
-    else if (cityName == "jaipur") {
-      cardPrefix = "TEST";
-    }
-    else if (cityName == "sikar") {
-      cardPrefix = "SIKA";
-    }
-    else if (cityName == "sikar-survey") {
-      cardPrefix = "SIKA";
-    }
-    else if (cityName == "reengus") {
-      cardPrefix = "RENA";
-    }
-    else if (cityName == "kishangarh") {
-      cardPrefix = "KNGH";
-    }
-    else if (cityName == "salasar") {
-      cardPrefix = "SALA";
-    }
-    else if (cityName == "jaipur-malviyanagar") {
-      cardPrefix = "MNZ";
-    }
-    else if (cityName == "mnz-test") {
-      cardPrefix = "MNZ";
-    }
-    else if (cityName == "jaipur-murlipura") {
-      cardPrefix = "MPZ";
-    }
-    else if (cityName == "mpz-test") {
-      cardPrefix = "MPZ";
-    }
-    else if (cityName == "wevois-others") {
-      cardPrefix = "WEVO";
-    }
-    else if (cityName == "tonk") {
-      cardPrefix = "TONK";
-    }
-    else if (cityName == "ratangarh") {
-      cardPrefix = "RATG";
-    }
-    else if (cityName == "nokha") {
-      cardPrefix = "NKH";
-    }
-    else if (cityName == "losal") {
-      cardPrefix = "LSA";
-    }
-    else if (cityName == "jammu-survey") {
-      cardPrefix = "JAM";
-    }
-    else if (cityName == "khandela") {
-      cardPrefix = "KHL";
-    }
-    else if (cityName == "dehradun") {
-      cardPrefix = "DEH";
-    }
-    else if (cityName == "pali") {
-      cardPrefix = "PAL";
-    }
-    else if (cityName == "sujangarh") {
-      cardPrefix = "SUG";
-    }
-    else if (cityName == "noida") {
-      cardPrefix = "NOI";
-    }
-    else if (cityName == "jodhpur") {
-      cardPrefix = "JODH";
-    }
-    else if (cityName == "kuchaman") {
-      cardPrefix = "KUMN";
-    }
-    else if (cityName == "jodhpur-bwg") {
-      cardPrefix = "JODBWG";
-    }
-    else if (cityName == "chirawa") {
-      cardPrefix = "CHI";
-    }
-    else if (cityName == "tonk-raj") {
-      cardPrefix = "TONR";
-    }
-    else if (cityName == "jaipur-bwg") {
-      cardPrefix = "JAIBWG";
-    }
-    else if (cityName == "etmadpur") {
-      cardPrefix = "ETM";
-    }
-    else if (cityName == "bharatpur") {
-      cardPrefix = "BHA";
-    }
-    else if (cityName == "uniara") {
-      cardPrefix = "UNI";
-    }
-    else if (cityName == "sujalpur") {
-      cardPrefix = "SUJ";
-    }
-    else if (cityName == "ajmer") {
-      cardPrefix = "AJM";
-    }
-    else if (cityName == "rajsamand") {
-      cardPrefix = "RAJ";
-    }
-    else if (cityName == "sultanpur") {
-      cardPrefix = "SUL";
-    }
-    else if (cityName == "khairabad") {
-      cardPrefix = "KHAI";
-    }
-    else if (cityName == "sanchore") {
-      cardPrefix = "SAN";
-    }
-    else if (cityName == "jaipur-civil-line") {
-      cardPrefix = "JAIC";
-    }
-    else if (cityName == "jaipur-kishanpole") {
-      cardPrefix = "JAIK";
-    }
-    else if (cityName == "jaunpur") {
-      cardPrefix = "JAUN";
-    }
-    else if (cityName == "mapusa-goa") {
-      cardPrefix = "MAP";
-    }
-    else if (cityName == "chennai") {
-      cardPrefix = "CHE";
-    }
-    else if (cityName == "dausa") {
-      cardPrefix = "DAU";
-    }
-    else if (cityName == "dei-bundi") {
-      cardPrefix = "DEI";
-    }
-    else if (cityName == "biofics-surat") {
-      cardPrefix = "BIO";
-    }
-    else if (cityName == "nainwa") {
-      cardPrefix = "NAI";
-    }
-    */
     return cardPrefix;
   }
 
   getDefaultCityLatLng() {
     let latLng = [];
     let cityName = localStorage.getItem("cityName");
-    let list = JSON.parse(localStorage.getItem("CityDetailList"));
+    let list = JSON.parse(localStorage.getItem("CityCommonDataList"));
     let detail = list.find(item => item.city == cityName);
     if (detail != undefined) {
       let cityLatLng = detail.latLng;
@@ -324,189 +179,7 @@ export class CommonService {
       let lng = cityLatLng.split(",")[1];
       latLng.push({ lat: Number(lat), lng: Number(lng) });
     }
-
-    /*
-        if (cityName == "jaipur-greater") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "test") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur-test") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur-office") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "sikar") {
-          latLng.push({ lat: 27.616270, lng: 75.152443 });
-        }
-        else if (cityName == "sikar-survey") {
-          latLng.push({ lat: 27.616270, lng: 75.152443 });
-        }
-        else if (cityName == "reengus") {
-          latLng.push({ lat: 27.369301, lng: 75.566200 });
-        }
-        else if (cityName == "kishangarh") {
-          latLng.push({ lat: 26.5948983, lng: 74.8162661 });
-        }
-        else if (cityName == "salasar") {
-          latLng.push({ lat: 27.7186438, lng: 74.7206506 });
-        }
-        else if (cityName == "jaipur-jagatpura") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur-jhotwara") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur-malviyanagar") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "mnz-test") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur-mansarovar") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur-murlipura") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "mpz-test") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur-sanganer") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "jaipur-vidhyadhar") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "wevois-others") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "tonk") {
-          latLng.push({ lat: 26.165516, lng: 75.779292 });
-        }
-        else if (cityName == "ratangarh") {
-          latLng.push({ lat: 28.074173, lng: 74.595064 });
-        }
-        else if (cityName == "nokha") {
-          latLng.push({ lat: 27.55713, lng: 73.4700985 });
-        }
-        else if (cityName == "losal") {
-          latLng.push({ lat: 27.3966561, lng: 74.9193112 });
-        }
-        else if (cityName == "jammu-survey") {
-          latLng.push({ lat: 32.7346044, lng: 74.8570259 });
-        }
-        else if (cityName == "khandela") {
-          latLng.push({ lat: 27.6041575, lng: 75.4998704 });
-        }
-        else if (cityName == "dehradun") {
-          latLng.push({ lat: 30.3164945, lng: 78.0321918 });
-        }
-        else if (cityName == "pali") {
-          latLng.push({ lat: 25.7794331, lng: 73.3779516 });
-        }
-        else if (cityName == "sujangarh") {
-          latLng.push({ lat: 27.7066465, lng: 74.4631898 });
-        }
-        else if (cityName == "noida") {
-          latLng.push({ lat: 28.5433155, lng: 77.3640599 });
-        }
-        else if (cityName == "jodhpur") {
-          latLng.push({ lat: 26.2405459, lng: 73.0197328 });
-        }
-        else if (cityName == "kuchaman") {
-          latLng.push({ lat: 27.150367, lng: 74.85469 });
-        }
-        else if (cityName == "jodhpur-bwg") {
-          latLng.push({ lat: 26.2405459, lng: 73.0197328 });
-        }
-        else if (cityName == "chirawa") {
-          latLng.push({ lat: 28.2421284, lng: 75.6382847 });
-        }
-        else if (cityName == "nawa") {
-          latLng.push({ lat: 27.02355529, lng: 75.0051479 });
-        }
-        else if (cityName == "nawa") {
-          latLng.push({ lat: 27.02355529, lng: 75.0051479 });
-        }
-        else if (cityName == "sonipat") {
-          latLng.push({ lat: 28.99438060, lng: 77.0191231 });
-        }
-        else if (cityName == "iit-roorkee") {
-          latLng.push({ lat: 29.86603638, lng: 77.89051172 });
-        }
-        else if (cityName == "tonk-raj") {
-          latLng.push({ lat: 26.165516, lng: 75.779292 });
-        }
-        else if (cityName == "jaipur-bwg") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "bharatpur") {
-          latLng.push({ lat: 27.214840, lng: 77.5002347 });
-        }
-        else if (cityName == "etmadpur") {
-          latLng.push({ lat: 27.2547723, lng: 78.1590455 });
-        }
-        else if (cityName == "ajmer") {
-          latLng.push({ lat: 26.4497603, lng: 74.638332 });
-        }
-        else if (cityName == "sujalpur") {
-          latLng.push({ lat: 23.3941437, lng: 76.7070692 });
-        }
-        else if (cityName == "uniara") {
-          latLng.push({ lat: 25.9190125, lng: 76.0210168 });
-        }
-        else if (cityName == "rajsamand") {
-          latLng.push({ lat: 25.070579, lng: 73.8750379 });
-        }
-        else if (cityName == "sultanpur") {
-          latLng.push({ lat: 25.2872046, lng: 76.0210168 });
-        }
-        else if (cityName == "khairabad") {
-          latLng.push({ lat: 24.6568575, lng: 75.9264164 });
-        }
-        else if (cityName == "sanchore") {
-          latLng.push({ lat: 24.749691, lng: 71.7724481 });
-        }
-        else if (cityName == "jaipur-civil-line") {
-          latLng.push({ lat: 26.908028, lng: 75.7782204 });
-        }
-        else if (cityName == "jaipur-kishanpole") {
-          latLng.push({ lat: 26.9204252, lng: 75.8110759 });
-        }
-        else if (cityName == "jaunpur") {
-          latLng.push({ lat: 25.7462391, lng: 82.6760959 });
-        }
-        else if (cityName == "mapusa-goa") {
-          latLng.push({ lat: 15.5908594, lng: 73.8086133 });
-        }
-        else if (cityName == "ecogram") {
-          latLng.push({ lat: 13.1836585, lng: 77.569515 });
-        }
-        else if (cityName == "jaipur-textile-recycling-facility") {
-          latLng.push({ lat: 26.912434, lng: 75.787270 });
-        }
-        else if (cityName == "chennai") {
-          latLng.push({ lat: 13.0841297, lng: 80.2680208 });
-        }
-        else if (cityName == "dausa") {
-          latLng.push({ lat: 26.9006581, lng: 76.3283162 });
-        }
-        else if (cityName == "dei-bundi") {
-          latLng.push({ lat: 25.6761984, lng: 75.9133425 });
-        }
-        else if (cityName == "biofics-surat") {
-          latLng.push({ lat: 21.1544467, lng: 72.8075473 });
-        }
-        else if (cityName == "nainwa") {
-          latLng.push({ lat: 25.773878, lng: 75.8630841 });
-        }
-    */
+      
 
     return latLng;
   }
@@ -1111,7 +784,7 @@ export class CommonService {
   }
 
   setDesignation() {
-    const path = this.fireStoragePath + "Common%2FDesignations.json?alt=media";
+    const path = this.fireStorageCommonPath + "Common%2FDesignations.json?alt=media";
     let Instance = this.httpService.get(path).subscribe(dataDate => {
       Instance.unsubscribe();
       let designationList = [];
@@ -1130,7 +803,7 @@ export class CommonService {
   }
   setAllDepartments = async () => {
 
-    const path = this.fireStoragePath + "Common%2FDepartments.json?alt=media";
+    const path = this.fireStorageCommonPath + "Common%2FDepartments.json?alt=media";
     let departmentInstance = this.httpService.get(path).subscribe(data => {
       departmentInstance.unsubscribe();
       let departmentList = [];
@@ -1401,7 +1074,6 @@ export class CommonService {
           }
         }
       }
-      console.log(zoneList);
       localStorage.setItem("allZoneList", JSON.stringify(zoneList));
     })
   }
@@ -1411,7 +1083,6 @@ export class CommonService {
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
     let cityName = localStorage.getItem("cityName");
     let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
-    console.log(path)
     if (cityName == "jodhpur") {
       path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
     }
@@ -1544,7 +1215,6 @@ export class CommonService {
             }
           }
         }
-        console.log(letestZone)
         localStorage.setItem("latest-zones", JSON.stringify(letestZone));
       }
     }, error => {
@@ -2050,7 +1720,6 @@ export class CommonService {
   saveJsonFile(listArray: any, fileName: any, filePath: any) {
     return new Promise((resolve) => {
       let fireStorePath = this.fireStoragePath;
-      console.log(fireStorePath)
       var jsonFile = JSON.stringify(listArray);
       var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
       const path = this.getFireStoreCity() + filePath + fileName;

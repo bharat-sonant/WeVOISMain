@@ -75,7 +75,7 @@ export class VtsMonthlyReportComponent implements OnInit {
   getYear() {
     this.yearList = [];
     let year = parseInt(this.toDayDate.split('-')[0]);
-    for (let i = year - 2; i <= year; i++) {
+    for (let i = year - 4; i <= year; i++) {
       this.yearList.push({ year: i });
     }
   }
