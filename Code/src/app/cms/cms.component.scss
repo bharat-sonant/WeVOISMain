@@ -3,13 +3,12 @@
 @import "../../assets/scss/style.scss";
 
 .blur-bg {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    // background: radial-gradient(circle at bottom, #ffc89699 0%, #ff96b400 25%, #e3e7fd 60%, #c0ffc4 100%);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+background-color: #f3f3f9;
   background: radial-gradient(
     circle at bottom,
     rgba(255, 200, 150, 0.5) 0%,
@@ -17,11 +16,43 @@
     rgba(247, 255, 248, 0.9) 60%,
     rgba(227, 255, 229, 1) 100%
   );
-    /* Grain effect overlay */
-    overflow: hidden;
-    width: 100%;
-    position: fixed;
+
+  animation: bgTransition 15s ease-in-out infinite alternate;
+  overflow: hidden;
+  width: 100%;
+  position: fixed;
 }
+
+@keyframes bgTransition {
+  0% {
+    background: radial-gradient(
+      circle at bottom,
+      rgba(255, 200, 150, 0.5) 0%,
+      rgba(255, 180, 200, 0.25) 25%,
+      rgba(247, 255, 248, 0.9) 60%,
+      rgba(227, 255, 229, 1) 100%
+    );
+  }
+  50% {
+    background: radial-gradient(
+      circle at bottom,
+      rgba(200, 220, 255, 0.5) 0%,
+      rgba(220, 200, 255, 0.25) 25%,
+      rgba(250, 255, 250, 0.9) 60%,
+      rgba(220, 255, 245, 1) 100%
+    );
+  }
+  100% {
+    background: radial-gradient(
+      circle at bottom,
+      rgba(255, 220, 200, 0.5) 0%,
+      rgba(255, 210, 230, 0.25) 25%,
+      rgba(245, 255, 250, 0.9) 60%,
+      rgba(230, 255, 240, 1) 100%
+    );
+  }
+}
+
 .blur-bg::before {
     content: "";
     position: absolute;
@@ -43,8 +74,9 @@
 .monitoring-card-row {
     display: flex;
     gap: 10px;
-    width: 80%;
+    width: 85%;
     flex-wrap: wrap;
+    justify-content: center;
     margin-top: 20px;
 }
 
@@ -65,9 +97,10 @@
     padding: 12px 14px;
     transition: 0.3s;
     cursor: pointer;
-    width: calc(100% / 5 - 9px);
+    // width: calc(100% / 5 - 9px);
+    width: 260px;
     overflow: hidden;
-    background-color: #fafafa;
+    background-color: #ffffff;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
     // border-top-left-radius: 100px;
@@ -106,7 +139,7 @@ z-index: 3;
 // }
 
 .monitoring-card-item:hover {
-    background: linear-gradient(to left, white, #d5ffd8);
+    background: linear-gradient(to left, white, #e1f3f5);
     // box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
       box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 
@@ -603,6 +636,9 @@ i {
 }
 
 @media (max-width: 1680px) {
+    .monitoring-card-row{
+        width: 98%;
+    }
     .monitoring-card-item {
         width: calc(100% / 5 - 9px);
 
