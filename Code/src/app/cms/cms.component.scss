@@ -635,9 +635,18 @@ i {
     display: none;
 }
 
+@media (min-width: 2000px) {
+       .monitoring-card-row{
+        width: 75%;
+    }
+    .monitoring-card-item {
+        width: calc(100% / 5 - 9px);
+
+    }
+}
 @media (max-width: 1680px) {
     .monitoring-card-row{
-        width: 98%;
+        width: 100%;
     }
     .monitoring-card-item {
         width: calc(100% / 5 - 9px);
@@ -645,7 +654,7 @@ i {
     }
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1434px) {
     .monitoring-card-item {
         width: calc(100% / 4 - 9px);
 
