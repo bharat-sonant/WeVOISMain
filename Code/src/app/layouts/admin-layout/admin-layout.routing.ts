@@ -39,7 +39,6 @@ import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
-import { TaskManagerComponent } from '../../task-manager/task-manager.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
 import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
@@ -251,7 +250,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/cms/:id', component: CmsComponent },
     { path: ':cityId/cms1', component: Cms1Component },
     { path: ':cityId/vehicle-report', component: VehicleReportComponent },
-    { path: ':cityId/task-manager', component: TaskManagerComponent },
     { path: ':cityId/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: ':cityId/house-marking', component: HouseMarkingComponent },
     { path: ':cityId/house-marking/:id1', component: HouseMarkingComponent },
@@ -352,7 +350,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/cms/:id', component: CmsComponent },
     { path: ':cityId/:id/cms1', component: Cms1Component },
     { path: ':cityId/:id/vehicle-report', component: VehicleReportComponent },
-    { path: ':cityId/:id/task-manager', component: TaskManagerComponent },
     { path: ':cityId/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: ':cityId/:id/house-marking', component: HouseMarkingComponent },
     { path: ':cityId/:id/house-marking/:id1', component: HouseMarkingComponent },

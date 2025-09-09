@@ -47,7 +47,6 @@ import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
-import { TaskManagerComponent } from '../../task-manager/task-manager.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
 import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
@@ -254,7 +253,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     CmsComponent,
     Cms1Component,
     VehicleReportComponent,
-    TaskManagerComponent,
     WardTripAnalysisComponent,
     HouseMarkingComponent,
     TaskManagementMastersComponent,
