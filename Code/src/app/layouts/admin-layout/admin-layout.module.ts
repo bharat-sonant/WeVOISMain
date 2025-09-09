@@ -93,10 +93,7 @@ import { MonthlyAttendanceComponent } from '../../EmployeeManagement/monthly-att
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
-import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-breakdown/vehicle-breakdown.component';
-import { VehicleBreakdownReportComponent } from '../../VehicleMaintenance/vehicle-breakdown-report/vehicle-breakdown-report.component';
 import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-marker-data/change-line-marker-data.component';
-import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehicle-breakdown/add-vehicle-breakdown.component';
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
@@ -302,10 +299,7 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     DailyWorkDetailComponent,
     SupportQueryComponent,
     MonthlyFuelReportComponent,
-    VehicleBreakdownComponent,
-    VehicleBreakdownReportComponent,
     ChangeLineMarkerDataComponent,
-    AddVehicleBreakdownComponent,
     RolesComponent,
     RolePageAccessComponent,
     MapsComponent,

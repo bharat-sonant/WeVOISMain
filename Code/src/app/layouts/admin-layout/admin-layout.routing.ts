@@ -85,10 +85,7 @@ import { MonthlyAttendanceComponent } from '../../EmployeeManagement/monthly-att
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
-import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-breakdown/vehicle-breakdown.component';
-import { VehicleBreakdownReportComponent } from '../../VehicleMaintenance/vehicle-breakdown-report/vehicle-breakdown-report.component';
 import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-marker-data/change-line-marker-data.component';
-import { AddVehicleBreakdownComponent } from '../../VehicleMaintenance/add-vehicle-breakdown/add-vehicle-breakdown.component';
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
@@ -300,9 +297,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/daily-work-detail', component: DailyWorkDetailComponent },
     { path: ':cityId/support-query', component: SupportQueryComponent },
     { path: ':cityId/monthly-fuel-report', component: MonthlyFuelReportComponent },
-    { path: ':cityId/vehicle-breakdown', component: VehicleBreakdownComponent },
-    { path: ':cityId/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
-    { path: ':cityId/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
     { path: ':cityId/role-page-access/:id', component: RolePageAccessComponent },
     { path: ':cityId/assets-dashboard', component: AssetsDashboardComponent },
     { path: ':cityId/complaint-dashboard', component: ComplaintDashboardComponent },
@@ -407,11 +401,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: ':cityId/:id/support-query', component: SupportQueryComponent },
     { path: ':cityId/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
-    { path: ':cityId/:id/vehicle-breakdown', component: VehicleBreakdownComponent },
-    { path: ':cityId/:id/vehicle-breakdown-report', component: VehicleBreakdownReportComponent },
     { path: ':cityId/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
-    { path: ':cityId/:id1/add-vehicle-breakdown/:id', component: AddVehicleBreakdownComponent },
-    { path: ':cityId/:id1/add-vehicle-breakdown', component: AddVehicleBreakdownComponent },
     { path: ':cityId/:id/roles', component: RolesComponent },
     { path: ':cityId/:id/maps', component: MapsComponent },
     { path: ':cityId/:id/card-marker-mapping', component: CardMarkerMappingComponent },
