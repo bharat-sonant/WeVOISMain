@@ -44,7 +44,6 @@ import { WorkAssignReportComponent } from '../../reports/work-assign-report/work
 import { PortalServicesComponent } from '../../PortalServices/portal-services/portal-services.component';
 import { WardDutyDataComponent } from '../../PortalServices/ward-duty-data/ward-duty-data.component';
 import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin-analysis.component';
-import { DustbinReportComponent } from '../../reports/dustbin-report/dustbin-report.component';
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
@@ -255,7 +254,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     PortalServicesComponent,
     WardDutyDataComponent,
     DustbinAnalysisComponent,
-    DustbinReportComponent,
     CmsComponent,
     Cms1Component,
     VehicleReportComponent,

@@ -36,7 +36,6 @@ import { WorkAssignReportComponent } from '../../reports/work-assign-report/work
 import { PortalServicesComponent } from '../../PortalServices/portal-services/portal-services.component';
 import { WardDutyDataComponent } from '../../PortalServices/ward-duty-data/ward-duty-data.component';
 import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin-analysis.component';
-import { DustbinReportComponent } from '../../reports/dustbin-report/dustbin-report.component';
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
@@ -252,7 +251,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/portal-services', component: PortalServicesComponent },
     { path: ':cityId/ward-duty-data', component: WardDutyDataComponent },
     { path: ':cityId/dustbin-analysis', component: DustbinAnalysisComponent },
-    { path: ':cityId/dustbin-report', component: DustbinReportComponent },
     { path: ':cityId/cms/:id', component: CmsComponent },
     { path: ':cityId/cms1', component: Cms1Component },
     { path: ':cityId/vehicle-report', component: VehicleReportComponent },
@@ -357,7 +355,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/portal-services', component: PortalServicesComponent },
     { path: ':cityId/:id/ward-duty-data', component: WardDutyDataComponent },
     { path: ':cityId/:id/dustbin-analysis', component: DustbinAnalysisComponent },
-    { path: ':cityId/:id/dustbin-report', component: DustbinReportComponent },
     { path: ':cityId/:id/cms/:id', component: CmsComponent },
     { path: ':cityId/:id/cms1', component: Cms1Component },
     { path: ':cityId/:id/vehicle-report', component: VehicleReportComponent },
