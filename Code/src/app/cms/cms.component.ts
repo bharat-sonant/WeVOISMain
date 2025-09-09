@@ -48,24 +48,31 @@ export class CmsComponent implements OnInit {
     }
     this.isActual = localStorage.getItem("isActual");
     const id = this.actRoute.snapshot.paramMap.get("id");
+    
+      this.isMonitoringPage = true;
+      /*
     if (id == "2" || id=="3") {
       this.isMonitoringPage = true;
     }
     else {
       this.isMonitoringPage = false;
     }
+    */
     let pageList = id.split("-");
     this.getPages(pageList[pageList.length - 1]);
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         const id1 = this.actRoute.snapshot.paramMap.get("id");
+        this.isMonitoringPage = true;
+/*
         if (id1 == "2" || id1=="3") {
           this.isMonitoringPage = true;
         }
         else {
           this.isMonitoringPage = false;
         }
+        */
         let pageList = id1.split("-");
         this.getPages(pageList[pageList.length - 1]);
       });
