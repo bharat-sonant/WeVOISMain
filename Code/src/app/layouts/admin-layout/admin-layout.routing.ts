@@ -67,12 +67,10 @@ import { SalaryTransactionComponent } from '../../salary-management/salary-trans
 import { DustbinServiceComponent } from '../../Dustbin/dustbin-service/dustbin-service.component';
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
-import { CashManagementComponent } from '../../expense-management/cash-management/cash-management.component';
 import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
 import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
-import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/vendor-ledger.component';
 import { EmployeesComponent } from '../../EmployeeManagement/employees/employees.component';
 import { SpecialUsersComponent } from '../../EmployeeManagement/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
@@ -285,12 +283,10 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/ward-work-tracking', component: WardWorkTrackingComponent },
     { path: ':cityId/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: ':cityId/staff-account-detail', component: StaffAccountDetailComponent },
-    { path: ':cityId/cash-management', component: CashManagementComponent },
     { path: ':cityId/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: ':cityId/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: ':cityId/ward-work-done', component: WardWorkDoneComponent },
     { path: ':cityId/settings', component: SettingsComponent },
-    { path: ':cityId/vendor-ledger', component: VendorLedgerComponent },
     { path: ':cityId/employees', component: EmployeesComponent },
     { path: ':cityId/special-users', component: SpecialUsersComponent },
     { path: ':cityId/dustbin-planing', component: DustbinPlaningComponent },
@@ -395,12 +391,10 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id1/ward-work-tracking', component: WardWorkTrackingComponent },
     { path: ':cityId/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: ':cityId/:id/staff-account-detail', component: StaffAccountDetailComponent },
-    { path: ':cityId/:id/cash-management', component: CashManagementComponent },
     { path: ':cityId/:id/ward-work-percentage', component: WardWorkPercentageComponent },
     { path: ':cityId/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
     { path: ':cityId/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: ':cityId/:id/settings', component: SettingsComponent },
-    { path: ':cityId/:id/vendor-ledger', component: VendorLedgerComponent },
     { path: ':cityId/:id/employees', component: EmployeesComponent },
     { path: ':cityId/:id/special-users', component: SpecialUsersComponent },
     { path: ':cityId/:id/dustbin-planing', component: DustbinPlaningComponent },

@@ -75,12 +75,10 @@ import { SalaryTransactionComponent } from '../../salary-management/salary-trans
 import { DustbinServiceComponent } from '../../Dustbin/dustbin-service/dustbin-service.component';
 import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tracking.component';
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
-import { CashManagementComponent } from '../../expense-management/cash-management/cash-management.component';
 import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
 import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
-import { VendorLedgerComponent } from '../../expense-management/vendor-ledger/vendor-ledger.component';
 import { EmployeesComponent } from '../../EmployeeManagement/employees/employees.component';
 import { SpecialUsersComponent } from '../../EmployeeManagement/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
@@ -288,12 +286,10 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     DustbinServiceComponent,
     WardWorkTrackingComponent,
     StaffAccountDetailComponent,
-    CashManagementComponent,
     WardWorkPercentageComponent,
     ChangeLineSurveyedDataComponent,
     WardWorkDoneComponent,
     SettingsComponent,
-    VendorLedgerComponent,
     EmployeesComponent,
     SpecialUsersComponent,
     DustbinPlaningComponent,

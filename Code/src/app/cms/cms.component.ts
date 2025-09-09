@@ -48,7 +48,7 @@ export class CmsComponent implements OnInit {
     }
     this.isActual = localStorage.getItem("isActual");
     const id = this.actRoute.snapshot.paramMap.get("id");
-    if (id == "2") {
+    if (id == "2" || id=="3") {
       this.isMonitoringPage = true;
     }
     else {
@@ -60,7 +60,7 @@ export class CmsComponent implements OnInit {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         const id1 = this.actRoute.snapshot.paramMap.get("id");
-        if (id1 == "2") {
+        if (id1 == "2" || id1=="3") {
           this.isMonitoringPage = true;
         }
         else {
