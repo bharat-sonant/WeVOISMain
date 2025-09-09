@@ -86,7 +86,6 @@ import { SalaryCalculationsComponent } from '../../salary-management/salary-calc
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 import { MonthlyAttendanceComponent } from '../../EmployeeManagement/monthly-attendance/monthly-attendance.component';
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
-import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
 import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-breakdown/vehicle-breakdown.component';
@@ -305,7 +304,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/salary-calculations', component: SalaryCalculationsComponent },
     { path: ':cityId/employee-attendance', component: EmployeeAttendanceComponent },
     { path: ':cityId/daily-work-detail', component: DailyWorkDetailComponent },
-    { path: ':cityId/dustbins-monitoring', component: DustbinsMonitoringComponent },
     { path: ':cityId/support-query', component: SupportQueryComponent },
     { path: ':cityId/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: ':cityId/vehicle-breakdown', component: VehicleBreakdownComponent },
@@ -416,7 +414,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/salary-calculations', component: SalaryCalculationsComponent },
     { path: ':cityId/:id/employee-attendance', component: EmployeeAttendanceComponent },
     { path: ':cityId/:id/daily-work-detail', component: DailyWorkDetailComponent },
-    { path: ':cityId/:id/dustbins-monitoring', component: DustbinsMonitoringComponent },
     { path: ':cityId/:id/support-query', component: SupportQueryComponent },
     { path: ':cityId/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
     { path: ':cityId/:id/vehicle-breakdown', component: VehicleBreakdownComponent },

@@ -94,7 +94,6 @@ import { SalaryCalculationsComponent } from '../../salary-management/salary-calc
 import { EmployeeAttendanceComponent } from '../../EmployeeManagement/employee-attendance/employee-attendance.component';
 import { MonthlyAttendanceComponent } from '../../EmployeeManagement/monthly-attendance/monthly-attendance.component';
 import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-work-detail.component';
-import { DustbinsMonitoringComponent } from '../../Dustbin/dustbins-monitoring/dustbins-monitoring.component';
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
 import { VehicleBreakdownComponent } from '../../VehicleMaintenance/vehicle-breakdown/vehicle-breakdown.component';
@@ -307,7 +306,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     SalaryCalculationsComponent,
     EmployeeAttendanceComponent,
     DailyWorkDetailComponent,
-    DustbinsMonitoringComponent,
     SupportQueryComponent,
     MonthlyFuelReportComponent,
     VehicleBreakdownComponent,
