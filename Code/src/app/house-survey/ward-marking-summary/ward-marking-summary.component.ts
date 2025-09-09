@@ -944,8 +944,6 @@ export class WardMarkingSummaryComponent implements OnInit {
 
 
   getZoneHouseTypeList() {
-    this.totalTypeCount = 0;
-    this.zoneHouseTypeList = [];
     // this.modalService.open(content, { size: "lg" });
     // let windowHeight = $(window).height();
     // let height = 870;
@@ -965,6 +963,8 @@ export class WardMarkingSummaryComponent implements OnInit {
           this.closeModel();
         }
         else {
+          this.totalTypeCount = 0;
+          this.zoneHouseTypeList = [];
           let keyArray = Object.keys(markerData);
           for (let i = 0; i < keyArray.length; i++) {
             let houseTypeCount = 0;
@@ -994,7 +994,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                     this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
                   }
                   else {
-                    let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                    let listDetail = this.zoneHouseTypeList.find(item => Number(item.houseTypeId) == Number(houseTypeId));
                     if (listDetail != undefined) {
                       listDetail.counts = listDetail.counts + 1;
                       listDetail.servingCounts = listDetail.servingCounts + servingCount;
@@ -1097,6 +1097,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.exportHouseTypeList("1");
     }
     else {
+      this.zoneHouseTypeList = [];
       this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseType");
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1138,7 +1139,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                       this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
                     }
                     else {
-                      let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                      let listDetail = this.zoneHouseTypeList.find(item => Number(item.houseTypeId) == Number(houseTypeId));
                       if (listDetail != undefined) {
                         listDetail.counts = listDetail.counts + 1;
                         listDetail.servingCounts = listDetail.servingCounts + servingCount;
@@ -1172,6 +1173,9 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.totalMarkersCount = 0;
     this.totalHousesCountActual = 0;
     this.totalMarkersCountActual = 0;
+    this.markerData.totalMarkers=0;
+    this.markerData.totalHouses=0;
+
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.updateCounts(1);
   }
@@ -1204,8 +1208,8 @@ export class WardMarkingSummaryComponent implements OnInit {
         $(this.divLoaderCounts).hide();
         this.markerData.lastUpdate = lastUpdate;
         this.markerData.totalAlreadyCard = 0;
-        this.markerData.totalHouses = this.userIsExternal ? this.totalHousesCountActual : this.totalHousesCount;
-        this.markerData.totalMarkers = this.userIsExternal ? this.totalMarkersCountActual : this.totalMarkersCount;
+       //this.markerData.totalHouses = this.userIsExternal ? this.totalHousesCountActual : this.totalHousesCount;
+       // this.markerData.totalMarkers = this.userIsExternal ? this.totalMarkersCountActual : this.totalMarkersCount;
         this.getWards();
       }, 5000);
 

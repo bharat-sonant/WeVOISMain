@@ -863,7 +863,9 @@
       <div class="survey-row">
         <div class="survey-box" *ngFor="let dt of markerList">
           <a class="survey-img-box" href="{{ dt.imageUrl }}" target="_blank">
-            <img class="markerList-img" [src]="dt.imageUrl" />
+            <img class="markerList-img" 
+              [src]="dt.imageUrl"
+              (error)="setDefaultImage($event)" />
           </a>
 
           <div class="survey-footer">
@@ -874,15 +876,17 @@
                   {{ dt.type }}
                   <span [hidden]="dt.servingCount == 0">
                     ({{ dt.servingCount }})</span>
-                    
-              </div>
-              <div class="d-flex">
-                  <img src="../../../assets/img/iconEdit.png" style="float: right;" alt="edit" class="iconEdit" title="edit" (click)="
+
+                </div>
+                <div class="d-flex">
+                  <img src="../../../assets/img/iconEdit.png" style="float: right;" alt="edit" class="iconEdit"
+                    title="edit" (click)="
                       setHouseType(dt.index, dt.zoneNo, dt.lineNo, 'marker')
                     " />
                 </div>
-                <img src="../../../assets/img/iconHistory.png" style="float: right;" [hidden]="dt.markerUpdateId == ''" alt="show history"
-                  class="icon-history" (click)="showMarkerUpdateHistory(dt.markerUpdateId)" /></div>
+                <img src="../../../assets/img/iconHistory.png" style="float: right;" [hidden]="dt.markerUpdateId == ''"
+                  alt="show history" class="icon-history" (click)="showMarkerUpdateHistory(dt.markerUpdateId)" />
+              </div>
             </div>
             <div class="survey-info-row" [hidden]="dt.cardNumber == ''">
               <div class="survey-info-left">Status</div>
@@ -1122,29 +1126,31 @@
                     {{ dt.type }}
                     <span [hidden]="dt.servingCount == 0">
                       ({{ dt.servingCount }})</span>
-                      
+
                   </div>
                   <div class="d-flex">
-                    <img src="../../../assets/img/iconEdit.png" style="float: right;" alt="edit" class="iconEdit" title="edit" (click)="
+                    <img src="../../../assets/img/iconEdit.png" style="float: right;" alt="edit" class="iconEdit"
+                      title="edit" (click)="
                         setHouseType(dt.index, dt.zoneNo, dt.lineNo, 'marker')
                       " [hidden]="isActionShow == false" />
                     <img class="icon-history" style="float: right;" src="../../../assets/img/iconHistory.png"
                       [hidden]="dt.markerUpdateId == ''" alt="show history"
-                      (click)="showMarkerUpdateHistory(dt.markerUpdateId)" /></div>
+                      (click)="showMarkerUpdateHistory(dt.markerUpdateId)" />
+                  </div>
                 </div>
               </div>
 
               <div class="include-info-row" [hidden]="dt.cardNumber == ''">
                 <div class="include-info-left">Status</div>
                 <div class="include-info-right">
-                   <div [hidden]="cityName=='sikar'">
-                  {{ dt.status }}
-                  <span [hidden]="dt.cardNumber == ''">({{ dt.cardNumber }})</span>
-                </div>
-                <div [hidden]="cityName!='sikar'">
-                  Surveyed
-                  <span [hidden]="dt.cardNumber == ''">({{ dt.cardNumber }})</span>
-                </div>
+                  <div [hidden]="cityName=='sikar'">
+                    {{ dt.status }}
+                    <span [hidden]="dt.cardNumber == ''">({{ dt.cardNumber }})</span>
+                  </div>
+                  <div [hidden]="cityName!='sikar'">
+                    Surveyed
+                    <span [hidden]="dt.cardNumber == ''">({{ dt.cardNumber }})</span>
+                  </div>
                 </div>
               </div>
               <div class="include-info-row" [hidden]="dt.markerId == ''">
@@ -1380,7 +1386,7 @@
                     <span [hidden]="dt.servingCount == 0">
                       ({{ dt.servingCount }})</span>
                   </div>
-                   <div class="d-flex">
+                  <div class="d-flex">
                     <img src="../../../assets/img/iconEdit.png" alt="edit" style="float:right" class="iconEdit" (click)="
                         setHouseType(
                           dt.index,
@@ -1389,22 +1395,23 @@
                           'includedMarker'
                         )
                       " [hidden]="isActionShow == false" />
-                    <img class="icon-history" style="float:right"  src="../../../assets/img/iconHistory.png"
+                    <img class="icon-history" style="float:right" src="../../../assets/img/iconHistory.png"
                       [hidden]="dt.markerUpdateId == ''" alt="show history"
-                      (click)="showMarkerUpdateHistory(dt.markerUpdateId)" /></div>
+                      (click)="showMarkerUpdateHistory(dt.markerUpdateId)" />
+                  </div>
                 </div>
               </div>
               <div class="include-info-row" [hidden]="dt.cardNumber == ''">
                 <div class="include-info-left">Status</div>
                 <div class="include-info-right">
-                   <div [hidden]="cityName=='sikar'">
-                  {{ dt.status }}
-                  <span [hidden]="dt.cardNumber == ''">({{ dt.cardNumber }})</span>
-                </div>
-                <div [hidden]="cityName!='sikar'">
-                  Surveyed
-                  <span [hidden]="dt.cardNumber == ''">({{ dt.cardNumber }})</span>
-                </div>
+                  <div [hidden]="cityName=='sikar'">
+                    {{ dt.status }}
+                    <span [hidden]="dt.cardNumber == ''">({{ dt.cardNumber }})</span>
+                  </div>
+                  <div [hidden]="cityName!='sikar'">
+                    Surveyed
+                    <span [hidden]="dt.cardNumber == ''">({{ dt.cardNumber }})</span>
+                  </div>
                 </div>
               </div>
               <div class="include-info-row" [hidden]="dt.markerId == ''">
