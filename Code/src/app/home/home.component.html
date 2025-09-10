@@ -6,7 +6,7 @@
             wait...</span></span>
 </div>
 <section class="d-page">
-    <div class="container-fluid">
+    <div class="container-fluid p-0">
         <div class="row">
             <div class="col-md-12 center">
                 <div class="absolute">
@@ -27,24 +27,37 @@
                 <a id="devendraLink" style="color:white; float:right ; display: none; font-size: 10px;" href="https://main-wevois.firebaseapp.com/ajmer/4/1/1/daily-work-reports"  target="_blank">Daily work report</a>
             </div>
         </div>
-
-        <div class="height-mob">
+<div class="blur-bg" aria-hidden="true">
+</div>
+        <div class="height-mob menuScroll">
             <div class="row mob-responsive" style="display: flex; justify-content: center;">
-                <div class="col-md-2 mt-15" style="padding-right: 8px;" routerLinkActive="active"
-                    *ngFor="let usr of accessList ">
-                    <div class="more-cards rainbow" [routerLink]="[usr.url]" [hidden]="usr.isOuterUrl=='yes'">
+                <div class="col-md-12 monitoring-card" >
+                     <div class="monitoring-card-row">
+                                   <div routerLinkActive="active" *ngFor="let usr of accessList ">
+                    <div class="monitoring-card-item" [routerLink]="[usr.url]" [hidden]="usr.isOuterUrl=='yes'">
                         <div class="vertical">
-                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;height: 30px;" /> <br>
+                             <div class="imgbg">
+                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;height: 30px;" />
+                            </div>
+                              <div class="infoRight">
                             <h3>{{usr.name}}</h3>
+                            </div>
                         </div>
                     </div>
-                    <a class="more-cards rainbow" [attr.href]="usr.url" target="_blank" [hidden]="usr.isOuterUrl=='no'"
+                     
+                    <a class="monitoring-card-item" [attr.href]="usr.url" target="_blank" [hidden]="usr.isOuterUrl=='no'"
                         style="text-decoration:none;">
                         <div class="vertical">
-                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;height:30px;" /> <br>
+                                   <div class="imgbg">
+                            <img [src]="usr.img" class="icon-green" style="font-weight: bold;height:30px;" /> 
+                            </div>
+                                     <div class="infoRight">
                             <h3>{{usr.name}}</h3>
+                            </div>
                         </div>
                     </a>
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>
