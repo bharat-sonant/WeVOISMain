@@ -92,11 +92,22 @@
                                 <option value="No Waste">No Waste</option>
                             </select>
                         </div>
-                        <div class="col-md-6 text-right; ">
+                        <div class="col-md-6 text-right d-flex justify-content-end">
+                            <div style="padding-right:20px;text-align: right; ">
+                                <b >{{totalScanedCards}}</b>
+                                <h6 style="font-size:9px;text-align:right;margin-top: 3px;">Scanned Cards</h6>
+                            </div>
+                            <div style="padding-right:20px;text-align: right;"  [hidden]="cityName!='chennai'">
+                                <img src="../../../assets/icons/file-export-solid.svg" alt="export-excel"
+                                    class="icon-green cursor-pointer" width="22" (click)="exportWardScanTypeList()"
+                                    style="cursor: pointer;margin-bottom:3px;" />
+                                <h6 style="font-size:9px;text-align:right">Export Excel</h6>
+                            </div>
 
                             <div style="padding-right:20px;text-align: right;">
-                                <b>{{totalScanedCards}}</b>
-                                <h6 style="font-size:9px;text-align:right">Scanned Cards</h6>
+                                <img class="far fa-file-pdf" src="../../../assets/icons/file-pdf-regular.svg" width="22"
+                                    style="cursor: pointer;margin-bottom:3px;" (click)="SavePDF('detail');" alt="">
+                                <h6 style="font-size:9px;text-align:right">Export PDF</h6>
                             </div>
                         </div>
                     </div>
@@ -130,7 +141,7 @@
                                                         style="border-right:1px solid #dee2e6; width:20%;">Scaned By
                                                         <img class="far fa-file-pdf"
                                                             src="../../../assets/icons/file-pdf-regular.svg"
-                                                            width="37px"
+                                                            width="37px" [hidden]="isEcogram=='1'"
                                                             style="float: right; margin-left: 10px; cursor: pointer;"
                                                             (click)="SavePDF('detail');" alt="">
                                                         <!-- <i class="far fa-file-pdf" style="float: right; font-size: 20px; color:#f96332; cursor: pointer;" (click)="SavePDF('detail');"></i> -->

@@ -1097,7 +1097,6 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.exportHouseTypeList("1");
     }
     else {
-      this.zoneHouseTypeList = [];
       this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseType");
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1132,7 +1131,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                     }
                     servingCount = totalHouses;
                   }
-                  let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+                  let detail = this.houseTypeList.find(item =>Number(item.id) ==Number(houseTypeId));
                   if (detail != undefined) {
                     let houseType = detail.houseType;
                     if (this.zoneHouseTypeList.length == 0) {

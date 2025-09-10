@@ -44,8 +44,7 @@ export class WardScancardReportComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-    console.log(this.cityName);
-    if (this.cityName == "test" || this.cityName == "ecogram" || this.cityName == "jaipur-civil-line" || this.cityName == "jaipur-kishanpol" || this.cityName=="chennai") {
+    if (this.cityName == "test" || this.cityName == "ecogram" || this.cityName == "jaipur-civil-line" || this.cityName == "jaipur-kishanpole" || this.cityName == "chennai") {
       this.isEcogram = "1";
       $("#divEcogram").show();
       this.totalScanedCards = 0;
@@ -69,6 +68,47 @@ export class WardScancardReportComponent implements OnInit {
     setTimeout(() => {
       $("#divLoader").hide();
     }, 4000);
+  }
+
+  exportWardScanTypeList() {
+    if (this.wardScanedListFiltered.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Card No.";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Waste Category";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Time";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Scaned By";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.wardScanedListFiltered.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardScanedListFiltered[i]["cardNo"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardScanedListFiltered[i]["wasteCategory"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardScanedListFiltered[i]["time"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.wardScanedListFiltered[i]["name"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let monthName = this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split("-")[1]));
+      let fileName = "Card Scan Report - Ward " + this.wardScanedListFiltered[0]["wardNo"] + " [" + this.selectedDate.split("-")[2] + " " + monthName + " " + this.selectedDate.split("-")[0] + "].xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+    }
   }
 
   SavePDF(type: any) {
@@ -366,7 +406,7 @@ export class WardScancardReportComponent implements OnInit {
           employeeInstance.unsubscribe();
           if (empData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", empData);
-            let name = empData.split(',')[empData.split(',').length-1];
+            let name = empData.split(',')[empData.split(',').length - 1];
 
             let keyArray = Object.keys(data);
             for (let i = 0; i < keyArray.length; i++) {
@@ -460,7 +500,7 @@ export class WardScancardReportComponent implements OnInit {
                 else {
 
                   if (data[cardNo]["scanBy"] != "-1") {
-                    if (this.isEcogram=="1") {
+                    if (this.isEcogram == "1") {
                       let wasteCategory = "";
                       if (data[cardNo]["wasteCategory"] != undefined) {
                         wasteCategory = data[cardNo]["wasteCategory"];
