@@ -3,61 +3,54 @@
 @import "../../assets/scss/style.scss";
 
 .blur-bg {
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-background-color: #f3f3f9;
-  background: radial-gradient(
-    circle at bottom,
-    rgba(255, 200, 150, 0.5) 0%,
-    rgba(255, 180, 200, 0.25) 25%,
-    rgba(247, 255, 248, 0.9) 60%,
-    rgba(227, 255, 229, 1) 100%
-  );
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f3f9;
+    background: radial-gradient(circle at bottom,
+            rgba(255, 200, 150, 0.5) 0%,
+            rgba(255, 180, 200, 0.25) 25%,
+            rgba(247, 255, 248, 0.9) 60%,
+            rgba(227, 255, 229, 1) 100%);
 
-  animation: bgTransition 15s ease-in-out infinite alternate;
-  overflow: hidden;
-  width: 100%;
-  position: fixed;
+    animation: bgTransition 15s ease-in-out infinite alternate;
+    overflow: hidden;
+    width: 100%;
+    position: fixed;
 }
 
 @keyframes bgTransition {
-  0% {
-    background: radial-gradient(
-      circle at bottom,
-      rgba(255, 200, 150, 0.5) 0%,
-      rgba(255, 180, 200, 0.25) 25%,
-      rgba(247, 255, 248, 0.9) 60%,
-      rgba(227, 255, 229, 1) 100%
-    );
-  }
-  50% {
-    background: radial-gradient(
-      circle at bottom,
-      rgba(200, 220, 255, 0.5) 0%,
-      rgba(220, 200, 255, 0.25) 25%,
-      rgba(250, 255, 250, 0.9) 60%,
-      rgba(220, 255, 245, 1) 100%
-    );
-  }
-  100% {
-    background: radial-gradient(
-      circle at bottom,
-      rgba(255, 220, 200, 0.5) 0%,
-      rgba(255, 210, 230, 0.25) 25%,
-      rgba(245, 255, 250, 0.9) 60%,
-      rgba(230, 255, 240, 1) 100%
-    );
-  }
+    0% {
+        background: radial-gradient(circle at bottom,
+                rgba(255, 200, 150, 0.5) 0%,
+                rgba(255, 180, 200, 0.25) 25%,
+                rgba(247, 255, 248, 0.9) 60%,
+                rgba(227, 255, 229, 1) 100%);
+    }
+
+    50% {
+        background: radial-gradient(circle at bottom,
+                rgba(200, 220, 255, 0.5) 0%,
+                rgba(220, 200, 255, 0.25) 25%,
+                rgba(250, 255, 250, 0.9) 60%,
+                rgba(220, 255, 245, 1) 100%);
+    }
+
+    100% {
+        background: radial-gradient(circle at bottom,
+                rgba(255, 220, 200, 0.5) 0%,
+                rgba(255, 210, 230, 0.25) 25%,
+                rgba(245, 255, 250, 0.9) 60%,
+                rgba(230, 255, 240, 1) 100%);
+    }
 }
 
 .blur-bg::before {
     content: "";
     position: absolute;
     backdrop-filter: blur(60px);
-    /* background blur */
     -webkit-backdrop-filter: blur(60px);
     top: 0;
     left: 0;
@@ -66,7 +59,6 @@ background-color: #f3f3f9;
 
     background-image: url("https://grainy-gradients.vercel.app/noise.svg");
     opacity: 0.2;
-    /* grain intensity */
     pointer-events: none;
 }
 
@@ -85,11 +77,9 @@ background-color: #f3f3f9;
 }
 
 .monitoring-card-item {
-    // background: transparent;
     background-size: 200% 100%;
     transition: all 0.3s ease;
     border: 1px solid #0ba11818;
-    // border-radius: 100px;
     border-top-left-radius: 100px;
     border-bottom-left-radius: 100px;
     border-top-right-radius: 100px;
@@ -97,51 +87,17 @@ background-color: #f3f3f9;
     padding: 12px 14px;
     transition: 0.3s;
     cursor: pointer;
-    // width: calc(100% / 5 - 9px);
     width: 260px;
     overflow: hidden;
     background-color: #ffffff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-    // border-top-left-radius: 100px;
-    // border-bottom-left-radius: 100px;
-        // background: linear-gradient(63.73deg, #ffffff 10.85%, #f3fff4 90.67%);
-        // background: linear-gradient(63.73deg, rgb(242 249 242) 10.85%, rgb(234 255 236) 90.67%);
-// background: linear-gradient(to left, #fafafa, #f5fff5);
-//       background: rgba(255, 255, 255, 0.2); /* semi-transparent white */
-//   backdrop-filter: blur(10px);
-//   -webkit-backdrop-filter: blur(10px); /* for Safari */
-//   border: 1px solid rgba(255, 255, 255, 0.3);
-//   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-z-index: 3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 3;
 }
-// .monitoring-card-item {
-//     background: #ffffffbe;
-//     //   background: linear-gradient(to left, white, #d5ffd8);
-//     backdrop-filter: blur(12px);
-//     /* blur effect */
-//     -webkit-backdrop-filter: blur(12px);
-//     /* Safari support */
-
-//     border: 1px solid #ffffffb2;
-//     /* light border */
-//     border-radius: 20px;
-//     /* soft rounded corners */
-//     padding: 16px;
-//     cursor: pointer;
-//     width: calc(100% / 5 - 9px);
-//     overflow: hidden;
-
-//     /* subtle shadow for floating effect */
-//     // box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-
-//     transition: all 0.3s ease;
-// }
 
 .monitoring-card-item:hover {
     background: linear-gradient(to left, white, #e1f3f5);
-    // box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 
 }
 
@@ -636,18 +592,21 @@ i {
 }
 
 @media (min-width: 2000px) {
-       .monitoring-card-row{
+    .monitoring-card-row {
         width: 75%;
     }
+
     .monitoring-card-item {
         width: calc(100% / 5 - 9px);
 
     }
 }
+
 @media (max-width: 1680px) {
-    .monitoring-card-row{
+    .monitoring-card-row {
         width: 100%;
     }
+
     .monitoring-card-item {
         width: calc(100% / 5 - 9px);
 

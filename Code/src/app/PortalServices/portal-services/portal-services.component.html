@@ -1,234 +1,261 @@
-<section class="dashboard">
-    <div class="container-fluid">
+<section >
+    <div class="container-fluid p-0">
         <div class="row">
             <div class="col-md-12 home-header">
                 Portal <span class="imp-text">Services</span>
             </div>
         </div>
-        <div class="row" style="margin-top: -10px;">
-            <div id="divMapReview" class="col-md-2"
-                style="padding-left: 17px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8E/map-card-review');">
-                    <div class="vertical">
+        <div class="blur-bg"></div>
+         <div class="menuScroll">
+        <div class="row">
+            <div class="col-md-12 monitoring-card">
+            <div class="monitoring-card-row">
+                <div class="monitoring-card-item" id="divMapReview" style="display: none;" (click)="goToPage('/8E/map-card-review');">
+                   
+                         <div class="imgbg">
                         <img src="../../../assets/icons/location.svg" alt="location-dot-solid" class="icon-green"
-                            style="font-weight: bold;width:50px;" /> <br>
+                            style="font-weight: bold;width:50px;" /> 
+                            </div>
+                               <div class="infoRight">
                         <h3>Map Card Review</h3>
-                    </div>
+                        </div>
+                   
                 </div>
-            </div>
-            <div id="divTaskMasters" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8D/task-management-masters');">
-                    <div class="vertical">
+                <div class="monitoring-card-item"  id="divTaskMasters" style="display: none;" (click)="goToPage('/8D/task-management-masters');">
+                    
+                         <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            style="width:50px;" /> <br>
+                            style="width:50px;" /> 
+                            </div>
+                                   <div class="infoRight">
                         <h3>Task Masters</h3>
-                    </div>
+                        </div>
+                
                 </div>
-            </div>
-            <div id="divPenalty" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8M/penalty-portal-service');">
-                    <div class="vertical">
+                <div class="monitoring-card-item"  id="divPenalty" style="display: none;" (click)="goToPage('/8M/penalty-portal-service');">
+                  
+                           <div class="imgbg">
                         <img src="../../../assets/icons/sack-dollar-solid.svg" alt="sack-dollar-solid"
-                            class="icon-green" style="width:50px;" /><br>
+                            class="icon-green" style="width:50px;" />
+                        </div>
+                          <div class="infoRight">
                         <h3>Penalty</h3>
-                    </div>
+                        </div>
+                 
                 </div>
-            </div>
-            <div id="divAccount" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8N/employee-account-service');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divAccount" style="display: none;" (click)="goToPage('/8N/employee-account-service');">
+                 
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            style="width:50px;" /> <br>
+                            style="width:50px;" />
+                         </div>
+                             <div class="infoRight">
                         <h3>Employee Account</h3>
-                    </div>
+                        </div>
+               
                 </div>
-            </div>
-            <div id="divKMLtoJSON" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8O/kml-to-json');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divKMLtoJSON"  style="display: none;" (click)="goToPage('/8O/kml-to-json');">
+                    
+                           <div class="imgbg">
                         <img src="../../../assets/icons/gauge-solid.svg" alt="gauge-solid" class="icon-green"
-                            style="width:50px;" /> <br>
+                            style="width:50px;" />
+                        </div>
+                         <div class="infoRight">
                         <h3>Boundary Kml to Json</h3>
-                    </div>
+                        </div>
+                 
                 </div>
-            </div>
-            <div id="divWorkPercentage" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8Q/ward-work-percentage');">
-                    <div class="vertical">
+                <div class="monitoring-card-item"  id="divWorkPercentage"  style="display: none;" (click)="goToPage('/8Q/ward-work-percentage');">
+                  
+                           <div class="imgbg">
                         <img src="../../../assets/icons/percent.svg" alt="percent" class="icon-green"
-                            style="width:50px;" /> <br>
+                            style="width:50px;" /> 
+                        </div>
+                          <div class="infoRight">
                         <h3>Work Percentage</h3>
-                    </div>
+                        </div>
+                    
                 </div>
-            </div>
-            <div id="divChangeLineData" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8R/change-line-surveyed-data');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divChangeLineData" style="display: none;" (click)="goToPage('/8R/change-line-surveyed-data');">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/square-poll-vertical-solid.svg" alt="square-poll-vertical-solid"
-                            class="icon-green" width="50px" /> <br>
+                            class="icon-green" width="50px" />
+                        </div>
+                         <div class="infoRight">
                         <h3>Change Line Surveyed Data</h3>
-                    </div>
+                        </div>
+                  
                 </div>
-            </div>
-            <div id="divChangeLineMarkerData" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8X/change-line-marker-data');">
-                    <div class="vertical">
+                <div class="monitoring-card-item"  id="divChangeLineMarkerData"  style="display: none;" (click)="goToPage('/8X/change-line-marker-data');">
+                 
+                           <div class="imgbg">
                         <img src="../../../assets/icons/map-location-dot-solid.svg" alt="map-location-dot-solid"
-                            class="icon-green" width="50px" /><br>
+                            class="icon-green" width="50px" />
+                        </div>
+                         <div class="infoRight">
                         <h3>Change Line Marker Data</h3>
-                    </div>
+                        </div>
+                 
                 </div>
-            </div>
-            <div id="divSettings" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8S/settings');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divSettings" style="display: none;" (click)="goToPage('/8S/settings');">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/gears-solid.svg" alt="gears-solid" class="icon-green"
-                            style="width:50px;" /><br>
+                            style="width:50px;" />
+                        </div>
+                          <div class="infoRight">
                         <h3>Settings</h3>
-                    </div>
+                        </div>
+                  
                 </div>
-            </div>
-            <div id="divWebPortalSettings" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8A5/web-portal-setting');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divWebPortalSettings" style="display: none;" (click)="goToPage('/8A5/web-portal-setting');">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/gears-solid.svg" alt="gears-solid" class="icon-green"
-                            style="width:50px;" /><br>
+                            style="width:50px;" />
+                        </div>
+                           <div class="infoRight">
                         <h3>Web Portal Settings</h3>
-                    </div>
+                        </div>
+                 
                 </div>
-            </div>
-            <div id="divDustbinWardMapping" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8V/dustbin-ward-mapping');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divDustbinWardMapping" style="display: none;" (click)="goToPage('/8V/dustbin-ward-mapping');">
+               
+                           <div class="imgbg">
                         <img src="../../../assets/icons/trash3-fill.svg" alt="trash3-fill" class="icon-green"
-                            width="50px;" /> <br>
+                            width="50px;" /> 
+                        </div>
+                           <div class="infoRight">
                         <h3>Dustbin Ward Mapping</h3>
-                    </div>
+                        </div>
+                 
                 </div>
-            </div>
-            <div id="divOpenDepotWardMapping" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8A4/open-depot-ward-mapping');">
-                    <div class="vertical">
+                <div class="monitoring-card-item"  id="divOpenDepotWardMapping"  style="display: none;" (click)="goToPage('/8A4/open-depot-ward-mapping');">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/trash3-fill.svg" alt="trash3-fill" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" /> 
+                        </div>
+                         <div class="infoRight">
                         <h3>Open Depot Ward Mapping</h3>
-                    </div>
+                        </div>
+                   
                 </div>
-            </div>
-            <div id="divWardLineWeightage" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8W/line-weightage');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divWardLineWeightage" style="display: none;" (click)="goToPage('/8W/line-weightage');">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/warehouse-solid.svg" alt="warehouse-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" /> 
+                        </div>
+                         <div class="infoRight">
                         <h3>Ward Line Weightage</h3>
-                    </div>
+                        </div>
+                   
                 </div>
-            </div>
-            <div id="divScanCardManipulation" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8Y/scan-card-manipulation');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divScanCardManipulation"  style="display: none;" (click)="goToPage('/8Y/scan-card-manipulation');">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                         </div>
+                          <div class="infoRight">
                         <h3>Scan card Modification</h3>
-                    </div>
+                        </div>
+                  
                 </div>
-            </div>
-            <div id="divSetNearbyWard" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8Z/set-nearby-ward');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divSetNearbyWard" style="display: none;" (click)="goToPage('/8Z/set-nearby-ward');">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                        </div>
+                          <div class="infoRight">
                         <h3>Set Nearby Ward</h3>
                     </div>
+                 
                 </div>
-            </div>
-            <div id="divBGManagement" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow"
+                <div class="monitoring-card-item" id="divBGManagement" style="display: none;"
                     (click)="goToURL('https://mainportal-react.web.app/userId/BgServiceManagement');">
-                    <div class="vertical">
+     
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                         </div>
+                          <div class="infoRight">
                         <h3>BG Service Management</h3>
                     </div>
+                   
                 </div>
-            </div>
-            <div id="divPortalReview" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8A2/penalty-review');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divPortalReview" style="display: none;" (click)="goToPage('/8A2/penalty-review');">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                        </div>
+                          <div class="infoRight">
                         <h3>Penalty Review</h3>
                     </div>
+                  
                 </div>
-            </div>
-            <div id="divManageWardWorkTime" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow"
+                <div class="monitoring-card-item" id="divManageWardWorkTime" style="display: none;"
                     (click)="goToOuterURL('https://mainportal-react.web.app/userId/manage-ward-worktime');">
-                    <div class="vertical">
+                   
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                        </div>
+                          <div class="infoRight">
                         <h3>Manage Ward Work Time</h3>
                     </div>
+                
                 </div>
-            </div>
-            <div id="divWardDutyOn" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToPage('/8A6/ward-duty-on');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divWardDutyOn" style="display: none;" (click)="goToPage('/8A6/ward-duty-on');">
+            
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                        </div>
+                          <div class="infoRight">
                         <h3>Ward Duty On</h3>
                     </div>
+                   
                 </div>
-            </div>
-            <div id="divFreeAssignment" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToOuterURL('https://mainportal-react.web.app/userId/freeAssignment');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divFreeAssignment" style="display: none;" (click)="goToOuterURL('https://mainportal-react.web.app/userId/freeAssignment');">
+                 
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                         </div>
+                          <div class="infoRight">
                         <h3>Free Work Assignment</h3>
                     </div>
+                   
                 </div>
-            </div>
-            <div id="divDeleteCard" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToOuterURL('https://mainportal-react.web.app/userId/removeUnwantedSurveyCards');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divDeleteCard"  style="display: none;" (click)="goToOuterURL('https://mainportal-react.web.app/userId/removeUnwantedSurveyCards');">
+               
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                        </div>
+                          <div class="infoRight">
                         <h3>Delete Unwanted Cards</h3>
                     </div>
                 </div>
-            </div>
-            <div id="divDummyHeplerDevice" class="col-md-2"
-                style="padding-left: 7px; padding-right: 8px; padding-top: 25px; display: none;">
-                <div class="more-cards rainbow" (click)="goToOuterURL('https://mainportal-react.web.app/userId/dummyHelperDevice');">
-                    <div class="vertical">
+                <div class="monitoring-card-item" id="divDummyHeplerDevice" style="display: none;" (click)="goToOuterURL('https://mainportal-react.web.app/userId/dummyHelperDevice');">
+                
+                           <div class="imgbg">
                         <img src="../../../assets/icons/tasks-solid.svg" alt="tasks-solid" class="icon-green"
-                            width="50px" /> <br>
+                            width="50px" />
+                        </div>
+                          <div class="infoRight">
                         <h3>Dummy Helper Devices</h3>
                     </div>
                 </div>
-            </div>
         </div>
+        </div>
+        </div>
+    </div>
         <div class="row">
             <div class="col-md-12 text-center home-footer">
                 Copyright by <b

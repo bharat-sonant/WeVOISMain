@@ -596,6 +596,20 @@ i {
     text-decoration: none;
 }
 
+
+@media (min-width: 2000px) {
+       .monitoring-card-row{
+        width: 75%;
+    }
+}
+@media (max-width: 1680px) {
+    .monitoring-card-row{
+        width: 100%;
+    }
+   
+}
+
+
 // Small devices (landscape phones, 576px and up)
 @media (max-width: 360px) {
     .more-pages-header {
