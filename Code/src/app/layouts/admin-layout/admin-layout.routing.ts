@@ -24,7 +24,6 @@ import { UserAccessComponent } from "../../Users/user-access/user-access.compone
 import { HomeComponent } from '../../home/home.component';
 import { HaltReportComponent } from '../../halt-report/halt-report.component';
 import { RouteTrackingComponent } from '../../route-tracking/route-tracking.component';
-import { HaltSummaryComponent } from '../../halt-summary/halt-summary.component';
 import { SalarySummaryComponent } from '../../salary-summary/salary-summary.component';
 import { WardMonitoringReportComponent } from '../../ward-monitoring-report/ward-monitoring-report.component';
 import { FinanceComponent } from '../../finance-report/finance/finance.component';
@@ -233,7 +232,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/halt-report', component: HaltReportComponent },
     { path: ':cityId/route-tracking/:id1', component: RouteTrackingComponent },
     { path: ':cityId/route-tracking', component: RouteTrackingComponent },
-    { path: ':cityId/halt-summary', component: HaltSummaryComponent },
     { path: ':cityId/salary-summary', component: SalarySummaryComponent },
     { path: ':cityId/ward-monitoring-report', component: WardMonitoringReportComponent },
     { path: ':cityId/finance', component: FinanceComponent },
@@ -331,7 +329,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/halt-report', component: HaltReportComponent },
     { path: ':cityId/:id/route-tracking/:id1', component: RouteTrackingComponent },
     { path: ':cityId/:id/route-tracking', component: RouteTrackingComponent },
-    { path: ':cityId/:id/halt-summary', component: HaltSummaryComponent },
     { path: ':cityId/:id/salary-summary', component: SalarySummaryComponent },
     { path: ':cityId/:id/ward-monitoring-report', component: WardMonitoringReportComponent },
     { path: ':cityId/:id/finance', component: FinanceComponent },
