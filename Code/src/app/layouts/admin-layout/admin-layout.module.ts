@@ -53,7 +53,6 @@ import { HouseMarkingAssignmentComponent } from '../../house-survey/house-markin
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
-import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map-card-review.component';
 import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-summary/ward-marking-summary.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
 import { LineMarkerMappingComponent } from '../../house-survey/line-marker-mapping/line-marker-mapping.component';
@@ -258,7 +257,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     EmployeeMarkingComponent,
     WardSurveyAnalysisComponent,
     WardSurveySummaryComponent,
-    MapCardReviewComponent,
     WardMarkingSummaryComponent,
     WardScancardReportComponent,
     LineMarkerMappingComponent,

@@ -45,7 +45,6 @@ import { HouseMarkingAssignmentComponent } from '../../house-survey/house-markin
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
-import { MapCardReviewComponent } from '../../PortalServices/map-card-review/map-card-review.component';
 import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-summary/ward-marking-summary.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
 import { LineMarkerMappingComponent } from '../../house-survey/line-marker-mapping/line-marker-mapping.component';
@@ -257,7 +256,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: ':cityId/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: ':cityId/ward-survey-summary', component: WardSurveySummaryComponent },
-    { path: ':cityId/map-card-review', component: MapCardReviewComponent },
     { path: ':cityId/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: ':cityId/ward-scancard-report', component: WardScancardReportComponent },
     { path: ':cityId/line-marker-mapping', component: LineMarkerMappingComponent },
@@ -356,7 +354,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
     { path: ':cityId/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
     { path: ':cityId/:id/ward-survey-summary', component: WardSurveySummaryComponent },
-    { path: ':cityId/:id/map-card-review', component: MapCardReviewComponent },
     { path: ':cityId/:id/ward-marking-summary', component: WardMarkingSummaryComponent },
     { path: ':cityId/:id/ward-scancard-report', component: WardScancardReportComponent },
     { path: ':cityId/:id/line-marker-mapping', component: LineMarkerMappingComponent },
