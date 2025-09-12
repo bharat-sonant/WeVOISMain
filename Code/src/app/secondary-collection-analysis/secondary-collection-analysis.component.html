@@ -19,8 +19,8 @@
                                 </span></span>
                             <button class="refresh-button" (click)="refreshData();" title="Refresh Data">
                                 <!-- <i class="fas fa-redo-alt"></i> -->
-                                 <img src="../../assets/icons/rotate-right-solid.svg" alt="rotate-right-solid" width="20" class="icon-green cursor-pointer"
-                                 style="margin-bottom: 3px;"/>
+                                <img src="../../assets/icons/rotate-right-solid.svg" alt="rotate-right-solid" width="20"
+                                    class="icon-green cursor-pointer" style="margin-bottom: 3px;" />
                             </button>
                         </div>
                     </h3>
@@ -197,11 +197,12 @@
                                             <p class="align-self-center"><b [innerHTML]="binDetail.analysisDetail"></b>
                                             </p>
                                             <button type="button" class="btn btn-success"
-                                                (click)="saveDustbinAnalysis();">Save 
+                                                (click)="saveDustbinAnalysis();">Save
                                                 <!-- <i
                                                     class="fas fa-save"></i> -->
-                                                    <img src="../../assets/icons/save-solid.svg" alt="save-solid" width="10" class="icon-white cursor-pointer" style="margin-bottom: 2px;"/>
-                                                </button>
+                                                <img src="../../assets/icons/save-solid.svg" alt="save-solid" width="10"
+                                                    class="icon-white cursor-pointer" style="margin-bottom: 2px;" />
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -214,29 +215,30 @@
                                 <div id="divUpdatePickDetail" class="col-md-12 mt-10 pl-0 pr-0" style="display: none;">
                                     <div class="progress-card d-flax">
                                         <div class="col-md-12" style="padding-bottom: 10px; ">
-                                          <label>  Before Pick Image </label>
+                                            <label> Before Pick Image </label>
                                             <input id="fileUploadBefore" type="file" accept="image/*" />
                                         </div>
                                         <div class="col-md-12" style="padding-bottom: 10px; ">
-                                           <label> After Pick Image</label>
+                                            <label> After Pick Image</label>
                                             <input id="fileUploadAfter" type="file" accept="image/*" />
                                         </div>
                                         <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
-                                          <label>  Start Time </label> <br/> <input id="txtPickTime" class="caret-select"
-                                                type="time" style="width:120px" />
+                                            <label> Start Time </label> <br /> <input id="txtPickTime"
+                                                class="caret-select" type="time" style="width:120px" />
                                         </div>
                                         <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
-                                          <label>  End Time </label> <br/> <input id="txtPickTimeEnd" class="caret-select"
-                                                type="time" style="width:120px" />
+                                            <label> End Time </label> <br /> <input id="txtPickTimeEnd"
+                                                class="caret-select" type="time" style="width:120px" />
                                         </div>
                                         <div class="dustbin-progress align-self-center-outer">
                                             <p class="align-self-center"><b [innerHTML]="binDetail.analysisDetail"></b>
                                             </p>
                                             <button type="button" class="btn btn-success" style="width:150px"
-                                                (click)="saveOfflineDustbinDetail();">Update Pick Detail 
+                                                (click)="saveOfflineDustbinDetail();">Update Pick Detail
                                                 <!-- <i class="fas fa-save"></i> -->
-                                                <img src="../../assets/icons/save-solid.svg" alt="save-solid" width="10" class="icon-white cursor-pointer"/>
-                                                </button>
+                                                <img src="../../assets/icons/save-solid.svg" alt="save-solid" width="10"
+                                                    class="icon-white cursor-pointer" />
+                                            </button>
 
                                         </div>
                                     </div>
@@ -258,7 +260,9 @@
                                             <button class="refresh-button" (click)="refreshData();"
                                                 title="Refresh Data">
                                                 <!-- <i class="fas fa-redo-alt"></i> -->
-                                                <img src="../../assets/icons/rotate-right-solid.svg" alt="rotate-right-solid" width="20" class="icon-green cursor-pointer" style="margin-bottom: 3px;"/>
+                                                <img src="../../assets/icons/rotate-right-solid.svg"
+                                                    alt="rotate-right-solid" width="20"
+                                                    class="icon-green cursor-pointer" style="margin-bottom: 3px;" />
                                             </button>
                                         </div>
                                     </h3>
@@ -267,12 +271,27 @@
                             <div class="col-md-12 mob-res slide-outer">
                                 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
                                     data-interval="false">
-                                    <div class="carousel-inner">
-                                        <div id="slide1" class="carousel-item active">
+                                    <div class="carousel-inner" >
+                                       
+                                        <div id="slide1" class="carousel-item active" style="position: relative;">
+                                             <div [hidden]="isShowImageDownload=='0'"
+                                            style="z-index: 999;position: absolute;top: 14px;right: 14px;display: flex;gap: 10px;">
+                                            <img src="../../assets/img/iconNewMarker.svg"
+                                                style="width:34px; height: 34px; cursor: pointer; display: block;" title="Download with GPS Information" (click)="downloadGPSImage(binDetail.filledFarFromImageUrl,binDetail.imageCaptureAddress,binDetail.latLng,'start');" />
+                                            <img src="../../assets/img/iconImages.svg"
+                                                style="width:34px; height:34px; cursor: pointer; display: block;" title="Download without GPS Information" (click)="downloadImage(binDetail.filledFarFromImageUrl);"/>
+                                        </div>
                                             <img id="slideImg1" class="rotate0 d-block w-100 img-fluid"
                                                 src="{{binDetail.filledFarFromImageUrl}}">
                                         </div>
-                                        <div id="slide2" class="carousel-item">
+                                        <div id="slide2" class="carousel-item" style="position: relative;">
+                                            <div [hidden]="isShowImageDownload=='0'"
+                                            style="z-index: 999; position: absolute;top: 14px;right: 14px; display: flex;gap: 10px;">
+                                            <img src="../../assets/img/iconNewMarker.svg"
+                                                style="width:34px; height: 34px; cursor: pointer; display: block;" title="Download with GPS Information" (click)="downloadGPSImage(binDetail.emptyFarFromImageUrl,binDetail.imageCaptureAddress,binDetail.latLng,'end');" />
+                                            <img src="../../assets/img/iconImages.svg"
+                                                style="width:34px; height:34px; cursor: pointer; display: block;" title="Download without GPS Information" (click)="downloadImage(binDetail.emptyFarFromImageUrl);"/>
+                                        </div>
                                             <img id="slideImg2" class="rotate0 d-block w-100 img-fluid"
                                                 src="{{binDetail.emptyFarFromImageUrl}}">
                                         </div>
@@ -282,15 +301,17 @@
                                             (click)="setSlideImage(0,'previous');">
                                             <!-- <i
                                                 class="fas fa-angle-left"></i> -->
-                                                <img src="../../assets/icons/angle-left-solid.svg" alt="angle-left" width="22" class="icon-white cursor-pointer"/>
-                                            </span>
+                                            <img src="../../assets/icons/angle-left-solid.svg" alt="angle-left"
+                                                width="22" class="icon-white cursor-pointer" />
+                                        </span>
                                         <span class="sr-only">Previous</span>
                                     </a>
                                     <a class="carousel-control-next" href="javaScript:void(0);" role="button">
                                         <span id="nextLink" class="carousel-control-next-icon" aria-hidden="true"
                                             (click)="setSlideImage(0,'next')">
                                             <!-- <i class="fas fa-angle-right"></i> -->
-                                            <img src="../../assets/icons/angle-right-solid.svg" alt="angle-right" width="22" class="icon-white cursor-pointer"/>
+                                            <img src="../../assets/icons/angle-right-solid.svg" alt="angle-right"
+                                                width="22" class="icon-white cursor-pointer" />
                                         </span>
                                         <span class="sr-only">Next</span>
                                     </a>
@@ -300,7 +321,8 @@
                                 <div id="box1" class="icon-box active-box text-center"
                                     (click)="setSlideImage(1,'selected');">
                                     <!-- <i id="i1" class="fas fa-caret-up"></i> -->
-                                     <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i1" width="18" class="fas fa-caret-up cursor-pointer green-filter"/>
+                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i1"
+                                        width="18" class="fas fa-caret-up cursor-pointer green-filter" />
                                     <div class="text-field">
                                         <img id="img1" src="../../../assets/img/dustbin-hover.png" class="img-fluid">
                                         <h6 id="hText1" class="mt-15 full">कचरा उठाने से पहले
@@ -311,8 +333,9 @@
                             <div class="col-md-6 mt-10 pl-5 pr-5">
                                 <div id="box2" class="icon-box text-center" (click)="setSlideImage(2,'selected');">
                                     <!-- <i id="i2" class="fas fa-caret-up" style="display: none;"></i> -->
-                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i2" width="18" class="fas fa-caret-up cursor-pointer green-filter"
-                                    style="display: none;"/>
+                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i2"
+                                        width="18" class="fas fa-caret-up cursor-pointer green-filter"
+                                        style="display: none;" />
                                     <div class="text-field">
                                         <img id="img2" src="../../../assets/img/dustbin.png" class="img-fluid">
                                         <h6 id="hText2" class="mt-15 full">कचरा उठाने के बाद </h6>
@@ -322,8 +345,9 @@
                             <div class="col-md-3 mt-10 pl-5 pr-5" style="display: none;">
                                 <div id="box3" class="icon-box text-center" (click)="setSlideImage(3,'selected');">
                                     <!-- <i id="i3" class="fas fa-caret-up" style="display: none;"></i> -->
-                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i3" width="18" class="fas fa-caret-up cursor-pointer green-filter"
-                                    style="display: none;"/>
+                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i3"
+                                        width="18" class="fas fa-caret-up cursor-pointer green-filter"
+                                        style="display: none;" />
                                     <div class="text-field">
                                         <img id="img3" src="../../../assets/img/dustbin.png" class="img-fluid">
                                         <h6 id="hText3" class="mt-15 full">ऊपर से खाली
@@ -334,8 +358,9 @@
                             <div class="col-md-3 mt-10 pl-5" style="display: none;">
                                 <div id="box4" class="icon-box text-center" (click)="setSlideImage(4,'selected');">
                                     <!-- <i id="i4" class="fas fa-caret-up" style="display: none;"></i> -->
-                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i4" width="18" class="fas fa-caret-up cursor-pointer green-filter"
-                                    style="display: none;"/>
+                                    <img src="../../assets/icons/caret-up-solid.svg" alt="caret-up-solid" id="i4"
+                                        width="18" class="fas fa-caret-up cursor-pointer green-filter"
+                                        style="display: none;" />
                                     <div class="text-field">
                                         <img id="img4" src="../../../assets/img/dustbin.png" class="img-fluid">
                                         <h6 id="hText3" class="mt-15 full">खाली दूर से
@@ -350,21 +375,22 @@
                             <div id="filter{{i}}" class="{{data.divClass}}"
                                 *ngFor="let data of dustbinList ; let i=index"
                                 (click)="data.iconClass!='fas fa-ellipsis-h' && showDustbinData(i,'picked');">
-                                <i class="{{data.iconClass}}"></i>                                
+                                <i class="{{data.iconClass}}"></i>
                                 <div class="address-text-outer">
                                     <div class="address-text">
-                                        <h6>                                            
-                                            {{data.dustbinId}}-{{data.address}}
+                                        <h6>
+                                            {{data.address}}
                                         </h6>
                                     </div>
                                 </div>
                                 <div class="address-main" [hidden]="data.iconClass=='fas fa-ellipsis-h'">
-                                    <div class="address-text">                                        
+                                    <div class="address-text">
                                         <h6>
                                             <!-- <i class="fa-solid fa-circle" style="color:red; font-size: 10px;" [hidden]="data.isOffline==0 || userType=='External User'" ></i> -->
-                                             <img src="../../assets/icons/circle-solid.svg" alt="circle-solid" class="icon-red fa-solid fa-circle" width="10"
-                                             [hidden]="data.isOffline==0 || userType=='External User'"/>
-                                           &nbsp;<span  [innerHTML]="data.duration"></span>
+                                            <img src="../../assets/icons/circle-solid.svg" alt="circle-solid"
+                                                class="icon-red fa-solid fa-circle" width="10"
+                                                [hidden]="data.isOffline==0 || userType=='External User'" />
+                                            &nbsp;<span [innerHTML]="data.duration"></span>
                                         </h6>
                                     </div>
                                 </div>
@@ -372,10 +398,13 @@
                                     <div class="address-text">
                                         <!-- <i class="far fa-edit" (click)="showDustbinData(i,'edit')" title="Update Pick Detail"
                                             style="cursor:pointer !important; font-size: 15px;color: royalblue;"></i> -->
-                                            <img src="../../assets/icons/pen-to-square-regular.svg" alt="pen-to-sqaure" class="cursor-pointer" width="15"
-                                            (click)="showDustbinData(i,'edit')" title="Update Pick Detail" [hidden]="canUpdateOpendepotPickDetail=='0'"/>
-                                            <img src="../../assets/icons/dustbin.svg" alt="Remove Dustbin" class="icon-red  cursor-pointer" width="15"
-                                            (click)="openConfirmationModel(contentConfirmation,data.dustbinId,data.planId);" title="Remove Dustbin" [hidden]="canRemoveNotPickedDustbin=='0'"/>
+                                        <img src="../../assets/icons/pen-to-square-regular.svg" alt="pen-to-sqaure"
+                                            class="cursor-pointer" width="15" (click)="showDustbinData(i,'edit')"
+                                            title="Update Pick Detail" [hidden]="canUpdateOpendepotPickDetail=='0'" />
+                                        <img src="../../assets/icons/dustbin.svg" alt="Remove Dustbin"
+                                            class="icon-red  cursor-pointer" width="15"
+                                            (click)="openConfirmationModel(contentConfirmation,data.dustbinId,data.planId);"
+                                            title="Remove Dustbin" [hidden]="canRemoveNotPickedDustbin=='0'" />
                                     </div>
                                 </div>
                             </div>
@@ -393,8 +422,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <input type="hidden" id="hddRemoveIndex"/>
-                <input type="hidden" id="hddRemovePlanId"/>
+                <input type="hidden" id="hddRemoveIndex" />
+                <input type="hidden" id="hddRemovePlanId" />
                 <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
                 <button type="button" class="close" (click)="closeModel();">
                     <span aria-hidden="true">&times;</span>
@@ -402,16 +431,19 @@
             </div>
             <div class="modal-body">
                 <div class="wrap-input-effects" style="display:block; padding-bottom: 20px;">
-                    <input id="chkConfirm" type="checkbox">&nbsp;You want to delete this dustbin from plan. Are you sure?
+                    <input id="chkConfirm" type="checkbox">&nbsp;You want to delete this dustbin from plan. Are you
+                    sure?
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <input type="button" class="btn w-100 btn-success submit-btn"  value="Confirm" (click)="removeUnpickedDustbin();" style="height: 45px;margin-left: 0px;" />
+                        <input type="button" class="btn w-100 btn-success submit-btn" value="Confirm"
+                            (click)="removeUnpickedDustbin();" style="height: 45px;margin-left: 0px;" />
                     </div>
                     <div class="col-md-6">
-                        <input type="button" class="btn w-100 btn-danger"  value="Cancel" (click)="closeModel();" style="height: 45px;margin-left: 0px;margin-top: 0px;" />
+                        <input type="button" class="btn w-100 btn-danger" value="Cancel" (click)="closeModel();"
+                            style="height: 45px;margin-left: 0px;margin-top: 0px;" />
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
     </div>

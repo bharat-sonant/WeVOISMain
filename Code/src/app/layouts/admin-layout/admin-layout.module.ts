@@ -49,7 +49,6 @@ import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
-import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
 import { HouseMarkingAssignmentComponent } from '../../house-survey/house-marking-assignment/house-marking-assignment.component';
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
@@ -255,7 +254,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     VehicleReportComponent,
     WardTripAnalysisComponent,
     HouseMarkingComponent,
-    TaskManagementMastersComponent,
     HouseMarkingAssignmentComponent,
     EmployeeMarkingComponent,
     WardSurveyAnalysisComponent,

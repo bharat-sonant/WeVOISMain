@@ -4,6 +4,8 @@ import { FirebaseService } from "../firebase.service";
 import { NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { HttpClient } from "@angular/common/http";
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-secondary-collection-analysis',
@@ -12,7 +14,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class SecondaryCollectionAnalysisComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage, private commonService: CommonService, private modalService: NgbModal, public fs: FirebaseService) { }
+  constructor(private storage: AngularFireStorage, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal, public fs: FirebaseService) { }
 
   planList: any[];
   dustbinList: any[];
@@ -34,6 +36,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   canRemoveNotPickedDustbin: any;
   dustbinStorageList: any[] = [];
   userType: any;
+  public isShowImageDownload: any;
   binDetail: dustbinDetails = {
     binId: "",
     filledTopViewImageUrl: "",
@@ -54,7 +57,9 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     analysisRemarks: "",
     analysisDetail: "",
     manualRemarks: "",
-    isOffline: 0
+    isOffline: 0,
+    imageCaptureAddress: "",
+    latLng: ""
   };
 
   planDetail: planDetails = {
@@ -76,7 +81,11 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.isShowImageDownload = "0";
     this.cityName = localStorage.getItem("cityName");
+    if (this.cityName == "jaipur-kishanpole" || this.cityName == "jaipur-civil-line") {
+      this.isShowImageDownload = "1";
+    }
     this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -87,7 +96,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       document.getElementById("dustbinReportLink")
     );
     element.href = this.cityName + "/25B/open-depot-planing";
-    this.dustbinStorageList = JSON.parse(localStorage.getItem("dustbin"));
+    this.dustbinStorageList = JSON.parse(localStorage.getItem("openDepot"));
+    console.log(this.dustbinStorageList);
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
     this.getPandingAnalysis();
@@ -127,12 +137,12 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     $(this.txtManualRemark).val("");
   }
 
-  
-  
+
+
   removeUnpickedDustbin() {
-    let element=<HTMLInputElement>document.getElementById("chkConfirm");
-    if(element.checked==false){
-      this.commonService.setAlertMessage("error","Please check confirmation!!!");
+    let element = <HTMLInputElement>document.getElementById("chkConfirm");
+    if (element.checked == false) {
+      this.commonService.setAlertMessage("error", "Please check confirmation!!!");
       return;
     }
     let dustbinId = $("#hddRemoveIndex").val();
@@ -146,7 +156,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     }
     this.closeModel();
   }
-  
+
   closeModel() {
     this.modalService.dismissAll();
   }
@@ -199,16 +209,16 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       bins: bins,
       pickingSequence: pickingSequence
     }
-    if(bins==""){
+    if (bins == "") {
       this.db.object(dbPath).set(null);
       this.resetData();
       this.getBinsForSelectedPlan(this.planList[0]["planId"]);
     }
-    else{
+    else {
       this.db.object(dbPath).update(obj);
     }
-    this.commonService.setAlertMessage("success","Dustbin removed from plan!!!");
-    
+    this.commonService.setAlertMessage("success", "Dustbin removed from plan!!!");
+
   }
 
   openConfirmationModel(content: any, id: any, planId: any) {
@@ -382,6 +392,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.analysisDetail = "";
     this.binDetail.canDoAnalysis = "no";
     this.binDetail.isOffline = 0;
+    this.binDetail.imageCaptureAddress = "";
+    this.binDetail.latLng = "";
 
     // now reset plan data
     this.planDetail.driverName = "--";
@@ -432,7 +444,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
         let dustbinPickHistoryPath = this.db.object("DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + binId + "/" + planId).valueChanges().subscribe((dustbinHistoryData) => {
           this.dustbinList.push({
             dustbinId: binId,
-            planId:planId,
+            planId: planId,
             address: dustbinAddress,
             iconClass: this.setIconClass(dustbinHistoryData),
             divClass: this.setBackgroudClasss(dustbinHistoryData),
@@ -477,7 +489,9 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
             filledPercentage: this.checkAnalysisValues(dustbinHistoryData, "filledPercentage"),
             analysisRemark: this.checkAnalysisValues(dustbinHistoryData, "remark"),
             manualRemarks: this.checkAnalysisValues(dustbinHistoryData, "manualRemark"),
-            isPicked: "0"
+            isPicked: "0",
+            imageCaptureAddress: this.checkNullValue(dustbinHistoryData, "imageCaptureAddress"),
+            latLng: this.checkLatLngValue(dustbinHistoryData, "latLng", binId)
           });
           this.setPickedBins(index);
 
@@ -599,6 +613,21 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     }
 
     return time;
+  }
+
+  checkLatLngValue(binData: any, fieldName: string, binId: any) {
+    let latLng = "";
+    let detail = this.dustbinStorageList.find(item => Number(item.dustbin) == Number(binId));
+    if (detail != undefined) {
+      latLng = detail.lat + "," + detail.lng;
+    }
+    if (binData != null) {
+      if (binData[fieldName] != undefined) {
+        latLng = binData[fieldName];
+      }
+    }
+    return latLng;
+
   }
 
   checkAnalysisValues(list: any, fieldName: string) {
@@ -732,6 +761,141 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     });
   }
 
+  downloadImage(uri: any) {
+
+    fetch(uri)
+      .then(response => response.blob())
+      .then(blob => {
+        const objectUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = objectUrl;
+        a.download = this.binDetail.binId + "-without-GPS.jpg";   // suggest filename
+        document.body.appendChild(a);
+        a.click();
+
+        // cleanup
+        a.remove();
+        URL.revokeObjectURL(objectUrl);
+      })
+      .catch(err => console.error('Download failed:', err));
+  }
+
+  downloadGPSImage(uri: any, address: any, latLng: any, type: any) {
+    console.log(uri);
+    console.log(address);
+    console.log(latLng);
+    $("#ImageLoader").show();
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      ctx.drawImage(img, 0, 0);
+
+      const fontSize = 100;
+      const padding = 50;
+      const lineHeight = fontSize + 20;
+      const maxTextWidth = canvas.width - padding * 2;
+
+      ctx.font = `${fontSize}px Arial`;
+
+      // Function to wrap long text
+      const wrapText = (text, maxWidth) => {
+        const words = text.split(' ');
+        const lines = [];
+        let line = '';
+
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line + words[i] + ' ';
+          const testWidth = ctx.measureText(testLine).width;
+          if (testWidth > maxWidth && i > 0) {
+            lines.push(line.trim());
+            line = words[i] + ' ';
+          } else {
+            line = testLine;
+          }
+        }
+        lines.push(line.trim());
+        return lines;
+      };
+
+      let time = "";
+      if (type == "start") {
+        time = this.binDetail.startTime;
+      }
+      else {
+        time = this.binDetail.endTime;
+        if (time == "") {
+          time = this.getNextTime(this.binDetail.startTime, this.getRandemTimeDifference());
+        }
+      }
+
+
+
+      let lines = [];
+      let date = this.selectedDate.split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split("-")[1])) + " " + this.selectedDate.split("-")[0] + " " + time;
+      let lat = latLng.split(",")[0];
+      let lng = latLng.split(",")[1];
+
+      if (address) {
+        const addressLines = wrapText(`${address}`, maxTextWidth);
+        lines = lines.concat(addressLines);
+      }
+      lines.push(`Lat: ${lat} Long: ${lng}`);
+      lines.push(`${date}`);
+
+      const extraSpacing = 30;
+      const rectHeight = lines.length * (lineHeight + extraSpacing) + padding * 1.5;
+
+
+      // Draw background rectangle
+      ctx.fillStyle = 'rgba(70, 70, 70, 0.77)';
+      ctx.fillRect(0, canvas.height - rectHeight, canvas.width, rectHeight);
+
+      // Set text style
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 2;
+
+      // Draw each line
+
+      lines.forEach((line, i) => {
+        const x = padding;
+        const y = canvas.height - rectHeight + padding + (i + 1) * lineHeight + i * extraSpacing;
+        ctx.strokeText(line, x, y);
+        ctx.fillText(line, x, y);
+      });
+
+
+      // Trigger download
+      const link = document.createElement('a');
+      link.download = this.binDetail.binId + "-with-GPS-information.jpg";
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      $("#ImageLoader").hide();
+    };
+
+    img.src = uri;
+
+  }
+
+  getRandemTimeDifference() {
+    return Math.floor(Math.random() * (3 - 1 + 1)) + 1;
+  }
+
+  getNextTime(startTime: any, timediff: any) {
+    const now = new Date(new Date(this.selectedDate + " " + startTime).getTime() + timediff * 60000);
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return hours + ":" + minutes;
+  }
+
   showDustbinData(index: any, type: any) {
     if (this.dustbinList[index]["filledTopViewImage"] != this.imageNotAvailablePath) {
       $("#ImageLoader").show();
@@ -749,7 +913,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     this.binDetail.emptyDustbinFarViewImageUrl = this.dustbinList[index]["emptyDustbinFarFromImage"];
     this.binDetail.dustbinNotFoundImageUrl = this.dustbinList[index]["dustbinNotFoundImage"];
     this.binDetail.isOffline = this.dustbinList[index]["isOffline"] ? this.dustbinList[index]["isOffline"] : 0;
-
+    this.binDetail.imageCaptureAddress = this.dustbinList[index]["imageCaptureAddress"] ? this.dustbinList[index]["imageCaptureAddress"] : "";
+    this.binDetail.latLng = this.dustbinList[index]["latLng"] ? this.dustbinList[index]["latLng"] : "";
     this.binDetail.analysisBy = this.dustbinList[index]["analysisBy"];
     this.binDetail.analysisAt = this.dustbinList[index]["analysisAt"];
     this.binDetail.filledPercentage = this.dustbinList[index]["filledPercentage"];
@@ -1234,7 +1399,9 @@ export class dustbinDetails {
   analysisRemarks: string;
   analysisDetail: string;
   manualRemarks: string;
-  isOffline: number
+  isOffline: number;
+  imageCaptureAddress: string;
+  latLng: string;
 }
 
 export class planDetails {

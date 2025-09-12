@@ -329,7 +329,7 @@
   <div class="col-md-12 monitoring-card d-flex justify-content-center">
     <div class="monitoring-card-row">
       <div 
-        class="monitoring-card-item" 
+        class="monitoring-card-item" [ngStyle]="{ 'width': cardWidth }"
         *ngFor="let data of pageList; let i = index" 
         (click)="goToURL(data.url, data.pageId)"
       >

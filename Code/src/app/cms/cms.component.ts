@@ -33,6 +33,8 @@ export class CmsComponent implements OnInit {
   db: any;
   isDehradun: boolean;
   pageList: any[] = [];
+  pageId: string | null = null;
+  cardWidth: string = '260px';  // default width
 
   isMonitoringPage: boolean = false;  // 👈 Add this at the top
 
@@ -48,16 +50,22 @@ export class CmsComponent implements OnInit {
     }
     this.isActual = localStorage.getItem("isActual");
     const id = this.actRoute.snapshot.paramMap.get("id");
-    
-      this.isMonitoringPage = true;
-      /*
-    if (id == "2" || id=="3") {
-      this.isMonitoringPage = true;
+
+    this.isMonitoringPage = true;
+    if (id == "20" || id=="10-10A" || id=="13" || id=="14-14A" || id=="19") {
+      this.cardWidth = "305px";
     }
     else {
-      this.isMonitoringPage = false;
+      this.cardWidth = "260px";
     }
-    */
+    /*
+  if (id == "2" || id=="3") {
+    this.isMonitoringPage = true;
+  }
+  else {
+    this.isMonitoringPage = false;
+  }
+  */
     let pageList = id.split("-");
     this.getPages(pageList[pageList.length - 1]);
     this.router.events
@@ -65,14 +73,20 @@ export class CmsComponent implements OnInit {
       .subscribe(() => {
         const id1 = this.actRoute.snapshot.paramMap.get("id");
         this.isMonitoringPage = true;
-/*
-        if (id1 == "2" || id1=="3") {
-          this.isMonitoringPage = true;
+        if (id1 == "20" || id1=="10-10A" || id1=="13" || id1=="14-14A" || id1=="19") {
+          this.cardWidth = "305px";
         }
         else {
-          this.isMonitoringPage = false;
+          this.cardWidth = "260px";
         }
-        */
+        /*
+                if (id1 == "2" || id1=="3") {
+                  this.isMonitoringPage = true;
+                }
+                else {
+                  this.isMonitoringPage = false;
+                }
+                */
         let pageList = id1.split("-");
         this.getPages(pageList[pageList.length - 1]);
       });

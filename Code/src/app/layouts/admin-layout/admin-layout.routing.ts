@@ -41,7 +41,6 @@ import { Cms1Component } from '../../cms1/cms1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
-import { TaskManagementMastersComponent } from '../../PortalServices/task-management-masters/task-management-masters.component';
 import { HouseMarkingAssignmentComponent } from '../../house-survey/house-marking-assignment/house-marking-assignment.component';
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
@@ -253,7 +252,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: ':cityId/house-marking', component: HouseMarkingComponent },
     { path: ':cityId/house-marking/:id1', component: HouseMarkingComponent },
-    { path: ':cityId/task-management-masters', component: TaskManagementMastersComponent },
     { path: ':cityId/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: ':cityId/employee-marking', component: EmployeeMarkingComponent },
     { path: ':cityId/ward-survey-analysis', component: WardSurveyAnalysisComponent },
@@ -353,7 +351,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
     { path: ':cityId/:id/house-marking', component: HouseMarkingComponent },
     { path: ':cityId/:id/house-marking/:id1', component: HouseMarkingComponent },
-    { path: ':cityId/:id/task-management-masters', component: TaskManagementMastersComponent },
     { path: ':cityId/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
     { path: ':cityId/:id/employee-marking', component: EmployeeMarkingComponent },
     { path: ':cityId/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
