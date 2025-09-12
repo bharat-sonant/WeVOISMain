@@ -32,7 +32,6 @@ import { HomeComponent } from '../../home/home.component';
 import { HaltReportComponent } from '../../halt-report/halt-report.component';
 import { OrderByPipe } from '../../order-by.pipe';
 import { RouteTrackingComponent } from '../../route-tracking/route-tracking.component';
-import { SalarySummaryComponent } from '../../salary-summary/salary-summary.component';
 import { WardMonitoringReportComponent } from '../../ward-monitoring-report/ward-monitoring-report.component';
 import { FinanceComponent } from '../../finance-report/finance/finance.component';
 import { WardReachCostComponent } from '../../finance-report/ward-reach-cost/ward-reach-cost.component';
@@ -235,7 +234,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     OrderByPipe,
     HaltReportComponent,
     RouteTrackingComponent,
-    SalarySummaryComponent,
     WardMonitoringReportComponent,
     FinanceComponent,
     WardReachCostComponent,
