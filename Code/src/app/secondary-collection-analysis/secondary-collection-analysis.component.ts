@@ -36,7 +36,6 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   canRemoveNotPickedDustbin: any;
   dustbinStorageList: any[] = [];
   userType: any;
-  public isShowImageDownload: any;
   binDetail: dustbinDetails = {
     binId: "",
     filledTopViewImageUrl: "",
@@ -81,12 +80,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.isShowImageDownload = "0";
     this.cityName = localStorage.getItem("cityName");
-    if (this.cityName == "jaipur-kishanpole" || this.cityName == "jaipur-civil-line") {
-      this.isShowImageDownload = "1";
-    }
-    this.userType = localStorage.getItem("userType");
+        this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Secondary-Collection-Analysis", localStorage.getItem("userID"));

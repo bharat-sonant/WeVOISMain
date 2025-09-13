@@ -274,7 +274,7 @@
                                     <div class="carousel-inner" >
                                        
                                         <div id="slide1" class="carousel-item active" style="position: relative;">
-                                             <div [hidden]="isShowImageDownload=='0'"
+                                             <div 
                                             style="z-index: 999;position: absolute;top: 14px;right: 14px;display: flex;gap: 10px;">
                                             <img src="../../assets/img/iconNewMarker.svg"
                                                 style="width:34px; height: 34px; cursor: pointer; display: block;" title="Download with GPS Information" (click)="downloadGPSImage(binDetail.filledFarFromImageUrl,binDetail.imageCaptureAddress,binDetail.latLng,'start');" />
@@ -285,7 +285,7 @@
                                                 src="{{binDetail.filledFarFromImageUrl}}">
                                         </div>
                                         <div id="slide2" class="carousel-item" style="position: relative;">
-                                            <div [hidden]="isShowImageDownload=='0'"
+                                            <div 
                                             style="z-index: 999; position: absolute;top: 14px;right: 14px; display: flex;gap: 10px;">
                                             <img src="../../assets/img/iconNewMarker.svg"
                                                 style="width:34px; height: 34px; cursor: pointer; display: block;" title="Download with GPS Information" (click)="downloadGPSImage(binDetail.emptyFarFromImageUrl,binDetail.imageCaptureAddress,binDetail.latLng,'end');" />
