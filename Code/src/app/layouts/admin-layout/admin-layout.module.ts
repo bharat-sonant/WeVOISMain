@@ -35,7 +35,6 @@ import { RouteTrackingComponent } from '../../route-tracking/route-tracking.comp
 import { WardMonitoringReportComponent } from '../../ward-monitoring-report/ward-monitoring-report.component';
 import { FinanceComponent } from '../../finance-report/finance/finance.component';
 import { WardReachCostComponent } from '../../finance-report/ward-reach-cost/ward-reach-cost.component';
-import { MonthSalaryReportComponent } from '../../finance-report/month-salary-report/month-salary-report.component';
 import { ReportsComponent } from '../../reports/reports/reports.component';
 import { RemarkReportComponent } from '../../reports/remark-report/remark-report.component';
 import { WorkAssignReportComponent } from '../../reports/work-assign-report/work-assign-report.component';
@@ -237,7 +236,6 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     WardMonitoringReportComponent,
     FinanceComponent,
     WardReachCostComponent,
-    MonthSalaryReportComponent,
     ReportsComponent,
     RemarkReportComponent,
     WorkAssignReportComponent,

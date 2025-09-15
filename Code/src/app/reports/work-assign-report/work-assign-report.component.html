@@ -1,4 +1,4 @@
-d<section class="header">
+<section class="header">
     <div class="row no-gutters">
       <div class="col-md-5" style=" padding-left: 20px; margin-top: -3px;">
       </div>
@@ -104,42 +104,6 @@ d<section class="header">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
-                                    </div>
-                                </div>
-        
-        
-        
-        
-        
-        
-                                <div class="table-bg">
-                                    <div class="tableFixHead">
-                                        <table class="table table-hover" style="margin-bottom: 0px;">
-                                            <thead>
-                                                <tr>
-                                                    <th style="border-right:1px solid #dee2e6; width:10%;">S No.</th>
-                                                    <th scope="col" class="tdBorder">Work </th>
-                                                    <th scope="col" class="text-left">Duty On Time</th>
-                                                    <th scope="col" class="text-left">Duty On By</th>
-                                                    <th scope="col" class="text-left">Duty Off Time</th>
-                                                    <th scope="col" class="text-left"><span>Duty Off By</span> <span class="export-span" >
-                                                        <i class="fa-solid fa-file-export export-icon" (click)="exportToExcel()"></i><br />
-                                                        <span class="export-span-iner">Export</span>
-                                                    </span></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr *ngFor="let dt of workList; let i=index" >
-                                                    <td style="border-right:1px solid #dee2e6">
-                                                        {{i+1}}</td>
-                                                    <td class="text-left tdBorder">{{dt.ward}}</td>
-                                                    <td class="text-left tdBorder">{{dt.inTime}}</td>
-                                                    <td class="text-left tdBorder">{{dt.dutyOnByName}}</td>
-                                                    <td class="text-left tdBorder">{{dt.outTime}}</td>
-                                                    <td class="text-left tdBorder">{{dt.dutyOffByName}}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </div>
                             </div>

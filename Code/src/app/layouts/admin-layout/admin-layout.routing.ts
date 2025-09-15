@@ -27,7 +27,6 @@ import { RouteTrackingComponent } from '../../route-tracking/route-tracking.comp
 import { WardMonitoringReportComponent } from '../../ward-monitoring-report/ward-monitoring-report.component';
 import { FinanceComponent } from '../../finance-report/finance/finance.component';
 import { WardReachCostComponent } from '../../finance-report/ward-reach-cost/ward-reach-cost.component';
-import { MonthSalaryReportComponent } from '../../finance-report/month-salary-report/month-salary-report.component';
 import { ReportsComponent } from '../../reports/reports/reports.component';
 import { RemarkReportComponent } from '../../reports/remark-report/remark-report.component';
 import { WorkAssignReportComponent } from '../../reports/work-assign-report/work-assign-report.component';
@@ -234,7 +233,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/ward-monitoring-report', component: WardMonitoringReportComponent },
     { path: ':cityId/finance', component: FinanceComponent },
     { path: ':cityId/ward-reach-cost', component: WardReachCostComponent },
-    { path: ':cityId/month-salary-report', component: MonthSalaryReportComponent },
     { path: ':cityId/reports', component: ReportsComponent },
     { path: ':cityId/remark-report', component: RemarkReportComponent },
     { path: ':cityId/work-assign-report', component: WorkAssignReportComponent },
@@ -330,7 +328,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/ward-monitoring-report', component: WardMonitoringReportComponent },
     { path: ':cityId/:id/finance', component: FinanceComponent },
     { path: ':cityId/:id/ward-reach-cost', component: WardReachCostComponent },
-    { path: ':cityId/:id/month-salary-report', component: MonthSalaryReportComponent },
     { path: ':cityId/:id/reports', component: ReportsComponent },
     { path: ':cityId/:id/remark-report', component: RemarkReportComponent },
     { path: ':cityId/:id/work-assign-report', component: WorkAssignReportComponent },

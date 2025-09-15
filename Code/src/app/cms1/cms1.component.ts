@@ -1020,15 +1020,15 @@ export class Cms1Component implements OnInit {
         let pickFrequency = "1";
         let zone = fileList[i]["Zone"];
         const data = {
-          address: "Ward-" + wardNo + " " + address,
+          address: address,
           lat: lat,
           lng: lng,
           pickFrequency: pickFrequency,
           type: "Rectangular",
           ward: wardNo,
           zone: zone,
-          dustbinType: "Open Depot",
-          createdDate: "2025-09-02"
+          dustbinType: "Dustbin",
+          createdDate: "2025-09-15"
         }
         this.db.object("DustbinData/DustbinDetails/" + key.toString()).update(data);
         jsonObj[key] = data;
