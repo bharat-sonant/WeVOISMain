@@ -97,6 +97,7 @@ export class RouteTrackingComponent {
     if (this.userType == "External User") {
       $(this.chkVTS).hide();
       $(this.lblVTS).hide();
+      $("#divVTSRoute").hide();
       // this.router.navigate(["/" + localStorage.getItem("cityName") + "/something-wrong"]);
     }
     this.instancesList = [];
