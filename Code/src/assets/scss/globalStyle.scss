@@ -264,6 +264,7 @@
 .modal-header .btn-close {
     width: 12px;
     padding: 0px;
+    box-shadow: none;
 
     &:hover {
         filter: brightness(0) saturate(100%) invert(42%) sepia(82%) saturate(828%) hue-rotate(331deg) brightness(103%) contrast(88%);

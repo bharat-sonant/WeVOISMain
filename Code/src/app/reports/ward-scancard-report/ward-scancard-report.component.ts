@@ -89,7 +89,7 @@ export class WardScancardReportComponent implements OnInit {
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
-    let height = 300;
+    let height = 240;
     let width = 400;
     let marginTop = "0px";
     marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
