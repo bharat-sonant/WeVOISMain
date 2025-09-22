@@ -137,10 +137,15 @@ export class WardScancardReportComponent implements OnInit {
   }
 
   exportDateRangeExcel() {
+    if(this.cardList.length==0){
+      this.commonService.setAlertMessage("error","No Card Found!!");
+      return;
+    }
     let dateFrom = $(this.txtDateFrom).val();
     let dateTo = $(this.txtDateTo).val();
     let dateRangeList = [];
     dateRangeList.push(dateFrom);
+    $("#divLoader").show();
     this.getDatesFromDateRange(dateFrom, dateTo, dateRangeList);
   }
 
@@ -166,7 +171,6 @@ export class WardScancardReportComponent implements OnInit {
       }
 
       Promise.all(promises).then((results) => {
-        console.log(results);
         for (let i = 0; i < results.length; i++) {
           let cardNo = results[i]["cardNo"];
           let dat = results[i]["date"];
@@ -176,9 +180,8 @@ export class WardScancardReportComponent implements OnInit {
             detail[dat] = wasteCat;
           }
         }
-        console.log(result);
         this.exportDateRangeScanCard(result, dateRangeList);
-
+        $("#divLoader").hide();
       });
 
     }
