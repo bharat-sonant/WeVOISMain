@@ -7,6 +7,7 @@ import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { AngularFireDatabase, AngularFireList, AngularFireObject } from "angularfire2/database";
 import { AngularFireModule } from "angularfire2";
 import { HttpClient } from "@angular/common/http";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 //services
 import { CommonService } from "../../services/common/common.service";
 import * as $ from "jquery";
@@ -20,7 +21,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
   styleUrls: ["./ward-scancard-report.component.scss"],
 })
 export class WardScancardReportComponent implements OnInit {
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private modalService: NgbModal, private besuh: BackEndServiceUsesHistoryService, public af: AngularFireModule, public httpService: HttpClient, private actRoute: ActivatedRoute, private commonService: CommonService) { }
 
   wardList: any[];
   selectedCircle: any;
@@ -39,8 +40,12 @@ export class WardScancardReportComponent implements OnInit {
   header = [["Card No.", "Name", "RFID", "Time", "Scaned By"]];
   headerEcogram = [["Card No.", "Waste Category", "Time", "Scaned By"]];
   headerWard = [["Ward No.", "Ward Length(km)", "Covered Length(km)"]];
-
+  txtDateFrom = "#txtDateFrom";
+  txtDateTo = "#txtDateTo";
+  cardList: any[] = [];
   tableData = [[]];
+  selectedWard: any;
+  cardExportList: any[] = [];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -60,6 +65,7 @@ export class WardScancardReportComponent implements OnInit {
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $("#txtDate").val(this.selectedDate);
+    this.selectedWard = "";
     this.getWards();
   }
 
@@ -68,6 +74,160 @@ export class WardScancardReportComponent implements OnInit {
     setTimeout(() => {
       $("#divLoader").hide();
     }, 4000);
+  }
+
+
+
+  openModel(content: any) {
+    if (this.selectedWard == "") {
+      this.commonService.setAlertMessage("error", "Please select ward");
+      return;
+    }
+    if (this.cardList.length == 0) {
+      this.getWardCards();
+    }
+    this.modalService.open(content, { size: 'lg' });
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
+    let height = 300;
+    let width = 400;
+    let marginTop = "0px";
+    marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+    $('div .modal-dialog-centered').css("margin-top", "26px");
+
+    $(this.txtDateFrom).val(this.toDayDate);
+    $(this.txtDateTo).val(this.toDayDate);
+  }
+
+  getWardCards() {
+    let cardInstance = this.db.object("Houses/" + this.selectedWard).valueChanges().subscribe(data => {
+      cardInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          let cardObj = data[lineNo];
+          let cardKeyArray = Object.keys(cardObj);
+          for (let j = 0; j < cardKeyArray.length; j++) {
+            this.cardList.push(cardKeyArray[j]);
+          }
+        }
+      }
+    })
+  }
+
+  getScanCardData(cardNo: any, date: any) {
+    return new Promise((resolve) => {
+      let scanObj = {};
+      let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
+      let year = this.selectedDate.split("-")[0];
+      let dbPath = "HousesCollectionInfo/" + this.selectedWard + "/" + year + "/" + monthName + "/" + date + "/" + cardNo + "/wasteCategory";
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        let wasteCategory = "";
+        if (data != null) {
+          wasteCategory = data.toString();
+        }
+        scanObj = { cardNo: cardNo, date: date, wasteCategory: wasteCategory };
+        resolve(scanObj);
+      })
+    });
+  }
+
+  exportDateRangeExcel() {
+    let dateFrom = $(this.txtDateFrom).val();
+    let dateTo = $(this.txtDateTo).val();
+    let dateRangeList = [];
+    dateRangeList.push(dateFrom);
+    this.getDatesFromDateRange(dateFrom, dateTo, dateRangeList);
+  }
+
+  getDatesFromDateRange(dateFrom: any, dateTo: any, dateRangeList: any) {
+    if (dateFrom == dateTo) {
+      let result = [];
+      // Step 2: Build objects for each card
+      this.cardList.forEach(cardNo => {
+        const obj: any = { cardNo: cardNo };
+
+        // Step 3: Add dynamic date columns
+        dateRangeList.forEach(date => {
+          obj[date] = ""; // empty initially, you can put scan status
+        });
+
+        result.push(obj);
+      });
+      const promises = [];
+      for (let i = 0; i <= this.cardList.length; i++) {
+        for (let j = 0; j < dateRangeList.length; j++) {
+          promises.push(Promise.resolve(this.getScanCardData(this.cardList[i], dateRangeList[j])));
+        }
+      }
+
+      Promise.all(promises).then((results) => {
+        console.log(results);
+        for (let i = 0; i < results.length; i++) {
+          let cardNo = results[i]["cardNo"];
+          let dat = results[i]["date"];
+          let wasteCat = results[i]["wasteCategory"];
+          let detail = result.find(item => item.cardNo == cardNo);
+          if (detail != undefined) {
+            detail[dat] = wasteCat;
+          }
+        }
+        console.log(result);
+        this.exportDateRangeScanCard(result, dateRangeList);
+
+      });
+
+    }
+    else {
+      dateFrom = this.commonService.getNextDate(dateFrom, 1);
+      dateRangeList.push(dateFrom);
+      this.getDatesFromDateRange(dateFrom, dateTo, dateRangeList);
+    }
+  }
+
+  exportDateRangeScanCard(list: any, datelist: any) {
+    if (list.length > 0) {
+      let htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Card No.";
+      htmlString += "</td>";
+      for (let i = 0; i < datelist.length; i++) {
+        htmlString += "<td t='s'>";
+        htmlString += datelist[i].split("-")[2] + "-" + datelist[i].split("-")[1] + "-" + datelist[i].split("-")[0];
+        htmlString += "</td>";
+      }
+      htmlString += "</tr>";
+      for (let i = 0; i < list.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += list[i]["cardNo"];
+        htmlString += "</td>";
+        for (let j = 0; j < datelist.length; j++) {
+          htmlString += "<td t='s'>";
+          let dat = datelist[j];
+          let detail = list.find(item => item.cardNo == list[i]["cardNo"]);
+          if (detail != undefined) {
+            let watCat = detail[dat];
+            htmlString += watCat;
+          }
+          htmlString += "</td>";
+        }
+        htmlString += "</tr>";
+      }
+
+      htmlString += "</table>";
+      let fileName = "Card Scan Report - Ward.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+    }
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
   }
 
   exportWardScanTypeList() {
@@ -379,6 +539,8 @@ export class WardScancardReportComponent implements OnInit {
   getScanDetail(wardNo: any, index: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScanDetail");
     this.showLoder();
+    this.selectedWard = wardNo;
+    this.cardList = [];
     this.clearScanCardDetail();
     if (this.isFirst == false) {
       this.setActiveClass(index);

@@ -162,7 +162,7 @@ export class CommonService {
     let list = JSON.parse(localStorage.getItem("CityDetailList"));
     let detail = list.find(item => item.city == cityName);
     if (detail != undefined) {
-      cardPrefix=detail.key;
+      cardPrefix = detail.key;
     }
 
     return cardPrefix;
@@ -179,7 +179,7 @@ export class CommonService {
       let lng = cityLatLng.split(",")[1];
       latLng.push({ lat: Number(lat), lng: Number(lng) });
     }
-      
+
 
     return latLng;
   }
@@ -1912,6 +1912,12 @@ export class CommonService {
     var parser = new DOMParser();
     var doc = parser.parseFromString(htmlString, 'text/html');
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(doc);
+
+    const headerRow = doc.querySelectorAll("td");
+    const colWidths = Array.from(headerRow).map((td: any) => {
+      return { wch: td.innerText.length + 5 };// +5 for padding
+    });
+    ws["!cols"] = colWidths;
 
     /* generate workbook and add the worksheet */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();

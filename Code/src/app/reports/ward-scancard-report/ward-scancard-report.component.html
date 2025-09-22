@@ -94,12 +94,12 @@
                         </div>
                         <div class="col-md-6 text-right d-flex justify-content-end">
                             <div style="padding-right:20px;text-align: right; ">
-                                <b >{{totalScanedCards}}</b>
+                                <b>{{totalScanedCards}}</b>
                                 <h6 style="font-size:9px;text-align:right;margin-top: 3px;">Scanned Cards</h6>
                             </div>
-                            <div style="padding-right:20px;text-align: right;"  [hidden]="cityName!='chennai'">
+                            <div style="padding-right:20px;text-align: right;" [hidden]="cityName!='chennai'">
                                 <img src="../../../assets/icons/file-export-solid.svg" alt="export-excel"
-                                    class="icon-green cursor-pointer" width="22" (click)="exportWardScanTypeList()"
+                                    class="icon-green cursor-pointer" width="22" (click)="openModel(contentExport);"
                                     style="cursor: pointer;margin-bottom:3px;" />
                                 <h6 style="font-size:9px;text-align:right">Export Excel</h6>
                             </div>
@@ -185,3 +185,37 @@
         </div>
     </div>
 </div>
+
+
+<!--Plan Dustbin Form Start-->
+<ng-template #contentExport>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Export Excel</h5>
+                <button type="button" class="close" (click)="closeModel();" style="border: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Date From</label>
+                        <input id="txtDateFrom" class="date-input" type="date">
+                    </div>                    
+                    <div class="col-md-6">
+                        <label>Date To</label>
+                        <input id="txtDateTo" class="date-input" type="date">
+                    </div>
+
+                </div>
+
+
+                <input type="button" class="btn btn-success" value="Export" (click)="exportDateRangeExcel();"
+                    style="width: 100%; height: 45px; padding-top: 4px;" />
+
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Plan Dustbin Form End-->
