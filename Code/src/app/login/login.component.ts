@@ -290,6 +290,12 @@ export class LoginComponent implements OnInit {
       else {
         localStorage.setItem("canAddWardDutyOn", "0");
       }
+      if (userDetails.canReimburseFuel != null) {
+        localStorage.setItem("canReimburseFuel", userDetails.canReimburseFuel);
+      }
+      else {
+        localStorage.setItem("canReimburseFuel", "0");
+      }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
       localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);
       localStorage.setItem("notificationMobileDataOff", userDetails.notificationMobileDataOff);

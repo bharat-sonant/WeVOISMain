@@ -121,6 +121,7 @@ export class UsersService {
               let canRemoveNotPickedDustbin=0;
               let canAccessBIDashboard=0;
               let canAddWardDutyOn=0;
+              let canReimburseFuel=0;
               if(data[key]["isDelete"]!=undefined){
                 isDelete=data[key]["isDelete"];
               }
@@ -169,6 +170,9 @@ export class UsersService {
               if(data[key]["canAddWardDutyOn"]!=undefined){
                 canAddWardDutyOn=data[key]["canAddWardDutyOn"];
               }
+              if(data[key]["canReimburseFuel"]!=undefined){
+                canReimburseFuel=data[key]["canReimburseFuel"];
+              }
              // if (data[key]["isDelete"] == "0") {
                 userList.push({
                   userKey: data[key]["userId"],
@@ -202,7 +206,8 @@ export class UsersService {
                   canUpdateDustbinPickDetail:canUpdateDustbinPickDetail,
                   canRemoveNotPickedDustbin:canRemoveNotPickedDustbin,
                   canAccessBIDashboard:canAccessBIDashboard,
-                  canAddWardDutyOn:canAddWardDutyOn
+                  canAddWardDutyOn:canAddWardDutyOn,
+                  canReimburseFuel:canReimburseFuel
                 });
               //}
             }
