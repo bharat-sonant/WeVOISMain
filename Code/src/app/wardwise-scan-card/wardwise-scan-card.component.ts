@@ -118,6 +118,7 @@ export class WardwiseScanCardComponent implements OnInit {
       data => {
         houseCollectionInstance.unsubscribe();
         if (data != null) {
+          console.log(data)
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDataFromDatabase", data);
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
@@ -147,6 +148,18 @@ export class WardwiseScanCardComponent implements OnInit {
                 this.getCardImagePath(cardNo);
               }
             }
+            setTimeout(() => {
+              let element = <HTMLElement>document.getElementById("divList");
+              element.scrollTop = 0;
+              this.rowDataList = 100;
+              this.cardFinalList = this.cardList.slice(0, this.rowDataList);
+              if (this.selectedDate != this.todayDate) {
+                if (data["ImagesData"] == null) {
+                  this.saveJSONData();
+                }
+              }
+              $(this.divMainLoader).hide();
+            }, 12000);
           }
         }
         else {
