@@ -32,14 +32,6 @@
             </div>
         </div>
     </header>
-
-
-
-
-
-
-
-
     <div class="page-content">
         <!-- <div class="row">
             <div class="col-md-12" > -->
@@ -135,6 +127,7 @@
                                     <th scope="col" class="text-left">KM</th>
                                     <th scope="col" class="text-left">GPS KM</th>
                                     <th scope="col" class="text-left">Driver Name</th>
+                                    <th scope="col" class="text-left">Reimbursement</th>
 
                                 </tr>
                             </thead>
@@ -220,6 +213,24 @@
                                             [innerHTML]="dt.empId">
                                         </div>
                                     </td>
+                                    <td class="text-left " style="vertical-align: top;">
+                                        <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                            <div *ngIf="diesel.rmb_no" class="mb-2">
+                                                <div style="width:100%; font-weight: bold;" [hidden]="diesel.fuelType==''">
+                                                    {{diesel.fuelType}}</div>
+                                                <div style="width:100%" [hidden]="diesel.rmb_no==''">
+                                                    Reimbursement No - {{diesel.rmb_no}}</div>
+                                                <div style="width:100%" [hidden]="diesel.rmb_at==''">
+                                                    At- {{diesel.rmb_at}}</div>
+                                                <div style="width:100%" [hidden]="diesel.rmb_by==''">
+                                                    By - {{diesel.rmb_by}}</div>
+                                            </div>
+                                            <button class="btn-success mb-2" *ngIf="!diesel.rmb_no && canReimburseFuel==1 " (click)="showFuelReimbursement(contentFuelReimbursement,diesel)">
+                                                Reimburse {{diesel.fuelType}}
+                                            </button>
+                                        </div>
+                                        
+                                    </td>
                                 </tr>
                             </tbody>
 
@@ -255,8 +266,6 @@
             </div>
         </div>
     </div>
-    <!-- </div>
-    </div> -->
 
     <ng-template #contentHistory>
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -307,4 +316,162 @@
         </div>
     </ng-template>
 
+    <!--Fuel Reimbursement-->
+    <ng-template #contentFuelReimbursement>
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Fuel Reimbursement</h5>
+                    <button type="button" class="btn-close" (click)="closeModel()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Images Section -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="image-card">
+                                <div class="image-title">Slip Image</div>
+                                <div class="image-container">
+                                    <img [src]="selectedFuelData?.slipImageUrl" class="img-fluid preview-image"
+                                        alt="Slip Image">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="image-card">
+                                <div class="image-title">Meter Reading Image</div>
+                                <div class="image-container">
+                                    <img [src]="selectedFuelData?.meterImageUrl" class="img-fluid preview-image"
+                                        alt="Meter Reading">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Details Section -->
+                    <div class="details-section">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="fw-bold">Fuel Type</label>
+                                    <div>{{selectedFuelData?.fuelType}}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="fw-bold">Quantity</label>
+                                    <div>{{selectedFuelData?.qty}}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="fw-bold">Amount</label>
+                                    <div>{{selectedFuelData?.amount}}</div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <!-- Reimbursement Input -->
+                        <div class="row mt-3">
+                            <div class="col-md-6 mx-auto">
+                                <div class="form-group">
+                                    <label class="fw-bold required">Reimbursement Number</label>
+                                    <input type="text" class="form-control" [(ngModel)]="reimbursementNumber"
+                                        placeholder="Enter reimbursement number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-12 mt-3">
+                        <div class="btn-footer-group">
+                            <button class="btn-cancel btn-footer" (click)="closeModel()">
+                                Cancel
+                            </button>
+                            <button class="btn-success btn-footer" (click)="saveFuelReimbursement()">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    </ng-template>
+    <!-- <div class="modal fade" id="contentFuelReimbursement" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Fuel Reimbursement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="image-card">
+                                <div class="image-title">Slip Image</div>
+                                <div class="image-container">
+                                    <img [src]="selectedFuelData?.slipImageUrl" class="img-fluid preview-image"
+                                        alt="Slip Image">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="image-card">
+                                <div class="image-title">Meter Reading Image</div>
+                                <div class="image-container">
+                                    <img [src]="selectedFuelData?.meterImageUrl" class="img-fluid preview-image"
+                                        alt="Meter Reading">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="details-section">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="fw-bold">Fuel Type</label>
+                                    <div>{{selectedFuelData?.fuelType}}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="fw-bold">Quantity</label>
+                                    <div>{{selectedFuelData?.qty}}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="fw-bold">Amount</label>
+                                    <div>{{selectedFuelData?.amount}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6 mx-auto">
+                                <div class="form-group">
+                                    <label class="fw-bold required">Reimbursement Number</label>
+                                    <input type="text" class="form-control" [(ngModel)]="reimbursementNumber"
+                                        placeholder="Enter reimbursement number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-12 mt-3">
+                        <div class="btn-footer-group">
+                            <button #closeModalBtn class="btn-cancel btn-footer" data-bs-dismiss="modal" aria-label="Close">
+                                Cancel
+                            </button>
+                            <button class="btn-success btn-footer" (click)="saveFuelReimbursement()">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
 </div>
