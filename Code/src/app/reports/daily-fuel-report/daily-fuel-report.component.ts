@@ -149,7 +149,7 @@ export class DailyFuelReportComponent implements OnInit {
     let fuelVehicle = $(this.drpFuelVehicle).val();
     let petrolPump = $(this.drpPetrolPump).val();
     let payMethod = $(this.drpPayMethod).val();
-    let usersMap = new Map(this.userList.map(item=>[item.userId.toString(), item.name]));
+    // let usersMap = new Map(this.userList.map(item=>[item.userId.toString(), item.name]));
     if (fuelVehicle == "0" && petrolPump == "0" && payMethod == "0") {
       this.vehicleList = this.allVehicleList;
     } else {
@@ -159,16 +159,16 @@ export class DailyFuelReportComponent implements OnInit {
           let dieselList = this.allVehicleList[i]["diesel"];
           let diesel = [];
           for (let j = 0; j < dieselList.length; j++) {
-            let rmb_at = '';
-            let rmb_by = '';
+            // let rmb_at = '';
+            // let rmb_by = '';
             if (dieselList[j]["fuelVehicle"] == fuelVehicle) {
-              if (dieselList[j]["rmb_at"] != null) {
-                let date = new Date(dieselList[j]["rmb_at"]);
-                rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
-              }
-              if (dieselList[j]["rmb_by"] != null) {
-                rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
-              }
+              // if (dieselList[j]["rmb_at"] != null) {
+              //   let date = new Date(dieselList[j]["rmb_at"]);
+              //   rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
+              // }
+              // if (dieselList[j]["rmb_by"] != null) {
+              //   rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
+              // }
               diesel.push({
                 key: dieselList[j].key,
                 fuelType: dieselList[j].fuelType,
@@ -182,8 +182,8 @@ export class DailyFuelReportComponent implements OnInit {
                 payMethod: dieselList[j].payMethod,
                 remark: dieselList[j].remark,
                 rmb_no:dieselList[j].rmb_no,
-                rmb_at:rmb_at,
-                rmb_by:rmb_by
+                rmb_at:dieselList[j].rmb_at,
+                rmb_by:dieselList[j].rmb_by
               });
             }
           }
@@ -204,16 +204,16 @@ export class DailyFuelReportComponent implements OnInit {
           let dieselList = filterList[i]["diesel"];
           let diesel = [];
           for (let j = 0; j < dieselList.length; j++) {
-            let rmb_at = '';
-            let rmb_by = '';
+            // let rmb_at = '';
+            // let rmb_by = '';
             if (dieselList[j]["petrolPump"] == petrolPump) {
-              if (dieselList[j]["rmb_at"] != null) {
-                let date = new Date(dieselList[j]["rmb_at"]);
-                rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
-              }
-              if (dieselList[j]["rmb_by"] != null) {
-                rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
-              }
+              // if (dieselList[j]["rmb_at"] != null) {
+              //   let date = new Date(dieselList[j]["rmb_at"]);
+              //   rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
+              // }
+              // if (dieselList[j]["rmb_by"] != null) {
+              //   rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
+              // }
               diesel.push({
                 key: dieselList[j].key,
                 fuelType: dieselList[j].fuelType,
@@ -227,8 +227,8 @@ export class DailyFuelReportComponent implements OnInit {
                 payMethod: dieselList[j].payMethod,
                 remark: dieselList[j].remark,
                 rmb_no:dieselList[j].rmb_no,
-                rmb_at:rmb_at,
-                rmb_by:rmb_by
+                rmb_at:dieselList[j].rmb_at,
+                rmb_by:dieselList[j].rmb_by
               });
             }
           }
@@ -249,16 +249,16 @@ export class DailyFuelReportComponent implements OnInit {
           let dieselList = filterList[i]["diesel"];
           let diesel = [];
           for (let j = 0; j < dieselList.length; j++) {
-            let rmb_at = '';
-            let rmb_by = '';
+            // let rmb_at = '';
+            // let rmb_by = '';
             if (dieselList[j]["payMethod"] == payMethod) {
-              if (dieselList[j]["rmb_at"] != null) {
-                let date = new Date(dieselList[j]["rmb_at"]);
-                rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
-              }
-              if (dieselList[j]["rmb_by"] != null) {
-                rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
-              }
+              // if (dieselList[j]["rmb_at"] != null) {
+              //   let date = new Date(dieselList[j]["rmb_at"]);
+              //   rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
+              // }
+              // if (dieselList[j]["rmb_by"] != null) {
+              //   rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
+              // }
               diesel.push({
                 key: dieselList[j].key,
                 fuelType: dieselList[j].fuelType,
@@ -272,8 +272,8 @@ export class DailyFuelReportComponent implements OnInit {
                 payMethod: dieselList[j].payMethod,
                 remark: dieselList[j].remark,
                 rmb_no:dieselList[j].rmb_no,
-                rmb_at:rmb_at,
-                rmb_by:rmb_by
+                rmb_at:dieselList[j].rmb_at,
+                rmb_by:dieselList[j].rmb_by
               });
             }
           }
@@ -331,9 +331,9 @@ export class DailyFuelReportComponent implements OnInit {
           }
           totalFuel += Number(dieselData[i]["qty"]);
           if (dieselData[i]["rmb_no"]) {
-            reimbursedFuel += Number(dieselData[i]["quantity"]);
+            reimbursedFuel += Number(dieselData[i]["qty"]);
           } else {
-            vendorFuel += Number(dieselData[i]["quantity"]);
+            vendorFuel += Number(dieselData[i]["qty"]);
           }
         }
       }
@@ -1412,7 +1412,7 @@ export class DailyFuelReportComponent implements OnInit {
 
     // Create reimbursement data object
     const reimbursementData = {
-      rmb_no: this.reimbursementNumber,
+      rmb_no: `ER`+ this.reimbursementNumber,
       rmb_by: userId,
       rmb_at: this.commonService.getTodayDateTime(),
     };

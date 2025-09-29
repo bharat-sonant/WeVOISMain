@@ -2296,6 +2296,7 @@ input {
     font-family: $fontGraphik;
 }
 .form-control {
+    border-radius: 0px;
     &:focus {
         border-color: #ced4da;
         // box-shadow: 0 0 0 0.25rem rgba(206, 212, 218, 0.25);

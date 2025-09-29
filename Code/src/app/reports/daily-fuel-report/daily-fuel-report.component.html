@@ -25,7 +25,35 @@
             </nav> -->
             <!-- Breadcrumb ends -->
         </div>
+        
         <div class="header-right">
+            <div class=" count-fuel-table">
+                     <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalCNG}}</h4>
+                        <p class="title-heading"> CNG</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalPetrol}}</h4>
+                        <p class="title-heading"> Petrol</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalDiesel}}</h4>
+                        <p class="title-heading"> Diesel Qty</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalFuel}}</h4>
+                        <p class="title-heading"> Total Fuel</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalAmount}}</h4>
+                        <p class="title-heading"> Fuel Amount</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.totalKm}}</h4>
+                        <p class="title-heading"> KM
+                            Running</p>
+                    </div>
+                </div>
             <div class="btn-default btn-export" (click)="exportToExcel();">
                 Export to Excel
                 <img src="../../../assets/img/iconExport.png" class="img-fluid icon-default" alt="File" width="24" />
@@ -82,7 +110,7 @@
 
                 <div class=" count-fuel-table">
 
-                    <div class="text-center">
+                    <!-- <div class="text-center">
                         <h4 class="amount-fuel"> {{fuelDetail.totalCNG}}</h4>
                         <p class="title-heading"> CNG</p>
                     </div>
@@ -106,7 +134,7 @@
                         <h4 class="amount-fuel"> {{fuelDetail.totalKm}}</h4>
                         <p class="title-heading"> KM
                             Running</p>
-                    </div>
+                    </div> -->
                     <div class="text-center">
                         <h4 class="amount-fuel"> {{fuelDetail.vendorPumpFuel}}</h4>
                         <p class="title-heading">Vendor Pump Fuel</p>
@@ -232,14 +260,14 @@
                                     <td class="text-left " style="vertical-align: top;">
                                         <div style="width:100% " *ngFor="let diesel of data.diesel ">
                                             <div *ngIf="diesel.rmb_no" class="mb-2">
-                                                <div style="width:100%; font-weight: bold;" [hidden]="diesel.fuelType==''">
-                                                    {{diesel.fuelType}}</div>
+                                                <!-- <div style="width:100%; font-weight: bold;" [hidden]="diesel.fuelType==''">
+                                                    {{diesel.fuelType}}</div> -->
                                                 <div style="width:100%" [hidden]="diesel.rmb_no==''">
                                                     Reimbursement No - {{diesel.rmb_no}}</div>
                                                 <div style="width:100%" [hidden]="diesel.rmb_at==''">
-                                                    At- {{diesel.rmb_at}}</div>
-                                                <div style="width:100%" [hidden]="diesel.rmb_by==''">
-                                                    By - {{diesel.rmb_by}}</div>
+                                                    {{diesel.rmb_by}} [{{diesel.rmb_at}}]</div>
+                                                <!-- <div style="width:100%" [hidden]="diesel.rmb_by==''">
+                                                    By - {{diesel.rmb_by}}</div> -->
                                             </div>
                                             <button class="btn-success mb-2 ms-0" *ngIf="!diesel.rmb_no && canReimburseFuel==1 " (click)="showFuelReimbursement(contentFuelReimbursement,diesel)" style="padding: 6px 10px !important;width: 140px;">
                                                 Reimburse {{diesel.fuelType}}
@@ -391,8 +419,12 @@
                             <div class="col-md-6 mx-auto">
                                 <div class="form-group">
                                     <label class="fw-bold required">Reimbursement Number</label>
-                                    <input type="text" class="form-control" [(ngModel)]="reimbursementNumber"
-                                        placeholder="Enter reimbursement number">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text" id="basic-addon1">ER-</span>
+                                        <input type="number" class="form-control" [(ngModel)]="reimbursementNumber" placeholder="Enter reimbursement number" >
+                                    </div>
+                                    <!-- <input type="text" class="form-control" [(ngModel)]="reimbursementNumber"
+                                        placeholder="Enter reimbursement number"> -->
                                 </div>
                             </div>
                         </div>
