@@ -53,6 +53,10 @@ export class DailyFuelReportComponent implements OnInit {
     totalKm: "0.000",
     totalAmount: "0.00",
     totalFuel: "0.00",
+    vendorPumpFuel: "0.00",
+    reimbursedFuel: "0.00",
+    vendorAmount: "0.00",
+    reimbursedAmount: "0.00",
   };
 
   ngOnInit() {
@@ -75,10 +79,7 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   checkPetrolPumpDetail() {
-    let instance = this.db
-      .object("Settings/FuelEntry/isApplyPetrolPumpDetail")
-      .valueChanges()
-      .subscribe((data) => {
+    let instance = this.db.object("Settings/FuelEntry/isApplyPetrolPumpDetail").valueChanges().subscribe((data) => {
         instance.unsubscribe();
         if (data != null) {
           if (data == "yes") {
@@ -92,9 +93,8 @@ export class DailyFuelReportComponent implements OnInit {
   getFuleSetting() {
     let path =
       this.commonService.fireStoragePath +
-      this.commonService.getFireStoreCity() +
-      "%2FFuelSettingData%2FfuelVehicles.json?alt=media";
-    let fuelVehiclesInstance = this.httpService.get(path).subscribe((data) => {
+      this.commonService.getFireStoreCity() + "%2FFuelSettingData%2FfuelVehicles.json?alt=media";
+      let fuelVehiclesInstance = this.httpService.get(path).subscribe((data) => {
       fuelVehiclesInstance.unsubscribe();
       if (data != null) {
         let list = JSON.parse(JSON.stringify(data));
@@ -104,9 +104,7 @@ export class DailyFuelReportComponent implements OnInit {
       }
     });
     path =
-      this.commonService.fireStoragePath +
-      this.commonService.getFireStoreCity() +
-      "%2FFuelSettingData%2FpetrolPump.json?alt=media";
+      this.commonService.fireStoragePath +this.commonService.getFireStoreCity() + "%2FFuelSettingData%2FpetrolPump.json?alt=media";
     let petrolpumpInstance = this.httpService.get(path).subscribe((data) => {
       petrolpumpInstance.unsubscribe();
       if (data != null) {
@@ -125,6 +123,12 @@ export class DailyFuelReportComponent implements OnInit {
     this.fuelDetail.totalAmount = "0.00";
     this.fuelDetail.totalKm = "0.000";
     this.fuelDetail.totalFuel = "0.00";
+
+    this.fuelDetail.vendorPumpFuel = "0.00";
+    this.fuelDetail.reimbursedFuel = "0.00";
+    this.fuelDetail.vendorAmount = "0.00";
+    this.fuelDetail.reimbursedAmount = "0.00";
+
     $(this.drpFuelVehicle).val("0");
     $(this.drpPetrolPump).val("0");
     $(this.drpPayMethod).val("0");
@@ -145,6 +149,7 @@ export class DailyFuelReportComponent implements OnInit {
     let fuelVehicle = $(this.drpFuelVehicle).val();
     let petrolPump = $(this.drpPetrolPump).val();
     let payMethod = $(this.drpPayMethod).val();
+    let usersMap = new Map(this.userList.map(item=>[item.userId.toString(), item.name]));
     if (fuelVehicle == "0" && petrolPump == "0" && payMethod == "0") {
       this.vehicleList = this.allVehicleList;
     } else {
@@ -154,7 +159,16 @@ export class DailyFuelReportComponent implements OnInit {
           let dieselList = this.allVehicleList[i]["diesel"];
           let diesel = [];
           for (let j = 0; j < dieselList.length; j++) {
+            let rmb_at = '';
+            let rmb_by = '';
             if (dieselList[j]["fuelVehicle"] == fuelVehicle) {
+              if (dieselList[j]["rmb_at"] != null) {
+                let date = new Date(dieselList[j]["rmb_at"]);
+                rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
+              }
+              if (dieselList[j]["rmb_by"] != null) {
+                rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
+              }
               diesel.push({
                 key: dieselList[j].key,
                 fuelType: dieselList[j].fuelType,
@@ -167,6 +181,9 @@ export class DailyFuelReportComponent implements OnInit {
                 petrolPump: dieselList[j].petrolPump,
                 payMethod: dieselList[j].payMethod,
                 remark: dieselList[j].remark,
+                rmb_no:dieselList[j].rmb_no,
+                rmb_at:rmb_at,
+                rmb_by:rmb_by
               });
             }
           }
@@ -187,7 +204,16 @@ export class DailyFuelReportComponent implements OnInit {
           let dieselList = filterList[i]["diesel"];
           let diesel = [];
           for (let j = 0; j < dieselList.length; j++) {
+            let rmb_at = '';
+            let rmb_by = '';
             if (dieselList[j]["petrolPump"] == petrolPump) {
+              if (dieselList[j]["rmb_at"] != null) {
+                let date = new Date(dieselList[j]["rmb_at"]);
+                rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
+              }
+              if (dieselList[j]["rmb_by"] != null) {
+                rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
+              }
               diesel.push({
                 key: dieselList[j].key,
                 fuelType: dieselList[j].fuelType,
@@ -200,6 +226,9 @@ export class DailyFuelReportComponent implements OnInit {
                 petrolPump: dieselList[j].petrolPump,
                 payMethod: dieselList[j].payMethod,
                 remark: dieselList[j].remark,
+                rmb_no:dieselList[j].rmb_no,
+                rmb_at:rmb_at,
+                rmb_by:rmb_by
               });
             }
           }
@@ -220,7 +249,16 @@ export class DailyFuelReportComponent implements OnInit {
           let dieselList = filterList[i]["diesel"];
           let diesel = [];
           for (let j = 0; j < dieselList.length; j++) {
+            let rmb_at = '';
+            let rmb_by = '';
             if (dieselList[j]["payMethod"] == payMethod) {
+              if (dieselList[j]["rmb_at"] != null) {
+                let date = new Date(dieselList[j]["rmb_at"]);
+                rmb_at = date.toLocaleDateString("en-GB", {day: "2-digit",month: "short",year: "numeric"});
+              }
+              if (dieselList[j]["rmb_by"] != null) {
+                rmb_by = usersMap.has(dieselList[j]["rmb_by"].toString()) ? usersMap.get(dieselList[j]["rmb_by"].toString()) : "";
+              }
               diesel.push({
                 key: dieselList[j].key,
                 fuelType: dieselList[j].fuelType,
@@ -233,6 +271,9 @@ export class DailyFuelReportComponent implements OnInit {
                 petrolPump: dieselList[j].petrolPump,
                 payMethod: dieselList[j].payMethod,
                 remark: dieselList[j].remark,
+                rmb_no:dieselList[j].rmb_no,
+                rmb_at:rmb_at,
+                rmb_by:rmb_by
               });
             }
           }
@@ -259,12 +300,22 @@ export class DailyFuelReportComponent implements OnInit {
     let amount = 0;
     let totalKM = 0;
 
+    let vendorFuel:any = 0;
+    let reimbursedFuel:any=0;
+    let vendorAmount:any=0;
+    let reimbursedAmount:any = 0;
+
     for (let j = 0; j < this.vehicleList.length; j++) {
       let dieselData = this.vehicleList[j]["diesel"];
       for (let i = 0; i < dieselData.length; i++) {
         if (dieselData[i]["amount"] != null) {
           amount = dieselData[i]["amount"];
           totalAmount += Number(dieselData[i]["amount"]);
+           if (dieselData[i]["rmb_no"]) {
+             reimbursedAmount += Number(dieselData[i]["amount"]);
+           } else {
+             vendorAmount += Number(dieselData[i]["amount"]);
+           }
         }
         if (dieselData[i]["fuelType"] != null) {
           fuelType = dieselData[i]["fuelType"];
@@ -279,6 +330,11 @@ export class DailyFuelReportComponent implements OnInit {
             totalDiesel += Number(dieselData[i]["qty"]);
           }
           totalFuel += Number(dieselData[i]["qty"]);
+          if (dieselData[i]["rmb_no"]) {
+            reimbursedFuel += Number(dieselData[i]["quantity"]);
+          } else {
+            vendorFuel += Number(dieselData[i]["quantity"]);
+          }
         }
       }
 
@@ -295,6 +351,11 @@ export class DailyFuelReportComponent implements OnInit {
     this.fuelDetail.totalAmount = totalAmount.toFixed(2);
     this.fuelDetail.totalFuel = totalFuel.toFixed(2);
     this.fuelDetail.totalKm = totalKM.toFixed(3);
+
+     this.fuelDetail.vendorPumpFuel = vendorFuel.toFixed(2);
+     this.fuelDetail.reimbursedFuel = reimbursedFuel.toFixed(2);
+     this.fuelDetail.vendorAmount = vendorAmount.toFixed(2);
+     this.fuelDetail.reimbursedAmount = reimbursedAmount.toFixed(2);
   }
 
   setDate(filterVal: any, type: string) {
@@ -376,19 +437,8 @@ export class DailyFuelReportComponent implements OnInit {
 
   getDiselEntryHistory(key: any) {
     this.dieselHistoryList = [];
-    let instance = this.db
-      .object(
-        "DieselEntriesData/History/" +
-          this.selectedYear +
-          "/" +
-          this.selectedMonthName +
-          "/" +
-          this.selectedDate +
-          "/" +
-          key
-      )
-      .valueChanges()
-      .subscribe((data) => {
+    let instance = this.db.object("DieselEntriesData/History/" + this.selectedYear + "/" + this.selectedMonthName +
+        "/" +this.selectedDate + "/" + key).valueChanges().subscribe((data) => {
         instance.unsubscribe();
         if (data != null) {
           let keyArray = Object.keys(data);
@@ -471,6 +521,12 @@ export class DailyFuelReportComponent implements OnInit {
     let totalCNG = 0;
     let totalAmount = 0;
     let totalFuel = 0;
+
+    let vendorFuel:any = 0;
+    let reimbursedFuel:any=0;
+    let vendorAmount:any=0;
+    let reimbursedAmount:any = 0;
+
     let usersMap = new Map(this.userList.map(item=>[item.userId.toString(), item.name]));
     let dbPath ="DieselEntriesData/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let dieselInstance = this.db.object(dbPath).valueChanges().subscribe((dieselData) => {
@@ -503,6 +559,13 @@ export class DailyFuelReportComponent implements OnInit {
                 if (dieselData[key]["amount"] != null) {
                   amount = dieselData[key]["amount"];
                   totalAmount += Number(dieselData[key]["amount"]);
+                  if(dieselData[key]["rmb_no"]){
+                    reimbursedAmount += Number(dieselData[key]["amount"]);
+                  }
+                  else{
+                    vendorAmount += Number(dieselData[key]["amount"]);
+                  }
+                 
                 }
                 if (dieselData[key]["fuelType"] != null) {
                   fuelType = dieselData[key]["fuelType"];
@@ -517,6 +580,12 @@ export class DailyFuelReportComponent implements OnInit {
                     totalDiesel += Number(dieselData[key]["quantity"]);
                   }
                   totalFuel += Number(dieselData[key]["quantity"]);
+                  if(dieselData[key]["rmb_no"]){
+                    reimbursedFuel += Number(dieselData[key]["quantity"]);
+                  }
+                  else{
+                    vendorFuel += Number(dieselData[key]["quantity"]);
+                  }
                 }
                 if (dieselData[key]["fuelVehicle"] != null) {
                   fuelVehicle = dieselData[key]["fuelVehicle"];
@@ -574,35 +643,24 @@ export class DailyFuelReportComponent implements OnInit {
           this.fuelDetail.totalPetrol = totalPetrol.toFixed(2);
           this.fuelDetail.totalAmount = totalAmount.toFixed(2);
           this.fuelDetail.totalFuel = totalFuel.toFixed(2);
+
+          this.fuelDetail.vendorPumpFuel = vendorFuel.toFixed(2);
+          this.fuelDetail.reimbursedFuel = reimbursedFuel.toFixed(2);
+          this.fuelDetail.vendorAmount = vendorAmount.toFixed(2)
+          this.fuelDetail.reimbursedAmount = reimbursedAmount.toFixed(2);
           $("#divLoader").hide();
         }
       });
   }
 
   getDailyWardKMDetail() {
-    this.besuh.saveBackEndFunctionCallingHistory(
-      this.serviceName,
-      "getDailyWardKMDetail"
-    );
-    let dbPath =
-      "DailyFuelWardKMDetail/" +
-      this.selectedYear +
-      "/" +
-      this.selectedMonthName +
-      "/" +
-      this.selectedDate;
-    let instance = this.db
-      .object(dbPath)
-      .valueChanges()
-      .subscribe((data) => {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName,"getDailyWardKMDetail");
+    let dbPath = "DailyFuelWardKMDetail/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+    let instance = this.db.object(dbPath).valueChanges().subscribe((data) => {
         instance.unsubscribe();
         if (data != null) {
           let totalKM = 0;
-          this.besuh.saveBackEndFunctionDataUsesHistory(
-            this.serviceName,
-            "getDailyWardKMDetail",
-            data
-          );
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName,"getDailyWardKMDetail",data);
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let vehicle = keyArray[i];
@@ -1336,8 +1394,8 @@ export class DailyFuelReportComponent implements OnInit {
     this.modalService.open(content, { size: "lg" });
    
     let windowHeight = $(window).height();
-    let height = 650;
-    let width = 700;
+    let height = 620;
+    let width = 600;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
 
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -1395,4 +1453,8 @@ export class fuelDetail {
   totalKm: string;
   totalAmount: string;
   totalFuel: string;
+  vendorPumpFuel:string;
+  reimbursedFuel:string;
+  vendorAmount:string;
+  reimbursedAmount:string;
 }

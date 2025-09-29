@@ -107,6 +107,22 @@
                         <p class="title-heading"> KM
                             Running</p>
                     </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.vendorPumpFuel}}</h4>
+                        <p class="title-heading">Vendor Pump Fuel</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.reimbursedFuel}}</h4>
+                        <p class="title-heading"> Reimbursed Fuel</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.vendorAmount}}</h4>
+                        <p class="title-heading"> Vendor Amount</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="amount-fuel"> {{fuelDetail.reimbursedAmount}}</h4>
+                        <p class="title-heading"> Reimbursed Amount</p>
+                    </div>
                 </div>
             </div>
             <div class="table-body">
@@ -225,7 +241,7 @@
                                                 <div style="width:100%" [hidden]="diesel.rmb_by==''">
                                                     By - {{diesel.rmb_by}}</div>
                                             </div>
-                                            <button class="btn-success mb-2" *ngIf="!diesel.rmb_no && canReimburseFuel==1 " (click)="showFuelReimbursement(contentFuelReimbursement,diesel)">
+                                            <button class="btn-success mb-2 ms-0" *ngIf="!diesel.rmb_no && canReimburseFuel==1 " (click)="showFuelReimbursement(contentFuelReimbursement,diesel)" style="padding: 6px 10px !important;width: 140px;">
                                                 Reimburse {{diesel.fuelType}}
                                             </button>
                                         </div>
