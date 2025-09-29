@@ -391,6 +391,11 @@
                                                 class="icon-red fa-solid fa-circle" width="10"
                                                 [hidden]="data.isOffline==0 || userType=='External User'" />
                                             &nbsp;<span [innerHTML]="data.duration"></span>
+                                               <input type="checkbox" *ngIf="data.duration"
+                                            [(ngModel)]="data.isVerifiedDustbinChecked"
+                                            (change)="updateVerifiedDustbins(data.dustbinId, data.planId, data.isVerifiedDustbinChecked)"
+                                            [title]="data.isVerifiedDustbinChecked ? 'Click to unverify this dustbin' : 'Click to verify this dustbin'"
+                                            style="width:14px; height:14px; margin-left:3px; vertical-align:middle; cursor:pointer; accent-color:#28a745; border-radius:4px;" />
                                         </h6>
                                     </div>
                                 </div>

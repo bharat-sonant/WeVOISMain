@@ -580,7 +580,7 @@ export class DustbinAnalysisComponent implements OnInit {
             isPicked: "0",
             isNotPickedIcon: this.checkAutoPickedValue(dustbinHistoryData, "isAutoPicked"),
             isAutoPicked: this.checkAutoPickedValue(dustbinHistoryData, "isAutoPicked"),
-            isVerifiedDustbinChecked: dustbinHistoryData.verified === 'yes' ? true : false
+            isVerifiedDustbinChecked: dustbinHistoryData && dustbinHistoryData.verified === 'yes' ? true : false
           });
           this.setPickedBins(index);
           if (this.dustbinList[index]["divClass"] != "address md-background" && firstIndexNeedtobeSelected == -1) {
@@ -1749,9 +1749,7 @@ export class DustbinAnalysisComponent implements OnInit {
     const date = this.selectedDate; // YYYY-MM-DD
     const currentDate = this.formatDate(new Date()); // today's date (YYYY-MM-DD)
 
-    // ------------------------------
-    // NOTE 1 + FALSE CASE (Analysis Update)
-    // ------------------------------
+
     const analysisPath = `DustbinData/DustbinPickHistory/${year}/${monthName}/${date}/${dustbinId}/${planId}/`;
 
     if (isChecked) {
@@ -1762,9 +1760,7 @@ export class DustbinAnalysisComponent implements OnInit {
       await this.db.object(`${analysisPath}/verified`).remove();
     }
 
-    // ------------------------------
-    // NOTE 2 (Update dustbinList value)
-    // ------------------------------
+ 
     const index = this.dustbinList.findIndex(d => d.dustbinId === dustbinId);
     if (index !== -1) {
       this.dustbinList[index].isVerifiedDustbinChecked = isChecked;
@@ -1775,10 +1771,7 @@ export class DustbinAnalysisComponent implements OnInit {
       .filter(d => d.isVerifiedDustbinChecked === true)
       .map(d => d.dustbinId)
       .join(",");
-    // ------------------------------
-    // NOTE 4 (If current date → also update in PickingPlans)
 
-    // ------------------------------
     if (date === currentDate) {
       const pickingPlanPath = `DustbinData/DustbinPickingPlans/${date}/${planId}`;
 
@@ -1789,14 +1782,27 @@ export class DustbinAnalysisComponent implements OnInit {
           // ✅ path exists → safe to update
           this.db.object(pickingPlanPath).update({ verifiedDustbin: verifiedIds });
         } else {
-          const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
-          await this.db.object(planHistoryPath).update({ verifiedDustbin: verifiedIds });
+          if (verifiedIds && verifiedIds.trim().length > 0) {
+
+            const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
+            await this.db.object(planHistoryPath).update({ verifiedDustbin: verifiedIds });
+          }
+          else {
+            const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
+            await this.db.object(`${planHistoryPath}/verifiedDustbin`).remove();
+          }
         }
       });
     }
     else {
-      const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
-      await this.db.object(planHistoryPath).update({ verifiedDustbin: verifiedIds });
+      if (verifiedIds && verifiedIds.trim().length > 0) {
+        const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
+        await this.db.object(planHistoryPath).update({ verifiedDustbin: verifiedIds });
+      }
+      else {
+        const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
+        await this.db.object(`${planHistoryPath}/verifiedDustbin`).remove();
+      }
     }
 
     this.commonService.setAlertMessage(`success`, `Dustbin ${isChecked ? "Verified" : "Unverified"} Successfully.`);

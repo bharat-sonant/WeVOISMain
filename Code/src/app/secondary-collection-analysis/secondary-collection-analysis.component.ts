@@ -81,7 +81,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
-        this.userType = localStorage.getItem("userType");
+    this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Secondary-Collection-Analysis", localStorage.getItem("userID"));
@@ -92,7 +92,6 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     );
     element.href = this.cityName + "/25B/open-depot-planing";
     this.dustbinStorageList = JSON.parse(localStorage.getItem("openDepot"));
-    console.log(this.dustbinStorageList);
     this.setPageAccessAndPermissions();
     this.setDefaultValues();
     this.getPandingAnalysis();
@@ -172,7 +171,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       else {
         this.removeUnpickedDustbinFromPlan(planId, dustbinId, historyData, dbPath);
       }
-    })
+    });
   }
 
   removeUnpickedDustbinFromPlan(planId: any, dustbinId: any, planData: any, dbPath: any) {
@@ -203,7 +202,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     let obj = {
       bins: bins,
       pickingSequence: pickingSequence
-    }
+    };
     if (bins == "") {
       this.db.object(dbPath).set(null);
       this.resetData();
@@ -288,7 +287,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
                         secondHelper: assignedPlans[planId]["secondHelper"],
                         thirdHelper: assignedPlans[planId]["thirdHelper"],
                         vehicle: assignedPlans[planId]["vehicle"]
-                      }
+                      };
                       resolve({ status: "success", data: obj });
                     }
                     else {
@@ -315,7 +314,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
                       secondHelper: assignedPlans[planId]["secondHelper"],
                       thirdHelper: assignedPlans[planId]["thirdHelper"],
                       vehicle: assignedPlans[planId]["vehicle"]
-                    }
+                    };
                     resolve({ status: "success", data: obj });
                   }
                   else {
@@ -343,7 +342,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
                   secondHelper: assignedPlans[planId]["secondHelper"],
                   thirdHelper: assignedPlans[planId]["thirdHelper"],
                   vehicle: assignedPlans[planId]["vehicle"]
-                }
+                };
                 resolve({ status: "success", data: obj });
               }
               else {
@@ -486,7 +485,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
             manualRemarks: this.checkAnalysisValues(dustbinHistoryData, "manualRemark"),
             isPicked: "0",
             imageCaptureAddress: this.checkNullValue(dustbinHistoryData, "imageCaptureAddress"),
-            latLng: this.checkLatLngValue(dustbinHistoryData, "latLng", binId)
+            latLng: this.checkLatLngValue(dustbinHistoryData, "latLng", binId),
+            isVerifiedDustbinChecked: dustbinHistoryData && dustbinHistoryData.verified === 'yes' ? true : false
           });
           this.setPickedBins(index);
 
@@ -514,7 +514,89 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
     // this.totalDustbins = binsArray.length;
   }
+  /**
+   * Format a JS Date into YYYY-MM-DD
+   */
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  /**
+   * Method for update verified dustbins when user check/uncheck the checkbox
+   * @param dustbinId 
+   * @param planId
+   * @param isChecked - true when checkbox is ticked, false when unticked
+   * @description Handles Analysis/verified updates, updates dustbinList,
+   * builds verified dustbin string, and saves it in PickingPlanHistory (and PickingPlans if current date).
+   * @author Ritik
+   * @date 29 Sep 2025
+   */
+  async updateVerifiedDustbins(dustbinId: string, planId: string, isChecked: boolean) {
+    const year = this.selectedDate.split("-")[0];
+    const monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
+    const date = this.selectedDate; // YYYY-MM-DD
+    const currentDate = this.formatDate(new Date()); // today's date (YYYY-MM-DD)
 
+
+    const analysisPath = `DustbinData/DustbinPickHistory/${year}/${monthName}/${date}/${dustbinId}/${planId}/`;
+
+    if (isChecked) {
+      // ✅ True case → set verified = "yes"
+      await this.db.object(analysisPath).update({ verified: "yes" });
+    } else {
+      // ❌ False case → remove only verified key
+      await this.db.object(`${analysisPath}/verified`).remove();
+    }
+
+
+    const index = this.dustbinList.findIndex(d => d.dustbinId === dustbinId);
+    if (index !== -1) {
+      this.dustbinList[index].isVerifiedDustbinChecked = isChecked;
+    }
+
+    // Build verified IDs string from dustbinList
+    const verifiedIds = this.dustbinList
+      .filter(d => d.isVerifiedDustbinChecked === true)
+      .map(d => d.dustbinId)
+      .join(",");
+
+    if (date === currentDate) {
+      const pickingPlanPath = `DustbinData/DustbinPickingPlans/${date}/${planId}`;
+
+      let instance = this.db.object(pickingPlanPath).valueChanges().subscribe(async (planData) => {
+        instance.unsubscribe();
+
+        if (planData != null) {
+          // ✅ path exists → safe to update
+          this.db.object(pickingPlanPath).update({ verifiedDustbin: verifiedIds });
+        } else {
+          if (verifiedIds && verifiedIds.trim().length > 0) {
+            const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
+            await this.db.object(planHistoryPath).update({ verifiedDustbin: verifiedIds });
+          }
+          else {
+            const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
+            await this.db.object(`${planHistoryPath}/verifiedDustbin`).remove();
+          }
+        }
+      });
+    }
+    else {
+      if (verifiedIds && verifiedIds.trim().length > 0) {
+
+        const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
+        await this.db.object(planHistoryPath).update({ verifiedDustbin: verifiedIds });
+      }
+      else {
+        const planHistoryPath = `DustbinData/DustbinPickingPlanHistory/${year}/${monthName}/${date}/${planId}`;
+        await this.db.object(`${planHistoryPath}/verifiedDustbin`).remove();
+      }
+    }
+
+    this.commonService.setAlertMessage(`success`, `Dustbin ${isChecked ? "Verified" : "Unverified"} Successfully.`);
+  }
   setIsOffline(dustbinHistoryData) {
     let isOffline = 0;
     if (dustbinHistoryData != null) {
@@ -777,9 +859,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   }
 
   downloadGPSImage(uri: any, address: any, latLng: any, type: any) {
-    console.log(uri);
-    console.log(address);
-    console.log(latLng);
+
     $("#ImageLoader").show();
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -1209,7 +1289,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       endTime: this.selectedDate + " " + endTime,
       startTime: this.selectedDate + " " + startTime,
       isOffline: 1
-    }
+    };
 
     let dbPath = "DustbinData/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId;
     this.db.object(dbPath).update(data);
