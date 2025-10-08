@@ -23,6 +23,8 @@ export class PaymentCollectorComponent implements OnInit {
   zoneList: any[];
   deviceList: any[];
   userList: any[];
+  selectedStatus: string = 'active';
+  filteredUserList: any[];
   collectionList: any[];
   collectionDetailList: any[];
   wardLineList: any[] = [];
@@ -174,65 +176,133 @@ export class PaymentCollectorComponent implements OnInit {
 
   getEmployee() {
     this.userList = [];
-    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
-    let userJSONInstance = this.httpService.get(path).subscribe(userJsonData => {
-      userJSONInstance.unsubscribe();
-      if (userJsonData != null) {
-        this.lastEmpId = Number(userJsonData["lastKey"]);
-        let keyArray = Object.keys(userJsonData);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let empId = keyArray[i];
-            if (empId != "lastKey") {
-              let wardNo = "";
-              let deviceNo = "";
-              let lines = "";
-              let officeEmpID = "";
-              if (userJsonData[empId]["assignedWard"] != null) {
-                wardNo = userJsonData[empId]["assignedWard"];
+    this.filteredUserList = []; // filtered list to show in table
+
+    const path =
+      this.commonService.fireStoragePath +
+      this.commonService.getFireStoreCity() +
+      "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
+
+    let userJSONInstance = this.httpService.get(path).subscribe(
+      (userJsonData) => {
+        userJSONInstance.unsubscribe();
+
+        if (userJsonData != null) {
+          this.lastEmpId = Number(userJsonData["lastKey"]);
+          let keyArray = Object.keys(userJsonData);
+
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let empId = keyArray[i];
+              if (empId != "lastKey") {
+                let wardNo = "";
+                let deviceNo = "";
+                let lines = "";
+                let officeEmpID = "";
+
+                if (userJsonData[empId]["assignedWard"] != null) {
+                  wardNo = userJsonData[empId]["assignedWard"];
+                }
+                if (userJsonData[empId]["assignedDevice"] != null) {
+                  deviceNo = userJsonData[empId]["assignedDevice"];
+                }
+                if (userJsonData[empId]["assignedLines"] != null) {
+                  lines = userJsonData[empId]["assignedLines"];
+                }
+                if (userJsonData[empId]["empId"] != null) {
+                  officeEmpID = userJsonData[empId]["empId"];
+                }
+
+                // 🔹 Push all users to main list
+                this.userList.push({
+                  empId: empId,
+                  name: userJsonData[empId]["name"],
+                  mobile: userJsonData[empId]["mobile"],
+                  isActive: userJsonData[empId]["isActive"],
+                  password: userJsonData[empId]["password"],
+                  fileName: userJsonData[empId]["fileName"],
+                  wardNo: wardNo,
+                  deviceNo: deviceNo,
+                  officeEmpID: officeEmpID,
+                  qrCodeImageUrl:
+                    this.commonService.fireStoragePath +
+                    this.commonService.getFireStoreCity() +
+                    "%2FCollectionManagement%2F" +
+                    empId +
+                    "%2F" +
+                    userJsonData[empId]["qrImage"] +
+                    "?alt=media",
+                  docImageUrl:
+                    this.commonService.fireStoragePath +
+                    this.commonService.getFireStoreCity() +
+                    "%2FCollectionManagement%2F" +
+                    empId +
+                    "%2F" +
+                    userJsonData[empId]["fileName"] +
+                    "?alt=media",
+                  collectedAmount: 0,
+                  collectionList: [],
+                  lines: lines,
+                  assignType: userJsonData[empId]["assignType"]
+                    ? userJsonData[empId]["assignType"]
+                    : "Single",
+                  wardAssignmentList: userJsonData[empId]["wardAssignmentList"]
+                    ? userJsonData[empId]["wardAssignmentList"]
+                    : {},
+                });
+
+                this.getCollectionDetail(empId);
               }
-              if (userJsonData[empId]["assignedDevice"] != null) {
-                deviceNo = userJsonData[empId]["assignedDevice"];
-              }
-              if (userJsonData[empId]["assignedLines"] != null) {
-                lines = userJsonData[empId]["assignedLines"];
-              }
-              if (userJsonData[empId]["empId"] != null) {
-                officeEmpID = userJsonData[empId]["empId"];
-              }
-              this.userList.push({
-                empId: empId,
-                name: userJsonData[empId]["name"],
-                mobile: userJsonData[empId]["mobile"],
-                isActive: userJsonData[empId]["isActive"],
-                password: userJsonData[empId]["password"],
-                fileName: userJsonData[empId]["fileName"],
-                wardNo: wardNo,
-                deviceNo: deviceNo,
-                officeEmpID: officeEmpID,
-                qrCodeImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["qrImage"] + "?alt=media",
-                docImageUrl: this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2F" + empId + "%2F" + userJsonData[empId]["fileName"] + "?alt=media",
-                collectedAmount: 0,
-                collectionList: [],
-                lines: lines,
-                assignType: userJsonData[empId]["assignType"] ? userJsonData[empId]["assignType"] : "Single",
-                wardAssignmentList: userJsonData[empId]["wardAssignmentList"] ? userJsonData[empId]["wardAssignmentList"] : {}
-              });
-              this.getCollectionDetail(empId);
             }
-            if (this.userList.length > 0) {
+
+            // ✅ Default: show only ACTIVE users on load
+            this.filteredUserList = this.userList.filter(
+              (u) => u.isActive === true
+            ).sort((a, b) => a.name.localeCompare(b.name));
+
+            // ✅ Set dropdown default to “active”
+            this.filterByStatus();
+
+            // Show first collector detail if exists
+            if (this.filteredUserList.length > 0) {
               setTimeout(() => {
-                this.showCollectionDetail(this.userList[0]["empId"], 0);
+                this.showCollectionDetail(
+                  this.filteredUserList[0]["empId"],
+                  0
+                );
               }, 600);
             }
           }
         }
+      },
+      (error) => {
+        this.lastEmpId = 100;
       }
-    }, error => {
-      this.lastEmpId = 100;
-    });
+    );
   }
 
+
+  /**
+   * @function filterByStatus
+   * @description This function is working for status based filtering of payment collectors 
+   * @param selectedStaus
+   * @param usersList
+   * @returns filtered users list
+   */
+  filterByStatus() {
+    if (this.selectedStatus === 'all') {
+      this.filteredUserList = this.userList;
+    } else if (this.selectedStatus === 'active') {
+      this.filteredUserList = this.userList.filter(u => u.isActive === true);
+    } else if (this.selectedStatus === 'inactive') {
+      this.filteredUserList = this.userList.filter(u => u.isActive === false);
+    }
+
+    // Sort alphabetically by name
+    this.filteredUserList.sort((a, b) =>
+      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+    );
+  }
 
   getLines(wardNo: any) {
     return new Promise((resolve) => {
@@ -361,6 +431,7 @@ export class PaymentCollectorComponent implements OnInit {
         detail.collectionList = collectionList;
         this.collectionData.sumTotalCollection = (Number(this.collectionData.sumTotalCollection) + totalCollectionAmount).toFixed(2);
       }
+      this.filterByStatus();
     });
 
   }
@@ -371,7 +442,7 @@ export class PaymentCollectorComponent implements OnInit {
     this.collectionData.name = "";
     this.collectionData.totalCollection = "0";
     this.collectionData.totalDays = 0;
-    let detail = this.userList.find(item => item.empId == empId);
+    let detail = this.filteredUserList.find(item => item.empId == empId);
     if (detail != undefined) {
       this.collectionData.name = detail.name;
       this.collectionData.totalCollection = Number(detail.collectedAmount).toFixed(2);
@@ -397,7 +468,7 @@ export class PaymentCollectorComponent implements OnInit {
   }
 
   setActiveClass(index: any) {
-    for (let i = 0; i < this.userList.length; i++) {
+    for (let i = 0; i < this.filteredUserList.length; i++) {
       let id = "tr" + i;
       let element = <HTMLElement>document.getElementById(id);
       let className = element.className;
@@ -407,7 +478,7 @@ export class PaymentCollectorComponent implements OnInit {
         }
       }
       if (i == index) {
-        if (this.userList[i]["isActive"] == true) {
+        if (this.filteredUserList[i]["isActive"] == true) {
           $("#tr" + i).addClass("active");
         }
       }
@@ -471,7 +542,7 @@ export class PaymentCollectorComponent implements OnInit {
         this.commonService.setAlertMessage("error", "Incorrect Employee ID !!!");
         return;
       }
-    })
+    });
   }
 
   saveDataInJSON(id: any, jsonData: any, name: any, mobile: any, password: any, empId: any, isActive: any) {
@@ -534,7 +605,7 @@ export class PaymentCollectorComponent implements OnInit {
     var byteString = atob(qrCodeImage.split(',')[1]);
 
     // separate out the mime component
-    var mimeString = qrCodeImage.split(',')[0].split(':')[1].split(';')[0]
+    var mimeString = qrCodeImage.split(',')[0].split(':')[1].split(';')[0];
 
     // write the bytes of the string to an ArrayBuffer
     var ab = new ArrayBuffer(byteString.length);
@@ -561,7 +632,7 @@ export class PaymentCollectorComponent implements OnInit {
     this.wardLineList = [];
     this.lineList = [];
     if (type == "ward") {
-      let userDetail = this.userList.find((item) => item.empId == id);
+      let userDetail = this.filteredUserList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         if (userDetail.isActive == false) {
           this.commonService.setAlertMessage("error", "This account is in-active, please active account !!!");
@@ -577,7 +648,7 @@ export class PaymentCollectorComponent implements OnInit {
       $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
       $("div .modal-dialog-centered").css("margin-top", "26px");
       $("#empID").val(id);
-      userDetail = this.userList.find((item) => item.empId == id);
+      userDetail = this.filteredUserList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         this.setWardAssignType(userDetail.assignType);
         if (userDetail.deviceNo != "") {
@@ -628,8 +699,9 @@ export class PaymentCollectorComponent implements OnInit {
           }, 100);
         }
       }
+
     } else if (type == "delete") {
-      let userDetail = this.userList.find((item) => item.empId == id);
+      let userDetail = this.filteredUserList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         if (userDetail.wardNo == null) {
           this.commonService.setAlertMessage("error", "No assignment found !!!");
@@ -647,6 +719,7 @@ export class PaymentCollectorComponent implements OnInit {
       if (id != "0") {
         $("#deleteId").val(id);
       }
+
     } else {
 
       this.modalService.open(content, { size: "lg" });
@@ -659,7 +732,7 @@ export class PaymentCollectorComponent implements OnInit {
       $("div .modal-dialog-centered").css("margin-top", "26px");
       if (id != "0") {
         $("#key").val(id);
-        let userDetail = this.userList.find((item) => item.empId == id);
+        let userDetail = this.filteredUserList.find((item) => item.empId == id);
         if (userDetail != undefined) {
           $("#txtName").val(userDetail.name);
           $("#txtPhone").val(userDetail.mobile);
@@ -678,6 +751,7 @@ export class PaymentCollectorComponent implements OnInit {
         $("#txtPassword").val("");
         $("#txtEmpId").val("");
       }
+
     }
   }
 
@@ -721,7 +795,7 @@ export class PaymentCollectorComponent implements OnInit {
     else {
       if (this.wardLineList.length > 0) {
         for (let i = 0; i < this.wardLineList.length; i++) {
-          wardAssignmentList[this.wardLineList[i]["ward"]] = this.wardLineList[i]["lines"]
+          wardAssignmentList[this.wardLineList[i]["ward"]] = this.wardLineList[i]["lines"];
         }
       }
       else {
@@ -791,6 +865,7 @@ export class PaymentCollectorComponent implements OnInit {
             this.multipleLineList = [];
             this.wardLineList = [];
             this.selectedAssignType = "Single";
+            this.filterByStatus();
             this.closeModel();
           });
         }
@@ -825,6 +900,7 @@ export class PaymentCollectorComponent implements OnInit {
             userDetail.wardAssignmentList = {};
             userDetail.assignType = "Single";
           }
+          this.filterByStatus();
         });
       }
     });

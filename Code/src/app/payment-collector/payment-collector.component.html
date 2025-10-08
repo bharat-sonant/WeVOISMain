@@ -56,6 +56,24 @@
                 <div class="card card-main-iner">
                     <div class="card-body card-body2">
                         <form>
+                            <!-- 🔹 Status Filter Dropdown -->
+                            <div style="padding: 10px;">
+                                <div
+                                    style="display:flex;align-items:center;margin:5px 0; gap:2px; justify-content: flex-start; width: 100%;">
+                                    <label for="statusFilter"
+                                        style="margin-right:8px;font-weight:600;color:#333;font-size:14px;">Status
+                                        :</label>
+                                    <select id="statusFilter"  [(ngModel)]="selectedStatus"  (change)="filterByStatus()"  name="statusFilter"
+                                        style="width:160px;border-radius:4px;border:1px solid #dee2e6;background-color:#fff;color:#333;font-size:14px;padding:5px 8px;transition:all 0.2s ease; cursor: pointer;"
+                                        onfocus="this.style.borderColor='#2c7be5';this.style.boxShadow='0 0 0 2px rgba(44,123,229,0.25)';"
+                                        onblur="this.style.borderColor='#dee2e6';this.style.boxShadow='none';">
+                                        <option value="all">All</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="table-wrapper table-one table-wrapper-one">
                                 <table class="table table-one-iner">
                                     <thead>
@@ -71,7 +89,7 @@
                                             Action</th>
                                     </thead>
                                     <tbody>
-                                        <tr class="table-row" id="tr{{i}}" *ngFor="let data of userList; let i=index"
+                                        <tr class="table-row" id="tr{{i}}" *ngFor="let data of filteredUserList; let i=index"
                                             class="{{data.trClass}}" (click)="showCollectionDetail(data.empId,i);"
                                             style="cursor: pointer;">
                                             <td class="table-data-1">{{i+1}}</td>
@@ -273,8 +291,8 @@
 
                     </div>
                     <div id="divSingleWard">
-                        <label  class="label-title">Ward</label>
-                        <div class="wrap-input-effects" required >
+                        <label class="label-title">Ward</label>
+                        <div class="wrap-input-effects" required>
                             <select id="ddlWard" class="input-green" (change)="getLines($event.target.value);">
                                 <option value={{zone.zoneNo}} *ngFor="let zone of zoneList">
                                     {{zone.zoneName}}</option>
@@ -286,8 +304,8 @@
                                     aria-hidden="true" />
                             </span>
                         </div>
-                        <label  class="label-title">Select Lines</label>
-                        <div class="wrap-input-effects" required >
+                        <label class="label-title">Select Lines</label>
+                        <div class="wrap-input-effects" required>
                             <div class="checkbox-scroll">
                                 <!-- <div class="row">
                             <div class="col-md-2 checkbox-div" *ngFor="let line of lineList">
@@ -328,12 +346,13 @@
                                 </div>
                             </div>
                             <div style="width:30%">
-                                <button type="button" class="btn btn-success submit-btn click-input" style="height:40px;margin-left: 10px; width:150px"
-                                    (click)="addMultipleWard();">Add Ward</button>
+                                <button type="button" class="btn btn-success submit-btn click-input"
+                                    style="height:40px;margin-left: 10px; width:150px" (click)="addMultipleWard();">Add
+                                    Ward</button>
                             </div>
                         </div>
                         <label class="label-title">Select Lines</label>
-                        <div class="wrap-input-effects" required >
+                        <div class="wrap-input-effects" required>
                             <div class="checkboxMultiple-scroll">
                                 <div class="line-container">
                                     <div *ngFor="let line of multipleLineList" class="line-box">
@@ -362,11 +381,11 @@
                                                 {{data.ward}}</td>
                                             <td class="markers-details">
                                                 {{data.lines}}</td>
-                                            <td class="text-center markers-details">                                               
-                                                        <img src="../../assets/icons/dustbin.svg"
-                                                        class="delete-icon cursor-pointer" alt="delete"
-                                                        (click)="deleteMultipleLineList(data.ward,'delete');"
-                                                        title="Delete Ward">
+                                            <td class="text-center markers-details">
+                                                <img src="../../assets/icons/dustbin.svg"
+                                                    class="delete-icon cursor-pointer" alt="delete"
+                                                    (click)="deleteMultipleLineList(data.ward,'delete');"
+                                                    title="Delete Ward">
                                             </td>
                                         </tr>
                                     </tbody>
