@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="col-md-3 col-lg-3 col-xl-4 main-headers">
-            Employee Penalty Report
+            Employee Penalty/Reward Report
         </div>
         <div class="col-md-3 col-lg-3 col-xl-3 text-right total-house pl-18">
             <div class="fix-home">
@@ -42,6 +42,13 @@
                             class="icon-red far fa-times-circle" width="14" /> {{penalitylDetail.totalPenality}}
                     </span><br>
                     <h6>Penalty</h6>
+                </div>
+                <div id="topReward" class="float-first ml-10 mt-0" style="width: 100px !important;">
+                    <span class="house">
+                        <img src="../../../assets/icons/check-solid.svg" alt="check-solid"
+                            class="icon-green far fa-times-circle" width="14" /> {{penalitylDetail.totalReward}}
+                    </span><br>
+                    <h6>Reward</h6>
                 </div>
             </div>
         </div>
@@ -86,7 +93,7 @@
                                     <!-- <i class="fas fa-file-export" style="color: green; font-size: 25px; cursor: pointer; float: right; margin-top: 10px;" (click)="exportexcel();"></i> -->
                                     <img src="../../../assets/icons/file-export-solid.svg" alt="file-export-solid"
                                         class="icon-green cursor-pointer" style="float: right; margin-top: 10px;"
-                                        width="25" (click)="exportexcel();" />
+                                        width="25" (click)="exportexcel();" title="Export Excel" />
                                 </div>
                             </div>
                         </div>
@@ -102,23 +109,28 @@
                                     <table id="tblPenalty" class="table table-line">
                                         <thead>
                                             <th class="br-1 td-1" style="width:100px;border:none!important;">Date</th>
+                                            <th class="br-1 td-1" style="width:100px;border:none!important;">Entry Type</th>
                                             <th class="text-left br-1" style="width:150px;border:none!important;">
                                                 Type</th>
                                             <th class="text-right br-1" style="width:100px;border:none!important;">
-                                                Penalty</th>
+                                                Amount</th>
                                             <th class="text-left br-1" style="width:200px;border:none!important;">
                                                 Name</th>
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Reason</th>
                                             <th class="text-left br-1" style="width:200px;border:none!important;">
-                                                Penalty by</th>
+                                                Entry by</th>
                                             <th class="text-left br-1" style="width:100px;border:none!important;">
-                                                Penalty on</th>
+                                                Entry on</th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of penalityList; let i=index">
                                                 <td class="td-1" style="width:100px; border-right:1px solid #dee2e6">
                                                     {{data.date}}
+                                                </td>
+                                                <td class="text-left br-1" >
+                                                    <span *ngIf="data.entryType==='Reward'" class="text-success">{{data.entryType }}</span>
+                                                    <span *ngIf="data.entryType!=='Reward'" class="text-danger">{{data.entryType}}</span>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.penaltyType}}</td>
