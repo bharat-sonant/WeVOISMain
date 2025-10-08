@@ -185,11 +185,16 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canAddWardDutyOn"))).checked = true;
         }
       }
-       if (data["canReimburseFuel"] != undefined) {
-        if (data["canReimburseFuel"] == 1) {
-          (<HTMLInputElement>(document.getElementById("canReimburseFuel"))).checked = true;
-        }
-      }
+      if (data["canReimburseFuel"] != undefined) {
+         if (data["canReimburseFuel"] == 1) {
+           (<HTMLInputElement>(document.getElementById("canReimburseFuel"))).checked = true;
+          }
+       }
+       if (data["canUploadDailySalary"] != undefined) {
+         if (data["canUploadDailySalary"] == 1) {
+           (<HTMLInputElement>(document.getElementById("canUploadDailySalary"))).checked = true;
+          }
+       }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -297,6 +302,7 @@ export class UserAddComponent implements OnInit {
     let canAccessBIDashboard: any = 0;
     let canAddWardDutyOn: any = 0;
     let canReimburseFuel: any = 0;
+    let canUploadDailySalary:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -362,6 +368,9 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canAddWardDutyOn = 1;
     element = <HTMLInputElement>document.getElementById("canReimburseFuel");
     if (element.checked == true) canReimburseFuel = 1;
+    element = <HTMLInputElement>document.getElementById("canUploadDailySalary");
+    if (element.checked == true) canUploadDailySalary = 1;
+
     if (this.userid == null) {
       let lastKey = Number(this.userJsonData["lastKey"]) + 1;
       this.userid = lastKey;
@@ -402,6 +411,7 @@ export class UserAddComponent implements OnInit {
       canAccessBIDashboard: canAccessBIDashboard,
       canAddWardDutyOn: canAddWardDutyOn,
       canReimburseFuel: canReimburseFuel,
+      canUploadDailySalary:canUploadDailySalary
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

@@ -122,6 +122,7 @@ export class UsersService {
               let canAccessBIDashboard=0;
               let canAddWardDutyOn=0;
               let canReimburseFuel=0;
+              let canUploadDailySalary=0;
               if(data[key]["isDelete"]!=undefined){
                 isDelete=data[key]["isDelete"];
               }
@@ -173,6 +174,9 @@ export class UsersService {
               if(data[key]["canReimburseFuel"]!=undefined){
                 canReimburseFuel=data[key]["canReimburseFuel"];
               }
+              if(data[key]["canUploadDailySalary"]!=undefined){
+                canUploadDailySalary=data[key]["canUploadDailySalary"];
+              }
              // if (data[key]["isDelete"] == "0") {
                 userList.push({
                   userKey: data[key]["userId"],
@@ -207,7 +211,8 @@ export class UsersService {
                   canRemoveNotPickedDustbin:canRemoveNotPickedDustbin,
                   canAccessBIDashboard:canAccessBIDashboard,
                   canAddWardDutyOn:canAddWardDutyOn,
-                  canReimburseFuel:canReimburseFuel
+                  canReimburseFuel:canReimburseFuel,
+                  canUploadDailySalary:canUploadDailySalary
                 });
               //}
             }
