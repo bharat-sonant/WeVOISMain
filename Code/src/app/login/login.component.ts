@@ -302,6 +302,12 @@ export class LoginComponent implements OnInit {
       else {
         localStorage.setItem("canUploadDailySalary", "0");
       }
+      if (userDetails.canApproveDailyWork != null) {
+        localStorage.setItem("canApproveDailyWork", userDetails.canApproveDailyWork);
+      }
+      else {
+        localStorage.setItem("canApproveDailyWork", "0");
+      }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
       localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);
       localStorage.setItem("notificationMobileDataOff", userDetails.notificationMobileDataOff);

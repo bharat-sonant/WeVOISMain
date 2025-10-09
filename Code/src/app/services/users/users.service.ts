@@ -123,6 +123,7 @@ export class UsersService {
               let canAddWardDutyOn=0;
               let canReimburseFuel=0;
               let canUploadDailySalary=0;
+              let canApproveDailyWork=0;
               if(data[key]["isDelete"]!=undefined){
                 isDelete=data[key]["isDelete"];
               }
@@ -177,6 +178,9 @@ export class UsersService {
               if(data[key]["canUploadDailySalary"]!=undefined){
                 canUploadDailySalary=data[key]["canUploadDailySalary"];
               }
+               if(data[key]["canApproveDailyWork"]!=undefined){
+                canApproveDailyWork=data[key]["canApproveDailyWork"];
+              }
              // if (data[key]["isDelete"] == "0") {
                 userList.push({
                   userKey: data[key]["userId"],
@@ -212,7 +216,8 @@ export class UsersService {
                   canAccessBIDashboard:canAccessBIDashboard,
                   canAddWardDutyOn:canAddWardDutyOn,
                   canReimburseFuel:canReimburseFuel,
-                  canUploadDailySalary:canUploadDailySalary
+                  canUploadDailySalary:canUploadDailySalary,
+                  canApproveDailyWork:canApproveDailyWork,
                 });
               //}
             }

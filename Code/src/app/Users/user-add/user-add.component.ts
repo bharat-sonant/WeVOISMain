@@ -190,11 +190,16 @@ export class UserAddComponent implements OnInit {
            (<HTMLInputElement>(document.getElementById("canReimburseFuel"))).checked = true;
           }
        }
-       if (data["canUploadDailySalary"] != undefined) {
-         if (data["canUploadDailySalary"] == 1) {
-           (<HTMLInputElement>(document.getElementById("canUploadDailySalary"))).checked = true;
-          }
-       }
+      if (data["canUploadDailySalary"] != undefined) {
+        if (data["canUploadDailySalary"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canUploadDailySalary"))).checked = true;
+        }
+      }
+      if (data["canApproveDailyWork"] != undefined) {
+        if (data["canApproveDailyWork"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canApproveDailyWork"))).checked = true;
+        }
+      }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -303,6 +308,7 @@ export class UserAddComponent implements OnInit {
     let canAddWardDutyOn: any = 0;
     let canReimburseFuel: any = 0;
     let canUploadDailySalary:any=0;
+    let canApproveDailyWork:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -370,6 +376,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canReimburseFuel = 1;
     element = <HTMLInputElement>document.getElementById("canUploadDailySalary");
     if (element.checked == true) canUploadDailySalary = 1;
+    element = <HTMLInputElement>document.getElementById("canApproveDailyWork");
+    if (element.checked == true) canApproveDailyWork = 1;
 
     if (this.userid == null) {
       let lastKey = Number(this.userJsonData["lastKey"]) + 1;
@@ -411,7 +419,8 @@ export class UserAddComponent implements OnInit {
       canAccessBIDashboard: canAccessBIDashboard,
       canAddWardDutyOn: canAddWardDutyOn,
       canReimburseFuel: canReimburseFuel,
-      canUploadDailySalary:canUploadDailySalary
+      canUploadDailySalary:canUploadDailySalary,
+      canApproveDailyWork:canApproveDailyWork,
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {
