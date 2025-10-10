@@ -156,23 +156,22 @@ export class Cms1Component implements OnInit {
   }
 
   createHelperDevice() {
-    this.addDevices(131, 85);
+    this.addDevices(208, 0);
   }
 
   addDevices(lastDevice: any, index: any) {
     index = index + 1;
     lastDevice = lastDevice + 1;
-    if (index <= 115) {
-      let key = "DummyHelper" + index;
+    if (index <= 150) {
+      let key = "DummyDriver" + index;
       const data = {
-        appType: "2",
-        lastActive: "30/05/2025 08:10",
+        appType: "1",
         name: "JAI-" + (lastDevice < 10 ? '0' : '') + lastDevice,
-        readerAppVersion: "1.0.0.8",
+        navigatorAppVersion: "3.0.0.5",
         status: "1"
       }
       console.log("JAI-" + lastDevice);
-      let dbPath = "Devices/Jaipur-Civil-Line/" + key;
+      let dbPath = "Devices/Jaipur-Kishanpole/" + key;
       this.db.object(dbPath).update(data);
       this.addDevices(lastDevice, index);
     }
@@ -180,6 +179,7 @@ export class Cms1Component implements OnInit {
       console.log("lastDevice=>" + lastDevice)
       this.db.object("Devices").update({ LastConfigurationNo: lastDevice });
     }
+    
   }
 
   setSurveyorId() {

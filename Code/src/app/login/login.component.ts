@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.setCityDetailList();
-    this.setCommonCityData();
+   // this.setCommonCityData();
     //this.setCityList();
     this.getRoles();
     this.getMessage();
@@ -73,8 +73,9 @@ export class LoginComponent implements OnInit {
       let list = [];
       for (let i = 0; i < keyArray.length; i++) {
         let key = keyArray[i];
-        list.push({ city: key, latLng: cityCommonDataJsonData[key]["latLng"] });
+        list.push({ city: key, latLng: cityCommonDataJsonData[key]["latLng"],cityLogo: cityCommonDataJsonData[key]["cityLogo"]});
         localStorage.setItem("CityCommonDataList", JSON.stringify(list));
+        console.log(list)
       }
     }, error => {
 
@@ -295,18 +296,6 @@ export class LoginComponent implements OnInit {
       }
       else {
         localStorage.setItem("canReimburseFuel", "0");
-      }
-      if (userDetails.canUploadDailySalary != null) {
-        localStorage.setItem("canUploadDailySalary", userDetails.canUploadDailySalary);
-      }
-      else {
-        localStorage.setItem("canUploadDailySalary", "0");
-      }
-      if (userDetails.canApproveDailyWork != null) {
-        localStorage.setItem("canApproveDailyWork", userDetails.canApproveDailyWork);
-      }
-      else {
-        localStorage.setItem("canApproveDailyWork", "0");
       }
       localStorage.setItem("notificationHalt", userDetails.notificationHalt);
       localStorage.setItem("haltDisableAccess", userDetails.haltDisableAccess);

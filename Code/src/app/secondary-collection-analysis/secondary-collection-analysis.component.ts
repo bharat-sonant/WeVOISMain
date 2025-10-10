@@ -595,7 +595,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       }
     }
 
-    this.commonService.setAlertMessage(`success`, `Open depot ${isChecked ? "Verified" : "Unverified"} Successfully.`);
+    this.commonService.setAlertMessage(`success`, `Open depot ${isChecked ? "verified" : "un-verified"} successfully.`);
   }
   setIsOffline(dustbinHistoryData) {
     let isOffline = 0;

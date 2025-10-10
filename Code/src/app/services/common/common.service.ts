@@ -1726,6 +1726,7 @@ export class CommonService {
 
       //const ref = this.storage.ref(path);
       const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
+      console.log(ref);
       var byteString;
       // write the bytes of the string to a typed array
 

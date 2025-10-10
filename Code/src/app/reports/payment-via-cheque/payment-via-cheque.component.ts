@@ -123,9 +123,9 @@ export class PaymentViaChequeComponent implements OnInit {
                       day = checkDate.split("-")[2];
                       monthName = this.commonService.getCurrentMonthShortName(Number(month));
                       let checkDateFormat = day + " " + monthName + " " + year;
-                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2FEntities%2F" + entity + "%2F" + date + "%2F" + dataKey[key]["image"] + "?alt=media";
+                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2FEntities%2F" + entity + "%2F" + checkDate + "%2F" + dataKey[key]["image"] + "?alt=media";
 
-                      const houseImgUrl = dataKey[key]["houseImage"] ? `${this.commonService.fireStoragePath}${this.commonService.getFireStoreCity()}%2FPaymentCollectionHistory%2FPaymentHouseImage%2F${cardNo}%2FEntities%2F${entity}%2F${date}%2F${dataKey[key]["houseImage"]}?alt=media` : ''
+                      const houseImgUrl = dataKey[key]["houseImage"] ? `${this.commonService.fireStoragePath}${this.commonService.getFireStoreCity()}%2FPaymentCollectionHistory%2FPaymentHouseImage%2F${cardNo}%2FEntities%2F${entity}%2F${checkDate}%2F${dataKey[key]["houseImage"]}?alt=media` : ''
 
                       this.chequeList.push({ key: key, cardNo: cardNo, zone: dataKey[key]["ward"], chequeNo: dataKey[key]["chequeNo"], chequeDate: dataKey[key]["chequeDate"], checkDateFormat: checkDateFormat, name: dataKey[key]["name"], bankName: dataKey[key]["bankName"], collectedBy: dataKey[key]["collectedById"], collectedByName: dataKey[key]["collectedByName"], collectedDate: date, collectedDateFormat: collectedDateFormat, amount: dataKey[key]["amount"], monthYear: dataKey[key]["monthYear"], merchantTransactionId: dataKey[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl, entityType: "subEntity", entityId: entity, houseImgUrl, houseImage: dataKey[key]["houseImage"] || '' });
                     }
@@ -366,7 +366,7 @@ export class PaymentViaChequeComponent implements OnInit {
         let month = monthYearList[i].split('-')[0];
         let year = monthYearList[i].split('-')[1];
         let dbPath = "PaymentCollectionInfo/PaymentCollectionHistory/" + cardNo + "/" + year + "/" + month;
-        this.db.object(dbPath).update({ status: "Paid",payMethod:"CHEQUE" });
+        this.db.object(dbPath).update({ status: "Paid", payMethod: "CHEQUE" });
       }
 
       const transData = {
@@ -381,9 +381,9 @@ export class PaymentViaChequeComponent implements OnInit {
         updatedBy: localStorage.getItem("userID"),
         updatedDate: this.commonService.getCurrentTimeWithSecond(),
         houseImage: detail.houseImage || '',
-        chequeNo:detail.chequeNo?detail.chequeNo:'',
-        bankName:detail.bankName?detail.bankName:'',
-        payDate:date
+        chequeNo: detail.chequeNo ? detail.chequeNo : '',
+        bankName: detail.bankName ? detail.bankName : '',
+        payDate: date
 
       }
 
@@ -408,6 +408,7 @@ export class PaymentViaChequeComponent implements OnInit {
             let keyArray = Object.keys(colectorData);
             collectorKey = keyArray.length + 1;
           }
+          collectorKey = detail.merchantTransactionId;
           const collectorData = {
             cardNo: cardNo,
             merchantTransactionId: detail.merchantTransactionId,
@@ -494,9 +495,9 @@ export class PaymentViaChequeComponent implements OnInit {
         updatedBy: localStorage.getItem("userID"),
         updatedDate: this.commonService.getCurrentTimeWithSecond(),
         houseImage: detail.houseImage || '',
-        chequeNo:detail.chequeNo?detail.chequeNo:'',
-        bankName:detail.bankName?detail.bankName:'',
-        payDate:date
+        chequeNo: detail.chequeNo ? detail.chequeNo : '',
+        bankName: detail.bankName ? detail.bankName : '',
+        payDate: date
       }
 
 
@@ -522,6 +523,7 @@ export class PaymentViaChequeComponent implements OnInit {
             let keyArray = Object.keys(colectorData);
             collectorKey = keyArray.length + 1;
           }
+          collectorKey=detail.merchantTransactionId;
           const collectorData = {
             cardNo: cardNo,
             merchantTransactionId: detail.merchantTransactionId,

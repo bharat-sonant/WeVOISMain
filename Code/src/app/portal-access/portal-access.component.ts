@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../services/common/common.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Router, } from "@angular/router";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-portal-access",
@@ -9,7 +10,7 @@ import { Router, } from "@angular/router";
   styleUrls: ["./portal-access.component.scss"],
 })
 export class PortalAccessComponent implements OnInit {
-  constructor(private commonService: CommonService, private modalService: NgbModal, public router: Router) { }
+  constructor(private commonService: CommonService, private modalService: NgbModal, public router: Router, public httpService: HttpClient) { }
   accessCity: any[] = [];
   citySelectionList: any[] = [];
   jaipurCityList: any[] = [];
@@ -19,30 +20,57 @@ export class PortalAccessComponent implements OnInit {
     $("#divMainContent").css("width", "calc(100% - 1px)");
     this.commonService.setStoragePath(localStorage.getItem("cityName"));
     this.accessCity = JSON.parse(localStorage.getItem("accessCity"));
-    this.getCityAccess();
-
+    this.setCommonCityData();
   }
 
-  getCityAccess() {
-    let cityList = JSON.parse(localStorage.getItem("cityList"));
+  setCommonCityData() {
+    const path = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Common%2FCityCommonData.json?alt=media";
+    let cityCommonDataJSONInstance = this.httpService.get(path).subscribe(cityCommonDataJsonData => {
+      cityCommonDataJSONInstance.unsubscribe();
+      let keyArray = Object.keys(cityCommonDataJsonData);
+      let list = [];
+      for (let i = 0; i < keyArray.length; i++) {
+        let key = keyArray[i];
+        let cityLogoURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityImages%2F" + cityCommonDataJsonData[key]["cityLogo"] + "?alt=media";
+        list.push({ city: key, latLng: cityCommonDataJsonData[key]["latLng"], cityLogo: cityLogoURL });
+      }
+      console.log(list);
+      localStorage.setItem("CityCommonDataList", JSON.stringify(list));
+      if (list.length > 0) {
+        this.getCityAccess(list);
+      }
+
+    }, error => {
+
+    });
+  }
+
+  getCityAccess(cityList) {
     let isJaipurCity = false;
     for (let i = 0; i < this.accessCity.length; i++) {
       let detail = cityList.find(item => item.city == this.accessCity[i]["city"]);
       if (detail != undefined) {
-        if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar" || this.accessCity[i]["city"] == "jaipur-civil-line" || this.accessCity[i]["city"] == "jaipur-kishanpole") {
-          isJaipurCity = true;
-          this.jaipurCityList.push({ city: detail.city, cityLogo: detail.cityLogo ? detail.cityLogo : "", name: detail.cityName });
-        }
-        else {
-          this.citySelectionList.push({ city: detail.city, cityLogo: detail.cityLogo ? detail.cityLogo : "", name: detail.cityName });
+        let cityDetailList = JSON.parse(localStorage.getItem("CityDetailList"));
+        let cityDetail = cityDetailList.find(item => item.city == this.accessCity[i]["city"]);
+        if (cityDetail != undefined) {
+          let cityName = cityDetail.cityName;
+          if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar" || this.accessCity[i]["city"] == "jaipur-civil-line" || this.accessCity[i]["city"] == "jaipur-kishanpole") {
+            isJaipurCity = true;
+            this.jaipurCityList.push({ city: detail.city, cityLogo: detail.cityLogo ? detail.cityLogo : "", name: cityName });
+          }
+          else {
+            if (detail.city != "test" && detail.city != "devtest") {
+              this.citySelectionList.push({ city: detail.city, cityLogo: detail.cityLogo ? detail.cityLogo : "", name: cityName });
+            }
+          }
         }
       }
-
     }
     if (isJaipurCity == true) {
       this.citySelectionList.push({ city: "", cityLogo: "../../../assets/images/jaipur icon.png", name: "Jaipur D2D" });
     }
-    this.citySelectionList=this.citySelectionList.sort((a, b) => b.name < a.name ? 1 : -1);
+    this.citySelectionList = this.citySelectionList.sort((a, b) => b.name < a.name ? 1 : -1);
+    console.log(this.citySelectionList)
 
   }
 
@@ -64,7 +92,6 @@ export class PortalAccessComponent implements OnInit {
 
 
   openCityModel(content: any) {
-    console.log(content)
     this.modalService.open(content, { size: "lg" });
     $("div .modal-content").css("background", "transparent").css("box-shadow", "none").css("border", "none");
     // let windowHeight = $(window).height();

@@ -759,13 +759,16 @@ export class PaymentCollectorComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
+  
   saveWard() {
     let empID = $("#empID").val();
     let lines = "";
     let wardAssignmentList = {};
-    if ($("#ddlDevice").val() == "0") {
-      this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
-      return;
+    if (this.cityName != "jodhpur") {
+      if ($("#ddlDevice").val() == "0") {
+        this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
+        return;
+      }
     }
     if (this.selectedAssignType == "Single") {
       if ($("#ddlWard").val() == "0") {
@@ -795,7 +798,7 @@ export class PaymentCollectorComponent implements OnInit {
     else {
       if (this.wardLineList.length > 0) {
         for (let i = 0; i < this.wardLineList.length; i++) {
-          wardAssignmentList[this.wardLineList[i]["ward"]] = this.wardLineList[i]["lines"];
+          wardAssignmentList[this.wardLineList[i]["ward"]] = this.wardLineList[i]["lines"]
         }
       }
       else {
@@ -809,12 +812,13 @@ export class PaymentCollectorComponent implements OnInit {
       let wardNo = "";
 
       wardNo = $("#ddlWard").val().toString();
-
-      let list = this.userList.filter(item => item.empId != empID);
-      let detail = list.find(item => item.deviceNo == deviceNo);
-      if (detail != undefined) {
-        this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
-        return;
+      if (deviceNo != "0") {
+        let list = this.userList.filter(item => item.empId != empID);
+        let detail = list.find(item => item.deviceNo == deviceNo);
+        if (detail != undefined) {
+          this.commonService.setAlertMessage("error", "Sorry ! you have assigned this device to " + detail.name + " !!!");
+          return;
+        }
       }
       let element = <HTMLInputElement>document.getElementById("chkRemove");
       if (element.checked == true) {
@@ -865,7 +869,6 @@ export class PaymentCollectorComponent implements OnInit {
             this.multipleLineList = [];
             this.wardLineList = [];
             this.selectedAssignType = "Single";
-            this.filterByStatus();
             this.closeModel();
           });
         }
@@ -874,6 +877,7 @@ export class PaymentCollectorComponent implements OnInit {
 
   }
 
+  
   removeAssignment() {
     let empID = $("#deleteId").val();
     const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
@@ -900,11 +904,11 @@ export class PaymentCollectorComponent implements OnInit {
             userDetail.wardAssignmentList = {};
             userDetail.assignType = "Single";
           }
-          this.filterByStatus();
         });
       }
     });
   }
+
   exportToExcel() {
     if (this.collectionList.length > 0) {
       let htmlString = "";

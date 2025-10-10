@@ -132,13 +132,13 @@ export class PaymentViaNeftReportComponent implements OnInit {
                       day = transactionDateFormat.split("-")[2];
                       monthName = this.commonService.getCurrentMonthShortName(Number(month));
                       transactionDateFormat = day + " " + monthName + " " + year;
-                      let neftDateFormat = dateData[key]["neftDate"];
-                      month = neftDateFormat.split("-")[1];
-                      year = neftDateFormat.split("-")[0];
-                      day = neftDateFormat.split("-")[2];
+                      let neftDate = dateData[key]["neftDate"];
+                      month = neftDate.split("-")[1];
+                      year = neftDate.split("-")[0];
+                      day = neftDate.split("-")[2];
                       monthName = this.commonService.getCurrentMonthShortName(Number(month));
-                      neftDateFormat = day + " " + monthName + " " + year;
-                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2F" + entityCollectedDate + "%2F" + dateData[key]["image"] + "?alt=media";
+                      let neftDateFormat = day + " " + monthName + " " + year;
+                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaNEFTImage%2F" + cardNo + "%2FEntities%2F"+entityKey+"%2F" + neftDate + "%2F" + dateData[key]["image"] + "?alt=media";
                       let transactionId = "NA";
                       if (dateData[key]["transactionId"] != null) {
                         transactionId = dateData[key]["transactionId"];

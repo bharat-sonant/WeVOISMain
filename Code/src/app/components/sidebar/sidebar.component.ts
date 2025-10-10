@@ -329,56 +329,58 @@ export class SidebarComponent implements OnInit {
       let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
       if (userAccessList != null) {
         for (let i = 0; i < userAccessList.length; i++) {
-          if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid && userAccessList[i]["city"] == this.cityName) {
-            let url = "javaScript:void(0);";
-            let isOuterUrl = "no";
-            if (userAccessList[i]["url"].includes("https")) {
-              isOuterUrl = "yes";
-              let newUrl = userAccessList[i]["url"].split("https://mainportal-react.web.app/userId/")[1];
+          if (userAccessList[i]["city"] != "test") {
+            if (userAccessList[i]["parentId"] == 0 && userAccessList[i]["userId"] == this.userid && userAccessList[i]["city"] == this.cityName) {
+              let url = "javaScript:void(0);";
+              let isOuterUrl = "no";
+              if (userAccessList[i]["url"].includes("https")) {
+                isOuterUrl = "yes";
+                let newUrl = userAccessList[i]["url"].split("https://mainportal-react.web.app/userId/")[1];
 
-              url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
+                url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
 
-              if (userAccessList[i]["url"].includes("dehradun-pmc")) {
-                if (this.isDehradun == true) {
-                  let userType = "1";
-                  if (localStorage.getItem("userType") != "Internal User") {
-                    userType = "2";
+                if (userAccessList[i]["url"].includes("dehradun-pmc")) {
+                  if (this.isDehradun == true) {
+                    let userType = "1";
+                    if (localStorage.getItem("userType") != "Internal User") {
+                      userType = "2";
+                    }
+                    url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + userType + "/" + newUrl;
+
+                    this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
                   }
-                  url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + userType + "/" + newUrl;
-
+                }
+                else {
                   this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
                 }
               }
               else {
-                this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
-              }
-            }
-            else {
-              if (userAccessList[i]["url"].includes("task-manager")) {
-                if (localStorage.getItem("officeAppUserId") != null) {
+                if (userAccessList[i]["url"].includes("task-manager")) {
+                  if (localStorage.getItem("officeAppUserId") != null) {
+                    this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
+                  }
+                }
+                else if (userAccessList[i]["url"].includes("/cms/22")) {
+                  if (this.isDehradun == true) {
+                    this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
+                  }
+                }
+                else if (userAccessList[i]["url"].includes("/cms/21")) {
+                  if (this.cityName == "jaipur-greater" || this.cityName == "dehradun" || this.cityName == "test") {
+                    this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
+                  }
+                }
+                else if (userAccessList[i]["url"].includes("deharadun-pmc")) {
+                  if (this.isDehradun == true) {
+                    this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
+                  }
+                }
+                else {
                   this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
                 }
               }
-              else if (userAccessList[i]["url"].includes("/cms/22")) {
-                if (this.isDehradun == true) {
-                  this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
-                }
-              }
-              else if (userAccessList[i]["url"].includes("/cms/21")) {
-                if (this.cityName == "jaipur-greater" || this.cityName == "dehradun" || this.cityName == "test") {
-                  this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
-                }
-              }
-              else if (userAccessList[i]["url"].includes("deharadun-pmc")) {
-                if (this.isDehradun == true) {
-                  this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
-                }
-              }
-              else {
-                this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + "/" + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
-              }
-            }
 
+            }
           }
         }
       }
@@ -821,18 +823,26 @@ export class SidebarComponent implements OnInit {
       $("#popUpCityName").html(this.commonService.getCityName(this.cityName));
     }
     let isBaseCity = false;
-    let cityList = JSON.parse(localStorage.getItem("cityList"));
+    let cityList = JSON.parse(localStorage.getItem("CityCommonDataList"));
     let isJaipurCity = false;
     for (let i = 0; i < this.accessCity.length; i++) {
       let detail = cityList.find(item => item.city == this.accessCity[i]["city"]);
       if (detail != undefined) {
-        if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar" || this.accessCity[i]["city"] == "jaipur-civil-line" || this.accessCity[i]["city"] == "jaipur-kishanpole") {
-          isJaipurCity = true;
-          this.jaipurCityList.push({ city: detail.city, cityLogo: detail.cityLogo ? detail.cityLogo : "", name: detail.cityName });
-        }
-        else {
-          isBaseCity = true;
-          this.citySelectionList.push({ city: detail.city, cityLogo: detail.cityLogo ? detail.cityLogo : "", name: detail.cityName });
+
+        let cityDetailList = JSON.parse(localStorage.getItem("CityDetailList"));
+        let cityDetail = cityDetailList.find(item => item.city == this.accessCity[i]["city"]);
+        if (cityDetail != undefined) {
+          let cityName = cityDetail.cityName;
+          if (this.accessCity[i]["city"] == "jaipur-jagatpura" || this.accessCity[i]["city"] == "jaipur-jhotwara" || this.accessCity[i]["city"] == "jaipur-malviyanagar" || this.accessCity[i]["city"] == "jaipur-mansarovar" || this.accessCity[i]["city"] == "jaipur-murlipura" || this.accessCity[i]["city"] == "jaipur-sanganer" || this.accessCity[i]["city"] == "jaipur-vidhyadhar" || this.accessCity[i]["city"] == "jaipur-civil-line" || this.accessCity[i]["city"] == "jaipur-kishanpole") {
+            isJaipurCity = true;
+            this.jaipurCityList.push({ city: detail.city, cityLogo: detail.cityLogo ? detail.cityLogo : "", name: cityName });
+          }
+          else {
+            if (detail.city != "test" && detail.city != "devtest") {
+              isBaseCity = true;
+              this.citySelectionList.push({ city: detail.city, cityLogo: detail.cityLogo ? detail.cityLogo : "", name: cityName });
+            }
+          }
         }
       }
 

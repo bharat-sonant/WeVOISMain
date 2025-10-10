@@ -218,7 +218,7 @@ export class RealtimeMonitoringComponent implements OnInit {
       localStorage.setItem("employeeDetail", null);
     }
     if (this.cityName == "jodhpur") {
-      this.hiddenWardList = [{ zone: "31-R1" }, { zone: "31-R2" }, { zone: "34-R1" }, { zone: "34-R2" }, { zone: "36-R1" }, { zone: "36-R2" }, { zone: "37-R1" }, { zone: "37-R2" }, { zone: "33-R1" }, { zone: "33-R2" }, { zone: "39" }];
+      this.hiddenWardList = [{ zone: "31-R1" }, { zone: "31-R2" }, { zone: "34-R1" }, { zone: "34-R2" }, { zone: "36-R1" }, { zone: "36-R2" }, { zone: "37-R1" }, { zone: "37-R2" }, { zone: "33-R1" }, { zone: "33-R2" }, { zone: "39" }, { zone: "31" }, { zone: "32" }, { zone: "33" }, { zone: "34" }];
     }
     if (this.cityName == "ajmer") {
       this.hiddenWardList = [{ zone: "21" }, { zone: "27" }];

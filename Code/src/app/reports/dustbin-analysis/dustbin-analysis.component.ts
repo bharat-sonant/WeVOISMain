@@ -1805,7 +1805,7 @@ export class DustbinAnalysisComponent implements OnInit {
       }
     }
 
-    this.commonService.setAlertMessage(`success`, `Dustbin ${isChecked ? "Verified" : "Unverified"} Successfully.`);
+    this.commonService.setAlertMessage(`success`, `Dustbin ${isChecked ? "verified" : "un-verified"} Ssuccessfully.`);
   }
 
 

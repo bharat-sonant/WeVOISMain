@@ -26,6 +26,7 @@ export class RemarkReportComponent implements OnInit {
   db: any;
   cityName: any;
   serviceName = "remark-report";
+  portalUserList:any[]=[];
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -35,6 +36,7 @@ export class RemarkReportComponent implements OnInit {
     $('#txtDate').val(this.selectedDate);
     this.currentMonthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     this.currentYear = new Date().getFullYear();
+    this.portalUserList = JSON.parse(localStorage.getItem("webPortalUserList"));
     this.getZoneList();
     this.selectedZone = this.zoneList[1]["zoneNo"];
     this.selectedCategory = "0";
@@ -130,22 +132,13 @@ export class RemarkReportComponent implements OnInit {
                   else if (topicId == "6") {
                     topic = "General";
                   }
-                  this.remarkList.push({ wardNo: wardNo, wardName: wardNo, topic: topic, category: Data[j]["category"], time: Data[j]["time"], remark: Data[j]["remark"], user: "", userId: Data[j]["userId"] });
-                  dbPath = "Users";
-                  let userInfoData = this.db.list(dbPath).valueChanges().subscribe(
-                    userData => {
-                      if (userData.length > 0) {
-                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCategoryRemark", userData);
-                        for (let usr = 0; usr < userData.length; usr++) {
-                          for (let index = 0; index < this.remarkList.length; index++) {
-                            if (userData[usr]["userId"] == this.remarkList[index]["userId"]) {
-                              this.remarkList[index]["user"] = userData[usr]["name"];
-                            }
-                          }
-                        }
-                      }
-                      userInfoData.unsubscribe();
-                    });
+
+                  let name="";
+                  let detail=this.portalUserList.find(item=>item.userId==Data[j]["userId"]);
+                  if(detail!=undefined){
+                    name=detail.name;
+                  }
+                  this.remarkList.push({ wardNo: wardNo, wardName: wardNo, topic: topic, category: Data[j]["category"], time: Data[j]["time"], remark: Data[j]["remark"], user: name, userId: Data[j]["userId"] });
                 }
               }
             }
@@ -190,29 +183,19 @@ export class RemarkReportComponent implements OnInit {
                 else if (topicId == "6") {
                   topic = "General";
                 }
+                let name="";
+                  let detail=this.portalUserList.find(item=>item.userId==Data[j]["userId"]);
+                  if(detail!=undefined){
+                    name=detail.name;
+                  }
                 if (this.selectedCategory == "0") {
-                  this.remarkList.push({ wardNo: wardNo, wardName: wardNo, topic: topic, category: Data[j]["category"], time: Data[j]["time"], remark: Data[j]["remark"], user: "", userId: Data[j]["userId"] });
+                  this.remarkList.push({ wardNo: wardNo, wardName: wardNo, topic: topic, category: Data[j]["category"], time: Data[j]["time"], remark: Data[j]["remark"], user: name, userId: Data[j]["userId"] });
                 }
                 else {
                   if (Data[j]["category"] == this.selectedCategory) {
-                    this.remarkList.push({ wardNo: wardNo, wardName: wardNo, topic: topic, category: Data[j]["category"], time: Data[j]["time"], remark: Data[j]["remark"], user: "", userId: Data[j]["userId"] });
+                    this.remarkList.push({ wardNo: wardNo, wardName: wardNo, topic: topic, category: Data[j]["category"], time: Data[j]["time"], remark: Data[j]["remark"], user: name, userId: Data[j]["userId"] });
                   }
                 }
-                dbPath = "Users";
-                let userInfoData = this.db.list(dbPath).valueChanges().subscribe(
-                  userData => {
-                    if (userData.length > 0) {
-                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRemark", userData);
-                      for (let usr = 0; usr < userData.length; usr++) {
-                        for (let index = 0; index < this.remarkList.length; index++) {
-                          if (userData[usr]["userId"] == this.remarkList[index]["userId"]) {
-                            this.remarkList[index]["user"] = userData[usr]["name"];
-                          }
-                        }
-                      }
-                    }
-                    userInfoData.unsubscribe();
-                  });
               }
             }
             remarkData.unsubscribe();
