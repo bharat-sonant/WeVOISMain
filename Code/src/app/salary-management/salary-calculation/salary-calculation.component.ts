@@ -110,7 +110,7 @@ export class SalaryCalculationComponent implements OnInit {
             this.wardWagesList.push({ date: date, timestamp: timestamp, wages: wages });
           }
         }
-        this.wardWagesList = this.commonService.transformNumeric(this.wardWagesList, "-timestamp");
+        this.wardWagesList.sort((a, b) => Number(b.timestamp) > Number(a.timestamp) ? 1 : -1);
       }
       // this.getEmployee();
     }, error => {
@@ -143,12 +143,12 @@ export class SalaryCalculationComponent implements OnInit {
           let dateOfLeave = list[i]["dateOfLeave"] ? list[i]["dateOfLeave"] : "";
           let salaryType = list[i]["salaryType"];
           let status = list[i]["status"];
-          let designation=list[i]["designation"];
-          if(designation=="Driver"){
-            designation="Transportation Executive";
+          let designation = list[i]["designation"];
+          if (designation == "Driver") {
+            designation = "Transportation Executive";
           }
-          else if(designation=="Helper"){
-            designation="Service Executive";
+          else if (designation == "Helper") {
+            designation = "Service Executive";
           }
           let isSalaried = false;
           if (salaryType == "salaried") {
@@ -191,7 +191,7 @@ export class SalaryCalculationComponent implements OnInit {
       this.salaryList = this.employeeList.filter(item => item.designation == filterVal);
       this.salaryList = this.salaryList.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
     }
-   // this.getSalary();
+    // this.getSalary();
   }
 
   async getSalary() {
@@ -281,34 +281,38 @@ export class SalaryCalculationComponent implements OnInit {
                         }
                       }
                     }
-                    if (new Date(monthDate) >= new Date(this.getDate())) {
-                      if (this.wardWagesList.length > 0) {
-                        for (let k = 0; k < this.wardWagesList.length; k++) {
-                          let wageDate = this.wardWagesList[k]["date"];
-                          if (new Date(monthDate) >= new Date(wageDate)) {
-                            let wagesList = this.wardWagesList[k]["wages"];
-                            let wageDetail = wagesList.find(item => item.ward == ward);
-                            if (wageDetail != undefined) {
-                              if (isFirstZone == true) {
-                                wages = 200;
+                    //  if (new Date(monthDate) >= new Date(this.getDate())) {
+
+
+                    if (this.wardWagesList.length > 0) {
+                      for (let k = 0; k < this.wardWagesList.length; k++) {
+                        let wageDate = this.wardWagesList[k]["date"];
+
+                        if (new Date(monthDate) >= new Date(wageDate)) {
+                          let wagesList = this.wardWagesList[k]["wages"];
+                          let wageDetail = wagesList.find(item => item.ward === ward);
+                          if (wageDetail != undefined) {
+                            if (isFirstZone === true) {
+                              wages = 200;
+                            }
+                            else {
+                              if (salaryDetail.designation.trim() === "Transportation Executive") {
+                                wages = wageDetail.driver;
                               }
                               else {
-                                if (salaryDetail.designation == "Driver") {
-                                  wages = wageDetail.driver;
-                                }
-                                else {
-                                  wages = wageDetail.helper;
-                                }
-                              }
-                              if (!ward.includes["BinLifting"] && !ward.includes["GarageWork "]) {
-                                isFirstZone = true;
+                                wages = wageDetail.helper;
                               }
                             }
-                            k = this.wardWagesList.length;
+                            if (!ward.includes["BinLifting"] && !ward.includes["GarageWork "]) {
+                              isFirstZone = true;
+                            }
                           }
+                          k = this.wardWagesList.length;
                         }
                       }
                     }
+
+                    //}
 
                     if (new Date(this.commonService.setTodayDate() + " " + inTime) > new Date(this.commonService.setTodayDate() + " " + outTime)) {
                       let dbPath = "WasteCollectionInfo/" + ward + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate + "/Summary/lastLineCompletedOn";
@@ -326,14 +330,6 @@ export class SalaryCalculationComponent implements OnInit {
                         if (zoneDetail != undefined) {
                           this.getWorkPercentage(empId, ward, monthDate, inTime, outTime);
                         }
-                        for (let k = 0; k < workDetail.length; k++) {
-                          totalWeges += Number(workDetail[k]["wages"]);
-                        }
-                        salaryDetail[day] = workDetail;
-                        salaryDetail[totalDaySalary] = totalWeges;
-                        salaryDetail.salary += totalWeges;
-                        this.salarySummary.salary = (Number(this.salarySummary.salary) + totalWeges).toFixed(2);
-                        this.getTotalSalaryFooter(index, totalWeges);
                       });
                     }
                     else {
@@ -346,18 +342,18 @@ export class SalaryCalculationComponent implements OnInit {
                       if (zoneDetail != undefined) {
                         this.getWorkPercentage(empId, ward, monthDate, inTime, outTime);
                       }
-                      for (let k = 0; k < workDetail.length; k++) {
-                        totalWeges += Number(workDetail[k]["wages"]);
-                      }
-                      salaryDetail[day] = workDetail;
-                      salaryDetail[totalDaySalary] = totalWeges;
-                      salaryDetail.salary += totalWeges;
-                      this.salarySummary.salary = (Number(this.salarySummary.salary) + totalWeges).toFixed(2);
-                      this.getTotalSalaryFooter(index, totalWeges);
+
                     }
                   }
                 }
-
+                for (let k = 0; k < workDetail.length; k++) {
+                  totalWeges += Number(workDetail[k]["wages"]);
+                }
+                salaryDetail[day] = workDetail;
+                salaryDetail[totalDaySalary] = totalWeges;
+                salaryDetail.salary += totalWeges;
+                this.salarySummary.salary = (Number(this.salarySummary.salary) + totalWeges).toFixed(2);
+                this.getTotalSalaryFooter(index, totalWeges);
               }
             }
           }
@@ -408,7 +404,7 @@ export class SalaryCalculationComponent implements OnInit {
           let salaryDetail = this.salaryList.find(item => item.empId == empId);
           if (salaryDetail != undefined) {
             let day = "day" + Number(monthDate.split('-')[2]);
-            let workDetailList = salaryDetail[day]?salaryDetail[day]:[];
+            let workDetailList = salaryDetail[day] ? salaryDetail[day] : [];
             if (workDetailList.length > 0) {
               for (let i = 0; i < workDetailList.length; i++) {
                 if (workDetailList[i]["ward"] == ward) {
@@ -523,10 +519,10 @@ export class SalaryCalculationComponent implements OnInit {
     this.selectedYear = filterVal;
     $(this.ddlRoles).val("0");
     $(this.ddlMonth).val("0");
-    this.salaryList=[];
+    this.salaryList = [];
     this.clearSalary();
     if (filterVal != "0") {
-     // this.getEmployee();
+      // this.getEmployee();
     }
   }
 

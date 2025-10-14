@@ -35,7 +35,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
   canUpdateOpendepotPickDetail: any;
   canRemoveNotPickedDustbin: any;
   dustbinStorageList: any[] = [];
-  userType: any;
+  public userType: any;
   binDetail: dustbinDetails = {
     binId: "",
     filledTopViewImageUrl: "",

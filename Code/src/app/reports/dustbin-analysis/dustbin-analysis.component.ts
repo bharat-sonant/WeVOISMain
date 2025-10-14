@@ -29,7 +29,7 @@ export class DustbinAnalysisComponent implements OnInit {
   imageNotAvailablePath = "../assets/img/img-not-available.png";
   maxSlideCount: any;
   cityName: any;
-  userType: any;
+  public userType: any;
   isShowData: any;
   isShowActualPicked: any;
   db: any;

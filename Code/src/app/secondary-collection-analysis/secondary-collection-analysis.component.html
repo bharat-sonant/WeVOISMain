@@ -391,7 +391,7 @@
                                                 class="icon-red fa-solid fa-circle" width="10"
                                                 [hidden]="data.isOffline==0 || userType=='External User'" />
                                             &nbsp;<span [innerHTML]="data.duration"></span>
-                                               <input type="checkbox" *ngIf="data.duration"
+                                               <input type="checkbox" *ngIf="data.duration"  [hidden]="userType=='External User'"
                                             [(ngModel)]="data.isVerifiedDustbinChecked"
                                             (change)="updateVerifiedDustbins(data.dustbinId, data.planId, data.isVerifiedDustbinChecked)"
                                             [title]="data.isVerifiedDustbinChecked ? 'Click to unverify this dustbin' : 'Click to verify this dustbin'"
