@@ -317,7 +317,7 @@ export class NonSalariedCalculationComponent implements OnInit {
                                 wages = 200;
                               }
                               else {
-                                if (salaryDetail.designation == "Driver") {
+                                if (salaryDetail.designation == "Transportation Executive") {
                                   wages = wageDetail.driver;
                                 }
                                 else {
