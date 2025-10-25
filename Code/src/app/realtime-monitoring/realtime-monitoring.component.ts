@@ -233,7 +233,18 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.toDayDate.toString().split("-")[1]) - 1);
     this.currentYear = new Date().getFullYear();
-    this.allZones = this.mapService.getZones(this.toDayDate);
+    let zones = this.mapService.getZones(this.toDayDate);
+    this.allZones = zones.reduce((acc, val) => {
+      if (
+        !val.zoneNo.includes("Service") &&
+        !val.zoneNo.includes("Support") &&
+        !val.zoneName.includes("Service") &&
+        !val.zoneName.includes("Support")
+      ) {
+        acc.push(val);
+      }
+      return acc;
+    }, []);
     this.setMap();
     this.getpeopleAtWork();
     this.getGarageWorkDutyOn();
