@@ -93,7 +93,34 @@ export class HouseMarkingComponent {
     totalRemovedMarkersCount: "0",
     lineApprovedBy: "",
     lineApprovedDate: "",
+
+    // New fields
+    status: "---",
+    cardNumber: "---",
+    markerId: "---",
+    ownerName: "---",
+    mobileNo: "---",
+    houseNo: "---",
+    address: "---",
+    streetColony: "---",
+    wardNumber: "---",
+
+    // Building details (for Ajmer city)
+    landType: "---",
+    plotLength: "---",
+    plotBreadth: "---",
+    underGroundArea: "---",
+    groundFloorArea: "---",
+    noOfFloors: "---",
+
+    // Additional info / audit fields
+    markerRemark: "---",
+    markingBy: "---",
+    showMarkingDate: "---",
+    approveName: "---",
+    showApproveDate: "---",
   };
+
   markerListIncluded: any[] = [];
   deletedMarkerList: any[] = [];
   locationCordinates: any[] = [];
