@@ -1758,6 +1758,62 @@ display:block;}
     padding: 10px;
     display: none;
 }
+// Marker Details box - Start
+.popup-details-wrap {
+  padding: 10px 15px;
+  margin-top: 5px;
+  font-size: 13px;
+  color: #222;
+  line-height: 1.4;
+  background: #fff;
+  position: relative;
+  z-index: 1;
+  clear: both;
+  border-top: 1px dashed #dcdcdc;
+
+  /* 👇 Auto grows with content but scrolls if screen is small */
+  max-height: calc(100vh - 412px);
+  overflow-y: auto;
+}
+
+
+.details-block,
+.building-block {
+  margin-bottom: 12px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 3px 0;
+  border-bottom: 1px dotted #e0e0e0;
+}
+
+.label {
+  font-weight: 600;
+  color: #444;
+  flex: 0 0 45%;
+  text-align: left;
+  word-break: break-word;
+}
+
+.value {
+  flex: 0 0 50%;
+  text-align: right;
+  color: #111;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.building-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin: 10px 0 5px;
+  text-decoration: underline;
+  color: #333;
+}
+// Marker Details box - End
 
 .house-type {
     height: 55px;

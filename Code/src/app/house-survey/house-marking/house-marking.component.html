@@ -369,25 +369,122 @@
     <div id="divLoader" class="loaderClass">
       <img src="../../../assets/img/loading.gif" width="50" class="imgLoader" />
     </div>
-    <div class="row">
-      <div class="col-md-12 house-type">
-        <h3>
-          {{ markerData.houseType }} <br />
-          {{ markerData.alreadyCard }}
-          <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeSubModel('#markerImageBox')"
-            style="float: right" />
-        </h3>
+
+    <!-- Image -->
+    <div class="main-box" style="height: auto;margin: 30px 0px 9px 0px;position: relative;">
+      <a href="{{ markerData.markerImgURL }}" target="_blank">
+        <img id="markingImg" class="markerdata-img" (load)="onImageLoad()" (error)="onImageError()"
+          [src]="markerData.markerImgURL" alt="Marker Image" />
+      </a>
+      <img src="../../../assets/img/close-grey.png" class="img-close"
+        style="position: absolute; top: -6px; right: -5px;" (click)="closeSubModel('#markerImageBox')" />
+    </div>
+
+    <!-- House Type below image -->
+    <div class="house-type">
+      <h3>{{ markerData.houseType }} {{ markerData.alreadyCard }}</h3>
+    </div>
+
+    <!-- Details Section -->
+    <div class="popup-details-wrap">
+      <div class="details-block">
+        <div class="detail-row">
+          <span class="label">Entity Type</span>
+          <span class="value">{{ markerData.houseType || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Status</span>
+          <span class="value">
+            {{ markerData.status || '...' }}
+            <span *ngIf="markerData.cardNumber">
+              ({{ markerData.cardNumber }})
+            </span>
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Marker ID</span>
+          <span class="value">{{ markerData.markerId || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Owner Name</span>
+          <span class="value">{{ markerData.ownerName || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Mobile No.</span>
+          <span class="value">{{ markerData.mobileNo || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">House No.</span>
+          <span class="value">{{ markerData.houseNo || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Address</span>
+          <span class="value">{{ markerData.address || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Street/Colony</span>
+          <span class="value">{{ markerData.streetColony || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Ward</span>
+          <span class="value">{{ markerData.wardNumber || '...' }}</span>
+        </div>
       </div>
-      <div class="col-md-12">
-        <div class="main-box">
-          <a href="{{ markerData.markerImgURL }}" target="_blank">
-            <img id="markingImg" class="markerdata-img" [src]="markerData.markerImgURL" />
-          </a>
+
+      <div class="building-block" *ngIf="cityName === 'ajmer'">
+        <h4 class="building-title">Building Detail</h4>
+        <div class="detail-row">
+          <span class="label">Land Type</span>
+          <span class="value">{{ markerData.landType || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Length</span>
+          <span class="value">{{ markerData.plotLength || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Breadth</span>
+          <span class="value">{{ markerData.plotBreadth || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Under Ground</span>
+          <span class="value">{{ markerData.underGroundArea || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Ground Floor</span>
+          <span class="value">{{ markerData.groundFloorArea || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">No. of Floors</span>
+          <span class="value">{{ markerData.noOfFloors || '...' }}</span>
+        </div>
+      </div>
+
+      <div class="details-block">
+        <div class="detail-row">
+          <span class="label">Remark</span>
+          <span class="value">{{ markerData.markerRemark || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Mkd By</span>
+          <span class="value">{{ markerData.markingBy || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Mkd Date</span>
+          <span class="value">{{ markerData.showMarkingDate || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Appr By</span>
+          <span class="value">{{ markerData.approveName || '...' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Appr Date</span>
+          <span class="value">{{ markerData.showApproveDate || '...' }}</span>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 <!--Vehicle Status Start-->
 <ng-template #contentLineMarkers>
@@ -863,9 +960,7 @@
       <div class="survey-row">
         <div class="survey-box" *ngFor="let dt of markerList">
           <a class="survey-img-box" href="{{ dt.imageUrl }}" target="_blank">
-            <img class="markerList-img" 
-              [src]="dt.imageUrl"
-              (error)="setDefaultImage($event)" />
+            <img class="markerList-img" [src]="dt.imageUrl" (error)="setDefaultImage($event)" />
           </a>
 
           <div class="survey-footer">
@@ -879,10 +974,10 @@
 
                 </div>
                 <div class="d-flex">
-                  <img src="../../../assets/img/iconEdit.png" style="float: right;" alt="edit" class="iconEdit"
-                    title="edit" (click)="
-                      setHouseType(dt.index, dt.zoneNo, dt.lineNo, 'marker')
-                    " />
+                  <img src="../../../assets/img/iconEdit.png" *ngIf="userType === 'Internal User'" style="float: right;"
+                    alt="edit" class="iconEdit" title="edit"
+                    (click)="setHouseType(dt.index, dt.zoneNo, dt.lineNo, 'marker')" />
+
                 </div>
                 <img src="../../../assets/img/iconHistory.png" style="float: right;" [hidden]="dt.markerUpdateId == ''"
                   alt="show history" class="icon-history" (click)="showMarkerUpdateHistory(dt.markerUpdateId)" />
@@ -971,8 +1066,8 @@
               style="font-weight: bold; text-decoration: underline; font-size: 11px;font-family: Graphik-Regular; padding-top: 5px;">
               Building Detail
               <div class="d-flex">
-                <img src="../../../assets/img/iconEdit.png" alt="edit" class="iconEdit" title="edit"
-                  style="float: right;" (click)="
+                <img src="../../../assets/img/iconEdit.png" *ngIf="userType === 'Internal User'" alt="edit"
+                  class="iconEdit" title="edit" style="float: right;" (click)="
                       setBuildingDetail(dt.index, dt.zoneNo, dt.lineNo, 'marker')
                     " />
                 <img src="../../../assets/img/iconHistory.png" [hidden]="dt.markerBuildingUpdateId == ''"
@@ -1023,8 +1118,8 @@
                   {{ dt.markerRemark }}
                 </div>
                 <div class="d-flex">
-                  <img src="../../../assets/img/iconEdit.png" class="iconEdit" alt="edit" title="edit"
-                    style="float: right;" (click)="
+                  <img src="../../../assets/img/iconEdit.png" *ngIf="userType === 'Internal User'" class="iconEdit"
+                    alt="edit" title="edit" style="float: right;" (click)="
                       showUpdatePopupMarkerRemark(
                         dt.markerRemark,
                         dt.zoneNo,

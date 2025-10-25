@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
+import { NgZone } from '@angular/core';
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
@@ -18,7 +19,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 export class HouseMarkingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private ngzone: NgZone, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -38,7 +39,7 @@ export class HouseMarkingComponent {
   houseMarker: any[] = [];
   markerList: any[];
   toDayDate: any;
-  Approvename: any
+  Approvename: any;
   userList: any[] = [];
   public isAlreadyShow = false;
   isShowWardAndLine: any;
@@ -96,7 +97,7 @@ export class HouseMarkingComponent {
   markerListIncluded: any[] = [];
   deletedMarkerList: any[] = [];
   locationCordinates: any[] = [];
-  workingPersonUrl = "../assets/img/walking.png"
+  workingPersonUrl = "../assets/img/walking.png";
   surveyorMarker: any[] = [];
   modifiedMarkerList: any[] = [];
   modificationDataList: any[] = [];
@@ -118,12 +119,13 @@ export class HouseMarkingComponent {
   txtGroundFloor = "#txtGroundFloor";
   txtNoOfFloors = "#txtNoOfFloors";
   buildingType = "#buildingType";
+  userType = localStorage.getItem("userType");
   toUpdateRemark: any = {
     zoneNo: '',
     lineNo: '',
     index: '',
     type: ''
-  }
+  };
 
   ngOnInit() {
     this.nearByStatus = "show";
@@ -167,7 +169,6 @@ export class HouseMarkingComponent {
           this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"], icon: data[id]["iconImage"] ? data[id]["iconImage"] : "" });
         }
       }
-      console.log(this.houseTypeList)
     });
   }
 
@@ -212,7 +213,7 @@ export class HouseMarkingComponent {
       this.map.fitBounds(bounds);
     });
     this.getWardDetail();
-    this.getNearByWards()
+    this.getNearByWards();
   }
 
   getWardDetail() {
@@ -295,37 +296,251 @@ export class HouseMarkingComponent {
 
   showMarkers(lineNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showMarkers");
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+    const dbPath = `EntityMarkingData/MarkedHouses/${this.selectedZone}/${lineNo}`;
+    const houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       houseInstance.unsubscribe();
-      if (data != null) {
-        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showMarkers", data);
-        let keyArray = Object.keys(data);
-        if (keyArray.length > 0) {
-          for (let i = 0; i < keyArray.length; i++) {
-            let index = keyArray[i];
-            if (data[index]["latLng"] != undefined) {
-              let lat = data[index]["latLng"].split(",")[0];
-              let lng = data[index]["latLng"].split(",")[1];
-              let type = data[index]["houseType"];
-              let imageName = data[index]["image"];
-              let iconImage = "";
-              let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
-              if (houseTypeDetail != undefined) {
-                let houseType = houseTypeDetail.houseType;
-                iconImage = houseTypeDetail.icon;
-                let markerURL = this.getMarkerIcon(type);
-                if (iconImage != "") {
-                  markerURL = "../assets/img/" + iconImage;
-                }
-                this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, "", index);
-              }
-            }
-          }
+      if (!data) return;
+
+      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showMarkers", data);
+
+      const keyArray = Object.keys(data);
+      if (keyArray.length === 0) return;
+
+      let count = 0;
+      const cityName = this.cityName;
+      const city =
+        cityName === "sikar" ? "Sikar-Survey" : this.commonService.getFireStoreCity();
+
+      for (let i = 0; i < keyArray.length; i++) {
+        const index = keyArray[i];
+        const entry = data[index];
+        if (!entry["latLng"]) continue;
+
+        const markerUID = `${this.selectedZone}_${lineNo}_${index}_${Date.now()}_${i}_${Math.random()
+          .toString(36)
+          .substring(2, 8)}`;
+
+        const [lat, lng] = entry["latLng"].split(",");
+        const imageName = entry["image"] || "";
+        const userId = entry["userId"] || "";
+        const ApproveId = entry["approveById"] || 0;
+
+        let ownerName = entry["ownerName"] ? entry["ownerName"].toUpperCase() : "---";
+        const persons = entry["totalPerson"] || "";
+        const markerRemark = entry["markerRemark"] || "";
+        const type = entry["houseType"];
+        const buildingName = entry["buildingName"] || "";
+        const totalHouses = entry["totalHouses"] || "";
+        const totalPerson = entry["totalPerson"] || "";
+        const wardNumber = entry["wardNumber"] || this.selectedZone || "---";
+
+        // 🔹 Dates
+        let date = "";
+        let showMarkingDate = "---";
+        if (entry["date"]) {
+          showMarkingDate =
+            entry["date"].split(" ")[0].split("-")[2] +
+            " " +
+            this.commonService.getCurrentMonthShortName(
+              Number(entry["date"].split(" ")[0].split("-")[1])
+            ) +
+            " " +
+            entry["date"].split(" ")[0].split("-")[0] +
+            " " +
+            entry["date"].split(" ")[1];
+          date = entry["date"].split(" ")[0];
         }
+
+        let approveDate = "";
+        let showApproveDate = "---";
+        if (entry["approveDate"]) {
+          approveDate = entry["approveDate"].split(" ")[0];
+          showApproveDate =
+            entry["approveDate"].split(" ")[0].split("-")[2] +
+            " " +
+            this.commonService.getCurrentMonthShortName(
+              Number(entry["approveDate"].split(" ")[0].split("-")[1])
+            ) +
+            " " +
+            entry["approveDate"].split(" ")[0].split("-")[0] +
+            " " +
+            entry["approveDate"].split(" ")[1];
+        }
+
+        // 🔹 Status and misc.
+        let status = "";
+        let markerId = "";
+        let statusClass = "";
+        let isRevisit = "0";
+        let cardNumber = entry["cardNumber"] || "";
+        let isApprove = entry["isApprove"] || "0";
+        let servingCount = 0;
+        let markingBy = "";
+        let approveName = "";
+        let modifiedHouseTypeHistoryId = entry["modifiedHouseTypeHistoryId"] || "";
+        let totalEntity = entry["totalHouses"] || "0";
+
+        if (type === "19" || type === "20") {
+          servingCount = parseInt(entry["totalHouses"]);
+          if (isNaN(servingCount)) servingCount = 0;
+        }
+
+        if (isApprove === "1") count++;
+        this.markerData.isApprovedCount = count.toString();
+
+        if (cardNumber) status = "Surveyed";
+        if (entry["revisitKey"]) status = "Revisit";
+        if (entry["rfidNotFoundKey"]) status = "RFID not matched";
+        if (entry["revisitCardDeleted"]) {
+          status = "Revisit Deleted";
+          isRevisit = "1";
+          statusClass = "status-deleted";
+        }
+
+        if (entry["markerId"]) {
+          markerId = this.commonService.getDefaultCardPrefix() + entry["markerId"];
+        }
+
+        // 🔹 Building Details
+        const bd = entry["BuildingDetails"] || {};
+        const plotLength = bd["plotLength"] || "---";
+        const plotBreadth = bd["plotDepth"] || "---";
+        const groundFloorArea = bd["groundFloorArea"] || "---";
+        const underGroundArea = bd["underGroundArea"] || "---";
+        const landType = bd["landType"] || entry["landType"] || "---";
+        const noOfFloors = bd["totalFloor"] || "---";
+
+        // 🔹 Image URL
+        const imageURL =
+          this.commonService.fireStoragePath +
+          city +
+          "%2FMarkingSurveyImages%2F" +
+          this.selectedZone +
+          "%2F" +
+          lineNo +
+          "%2F" +
+          imageName +
+          "?alt=media";
+
+        // 🔹 Already card
+        const alreadyInstalled = entry["alreadyInstalled"] ? "हाँ" : "नहीं";
+        const alreadyCard =
+          alreadyInstalled === "हाँ" ? "(कार्ड पहले से लगा हुआ है)" : "";
+
+        // 🔹 House type & icon
+        let iconImage = "";
+        let houseType = "";
+        const houseTypeDetail = this.houseTypeList.find((item) => item.id == type);
+        if (houseTypeDetail) {
+          houseType = houseTypeDetail.houseType;
+          iconImage = houseTypeDetail.icon;
+        }
+
+        let markerURL = this.getMarkerIcon(type);
+        if (iconImage) markerURL = "../assets/img/" + iconImage;
+
+        // ✅ Directly get markingBy (username)
+        // ✅ Get markingBy and update in houseMarker after fetch
+        if (userId) {
+          const path = "EntityMarkingData/MarkerAppAccess/" + userId + "/name";
+          let usernameInstance = this.db.object(path).valueChanges().subscribe((data) => {
+            usernameInstance.unsubscribe();
+            if (data != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getUsername", data);
+
+              // 🔹 Update in houseMarker directly by matching markerUID
+              const detail = this.houseMarker.find(
+                (item: any) => item.markerUID === markerUID && item.lineNo === lineNo
+              );
+              if (detail) {
+                detail.markingBy = data || "---";
+              }
+
+            }
+          });
+        }
+
+
+        // ✅ Directly get approveName (from userList)
+        const userDetail = this.userList.find((item) => item.userId == ApproveId);
+        if (userDetail != undefined) {
+          approveName = userDetail.name || '---';
+        }
+
+        // ✅ Push full data to houseMarker
+        this.houseMarker.push({
+          zoneNo: this.selectedZone,
+          markerUID,
+          lineNo,
+          index,
+          lat,
+          lng,
+          alreadyInstalled,
+          imageName,
+          iconImage,
+          type: houseType,
+          imageUrl: imageURL,
+          status,
+          markerId,
+          userId,
+          date,
+          statusClass,
+          isRevisit,
+          cardNumber,
+          houseTypeId: type,
+          isApprove,
+          servingCount,
+          approveDate,
+          markingBy,
+          ApproveId,
+          approveName,
+          modifiedHouseTypeHistoryId,
+          ownerName,
+          persons,
+          totalEntity,
+          markerRemark,
+          mobileNo: entry["mobileNumber"] || "",
+          houseNo: entry["houseNumber"] || "",
+          address: entry["address"] || "",
+          streetColony: entry["streetColony"] || "",
+          buildingName,
+          totalHouses,
+          totalPerson,
+          wardNumber,
+          markerUpdateId: entry["markerUpdateId"] || "",
+          plotBreadth,
+          plotLength,
+          groundFloorArea,
+          underGroundArea,
+          landType,
+          noOfFloors,
+          markerBuildingUpdateId: entry["markerBuildingUpdateId"] || "",
+          showMarkingDate,
+          showApproveDate,
+        });
+
+        // ✅ Create marker on map
+        this.setMarker(
+          lat,
+          lng,
+          markerURL,
+          houseType,
+          imageName,
+          "marker",
+          lineNo,
+          alreadyCard,
+          index,
+          markerUID
+        );
       }
     });
   }
+
+
+
+
+
+
 
   getApprovedLines() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getApprovedLines");
@@ -381,7 +596,7 @@ export class HouseMarkingComponent {
   }
   getLineApproveStatus(lineNo: any, latLng: any, i: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineApproveStatus");
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/ApproveStatus/status"
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/ApproveStatus/status";
     let approveStatusInstance = this.db.object(dbPath).valueChanges().subscribe(approveStatus => {
       // approveStatusInstance.unsubscribe();
 
@@ -425,6 +640,9 @@ export class HouseMarkingComponent {
           let count = 0;
           for (let i = 0; i < keyArray.length; i++) {
             let index = keyArray[i];
+            const markerUID = `${this.selectedZone}_${lineNo}_${index}_${Date.now()}_${i}_${Math.random()
+              .toString(36)
+              .substring(2, 8)}`;
             if (data[index]["latLng"] != undefined) {
               let lat = data[index]["latLng"].split(",")[0];
               let lng = data[index]["latLng"].split(",")[1];
@@ -463,7 +681,7 @@ export class HouseMarkingComponent {
               let servingCount = 0;
               let markingBy = "";
               let ApproveId = 0;
-              let approveName = ""
+              let approveName = "";
               let modifiedHouseTypeHistoryId = "";
               this.markerData.wardno = this.selectedZone;
               this.markerData.lineno = this.lineNo;
@@ -564,15 +782,15 @@ export class HouseMarkingComponent {
                 houseType = houseTypeDetail.houseType;
                 iconImage = houseTypeDetail.icon;
               }
-              const mobileNo = data[index]['mobileNumber'] || ''
-              const houseNo = data[index]['houseNumber'] || ''
-              const address = data[index]['address'] || ''
-              const streetColony = data[index]['streetColony'] || ''
-              const buildingName = data[index]['buildingName'] || ''
-              const totalHouses = data[index]['totalHouses'] || ''
-              const totalPerson = data[index]['totalPerson'] || ''
-              const wardNumber = data[index]['wardNumber'] || ''
-              this.markerList.push({ zoneNo: this.selectedZone, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, iconImage: iconImage, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '', plotBreadth: plotBreadth, plotLength: plotLength, groundFloorArea: groundFloorArea, underGroundArea: underGroundArea, landType: landType, noOfFloors: noOfFloors, markerBuildingUpdateId: data[index]["markerBuildingUpdateId"] || '', showMarkingDate: showMarkingDate, showApproveDate: showApproveDate });
+              const mobileNo = data[index]['mobileNumber'] || '';
+              const houseNo = data[index]['houseNumber'] || '';
+              const address = data[index]['address'] || '';
+              const streetColony = data[index]['streetColony'] || '';
+              const buildingName = data[index]['buildingName'] || '';
+              const totalHouses = data[index]['totalHouses'] || '';
+              const totalPerson = data[index]['totalPerson'] || '';
+              const wardNumber = data[index]['wardNumber'] || '';
+              this.markerList.push({ zoneNo: this.selectedZone, markerUID, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, iconImage: iconImage, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '', plotBreadth: plotBreadth, plotLength: plotLength, groundFloorArea: groundFloorArea, underGroundArea: underGroundArea, landType: landType, noOfFloors: noOfFloors, markerBuildingUpdateId: data[index]["markerBuildingUpdateId"] || '', showMarkingDate: showMarkingDate, showApproveDate: showApproveDate });
               if (this.cityName == "sikar") {
                 if (cardNumber == "") {
                   let detail = this.markerList.find(item => item.index == index);
@@ -588,7 +806,7 @@ export class HouseMarkingComponent {
               if (iconImage != "") {
                 markerURL = "../assets/img/" + iconImage;
               }
-              this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index);
+              this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index, markerUID);
               this.getUsername(index, userId, this.selectedZone, lineNo);
               this.getApproveUsername(ApproveId, index, this.selectedZone, lineNo);
             }
@@ -651,7 +869,7 @@ export class HouseMarkingComponent {
           }
         }
       }
-    })
+    });
   }
 
 
@@ -675,7 +893,7 @@ export class HouseMarkingComponent {
         }
       }
 
-    })
+    });
   }
   getApproveUsername(ApproveId: any, index: any, zoneNo: any, lineNo: any) {
 
@@ -765,7 +983,7 @@ export class HouseMarkingComponent {
               let servingCount = 0;
               let markingBy = "";
               let ApproveId = 0;
-              let approveName = ""
+              let approveName = "";
               let totalEntity = "0";
               let modifiedHouseTypeHistoryId = "";
               this.markerData.wardno = this.selectedZone;
@@ -862,14 +1080,14 @@ export class HouseMarkingComponent {
                 houseType = houseTypeDetail.houseType;
               }
 
-              const mobileNo = data[index]['mobileNumber'] || ''
-              const houseNo = data[index]['houseNumber'] || ''
-              const address = data[index]['address'] || ''
-              const streetColony = data[index]['streetColony'] || ''
-              const buildingName = data[index]['buildingName'] || ''
-              const totalHouses = data[index]['totalHouses'] || ''
-              const totalPerson = data[index]['totalPerson'] || ''
-              const wardNumber = data[index]['wardNumber'] || ''
+              const mobileNo = data[index]['mobileNumber'] || '';
+              const houseNo = data[index]['houseNumber'] || '';
+              const address = data[index]['address'] || '';
+              const streetColony = data[index]['streetColony'] || '';
+              const buildingName = data[index]['buildingName'] || '';
+              const totalHouses = data[index]['totalHouses'] || '';
+              const totalPerson = data[index]['totalPerson'] || '';
+              const wardNumber = data[index]['wardNumber'] || '';
 
               this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '', plotBreadth: plotBreadth, plotLength: plotLength, groundFloorArea: groundFloorArea, underGroundArea: underGroundArea, landType: landType, noOfFloors: noOfFloors, markerBuildingUpdateId: data[index]["markerBuildingUpdateId"] || '', showMarkingDate: showMarkingDate, showApproveDate: showApproveDate });
               if (this.cityName == "sikar") {
@@ -1019,7 +1237,7 @@ export class HouseMarkingComponent {
         totalBuildUpArea: totalBuildUpArea,
         totalArea: totalArea,
         vacantArea: vacantArea
-      }
+      };
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index + "/BuildingDetails";
       this.db.object(dbPath).update(buildingObj);
       let obj = {
@@ -1037,7 +1255,7 @@ export class HouseMarkingComponent {
         noOfFloors: detail.noOfFloors,
         updatedById: this.userId,
         updateDate: this.commonService.getTodayDateTime()
-      }
+      };
       this.saveBuildingUpdateHistory(obj, zoneNo, lineNo, index, type);
     }
     this.cancelBuildingDetail();
@@ -1073,7 +1291,7 @@ export class HouseMarkingComponent {
         }
         this.db.object(dbPath).update({ markerBuildingUpdateId });
       });
-    })
+    });
   }
 
 
@@ -1123,13 +1341,13 @@ export class HouseMarkingComponent {
             underGroundArea: data["underGroundArea"],
             updateDate: data["updateDate"],
             updatedById: data["updatedById"]
-          }
+          };
           resolve(obj);
         }
         else {
           resolve(null);
         }
-      })
+      });
     });
   }
 
@@ -1141,13 +1359,13 @@ export class HouseMarkingComponent {
   }
 
   saveMarkerRemark() {
-    const markerRemark = $('#txtMarkerRemark').val()
+    const markerRemark = $('#txtMarkerRemark').val();
 
     if (!markerRemark) {
-      return this.commonService.setAlertMessage('error', 'Please add remark')
+      return this.commonService.setAlertMessage('error', 'Please add remark');
     }
 
-    const path = `EntityMarkingData/MarkedHouses/${this.toUpdateRemark.zoneNo}/${this.toUpdateRemark.lineNo}/${this.toUpdateRemark.index}`
+    const path = `EntityMarkingData/MarkedHouses/${this.toUpdateRemark.zoneNo}/${this.toUpdateRemark.lineNo}/${this.toUpdateRemark.index}`;
     this.db.object(path).update({ markerRemark });
 
     // update it locally
@@ -1160,12 +1378,12 @@ export class HouseMarkingComponent {
     }
 
     marker.markerRemark = markerRemark;
-    this.commonService.setAlertMessage('success', 'Remark updated successfully')
-    this.cancelMarkerRemarkEdit()
+    this.commonService.setAlertMessage('success', 'Remark updated successfully');
+    this.cancelMarkerRemarkEdit();
   }
 
   cancelMarkerRemarkEdit() {
-    $('#txtMarkerRemark').val('')
+    $('#txtMarkerRemark').val('');
     $(this.divEditMarkerRemark).hide();
     this.toUpdateRemark = { zoneNo: '', lineNo: '', index: '', type: '' };
   }
@@ -1271,13 +1489,13 @@ export class HouseMarkingComponent {
             preHouseNo: data["preHouseNo"] ? data["preHouseNo"] : "",
             houseNo: data["houseNo"] ? data["houseNo"] : ""
 
-          }
+          };
           resolve(obj);
         }
         else {
           resolve(null);
         }
-      })
+      });
     });
   }
 
@@ -1384,7 +1602,7 @@ export class HouseMarkingComponent {
           address: detail.address,
           updatedById: this.userId,
           updateDate: this.commonService.getTodayDateTime()
-        }
+        };
         this.saveUpdateHistory(obj, zoneNo, lineNo, index);
 
         if (preHouseTypeId != houseTypeId) {
@@ -1418,7 +1636,7 @@ export class HouseMarkingComponent {
         this.db.object(dbPath).update({ markerUpdateId });
       });
 
-    })
+    });
 
   }
 
@@ -1430,7 +1648,7 @@ export class HouseMarkingComponent {
       newHouseTypeId: houseTypeId,
       updatedById: localStorage.getItem("userID"),
       updateDate: this.toDayDate + " " + this.commonService.getCurrentTime()
-    }
+    };
 
     if (modifiedHouseTypeHistoryId == "") {
       let newRef = this.db.list("EntityMarkingData/ModifiedHouseTypeHistory").push({ a: "a" });
@@ -1452,7 +1670,7 @@ export class HouseMarkingComponent {
       }
 
       this.markerData.totalHouseTypeModifiedCount = Number(this.markerData.totalHouseTypeModifiedCount) + 1;
-      let path = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo + "/totalHouseTypeModifiedCount"
+      let path = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo + "/totalHouseTypeModifiedCount";
       let modifiedCountInstance = this.db.object(path).valueChanges().subscribe((data) => {
         modifiedCountInstance.unsubscribe();
         let count = 1;
@@ -1562,7 +1780,7 @@ export class HouseMarkingComponent {
     $(this.deleteZoneNo).val(zoneNo);
     $(this.deletelineNo).val(lineNo);
     $(this.deleteCardNo).val(cardNumber);
-    $("#type").val(type)
+    $("#type").val(type);
     this.deleteReason = "0";
     $(this.divConfirm).show();
   }
@@ -1572,7 +1790,7 @@ export class HouseMarkingComponent {
     $(this.approveMarkerId).val(markerNo);
     $(this.approveZoneNo).val(zoneNo);
     $(this.approveLineNo).val(lineNo);
-    $("#type").val(type)
+    $("#type").val(type);
   }
 
   cancelMarkerDelete() {
@@ -1690,7 +1908,7 @@ export class HouseMarkingComponent {
     $(this.btnRemoveIncludedLines).hide();
     setTimeout(() => {
       this.commonService.setAlertMessage("success", "Included line removed successfully !!!");
-    }, 100)
+    }, 100);
 
   }
   removeMarker(markerNo: any, alreadyCard: any, zoneNo: any, lineNo: any, type: any, reason: any) {
@@ -1771,7 +1989,7 @@ export class HouseMarkingComponent {
                   }
                 }
                 else {
-                  newMarkerList.push({ zoneNo: this.markerList[i]["zoneNo"], lineNo: this.markerList[i]["lineNo"], index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["type"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], markerId: this.markerList[i]["markerId"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], statusClass: this.markerList[i]["statusClass"], isRevisit: this.markerList[i]["isRevisit"], cardNumber: this.markerList[i]["cardNumber"], houseTypeId: this.markerList[i]["houseTypeId"], isApprove: this.markerList[i]["isApprove"], servingCount: this.markerList[i]["servingCount"], approveDate: this.markerList[i]["approveDate"], markingBy: this.markerList[i]["markingBy"], ApproveId: this.markerList[i]["ApproveId"], approveName: this.markerList[i]["approveName"], modifiedHouseTypeHistoryId: this.markerList[i]["modifiedHouseTypeHistoryId"], ownerName: this.markerList[i]["ownerName"], persons: this.markerList[i]["persons"], totalEntity: this.markerList[i]["totalEntity"], markerRemark: this.markerList[i]["markerRemark"], mobileNo: this.markerList[i]["mobileNo"], houseNo: this.markerList[i]["houseNo"], address: this.markerList[i]["address"], streetColony: this.markerList[i]["streetColony"], buildingName: this.markerList[i]["buildingName"], totalHouses: this.markerList[i]["totalHouses"], totalPerson: this.markerList[i]["totalPerson"], wardNumber: this.markerList[i]["wardNumber"], markerUpdateId: this.markerList[i]["markerUpdateId"], plotBreadth: this.markerList[i]["plotBreadth"], plotLength: this.markerList[i]["plotLength"], groundFloorArea: this.markerList[i]["groundFloorArea"], underGroundArea: this.markerList[i]["underGroundArea"], landType: this.markerList[i]["landType"], noOfFloors: this.markerList[i]["noOfFloors"], markerBuildingUpdateId: this.markerList[i]["markerBuildingUpdateId"], showMarkingDate: this.markerList[i]["showMarkingDate"], showApproveDate: this.markerList[i]["showApproveDate"] })
+                  newMarkerList.push({ zoneNo: this.markerList[i]["zoneNo"], lineNo: this.markerList[i]["lineNo"], index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["type"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], markerId: this.markerList[i]["markerId"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], statusClass: this.markerList[i]["statusClass"], isRevisit: this.markerList[i]["isRevisit"], cardNumber: this.markerList[i]["cardNumber"], houseTypeId: this.markerList[i]["houseTypeId"], isApprove: this.markerList[i]["isApprove"], servingCount: this.markerList[i]["servingCount"], approveDate: this.markerList[i]["approveDate"], markingBy: this.markerList[i]["markingBy"], ApproveId: this.markerList[i]["ApproveId"], approveName: this.markerList[i]["approveName"], modifiedHouseTypeHistoryId: this.markerList[i]["modifiedHouseTypeHistoryId"], ownerName: this.markerList[i]["ownerName"], persons: this.markerList[i]["persons"], totalEntity: this.markerList[i]["totalEntity"], markerRemark: this.markerList[i]["markerRemark"], mobileNo: this.markerList[i]["mobileNo"], houseNo: this.markerList[i]["houseNo"], address: this.markerList[i]["address"], streetColony: this.markerList[i]["streetColony"], buildingName: this.markerList[i]["buildingName"], totalHouses: this.markerList[i]["totalHouses"], totalPerson: this.markerList[i]["totalPerson"], wardNumber: this.markerList[i]["wardNumber"], markerUpdateId: this.markerList[i]["markerUpdateId"], plotBreadth: this.markerList[i]["plotBreadth"], plotLength: this.markerList[i]["plotLength"], groundFloorArea: this.markerList[i]["groundFloorArea"], underGroundArea: this.markerList[i]["underGroundArea"], landType: this.markerList[i]["landType"], noOfFloors: this.markerList[i]["noOfFloors"], markerBuildingUpdateId: this.markerList[i]["markerBuildingUpdateId"], showMarkingDate: this.markerList[i]["showMarkingDate"], showApproveDate: this.markerList[i]["showApproveDate"] });
                 }
               }
               this.markerList = newMarkerList;
@@ -1834,7 +2052,7 @@ export class HouseMarkingComponent {
           if (markerDatails.modifiedHouseTypeHistoryId != "") {
 
             this.markerData.totalHouseTypeModifiedCount = Number(this.markerData.totalHouseTypeModifiedCount) - 1;
-            let path = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo + "/totalHouseTypeModifiedCount"
+            let path = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo + "/totalHouseTypeModifiedCount";
             let modifiedCountInstance = this.db.object(path).valueChanges().subscribe((data) => {
               modifiedCountInstance.unsubscribe();
               let count = 1;
@@ -1848,7 +2066,7 @@ export class HouseMarkingComponent {
           }
 
 
-          let path = "EntityMarkingData/RemovedMarkers/" + zoneNo + "/totalRemovedMarkersCount"
+          let path = "EntityMarkingData/RemovedMarkers/" + zoneNo + "/totalRemovedMarkersCount";
           let totalRemovedCountInstance = this.db.object(path).valueChanges().subscribe((data) => {
             totalRemovedCountInstance.unsubscribe();
             let count = 1;
@@ -2045,7 +2263,7 @@ export class HouseMarkingComponent {
     let lineNo = $(this.approveLineNo).val();
     let Entity = "chkApprovedEntity";
     let Markar = "chkApprovedMarkar";
-    let type = $("#type").val()
+    let type = $("#type").val();
     if ((<HTMLInputElement>document.getElementById(Entity)).checked == false) {
       this.commonService.setAlertMessage("error", "Choose Entity checkbox !!! ");
       return;
@@ -2120,14 +2338,25 @@ export class HouseMarkingComponent {
       if (userType == "Internal User") {
         let lat = latlng[0]["lat"];
         let lng = latlng[0]["lng"];
-        this.setMarker(lat, lng, this.invisibleImageUrl, lineNo.toString(), "", "lineNo", lineNo, "", "");
+        this.setMarker(lat, lng, this.invisibleImageUrl, lineNo.toString(), "", "lineNo", lineNo, "", "", "");
       }
     }
   }
 
-  setMarker(lat: any, lng: any, markerURL: any, markerLabel: any, imageName: any, type: any, lineNo: any, alreadyCard: any, markerNo: any) {
-    if (type == "lineNo") {
-      let marker = new google.maps.Marker({
+  setMarker(
+    lat: any,
+    lng: any,
+    markerURL: any,
+    markerLabel: any,
+    imageName: any,
+    type: any,
+    lineNo: any,
+    alreadyCard: any,
+    markerNo: any,
+    markerUID?: any
+  ) {
+    if (type === "lineNo") {
+      const marker = new google.maps.Marker({
         position: { lat: Number(lat), lng: Number(lng) },
         map: this.map,
         icon: {
@@ -2144,10 +2373,9 @@ export class HouseMarkingComponent {
           fontWeight: "bold",
         },
       });
-
       this.allMatkers.push({ marker });
     } else {
-      let marker = new google.maps.Marker({
+      const marker = new google.maps.Marker({
         position: { lat: Number(lat), lng: Number(lng) },
         map: this.map,
         icon: {
@@ -2157,30 +2385,96 @@ export class HouseMarkingComponent {
           origin: new google.maps.Point(0, 0),
         },
       });
-      let wardNo = this.selectedZone;
 
-      let markerDetail = this.markerData;
-      let city = this.commonService.getFireStoreCity();
-      if (this.cityName == "sikar") {
-        city = "Sikar-Survey";
-      }
-      let commonService = this.commonService;
-      marker.addListener("click", function () {
-        $("#divLoader").show();
-        // $("#markerImageBox").show();
-        setTimeout(() => {
-          $("#markerImageBox").show();
-          $("#divLoader").hide();
-        }, 2000);
-        let imageURL = commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+      const wardNo = this.selectedZone;
+      const cityName = this.cityName;
+      const city =
+        cityName === "sikar" ? "Sikar-Survey" : this.commonService.getFireStoreCity();
 
-        markerDetail.markerImgURL = imageURL;
-        markerDetail.houseType = markerLabel;
-        markerDetail.alreadyCard = alreadyCard;
+      const commonService = this.commonService;
+      const markerList = this.markerList;
+      const houseMarkerList = this.houseMarker;
+
+      // ✅ Use arrow function so `this` stays in scope
+      marker.addListener("click", () => {
+        this.ngzone.run(() => { // 🔹 ensures Angular detects the update
+          $("#divLoader").show();
+
+          const matchedMarker =
+            houseMarkerList.find(
+              (item: any) =>
+                item.markerUID === markerUID && item.lineNo === lineNo
+            ) ||
+            markerList.find(
+              (item: any) =>
+                item.markerUID === markerUID && item.lineNo === lineNo
+            );
+
+          if (matchedMarker) {
+            // ✅ Always update the same reference so Angular updates the UI
+            Object.assign(this.markerData, {
+              markerRemark: matchedMarker.markerRemark || "---",
+              ownerName: matchedMarker.ownerName || "---",
+              mobileNo: matchedMarker.mobileNo || "---",
+              houseNo: matchedMarker.houseNo || "---",
+              address: matchedMarker.address || "---",
+              streetColony: matchedMarker.streetColony || "---",
+              wardNumber: matchedMarker.wardNumber || "---",
+              landType: matchedMarker.landType || "---",
+              plotLength: matchedMarker.plotLength || "---",
+              plotBreadth: matchedMarker.plotBreadth || "---",
+              underGroundArea: matchedMarker.underGroundArea || "---",
+              groundFloorArea: matchedMarker.groundFloorArea || "---",
+              noOfFloors: matchedMarker.noOfFloors || "---",
+              status: matchedMarker.status || "---",
+              cardNumber: matchedMarker.cardNumber || "---",
+              markerId: matchedMarker.markerId || "---",
+              markingBy: matchedMarker.markingBy || "---",
+              showMarkingDate: matchedMarker.showMarkingDate || "---",
+              approveName: matchedMarker.approveName || "---",
+              showApproveDate: matchedMarker.showApproveDate || "---",
+              houseType: markerLabel || "---",
+              alreadyCard: alreadyCard || "---",
+              markerImgURL:
+                commonService.fireStoragePath +
+                city +
+                "%2FMarkingSurveyImages%2F" +
+                wardNo +
+                "%2F" +
+                lineNo +
+                "%2F" +
+                imageName +
+                "?alt=media",
+            });
+
+            // ✅ Immediately refresh popup content (even if already open)
+            $("#markerImageBox").show();
+          } else {
+            $("#divLoader").hide();
+            this.commonService.setAlertMessage(
+              "error",
+              "Marker details not found !!!"
+            );
+          }
+        });
       });
-      this.houseMarker.push({ markerNo: markerNo, marker: marker });
     }
   }
+
+
+
+
+  onImageLoad() {
+    // Hide loader when image is successfully loaded
+    $("#divLoader").hide();
+  }
+
+  onImageError() {
+    // Hide loader if image fails to load (optional)
+    $("#divLoader").hide();
+
+  }
+
 
   getNextPrevious(type: any) {
     this.clearLineData();
@@ -2465,7 +2759,7 @@ export class HouseMarkingComponent {
             let removedBy = "";
             let houseType = "";
             let removedDate = dataKey["removeDate"];
-            let removeReason = dataKey["reason"]
+            let removeReason = dataKey["reason"];
 
 
             let image = dataKey["image"];
@@ -2476,7 +2770,7 @@ export class HouseMarkingComponent {
             let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
 
             let removedById = dataKey["removeBy"];
-            let removedByDetail = this.userList.find(item => item.userId == removedById)
+            let removedByDetail = this.userList.find(item => item.userId == removedById);
             if (removedByDetail != undefined) {
               removedBy = removedByDetail.name;
             }
@@ -2577,7 +2871,7 @@ export class HouseMarkingComponent {
                 if (houseTypeDetail != undefined) {
                   houseType = houseTypeDetail.houseType;
                 }
-                this.modifiedMarkerList.push({ zoneNo: this.selectedZone, imageUrl: imageUrl, modifiedHouseTypeHistoryId: key["modifiedHouseTypeHistoryId"], houseType: houseType, lineNo: lineKey })
+                this.modifiedMarkerList.push({ zoneNo: this.selectedZone, imageUrl: imageUrl, modifiedHouseTypeHistoryId: key["modifiedHouseTypeHistoryId"], houseType: houseType, lineNo: lineKey });
               }
             }
           }
@@ -2633,12 +2927,12 @@ export class HouseMarkingComponent {
 
         // To get the user name by update by id        
         let updatedBy = "";
-        let updatedByDetail = this.userList.find(item => item.userId == updatedById)
+        let updatedByDetail = this.userList.find(item => item.userId == updatedById);
         if (updatedByDetail != undefined) {
           updatedBy = updatedByDetail.name;
         }
 
-        this.modificationDataList.push({ lineNo: lineNo, updatedBy: updatedBy, updateDate: updateDate, newHouseType: newHouseType, preHouseType: preHouseType, timeSpan: timeSpan })
+        this.modificationDataList.push({ lineNo: lineNo, updatedBy: updatedBy, updateDate: updateDate, newHouseType: newHouseType, preHouseType: preHouseType, timeSpan: timeSpan });
 
       }
       this.modificationDataFilterList = this.modificationDataList.sort((a, b) =>
@@ -2745,7 +3039,7 @@ export class HouseMarkingComponent {
         }
         if (data != undefined) {
           let jsonKeyArray = Object.keys(data);
-          let detail = jsonKeyArray.find(item => item == this.selectedZone)
+          let detail = jsonKeyArray.find(item => item == this.selectedZone);
           if (detail != undefined) {
             this.nearByWards = data[detail];
             setTimeout(() => {
@@ -2780,7 +3074,7 @@ export class HouseMarkingComponent {
           zoneKML = data;
           let aa = [];
           for (let i = 0; i < zoneKML[0]["latLng"].length; i++) {
-            aa.push({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) })
+            aa.push({ lat: Number(zoneKML[0]["latLng"][i]["lat"]), lng: Number(zoneKML[0]["latLng"][i]["lng"]) });
           }
 
           const polygon = new google.maps.Polygon({
@@ -2819,7 +3113,7 @@ export class HouseMarkingComponent {
       else {
         let detail = this.nearByWardsPolygon.find(item => item.zone == zone);
         if (detail != undefined) {
-          detail.polygon.setMap(null)
+          detail.polygon.setMap(null);
           this.nearByWardsPolygon = this.nearByWardsPolygon.filter(item => item != detail);
         }
       }
@@ -2907,22 +3201,48 @@ export class HouseMarkingComponent {
 }
 
 export class markerDetail {
-  totalMarkers: string;
-  totalLines: string;
-  totalLineMarkers: string;
-  approvedLines: string;
-  markerImgURL: string;
-  houseType: string;
-  alreadyCardCount: number;
-  alreadyCardLineCount: number;
-  alreadyCard: string;
-  lastScanTime: string;
-  isApprovedCount: string;
-  wardno: string;
-  lineno: string;
+  // Existing fields
+  totalMarkers: any;
+  totalLines: any;
+  totalLineMarkers: any;
+  approvedLines: any;
+  markerImgURL: any;
+  houseType: any;
+  alreadyCardCount: any;
+  alreadyCardLineCount: any;
+  alreadyCard: any;
+  lastScanTime: any;
+  isApprovedCount: any;
+  wardno: any;
+  lineno: any;
   totalHouseTypeModifiedCount: any;
   totalRemovedMarkersCount: any;
   lineApprovedBy: any;
   lineApprovedDate: any;
 
+  // New fields from popup details
+  status: any;
+  cardNumber: any;
+  markerId: any;
+  ownerName: any;
+  mobileNo: any;
+  houseNo: any;
+  address: any;
+  streetColony: any;
+  wardNumber: any;
+
+  // Building details (for Ajmer city)
+  landType: any;
+  plotLength: any;
+  plotBreadth: any;
+  underGroundArea: any;
+  groundFloorArea: any;
+  noOfFloors: any;
+
+  // Additional info / audit fields
+  markerRemark: any;
+  markingBy: any;
+  showMarkingDate: any;
+  approveName: any;
+  showApproveDate: any;
 }
