@@ -286,7 +286,7 @@ export class RouteTrackingComponent {
                       let lat1 = Number(data[keyArray[j]].toString().split(",")[0]);
                       let lng1 = Number(data[keyArray[j]].toString().split(",")[1]);
                       let distance = this.getDistanceFromLatLonInKm(lat1, lng1, latCity, lngCity);
-                      if (distance < 20000) {
+                      if (distance < 150000) {
                         list.push({ time: time, latLng: data[keyArray[j]] });
                       }
                     }

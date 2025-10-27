@@ -36,7 +36,7 @@ export class Cms1Component implements OnInit {
   }
 
   getEntityType() {
-    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType1.json?alt=media";
     let lastUpdateInstance = this.httpService.get(path).subscribe(data => {
       lastUpdateInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
@@ -179,7 +179,7 @@ export class Cms1Component implements OnInit {
       console.log("lastDevice=>" + lastDevice)
       this.db.object("Devices").update({ LastConfigurationNo: lastDevice });
     }
-    
+
   }
 
   setSurveyorId() {
@@ -929,6 +929,7 @@ export class Cms1Component implements OnInit {
       var bstr = arr.join("");
       var workbook = XLSX.read(bstr, { type: "binary" });
       this.first_sheet_name = workbook.SheetNames[0];
+      console.log(this.first_sheet_name);
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
       let marksCount = 0;
@@ -938,22 +939,31 @@ export class Cms1Component implements OnInit {
       let lineNo = 1;
       let hundredCounts = 0;
       let markerKey = 0;
+      console.log("arrey length => " + fileList.length);
       for (let i = 0; i < fileList.length; i++) {
-        let pId = fileList[i]["Property Id (E)"] ? fileList[i]["Property Id (E)"] : "";
-        let propId = fileList[i]["Property Id (C)"];
-        let name = fileList[i]["Owner/  Occupier Name (D)"] ? fileList[i]["Owner/  Occupier Name (D)"] : "";
-        let lat = fileList[i]["Latitude (G)"] ? fileList[i]["Latitude (G)"] : "";
-        let lng = fileList[i]["Longitude (H)"] ? fileList[i]["Longitude (H)"] : "";
-        let address = fileList[i]["Address   of Property (K)"] ? fileList[i]["Address   of Property (K)"] : "";
-        let mobile = fileList[i]["Mobile   No. (L)"] ? fileList[i]["Mobile   No. (L)"] : "";
-        let caregory = fileList[i]["Category (M)"] ? fileList[i]["Category (M)"] : "";
-        let streetColony = fileList[i]["Name Of   the Colony (J)"] ? fileList[i]["Name Of   the Colony (J)"] : "";
-        let entity = fileList[i]["SubType (O)"] ? fileList[i]["SubType (O)"] : "";
+        let pId = fileList[i]["Integrated"] ? fileList[i]["Integrated"] : "";
+        let propId = fileList[i]["Field3"];
+        let name = fileList[i]["Field4"] ? fileList[i]["Field4"] : "";
+        let lat = fileList[i]["Latitude__"] ? fileList[i]["Latitude__"] : "";
+        let lng = fileList[i]["Longitude"] ? fileList[i]["Longitude"] : "";
+        let address = fileList[i]["Address"] ? fileList[i]["Address"] : "";
+        let mobile = "";
+        let caregory = fileList[i]["Category__"] ? fileList[i]["Category__"] : "";
+        let streetColony = fileList[i]["Name_Of"] ? fileList[i]["Name_Of"] : "";
+        let entity = fileList[i]["SubType__O"] ? fileList[i]["SubType__O"] : "";
         let entityId = "";
         let detail = this.entityTypeList.find(item => item.name == entity);
         if (detail != undefined) {
           entityId = detail.id;
         }
+        if (entityId == "") {
+          console.log("propId => " + propId + ", entity=> " + entity + ", entityId=> " + entityId);
+         // if (entity == "Shops") {
+        //    entityId = "5";
+         // }
+
+        }
+
         let obj = {
           address: address,
           date: this.commonService.getTodayDateTime(),
@@ -978,18 +988,20 @@ export class Cms1Component implements OnInit {
           markerKey++;
           hundredCounts++;
         }
-        let dbPath = "EntityMarkingData/MarkedHouses/15-R1/" + lineNo + "/" + markerKey;
+        let dbPath = "EntityMarkingData/MarkedHouses/14-R9/" + lineNo + "/" + markerKey;
         this.db.object(dbPath).update(obj);
         console.log(dbPath);
         console.log(obj);
         marksCount++;
         key++;
         lastMarkerKey = key;
+        dbPath = "EntityMarkingData/MarkedHouses/14-R9/" + lineNo + "/";
+        this.db.object(dbPath).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
       }
-      let dbPath = "EntityMarkingData/MarkedHouses/15-R1/1/";
-      this.db.object(dbPath).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
-      console.log(marksCount);
-      console.log(lastMarkerKey);
+      // let dbPath = "EntityMarkingData/MarkedHouses/16-R1/1/";
+      // this.db.object(dbPath).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
+      //  console.log(marksCount);
+      //  console.log(lastMarkerKey);
     }
   }
 
@@ -1010,7 +1022,7 @@ export class Cms1Component implements OnInit {
       this.first_sheet_name = workbook.SheetNames[0];
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
-      let key = 1;
+      let key = 140;
       const jsonObj = {};
       for (let i = 0; i < fileList.length; i++) {
         let wardNo = fileList[i]["Ward No"];
@@ -1021,14 +1033,14 @@ export class Cms1Component implements OnInit {
         let zone = fileList[i]["Zone"];
         const data = {
           address: address,
-          lat: lat,
-          lng: lng,
+          lat: lat.toString(),
+          lng: lng.toString(),
           pickFrequency: pickFrequency,
           type: "Rectangular",
-          ward: wardNo,
+          ward: wardNo.toString(),
           zone: zone,
           dustbinType: "Dustbin",
-          createdDate: "2025-09-15"
+          createdDate: "2025-10-15"
         }
         this.db.object("DustbinData/DustbinDetails/" + key.toString()).update(data);
         jsonObj[key] = data;

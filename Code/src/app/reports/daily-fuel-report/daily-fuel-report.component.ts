@@ -898,6 +898,7 @@ export class DailyFuelReportComponent implements OnInit {
           .valueChanges()
           .subscribe(async (workerData) => {
             instance.unsubscribe();
+          console.log(dbPath)
             if (workerData != null) {
               let driverList = workerData["driver"].split(",");
               let vehicleList = workerData["vehicle"].split(",");

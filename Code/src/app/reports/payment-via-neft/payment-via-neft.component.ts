@@ -404,7 +404,7 @@ export class PaymentViaNeftComponent implements OnInit {
         }
         this.db.object(dbPath + "/" + transkey).update(transData);
 
-        dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/" + detail.collectedDate;
+        dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/" + transactionDate;
         let collectorInstance = this.db.object(dbPath).valueChanges().subscribe(colectorData => {
           collectorInstance.unsubscribe();
           let collectorKey = 1;
@@ -518,7 +518,7 @@ export class PaymentViaNeftComponent implements OnInit {
       }
       this.db.object(dbPath + "/" + transkey).update(transData);
 
-      dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/Entities/" + detail.entityId+"/" + detail.collectedDate;
+      dbPath = "PaymentCollectionInfo/PaymentCollectorHistory/" + detail.collectedBy + "/Entities/" + detail.entityId+"/" + transactionDate;
       let collectorInstance = this.db.object(dbPath).valueChanges().subscribe(colectorData => {
         collectorInstance.unsubscribe();
         let collectorKey = 1;

@@ -228,23 +228,28 @@ export class RealtimeMonitoringComponent implements OnInit {
 
     this.userId = localStorage.getItem("userID");
     this.commonService.savePageLoadHistory("Monitoring", "RealTime", localStorage.getItem("userID"));
-    if (localStorage.getItem("userType") == "External User") {
-      $(this.divRemark).hide();
-    }
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.toDayDate.toString().split("-")[1]) - 1);
     this.currentYear = new Date().getFullYear();
     let zones = this.mapService.getZones(this.toDayDate);
-    this.allZones = zones.reduce((acc, val) => {
-      if (
-        !val.zoneNo.includes("Service") &&
-        !val.zoneNo.includes("Support") &&
-        !val.zoneName.includes("Service") &&
-        !val.zoneName.includes("Support")
-      ) {
-        acc.push(val);
-      }
-      return acc;
-    }, []);
+    if (localStorage.getItem("userType") == "External User") {
+      $(this.divRemark).hide();
+      this.allZones = zones.reduce((acc, val) => {
+        if (
+          !val.zoneNo.includes("Service") &&
+          !val.zoneNo.includes("Support") &&
+          !val.zoneName.includes("Service") &&
+          !val.zoneName.includes("Support")
+        ) {
+          acc.push(val);
+        }
+        return acc;
+      }, []);
+    }
+    else{
+      this.allZones = zones;
+    }
+
+
     this.setMap();
     this.getpeopleAtWork();
     this.getGarageWorkDutyOn();
