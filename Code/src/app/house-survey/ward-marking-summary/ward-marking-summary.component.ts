@@ -69,7 +69,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   public totalTypeCount: any;
   isActionShow: any;
-  userId: any
+  userId: any;
   inProgressWards: any[] = [];
   serviceName = "marking-summary";
   isShowEntityExport: any;
@@ -215,6 +215,11 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Entity Counts";
       htmlString += "</td>";
+      if (this.cityName == 'hisar') {
+        htmlString += "<td>";
+        htmlString += "Property ID";
+        htmlString += "</td>";
+      }
       htmlString += "<td>";
       htmlString += "Owner Name";
       htmlString += "</td>";
@@ -300,6 +305,11 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["entityCounts"];
         htmlString += "</td>";
+        if (this.cityName == 'hisar') {
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["propId"];
+          htmlString += "</td>";
+        }
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["ownerName"];
         htmlString += "</td>";
@@ -410,6 +420,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                     let groundFloorArea = lineData[markerNo]['groundFloorArea'] || '';
                     let plotLength = lineData[markerNo]["plotLength"] || '';
                     let plotDepth = lineData[markerNo]["plotDepth"] || '';
+                    let propId = lineData[markerNo]['propId'] || '';
 
                     let totalArea = lineData[markerNo]['totalArea'] || '';
                     if (lineData[markerNo]["BuildingDetails"] != null) {
@@ -469,7 +480,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                               dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                               this.db.object(dbPath).update({ address: address });
                             }
-                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
+                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
                           }
                         );
                       }
@@ -477,11 +488,11 @@ export class WardMarkingSummaryComponent implements OnInit {
                         address = this.markerCityName;
                         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                         this.db.object(dbPath).update({ address: address });
-                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
+                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
                       }
                     }
                     else {
-                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
+                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea });
                     }
                   }
                 }
@@ -608,7 +619,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   getMarkingDetail(wardNo: any, listIndex: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkingDetail");
-    this.markerData.lastScan = ""
+    this.markerData.lastScan = "";
     let dbPath = "EntityMarkingData/LastScanTime/Ward/" + wardNo;
     let totalmarkingInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       totalmarkingInstance.unsubscribe();
@@ -644,7 +655,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.markerData.wardInstalled = wardDetail.alreadyInstalled;
       this.markerData.wardMarkers = wardDetail.markers;
       this.markerData.wardHouses = wardDetail.houses;
-      this.markerData.wardNo = wardDetail.wardNo
+      this.markerData.wardNo = wardDetail.wardNo;
 
       for (let i = 1; i <= wardDetail.wardLines; i++) {
         this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, markers: 0, houses: 0, complex: 0, houseInComplex: 0, isApproved: false, alreadyCard: 0 });
@@ -702,7 +713,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                   lineDetail.markers = Number(data);
                 }
               }
-            })
+            });
         }
       }
     );
@@ -734,7 +745,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                   lineDetail.houses = Number(data);
                 }
               }
-            })
+            });
         }
       }
     );
@@ -767,7 +778,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                   lineDetail.complex = Number(data);
                 }
               }
-            })
+            });
         }
       }
     );
@@ -799,7 +810,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                   lineDetail.complex = Number(data);
                 }
               }
-            })
+            });
         }
       }
     );
@@ -1131,7 +1142,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                     }
                     servingCount = totalHouses;
                   }
-                  let detail = this.houseTypeList.find(item =>Number(item.id) ==Number(houseTypeId));
+                  let detail = this.houseTypeList.find(item => Number(item.id) == Number(houseTypeId));
                   if (detail != undefined) {
                     let houseType = detail.houseType;
                     if (this.zoneHouseTypeList.length == 0) {
@@ -1172,8 +1183,8 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.totalMarkersCount = 0;
     this.totalHousesCountActual = 0;
     this.totalMarkersCountActual = 0;
-    this.markerData.totalMarkers=0;
-    this.markerData.totalHouses=0;
+    this.markerData.totalMarkers = 0;
+    this.markerData.totalHouses = 0;
 
     this.wardList = JSON.parse(localStorage.getItem("markingWards"));
     this.updateCounts(1);
@@ -1200,15 +1211,15 @@ export class WardMarkingSummaryComponent implements OnInit {
         totalMarkers: this.totalMarkersCount,
         actualTotalHouses: this.totalHousesCountActual,
         actualTotalMarkers: this.totalMarkersCountActual
-      }
+      };
       this.commonService.saveJsonFile(markingSummary, "MarkingSummary.json", "/SurveyManagement/MarkingManagement/");
       setTimeout(() => {
         this.commonService.setAlertMessage("success", "Data updated successfully !!!");
         $(this.divLoaderCounts).hide();
         this.markerData.lastUpdate = lastUpdate;
         this.markerData.totalAlreadyCard = 0;
-       //this.markerData.totalHouses = this.userIsExternal ? this.totalHousesCountActual : this.totalHousesCount;
-       // this.markerData.totalMarkers = this.userIsExternal ? this.totalMarkersCountActual : this.totalMarkersCount;
+        //this.markerData.totalHouses = this.userIsExternal ? this.totalHousesCountActual : this.totalHousesCount;
+        // this.markerData.totalMarkers = this.userIsExternal ? this.totalMarkersCountActual : this.totalMarkersCount;
         this.getWards();
       }, 5000);
 
@@ -1377,7 +1388,7 @@ export class WardMarkingSummaryComponent implements OnInit {
         }
         this.db.object(dbPath).update({ totalRemovedMarkersCount: counts });
       }
-    })
+    });
   }
 
   getAssignedWard() {
@@ -1412,8 +1423,8 @@ export class markerDatail {
   wardInstalled: number;
   wardApprovedLines: number;
   lastUpdate: string;
-  wardNo: string
+  wardNo: string;
   lastScan: string;
-  lineNo: string
+  lineNo: string;
 
 }
