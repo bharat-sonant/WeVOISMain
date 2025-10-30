@@ -27,6 +27,7 @@ export class PaymentCollectorTrackingComponent {
   selectMonthName: any;
 
   paymentCollectorList: any[];
+  paymentCollectorAllList: any[];
   cardList: any[] = [];
   polylines = [];
   routePathStore: any[] = [];
@@ -65,6 +66,7 @@ export class PaymentCollectorTrackingComponent {
     $('#btnReset').hide();
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.paymentCollectorList = [];
+    this.paymentCollectorAllList = [];
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     this.selectedYear = this.selectedDate.split('-')[0];
@@ -332,10 +334,26 @@ export class PaymentCollectorTrackingComponent {
 
 
 
+
   // Play Button Functionality End 
 
+  getFiltered(value: any) {
+    if (value == "0") {
+      this.paymentCollectorList = this.paymentCollectorAllList;
+    }
+    else if (value == "active") {
+      this.paymentCollectorList = this.paymentCollectorAllList.filter(item => item.isActive == true);
+    }
+    else {
+      this.paymentCollectorList = this.paymentCollectorAllList.filter(item => item.isActive == false);
+    }
+  }
+
   getPaymentCollector() {
+    $("#divLoader").show();
     this.paymentCollectorList = [];
+    this.paymentCollectorAllList = [];
+    $("#ddlStatus").val("active");
     const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
     let userJSONInstance = this.httpService.get(path).subscribe(async userJsonData => {
       userJSONInstance.unsubscribe();
@@ -345,8 +363,9 @@ export class PaymentCollectorTrackingComponent {
           for (let i = 0; i < keyArray.length; i++) {
             let empId = keyArray[i];
             if (empId != "lastKey") {
-              this.paymentCollectorList.push({
+              this.paymentCollectorAllList.push({
                 paymentCollectorId: empId,
+                isActive: userJsonData[empId]["isActive"],
                 name: userJsonData[empId]["name"].toUpperCase().trim(),
                 cssClass: "not-active",
                 latLng: [],
@@ -363,28 +382,31 @@ export class PaymentCollectorTrackingComponent {
             }
           }
         }
-        this.paymentCollectorList = this.paymentCollectorList.sort((a, b) => b.name < a.name ? 1 : -1);
-        const promises = this.paymentCollectorList.map(async (item) => {
+        this.paymentCollectorAllList = this.paymentCollectorAllList.sort((a, b) => b.name < a.name ? 1 : -1);
+        const promises = this.paymentCollectorAllList.map(async (item) => {
           const wardBoundary = await this.getPaymentCollectorRouteStatus(item.paymentCollectorId);
           return (wardBoundary);
         });
         const list = await Promise.all(promises);
         for (let i = 0; i < list.length; i++) {
           let empId = list[i]["empId"];
-          let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == empId);
+          let detail = this.paymentCollectorAllList.find(item => item.paymentCollectorId == empId);
           if (detail != undefined) {
             detail.cssClass = list[i]["cssClass"];
             detail.isRoute = list[i]["status"];
           }
         }
         const array = [];
-        const notRouteList = this.paymentCollectorList.filter(item => item.isRoute == 0);
-        const routeList = this.paymentCollectorList.filter(item => item.isRoute == 1);
+        const notRouteList = this.paymentCollectorAllList.filter(item => item.isRoute == 0);
+        const routeList = this.paymentCollectorAllList.filter(item => item.isRoute == 1);
         const concatenatedArray = array.concat(routeList, notRouteList);
-        this.paymentCollectorList = [];
-        this.paymentCollectorList = concatenatedArray;
+        this.paymentCollectorAllList = [];
+        this.paymentCollectorAllList = concatenatedArray;
+        this.paymentCollectorList = this.paymentCollectorAllList.filter(item => item.isActive == true);
+        $("#divLoader").hide();
       }
     }, error => {
+      $("#divLoader").hide();
     });
   }
 
@@ -452,10 +474,13 @@ export class PaymentCollectorTrackingComponent {
 
           let startTime = new Date(this.commonService.setTodayDate() + " " + "08:00");
           let endTime = new Date(this.commonService.setTodayDate() + " " + "21:00");
+          if (this.selectedDate == this.toDayDate) {
+            endTime = new Date();
+          }
+
           let routeTime = new Date(this.commonService.setTodayDate() + " " + index);
           if (routeTime >= startTime && routeTime <= endTime) {
             routePath.push({ distanceinmeter: data[index]["distance-in-meter"], latlng: data[index]["lat-lng"], time: index });
-
             if (data[index]["distance-in-meter"] != null) {
               totalKM = totalKM + Number(data[index]["distance-in-meter"]);
             }
@@ -482,6 +507,7 @@ export class PaymentCollectorTrackingComponent {
                 }
               }
             }
+
           }
           let detail = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
           if (detail != undefined) {

@@ -21,37 +21,42 @@
       </div>
 
       <div class="col-md-4 main1 text-right" style="justify-content: right;">
-       <div style="margin-right: -40px;">
-        <select class="caret-select" id="ddlSpeed" (change)="setSpeed($event.target.value)" style="width: 80px; margin-right: 8px;">
-          <option value="0">Speed</option>
-          <option value="1" selected>1x</option>
-          <option value="2" >2x</option>
-          <option value="3">3x</option>
-          <option value="4" >4x</option>
-          <option value="5">5x</option>
-          <option value="10" >10x</option>
-        </select>
-        <button class="fa-expand-showgraph" (click)="getPlayStop();" title="Play Route">
-          <!-- <i id="playStop" class="fab fa-youtube" style="font-size: 17px;"></i> -->
-           <img id="playStop" src="../../../assets/icons/youtube-brands-solid.svg" alt="youtube-brands-solid"
-           width="17" class="icon-white"/>
-        </button>
-        <button id="btnReset" class="fa-expand-showgraph" (click)="getReset();" title="Re-set" style="margin-right: 8px;">
-          <!-- <i class="fas fa-sync"  style="font-size: 17px;"></i> -->
-           <img src="../../../assets/icons/sync-alt-solid.svg" alt="sync-alt-solid" width="17" class="icon-white cursor-pointer"/>
-        </button>
+        <div style="margin-right: -40px;">
+          <select class="caret-select" id="ddlSpeed" (change)="setSpeed($event.target.value)"
+            style="width: 80px; margin-right: 8px;">
+            <option value="0">Speed</option>
+            <option value="1" selected>1x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="4">4x</option>
+            <option value="5">5x</option>
+            <option value="10">10x</option>
+          </select>
+          <button class="fa-expand-showgraph" (click)="getPlayStop();" title="Play Route">
+            <!-- <i id="playStop" class="fab fa-youtube" style="font-size: 17px;"></i> -->
+            <img id="playStop" src="../../../assets/icons/youtube-brands-solid.svg" alt="youtube-brands-solid"
+              width="17" class="icon-white" />
+          </button>
+          <button id="btnReset" class="fa-expand-showgraph" (click)="getReset();" title="Re-set"
+            style="margin-right: 8px;">
+            <!-- <i class="fas fa-sync"  style="font-size: 17px;"></i> -->
+            <img src="../../../assets/icons/sync-alt-solid.svg" alt="sync-alt-solid" width="17"
+              class="icon-white cursor-pointer" />
+          </button>
           <button class="btn btn-primary" (click)="getRouteDataPreNext('pre');"><span style="color: #fff; ">
-            << </span></button>
-      <select class="caret-select" id="ddlTime" (change)="getRouteData($event.target.value)" style="margin-right: 8px;">
-      <option value="0">All Time Route</option>
-      <option value="5">5 Minutes</option>
-      <option value="10">10 Minutes</option>
-      <option value="15">15 Minutes</option>
-    </select>
-      <button class="btn btn-primary" (click)="getRouteDataPreNext('next');"> 
-        >>
-      </button></div>
-    
+              << </span></button>
+          <select class="caret-select" id="ddlTime" (change)="getRouteData($event.target.value)"
+            style="margin-right: 8px;">
+            <option value="0">All Time Route</option>
+            <option value="5">5 Minutes</option>
+            <option value="10">10 Minutes</option>
+            <option value="15">15 Minutes</option>
+          </select>
+          <button class="btn btn-primary" (click)="getRouteDataPreNext('next');">
+            >>
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -63,6 +68,12 @@
     <div class="card">
       <div aria-labelledby="headingOne">
         <div class="dth">
+          <select class="caret-select" id="ddlStatus" (change)="getFiltered($event.target.value)"
+            style="width: 95%; margin-right: 10px; margin-bottom: 10px;">
+            <option value="0">All Payment Collector</option>
+            <option value="active" selected>Active</option>
+            <option value="inactive">In-Active</option>
+          </select>
           <div class="table-bg">
             <div class="tableFixHead">
               <table class="table table-hover">
@@ -83,89 +94,90 @@
 
 <div id="timeBox">
   Time : {{routeTime}}
- </div>
+</div>
 <div id="trackDetail">
   <div>
     <div style="border-bottom: 1px solid #d6d6d6; padding: 6px;text-align: right;">
       <div style="font-size: 18px;">{{paymentCollectorDetail.startTime}}</div>
-      <div style=" font-size: 12px;color: green; font-weight: normal;"> Start Time 
+      <div style=" font-size: 12px;color: green; font-weight: normal;"> Start Time
         <!-- <i class="fa-regular fa-clock"></i> -->
-         <img src="../../../assets/icons/clock-regular.svg" alt="clock-regular" width="12" class="icon-green"/>
+        <img src="../../../assets/icons/clock-regular.svg" alt="clock-regular" width="12" class="icon-green" />
       </div>
     </div>
     <div style="border-bottom: 1px solid #d6d6d6; padding: 6px;text-align: right;">
       <div style="font-size: 18px; ">{{paymentCollectorDetail.endTime}}</div>
-      <div style=" font-size: 12px;color: red;font-weight: normal;">End Time 
+      <div style=" font-size: 12px;color: red;font-weight: normal;">End Time
         <!-- <i class="fa-regular fa-clock"></i></div> -->
-        <img src="../../../assets/icons/clock-regular.svg" alt="clock-regular" width="12" class="icon-red"/>
-    </div>
-    <div style="border-bottom: 1px solid #d6d6d6; padding: 6px;text-align: right; ">
-      <div style="font-size: 18px; ">{{paymentCollectorDetail.totalKM}}</div>
-      <div style="font-size: 12px; color: blue;font-weight: normal;">Run KM 
-        <!-- <i class="fa-solid fa-route"></i></div> -->
-        <img src="../../../assets/icons/route-solid.svg" alt="route-solid" width="14" class="icon-blue"/>
-    </div>
-    <div style="border-bottom: 1px solid #d6d6d6;  padding: 6px;text-align: right;">
-      <div style="font-size: 18px;">{{paymentCollectorDetail.totalHr}}</div>
-      <div style="font-size: 12px;font-weight: normal;">Working Hr. 
-        <!-- <i class="fa-regular fa-clock"></i> -->
-        <img src="../../../assets/icons/clock-regular.svg" alt="clock-regular" width="12" />
+        <img src="../../../assets/icons/clock-regular.svg" alt="clock-regular" width="12" class="icon-red" />
       </div>
-    </div>
-    <div style=" padding: 6px;text-align: right; cursor: pointer;"
-      (click)="openCollectionDetail(contentCollectionDetail);">
-      <div style="font-size: 18px;">{{paymentCollectorDetail.cardCount}}</div>
-      <div style="font-size: 12px;font-weight: normal; color: green;">Card Processed 
-        <!-- <i class="fa-regular fa-credit-card"></i> -->
-        <img src="../../../assets/icons/credit-card-regular.svg" alt="credit-card-regular" width="14" class="icon-green"/>
+      <div style="border-bottom: 1px solid #d6d6d6; padding: 6px;text-align: right; ">
+        <div style="font-size: 18px; ">{{paymentCollectorDetail.totalKM}}</div>
+        <div style="font-size: 12px; color: blue;font-weight: normal;">Run KM
+          <!-- <i class="fa-solid fa-route"></i></div> -->
+          <img src="../../../assets/icons/route-solid.svg" alt="route-solid" width="14" class="icon-blue" />
         </div>
-    </div>
-  </div>
-</div>
-
-
-<!--Collection Detail  Start-->
-<ng-template #contentCollectionDetail>
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Collection Detail</h5>
-        <button type="button" class="close" (click)="closeModel();" style="float: right;margin-top: -35px;">
-          <span aria-hidden="true" style="float: right;margin-top: -35px;">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="col-md-12">
-          <div class="table-wrapper table-scroll-popup table-scroll-2">
-            <table class="table table-scroll-iner">
-              <thead>
-                <th>Card No</th>
-                <th>
-                  Payment Method</th>
-                <th>
-                  Time</th>
-                <th class="text-right">
-                  Amount</th>
-              </thead>
-              <tbody>
-                <tr *ngFor="let data of cardList; let i=index">
-                  <td class="date-details">
-                    {{data.cardNo}}</td>
-                  <td class="markers-details">
-                    {{data.payMethod}}</td>
-                  <td class="text-right markers-details">
-                    {{data.time}}</td>
-                  <td class="text-right markers-details">
-                    {{data.transactionAmount}}</td>
-                </tr>
-
-
-              </tbody>
-            </table>
+        <div style="border-bottom: 1px solid #d6d6d6;  padding: 6px;text-align: right;">
+          <div style="font-size: 18px;">{{paymentCollectorDetail.totalHr}}</div>
+          <div style="font-size: 12px;font-weight: normal;">Working Hr.
+            <!-- <i class="fa-regular fa-clock"></i> -->
+            <img src="../../../assets/icons/clock-regular.svg" alt="clock-regular" width="12" />
+          </div>
+        </div>
+        <div style=" padding: 6px;text-align: right; cursor: pointer;"
+          (click)="openCollectionDetail(contentCollectionDetail);">
+          <div style="font-size: 18px;">{{paymentCollectorDetail.cardCount}}</div>
+          <div style="font-size: 12px;font-weight: normal; color: green;">Card Processed
+            <!-- <i class="fa-regular fa-credit-card"></i> -->
+            <img src="../../../assets/icons/credit-card-regular.svg" alt="credit-card-regular" width="14"
+              class="icon-green" />
           </div>
         </div>
       </div>
     </div>
-  </div>
-</ng-template>
-<!--Collection Detail End-->
+
+
+    <!--Collection Detail  Start-->
+    <ng-template #contentCollectionDetail>
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Collection Detail</h5>
+            <button type="button" class="close" (click)="closeModel();" style="float: right;margin-top: -35px;">
+              <span aria-hidden="true" style="float: right;margin-top: -35px;">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="col-md-12">
+              <div class="table-wrapper table-scroll-popup table-scroll-2">
+                <table class="table table-scroll-iner">
+                  <thead>
+                    <th>Card No</th>
+                    <th>
+                      Payment Method</th>
+                    <th>
+                      Time</th>
+                    <th class="text-right">
+                      Amount</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of cardList; let i=index">
+                      <td class="date-details">
+                        {{data.cardNo}}</td>
+                      <td class="markers-details">
+                        {{data.payMethod}}</td>
+                      <td class="text-right markers-details">
+                        {{data.time}}</td>
+                      <td class="text-right markers-details">
+                        {{data.transactionAmount}}</td>
+                    </tr>
+
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <!--Collection Detail End-->
