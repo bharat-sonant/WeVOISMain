@@ -229,148 +229,201 @@ export class EmployeePenaltyComponent implements OnInit {
 
   getAppPenalities() {
     return new Promise(async (resolve) => {
-      let penaltyList = [];
-      let dbPath ="Penalties/" + this.selectedYear + "/" + this.selectedMonthName;
-      let penalityInstance = this.db.object(dbPath).valueChanges().subscribe(async (data:any) => {
-          penalityInstance.unsubscribe();
-          if (data != null) {
-            let keyArray = Object.keys(data);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length; i++) {
-                let date = keyArray[i];
-                let todayDate = new Date(date);
-                let formattedDate = todayDate.toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                });
-                let empObj = data[date];
-                let empArray = Object.keys(empObj);
-                if (empArray.length > 0) {
-                  for (let j = 0; j < empArray.length; j++) {
-                    let empId = empArray[j];
-                    const empData = empObj[empId];
-                    if (empData["lastKey"]) {
-                      Object.keys(empData).map(async(key)=>{
-                        if(key!=='lastKey'){
-                          let keyDataObj = empData[key]
-                          let processedData = await this.processPenaltiesData(keyDataObj,empId,date,penaltyList,formattedDate);
-                          penaltyList.push(processedData);
-                        }
-                      });
-                    }
-                    else{
-                      let processedData = await this.processPenaltiesData(empData,empId,date,penaltyList,formattedDate);
-                      penaltyList.push(processedData);
-                    }
+      let penaltyList: any[] = [];
+      const dbPath = `Penalties/${this.selectedYear}/${this.selectedMonthName}`;
+
+      try {
+        // Get data once and unsubscribe
+        const data = await new Promise(resolve => {
+          const subscription = this.db.object(dbPath)
+            .valueChanges()
+            .subscribe((result: any) => {
+              subscription.unsubscribe();
+              resolve(result);
+            });
+        });
+
+        if (!data) {
+          return resolve(penaltyList);
+        }
+
+        // Process dates
+        const datePromises = Object.keys(data).map(async (date) => {
+          const formattedDate = new Date(date).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+
+          const empObj = data[date];
+          const empArray = Object.keys(empObj);
+
+          // Process employees for this date
+          const employeePromises = empArray.map(async (empId) => {
+            const empData = empObj[empId];
+            const results: any[] = [];
+
+            if (empData["lastKey"]) {
+              // Process multiple entries
+              const keyPromises = Object.keys(empData)
+                .filter(key => key !== "lastKey")
+                .map(async (key) => {
+                  const processedData = await this.processPenaltiesData(
+                    empData[key],
+                    empId,
+                    date,
+                    penaltyList,
+                    formattedDate
+                  );
+                  if (processedData) {
+                    results.push(processedData);
                   }
-                }
+                });
+
+              await Promise.all(keyPromises);
+            } else {
+              // Process single entry
+              const processedData = await this.processPenaltiesData(
+                empData,
+                empId,
+                date,
+                penaltyList,
+                formattedDate
+              );
+              if (processedData) {
+                results.push(processedData);
               }
             }
-          }
-          resolve(penaltyList);
+
+            return results;
+          });
+
+          // Wait for all employees to be processed
+          const employeeResults = await Promise.all(employeePromises);
+          return employeeResults.reduce((acc, val) => acc.concat(val), []).filter(Boolean);;
         });
+
+        // Wait for all dates to be processed
+        const allResults = await Promise.all(datePromises);
+        
+        // Combine all results
+        const finalResults = allResults.reduce((acc, val) => acc.concat(val), []);
+        
+        // Add to penalty list
+        penaltyList = penaltyList.concat(finalResults.filter(Boolean));
+
+        resolve(penaltyList);
+
+      } catch (error) {
+        console.error("Error in getAppPenalities:", error);
+        resolve(penaltyList);
+      }
     });
-  }
+}
 
   getScanCardPenalties() {
     return new Promise(async (resolve) => {
       let penaltyList = [];
-      let dbPath =
-        "WardScanCardPenalties/" +
-        this.selectedYear +
-        "/" +
-        this.selectedMonthName;
-      let penalityInstance = this.db
-        .object(dbPath)
-        .valueChanges()
-        .subscribe(async (data) => {
-          penalityInstance.unsubscribe();
-          if (data != null) {
-            let keyArray = Object.keys(data);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length; i++) {
-                let date = keyArray[i];
-                let todayDate = new Date(date);
-                let formattedDate = todayDate.toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                });
-                let empObj = data[date];
-                let empArray = Object.keys(empObj);
-                if (empArray.length > 0) {
-                  for (let j = 0; j < empArray.length; j++) {
-                    let empId = empArray[j];
-                    let name;
-                    let empCode = "";
-                    let orderBy = new Date(date).getTime();
-                    let empDetail = penaltyList.find(
-                      (item) => item.empId == empId
-                    );
-                    if (empDetail == undefined) {
-                      let empObjName =
-                        await this.commonService.getEmplyeeDetailByEmployeeId(
-                          empId
-                        );
-                      name = empObjName["name"];
-                      empCode = empObjName["empCode"];
-                      // name = await this.getEmpNameById(empId);
-                    } else {
-                      name = empDetail.name;
-                      empCode = empDetail.empCode;
-                    }
-                    let penaltyType = "Scan Card";
-                    let obj = empObj[empId];
-                    let objKeyArray = Object.keys(obj);
-                    for (let k = 0; k < objKeyArray.length; k++) {
-                      let ward = objKeyArray[k];
-                      let reason = obj[ward]["reason"];
-                      let amount = obj[ward]["amount"];
-                      let createdById = obj[ward]["createdBy"];
-                      let createdBy;
-                      let detail = this.portalUserList.find(
-                        (item) => item.userId == createdById
-                      );
-                      if (detail != undefined) {
-                        createdBy = detail.name;
-                      }
-                      let createdDate = obj[ward]["createdOn"];
-                      let createdOn =
-                        createdDate.split(" ")[0].split("-")[2] +
-                        " " +
-                        this.commonService.getCurrentMonthShortName(
-                          Number(createdDate.split(" ")[0].split("-")[1])
-                        ) +
-                        " " +
-                        createdDate.split(" ")[0].split("-")[0] +
-                        " " +
-                        createdDate.split(" ")[1];
+      let dbPath = "WardScanCardPenalties/" + this.selectedYear + "/" + this.selectedMonthName;
 
-                      penaltyList.push({
-                        empId: empId,
-                        empCode: empCode,
-                        date: formattedDate,
-                        name: name,
-                        penaltyType: penaltyType,
-                        reason: reason,
-                        createdById: createdById,
-                        createdBy: createdBy,
-                        createdOn: createdOn,
-                        amount: amount,
-                        orderBy: orderBy,
-                        entryType: empObj[empId]["entryType"] || "Penalty",
-                      });
-                    }
-                  }
-                }
-              }
-            }
-          }
-          resolve(penaltyList);
+      try {
+        // Get data once and unsubscribe
+        const data = await new Promise(resolve => {
+          const subscription = this.db.object(dbPath)
+            .valueChanges()
+            .subscribe((result: any) => {
+              subscription.unsubscribe();
+              resolve(result);
+            });
         });
+
+        if (!data) {
+          return resolve(penaltyList);
+        }
+
+        let promises = Object.keys(data).map(async (date) => {
+          let todayDate = new Date(date);
+          let formattedDate = todayDate.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+
+          let empObj = data[date];
+          let orderBy = new Date(date).getTime();
+
+          let p = Object.keys(empObj).map(async (empId) => {
+            let name;
+            let empCode = "";
+            let empDetail = penaltyList.find(item => item.empId == empId);
+            
+            if (!empDetail) {
+              let empObjName = await this.commonService.getEmplyeeDetailByEmployeeId(empId);
+              name = empObjName["name"];
+              empCode = empObjName["empCode"];
+            } else {
+              name = empDetail.name;
+              empCode = empDetail.empCode;
+            }
+
+            let obj = empObj[empId];
+            let wardPromises = Object.keys(obj)
+              .filter(key => key !== 'entryType')
+              .map(async (ward) => {
+                let wardData = obj[ward];
+                let createdById = wardData.createdBy;
+                let createdBy;
+                let detail = this.portalUserList.find(item => item.userId == createdById);
+                if (detail) {
+                  createdBy = detail.name;
+                }
+
+                let createdDate = wardData.createdOn;
+                let createdOn = createdDate ? 
+                  createdDate.split(" ")[0].split("-")[2] +
+                  " " +
+                  this.commonService.getCurrentMonthShortName(
+                    Number(createdDate.split(" ")[0].split("-")[1])
+                  ) +
+                  " " +
+                  createdDate.split(" ")[0].split("-")[0] +
+                  " " +
+                  createdDate.split(" ")[1] : "";
+
+                return {
+                  empId: empId,
+                  empCode: empCode,
+                  date: formattedDate,
+                  name: name,
+                  penaltyType: "Scan Card",
+                  reason: wardData.reason,
+                  createdById: createdById,
+                  createdBy: createdBy,
+                  createdOn: createdOn,
+                  amount: wardData.amount,
+                  orderBy: orderBy,
+                  entryType: obj.entryType || "Penalty"
+                };
+              });
+
+            let wardResults = await Promise.all(wardPromises);
+            return wardResults;
+          });
+
+          let results = await Promise.all(p);
+          return results.reduce((acc, val) => acc.concat(val), []);
+        });
+
+        let allResults = await Promise.all(promises);
+        let finalResults = allResults.reduce((acc, val) => acc.concat(val), []);
+        penaltyList = penaltyList.concat(finalResults.filter(Boolean));
+        resolve(penaltyList);
+      } catch (error) {
+        console.error("Error in getScanCardPenalties:", error);
+        resolve(penaltyList);
+      }
     });
-  }
+}
 
   getAnalysisPenalities() {
     return new Promise(async (resolve) => {
