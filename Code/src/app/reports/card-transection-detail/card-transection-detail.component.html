@@ -165,7 +165,28 @@
             </div>
         </div>
         <div class="col-md-8" style="padding-left: 7px;padding-right:0px;">
-            <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; ">
+            <div class="card" style="margin-top:-6px;  height: auto!important; margin-bottom: 5px !important;">
+                <div class="card-header custom-header">
+                    <div class="row align">
+                        <div class="col-md-12">
+                            <div class="wrap-input-effects">
+                                <select id="ddlRecords me-2" class="caret-select" style="width: 200px;float: right;margin-right: 10px;" 
+                                [ngModel]="selectedFilter" (ngModelChange)="onChangeFilter($event)">
+                                    <option value="">All Payment Transactions</option>
+                                    <option value="cardTransactions">Card Transactions</option>
+                                    <optgroup label="Entities" *ngIf="cardEntityList.length > 0">
+                                    <option *ngFor="let e of cardEntityList;" [value]="e.key">
+                                        {{e.key}} - {{ e.name }}
+                                    </option>
+                                    </optgroup>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-0" style="height: 82vh!important;overflow: hidden; ">
                 <div id="content" #content class="card-body"
                     style="padding: 0px 0px 0px 0px; font-size: 10px!important;">
                     <div class="row">
@@ -198,7 +219,7 @@
                                             </th>
                                         </thead>
                                         <tbody>
-                                            <tr id="tr{{i}}" *ngFor="let data of transactionList; let i=index">
+                                            <tr id="tr{{i}}" *ngFor="let data of filteredTransactionList; let i=index">
                                                 <td class="text-left br-1">
                                                     {{data.transDate}}
                                                 </td>

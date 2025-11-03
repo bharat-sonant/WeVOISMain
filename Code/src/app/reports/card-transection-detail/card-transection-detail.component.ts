@@ -32,6 +32,8 @@ export class CardTransectionDetailComponent implements OnInit {
   cardEntityList: any[] = [];
   imgMarkerURL = "../assets/img/image-not-found.jpg";
   imgHouseURL = "../assets/img/image-not-found.jpg";
+  selectedFilter:string="";
+  filteredTransactionList:any[]=[];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -136,7 +138,7 @@ export class CardTransectionDetailComponent implements OnInit {
                       houseImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
                     }
 
-                    this.cardEntityList.push({ name: name, entity: entity, houseImageURL: houseImageURL });
+                    this.cardEntityList.push({key, name: name, entity: entity, houseImageURL: houseImageURL });
                   })
                 }
               }
@@ -196,6 +198,8 @@ export class CardTransectionDetailComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTransaction");
     this.totalAmount = "0.00";
     this.transactionList = [];
+    this.filteredTransactionList = [];
+    this.selectedFilter='';
     if ($(this.txtCardNo).val() == "") {
       this.commonService.setAlertMessage("error", "Please enter card number");
       return;
@@ -251,10 +255,11 @@ export class CardTransectionDetailComponent implements OnInit {
                       houseImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2F" + date + "%2F" + houseImage + "?alt=media";
                     }
                     let timestemp = new Date(date).getTime();
-                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL });
+                    this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL ,type:"card"});
                     this.transactionList = this.transactionList.sort((a, b) =>
                       b.timestemp < a.timestemp ? 1 : -1
                     );
+                    this.filteredTransactionList = this.transactionList
                     this.getDateTimeFormat(key, dateData[key]["transactionDateTime"], date, year, month);
                   }
                 }
@@ -327,10 +332,11 @@ export class CardTransectionDetailComponent implements OnInit {
                 }
 
                 let timestemp = new Date(date).getTime();
-                this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL });
+                this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL,entityKey,type:"entity" });
                 this.transactionList = this.transactionList.sort((a, b) =>
                   b.timestemp < a.timestemp ? 1 : -1
                 );
+                this.filteredTransactionList = this.transactionList
                 this.getDateTimeFormat(key, dateData[key]["transactionDateTime"], date, year, month);
               }
             }
@@ -364,7 +370,7 @@ export class CardTransectionDetailComponent implements OnInit {
   }
 
   exportToExcel() {
-    if (this.transactionList.length > 0) {
+    if (this.filteredTransactionList.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
@@ -390,28 +396,28 @@ export class CardTransectionDetailComponent implements OnInit {
       htmlString += "Amount";
       htmlString += "</td>";
       htmlString += "</tr>";
-      for (let i = 0; i < this.transactionList.length; i++) {
+      for (let i = 0; i < this.filteredTransactionList.length; i++) {
         htmlString += "<tr>";
         htmlString += "<td t='s'>";
-        htmlString += this.transactionList[i]["date"];
+        htmlString += this.filteredTransactionList[i]["date"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += this.transactionList[i]["transId"];
+        htmlString += this.filteredTransactionList[i]["transId"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += this.transactionList[i]["referId"];
+        htmlString += this.filteredTransactionList[i]["referId"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += this.transactionList[i]["payMethod"];
+        htmlString += this.filteredTransactionList[i]["payMethod"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += this.transactionList[i]["monthYear"];
+        htmlString += this.filteredTransactionList[i]["monthYear"];
         htmlString += "</td>";
         htmlString += "<td t='s'>";
-        htmlString += this.transactionList[i]["collectedBy"];
+        htmlString += this.filteredTransactionList[i]["collectedBy"];
         htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += this.transactionList[i]["amount"];
+        htmlString += this.filteredTransactionList[i]["amount"];
         htmlString += "</td>";
         htmlString += "</tr>";
       }
@@ -419,9 +425,10 @@ export class CardTransectionDetailComponent implements OnInit {
       let fileName = "Card No " + $(this.txtCardNo).val() + "-Transaction-Detail.xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
+    else{
+      this.commonService.setAlertMessage("error","No data to export.");
+    }
   }
-
-
   openHouseModel(content: any, url: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -449,4 +456,16 @@ export class CardTransectionDetailComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
+  onChangeFilter(event:any){
+    // this.selectedFilter=event.target.value;
+    if(!event){
+      this.filteredTransactionList = this.transactionList;
+    }
+    else if(event=="cardTransactions"){
+      this.filteredTransactionList = this.transactionList.filter(item=>item.type=="card");
+    }
+    else{
+      this.filteredTransactionList = this.transactionList.filter(item=>item.entityKey==event);
+    }
+  }
 }
