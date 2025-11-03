@@ -119,7 +119,7 @@ export class CardTransectionDetailComponent implements OnInit {
                 let keyArray = Object.keys(cardData["Entities"]);
                 for (let i = 0; i < keyArray.length; i++) {
                   let key = keyArray[i];
-                  let name = cardData["Entities"][key]["name"];
+                  let name = cardData["Entities"][key]["name"]?cardData["Entities"][key]["name"].toUpperCase():"";
                   let houseImage = cardData["Entities"][key]["houseImage"];
                   let houseImageURL = this.imageNotAvailablePath;
                   let entity = "";
@@ -139,6 +139,9 @@ export class CardTransectionDetailComponent implements OnInit {
                     }
 
                     this.cardEntityList.push({key, name: name, entity: entity, houseImageURL: houseImageURL });
+                    this.cardEntityList=this.cardEntityList.sort((a, b) =>
+                        b.name< a.name ? 1 : -1
+                      );
                   })
                 }
               }
