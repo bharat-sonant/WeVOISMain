@@ -253,8 +253,8 @@ export class CardTransectionDetailComponent implements OnInit {
                     amount = amount + Number(dateData[key]["transactionAmount"]);
                     let houseImage = "";
                     let houseImageURL = this.imageNotAvailablePath;
-                    if (dateData[key]["houseImage"]) {
-                      houseImage = dateData[key]["houseImage"];
+                    if (dateData[key]["houseImage"] || dateData[key]["merchantTransactionId"]) {
+                      houseImage = dateData[key]["houseImage"] || `${dateData[key]["merchantTransactionId"]}.jpg`;
                       houseImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2F" + date + "%2F" + houseImage + "?alt=media";
                     }
                     let timestemp = new Date(date).getTime();
@@ -329,8 +329,8 @@ export class CardTransectionDetailComponent implements OnInit {
                 amount = amount + Number(dateData[key]["transactionAmount"]);
                 let houseImage = "";
                 let houseImageURL = this.imageNotAvailablePath;
-                if (dateData[key]["houseImage"]) {
-                  houseImage = dateData[key]["houseImage"];
+                if (dateData[key]["houseImage"] || dateData[key]["merchantTransactionId"]) {
+                  houseImage = dateData[key]["houseImage"] || `${dateData[key]["merchantTransactionId"]}.jpg`;
                   houseImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2FEntities%2F" + entityKey + "%2F" + date + "%2F" + houseImage + "?alt=media";
                 }
 
