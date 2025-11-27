@@ -27,18 +27,40 @@
                                 [options]="lineBigDashboardChartOptions"
                                 [chartType]="lineBigDashboardChartType"></canvas>
                         </div>
-                        <div [hidden]="showAvgSpeedWidget==false" style="position: absolute;right:20px;top:10px;">
-                            <div style="width:100%; background-color: #fff; margin-top:10px; padding: 10px;">
-                                Time (in Zone) -
+                        <div [hidden]="showAvgSpeedWidget==false" style="position: absolute;right:20px;top:10px;background-color: #ffffff18; padding: 5px; border-radius:10px;">
+                            <div class="graphCard">
+                                <div class="imgLeft">
+                                    <img src="../../assets/img/iconClock.png" class="imgGraph" title="" alt="">
+                                </div>
+                                  <div class="graphRight">
+                                Time (in Zone) 
+                                <span class="graphCount">
                                 {{workerDetails.wardTime}}
+                                </span>
                             </div>
-                             <div style="width:100%; background-color: #fff; margin-top:10px; padding: 10px;">
-                                Distance Covered (in Zone) -
+                            </div>
+                             <div class="graphCard">
+                                <div class="imgLeft">
+                                    <img src="../../assets/img/iconMap.png" class="imgGraph" title="" alt="">
+                                </div>
+                                  <div class="graphRight">
+                                Distance Covered (in Zone) 
+                                <span class="graphCount">
                                 {{workerDetails.wardKM}} KM
+                            </span>
                             </div>
-                             <div style="width:100%; background-color: #fff; margin-top:10px; padding: 10px;">
-                                Avg. Speed -
+                            </div>
+                             <div class="graphCard">
+                                <div class="imgLeft">
+                                    <img src="../../assets/img/iconSpeed.png" class="imgGraph" title="" alt="">
+                                </div>
+                                
+                                <div class="graphRight">
+                                Avg. Speed 
+                                <span class="graphCount">
                                 {{workerDetails.avgSpeed}} Km/hr
+                                </span>
+                                </div>
                             </div>
                         </div>
                     </div>
