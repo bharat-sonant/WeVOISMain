@@ -27,7 +27,7 @@
                                 [options]="lineBigDashboardChartOptions"
                                 [chartType]="lineBigDashboardChartType"></canvas>
                         </div>
-                        <div id="DivTimeDistance" style="position: absolute;right:20px;top:10px;">
+                        <div [hidden]="showAvgSpeedWidget==false" style="position: absolute;right:20px;top:10px;">
                             <div style="width:100%; background-color: #fff; margin-top:10px; padding: 10px;">
                                 Time (in Zone) -
                                 {{workerDetails.wardTime}}
@@ -323,30 +323,6 @@
                                         <h1>{{workerDetails.wardKM}} Km</h1>
                                     </div>
                                 </div>
-                                <div class="vehicle-info" [hidden]="showAvgSpeedWidget==false">
-
-                                    <div class="vehicle-content">
-                                        <h3>Time (in Zone)</h3>
-                                        <h1>{{workerDetails.wardTime}}</h1>
-                                    </div>
-                                    <div class="vehicle-content"
-                                        style="border-top-left-radius: 10px;border-top-right-radius: 10px;">
-                                        <h3>Km Runs (in Zone)</h3>
-                                        <h1>{{workerDetails.wardKM}} Km</h1>
-                                    </div>
-                                    <div class="vehicle-content"
-                                        style="border-top-left-radius: 10px;border-top-right-radius: 10px;">
-                                        <h3>Avg. Speed</h3>
-                                        <h1>{{workerDetails.avgSpeed}} Km/hr</h1>
-                                    </div>
-                                    <div class="inner-info">
-                                        <h3><a style="cursor: pointer; color: green;"
-                                                [hidden]="showAvgSpeedOfLine==false"
-                                                (click)="openAvgLineSpeed(contentAvgLineSpeed)"> See Avg. Speed of
-                                                line</a>&nbsp;
-                                        </h3>
-                                    </div>
-                                </div>
                             </div>
                             <div class="col-md-12 mob-r"
                                 style="margin-top:10px; padding-left: 5px; padding-right: 5px;">
@@ -354,7 +330,6 @@
                                     <div class="ward-details">
                                         <h1>Zone Details</h1>
                                     </div>
-
                                     <div class="inner-info">
                                         <h3>Total Zone</h3>
                                         <span style="color: #333333; float: right;">{{workerDetails.totalWard}}</span>

@@ -297,10 +297,12 @@ export class RealtimeMonitoringComponent implements OnInit {
           }
         }
       }
+/*
       if (this.cityName == "sikar") {
         this.showAvgSpeedWidget = true;
         this.showAvgSpeedOfLine = true;
       }
+      */
     })
   }
 
