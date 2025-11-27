@@ -982,35 +982,76 @@ table td {
     height: 470px;
 }
 
-.graphCard{
-    background-color: #fff;
+.graphMainCard {
+ background-color: #0ba118;
     border-radius: 6px;
-    margin-bottom: 5px;
-    padding: 10px;
+    padding: 6px 6px;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    border-bottom: 6px;
+
+}
+
+.graphCard {
+    border-radius: 6px;
+    padding: 5px 10px;
     font-size: 11px;
     display: flex;
     gap: 10px;
     color: #707070;
     transition: 0.3s;
-    &:nth-last-child(1){
+
+    &:nth-last-child(1) {
         margin-bottom: 0px;
     }
-    &:hover{
+
+    &:hover {
         background-color: #f5f5f5;
     }
 }
-.imgLeft{
-    width: 16px;
+
+.imgLeft {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #1ecb79, #0fa56b);
+    box-shadow:
+        0px 10px 22px rgba(0, 0, 0, 0.15),
+        0px 6px 12px rgba(255, 255, 255, 0.12) inset;
+
+
 }
-.graphCount{
-     font-size: 13px;
-     font-weight: bold;
-     color: #000;
+
+.imgLeft2 {
+    background: linear-gradient(135deg, #3a8bff, #1b63e0);
+
 }
-.graphRight{
+
+.imgLeft3 {
+    background: linear-gradient(135deg, #b55bff, #8b2dff);
+
+}
+
+.imgGraph {
+    width: 14px;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7463%) hue-rotate(32deg) brightness(106%) contrast(110%);
+}
+
+.graphCount {
+    font-size: 13px;
+    font-weight: bold;
+    color: #000;
+}
+
+.graphRight {
     display: flex;
     flex-flow: column;
 }
+
 // Small devices (landscape phones, 576px and up)
 @media (max-width: 576px) {
     .pos-right {
