@@ -62,6 +62,7 @@ export class DustbinMonitoringComponent {
   filterArray: any[] = [];
   mainDbPath: any;
   dustbinShow: any[] = [];
+  allVehicleList: any[] = [];
   startUrl: any;
   endUrl: any;
   haltUrl: any;
@@ -110,6 +111,7 @@ export class DustbinMonitoringComponent {
   setDefault() {
     this.getDefaultImageUrl();
     this.setMaps();
+    this.getVehicles();
     if (this.cityName == "dehradun") {
       $("#divOthersCity").hide();
       $("#divOthersZone").hide();
@@ -143,7 +145,17 @@ export class DustbinMonitoringComponent {
       this.getDustbins();
     }
   }
-
+  getVehicles() {
+    let vehicles = JSON.parse(localStorage.getItem("vehicle"));
+    for (let i = 3; i < vehicles.length; i++) {
+      this.allVehicleList.push({
+        vehicle: vehicles[i]["vehicle"],
+        chasisNo: vehicles[i]["chasisNo"] || "",
+        diesel: [],
+        wardList: [],
+      });
+    }
+  }
   getDefaultImageUrl() {
     this.startUrl = "../../../assets/img/start.svg";
     this.endUrl = "../../../assets/img/stop.svg";
@@ -263,7 +275,16 @@ export class DustbinMonitoringComponent {
 
   getVTSRoute(vehicle: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getVTSRoute");
-    let path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicle + "/" + this.selectedDate + ".json";
+     let detail =
+        this.cityName.toLowerCase() === 'hisar'
+          ? this.allVehicleList.find(item => item.vehicle === vehicle)
+          : undefined;
+
+      let routeVehicle =
+        this.cityName.toLowerCase() === 'hisar'
+          ? (detail.chasisNo || vehicle)
+          : vehicle;
+    let path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + routeVehicle + "/" + this.selectedDate + ".json";
     this.httpService.get(path).subscribe(data => {
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVTSRoute", data);

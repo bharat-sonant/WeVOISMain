@@ -36,7 +36,7 @@ export class VehicleFuelReportComponent implements OnInit {
     vehicleName: "---",
     vehicleKM: "0.000",
     lastUpdateDate: "---"
-  }
+  };
 
 
   totalQtyJSON: any;
@@ -79,7 +79,7 @@ export class VehicleFuelReportComponent implements OnInit {
           this.isPetrolPumpDetail = true;
         }
       }
-    })
+    });
   }
 
   getFuelMonthData() {
@@ -149,7 +149,7 @@ export class VehicleFuelReportComponent implements OnInit {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
     let cssClass = "";
     for (let i = 3; i < vehicles.length; i++) {
-      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass, isEntry: 0 });
+      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], chasisNo: vehicles[i]["chasisNo"] || "", cssClass: cssClass, isEntry: 0 });
     }
     this.getFuelMonthData();
     this.getMonthSummary();
@@ -404,15 +404,15 @@ export class VehicleFuelReportComponent implements OnInit {
   getTrackAdditionalDetails(track: any, date: any) {
     return new Promise((resolve) => {
 
-      let dutyInTime = ''
-      let dutyOutTime = ''
-      let workPercentage = ''
+      let dutyInTime = '';
+      let dutyOutTime = '';
+      let workPercentage = '';
       if (track.ward.includes('BinLifting')) {
         //  get data according to binLifting
-        const path = `DailyWorkDetail/${this.selectedYear}/${this.selectedMonthName}/${date}/${track.driver}`
+        const path = `DailyWorkDetail/${this.selectedYear}/${this.selectedMonthName}/${date}/${track.driver}`;
         let driverTaskInstance = this.db.object(path).valueChanges().subscribe(
           data => {
-            driverTaskInstance.unsubscribe()
+            driverTaskInstance.unsubscribe();
             if (data) {
 
               for (let i = 1; i <= 5; i++) {
@@ -420,36 +420,36 @@ export class VehicleFuelReportComponent implements OnInit {
                 if (task && task.task === track.ward) {
                   Object.entries(task['in-out']).forEach(([time, type]) => {
                     if (type === 'In') {
-                      dutyInTime = time
+                      dutyInTime = time;
                     }
                     else {
-                      dutyOutTime = time
+                      dutyOutTime = time;
                     }
-                  })
+                  });
                   break;
                 }
               }
             }
 
-            resolve({ dutyInTime, dutyOutTime, workPercentage })
-          })
+            resolve({ dutyInTime, dutyOutTime, workPercentage });
+          });
       } else {
         // get data according to ward
-        const path = `WasteCollectionInfo/${track.ward}/${this.selectedYear}/${this.selectedMonthName}/${date}/Summary`
+        const path = `WasteCollectionInfo/${track.ward}/${this.selectedYear}/${this.selectedMonthName}/${date}/Summary`;
         let summaryInstance = this.db.object(path).valueChanges().subscribe(
           data => {
             summaryInstance.unsubscribe();
             if (data) {
 
               dutyInTime = data.dutyInTime ? data.dutyInTime.split(',')[0] : '';
-              dutyOutTime = data.dutyOutTime ? data.dutyOutTime.split(',').at(-1) : ''
-              workPercentage = data.workPercentage || ''
+              dutyOutTime = data.dutyOutTime ? data.dutyOutTime.split(',').at(-1) : '';
+              workPercentage = data.workPercentage || '';
             }
 
-            resolve({ dutyInTime, dutyOutTime, workPercentage })
-          })
+            resolve({ dutyInTime, dutyOutTime, workPercentage });
+          });
       }
-    })
+    });
   }
 
   getPortalKm(track: any, date: any, vehicle: any) {
@@ -457,15 +457,15 @@ export class VehicleFuelReportComponent implements OnInit {
       let distance = 0;
       if (track.ward.includes('BinLifting')) {
         // get data according to BinLifting
-        const path = `LocationHistory/BinLifting/${vehicle}/${this.selectedYear}/${this.selectedMonthName}/${date}`
+        const path = `LocationHistory/BinLifting/${vehicle}/${this.selectedYear}/${this.selectedMonthName}/${date}`;
         let distanceInstance = this.db.object(path).valueChanges().subscribe(
           data => {
-            distanceInstance.unsubscribe()
+            distanceInstance.unsubscribe();
             if (data) {
-              const [dutyInHr, dutyInMin] = track.dutyInTime.split(':')
-              const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":")
+              const [dutyInHr, dutyInMin] = track.dutyInTime.split(':');
+              const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":");
               Object.entries(data).forEach(([time, details]) => {
-                const [hr, min] = time.split(':')
+                const [hr, min] = time.split(':');
 
                 if (
                   (Number(hr) > Number(dutyInHr) ||
@@ -473,25 +473,25 @@ export class VehicleFuelReportComponent implements OnInit {
                   (Number(hr) < Number(dutyOutHr) ||
                     (Number(hr) === Number(dutyOutHr) && Number(min) <= Number(dutyOutMin)))
                 ) {
-                  distance += Number(details['distance-in-meter'])
+                  distance += Number(details['distance-in-meter']);
                 }
-              })
+              });
             }
 
-            resolve((distance / 1000).toFixed(3))
-          })
+            resolve((distance / 1000).toFixed(3));
+          });
       }
       else {
         // get data according to ward
-        const path = `LocationHistory/${track.ward}/${this.selectedYear}/${this.selectedMonthName}/${date}`
+        const path = `LocationHistory/${track.ward}/${this.selectedYear}/${this.selectedMonthName}/${date}`;
         let distanceInstance = this.db.object(path).valueChanges().subscribe(
           data => {
-            distanceInstance.unsubscribe()
+            distanceInstance.unsubscribe();
             if (data) {
-              const [dutyInHr, dutyInMin] = track.dutyInTime.split(':')
-              const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":")
+              const [dutyInHr, dutyInMin] = track.dutyInTime.split(':');
+              const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":");
               Object.entries(data).forEach(([time, details]) => {
-                const [hr, min] = time.split(':')
+                const [hr, min] = time.split(':');
 
                 if (
                   (Number(hr) > Number(dutyInHr) ||
@@ -499,16 +499,16 @@ export class VehicleFuelReportComponent implements OnInit {
                   (Number(hr) < Number(dutyOutHr) ||
                     (Number(hr) === Number(dutyOutHr) && Number(min) <= Number(dutyOutMin)))
                 ) {
-                  distance += Number(details['distance-in-meter'])
+                  distance += Number(details['distance-in-meter']);
                 }
-              })
+              });
             }
 
-            resolve((distance / 1000).toFixed(3))
+            resolve((distance / 1000).toFixed(3));
 
-          })
+          });
       }
-    })
+    });
   }
 
   getDistanceFromLatLonInKm(lat1: any, lon1: any, lat2: any, lon2: any) {
@@ -527,21 +527,31 @@ export class VehicleFuelReportComponent implements OnInit {
 
   getGPSKm(track: any, date: any, vehicle: any) {
     return new Promise((resolve) => {
-      let url = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicle + "/" + date + ".json";
+      let detail =
+        this.cityName.toLowerCase() === 'hisar'
+          ? this.vehicleList.find(item => item.vehicle === vehicle)
+          : undefined;
+
+      let routeVehicle =
+        this.cityName.toLowerCase() === 'hisar'
+          ? (detail.chasisNo || vehicle)
+          : vehicle;
+
+      let url = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + routeVehicle + "/" + date + ".json";
       fetch(url)
         .then(res => res.json())
         .then(data => {
           let distance = 0;
           if (data) {
-            const [dutyInHr, dutyInMin] = track.dutyInTime.split(':')
-            const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":")
+            const [dutyInHr, dutyInMin] = track.dutyInTime.split(':');
+            const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":");
 
             let keyArray = Object.keys(data);
             for (let j = 0; j < keyArray.length - 2; j++) {
               let time = keyArray[j];
-              const [hr, min] = time.split(':')
+              const [hr, min] = time.split(':');
               let nextTime = keyArray[j + 1];
-              const [nextHr, nextMin] = nextTime.split(':')
+              const [nextHr, nextMin] = nextTime.split(':');
 
               const isCurrTimeInRange = ((Number(hr) > Number(dutyInHr) ||
                 (Number(hr) === Number(dutyInHr) && Number(min) >= Number(dutyInMin))) &&
@@ -564,9 +574,9 @@ export class VehicleFuelReportComponent implements OnInit {
             resolve((distance / 1000).toFixed(3));
           }
 
-          resolve(distance)
+          resolve(distance);
 
-        })
+        });
 
     });
   }
@@ -574,7 +584,7 @@ export class VehicleFuelReportComponent implements OnInit {
   async getWardRunningDistance(listIndex: any, index: any, vehicleWorkList: any, workDetailList: any, vehicleLengthList: any) {
     if (listIndex == vehicleWorkList.length) {
       let vehicle = vehicleLengthList[index]["vehicle"];
-      const objDate = {}
+      const objDate = {};
       const aa = [];
       for (let j = 0; j < vehicleWorkList.length; j++) {
         let date = vehicleWorkList[j]["date"];
@@ -583,20 +593,20 @@ export class VehicleFuelReportComponent implements OnInit {
         if (list2.length > 0) {
           await Promise.all(list2.map(async (item) => {
             let distance = Number(item["distance"]);
-            const data = { ward: item["zone"], distance: distance.toFixed(3), driver: item["empId"], name: item["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '', portalKm: '', gps_km: '' }
+            const data = { ward: item["zone"], distance: distance.toFixed(3), driver: item["empId"], name: item["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '', portalKm: '', gps_km: '' };
 
-            const details: any = await this.getTrackAdditionalDetails(data, date)
-            data.dutyInTime = details.dutyInTime
-            data.dutyOutTime = details.dutyOutTime
-            data.workPercentage = details.workPercentage
+            const details: any = await this.getTrackAdditionalDetails(data, date);
+            data.dutyInTime = details.dutyInTime;
+            data.dutyOutTime = details.dutyOutTime;
+            data.workPercentage = details.workPercentage;
 
-            const [portalKm, gps_km] = await Promise.all([this.getPortalKm(data, date, vehicle), this.getGPSKm(data, date, vehicle)])
-            data.portalKm = `${portalKm}`
-            data.gps_km = `${gps_km}`
+            const [portalKm, gps_km] = await Promise.all([this.getPortalKm(data, date, vehicle), this.getGPSKm(data, date, vehicle)]);
+            data.portalKm = `${portalKm}`;
+            data.gps_km = `${gps_km}`;
 
             bb.push(data);
 
-          }))
+          }));
         }
 
         objDate[date] = bb;

@@ -41,7 +41,7 @@ export class MonthlyFuelReportComponent implements OnInit {
     totalKm: "0.000",
     totalAmount: "0.00",
     lastUpdateDate: "---"
-  }
+  };
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -78,7 +78,7 @@ export class MonthlyFuelReportComponent implements OnInit {
   getVehicles() {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
     for (let i = 3; i < vehicles.length; i++) {
-      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], qty: "0.00", km: "0.000", amount: "0.00", avg: "", fuelList: [] });
+      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], chasisNo: vehicles[i]["chasisNo"] || "", qty: "0.00", km: "0.000", amount: "0.00", avg: "", fuelList: [] });
     }
     this.getFuelData();
   }
@@ -244,10 +244,10 @@ export class MonthlyFuelReportComponent implements OnInit {
           let fuelType = "";
           for (let j = 0; j < list.length; j++) {
             if (fuelType == "") {
-              fuelType = list[j]["fuelType"] +"-"+ list[j]["qty"];
+              fuelType = list[j]["fuelType"] + "-" + list[j]["qty"];
             }
             else {
-              fuelType = fuelType + ", " + list[j]["fuelType"] +"-"+ list[j]["qty"];
+              fuelType = fuelType + ", " + list[j]["fuelType"] + "-" + list[j]["qty"];
             }
           }
           htmlString += fuelType;
@@ -322,21 +322,22 @@ export class MonthlyFuelReportComponent implements OnInit {
     }
     for (let i = 0; i < this.vehicleList.length; i++) {
       let vehicle = this.vehicleList[i]["vehicle"];
-      this.updateVehicleGPSKMJSON(1, days, vehicle, []);
+      let routeVehi = this.cityName.toLowerCase() === 'hisar' ? this.vehicleList[i]["chasisNo"] : this.vehicleList[i]["vehicle"];
+      this.updateVehicleGPSKMJSON(1, days, vehicle, [], routeVehi);
     }
     this.updateJSONForDieselEntry();
     let workDetailList = [];
     this.getDailyWorkDetail(1, days, workDetailList);
   }
 
-  updateVehicleGPSKMJSON(index: any, days: any, vehicle: any, list: any) {
+  updateVehicleGPSKMJSON(index: any, days: any, vehicle: any, list: any, routeVehi: any) {
     if (index == days) {
       let filePath = "/VehicleFuelJSONData/" + this.selectedYear + "/" + this.selectedMonthName + "/";
       this.commonService.saveJsonFile(list, vehicle + ".json", filePath + "VehicleGPSKM/");
     }
     else {
       let date = this.selectedYear + '-' + this.selectedMonth + '-' + (index < 10 ? '0' : '') + index;
-      let path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicle + "/" + date + ".json";
+      let path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + routeVehi + "/" + date + ".json";
       this.httpService.get(path).subscribe(data => {
         let distance = 0;
         if (data != null) {
@@ -355,8 +356,8 @@ export class MonthlyFuelReportComponent implements OnInit {
         if (distance > 0) {
           list.push({ date: date, distance: (distance / 1000).toFixed(3) });
         }
-        index++
-        this.updateVehicleGPSKMJSON(index, days, vehicle, list);
+        index++;
+        this.updateVehicleGPSKMJSON(index, days, vehicle, list, routeVehi);
       });
     }
   }
@@ -393,10 +394,10 @@ export class MonthlyFuelReportComponent implements OnInit {
               let quantity = 0;
               let cngQty = 0;
               let fuelType = "";
-              let fuelVehicle="";
-              let petrolPump="";
-              let payMethod="";
-              let remark="";
+              let fuelVehicle = "";
+              let petrolPump = "";
+              let payMethod = "";
+              let remark = "";
 
               let vehicle = obj[index]["vehicle"];
               if (obj[index]["amount"] != null) {
@@ -422,25 +423,25 @@ export class MonthlyFuelReportComponent implements OnInit {
               if (obj[index]["meterReading"] != null) {
                 meterReading = obj[index]["meterReading"];
               }
-              if(obj[index]["fuelVehicle"]!=null){
-                fuelVehicle=obj[index]["fuelVehicle"];
+              if (obj[index]["fuelVehicle"] != null) {
+                fuelVehicle = obj[index]["fuelVehicle"];
               }
-              if(obj[index]["petrolPump"]!=null){
-                petrolPump=obj[index]["petrolPump"];
+              if (obj[index]["petrolPump"] != null) {
+                petrolPump = obj[index]["petrolPump"];
               }
-              if(obj[index]["petrolPump"]!=null){
-                petrolPump=obj[index]["petrolPump"];
+              if (obj[index]["petrolPump"] != null) {
+                petrolPump = obj[index]["petrolPump"];
               }
-              if(obj[index]["payMethod"]!=null){
-                payMethod=obj[index]["payMethod"];
+              if (obj[index]["payMethod"] != null) {
+                payMethod = obj[index]["payMethod"];
               }
-              if(obj[index]["remark"]!=null){
-                remark=obj[index]["remark"];
+              if (obj[index]["remark"] != null) {
+                remark = obj[index]["remark"];
               }
               totalAmount = totalAmount + amount;
               totalQuantity = totalQuantity + quantity;
               let orderBy = new Date(date).getTime();
-              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), fuelType: fuelType, quantity: quantity.toFixed(2), meterReading: meterReading,fuelVehicle:fuelVehicle,petrolPump:petrolPump,payMethod:payMethod,remark:remark });
+              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), fuelType: fuelType, quantity: quantity.toFixed(2), meterReading: meterReading, fuelVehicle: fuelVehicle, petrolPump: petrolPump, payMethod: payMethod, remark: remark });
 
             }
             fuelList = fuelList.sort((a, b) => b.orderBy > a.orderBy ? -1 : 1);
@@ -557,7 +558,7 @@ export class MonthlyFuelReportComponent implements OnInit {
   getWardRunningDistance(listIndex: any, index: any, vehicleWorkList: any, workDetailList: any, vehicleLengthList: any) {
     if (listIndex == vehicleWorkList.length) {
       let vehicle = vehicleLengthList[index]["vehicle"];
-      const objDate = {}
+      const objDate = {};
       const aa = [];
       for (let j = 0; j < vehicleWorkList.length; j++) {
         let date = vehicleWorkList[j]["date"];
