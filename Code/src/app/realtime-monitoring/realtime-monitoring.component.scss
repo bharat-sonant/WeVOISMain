@@ -982,33 +982,32 @@ table td {
     height: 470px;
 }
 
-.graphMainCard {
- background-color: #0ba118;
+.dataRight {
+    width: 25%;
+    margin-left: 10px;
     border-radius: 6px;
-    padding: 3px 3px;
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    border-bottom: 6px;
 
 }
 
 .graphCard {
     border-radius: 6px;
-    padding: 5px 10px;
-    font-size: 11px;
+    padding: 2.5px 0px;
+    font-size: 10px;
     display: flex;
     gap: 10px;
     color: #707070;
     transition: 0.3s;
+    background: #fff;
+    padding: 12px;
+    margin-bottom: 5px;
 
     &:nth-last-child(1) {
         margin-bottom: 0px;
     }
 
-    &:hover {
-        background-color: #f5f5f5;
-    }
+    // &:hover {
+    //     background-color: #f5f5f5;
+    // }
 }
 
 .imgLeft {
@@ -1044,12 +1043,151 @@ table td {
 .graphCount {
     font-size: 13px;
     font-weight: bold;
-    color: #000;
+    color: #333;
 }
 
 .graphRight {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.graphBG {
+    position: absolute;
+    left: 13px;
+    top: 10px;
+    // background-color: #f3f3f9;
+    // border-radius: 6px;
+    width: 97.5%;
+    display: flex;
+    // padding: 10px;
+}
+
+.dataLeft {
+    display: flex;
+    gap: 10px;
+    width: 75%;
+    // flex-flow: column;
+}
+
+.Zonetitle {
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.zoneInnerCard {
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 10px;
+    border-bottom: 6px;
+    width: 350px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.zoneCard {
+    width: calc(100% / 2 - 10px);
+    display: flex;
+    gap: 10px;
+}
+
+.zoneLeft {
+    background: linear-gradient(135deg, #1ecb79, #0fa56b);
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow:
+        0px 10px 22px rgba(0, 0, 0, 0.15),
+        0px 6px 12px rgba(255, 255, 255, 0.12) inset;
+
+
+}
+
+.zoneCardOne {
+    width: 100% !important;
+}
+
+.zoneInnerCardOne {
+    width: 310px !important;
+    gap: 5px !important;
+    padding: 10px 16px;
+}
+
+.zoneRightOne {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row !important;
+    width: 100%;
+}
+
+.zoneMainCardTwo {
+    width: 100%;
+}
+
+.zoneInnerCardTwo {
+    width: 100%;
+    padding: 18px 16px;
+}
+
+.iconZone {
+    height: 16px;
+
+    filter: brightness(0) saturate(100%) invert(97%) sepia(0%) saturate(0%) hue-rotate(42deg) brightness(103%) contrast(103%);
+}
+
+
+
+.zoneRight {
+    display: flex;
     flex-flow: column;
+
+    h3 {
+        font-size: 10px;
+        margin: 0px;
+    }
+
+    span {
+        font-size: 13px;
+        font-weight: bold;
+    }
+}
+
+.zoneProgress {
+    width: 100%;
+
+    a {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        float: left;
+        width: 100%;
+        font-size: 11px;
+        color: green;
+    }
+
+    &:hover .iconGo {
+        transform: translateX(2px) rotate(45deg);
+        filter: brightness(0) saturate(100%) invert(47%) sepia(51%) saturate(1043%) hue-rotate(106deg) brightness(85%) contrast(84%);
+    }
+
+}
+
+.iconGo {
+    height: 10px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    margin-right: 5px;
 }
 
 // Small devices (landscape phones, 576px and up)
