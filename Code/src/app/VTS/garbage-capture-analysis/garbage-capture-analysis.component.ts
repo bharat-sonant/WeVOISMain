@@ -255,8 +255,15 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getImageOptionTypes() {
+     this.commonService.getCategory().then((category: any) => {
+      if (category != null) {
+        this.optionList = JSON.parse(category);
+      }
+    });
+    /*
     this.optionList.push({ id: 1, optionType: "Open Depo" });
     this.optionList.push({ id: 2, optionType: "litter Dustbin" });
+    */
   }
 
   setMonthYear() {

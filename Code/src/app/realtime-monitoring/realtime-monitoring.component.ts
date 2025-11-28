@@ -2623,7 +2623,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getAvgSpeedOfLines(){
-    console.log(this.lineStatus)
+    console.log(this.workerDetails.totalLines);
 
   }
 
