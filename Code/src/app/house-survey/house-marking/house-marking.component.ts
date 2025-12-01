@@ -73,6 +73,7 @@ export class HouseMarkingComponent {
   txtMarkerMobileNo = "#txtMarkerMobileNo";
   txtMarkerHouseNo = "#txtMarkerHouseNo";
   txtMarkerAddress = "#txtMarkerAddress";
+  txtPropertyID = "#txtPropertyID";
   btnRemoveIncludedLines = "#btnRemoveIncludedLines";
   serviceName = "marker-approval";
   markerData: markerDetail = {
@@ -394,6 +395,7 @@ export class HouseMarkingComponent {
           const wardNumber = entry["wardNumber"] || this.selectedZone || "---";
           const mobileNo = entry["mobileNumber"] || "---";
 
+
           const markerImgURL =
             this.commonService.fireStoragePath +
             city +
@@ -684,6 +686,7 @@ export class HouseMarkingComponent {
               let markingBy = "";
               let ApproveId = 0;
               let approveName = "";
+              let propId = "";
               let modifiedHouseTypeHistoryId = "";
               this.markerData.wardno = this.selectedZone;
               this.markerData.lineno = this.lineNo;
@@ -734,6 +737,9 @@ export class HouseMarkingComponent {
               }
               if (data[index]["totalHouses"] != null) {
                 totalEntity = data[index]["totalHouses"];
+              }
+              if (data[index]["propId"] != null) {
+                propId = data[index]["propId"];
               }
 
               // building Detail
@@ -792,7 +798,7 @@ export class HouseMarkingComponent {
               const totalHouses = data[index]['totalHouses'] || '';
               const totalPerson = data[index]['totalPerson'] || '';
               const wardNumber = data[index]['wardNumber'] || '';
-              this.markerList.push({ zoneNo: this.selectedZone, markerUID, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, iconImage: iconImage, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '', plotBreadth: plotBreadth, plotLength: plotLength, groundFloorArea: groundFloorArea, underGroundArea: underGroundArea, landType: landType, noOfFloors: noOfFloors, markerBuildingUpdateId: data[index]["markerBuildingUpdateId"] || '', showMarkingDate: showMarkingDate, showApproveDate: showApproveDate });
+              this.markerList.push({ zoneNo: this.selectedZone, markerUID, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, iconImage: iconImage, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '', plotBreadth: plotBreadth, plotLength: plotLength, groundFloorArea: groundFloorArea, underGroundArea: underGroundArea, landType: landType, noOfFloors: noOfFloors, markerBuildingUpdateId: data[index]["markerBuildingUpdateId"] || '', showMarkingDate: showMarkingDate, showApproveDate: showApproveDate, propId: propId });
               if (this.cityName == "sikar") {
                 if (cardNumber == "") {
                   let detail = this.markerList.find(item => item.index == index);
@@ -959,6 +965,7 @@ export class HouseMarkingComponent {
               let showMarkingDate = "";
               let ownerName = "";
               let persons = "";
+              let propId = "";
               const markerRemark = data[index].markerRemark || '';
               if (data[index]["ownerName"] != null) {
                 ownerName = data[index]["ownerName"].toUpperCase();
@@ -1033,6 +1040,10 @@ export class HouseMarkingComponent {
               if (data[index]["totalHouses"] != null) {
                 totalEntity = data[index]["totalHouses"];
               }
+              if (data[index]["propId"] != null) {
+                propId = data[index]["propId"];
+
+              }
 
               // building Detail
 
@@ -1091,7 +1102,7 @@ export class HouseMarkingComponent {
               const totalPerson = data[index]['totalPerson'] || '';
               const wardNumber = data[index]['wardNumber'] || '';
 
-              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '', plotBreadth: plotBreadth, plotLength: plotLength, groundFloorArea: groundFloorArea, underGroundArea: underGroundArea, landType: landType, noOfFloors: noOfFloors, markerBuildingUpdateId: data[index]["markerBuildingUpdateId"] || '', showMarkingDate: showMarkingDate, showApproveDate: showApproveDate });
+              this.markerListIncluded.push({ zoneNo: zoneNo, lineNo: lineNo, index: index, lat: lat, lng: lng, alreadyInstalled: alreadyInstalled, imageName: imageName, type: houseType, imageUrl: imageUrl, status: status, markerId: markerId, userId: userId, date: date, statusClass: statusClass, isRevisit: isRevisit, cardNumber: cardNumber, houseTypeId: type, isApprove: isApprove, servingCount: servingCount, approveDate: approveDate, markingBy: markingBy, ApproveId: ApproveId, approveName: approveName, modifiedHouseTypeHistoryId: modifiedHouseTypeHistoryId, ownerName: ownerName, persons: persons, totalEntity: totalEntity, markerRemark, mobileNo, houseNo, address, streetColony, buildingName, totalHouses, totalPerson, wardNumber, markerUpdateId: data[index]['markerUpdateId'] || '', plotBreadth: plotBreadth, plotLength: plotLength, groundFloorArea: groundFloorArea, underGroundArea: underGroundArea, landType: landType, noOfFloors: noOfFloors, markerBuildingUpdateId: data[index]["markerBuildingUpdateId"] || '', showMarkingDate: showMarkingDate, showApproveDate: showApproveDate, propId: propId });
               if (this.cityName == "sikar") {
                 if (cardNumber == "") {
                   let detail = this.markerListIncluded.find(item => item.index == index);
@@ -1429,6 +1440,7 @@ export class HouseMarkingComponent {
       $(this.txtMarkerMobileNo).val(detail.mobileNo);
       $(this.txtMarkerAddress).val(detail.address);
       $(this.txtMarkerHouseNo).val(detail.houseNo);
+      $(this.txtPropertyID).val(detail.propId);
 
     }
   }
@@ -1535,6 +1547,7 @@ export class HouseMarkingComponent {
     let mobileNo = $(this.txtMarkerMobileNo).val();
     let houseNo = $(this.txtMarkerHouseNo).val();
     let address = $(this.txtMarkerAddress).val();
+    let propId = $(this.txtPropertyID).val();
 
     let type = $("#type").val();
     let detail;
@@ -1553,6 +1566,7 @@ export class HouseMarkingComponent {
       let preMobileNo = detail.mobileNo;
       let preAddress = detail.address;
       let preHouseNo = detail.houseNo;
+      let prePropId = detail.propId;
       detail.houseTypeId = houseTypeId;
       let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
       if (houseTypeDetail != undefined) {
@@ -1564,6 +1578,7 @@ export class HouseMarkingComponent {
         detail.mobileNo = mobileNo;
         detail.address = address;
         detail.houseNo = houseNo;
+        detail.propId = propId;
         let zoneNo = detail.zoneNo;
         let lineNo = detail.lineNo;
         if (detail.cardNumber != "") {
@@ -1577,16 +1592,24 @@ export class HouseMarkingComponent {
           if (servingCount != "0") {
             houseServingCount = servingCount;
           }
+
           let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + detail.cardNumber;
           let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
             houseInstance.unsubscribe();
             if (data != null) {
-              this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, name: ownerName, mobile: mobileNo, houseNumber: houseNo, address: address, servingCount: houseServingCount, totalPerson: totalPerson });
+              this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, name: ownerName, mobile: mobileNo, houseNumber: houseNo, address: address, servingCount: houseServingCount, totalPerson: totalPerson, propId: propId });
             }
           });
         }
+        let objMarker = {};
+        if (this.cityName == "hisar") {
+          objMarker = { houseType: houseTypeId, ownerName: ownerName, mobileNumber: mobileNo, houseNumber: houseNo, address: address, totalHouses: servingCount, totalPerson: totalPerson, propId: propId };
+        }
+        else {
+          objMarker = { houseType: houseTypeId, ownerName: ownerName, mobileNumber: mobileNo, houseNumber: houseNo, address: address, totalHouses: servingCount, totalPerson: totalPerson };
+        }
         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-        this.db.object(dbPath).update({ houseType: houseTypeId, ownerName: ownerName, mobileNumber: mobileNo, houseNumber: houseNo, address: address, totalHouses: servingCount, totalPerson: totalPerson });
+        this.db.object(dbPath).update(objMarker);
         let obj = {
           preHouseTypeId: preHouseTypeId,
           preOwnerName: preOwnerName,
@@ -1596,6 +1619,7 @@ export class HouseMarkingComponent {
           preHouseNo: preHouseNo,
           preAddress: preAddress,
           newHouseTypeId: detail.houseTypeId,
+          prePropId: prePropId,
           ownerName: detail.ownerName,
           servingCount: detail.servingCount,
           persons: detail.persons,
@@ -1603,6 +1627,7 @@ export class HouseMarkingComponent {
           houseNo: detail.houseNo,
           address: detail.address,
           updatedById: this.userId,
+          propId: propId,
           updateDate: this.commonService.getTodayDateTime()
         };
         this.saveUpdateHistory(obj, zoneNo, lineNo, index);
@@ -1991,7 +2016,7 @@ export class HouseMarkingComponent {
                   }
                 }
                 else {
-                  newMarkerList.push({ zoneNo: this.markerList[i]["zoneNo"], lineNo: this.markerList[i]["lineNo"], index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["type"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], markerId: this.markerList[i]["markerId"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], statusClass: this.markerList[i]["statusClass"], isRevisit: this.markerList[i]["isRevisit"], cardNumber: this.markerList[i]["cardNumber"], houseTypeId: this.markerList[i]["houseTypeId"], isApprove: this.markerList[i]["isApprove"], servingCount: this.markerList[i]["servingCount"], approveDate: this.markerList[i]["approveDate"], markingBy: this.markerList[i]["markingBy"], ApproveId: this.markerList[i]["ApproveId"], approveName: this.markerList[i]["approveName"], modifiedHouseTypeHistoryId: this.markerList[i]["modifiedHouseTypeHistoryId"], ownerName: this.markerList[i]["ownerName"], persons: this.markerList[i]["persons"], totalEntity: this.markerList[i]["totalEntity"], markerRemark: this.markerList[i]["markerRemark"], mobileNo: this.markerList[i]["mobileNo"], houseNo: this.markerList[i]["houseNo"], address: this.markerList[i]["address"], streetColony: this.markerList[i]["streetColony"], buildingName: this.markerList[i]["buildingName"], totalHouses: this.markerList[i]["totalHouses"], totalPerson: this.markerList[i]["totalPerson"], wardNumber: this.markerList[i]["wardNumber"], markerUpdateId: this.markerList[i]["markerUpdateId"], plotBreadth: this.markerList[i]["plotBreadth"], plotLength: this.markerList[i]["plotLength"], groundFloorArea: this.markerList[i]["groundFloorArea"], underGroundArea: this.markerList[i]["underGroundArea"], landType: this.markerList[i]["landType"], noOfFloors: this.markerList[i]["noOfFloors"], markerBuildingUpdateId: this.markerList[i]["markerBuildingUpdateId"], showMarkingDate: this.markerList[i]["showMarkingDate"], showApproveDate: this.markerList[i]["showApproveDate"] });
+                  newMarkerList.push({ zoneNo: this.markerList[i]["zoneNo"], lineNo: this.markerList[i]["lineNo"], index: this.markerList[i]["index"], lat: this.markerList[i]["lat"], lng: this.markerList[i]["lng"], alreadyInstalled: this.markerList[i]["alreadyInstalled"], imageName: this.markerList[i]["imageName"], type: this.markerList[i]["type"], imageUrl: this.markerList[i]["imageUrl"], status: this.markerList[i]["status"], markerId: this.markerList[i]["markerId"], userId: this.markerList[i]["userId"], date: this.markerList[i]["date"], statusClass: this.markerList[i]["statusClass"], isRevisit: this.markerList[i]["isRevisit"], cardNumber: this.markerList[i]["cardNumber"], houseTypeId: this.markerList[i]["houseTypeId"], isApprove: this.markerList[i]["isApprove"], servingCount: this.markerList[i]["servingCount"], approveDate: this.markerList[i]["approveDate"], markingBy: this.markerList[i]["markingBy"], ApproveId: this.markerList[i]["ApproveId"], approveName: this.markerList[i]["approveName"], modifiedHouseTypeHistoryId: this.markerList[i]["modifiedHouseTypeHistoryId"], ownerName: this.markerList[i]["ownerName"], persons: this.markerList[i]["persons"], totalEntity: this.markerList[i]["totalEntity"], markerRemark: this.markerList[i]["markerRemark"], mobileNo: this.markerList[i]["mobileNo"], houseNo: this.markerList[i]["houseNo"], address: this.markerList[i]["address"], streetColony: this.markerList[i]["streetColony"], buildingName: this.markerList[i]["buildingName"], totalHouses: this.markerList[i]["totalHouses"], totalPerson: this.markerList[i]["totalPerson"], wardNumber: this.markerList[i]["wardNumber"], markerUpdateId: this.markerList[i]["markerUpdateId"], plotBreadth: this.markerList[i]["plotBreadth"], plotLength: this.markerList[i]["plotLength"], groundFloorArea: this.markerList[i]["groundFloorArea"], underGroundArea: this.markerList[i]["underGroundArea"], landType: this.markerList[i]["landType"], noOfFloors: this.markerList[i]["noOfFloors"], markerBuildingUpdateId: this.markerList[i]["markerBuildingUpdateId"], showMarkingDate: this.markerList[i]["showMarkingDate"], showApproveDate: this.markerList[i]["showApproveDate"], propId: this.markerList[i]["propId"] });
                 }
               }
               this.markerList = newMarkerList;
@@ -2009,7 +2034,7 @@ export class HouseMarkingComponent {
                   }
                 }
                 else {
-                  newMarkerList.push({ zoneNo: key["zoneNo"], lineNo: key["lineNo"], index: key["index"], lat: key["lat"], lng: key["lng"], alreadyInstalled: key["alreadyInstalled"], imageName: key["imageName"], type: key["type"], imageUrl: key["imageUrl"], status: key, markerId: key["markerId"], userId: key["userId"], date: key["date"], statusClass: key["statusClass"], isRevisit: key["isRevisit"], cardNumber: key["cardNumber"], houseTypeId: key["houseTypeId"], isApprove: key["isApprove"], servingCount: key["servingCount"], approveDate: key["approveDate"], markingBy: key["markingBy"], ApproveId: key["ApproveId"], approveName: key["approveName"], modifiedHouseTypeHistoryId: key["modifiedHouseTypeHistoryId"], ownerName: key["ownerName"], persons: key["persons"], totalEntity: key["totalEntity"], markerRemark: key["markerRemark"], mobileNo: key["mobileNo"], houseNo: key["houseNo"], address: key["address"], streetColony: key["streetColony"], buildingName: key["buildingName"], totalHouses: key["totalHouses"], totalPerson: key["totalPerson"], wardNumber: key["wardNumber"], markerUpdateId: key["markerUpdateId"], plotBreadth: key["plotBreadth"], plotLength: key["plotLength"], groundFloorArea: key["groundFloorArea"], underGroundArea: key["underGroundArea"], landType: key["landType"], noOfFloors: key["noOfFloors"], markerBuildingUpdateId: key["markerBuildingUpdateId"], showMarkingDate: key["showMarkingDate"], showApproveDate: key["showApproveDate"] });
+                  newMarkerList.push({ zoneNo: key["zoneNo"], lineNo: key["lineNo"], index: key["index"], lat: key["lat"], lng: key["lng"], alreadyInstalled: key["alreadyInstalled"], imageName: key["imageName"], type: key["type"], imageUrl: key["imageUrl"], status: key, markerId: key["markerId"], userId: key["userId"], date: key["date"], statusClass: key["statusClass"], isRevisit: key["isRevisit"], cardNumber: key["cardNumber"], houseTypeId: key["houseTypeId"], isApprove: key["isApprove"], servingCount: key["servingCount"], approveDate: key["approveDate"], markingBy: key["markingBy"], ApproveId: key["ApproveId"], approveName: key["approveName"], modifiedHouseTypeHistoryId: key["modifiedHouseTypeHistoryId"], ownerName: key["ownerName"], persons: key["persons"], totalEntity: key["totalEntity"], markerRemark: key["markerRemark"], mobileNo: key["mobileNo"], houseNo: key["houseNo"], address: key["address"], streetColony: key["streetColony"], buildingName: key["buildingName"], totalHouses: key["totalHouses"], totalPerson: key["totalPerson"], wardNumber: key["wardNumber"], markerUpdateId: key["markerUpdateId"], plotBreadth: key["plotBreadth"], plotLength: key["plotLength"], groundFloorArea: key["groundFloorArea"], underGroundArea: key["underGroundArea"], landType: key["landType"], noOfFloors: key["noOfFloors"], markerBuildingUpdateId: key["markerBuildingUpdateId"], showMarkingDate: key["showMarkingDate"], showApproveDate: key["showApproveDate"], propId: key["propId"] });
                 }
               }
               this.markerListIncluded = newMarkerList;

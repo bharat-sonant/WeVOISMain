@@ -51,7 +51,7 @@ export class EmployeeMarkingComponent implements OnInit {
   }
 
   getCityEmpCode() {
-    const path = this.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "CityDetails%2FCityDetails.json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe(data => {
       fuelInstance.unsubscribe();
       if (data != null) {

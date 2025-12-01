@@ -704,8 +704,6 @@ export class DustbinService {
       let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
       this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
       let dbPath = "DustbinData/DustbinPickingPlanHistory/" + year + "/" + monthName + "/" + date+"/"+planId;
-      console.log(dbPath);
-      console.log(planData);
       this.db.object(dbPath).update(planData);
      
     });

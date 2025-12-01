@@ -51,7 +51,7 @@ export class WardwiseScanCardComponent implements OnInit {
   }
 
   getCardPrefix() {
-    let path = this.commonService.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    let path = this.commonService.fireStorageCommonPath + "CityDetails%2FCityDetails.json?alt=media";
     let cityDetailInstance = this.httpService.get(path).subscribe((data) => {
       cityDetailInstance.unsubscribe();
       if (data != null) {

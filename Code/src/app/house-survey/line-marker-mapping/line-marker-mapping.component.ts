@@ -465,6 +465,72 @@ export class LineMarkerMappingComponent {
       if (this.cityName == "hisar") {
         // ref.delete();
         this.movedMarkerCount = this.movedMarkerCount + 1;
+        const pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
+        const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
+        ref.getDownloadURL()
+          .then((url) => {
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+            xhr.onload = (event) => {
+              var blob = xhr.response;
+              const pathNew = city + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
+              const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
+              ref1.put(blob).then((promise) => {
+                // ref.delete();
+
+              }
+              ).catch((error) => {
+
+              });
+            };
+            xhr.open('GET', url);
+            xhr.send();
+          })
+          .catch((error) => {
+
+          });
+        if (data["cardNumber"] != null) {
+          let cardNo = data["cardNumber"];
+          if (markerID != "") {
+            markerID = cardNo;
+          }
+          let dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
+          let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
+            cardInstance.unsubscribe();
+            if (cardData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveData", cardData);
+              data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
+              cardData["line"] = lineTo;
+              cardData["ward"] = zoneTo;
+              let dbPath = "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo;
+              this.db.object(dbPath).update(cardData);
+
+              dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
+              this.db.object(dbPath).remove();
+
+              // modify card ward mapping
+              this.db.object("CardWardMapping/" + cardNo).set({ line: lineTo, ward: zoneTo });
+
+              if (cardData["mobile"] != "") {
+                // modify house ward mapping
+                this.db.object("HouseWardMapping/" + cardData["mobile"]).set({ line: lineTo, ward: zoneTo });
+              }
+            }
+          });
+        }
+        if (data["revisitKey"] != null) {
+          let revisitKey = data["revisitKey"];
+          let dbPathPre = "EntitySurveyData/RevisitRequest/" + zoneFrom + "/" + lineFrom + "/" + revisitKey;
+          let revisitInstance = this.db.object(dbPathPre).valueChanges().subscribe(revisitData => {
+            revisitInstance.unsubscribe();
+            if (revisitData != null) {
+              let dbPath = "EntitySurveyData/RevisitRequest/" + zoneTo + "/" + lineTo + "/" + revisitKey;
+              this.db.object(dbPath).update(revisitData);
+              this.db.object(dbPathPre).remove();
+            }
+          });
+        }
+
         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
         this.db.object(dbPath).update(data);
 

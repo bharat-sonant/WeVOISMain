@@ -29,9 +29,12 @@ export class MonthlyWorkReportComponent {
   yearList: any[] = [];
   monthWorkList: any[] = [];
   minHaltTime: any;
+  public userType: any;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
+    this.userType = localStorage.getItem("userType");
+    //this.userType = "External User";
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.savePageLoadHistory("General-Reports", "Daily-Work-Report", localStorage.getItem("userID"));
     this.setDefault();
@@ -177,6 +180,7 @@ export class MonthlyWorkReportComponent {
         let endTime = "";
         let zoneRunKM = "";
         let workPercentage = "";
+        let actualWorkPercentage = "";
         if (data["dutyInTime"] != null) {
           startTime = data["dutyInTime"].split(",")[0];
         }
@@ -190,6 +194,7 @@ export class MonthlyWorkReportComponent {
           zoneRunKM = data["wardCoveredDistance"];
         }
         if (data["workPercentage"] != null) {
+          actualWorkPercentage = Math.round(Number(data["workPercentage"])).toFixed(0) + "%";
           workPercentage = Math.round(Number(data["workPercentage"])).toFixed(0) + "%";
         }
         if (data["updatedWorkPercentage"] != null) {
@@ -210,6 +215,7 @@ export class MonthlyWorkReportComponent {
           detail.endTime = endTime;
           detail.zoneRunKM = (Number(zoneRunKM) / 1000).toFixed(3);
           detail.workPercentage = workPercentage;
+          detail.actualWorkPercentage = actualWorkPercentage;
           detail.workTime = this.commonService.getHrsFull(totalMinutes);
         }
         this.getHaltTime(date, startTime, endTime);
@@ -381,6 +387,13 @@ export class MonthlyWorkReportComponent {
       htmlString += "<td>";
       htmlString += "Work Percentage";
       htmlString += "</td>";
+      /*
+      if (this.userType == "Internal User") {
+        htmlString += "<td>";
+        htmlString += "Actual Work Percentage";
+        htmlString += "</td>";
+      }
+      */
       htmlString += "<td>";
       htmlString += "Run KM";
       htmlString += "</td>";
@@ -448,6 +461,15 @@ export class MonthlyWorkReportComponent {
             htmlString += this.monthWorkList[i]["workPercentage"];
           }
           htmlString += "</td>";
+          /*
+          if (this.userType == "Internal User") {
+            htmlString += "<td t='s'>";
+            if (this.monthWorkList[i]["actualWorkPercentage"] != null) {
+              htmlString += this.monthWorkList[i]["actualWorkPercentage"];
+            }
+            htmlString += "</td>";
+          }
+          */
           htmlString += "<td>";
           if (this.monthWorkList[i]["runKM"] != null) {
             htmlString += this.monthWorkList[i]["runKM"];

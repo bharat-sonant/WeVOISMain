@@ -313,9 +313,6 @@ export class CollectedAmountReportComponent implements OnInit {
           for(let i=0;i<this.wardCardPaymentList.length;i++){
             for(let j=monthFrom;j<=monthTo;j++){
               let monthName = this.commonService.getCurrentMonthShortName(j);
-              console.log(this.wardCardPaymentList[i]["cardNo"]);
-              console.log(monthName);
-              
               this.setMonthAmountInList(this.wardCardPaymentList[i]["cardNo"], monthName.trim(), 0, "");
             }
           }
@@ -380,7 +377,6 @@ export class CollectedAmountReportComponent implements OnInit {
 
   getCollectedAmountNew(cardNo: any, monthFrom: any, monthTo: any) {
     return new Promise(async (resolve) => {
-      console.log(monthFrom,monthTo)
       let dbPath = "PaymentCollectionInfo/PaymentTransactionHistory/" + cardNo;
       let transactionInstance = this.db.object(dbPath).valueChanges().subscribe(async data => {
         transactionInstance.unsubscribe();

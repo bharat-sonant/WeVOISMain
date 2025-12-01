@@ -63,6 +63,7 @@
                                         <th scope="col" class="text-left">Work Time (hour)</th>
                                         <th scope="col" class="text-left">Halt Time (hour)</th>
                                         <th scope="col" class="text-left">Work Percentage</th>
+                                        <th scope="col" class="text-left" [hidden]="userType=='External User'">Actual Work Percentage</th>
                                         <th scope="col" class="text-left">Run KM</th>
                                         <th scope="col" class="text-left">Zone Run KM</th>
                                     </tr>
@@ -79,6 +80,7 @@
                                         <td class="text-left border-right">{{dt.workTime}}</td>
                                         <td class="text-left border-right">{{dt.haltTime}}</td>
                                         <td class="text-right border-right">{{dt.workPercentage}}</td>
+                                        <td class="text-right border-right" [hidden]="userType=='External User'">{{dt.actualWorkPercentage}}</td>
                                         <td class="text-right border-right">{{dt.runKM}}</td>
                                         <td class="text-right border-right">{{dt.zoneRunKM}}</td>
                                     </tr>

@@ -275,35 +275,82 @@ export class RouteTrackingComponent {
               }
               let detail = this.vtsVehicleList.find(item => item.vehicle == vehicles[i].toString().trim());
               if (detail == undefined) {
-                this.vtsVehicleList.push({ vehicle: vehicles[i].toString().trim(), color: color, km: '0.00', routeList: [] });
-                path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicles[i] + "/" + this.selectedDate + ".json";
-                this.httpService.get(path).subscribe(data => {
-                  if (data != null) {
-                    let keyArray = Object.keys(data);
-                    let list = [];
-                    for (let j = 0; j < keyArray.length - 2; j++) {
-                      let time = keyArray[j];
-                      let lat1 = Number(data[keyArray[j]].toString().split(",")[0]);
-                      let lng1 = Number(data[keyArray[j]].toString().split(",")[1]);
-                      let distance = this.getDistanceFromLatLonInKm(lat1, lng1, latCity, lngCity);
-                      if (distance < 150000) {
-                        list.push({ time: time, latLng: data[keyArray[j]] });
+                this.vtsVehicleList.push({ vehicle: vehicles[i].toString().trim(), color: color, km: '0.00', routeList: [], chasisNumber: "" });
+                if (localStorage.getItem("cityName") == "hisar") {
+                  let chasisInstance = this.db.object("VehicleChesisNumber/" + vehicles[i].toString().trim()).valueChanges().subscribe(chasisData => {
+                    chasisInstance.unsubscribe();
+                    console.log(chasisData);
+                    if (chasisData != null) {
+                      let chasisNumber = chasisData.toString();
+                      let vDetail = this.vtsVehicleList.find(item => item.vehicle == vehicles[i].toString().trim());
+                      if (vDetail != undefined) {
+                        vDetail.chasisNumber = chasisNumber;
+                        path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + chasisNumber + "/" + this.selectedDate + ".json";
+                        this.httpService.get(path).subscribe(data => {
+
+                          if (data != null) {
+                            let keyArray = Object.keys(data);
+                            let list = [];
+                            for (let j = 0; j < keyArray.length - 2; j++) {
+                              let time = keyArray[j];
+                              let lat1 = Number(data[keyArray[j]].toString().split(",")[0]);
+                              let lng1 = Number(data[keyArray[j]].toString().split(",")[1]);
+                              let distance = this.getDistanceFromLatLonInKm(lat1, lng1, latCity, lngCity);
+                              if (distance < 150000) {
+                                list.push({ time: time, latLng: data[keyArray[j]] });
+                              }
+                            }
+                            for (let j = 0; j < list.length; j++) {
+                              let time = list[j]["time"];
+                              let latLng = list[j]["latLng"];
+                              this.vtsVehicleList[i].routeList.push({ time: time, latLng });
+                            }
+                            (<HTMLInputElement>document.getElementById("chk" + i)).checked = true;
+                            this.drowVTSRoute(i);
+                            this.getVTSRouteDistance(i);
+                          }
+                          else {
+                            (<HTMLInputElement>document.getElementById("chk" + i)).checked = false;
+                            this.commonService.setAlertMessage("error", "No VTS Route found for vehicle " + vehicles[i].toString().trim());
+                          };
+                        });
                       }
+
                     }
-                    for (let j = 0; j < list.length; j++) {
-                      let time = list[j]["time"];
-                      let latLng = list[j]["latLng"];
-                      this.vtsVehicleList[i].routeList.push({ time: time, latLng });
+                  })
+
+                }
+                else {
+                  path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + vehicles[i] + "/" + this.selectedDate + ".json";
+                  this.httpService.get(path).subscribe(data => {
+
+                    if (data != null) {
+                      let keyArray = Object.keys(data);
+                      let list = [];
+                      for (let j = 0; j < keyArray.length - 2; j++) {
+                        let time = keyArray[j];
+                        let lat1 = Number(data[keyArray[j]].toString().split(",")[0]);
+                        let lng1 = Number(data[keyArray[j]].toString().split(",")[1]);
+                        let distance = this.getDistanceFromLatLonInKm(lat1, lng1, latCity, lngCity);
+                        if (distance < 150000) {
+                          list.push({ time: time, latLng: data[keyArray[j]] });
+                        }
+                      }
+                      for (let j = 0; j < list.length; j++) {
+                        let time = list[j]["time"];
+                        let latLng = list[j]["latLng"];
+                        this.vtsVehicleList[i].routeList.push({ time: time, latLng });
+                      }
+                      (<HTMLInputElement>document.getElementById("chk" + i)).checked = true;
+                      this.drowVTSRoute(i);
+                      this.getVTSRouteDistance(i);
                     }
-                    (<HTMLInputElement>document.getElementById("chk" + i)).checked = true;
-                    this.drowVTSRoute(i);
-                    this.getVTSRouteDistance(i);
-                  }
-                  else {
-                    (<HTMLInputElement>document.getElementById("chk" + i)).checked = false;
-                    this.commonService.setAlertMessage("error", "No VTS Route found for vehicle " + vehicles[i].toString().trim());
-                  };
-                });
+                    else {
+                      (<HTMLInputElement>document.getElementById("chk" + i)).checked = false;
+                      this.commonService.setAlertMessage("error", "No VTS Route found for vehicle " + vehicles[i].toString().trim());
+                    };
+                  });
+                }
               }
             }
           }
@@ -768,7 +815,7 @@ export class RouteTrackingComponent {
                 for (let i = 0; i < keyArray.length; i++) {
                   let index = keyArray[i];
                   let time = index.toString().split('-')[0];
-                  if (Number(routePath[index]["distance-in-meter"]) >0 ) {
+                  if (Number(routePath[index]["distance-in-meter"]) > 0) {
                     if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
                       let routeDateTime = new Date(this.selectedDate + " " + time);
                       if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
@@ -782,7 +829,7 @@ export class RouteTrackingComponent {
                 for (let i = 0; i < keyArray.length; i++) {
                   let index = keyArray[i];
                   let time = index.toString().split('-')[0];
-                  if (Number(routePath[index]["distance-in-meter"]) >0 ) {
+                  if (Number(routePath[index]["distance-in-meter"]) > 0) {
                     if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
                       let routeDateTime = new Date(this.selectedDate + " " + time);
                       if (!index.includes("-")) {
@@ -794,10 +841,10 @@ export class RouteTrackingComponent {
                   }
                 }
               }
-             // console.log(routePathList);
+              // console.log(routePathList);
               let latLngList = [];
-               this.routePathStore = routePathList;
-             // this.getLatLngList(routePathList);
+              this.routePathStore = routePathList;
+              // this.getLatLngList(routePathList);
 
 
               this.showDataOnMap();
@@ -828,7 +875,7 @@ export class RouteTrackingComponent {
   checkLatLngDistance(routeAllLatLngList: any, i: any, routeLatLngList: any) {
     if (i == routeAllLatLngList.length - 1) {
       console.log(routeAllLatLngList);
-      
+
       let timeList = routeAllLatLngList.map(item => item.time)
         .filter((value, index, self) => self.indexOf(value) === index);
       let finalRouteList = [];
@@ -850,7 +897,7 @@ export class RouteTrackingComponent {
           finalRouteList.push({ distanceinmeter: distanceinmeter, time: time, latlng: latLng });
         }
       }
-      
+
       // console.log(finalRouteList);
       this.routePathStore = finalRouteList;
       this.showDataOnMap();

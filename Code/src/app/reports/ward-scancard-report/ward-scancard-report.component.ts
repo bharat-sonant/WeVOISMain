@@ -46,6 +46,7 @@ export class WardScancardReportComponent implements OnInit {
   tableData = [[]];
   selectedWard: any;
   cardExportList: any[] = [];
+  wasteCategoryList:any[]=[];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -53,6 +54,12 @@ export class WardScancardReportComponent implements OnInit {
       this.isEcogram = "1";
       $("#divEcogram").show();
       this.totalScanedCards = 0;
+      if(this.cityName=="chennai"){
+        this.wasteCategoryList=[{ category: "All Segregated" }, { category: "Wet, Dry & Hazardous Segregated" }, { category: "Wet, Dry & Sanitary Segregated" }, { category: "Wet & Dry Segregated" }, { category: "No-Segregated" }, { category: "No Waste" }];
+      }
+      else{
+        this.wasteCategoryList=[{ category: "Segregated" }, { category: "Non-Segregated" }, { category: "No Waste" }];
+      }
     }
     else {
       this.isEcogram = "0";
@@ -129,16 +136,16 @@ export class WardScancardReportComponent implements OnInit {
         let wasteCategory = "";
         if (data != null) {
           wasteCategory = data.toString();
+          scanObj = { cardNo: cardNo, date: date, wasteCategory: wasteCategory };
         }
-        scanObj = { cardNo: cardNo, date: date, wasteCategory: wasteCategory };
         resolve(scanObj);
       })
     });
   }
 
   exportDateRangeExcel() {
-    if(this.cardList.length==0){
-      this.commonService.setAlertMessage("error","No Card Found!!");
+    if (this.cardList.length == 0) {
+      this.commonService.setAlertMessage("error", "No Card Found!!");
       return;
     }
     let dateFrom = $(this.txtDateFrom).val();

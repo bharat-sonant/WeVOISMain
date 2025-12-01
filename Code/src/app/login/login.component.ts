@@ -38,7 +38,6 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.setCityDetailList();
    // this.setCommonCityData();
-    //this.setCityList();
     this.getRoles();
     this.getMessage();
     this.getRendomBackground();
@@ -88,68 +87,6 @@ export class LoginComponent implements OnInit {
         this.roleJSONData = data;
       }
     });
-  }
-
-  setCityList() {
-    this.cityList.push({ city: "ajmer", name: "Ajmer", storagePath: "Ajmer" });
-    this.cityList.push({ city: "bharatpur", name: "Bharatpur", storagePath: "Bharatpur" });
-    this.cityList.push({ city: "biofics-surat", name: "Biofics Surat", storagePath: "Biofics-Surat" });
-    this.cityList.push({ city: "chennai", name: "Chennai", storagePath: "Chennai" });
-    this.cityList.push({ city: "chirawa", name: "Chirawa", storagePath: "Chirawa" });
-    this.cityList.push({ city: "dausa", name: "Dausa", storagePath: "Dausa" });
-    this.cityList.push({ city: "dei-bundi", name: "Dei-Bundi", storagePath: "Dei-Bundi" });
-    this.cityList.push({ city: "dehradun", name: "Dehradun", storagePath: "Dehradun" });
-    this.cityList.push({ city: "ecogram", name: "Ecogram", storagePath: "Ecogram" });
-    this.cityList.push({ city: "etmadpur", name: "Etmadpur", storagePath: "Etmadpur" });
-    this.cityList.push({ city: "iit-roorkee", name: "IIT-Roorkee", storagePath: "IIT-Roorkee" });
-    this.cityList.push({ city: "jaunpur", name: "Jaunpur", storagePath: "Jaunpur" });
-    this.cityList.push({ city: "jammu-survey", name: "Jammu Survey", storagePath: "Jammu-Survey" });
-    this.cityList.push({ city: "jaipur-office", name: "Jaipur Office", storagePath: "Jaipur" });
-    this.cityList.push({ city: "jaipur-test", name: "Jaipur Test", storagePath: "Jaipur-Test" });
-    this.cityList.push({ city: "jaipur-bwg", name: "Jaipur-BWG", storagePath: "Jaipur-BWG" });
-    this.cityList.push({ city: "jaipur", name: "Jaipur", storagePath: "JaipurD2D" });
-    this.cityList.push({ city: "jaipur-greater", name: "Jaipur Greater", storagePath: "Jaipur-Greater" });
-    this.cityList.push({ city: "jaipur-jagatpura", name: "Jagatpura", storagePath: "Jaipur-Jagatpura" });
-    this.cityList.push({ city: "jaipur-jhotwara", name: "Jhotwara", storagePath: "Jaipur-Jhotwara" });
-    this.cityList.push({ city: "jaipur-malviyanagar", name: "Malviyanagar", storagePath: "Jaipur-Malviyanagar" });
-    this.cityList.push({ city: "jaipur-mansarovar", name: "Mansarovar", storagePath: "Jaipur-Mansarovar" });
-    this.cityList.push({ city: "jaipur-murlipura", name: "Murlipura", storagePath: "Jaipur-Murlipura" });
-    this.cityList.push({ city: "jaipur-sanganer", name: "Sanganer", storagePath: "Jaipur-Sanganer" });
-    this.cityList.push({ city: "jaipur-civil-line", name: "Civil Line", storagePath: "Jaipur-Civil-Line" });
-    this.cityList.push({ city: "jaipur-kishanpole", name: "Kishanpole", storagePath: "Jaipur-Kishanpole" });
-    this.cityList.push({ city: "jaipur-textile-recycling-facility", name: "Textile Recycling Facility-Jaipur", storagePath: "Jaipur-Textile-Recycling-Facility" });
-    this.cityList.push({ city: "jodhpur", name: "Jodhpur", storagePath: "Jodhpur" });
-    this.cityList.push({ city: "jodhpur-bwg", name: "Jodhpur-BWG", storagePath: "Jodhpur-BWG" });
-    this.cityList.push({ city: "khandela", name: "Khandela", storagePath: "Khandela" });
-    this.cityList.push({ city: "khairabad", name: "Khairabad", storagePath: "Khairabad" });
-    this.cityList.push({ city: "kishangarh", name: "Kishangarh", storagePath: "Kishangarh" });
-    this.cityList.push({ city: "kuchaman", name: "Kuchaman", storagePath: "Kuchaman" });
-    this.cityList.push({ city: "losal", name: "Losal", storagePath: "Losal" });
-    this.cityList.push({ city: "mapusa-goa", name: "Mapusa Goa", storagePath: "Mapusa-Goa" });
-    this.cityList.push({ city: "mnz-test", name: "MNZ-Test", storagePath: "Jaipur-Malviyanagar" });
-    this.cityList.push({ city: "mpz-test", name: "MPZ-Test", storagePath: "Jaipur-Murlipura" });
-    this.cityList.push({ city: "nainwa", name: "Nainwa", storagePath: "Nainwa" });
-    this.cityList.push({ city: "nawa", name: "Nawa", storagePath: "Nawa" });
-    this.cityList.push({ city: "nokha", name: "Nokha", storagePath: "Nokha" });
-    this.cityList.push({ city: "noida", name: "Noida", storagePath: "Noida" });
-    this.cityList.push({ city: "pali", name: "Pali", storagePath: "Pali" });
-    this.cityList.push({ city: "ratangarh", name: "Ratangarh", storagePath: "Ratangarh" });
-    this.cityList.push({ city: "reengus", name: "Reengus", storagePath: "Reengus" });
-    this.cityList.push({ city: "rajsamand", name: "Rajsamand", storagePath: "Rajsamand" });
-    this.cityList.push({ city: "sanchore", name: "Sanchore", storagePath: "Sanchore" });
-    this.cityList.push({ city: "salasar", name: "Salasar Balaji", storagePath: "Salasar" });
-    this.cityList.push({ city: "sikar", name: "Sikar", storagePath: "Sikar" });
-    this.cityList.push({ city: "sikar-survey", name: "Sikar Survey", storagePath: "Sikar-Survey" });
-    this.cityList.push({ city: "sonipat", name: "Sonipat", storagePath: "Sonipat" });
-    this.cityList.push({ city: "sujangarh", name: "Sujangarh", storagePath: "Sujangarh" });
-    this.cityList.push({ city: "sujalpur", name: "Sujalpur", storagePath: "Sujalpur" });
-    this.cityList.push({ city: "sultanpur", name: "Sultanpur", storagePath: "Sultanpur" });
-    this.cityList.push({ city: "tonk", name: "Tonk", storagePath: "Tonk" });
-    this.cityList.push({ city: "tonk-raj", name: "Tonk-Raj", storagePath: "Tonk-Raj" });
-    this.cityList.push({ city: "test", name: "Test", storagePath: "Test" });
-    this.cityList.push({ city: "uniara", name: "Uniara", storagePath: "Uniara" });
-    this.cityList.push({ city: "wevois-others", name: "WeVOIS-Others", storagePath: "WeVOIS-Others" });
-    localStorage.setItem("cityList", JSON.stringify(this.cityList));
   }
 
   getRendomBackground() {
@@ -347,13 +284,6 @@ export class LoginComponent implements OnInit {
       this.commonService.setAlertMessage("error", "No access given to you, Please contact to admin, Thanks for you patience !!!");
     }
     $(this.divLoader).hide();
-  }
-
-  setLastLoginTime(userId: any) {
-    let obj = {
-      lastLogin: this.commonService.getTodayDateTime()
-    }
-    this.commonService.saveCommonJsonFile(obj, userId + ".json", "/Common/EmployeeLastLogin/");
   }
 
   setUserCityAccess(userId: any, accessCities: any, roleId: any, canAccessBIDashboard: any) {

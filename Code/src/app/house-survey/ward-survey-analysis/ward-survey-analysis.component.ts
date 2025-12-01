@@ -1087,7 +1087,6 @@ export class WardSurveyAnalysisComponent {
       .catch((error) => {
         let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
         if (detail != undefined) {
-          console.log(detail)
           detail.entityList[entityKey - 1]["entityImageURL"] = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
         }
       });

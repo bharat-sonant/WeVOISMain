@@ -64,7 +64,6 @@ export class CardUpdatedHistoryComponent implements OnInit {
         this.lastUpdateDate = cardJsonData["lastUpdateDate"];
         this.cardUpdateList = JSON.parse(JSON.stringify(cardJsonData["cards"]));
         this.cardUpdateFilterList = this.cardUpdateList;
-        console.log(this.cardUpdateFilterList);
       }
     });
   }

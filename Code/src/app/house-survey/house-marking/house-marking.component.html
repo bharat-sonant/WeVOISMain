@@ -387,123 +387,65 @@
 
     <!-- Details Section -->
     <div class="popup-details-wrap">
-      <!-- General Details -->
       <div class="details-block">
-        <div class="detail-row" *ngIf="markerData.houseType && markerData.houseType !== '---'">
+        <div class="detail-row">
           <span class="label">Entity Type</span>
-          <span class="value">{{ markerData.houseType }}</span>
+          <span class="value" style="margin-left: 10px;">{{ markerData.houseType || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.status && markerData.status !== '---'">
-          <span class="label">Status</span>
-          <span class="value">
-            {{ markerData.status }}
-            <span *ngIf="markerData.cardNumber && markerData.cardNumber !== '---'">
-              ({{ markerData.cardNumber }})
-            </span>
-          </span>
-        </div>
-
-        <div class="detail-row" *ngIf="markerData.markerId && markerData.markerId !== '---'">
-          <span class="label">Marker ID</span>
-          <span class="value">{{ markerData.markerId }}</span>
-        </div>
-
-        <div class="detail-row" *ngIf="markerData.ownerName && markerData.ownerName !== '---'">
+        <div class="detail-row">
           <span class="label">Owner Name</span>
-          <span class="value">{{ markerData.ownerName }}</span>
+          <span class="value">{{ markerData.ownerName || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.mobileNo && markerData.mobileNo !== '---'">
+        <div class="detail-row">
           <span class="label">Mobile No.</span>
-          <span class="value">{{ markerData.mobileNo }}</span>
+          <span class="value">{{ markerData.mobileNo || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.houseNo && markerData.houseNo !== '---'">
+        <div class="detail-row">
           <span class="label">House No.</span>
-          <span class="value">{{ markerData.houseNo }}</span>
+          <span class="value">{{ markerData.houseNo || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.address && markerData.address !== '---'">
+        <div class="detail-row">
           <span class="label">Address</span>
-          <span class="value">{{ markerData.address }}</span>
+          <span class="value">{{ markerData.address || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.streetColony && markerData.streetColony !== '---'">
+        <div class="detail-row">
           <span class="label">Street/Colony</span>
-          <span class="value">{{ markerData.streetColony }}</span>
+          <span class="value">{{ markerData.streetColony || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.wardNumber && markerData.wardNumber !== '---'">
+        <div class="detail-row">
           <span class="label">Ward</span>
-          <span class="value">{{ markerData.wardNumber }}</span>
+          <span class="value">{{ markerData.wardNumber || '...' }}</span>
         </div>
       </div>
 
-      <!-- Building Details (Ajmer only) -->
       <div class="building-block" *ngIf="cityName === 'ajmer'">
         <h4 class="building-title">Building Detail</h4>
-
-        <div class="detail-row" *ngIf="markerData.landType && markerData.landType !== '---'">
+        <div class="detail-row">
           <span class="label">Land Type</span>
-          <span class="value">{{ markerData.landType }}</span>
+          <span class="value">{{ markerData.landType || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.plotLength && markerData.plotLength !== '---'">
+        <div class="detail-row">
           <span class="label">Length</span>
-          <span class="value">{{ markerData.plotLength }}</span>
+          <span class="value">{{ markerData.plotLength || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.plotBreadth && markerData.plotBreadth !== '---'">
+        <div class="detail-row">
           <span class="label">Breadth</span>
-          <span class="value">{{ markerData.plotBreadth }}</span>
+          <span class="value">{{ markerData.plotBreadth || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.underGroundArea && markerData.underGroundArea !== '---'">
+        <div class="detail-row">
           <span class="label">Under Ground</span>
-          <span class="value">{{ markerData.underGroundArea }}</span>
+          <span class="value">{{ markerData.underGroundArea || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.groundFloorArea && markerData.groundFloorArea !== '---'">
+        <div class="detail-row">
           <span class="label">Ground Floor</span>
-          <span class="value">{{ markerData.groundFloorArea }}</span>
+          <span class="value">{{ markerData.groundFloorArea || '...' }}</span>
         </div>
-
-        <div class="detail-row" *ngIf="markerData.noOfFloors && markerData.noOfFloors !== '---'">
+        <div class="detail-row">
           <span class="label">No. of Floors</span>
-          <span class="value">{{ markerData.noOfFloors }}</span>
-        </div>
-      </div>
-
-      <!-- Additional Details -->
-      <div class="details-block">
-        <div class="detail-row" *ngIf="markerData.markerRemark && markerData.markerRemark !== '---'">
-          <span class="label">Remark</span>
-          <span class="value">{{ markerData.markerRemark }}</span>
-        </div>
-
-        <div class="detail-row" *ngIf="markerData.markingBy && markerData.markingBy !== '---'">
-          <span class="label">Mkd By</span>
-          <span class="value">{{ markerData.markingBy }}</span>
-        </div>
-
-        <div class="detail-row" *ngIf="markerData.showMarkingDate && markerData.showMarkingDate !== '---'">
-          <span class="label">Mkd Date</span>
-          <span class="value">{{ markerData.showMarkingDate }}</span>
-        </div>
-
-        <div class="detail-row" *ngIf="markerData.approveName && markerData.approveName !== '---'">
-          <span class="label">Appr By</span>
-          <span class="value">{{ markerData.approveName }}</span>
-        </div>
-
-        <div class="detail-row" *ngIf="markerData.showApproveDate && markerData.showApproveDate !== '---'">
-          <span class="label">Appr Date</span>
-          <span class="value">{{ markerData.showApproveDate }}</span>
+          <span class="value">{{ markerData.noOfFloors || '...' }}</span>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -577,6 +519,10 @@
                     {{ dt.houseType }}
                   </option>
                 </select>
+              </div>
+              <div class="col-md-12" [hidden]="cityName!='hisar'">
+                <label class="custom-label"> Property ID</label>
+                <input id="txtPropertyID" type="text" class="custom-input" value="" />
               </div>
               <div class="col-md-12">
                 <label class="custom-label"> Owner Name</label>
@@ -1030,6 +976,12 @@
                 {{ dt.zoneNo }} [Line {{ dt.lineNo }}]
               </div>
             </div>
+            <div class="survey-info-row" [hidden]="cityName != 'hisar'">
+              <div class="survey-info-left">Property ID</div>
+              <div class="survey-info-right">
+                {{ dt.propId }}
+              </div>
+            </div>
             <div class="survey-info-row" [hidden]="dt.ownerName == ''">
               <div class="survey-info-left">Owner Name</div>
               <div class="survey-info-right">
@@ -1232,7 +1184,7 @@
           <div class="include-card" *ngFor="let dt of markerList">
             <div class="include-header">
               <a class="include-img-box" href="{{ dt.imageUrl }}" target="_blank">
-                <img class="include-iner-img" [src]="dt.imageUrl" />
+                <img class="include-iner-img" [src]="dt.imageUrl" (error)="setDefaultImage($event)" />
               </a>
             </div>
             <div class="include-body">
@@ -1280,6 +1232,12 @@
                 <div class="include-info-left">Ward</div>
                 <div class="include-info-right">
                   {{ dt.zoneNo }} [Line {{ dt.lineNo }}]
+                </div>
+              </div>
+              <div class="survey-info-row" [hidden]="cityName != 'hisar'">
+                <div class="survey-info-left">Property ID</div>
+                <div class="survey-info-right">
+                  {{ dt.propId }}
                 </div>
               </div>
               <div class="include-info-row" [hidden]="dt.ownerName == ''">
@@ -1491,7 +1449,7 @@
           <div class="include-card" *ngFor="let dt of markerListIncluded">
             <div class="include-header">
               <a class="include-img-box" href="{{ dt.imageUrl }}" target="_blank">
-                <img class="include-iner-img" [src]="dt.imageUrl" />
+                <img class="include-iner-img" [src]="dt.imageUrl" (error)="setDefaultImage($event)" />
               </a>
             </div>
             <div class="include-body">
@@ -1541,6 +1499,12 @@
                 <div class="include-info-left">Ward</div>
                 <div class="include-info-right">
                   {{ dt.zoneNo }} [Line {{ dt.lineNo }}]
+                </div>
+              </div>
+              <div class="survey-info-row" [hidden]="cityName != 'hisar'">
+                <div class="survey-info-left">Property ID</div>
+                <div class="survey-info-right">
+                  {{ dt.propId }}
                 </div>
               </div>
               <div class="include-info-row" [hidden]="dt.ownerName == ''">

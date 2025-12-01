@@ -136,7 +136,12 @@ export class RealtimeMonitoringComponent implements OnInit {
     wardEndTime: "---",
     avgSpeed: "0",
     wardKMInMeter: "0",
-    wardTimeInMinutes: "0"
+    wardTimeInMinutes: "0",
+    totalCards: "0",
+    scanedCard: "0",
+    scanCardPercentage: "0",
+    commercialCards: "0",
+    residencialCards: "0"
   };
 
   // Time Graph
@@ -188,6 +193,9 @@ export class RealtimeMonitoringComponent implements OnInit {
   public hideZoneTimeAndDistanceWidget: any;
   public showAvgSpeedWidget: any;
   public showAvgSpeedOfLine: any;
+  public showScanCardWidget: any;
+  avgLineSpeedList: any[] = [];
+  cardWardList: any[] = [];
 
 
   divRemark = "#divRemark";
@@ -211,6 +219,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.hideZoneTimeAndDistanceWidget = false;
     this.showAvgSpeedWidget = false;
     this.showAvgSpeedOfLine = false;
+    this.showScanCardWidget = false;
     this.instancesList = [];
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -224,6 +233,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     element.href = this.cityName + "/ward-monitoring-report";
     this.bounds = new google.maps.LatLngBounds();
     this.toDayDate = this.commonService.setTodayDate();
+    // this.toDayDate="2025-11-16";
     let lineStatusDate = localStorage.getItem("lineStatusDate");
     if (lineStatusDate != null) {
       if (this.toDayDate != lineStatusDate) {
@@ -269,6 +279,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     }
     this.getWardForLineWeitage();
     this.managePermission(this.userAccessList);
+
   }
 
   getRealTimeSettings() {
@@ -296,14 +307,33 @@ export class RealtimeMonitoringComponent implements OnInit {
             this.showAvgSpeedOfLine = true;
           }
         }
+        if (data["showScanCardWidget"] != null) {
+          if (data["showScanCardWidget"] == "yes") {
+            this.showScanCardWidget = true;
+            this.getCardWardMapping();
+          }
+        }
       }
-/*
-      if (this.cityName == "sikar") {
+      if (this.cityName == "tonk-raj") {
         this.showAvgSpeedWidget = true;
         this.showAvgSpeedOfLine = true;
+        this.showScanCardWidget = true;
       }
-      */
     })
+  }
+
+  getCardWardMapping() {
+    let dbPath = "CardWardMapping";
+    let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      cardWardInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let cardNumber = keyArray[i];
+          this.cardWardList.push({ cardNumber: cardNumber, line: data[cardNumber]["line"], ward: data[cardNumber]["line"], cardType: "" });
+        }
+      }
+    });
   }
 
   getVehicleAvgSpeed() {
@@ -506,7 +536,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
               }
 
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: status, shortIndex: index, displayOrder: displayOrder, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: bgColor, iconName: iconName, progressClass: progressClass, wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: status, shortIndex: index, displayOrder: displayOrder, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: bgColor, iconName: iconName, progressClass: progressClass, wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0, totalCards: 0 });
             } else if (status == "stopped") {
               if (data[zoneNo]["isOnDuty"] == "no") {
                 status = "completed";
@@ -525,13 +555,13 @@ export class RealtimeMonitoringComponent implements OnInit {
                 borderClass = "progress-bar  progress-success";
                 progressClass = "progress progress-float";
               }
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: status, shortIndex: index, displayOrder: displayOrder, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: bgColor, iconName: iconName, progressClass: progressClass, wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: status, shortIndex: index, displayOrder: displayOrder, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: bgColor, iconName: iconName, progressClass: progressClass, wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0, totalCards: 0 });
             } else if (status == "completed") {
               completedWard++;
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "completed", shortIndex: index, displayOrder: 3, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "#95e495", iconName: "fas fa-caret-right active-ward", progressClass: "progress progress-float-completed", wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "completed", shortIndex: index, displayOrder: 3, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "#95e495", iconName: "fas fa-caret-right active-ward", progressClass: "progress progress-float-completed", wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0, totalCards: 0 });
             } else if ((status = "workNotStarted")) {
               inActiveWard++;
-              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "notStarted", shortIndex: index, displayOrder: 4, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "rgb(221 225 221)", iconName: "fas fa-caret-right inactive-ward", progressClass: "progress progress-float", wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0 });
+              this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: "notStarted", shortIndex: index, displayOrder: 4, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: "rgb(221 225 221)", iconName: "fas fa-caret-right inactive-ward", progressClass: "progress progress-float", wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0, totalCards: 0 });
             }
           } else {
             let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
@@ -620,6 +650,7 @@ export class RealtimeMonitoringComponent implements OnInit {
                 let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
                 if (zoneDetails != undefined) {
                   zoneDetails.totalLines = Number(lineList[lineList.length - 1]["totalLines"]);
+                  zoneDetails.totalCards = Number(lineList[lineList.length - 1]["totalLines"]);
                   for (let i = 0; i < lineList.length - 1; i++) {
                     zoneDetails.lineWeight.push({ lineNo: lineList[i]["lineNo"], weightage: lineList[i]["weightage"], lineLength: lineList[i]["lineLength"], lineStatus: "", endTime: 0 });
                   }
@@ -824,10 +855,77 @@ export class RealtimeMonitoringComponent implements OnInit {
             this.getTotalTime(zoneNo);
             this.getWardProgress();
             this.getVehicleStatus();
+            this.getWardTotalCards(zoneNo);
           }
         }
       }
     });
+  }
+
+  getScanedCards(zoneNo: any) {
+     let dbPath = "HousesCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate;
+    //let dbPath = "HousesCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/2025-11-16";
+    let totalScanCardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      totalScanCardInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        const promises = [];
+        for (let i = 0; i <= keyArray.length; i++) {
+          let cardNumber = keyArray[i];
+          promises.push(Promise.resolve(this.getScanCardType(cardNumber)));
+        }
+        Promise.all(promises).then((results) => {
+          let merged = [];
+          for (let i = 0; i < results.length; i++) {
+            if (results[i]["status"] == "success") {
+              merged = merged.concat(results[i]["data"]);
+            }
+          }
+          this.workerDetails.commercialCards = merged.filter(item => item.cardType == "Commercial").length.toString();
+          this.workerDetails.residencialCards = merged.filter(item => item.cardType == "Residential").length.toString();
+        });
+        this.workerDetails.scanedCard = data["totalScanned"].toString();
+        if (this.workerDetails.totalCards != "0") {
+          let scanCardPercentage = (Number(this.workerDetails.scanedCard) / Number(this.workerDetails.totalCards)) * 100;
+          if (scanCardPercentage > 100) {
+            scanCardPercentage = 100;
+          }
+          this.workerDetails.scanCardPercentage = scanCardPercentage.toFixed(0) + "%";
+        }
+      }
+    });
+  }
+
+  getScanCardType(cardNumber: any) {
+    return new Promise((resolve) => {
+      let dbPath = "CardTypeMapping/" + cardNumber + "/cardType";
+      let cardTypeInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        cardTypeInstance.unsubscribe();
+        let obj = {};
+        if (data != null) {
+          obj = { cardNumber: cardNumber, cardType: data.toString() };
+          resolve({ status: "success", data: obj });
+        }
+        else {
+          resolve({ status: "fail", data: obj });
+        }
+      });
+    });
+  }
+
+  getWardTotalCards(zoneNo: any) {
+    this.commonService.getWardTotalCards(zoneNo, this.toDayDate).then(res => {
+      if (res) {
+        let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
+        if (zoneDetails != undefined) {
+          zoneDetails.totalCards = Number(res["totalCards"]);
+          if (zoneNo == this.selectedZone) {
+            this.workerDetails.totalCards = res["totalCards"];
+            this.getScanedCards(zoneNo);
+          }
+        }
+      }
+    })
   }
 
   getWardTrips(zoneNo: any) {
@@ -1113,6 +1211,11 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.workerDetails.wardEndTime = "---";
     this.workerDetails.avgSpeed = "0";
     this.workerDetails.wardKMInMeter = "0";
+    this.workerDetails.totalCards = "0";
+    this.workerDetails.scanedCard = "0";
+    this.workerDetails.scanCardPercentage = "0";
+    this.workerDetails.commercialCards = "0";
+    this.workerDetails.residencialCards = "0";
     this.employeeDetail = [];
 
     let zoneDetails = this.zoneList.find((item) => item.zoneNo == this.selectedZone);
@@ -1122,6 +1225,14 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.workerDetails.wardKMInMeter = zoneDetails.wardKMInMeter;
       if (zoneDetails.lineWeight.length == 0) {
         this.getCurrentLine(this.selectedZone);
+      }
+      if (this.showScanCardWidget == true) {
+        if (zoneDetails.totalCards == 0) {
+          this.getWardTotalCards(this.selectedZone);
+        }
+        else {
+          this.getScanedCards(this.selectedZone);
+        }
       }
     }
     this.time = [];
@@ -2622,9 +2733,43 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.getAvgSpeedOfLines();
   }
 
-  getAvgSpeedOfLines(){
-    console.log(this.workerDetails.totalLines);
 
+
+  getAvgSpeedOfLines() {
+    this.avgLineSpeedList = [];
+    for (let i = 1; i <= Number(this.workerDetails.totalLines); i++) {
+      this.avgLineSpeedList.push({ lineNo: i, avgSpeed: "0" });
+    }
+    let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/LineStatus";
+    let lineInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      lineInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          if (data[lineNo]["start-time"] != null && data[lineNo]["end-time"] != null && data[lineNo]["line-distance"] != null) {
+            let lineDistance = Number(data[lineNo]["line-distance"]);
+
+            let dat1 = new Date(this.toDayDate + " " + data[lineNo]["start-time"]);
+            let dat2 = new Date(this.toDayDate + " " + data[lineNo]["end-time"]);
+            let totalMinutes=this.commonService.timeDifferenceMin(dat2, dat1);            
+            let avgSpeed = 0;
+            if (totalMinutes > 0) {
+              avgSpeed = (lineDistance / 1000) / (totalMinutes / 60);
+            }
+            let detail = this.avgLineSpeedList.find(item => item.lineNo == lineNo);
+            if (detail != undefined) {
+              detail.avgSpeed = avgSpeed.toFixed(3) + " Km/hr";
+            }
+          }
+        }
+      }
+    });
+  }
+
+  getSeconds(time: any) {
+    const [h, m, s] = time.split(":").map(Number);
+    return h * 3600 + m * 60 + s;
   }
 
   ngOnDestroy() {
@@ -2677,6 +2822,11 @@ export class WorkderDetails {
   avgSpeed: string;
   wardKMInMeter: string;
   wardTimeInMinutes: string;
+  totalCards: string;
+  scanedCard: string;
+  scanCardPercentage: string;
+  commercialCards: string;
+  residencialCards: string;
 }
 
 export class graphHeaders {

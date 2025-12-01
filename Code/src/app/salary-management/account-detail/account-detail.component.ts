@@ -47,7 +47,7 @@ export class AccountDetailComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Salary-Management-Driver","Account-Detail",localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Salary-Management-Driver", "Account-Detail", localStorage.getItem("userID"));
     this.setDefault();
   }
 
@@ -66,7 +66,7 @@ export class AccountDetailComponent implements OnInit {
     $(this.ddlUser).val("active");
     $(this.ddlDesignation).val("all");
     this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
-    
+
     this.getAccountDetail();
   }
 
@@ -76,26 +76,26 @@ export class AccountDetailComponent implements OnInit {
     this.designationList = [];
     this.accountList = [];
     this.checkForNewEmployee();
-/*
-    const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
-    let accountInstance = this.httpService.get(path).subscribe(data => {
-      accountInstance.unsubscribe();
-      if (data != null) {
-        let list = JSON.parse(JSON.stringify(data));
-        this.allAccountList = list.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
-        this.checkForNewEmployee();
-      }
-    }, error => {
-      this.checkForNewEmployee();
-    });
-    */
+    /*
+        const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccount%2FaccountDetail.json?alt=media";
+        let accountInstance = this.httpService.get(path).subscribe(data => {
+          accountInstance.unsubscribe();
+          if (data != null) {
+            let list = JSON.parse(JSON.stringify(data));
+            this.allAccountList = list.sort((a, b) => Number(b.empId) < Number(a.empId) ? 1 : -1);
+            this.checkForNewEmployee();
+          }
+        }, error => {
+          this.checkForNewEmployee();
+        });
+        */
   }
 
   checkForNewEmployee() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkForNewEmployee");
     let dbPath = "Employees/lastEmpId";
     let lastEmpIdInstance = this.db.object(dbPath).valueChanges().subscribe(
-      lastEmpIdData => {        
+      lastEmpIdData => {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkForNewEmployee", lastEmpIdData);
         lastEmpIdInstance.unsubscribe();
         let lastEmpId = Number(lastEmpIdData);
@@ -155,7 +155,7 @@ export class AccountDetailComponent implements OnInit {
   }
 
   showAccountDetail(status: any, designation: any) {
-    let driverHelperList = this.allAccountList.filter(item => item.empType == 2 && item.salaryType!="non-salaried");
+    let driverHelperList = this.allAccountList.filter(item => item.empType == 2 && item.salaryType != "non-salaried");
     if (status == "all") {
       this.accountList = driverHelperList;
     }
@@ -443,7 +443,7 @@ export class AccountDetailComponent implements OnInit {
 
   updateJsonForNewEmployee(jsonLastEmpId: any, lastEmpId: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateJsonForNewEmployee");
-    const promises=[];
+    const promises = [];
     for (let i = 1; i <= lastEmpId; i++) {
       promises.push(Promise.resolve(this.getEmployeeDetail(i)));
     }
@@ -451,22 +451,22 @@ export class AccountDetailComponent implements OnInit {
     Promise.all(promises).then((results) => {
       let merged = [];
       for (let i = 0; i < results.length; i++) {
-        if(results[i]["status"]=="success"){
-        merged = merged.concat(results[i]["data"]);
+        if (results[i]["status"] == "success") {
+          merged = merged.concat(results[i]["data"]);
         }
       }
-      this.allAccountList=merged;
+      this.allAccountList = merged;
       this.getRoles();
       this.filterData();
       this.saveJSONData();
     });
-    
+
   }
 
-  
+
   getEmployeeDetail(empId: any) {
     return new Promise((resolve) => {
-     
+
       let employeeData = {};
       let dbPath = "Employees/" + empId;
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -479,15 +479,16 @@ export class AccountDetailComponent implements OnInit {
               let empCode = employeeDetail["GeneralDetails"]["empCode"];
               let designationId = employeeDetail["GeneralDetails"]["designationId"];
               let email = employeeDetail["GeneralDetails"]["email"];
-              let salaryType=employeeDetail["GeneralDetails"]["salaryType"]?employeeDetail["GeneralDetails"]["salaryType"]:"salaried";
-              let dateOfLeave=employeeDetail["GeneralDetails"]["dateOfLeave"]?employeeDetail["GeneralDetails"]["dateOfLeave"]:"";
+              let salaryType = employeeDetail["GeneralDetails"]["salaryType"] ? employeeDetail["GeneralDetails"]["salaryType"] : "salaried";
+              let dateOfLeave = employeeDetail["GeneralDetails"]["dateOfLeave"] ? employeeDetail["GeneralDetails"]["dateOfLeave"] : "";
               let accountNo = "";
               let ifsc = "";
               let modifyBy = "";
               let modifyDate = "";
               let isLock = 0;
+              let payroll = employeeDetail["GeneralDetails"]["payroll"] ? employeeDetail["GeneralDetails"]["payroll"] : "WeVOIS";
+              let isDummyId = employeeDetail["GeneralDetails"]["isDummyId"] ? employeeDetail["GeneralDetails"]["isDummyId"] : 0;
 
-              console.log(dateOfLeave)
 
               if (employeeDetail["BankDetails"] != null) {
                 if (employeeDetail["BankDetails"]["AccountDetails"] != null) {
@@ -531,7 +532,7 @@ export class AccountDetailComponent implements OnInit {
                   }
                 }
               }
-              employeeData={ empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType,dateOfLeave:dateOfLeave,salaryType:salaryType };
+              employeeData = { empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType, dateOfLeave: dateOfLeave, salaryType: salaryType,payroll:payroll,isDummyId:isDummyId };
               resolve({ status: "success", data: employeeData });
             }
             else {

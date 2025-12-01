@@ -161,9 +161,9 @@
                 style="width: 200px"
               >
                 <option value="0" selected>--All Waste Category--</option>
-                <option value="Segregated">Segregated</option>
-                <option value="Non-Segregated">Non-Segregated</option>
-                <option value="No Waste">No Waste</option>
+                <option *ngFor="let cat of wasteCategoryList" value={{cat.category}}>
+          {{cat.category}}
+        </option>
               </select>
             </div>
             <div class="col-md-6 text-right d-flex justify-content-end">

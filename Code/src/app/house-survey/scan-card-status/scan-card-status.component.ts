@@ -44,7 +44,7 @@ export class ScanCardStatusComponent implements OnInit {
   }
 
   setReplaceKey() {
-    const path = this.commonService.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "CityDetails%2FCityDetails.json?alt=media";
     let cityDataInstance = this.httpService.get(path).subscribe(cityData => {
       cityDataInstance.unsubscribe();
       if (cityData != null) {

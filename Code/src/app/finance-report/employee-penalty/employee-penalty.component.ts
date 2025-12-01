@@ -78,7 +78,7 @@ export class EmployeePenaltyComponent implements OnInit {
 
   getEmployeeCodeByCityDetail() {
     const path =
-      this.commonService.fireStoragePath +
+      this.commonService.fireStorageCommonPath +
       "CityDetails%2FCityDetails.json?alt=media";
     let fuelInstance = this.httpService.get(path).subscribe((data) => {
       fuelInstance.unsubscribe();

@@ -45,6 +45,7 @@ export class WardSurveySummaryComponent implements OnInit {
   txtServingCount = "#txtServingCount";
   divServingCount = "#divServingCount";
   serviceName = "survey-summary";
+  showScanCardWidget: any;
   surveyData: surveyDatail = {
     totalLines: 0,
     totalMarkers: 0,
@@ -82,12 +83,29 @@ export class WardSurveySummaryComponent implements OnInit {
     }
 
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.getScanCardSettings();
     this.showHideAlreadyCardInstalled();
     this.getLastUpdate();
     this.getHouseType();
     this.getSurveyorList();
     this.getWardProgressList();
     //this.checkWithCardWardMapping();
+  }
+
+
+  getScanCardSettings() {
+    this.showScanCardWidget = false;
+    let dbPath = "Settings/RealTime";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      instance.unsubscribe();
+      if (data != null) {
+        if (data["showScanCardWidget"] != null) {
+          if (data["showScanCardWidget"] == "yes") {
+            this.showScanCardWidget = true;
+          }
+        }
+      }
+    })
   }
 
   getLastUpdate() {
@@ -552,6 +570,21 @@ export class WardSurveySummaryComponent implements OnInit {
                     dbPath="Houses/"+zoneNo+"/"+line+"/"+cardNo;
                     this.db.object(dbPath).update(cardData);
                     */
+
+                    // CardTypeMapping
+                    if (this.showScanCardWidget == true) {
+                      let cardTypeForMapping = cardObj[cardNo]["cardType"];
+                      if (cardTypeForMapping == "आवासीय") {
+                        cardTypeForMapping = "Residential";
+                      }
+                      else {
+                        cardTypeForMapping = "Commercial";
+                      }
+                      this.db.object("CardTypeMapping/" + cardNo).update({ cardType: cardTypeForMapping });
+                    }
+                    // end card type mapping
+
+
                     let cardCount = 1;
                     let surveyorId = cardObj[cardNo]["surveyorId"];
                     if (cardObj[cardNo]["createdDate"] != null) {
@@ -1719,7 +1752,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
   getZoneHouseTypes() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
-    
+
 
     // Remove this line - ye NgBootstrap modal open kar raha hai
     // this.modalService.open(content, { size: "lg" });
@@ -1877,7 +1910,7 @@ export class WardSurveySummaryComponent implements OnInit {
     index = index + 1;
     if (index == this.wardProgressList.length + 1) {
       this.commonService.saveJsonFile(this.zoneHouseTypeList, "houseType.json", "/SurveyManagement/SurveyManagement/");
-     // this.exportHouseTypeList("1");
+      // this.exportHouseTypeList("1");
     }
     else {
       this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseType");
@@ -1893,7 +1926,7 @@ export class WardSurveySummaryComponent implements OnInit {
           }
           else {
             this.commonService.saveJsonFile(this.zoneHouseTypeList, "houseType.json", "/SurveyManagement/SurveyManagement/");
-            this.exportHouseTypeList("1");
+            // this.exportHouseTypeList("1");
           }
         }
         else {

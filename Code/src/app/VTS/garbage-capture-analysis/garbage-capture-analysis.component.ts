@@ -255,7 +255,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
   }
 
   getImageOptionTypes() {
-     this.commonService.getCategory().then((category: any) => {
+    this.commonService.getCategory().then((category: any) => {
       if (category != null) {
         this.optionList = JSON.parse(category);
       }
@@ -378,11 +378,11 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.getCategorySummary();
     $(this.divLoader).show();
     let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption;
-    console.log(dbPath);
+   
     let imageInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         imageInstance.unsubscribe();
-        console.log(data);
+       
         if (data != null) {
           $(this.divMessage).hide();
           let keyArray = Object.keys(data);
@@ -621,7 +621,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       }
       //imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FImagesData%2F" + optionType + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedOption + "%2F" + imageName + "?alt=media";
       imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
-      console.log(imageURL)
+
       let element = <HTMLImageElement>document.getElementById("mainImage");
       element.src = imageURL;
       let imageId = this.progressList[index]["imageId"];

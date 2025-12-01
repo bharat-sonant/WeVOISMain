@@ -696,7 +696,6 @@ export class SecondaryCollectionPlaningComponent implements OnInit {
 
     }
     else {
-      console.log(planData)
       let planDetail = this.planList.find(item => item.planName == planData.planName && item.date == planDate);
       if (planDetail != undefined) {
         this.commonService.setAlertMessage("error", "Plan Name " + planData.planName + " already exist on date " + planDate + " !!!");

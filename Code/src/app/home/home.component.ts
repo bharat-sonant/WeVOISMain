@@ -50,11 +50,6 @@ export class HomeComponent implements OnInit {
       this.getUserAccess();
     }
     $('#divLoader').show();
-    let obj={
-      lastLogin:this.commonService.getTodayDateTime()
-    }
-    this.commonService.saveCommonJsonFile(obj, this.userid+".json", "/Common/EmployeeLastLogin/");
-
 
     this.userDetail.cityName = this.commonService.getCityName(this.cityName);
     setTimeout(() => {

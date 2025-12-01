@@ -983,16 +983,17 @@ table td {
 }
 
 .dataRight {
-    width: 25%;
-    margin-left: 10px;
+    width: 29%;
+    margin-left: 40px;
     border-radius: 6px;
+    margin-right: 12px;
 
 }
 
 .graphCard {
     border-radius: 6px;
     padding: 2.5px 0px;
-    font-size: 10px;
+    font-size: 12px;
     display: flex;
     gap: 10px;
     color: #707070;
@@ -1066,8 +1067,9 @@ table td {
 
 .dataLeft {
     display: flex;
-    gap: 10px;
+    gap: 40px;
     width: 75%;
+    margin-left: 20px;
     // flex-flow: column;
 }
 
@@ -1119,9 +1121,10 @@ table td {
 }
 
 .zoneInnerCardOne {
-    width: 310px !important;
+    width: 340px !important;
     gap: 5px !important;
     padding: 10px 16px;
+    line-height: 27px;
 }
 
 .zoneRightOne {
@@ -1138,6 +1141,7 @@ table td {
 .zoneInnerCardTwo {
     width: 100%;
     padding: 18px 16px;
+    line-height: 32px;
 }
 
 .iconZone {
@@ -1153,12 +1157,12 @@ table td {
     flex-flow: column;
 
     h3 {
-        font-size: 10px;
+        font-size: 13px;
         margin: 0px;
     }
 
     span {
-        font-size: 13px;
+        font-size: 15px;
         font-weight: bold;
     }
 }

@@ -34,7 +34,6 @@ export class PortalAccessComponent implements OnInit {
         let cityLogoURL = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityImages%2F" + cityCommonDataJsonData[key]["cityLogo"] + "?alt=media";
         list.push({ city: key, latLng: cityCommonDataJsonData[key]["latLng"], cityLogo: cityLogoURL });
       }
-      console.log(list);
       localStorage.setItem("CityCommonDataList", JSON.stringify(list));
       if (list.length > 0) {
         this.getCityAccess(list);
@@ -70,8 +69,6 @@ export class PortalAccessComponent implements OnInit {
       this.citySelectionList.push({ city: "", cityLogo: "../../../assets/images/jaipur icon.png", name: "Jaipur D2D" });
     }
     this.citySelectionList = this.citySelectionList.sort((a, b) => b.name < a.name ? 1 : -1);
-    console.log(this.citySelectionList)
-
   }
 
   getCity(city: any) {

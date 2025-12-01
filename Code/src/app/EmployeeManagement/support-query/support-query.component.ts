@@ -74,7 +74,7 @@ export class SupportQueryComponent implements OnInit {
   }
 
   getCityList() {
-    const path = this.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+    const path = this.commonService.fireStorageCommonPath + "CityDetails%2FCityDetails.json?alt=media";
     let cityInstance = this.httpService.get(path).subscribe(data => {
       cityInstance.unsubscribe();
       let list = JSON.parse(JSON.stringify(data));
