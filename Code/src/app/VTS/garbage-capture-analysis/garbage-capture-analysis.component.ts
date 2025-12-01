@@ -121,7 +121,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         }
         this.userList.sort((a, b) => b.name > a.name ? -1 : 1);
       }
-    })
+    });
 
   }
 
@@ -311,7 +311,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     $(this.ddlOptionNav).val(option);
     $(this.ddlOption).val(option);
     this.selectedOption = option;
-    this.garbageUserList=[];
+    this.garbageUserList = [];
     this.resetData();
     this.getCapturedImages();
   }
@@ -329,7 +329,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
       $(this.txtDateNav).val(newDate);
       if (newDate != this.selectedDate) {
         this.selectedDate = newDate;
-        this.garbageUserList=[];
+        this.garbageUserList = [];
         this.resetProgressData();
         this.setMonthYear();
         this.getCapturedImages();
@@ -378,11 +378,11 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
     this.getCategorySummary();
     $(this.divLoader).show();
     let dbPath = "WastebinMonitor/ImagesData/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.selectedOption;
-   
+
     let imageInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         imageInstance.unsubscribe();
-       
+
         if (data != null) {
           $(this.divMessage).hide();
           let keyArray = Object.keys(data);
@@ -446,7 +446,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                     time: data[imageId]["BvgAction"]["time"],
                     date: data[imageId]["BvgAction"]["date"],
                     latlng: data[imageId]["BvgAction"]["latlng"]
-                  }
+                  };
                   BvgAction = bvgData;
                 }
                 let timeStemp = new Date(this.selectedDate + " " + data[imageId]["time"]).getTime();
@@ -619,8 +619,66 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
         element.checked = true;
         elementButton.disabled = false;
       }
+      if (this.selectedDate) {
+
+        const selected = new Date(this.selectedDate);
+        const limit = new Date("2021-11-01");
+
+        let oldPathUrl =
+          this.commonService.fireStoragePath +
+          this.commonService.getFireStoreCity() +
+          "%2FWastebinMonitorImages%2F" +
+          imageName +
+          "?alt=media";
+
+        let newPathUrl =
+          this.commonService.fireStoragePath +
+          this.commonService.getFireStoreCity() +
+          "%2FWastebinMonitorImages%2F" +
+          this.currentYear + "%2F" +
+          this.currentMonthName + "%2F" +
+          this.selectedDate + "%2F" +
+          imageName +
+          "?alt=media";
+
+
+
+        // OLD DATE CASE → Check old path first
+        if (selected < limit) {
+
+
+          const testImg = new Image();
+          testImg.src = oldPathUrl;
+
+          testImg.onload = () => {
+
+            imageURL = oldPathUrl;
+
+            let element = document.getElementById("mainImage") as HTMLImageElement;
+            element.src = imageURL;
+          };
+
+          testImg.onerror = () => {
+
+            imageURL = newPathUrl;
+
+            let element = document.getElementById("mainImage") as HTMLImageElement;
+            element.src = imageURL;
+          };
+
+
+        }
+
+        // NEW DATE → Always use NEW PATH
+        imageURL = newPathUrl;
+      }
+
+
+
+
+
       //imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FImagesData%2F" + optionType + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedOption + "%2F" + imageName + "?alt=media";
-      imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+
 
       let element = <HTMLImageElement>document.getElementById("mainImage");
       element.src = imageURL;
@@ -642,7 +700,7 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
                   time: data["time"],
                   date: data["date"],
                   latlng: data["latlng"]
-                }
+                };
                 dataDetail.BvgAction = bvgData;
                 dataDetail.isResolved = 1;
                 let allDetail = this.allProgressList.find(item => item.imageId == imageId);
@@ -677,7 +735,60 @@ export class GarbageCaptureAnalysisComponent implements OnInit {
           optionType = "LitterDustbin";
         }
         // imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FImagesData%2F" + optionType + "%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.selectedOption + "%2F" + imageName + "?alt=media";
-        imageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWastebinMonitorImages%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
+        if (this.selectedDate) {
+
+          const selected = new Date(this.selectedDate);
+          const limit = new Date("2021-11-01");
+
+          let oldPathUrl =
+            this.commonService.fireStoragePath +
+            this.commonService.getFireStoreCity() +
+            "%2FWastebinMonitorImages%2F" +
+            imageName +
+            "?alt=media";
+
+          let newPathUrl =
+            this.commonService.fireStoragePath +
+            this.commonService.getFireStoreCity() +
+            "%2FWastebinMonitorImages%2F" +
+            this.currentYear + "%2F" +
+            this.currentMonthName + "%2F" +
+            this.selectedDate + "%2F" +
+            imageName +
+            "?alt=media";
+
+
+
+          // OLD DATE CASE → Check old path first
+          if (selected < limit) {
+
+
+            const testImg = new Image();
+            testImg.src = oldPathUrl;
+
+            testImg.onload = () => {
+
+              imageURL = oldPathUrl;
+
+              let element = document.getElementById("mainImage") as HTMLImageElement;
+              element.src = imageURL;
+            };
+
+            testImg.onerror = () => {
+              imageURL = newPathUrl;
+
+              let element = document.getElementById("mainImage") as HTMLImageElement;
+              element.src = imageURL;
+            };
+
+          }
+
+          // NEW DATE → Always use NEW PATH
+          imageURL = newPathUrl;
+        }
+
+
+
 
         let element = <HTMLImageElement>document.getElementById("mainImageResolved");
         element.src = imageURL;
