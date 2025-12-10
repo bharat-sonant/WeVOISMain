@@ -646,6 +646,8 @@ export class WardScancardReportComponent implements OnInit {
                             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", houseData);
                             rfId = houseData["rfid"];
                             personName = houseData["name"];
+                            const notAllowAutoScan = houseData['notAllowAutoScan']=='yes'?true:false;
+                            if (!notAllowAutoScan) {
                             this.wardScaanedList.push({
                               wardNo: wardNo,
                               cardNo: cardNumber,
@@ -661,6 +663,7 @@ export class WardScancardReportComponent implements OnInit {
                             );
                             this.wardScanedListFiltered = this.wardScaanedList;
                             this.totalScanedCards = this.wardScanedListFiltered.length;
+                          }
                           }
 
                         });
@@ -712,6 +715,8 @@ export class WardScancardReportComponent implements OnInit {
                               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", houseData);
                               rfId = houseData["rfid"];
                               personName = houseData["name"];
+                              const notAllowAutoScan = houseData['notAllowAutoScan']=='yes'?true:false;
+                              if (!notAllowAutoScan) {
                               this.wardScaanedList.push({
                                 wardNo: wardNo,
                                 cardNo: cardNumber,
@@ -726,6 +731,7 @@ export class WardScancardReportComponent implements OnInit {
                               );
                               this.wardScanedListFiltered = this.wardScaanedList;
                               this.totalScanedCards = this.wardScanedListFiltered.length;
+                            }
                             }
 
                           });

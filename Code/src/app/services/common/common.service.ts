@@ -2030,4 +2030,13 @@ export class CommonService {
 
     });
   }
+  getWardTotalCards(zoneNo: any, date: any) {
+    return new Promise((resolve) => {
+      this.getWardLine(zoneNo, date).then((linesData: any) => {
+        let wardLinesDataObj = JSON.parse(linesData);
+        resolve({totalCards:wardLinesDataObj["totalHouseCount"]});
+      });
+    });
+  }
 }
+
