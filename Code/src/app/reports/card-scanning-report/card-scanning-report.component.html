@@ -19,8 +19,9 @@
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <button (click)="setDate('','previous');" class="btn-hvr arrow-btn">
                                         << </button>
-                                    <input id="txtDate" class="filter-select filter-input" type="date" (change)="setDate($event.target.value,'current');" />
-                                    <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
+                                            <input id="txtDate" class="filter-select filter-input" type="date"
+                                                (change)="setDate($event.target.value,'current');" />
+                                            <button (click)="setDate('','next');" class="btn-hvr arrow-btn2">
                                                 >>
                                             </button>
                                 </div>
@@ -31,9 +32,9 @@
                                 <!-- <i class="fa-solid fa-file-export"
                                     style="cursor:pointer; color:green;  font-size: 24px; "
                                     (click)="exportToExcel();"></i> -->
-                                    <img src="../../../assets/icons/file-export-solid.svg" alt="file-export-solid"
-                                    width="24" class="icon-green cursor-pointer" (click)="exportToExcel();"/>
-                                    <br />
+                                <img src="../../../assets/icons/file-export-solid.svg" alt="file-export-solid"
+                                    width="24" class="icon-green cursor-pointer" (click)="exportToExcel();" />
+                                <br />
                                 Export to Excel
                             </span>
                         </div>
@@ -56,6 +57,15 @@
                                             <th class="text-right br-1" style="border:none!important;">
                                                 Scan %
                                             </th>
+                                            <th class="text-right br-1" style="border:none!important;"
+                                                *ngIf="cityName?.toLowerCase().trim() === 'hisar'">
+                                                Residential
+                                            </th>
+                                            <th class="text-right br-1" style="border:none!important;"
+                                                *ngIf="cityName?.toLowerCase().trim() === 'hisar'">
+                                                Commercial
+                                            </th>
+
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of scannedList; let i=index">
@@ -71,10 +81,20 @@
                                                 <td class="text-right br-1">
                                                     {{data.percentage}}
                                                 </td>
+                                                <td class="text-right br-1"
+                                                    *ngIf="cityName?.toLowerCase().trim() === 'hisar'">
+                                                    {{data.residentialCount}}
+                                                </td>
+                                                <td class="text-right br-1"
+                                                    *ngIf="cityName?.toLowerCase().trim() === 'hisar'">
+                                                    {{data.commercialCount}}
+                                                </td>
+
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -88,7 +108,8 @@
         </div>
         <div class="col-md-6" style="padding-left: 7px;padding-right:0px;">
             <div class="card" style="margin-top:-6px; height: 88vh!important;overflow: hidden; display: none;">
-                <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
+                <div id="content" #content class="card-body"
+                    style="padding: 3px 11px 15px 0px; font-size: 10px!important;">
                     <div class="row">
 
                         <div class="col-md-12">
@@ -97,7 +118,8 @@
                                     <div class="col-md-12 pr-1">
 
                                     </div>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>

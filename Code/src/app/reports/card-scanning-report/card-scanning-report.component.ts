@@ -46,7 +46,7 @@ export class CardScanningReportComponent implements OnInit {
       for (let i = 1; i < this.wardList.length; i++) {
         if (!this.wardList[i]["zoneNo"].includes("Commercial") && !this.wardList[i]["zoneNo"].includes("Dummy")) {
           let ward = this.wardList[i]["zoneNo"];
-          this.scannedList.push({ ward: this.wardList[i]["zoneNo"], cards: '', scanned: '', percentage: '' });
+          this.scannedList.push({ ward: this.wardList[i]["zoneNo"], cards: '', scanned: '', percentage: '', residentialCount: "", commercialCount: "" });
           this.getCardsData(ward);
         }
       }
@@ -72,6 +72,8 @@ export class CardScanningReportComponent implements OnInit {
         this.scannedList[i]["cards"] = "";
         this.scannedList[i]["scanned"] = "";
         this.scannedList[i]["percentage"] = "";
+        this.scannedList[i]["residentialCount"] = "";
+        this.scannedList[i]["commercialCount"] = "";
         this.getCardsData(this.scannedList[i]["ward"]);
       }
     }
@@ -103,6 +105,7 @@ export class CardScanningReportComponent implements OnInit {
         }
       }
     );
+
 
   }
 
@@ -145,27 +148,59 @@ export class CardScanningReportComponent implements OnInit {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScannedCards", scannedCardObj);
           let scannedCardCount = 0;
           if (this.userType == "External User") {
+
             scannedCardCount = scannedCardObj["totalScanned"];
+            if (this.cityName.toLowerCase().trim() === 'hisar') {
+              // 🔹 External user – type count separately
+              let keyArray = Object.keys(scannedCardObj)
+                .filter(k => !["ImagesData", "recentScanned", "totalScanned"].includes(k));
+
+
+              let detail = this.scannedList.find(item => item.ward == ward);
+              if (detail) {
+                detail.residentialCount = 0;
+                detail.commercialCount = 0;
+              }
+
+              for (let i = 0; i < keyArray.length; i++) {
+                this.updateCardTypeCount(keyArray[i], ward);
+              }
+            }
           }
           else {
 
-            let keyArray = Object.keys(scannedCardObj);
+            let keyArray = Object.keys(scannedCardObj)
+              .filter(k => !["ImagesData", "recentScanned", "totalScanned"].includes(k));
+
+            let detail = this.scannedList.find(item => item.ward == ward);
+            if (detail) {
+              detail.residentialCount = 0;
+              detail.commercialCount = 0;
+            }
 
             for (let i = 0; i < keyArray.length; i++) {
+
               let cardNo = keyArray[i];
-              if (cardNo != "ImagesData") {
-                if (cardNo != "recentScanned") {
-                  if (cardNo != "totalScanned") {
-                    if (scannedCardObj[cardNo]["scanBy"] != "-1")
-                      scannedCardCount++;
-                  }
-                }
+
+              // 🔹 existing scanned count logic
+              if (scannedCardObj[cardNo]["scanBy"] != "-1") {
+                scannedCardCount++;
+              }
+
+              if (this.cityName.toLowerCase().trim() === 'hisar') {
+                // 🔹 card type count (same filtered cards)
+                this.updateCardTypeCount(cardNo, ward);
               }
             }
-          } 
+
+          }
+
+
           let detail = this.scannedList.find(item => item.ward == ward);
           if (detail != undefined) {
+
             detail.scanned = scannedCardCount;
+
             if (Number(detail.scanned) > Number(detail.cards)) {
               detail.scanned = detail.cards;
             }
@@ -177,6 +212,25 @@ export class CardScanningReportComponent implements OnInit {
         }
       }
     );
+  }
+  updateCardTypeCount(cardNo: string, ward: any) {
+    let cardTypeInstance = this.db
+      .object(`/CardTypeMapping/${cardNo}/cardType`)
+      .valueChanges()
+      .subscribe(cardType => {
+
+        cardTypeInstance.unsubscribe();
+
+        let detail = this.scannedList.find(item => item.ward == ward);
+        if (!detail) return;
+
+        if (cardType === 'Commercial') {
+          detail.commercialCount = (detail.commercialCount || 0) + 1;
+        }
+        else if (cardType === 'Residential') {
+          detail.residentialCount = (detail.residentialCount || 0) + 1;
+        }
+      });
   }
 
   exportToExcel() {
@@ -209,7 +263,7 @@ export class CardScanningReportComponent implements OnInit {
         htmlString += "</tr>";
       }
       htmlString += "</table>";
-      let exportDate = this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]
+      let exportDate = this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0];
       let fileName = "Card-Scan-Report [" + exportDate + "].xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
