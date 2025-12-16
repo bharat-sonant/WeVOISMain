@@ -185,12 +185,13 @@ export class CardScanningReportComponent implements OnInit {
               // 🔹 existing scanned count logic
               if (scannedCardObj[cardNo]["scanBy"] != "-1") {
                 scannedCardCount++;
+                if (this.cityName.toLowerCase().trim() === 'hisar') {
+                  // 🔹 card type count (same filtered cards)
+                  this.updateCardTypeCount(cardNo, ward);
+                }
               }
 
-              if (this.cityName.toLowerCase().trim() === 'hisar') {
-                // 🔹 card type count (same filtered cards)
-                this.updateCardTypeCount(cardNo, ward);
-              }
+
             }
 
           }
@@ -209,6 +210,7 @@ export class CardScanningReportComponent implements OnInit {
               detail.percentage = scanPercentage.toFixed(0);
             }
           }
+          
         }
       }
     );
