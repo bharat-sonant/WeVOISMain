@@ -108,8 +108,8 @@ export class CardScanningReportComponent implements OnInit {
       item.cards = "";
       item.scanned = "";
       item.percentage = "";
-      item.residentialCount = 0;
-      item.commercialCount = 0;
+      item.residentialCount = '';
+      item.commercialCount = '';
     }
 
     this.processAllWardsParallel();
