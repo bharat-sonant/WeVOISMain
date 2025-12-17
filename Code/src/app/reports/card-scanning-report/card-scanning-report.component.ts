@@ -211,6 +211,7 @@ export class CardScanningReportComponent implements OnInit {
           }
 
           let scannedCardCount = 0;
+
           let keyArray = Object.keys(scannedCardObj)
             .filter(k => !["ImagesData", "recentScanned", "totalScanned"].includes(k));
 
@@ -259,16 +260,28 @@ export class CardScanningReportComponent implements OnInit {
           }
 
           /* 🔥 CARD TYPE COUNT – PARALLEL */
+          /* 🔥 CARD TYPE COUNT – PARALLEL */
           if (
             this.cityName.toLowerCase().trim() === 'hisar' &&
             cardsForTypeCount.length
           ) {
+
             this.updateCardTypeCountBatch(cardsForTypeCount, ward)
               .then(() => resolve(true));
+
           }
           else {
+
+            // ✅ IMPORTANT FIX: length = 0 case
+            let detail = this.scannedList.find(x => x.ward == ward);
+            if (detail) {
+              detail.residentialCount = 0;
+              detail.commercialCount = 0;
+            }
+
             resolve(true);
           }
+
         });
     });
   }
