@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-//services
+
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
@@ -12,22 +12,36 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 })
 export class CardScanningReportComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService) { }
+  constructor(
+    public fs: FirebaseService,
+    private besuh: BackEndServiceUsesHistoryService,
+    public httpService: HttpClient,
+    private commonService: CommonService
+  ) { }
 
-  wardList: any[];
+  wardList: any[] = [];
+  scannedList: any[] = [];
+  cardTypeList:any[]=[];
   selectedDate: any;
-  scannedList: any;
-  isFirst = true;
   db: any;
-  public cityName: any;
+  cityName: any;
+  userType: any;
+
   txtDate = "#txtDate";
   serviceName = "card-scanning-report";
-  userType: any;
+
+  /* ================= INIT ================= */
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.userType = localStorage.getItem("userType");
-    this.commonService.savePageLoadHistory("General-Reports", "Card-Scanning-Report", localStorage.getItem("userID"));
+
+    this.commonService.savePageLoadHistory(
+      "General-Reports",
+      "Card-Scanning-Report",
+      localStorage.getItem("userID")
+    );
+
     this.setDefaults();
   }
 
@@ -36,182 +50,355 @@ export class CardScanningReportComponent implements OnInit {
     this.selectedDate = this.commonService.setTodayDate();
     $(this.txtDate).val(this.selectedDate);
     this.getWards();
-  }
-
-  getWards() {
-    this.wardList = [];
-    this.wardList = JSON.parse(localStorage.getItem("latest-zones"));
-    this.scannedList = [];
-    if (this.wardList.length > 0) {
-      for (let i = 1; i < this.wardList.length; i++) {
-        if (!this.wardList[i]["zoneNo"].includes("Commercial") && !this.wardList[i]["zoneNo"].includes("Dummy")) {
-          let ward = this.wardList[i]["zoneNo"];
-          this.scannedList.push({ ward: this.wardList[i]["zoneNo"], cards: '', scanned: '', percentage: '' });
-          this.getCardsData(ward);
-        }
-      }
+    if(this.cityName=="hisar"){
+      this.getCartTypeMapping();
     }
   }
 
-  setDate(filterVal: any, type: string) {
-    this.commonService.setDate(this.selectedDate, filterVal, type).then((newDate: any) => {
-      $(this.txtDate).val(newDate);
-      if (newDate != this.selectedDate) {
-        this.selectedDate = newDate;
-        this.clearAllData();
-      }
-      else {
-        this.commonService.setAlertMessage("error", "Date can not be more than today date!!!");
+  getCartTypeMapping(){
+    let dbPath="CardTypeMapping";
+    let cardTypeInstance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+      cardTypeInstance.unsubscribe();
+      if(data!=null){
+        let keyArray=Object.keys(data);
+        for(let i=0;i<keyArray.length;i++){
+          this.cardTypeList.push({cardNo:keyArray[i], cardType:data[keyArray[i]]["cardType"]});
+        }
       }
     });
   }
 
-  clearAllData() {
-    if (this.scannedList.length > 0) {
-      for (let i = 0; i < this.scannedList.length; i++) {
-        this.scannedList[i]["cards"] = "";
-        this.scannedList[i]["scanned"] = "";
-        this.scannedList[i]["percentage"] = "";
-        this.getCardsData(this.scannedList[i]["ward"]);
+  /* ================= WARDS ================= */
+
+  getWards() {
+
+    this.wardList = JSON.parse(localStorage.getItem("latest-zones") || "[]");
+    this.scannedList = [];
+
+    for (let i = 1; i < this.wardList.length; i++) {
+
+      if (
+        !this.wardList[i]["zoneNo"].includes("Commercial") &&
+        !this.wardList[i]["zoneNo"].includes("Dummy")
+      ) {
+
+        let ward = this.wardList[i]["zoneNo"];
+
+        this.scannedList.push({
+          ward: ward,
+          cards: '',
+          scanned: '',
+          percentage: '',
+          residentialCount: '',
+          commercialCount: ''
+        });
       }
+    }
+
+    this.processAllWardsParallel();
+  }
+
+  /* ================= DATE ================= */
+
+  setDate(filterVal: any, type: string) {
+    this.commonService.setDate(this.selectedDate, filterVal, type)
+      .then((newDate: any) => {
+
+        $(this.txtDate).val(newDate);
+
+        if (newDate != this.selectedDate) {
+          this.selectedDate = newDate;
+          this.clearAllData();
+        }
+        else {
+          this.commonService.setAlertMessage(
+            "error",
+            "Date can not be more than today date!!!"
+          );
+        }
+      });
+  }
+
+  clearAllData() {
+
+    for (let item of this.scannedList) {
+      item.cards = "";
+      item.scanned = "";
+      item.percentage = "";
+      item.residentialCount = '';
+      item.commercialCount = '';
+    }
+
+    this.processAllWardsParallel();
+  }
+
+  /* ================= PARALLEL PROCESS ================= */
+
+  async processAllWardsParallel() {
+
+    let promises: Promise<any>[] = [];
+
+    for (let item of this.scannedList) {
+      promises.push(this.getCardsData(item.ward));
+    }
+
+    try {
+      await Promise.all(promises);
+      console.log("✅ All wards processed in parallel");
+    }
+    catch (e) {
+      console.error("❌ Error in ward processing", e);
     }
   }
 
-  getCardsData(ward: any) {
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardsData");
-    let dbPath = "EntitySurveyData/TotalHouseCount/" + ward;
-    let houseCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      houseCountData => {
-        houseCountInstance.unsubscribe();
-        if (houseCountData != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCardsData", houseCountData);
-          let detail = this.scannedList.find(item => item.ward == ward);
-          if (detail != undefined) {
+  /* ================= CARD COUNT ================= */
+
+  getCardsData(ward: any): Promise<any> {
+
+    return new Promise((resolve) => {
+
+      this.besuh.saveBackEndFunctionCallingHistory(
+        this.serviceName,
+        "getCardsData"
+      );
+
+      let dbPath = "EntitySurveyData/TotalHouseCount/" + ward;
+
+      let sub = this.db.object(dbPath).valueChanges()
+        .subscribe(houseCountData => {
+
+          sub.unsubscribe();
+
+          let detail = this.scannedList.find(x => x.ward == ward);
+          if (!detail) {
+            resolve(null);
+            return;
+          }
+
+          if (houseCountData != null) {
+
             detail.cards = Number(houseCountData);
-            this.getScannedCardsNew(ward);
-          }
-        }
-        else {
-          this.commonService.getWardLine(ward, this.selectedDate).then((linesData: any) => {
-            let wardLinesDataObj = JSON.parse(linesData);
-            let detail = this.scannedList.find(item => item.ward == ward);
-            if (detail != undefined) {
-              detail.cards = wardLinesDataObj["totalHouseCount"];
-              this.getScannedCardsNew(ward);
-            }
-          });
-        }
-      }
-    );
-
-  }
-
-  getScannedCards(ward: any) {
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScannedCards");
-    let year = this.selectedDate.split('-')[0];
-    let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-    let dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + this.selectedDate + "/totalScanned";
-    let scannedCardsInstance = this.db.object(dbPath).valueChanges().subscribe(
-      totalScanned => {
-        scannedCardsInstance.unsubscribe();
-        if (totalScanned != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScannedCards", totalScanned);
-          let detail = this.scannedList.find(item => item.ward == ward);
-          if (detail != undefined) {
-            detail.scanned = totalScanned;
-            if (Number(detail.scanned) > Number(detail.cards)) {
-              detail.scanned = detail.cards;
-            }
-            let scanPercentage = ((Number(detail.scanned) / Number(detail.cards)) * 100);
-            if (!isNaN(scanPercentage)) {
-              detail.percentage = scanPercentage.toFixed(0);
-            }
-          }
-        }
-      }
-    );
-  }
-
-
-  getScannedCardsNew(ward: any) {
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScannedCards");
-    let year = this.selectedDate.split('-')[0];
-    let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
-    let dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + this.selectedDate;
-    let scannedCardsInstance = this.db.object(dbPath).valueChanges().subscribe(
-      scannedCardObj => {
-        scannedCardsInstance.unsubscribe();
-        if (scannedCardObj != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScannedCards", scannedCardObj);
-          let scannedCardCount = 0;
-          if (this.userType == "External User") {
-            scannedCardCount = scannedCardObj["totalScanned"];
+            this.getScannedCardsNew(ward).then(() => resolve(true));
           }
           else {
 
-            let keyArray = Object.keys(scannedCardObj);
+            this.commonService.getWardLine(ward, this.selectedDate)
+              .then((linesData: any) => {
 
-            for (let i = 0; i < keyArray.length; i++) {
-              let cardNo = keyArray[i];
-              if (cardNo != "ImagesData") {
-                if (cardNo != "recentScanned") {
-                  if (cardNo != "totalScanned") {
-                    if (scannedCardObj[cardNo]["scanBy"] != "-1")
-                      scannedCardCount++;
-                  }
+                let wardLinesDataObj = JSON.parse(linesData);
+                detail.cards = wardLinesDataObj["totalHouseCount"];
+                this.getScannedCardsNew(ward).then(() => resolve(true));
+              });
+          }
+        });
+    });
+  }
+
+  /* ================= SCANNED CARDS ================= */
+
+  getScannedCardsNew(ward: any): Promise<any> {
+
+    return new Promise((resolve) => {
+
+      this.besuh.saveBackEndFunctionCallingHistory(
+        this.serviceName,
+        "getScannedCards"
+      );
+
+      let year = this.selectedDate.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(
+        Number(this.selectedDate.split('-')[1]) - 1
+      );
+
+      let dbPath =
+        "HousesCollectionInfo/" +
+        ward + "/" +
+        year + "/" +
+        monthName + "/" +
+        this.selectedDate;
+
+      let sub = this.db.object(dbPath).valueChanges()
+        .subscribe(scannedCardObj => {
+
+          sub.unsubscribe();
+
+          if (!scannedCardObj) {
+            resolve(null);
+            return;
+          }
+
+          let scannedCardCount = 0;
+
+          let keyArray = Object.keys(scannedCardObj)
+            .filter(k => !["ImagesData", "recentScanned", "totalScanned"].includes(k));
+
+          let cardsForTypeCount: string[] = [];
+
+          /* ===== External User ===== */
+
+          if (this.userType === "External User") {
+
+            scannedCardCount = scannedCardObj["totalScanned"];
+
+            if (this.cityName.toLowerCase().trim() === 'hisar') {
+              cardsForTypeCount = keyArray.slice();
+            }
+          }
+
+          /* ===== Internal User ===== */
+
+          else {
+
+            for (let cardNo of keyArray) {
+              if (scannedCardObj[cardNo]["scanBy"] != "-1") {
+                scannedCardCount++;
+                if (this.cityName.toLowerCase().trim() === 'hisar') {
+                  cardsForTypeCount.push(cardNo);
                 }
               }
             }
-          } 
-          let detail = this.scannedList.find(item => item.ward == ward);
-          if (detail != undefined) {
+          }
+
+          let detail = this.scannedList.find(x => x.ward == ward);
+          if (detail) {
+
             detail.scanned = scannedCardCount;
+
             if (Number(detail.scanned) > Number(detail.cards)) {
               detail.scanned = detail.cards;
             }
-            let scanPercentage = ((Number(detail.scanned) / Number(detail.cards)) * 100);
+
+            let scanPercentage =
+              (Number(detail.scanned) / Number(detail.cards)) * 100;
+
             if (!isNaN(scanPercentage)) {
               detail.percentage = scanPercentage.toFixed(0);
             }
           }
-        }
-      }
-    );
+
+          /* 🔥 CARD TYPE COUNT – PARALLEL */
+          /* 🔥 CARD TYPE COUNT – PARALLEL */
+          if (
+            this.cityName.toLowerCase().trim() === 'hisar' &&
+            cardsForTypeCount.length
+          ) {
+
+            this.updateCardTypeCountBatch(cardsForTypeCount, ward)
+              .then(() => resolve(true));
+
+          }
+          else {
+
+            // ✅ IMPORTANT FIX: length = 0 case
+            let detail = this.scannedList.find(x => x.ward == ward);
+            if (detail) {
+              detail.residentialCount = 0;
+              detail.commercialCount = 0;
+            }
+
+            resolve(true);
+          }
+
+        });
+    });
   }
 
-  exportToExcel() {
-    if (this.scannedList.length > 0) {
-      let htmlString = "<table>";
-      htmlString += "<tr>";
-      htmlString += "<td>Ward";
-      htmlString += "</td>";
-      htmlString += "<td>Cards";
-      htmlString += "</td>";
-      htmlString += "<td>Scanned Cards";
-      htmlString += "</td>";
-      htmlString += "<td>Scan (%)";
-      htmlString += "</td>";
-      htmlString += "</tr>";
-      for (let i = 0; i < this.scannedList.length; i++) {
-        htmlString += "<tr>";
-        htmlString += "<td>";
-        htmlString += this.scannedList[i]["ward"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.scannedList[i]["cards"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.scannedList[i]["scanned"];
-        htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += this.scannedList[i]["percentage"];
-        htmlString += "</td>";
-        htmlString += "</tr>";
+  /* ================= CARD TYPE (PARALLEL) ================= */
+
+  updateCardTypeCount(cardNo: string): Promise<string | null> {
+
+    return new Promise((resolve) => {
+
+      let sub = this.db
+        .object(`/CardTypeMapping/${cardNo}/cardType`)
+        .valueChanges()
+        .subscribe(cardType => {
+
+          sub.unsubscribe();
+          resolve(cardType as string);
+        });
+    });
+  }
+
+  async updateCardTypeCountBatch(cardNos: string[], ward: any) {
+
+    let detail = this.scannedList.find(x => x.ward == ward);
+    if (!detail) return;
+
+    detail.residentialCount = 0;
+    detail.commercialCount = 0;
+    
+
+    let promises: Promise<string | null>[] = [];
+
+    for (let cardNo of cardNos) {
+      let cardTypeDetail=this.cardTypeList.find(item=>item.cardNo==cardNo);
+      if(cardTypeDetail!=undefined){
+        if(cardTypeDetail.cardType=="Commercial"){
+          detail.commercialCount++;
+        }
+        else{
+          detail.residentialCount++;
+        }
       }
-      htmlString += "</table>";
-      let exportDate = this.selectedDate.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(this.selectedDate.split('-')[1])) + " " + this.selectedDate.split('-')[0]
-      let fileName = "Card-Scan-Report [" + exportDate + "].xlsx";
-      this.commonService.exportExcel(htmlString, fileName);
+      //promises.push(this.updateCardTypeCount(cardNo));
     }
+
+   // const results = await Promise.all(promises);
+
+   // for (let type of results) {
+    //  if (type === 'Commercial') {
+    //    detail.commercialCount++;
+    //  }
+    //  else if (type === 'Residential') {
+    //    detail.residentialCount++;
+    //  }
+    //}
+  }
+
+  /* ================= EXPORT ================= */
+
+  exportToExcel() {
+
+    if (!this.scannedList.length) return;
+
+    let isHisar = this.cityName.toLowerCase().trim() === 'hisar';
+
+    let htmlString = "<table><tr>";
+    htmlString += "<td>Ward</td><td>Cards</td><td>Scanned Cards</td><td>Scan (%)</td>";
+
+    if (isHisar) {
+      htmlString += "<td>Residential</td><td>Commercial</td>";
+    }
+
+    htmlString += "</tr>";
+
+    for (let item of this.scannedList) {
+
+      htmlString += "<tr>";
+      htmlString += "<td>" + item.ward + "</td>";
+      htmlString += "<td>" + item.cards + "</td>";
+      htmlString += "<td>" + item.scanned + "</td>";
+      htmlString += "<td>" + item.percentage + "</td>";
+
+      if (isHisar) {
+        htmlString += "<td>" + (item.residentialCount || 0) + "</td>";
+        htmlString += "<td>" + (item.commercialCount || 0) + "</td>";
+      }
+
+      htmlString += "</tr>";
+    }
+
+    htmlString += "</table>";
+
+    let exportDate =
+      this.selectedDate.split('-')[2] + " " +
+      this.commonService.getCurrentMonthShortName(
+        Number(this.selectedDate.split('-')[1])
+      ) + " " +
+      this.selectedDate.split('-')[0];
+
+    let fileName = "Card-Scan-Report [" + exportDate + "].xlsx";
+    this.commonService.exportExcel(htmlString, fileName);
   }
 }

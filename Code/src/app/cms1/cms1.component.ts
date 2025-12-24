@@ -916,6 +916,82 @@ export class Cms1Component implements OnInit {
     }
   }
 
+  updateChennaiScanCardData() {
+    let ward = "134-R6";
+    let date = "2025-10-08";
+
+    let element = <HTMLInputElement>document.getElementById("fileUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      const jsonObj = {};
+      for (let i = 0; i < fileList.length; i++) {
+        let cardNo = fileList[i]["Card No."];
+        let wasteCategory = fileList[i]["08-10-2025"];
+        let dbPath = "HousesCollectionInfo/" + ward + "/2025/October/" + date + "/" + cardNo;
+        let cardInsatnce = this.db.object(dbPath).valueChanges().subscribe(data => {
+          cardInsatnce.unsubscribe();
+          if (data == null) {
+            //  console.log(cardNo);
+            this.getCardWardLine(cardNo, wasteCategory, date);
+          }
+
+        })
+
+      }
+    }
+
+  }
+
+  getCardWardLine(cardNo: any, wasteCategory: any, date: any) {
+    let toDayDate=this.commonService.setTodayDate();
+    let dbPath = "CardWardMapping/" + cardNo;
+    let cardWardLineInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      cardWardLineInstance.unsubscribe();
+      if (data != null) {
+        let ward = data["ward"];
+        let line = data["line"];
+        dbPath = "Houses/" + ward + "/" + line + "/" + cardNo + "/latLng";
+        let latlngInstance = this.db.object(dbPath).valueChanges().subscribe(latLngData => {
+          latlngInstance.unsubscribe();
+          if (latLngData != null) {
+            let latLng = latLngData.toString().replace("(", "").replace(")", "");
+            console.log(cardNo);
+            let scanStartTime = new Date(toDayDate + " " + "10:00:00").getTime();
+            let scanEndTime = new Date(toDayDate + " " + "12:00:00").getTime();
+            let scanTime = this.getRandomScanTime(scanStartTime, scanEndTime);
+            let obj = {
+              latLng: latLng,
+              scanBy: "110",
+              scanTime: scanTime,
+              wasteCategory: wasteCategory
+            }
+            dbPath="HousesCollectionInfo/"+ward+"/2025/October/"+date+"/"+cardNo;
+            console.log(dbPath)
+            console.log(obj)
+           //this.db.object(dbPath).update(obj);
+          }
+        })
+      }
+    })
+  }
+
+  getRandomScanTime(scanStartTime: any, scanEndTime: any) {
+    let randomTime = new Date(scanStartTime + Math.random() * (scanEndTime - scanStartTime));
+    let scanTime = (randomTime.getHours() < 10 ? '0' : '') + randomTime.getHours() + ":" + (randomTime.getMinutes() < 10 ? '0' : '') + randomTime.getMinutes() + ":" + (randomTime.getSeconds() < 10 ? '0' : '') + randomTime.getSeconds();
+    return scanTime;
+  }
+
   hisarMarkerUpload() {
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
@@ -958,9 +1034,9 @@ export class Cms1Component implements OnInit {
         }
         if (entityId == "") {
           console.log("propId => " + propId + ", entity=> " + entity + ", entityId=> " + entityId);
-         // if (entity == "Shops") {
-        //    entityId = "5";
-         // }
+          // if (entity == "Shops") {
+          //    entityId = "5";
+          // }
 
         }
 

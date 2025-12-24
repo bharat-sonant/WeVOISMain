@@ -104,6 +104,12 @@ export class PortalServicesComponent implements OnInit {
         if (userAccessList[i]["pageId"] == "8A9" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divDummyHeplerDevice").show();
         }
+        if (userAccessList[i]["pageId"] == "8A10" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divWardSetting").show();
+        }
+        if (userAccessList[i]["pageId"] == "8A11" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divAllowAutoScan").show();
+        }
       }
     }
   }
