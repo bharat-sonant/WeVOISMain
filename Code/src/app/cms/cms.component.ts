@@ -52,7 +52,7 @@ export class CmsComponent implements OnInit {
     const id = this.actRoute.snapshot.paramMap.get("id");
 
     this.isMonitoringPage = true;
-    if (id == "20" || id=="10-10A" || id=="13" || id=="14-14A" || id=="19") {
+    if (id == "20" || id == "10-10A" || id == "13" || id == "14-14A" || id == "19") {
       this.cardWidth = "305px";
     }
     else {
@@ -73,7 +73,7 @@ export class CmsComponent implements OnInit {
       .subscribe(() => {
         const id1 = this.actRoute.snapshot.paramMap.get("id");
         this.isMonitoringPage = true;
-        if (id1 == "20" || id1=="10-10A" || id1=="13" || id1=="14-14A" || id1=="19") {
+        if (id1 == "20" || id1 == "10-10A" || id1 == "13" || id1 == "14-14A" || id1 == "19") {
           this.cardWidth = "305px";
         }
         else {
@@ -135,6 +135,7 @@ export class CmsComponent implements OnInit {
       imgElement.src = userAccessList[i]["img"];
       if (element != null) {
         element.addEventListener("click", (e) => {
+          console.log(userAccessList[i]["pageId"]);
           if (userAccessList[i]["url"].toString().includes("https")) {
             if (localStorage.getItem("cityName") == "ajmer" && userAccessList[i]["pageId"] == "10A19") {
               this.goToOuterURL(userAccessList[i]["url"] + "s");
@@ -147,6 +148,27 @@ export class CmsComponent implements OnInit {
             if (localStorage.getItem("cityName") == "ajmer" && userAccessList[i]["pageId"] == "2Y" && localStorage.getItem("userType") == "External User") {
               let url1 = "/ward-route-tracking";
               this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + url1);
+            }
+            else if (userAccessList[i]["pageId"] == "2U") {
+              let dutyOnReportInstance = this.db.object("Settings/GeneralSettings").valueChanges().subscribe(dataSetting => {
+                dutyOnReportInstance.unsubscribe();
+                let isRedirect = false;
+                if (dataSetting != null) {
+                  if (dataSetting["DutyOnOffImageReportShowViaNewStructure"] != null) {
+                    if (dataSetting["DutyOnOffImageReportShowViaNewStructure"] == "yes") {
+                      if (dataSetting["DutyOnOffImageReportUrl"] != null) {
+                        console.log(this.checkUrl(dataSetting["DutyOnOffImageReportUrl"]));
+                      }
+                      else {
+                        this.commonService.setAlertMessage("error", "Report URL not configured. Please contact admin.");
+                      }
+                    }
+                  }
+                }
+                if (isRedirect == false) {
+                  // this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+                }
+              });
             }
             else {
               this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
@@ -168,6 +190,7 @@ export class CmsComponent implements OnInit {
 
       if (element != null) {
         element.addEventListener("click", (e) => {
+          console.log(userAccessList[i]["pageId"]);
           if (userAccessList[i]["url"].toString().includes("https")) {
             if (localStorage.getItem("cityName") == "ajmer" && userAccessList[i]["pageId"] == "10A19") {
               this.goToOuterURL(userAccessList[i]["url"] + "s");
@@ -181,6 +204,27 @@ export class CmsComponent implements OnInit {
               let url1 = "/ward-route-tracking";
               this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + url1);
             }
+            else if (userAccessList[i]["pageId"] == "2U") {
+              let dutyOnReportInstance = this.db.object("Settings/GeneralSettings").valueChanges().subscribe(dataSetting => {
+                dutyOnReportInstance.unsubscribe();
+                let isRedirect = false;
+                if (dataSetting != null) {
+                  if (dataSetting["DutyOnOffImageReportShowViaNewStructure"] != null) {
+                    if (dataSetting["DutyOnOffImageReportShowViaNewStructure"] == "yes") {
+                      if (dataSetting["DutyOnOffImageReportUrl"] != null) {
+                        console.log(this.checkUrl(dataSetting["DutyOnOffImageReportUrl"]));
+                      }
+                      else {
+                        this.commonService.setAlertMessage("error", "Report URL not configured. Please contact admin.");
+                      }
+                    }
+                  }
+                }
+                if (isRedirect == false) {
+                  // this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
+                }
+              });
+            }
             else {
               this.getPage("/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"]);
             }
@@ -190,10 +234,16 @@ export class CmsComponent implements OnInit {
     }
   }
 
+
   goToURL(url: any, pageId: any) {
+    console.log(pageId)
     if (url.toString().includes("https")) {
       if (localStorage.getItem("cityName") == "ajmer" && pageId == "10A19") {
         this.goToOuterURL(url + "s");
+      }
+      else if(this.cityName=="hisar" && pageId=="10A19"){
+        url=url.replace("daily-work-report","hisar-work-report")
+        this.goToOuterURL(url);
       }
       else {
         this.goToOuterURL(url);
@@ -204,11 +254,52 @@ export class CmsComponent implements OnInit {
         let url1 = "/ward-route-tracking";
         this.getPage("/" + this.cityName + "/" + pageId + url1);
       }
+      else if (pageId == "2U") {
+        console.log(pageId)
+        let dutyOnReportInstance = this.db.object("Settings/GeneralSettings").valueChanges().subscribe(dataSetting => {
+          dutyOnReportInstance.unsubscribe();
+          if (dataSetting != null) {
+            if (dataSetting["DutyOnOffImageReportShowViaNewStructure"] != null) {
+              if (dataSetting["DutyOnOffImageReportShowViaNewStructure"] == "yes") {
+                if (dataSetting["DutyOnOffImageReportUrl"] != null) {
+                  if (this.checkUrl(dataSetting["DutyOnOffImageReportUrl"]) == true) {
+                    window.open(dataSetting["DutyOnOffImageReportUrl"], "_blank");
+                  }
+                  else {
+                    this.commonService.setAlertMessage("error", "Report URL not configured. Please contact admin.");
+                  }
+                }
+                else {
+                  this.commonService.setAlertMessage("error", "Report URL not configured. Please contact admin.");
+                }
+              }
+              else {
+                this.getPage("/" + this.cityName + "/" + pageId + url);
+              }
+            }
+            else {
+              this.getPage("/" + this.cityName + "/" + pageId + url);
+            }
+          }
+          else {
+            this.getPage("/" + this.cityName + "/" + pageId + url);
+          }
+        });
+      }
       else {
         this.getPage("/" + this.cityName + "/" + pageId + url);
       }
     }
 
+  }
+
+
+  checkUrl(url: string) {
+    const regex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
+    return regex.test(url);
+    return fetch(url, { method: 'HEAD' })
+      .then(res => res.ok)
+      .catch(() => false);
   }
 
   goToOuterURL(url: any) {

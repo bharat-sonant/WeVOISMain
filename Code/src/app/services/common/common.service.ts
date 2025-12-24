@@ -405,7 +405,7 @@ export class CommonService {
     let day = list[0];
     let monthName = list[1];
     let year = list[2];
-    let month = "00";
+    let month = "00"
     if (monthName == "Jan") {
       month = "01";
     }
@@ -780,7 +780,7 @@ export class CommonService {
     this.setMarkerZone();
     this.setMarkingWards();
     this.setAllDepartments();
-    this.setAllZones(newDb);
+    this.setAllZones(newDb)
   }
 
   setDesignation() {
@@ -807,7 +807,7 @@ export class CommonService {
     let departmentInstance = this.httpService.get(path).subscribe(data => {
       departmentInstance.unsubscribe();
       let departmentList = [];
-      let list = JSON.parse(JSON.stringify(data));
+      let list = JSON.parse(JSON.stringify(data))
       for (let i = 1; i < list.length; i++) {
         if (list[i] != null) {
           let id = list[i]["id"];
@@ -818,7 +818,7 @@ export class CommonService {
       }
       localStorage.setItem("department", JSON.stringify(departmentList));
     });
-  };
+  }
 
   setMarkerZone() {
     let zoneList = [];
@@ -921,7 +921,7 @@ export class CommonService {
         if (keyArrray.length > 0) {
           for (let i = 0; i < keyArrray.length; i++) {
             if (keyArrray[i] != "NotApplicable") {
-              vehicleList.push({ vehicle: keyArrray[i], chasisNo: vehicle[keyArrray[i]]["chasisNumber"] || "" });
+              vehicleList.push({ vehicle: keyArrray[i] });
             }
           }
         }
@@ -1059,7 +1059,7 @@ export class CommonService {
 
   setAllZones(newDb: any) {
     let zoneList = [];
-    let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }, { zone: "QRT" }];
+    let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }, { zone: "QRT" }, { zone: "Rickshaw" }];
     zoneList.push({ zoneNo: "0", zoneName: "-- Select --" });
     let dbPath = "Tasks";
     let zoneInstance = newDb.object(dbPath).valueChanges().subscribe(data => {
@@ -1075,7 +1075,7 @@ export class CommonService {
         }
       }
       localStorage.setItem("allZoneList", JSON.stringify(zoneList));
-    });
+    })
   }
 
   setMarkingWards() {
@@ -1279,7 +1279,7 @@ export class CommonService {
       let polylines = [];
       let cityName = localStorage.getItem("cityName");
       if (cityName == "jaipur-office") {
-        cityName = "jaipur";
+        cityName = "jaipur"
       }
       this.httpService.get("../../assets/jsons/WardBoundries/" + cityName + "/" + zoneNo + ".json").subscribe(data => {
         if (zoneKML != undefined) {
@@ -1349,7 +1349,7 @@ export class CommonService {
       let lineLengthList = [];
       let cityName = localStorage.getItem("cityName");
       if (cityName == "jaipur-office") {
-        cityName = "jaipur";
+        cityName = "jaipur"
       }
       this.httpService.get("../../assets/jsons/WardLineLength/" + cityName + "/" + wardNo + ".json").subscribe(data => {
         if (data != null) {
@@ -1390,7 +1390,7 @@ export class CommonService {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
       if (cityName == "jaipur-office") {
-        cityName = "jaipur";
+        cityName = "jaipur"
       }
       let circleList = [];
       this.httpService.get("../../assets/jsons/CircleWiseWard/" + cityName + ".json").subscribe(data => {
@@ -1433,7 +1433,7 @@ export class CommonService {
     return new Promise((resolve) => {
       let cityName = localStorage.getItem("cityName");
       if (cityName == "jaipur-office") {
-        cityName = "jaipur";
+        cityName = "jaipur"
       }
       const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardBoundryJson%2F" + zoneNo + ".json?alt=media";
       let fuelInstance = this.httpService.get(path).subscribe(data => {
@@ -1597,7 +1597,7 @@ export class CommonService {
   }
 
   deg2rad(deg: any) {
-    return deg * (Math.PI / 180);
+    return deg * (Math.PI / 180)
   }
 
 
@@ -1726,7 +1726,6 @@ export class CommonService {
 
       //const ref = this.storage.ref(path);
       const ref = this.storage.storage.app.storage(fireStorePath).ref(path);
-      console.log(ref);
       var byteString;
       // write the bytes of the string to a typed array
 
@@ -1748,7 +1747,7 @@ export class CommonService {
   }
 
   saveCommonJsonFile(listArray: any, fileName: any, filePath: any) {
-    let fireStorePath = this.fireStoragePath;
+    let fireStorePath = this.fireStorageCommonPath;
     var jsonFile = JSON.stringify(listArray);
     var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
     const path = filePath + fileName;
@@ -1775,7 +1774,7 @@ export class CommonService {
 
   getCarePrefix() {
     return new Promise((resolve) => {
-      const path = this.fireStoragePath + "CityDetails%2FCityDetails.json?alt=media";
+      const path = this.fireStorageCommonPath + "CityDetails%2FCityDetails.json?alt=media";
       let cityDataInstance = this.httpService.get(path).subscribe(cityData => {
         cityDataInstance.unsubscribe();
         if (cityData != null) {
@@ -1962,7 +1961,7 @@ export class CommonService {
         summaryInstance.unsubscribe();
         let summaryCount = respSummary === null ? 1 : (Number(respSummary) + 1);
         this.fsDb.object(dbPath).set(summaryCount);
-      });
+      })
     });
   }
 
@@ -1973,7 +1972,7 @@ export class CommonService {
         Instance.unsubscribe();
         resolve({ status: "Success", data: routeData });
       }, error => {
-        resolve({ status: "Fail", data: {} });
+        resolve({ status: "Fail", data: {} })
       });
     });
 
@@ -1986,7 +1985,7 @@ export class CommonService {
         Instance.unsubscribe();
         resolve({ status: "Success", data: workData });
       }, error => {
-        resolve({ status: "Fail", data: {} });
+        resolve({ status: "Fail", data: {} })
       });
     });
 
@@ -2006,14 +2005,13 @@ export class CommonService {
     if (date) {
       let splittedDateArray = date.split(' ')[0].split('-');
       let time = date.split(' ')[1];
-      splittedDateArray[1] = this.getCurrentMonthShortName(Number(splittedDateArray[1]));
-      let newDateString = (splittedDateArray.reverse().join(' ')).concat(time ? ` ${time}` : '');
+      splittedDateArray[1] = this.getCurrentMonthShortName(Number(splittedDateArray[1]))
+      let newDateString = (splittedDateArray.reverse().join(' ')).concat(time ? ` ${time}` : '')
       return newDateString;
 
     }
     return '';
-  };
-
+  }
 
   checkImageExist(imagePath: any) {
     return new Promise((resolve) => {
@@ -2029,7 +2027,8 @@ export class CommonService {
         });
 
     });
-  }
+  }  
+
   getWardTotalCards(zoneNo: any, date: any) {
     return new Promise((resolve) => {
       this.getWardLine(zoneNo, date).then((linesData: any) => {
@@ -2039,4 +2038,3 @@ export class CommonService {
     });
   }
 }
-

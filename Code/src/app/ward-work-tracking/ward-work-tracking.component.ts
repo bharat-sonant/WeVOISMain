@@ -92,7 +92,7 @@ export class WardWorkTrackingComponent {
   wardLinesDataObj: any;
   isShowAllHouse = false;
   isShowHouses: any;
-  public isShowLineDetail:any;
+  public isShowLineDetail: any;
   progressData: progressDetail = {
     totalLines: 0,
     completedLines: 0,
@@ -134,6 +134,10 @@ export class WardWorkTrackingComponent {
       this.isParshadShow = true;
     }
 
+    if (this.cityName == "hisar" && localStorage.getItem("userType") == 'External User') {
+      this.isShowHouses = false;
+    }
+
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
     $(this.txtDate).val(this.selectedDate);
@@ -143,7 +147,7 @@ export class WardWorkTrackingComponent {
     this.getWardForLineWeitage();
   }
 
-  
+
 
   getNearByWards() {
     this.nearByWardsList = [];

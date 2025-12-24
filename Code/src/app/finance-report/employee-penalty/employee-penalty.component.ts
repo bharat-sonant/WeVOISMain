@@ -168,6 +168,7 @@ export class EmployeePenaltyComponent implements OnInit {
     promises.push(Promise.resolve(this.getAnalysisPenalities()));
     promises.push(Promise.resolve(this.getScanCardPenalties()));
     Promise.all(promises).then((results) => {
+      console.log(results);
       let merged = [];
       for (let i = 0; i < results.length; i++) {
         merged = merged.concat(results[i]);
@@ -451,6 +452,7 @@ export class EmployeePenaltyComponent implements OnInit {
                 if (empArray.length > 0) {
                   for (let j = 0; j < empArray.length; j++) {
                     let empId = empArray[j];
+                    console.log(empId)
                     let name;
                     let empCode = "";
                     let orderBy = new Date(date).getTime();

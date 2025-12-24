@@ -393,7 +393,6 @@ export class DailyFuelReportComponent implements OnInit {
     for (let i = 3; i < vehicles.length; i++) {
       this.allVehicleList.push({
         vehicle: vehicles[i]["vehicle"],
-        chasisNo: vehicles[i]["chasisNo"] || "",
         diesel: [],
         wardList: [],
       });
@@ -647,7 +646,7 @@ export class DailyFuelReportComponent implements OnInit {
 
         this.fuelDetail.vendorPumpFuel = vendorFuel.toFixed(2);
         this.fuelDetail.reimbursedFuel = reimbursedFuel.toFixed(2);
-        this.fuelDetail.vendorAmount = vendorAmount.toFixed(2);
+        this.fuelDetail.vendorAmount = vendorAmount.toFixed(2)
         this.fuelDetail.reimbursedAmount = reimbursedAmount.toFixed(2);
         $("#divLoader").hide();
       }
@@ -899,7 +898,6 @@ export class DailyFuelReportComponent implements OnInit {
           .valueChanges()
           .subscribe(async (workerData) => {
             instance.unsubscribe();
-            console.log(dbPath);
             if (workerData != null) {
               let driverList = workerData["driver"].split(",");
               let vehicleList = workerData["vehicle"].split(",");
@@ -1020,10 +1018,9 @@ export class DailyFuelReportComponent implements OnInit {
   getVehicleGPSKM() {
     for (let i = 0; i < this.allVehicleList.length; i++) {
       let vehicle = this.allVehicleList[i]["vehicle"];
-      let routeVehi = this.cityName.toLowerCase() === 'hisar' ? this.allVehicleList[i]["chasisNo"] : this.allVehicleList[i]["vehicle"];
       let path =
         "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" +
-        routeVehi +
+        vehicle +
         "/" +
         this.selectedDate +
         ".json";
@@ -1390,7 +1387,7 @@ export class DailyFuelReportComponent implements OnInit {
         ".xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
-  };
+  }
   showFuelReimbursement = (content: any, fuelData: any) => {
     this.reimbursementNumber = '';
     this.selectedFuelData = fuelData;
@@ -1404,7 +1401,7 @@ export class DailyFuelReportComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-  };
+  }
   saveFuelReimbursement() {
     if (!this.reimbursementNumber) {
       this.commonService.setAlertMessage("error", "Please enter reimbursement number");
@@ -1431,7 +1428,7 @@ export class DailyFuelReportComponent implements OnInit {
       this.reimbursementNumber = "";
       this.selectedFuelData = null;
 
-      this.closeModel();
+      this.closeModel()
 
       // Refresh the data
       this.clearList();
@@ -1444,7 +1441,7 @@ export class DailyFuelReportComponent implements OnInit {
   }
   closeModel = () => {
     this.modalService.dismissAll();
-  };
+  }
 }
 
 

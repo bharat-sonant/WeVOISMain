@@ -253,6 +253,9 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (this.cityName == "ajmer") {
       this.hiddenWardList = [{ zone: "21" }, { zone: "27" }];
     }
+    if (this.cityName == "bundi") {
+      this.hiddenWardList = [{ zone: "3-4-5" }, { zone: "40-41-42" }, { zone: "44-45-46-47" }, { zone: "39-43" }, { zone: "26-27" }];
+    }
     this.zoneList = [];
     this.firstData = false;
 
@@ -262,7 +265,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.currentYear = new Date().getFullYear();
     let zones = this.mapService.getZones(this.toDayDate);
     this.allZones = zones.reduce((acc, val) => {
-      if (!val.zoneNo.includes("Service") && !val.zoneNo.includes("Support") && !val.zoneNo.includes("Beed") && !val.zoneNo.includes("Maint") && !val.zoneNo.includes("WetWaste") && !val.zoneNo.includes("Wet") && !val.zoneNo.includes("Qrt") && !val.zoneNo.includes("QRT")) {
+      if (!val.zoneNo.includes("Service") && !val.zoneNo.includes("Support") && !val.zoneNo.includes("Beed") && !val.zoneNo.includes("Maint") && !val.zoneNo.includes("WetWaste") && !val.zoneNo.includes("Wet") && !val.zoneNo.includes("Qrt") && !val.zoneNo.includes("QRT") && !val.zoneNo.includes("Rickshaw")) {
         acc.push(val);
       }
       return acc;

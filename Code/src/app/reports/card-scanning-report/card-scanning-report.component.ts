@@ -21,6 +21,7 @@ export class CardScanningReportComponent implements OnInit {
 
   wardList: any[] = [];
   scannedList: any[] = [];
+  cardTypeList:any[]=[];
   selectedDate: any;
   db: any;
   cityName: any;
@@ -49,6 +50,22 @@ export class CardScanningReportComponent implements OnInit {
     this.selectedDate = this.commonService.setTodayDate();
     $(this.txtDate).val(this.selectedDate);
     this.getWards();
+    if(this.cityName=="hisar"){
+      this.getCartTypeMapping();
+    }
+  }
+
+  getCartTypeMapping(){
+    let dbPath="CardTypeMapping";
+    let cardTypeInstance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+      cardTypeInstance.unsubscribe();
+      if(data!=null){
+        let keyArray=Object.keys(data);
+        for(let i=0;i<keyArray.length;i++){
+          this.cardTypeList.push({cardNo:keyArray[i], cardType:data[keyArray[i]]["cardType"]});
+        }
+      }
+    });
   }
 
   /* ================= WARDS ================= */
@@ -310,23 +327,33 @@ export class CardScanningReportComponent implements OnInit {
 
     detail.residentialCount = 0;
     detail.commercialCount = 0;
+    
 
     let promises: Promise<string | null>[] = [];
 
     for (let cardNo of cardNos) {
-      promises.push(this.updateCardTypeCount(cardNo));
+      let cardTypeDetail=this.cardTypeList.find(item=>item.cardNo==cardNo);
+      if(cardTypeDetail!=undefined){
+        if(cardTypeDetail.cardType=="Commercial"){
+          detail.commercialCount++;
+        }
+        else{
+          detail.residentialCount++;
+        }
+      }
+      //promises.push(this.updateCardTypeCount(cardNo));
     }
 
-    const results = await Promise.all(promises);
+   // const results = await Promise.all(promises);
 
-    for (let type of results) {
-      if (type === 'Commercial') {
-        detail.commercialCount++;
-      }
-      else if (type === 'Residential') {
-        detail.residentialCount++;
-      }
-    }
+   // for (let type of results) {
+    //  if (type === 'Commercial') {
+    //    detail.commercialCount++;
+    //  }
+    //  else if (type === 'Residential') {
+    //    detail.residentialCount++;
+    //  }
+    //}
   }
 
   /* ================= EXPORT ================= */
