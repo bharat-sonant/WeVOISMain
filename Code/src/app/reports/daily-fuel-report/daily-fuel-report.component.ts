@@ -553,6 +553,7 @@ export class DailyFuelReportComponent implements OnInit {
               let rmb_no = "";
               let rmb_at = "";
               let rmb_by = "";
+              let meterReading = "";
 
               if (dieselData[key]["isUpdate"] != null) {
                 isUpdate = 1;
@@ -570,6 +571,9 @@ export class DailyFuelReportComponent implements OnInit {
               }
               if (dieselData[key]["fuelType"] != null) {
                 fuelType = dieselData[key]["fuelType"];
+              }
+              if (dieselData[key]["meterReading"] != null) {
+                meterReading = dieselData[key]["meterReading"];
               }
               if (dieselData[key]["quantity"] != null) {
                 qty = dieselData[key]["quantity"];
@@ -633,8 +637,8 @@ export class DailyFuelReportComponent implements OnInit {
                 petrolPump: petrolPump,
                 payMethod: payMethod,
                 remark: remark,
-                rmb_no: rmb_no, rmb_at, rmb_by
-
+                rmb_no: rmb_no, rmb_at, rmb_by,
+                meterReading: meterReading
               });
             }
           }
@@ -899,7 +903,6 @@ export class DailyFuelReportComponent implements OnInit {
           .valueChanges()
           .subscribe(async (workerData) => {
             instance.unsubscribe();
-            console.log(dbPath);
             if (workerData != null) {
               let driverList = workerData["driver"].split(",");
               let vehicleList = workerData["vehicle"].split(",");
@@ -1224,6 +1227,7 @@ export class DailyFuelReportComponent implements OnInit {
               zone: "",
               km: "",
               driver: "",
+              meterReading: diesel[j]["meterReading"]
             });
           }
         }
@@ -1247,6 +1251,7 @@ export class DailyFuelReportComponent implements OnInit {
                 zone: wardDetailList[j]["zone"],
                 km: wardDetailList[j]["km"],
                 driver: wardDetailList[j]["driver"],
+                meterReading:''
               });
             }
           }
@@ -1267,6 +1272,7 @@ export class DailyFuelReportComponent implements OnInit {
               zone: "",
               km: "",
               driver: "",
+              meterReading: "",
             });
           }
         }
@@ -1285,6 +1291,7 @@ export class DailyFuelReportComponent implements OnInit {
               zone: list[j]["zone"],
               km: list[j]["km"],
               driver: list[j]["driver"],
+              meterReading: list[j]["meterReading"],
             });
           }
         }
@@ -1297,10 +1304,13 @@ export class DailyFuelReportComponent implements OnInit {
       htmlString += "Vehicle Number";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Diesel Quantity";
+      htmlString += "Fuel Type";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Diesel Quantity";
+      htmlString += "Fuel Quantity";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Meter Reading";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Diesel Amount";
@@ -1343,6 +1353,9 @@ export class DailyFuelReportComponent implements OnInit {
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["dieselQty"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["meterReading"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["amount"];

@@ -166,6 +166,7 @@
                                     <th scope="col" class="text-left" [hidden]="isPetrolPumpDetail==false">Fuel Detail
                                     </th>
                                     <th scope="col" class="text-right">Fuel Qty</th>
+                                    <th scope="col" class="text-right">Meter Reading</th>
                                     <th scope="col" class="text-right">Fuel Amount</th>
                                     <th scope="col" class="text-left">Ward No.</th>
                                     <th scope="col" class="text-left">KM</th>
@@ -208,6 +209,11 @@
                                     <td class="text-right " style="vertical-align: top;">
                                         <div style="width:100% " *ngFor="let diesel of data.diesel ">
                                             {{diesel.qty}}
+                                        </div>
+                                    </td>
+                                    <td class="text-right " style="vertical-align: top;">
+                                        <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                            {{diesel.meterReading}}
                                         </div>
                                     </td>
                                     <td class="text-right " style="vertical-align: top;">
