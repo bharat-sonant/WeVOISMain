@@ -256,6 +256,9 @@ export class RealtimeMonitoringComponent implements OnInit {
     if (this.cityName == "bundi") {
       this.hiddenWardList = [{ zone: "3-4-5" }, { zone: "40-41-42" }, { zone: "44-45-46-47" }, { zone: "39-43" }, { zone: "26-27" }];
     }
+    if (this.cityName == "sambhar-lake") {
+      this.hiddenWardList = [{ zone: "1-2-11-12-13-19" }, { zone: "3-4-5-6-7-8" }, { zone: "9-10-15" }, { zone: "14-16-17-18" }, { zone: "20-21-22-23-24-25" }];
+    }
     this.zoneList = [];
     this.firstData = false;
 
