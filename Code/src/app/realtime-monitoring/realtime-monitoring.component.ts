@@ -57,6 +57,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
   application: any;
   vehicle: any;
+  isActual: any;
 
   $Key: any;
   userId: any;
@@ -263,6 +264,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.firstData = false;
 
     this.userId = localStorage.getItem("userID");
+    this.isActual = localStorage.getItem("isActual");
     this.commonService.savePageLoadHistory("Monitoring", "RealTime", localStorage.getItem("userID"));
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.toDayDate.toString().split("-")[1]) - 1);
     this.currentYear = new Date().getFullYear();
@@ -326,7 +328,7 @@ export class RealtimeMonitoringComponent implements OnInit {
         this.showAvgSpeedOfLine = true;
         this.showScanCardWidget = true;
       }
-    })
+    });
   }
 
   getCardWardMapping() {
@@ -342,7 +344,14 @@ export class RealtimeMonitoringComponent implements OnInit {
       }
     });
   }
+  openAllWardMapPage(wardName: any) {
+    // https://main-wevois.firebaseapp.com/
+    const baseUrl = `https://main-wevois.firebaseapp.com/${this.cityName}/${this.userId}/all-wards-tracking`;
 
+    const url = `${baseUrl}?route=${encodeURIComponent(wardName)}`;
+
+    window.open(url, '_blank'); // opens React page in new tab
+  }
   getWardDisatnceTimeByLine(zoneNo: any) {
     let avgSpeed = 0;
     let distanceCovered = 0;
@@ -407,7 +416,7 @@ export class RealtimeMonitoringComponent implements OnInit {
           $(this.divTopSummary).hide();
         }
       }
-    })
+    });
   }
 
   managePermission(list: any) {
@@ -493,7 +502,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.workerDetails.commercialCards = "0";
     this.workerDetails.residencialCards = "0";
     this.workerDetails.wardKM = "0";
-    this.workerDetails.wardTime = "0 hr 0 min"
+    this.workerDetails.wardTime = "0 hr 0 min";
     this.workerDetails.avgSpeed = "0";
     this.getWardTotalCards(this.selectedZone);
     this.getWardDisatnceTimeByLine(this.selectedZone);
@@ -1332,7 +1341,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.workerDetails.commercialCards = "0";
     this.workerDetails.residencialCards = "0";
     this.workerDetails.wardKM = "0";
-    this.workerDetails.wardTime = "0 hr 0 min"
+    this.workerDetails.wardTime = "0 hr 0 min";
     this.workerDetails.avgSpeed = "0";
     this.employeeDetail = [];
     /*
@@ -2613,7 +2622,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             this.workerDetails.wardEndTime = this.commonService.tConvert(wardEndTime);
           }
 
-        })
+        });
 
       }
     });
