@@ -10,6 +10,7 @@ import * as $ from "jquery";
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../firebase.service";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-route-tracking',
@@ -21,7 +22,7 @@ export class RouteTrackingComponent {
   @ViewChild('gmap', null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, public router: Router, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public router: Router, private actRoute: ActivatedRoute, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -84,6 +85,7 @@ export class RouteTrackingComponent {
   lblVTS = "#lblVTS";
   chkVTS = "#chkVTS";
   userType: any;
+  serviceName = "route-tracking";
   trackData: trackDetail =
     {
       totalKM: 0,
@@ -238,6 +240,7 @@ export class RouteTrackingComponent {
 
 
   getVTSRoute() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getVTSRoute");
     if ((<HTMLInputElement>document.getElementById("chkVTS")).checked == false) {
       $("#divVTSRoute").hide();
       $(this.lblVTS).html("Show VTS Routes");
@@ -261,6 +264,7 @@ export class RouteTrackingComponent {
         let vehicleInstance = this.db.object(path).valueChanges().subscribe(vehicleData => {
           vehicleInstance.unsubscribe();
           if (vehicleData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVTSRoute", vehicleData);
             let vehicles = vehicleData.split(",");
             for (let i = 0; i < vehicles.length; i++) {
               let color = "blue";
@@ -279,16 +283,17 @@ export class RouteTrackingComponent {
                 if (localStorage.getItem("cityName") == "hisar") {
                   let chasisInstance = this.db.object("VehicleChesisNumber/" + vehicles[i].toString().trim()).valueChanges().subscribe(chasisData => {
                     chasisInstance.unsubscribe();
-                    console.log(chasisData);
                     if (chasisData != null) {
                       let chasisNumber = chasisData.toString();
                       let vDetail = this.vtsVehicleList.find(item => item.vehicle == vehicles[i].toString().trim());
                       if (vDetail != undefined) {
+                            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVTSRoute", vDetail);
                         vDetail.chasisNumber = chasisNumber;
                         path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + chasisNumber + "/" + this.selectedDate + ".json";
                         this.httpService.get(path).subscribe(data => {
 
                           if (data != null) {
+                            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVTSRoute", data);
                             let keyArray = Object.keys(data);
                             let list = [];
                             for (let j = 0; j < keyArray.length - 2; j++) {
@@ -325,6 +330,7 @@ export class RouteTrackingComponent {
                   this.httpService.get(path).subscribe(data => {
 
                     if (data != null) {
+                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVTSRoute", data);
                       let keyArray = Object.keys(data);
                       let list = [];
                       for (let j = 0; j < keyArray.length - 2; j++) {
@@ -409,11 +415,13 @@ export class RouteTrackingComponent {
   }
 
   getMinmumMaximumDistance() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMinmumMaximumDistance");
     let dbDistancePath = "Settings/RoueTrackings";
     let distanceDetail = this.db.object(dbDistancePath).valueChanges().subscribe(
       distanceData => {
         distanceDetail.unsubscribe();
         if (distanceData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMinmumMaximumDistance", distanceData);
           this.maximaumDistance = parseFloat(distanceData["maximumDistanceCanCoverInOneSecondInMeters"]);
           this.minimumDistance = parseFloat(distanceData["minimumDistanceShouldCoverinOneSecondInMeter"])
         }
@@ -568,12 +576,14 @@ export class RouteTrackingComponent {
 
 
   showVehicleMovement() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showVehicleMovement");
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + this.selectedDate + "/WorkerDetails/vehicle";
     let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
       routePath => {
         if (routePath != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicleMovement", routePath);
           this.vehicleName = routePath;
           if (this.vehicleName.includes(",")) {
             this.vehicleName = this.vehicleName.split(",")[this.vehicleName.split(",").length - 1];
@@ -586,6 +596,7 @@ export class RouteTrackingComponent {
             data => {
               this.instancesList.push({ instances: this.vehicleLocationInstance });
               if (data != undefined) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showVehicleMovement", data);
                 dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
                 let statusInstance = this.db.object(dbPath).valueChanges().subscribe(
                   statusData => {
@@ -758,6 +769,7 @@ export class RouteTrackingComponent {
     $('#ddlTime').val(0);
 
     this.isPreviousTime = false;
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getVehicleRoute");
     let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
     let year = this.selectedDate.split("-")[0];
     this.getDutyInOutTime(this.selectedZone, year, monthName, this.selectedDate).then((response) => {
@@ -770,6 +782,7 @@ export class RouteTrackingComponent {
           routePath => {
             vehicleTracking.unsubscribe();
             if (routePath != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVehicleRoute", routePath);
               let routeKeyArray = Object.keys(routePath);
               let keyArray = [];
               if (routeKeyArray.length > 0) {
@@ -922,6 +935,7 @@ export class RouteTrackingComponent {
 
 
   showDataOnMap() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showDataOnMap");
     let totalKM = 0;
     let lineData = [];
     for (let i = 0; i < this.routePathStore.length; i++) {
@@ -990,6 +1004,7 @@ export class RouteTrackingComponent {
               dutyData => {
                 vehicleDutyData.unsubscribe();
                 if (dutyData != null) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showDataOnMap", dutyData);
                   if (dutyData["isOnDuty"] != "yes") {
                     let lat = lineData[lineData.length - 1]["lat"];
                     let lng = lineData[lineData.length - 1]["lng"];
@@ -1046,11 +1061,13 @@ export class RouteTrackingComponent {
 
   getDutyInOutTime(zone: any, year: any, monthName: any, date: any) {
     return new Promise((resolve) => {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDutyInOutTime");
       let dutyInOutList = [];
       let dbPath = "WasteCollectionInfo/" + zone + "/" + year + "/" + monthName + "/" + date + "/Summary";
       let dutyInOutInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
         dutyInOutInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyInOutTime", data);
           if (data["dutyInTime"] != null) {
             let dutyInList = data["dutyInTime"].split(",");
             for (let i = 0; i < dutyInList.length; i++) {
@@ -1179,6 +1196,7 @@ export class RouteTrackingComponent {
   }
 
   getMonthDetailData(days: any, year: any, month: any, monthName: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMonthDetailData");
     let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
     this.getDutyInOutTime(this.selectedZone, year, monthName, monthDate).then((response) => {
       let dutyOnOffList = JSON.parse(JSON.stringify(response));
@@ -1194,6 +1212,7 @@ export class RouteTrackingComponent {
               routePath => {
                 vehicleTracking.unsubscribe();
                 if (routePath != null) {
+                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthDetailData", routePath);
                   if (monthDate != this.toDayDate) {
                     //this.commonService.saveJsonFile(routePath, "route.json", "/" + dbPath + "/");
                   }
@@ -1314,6 +1333,7 @@ export class RouteTrackingComponent {
   }
 
   getMonthDetailList(monthList: any, year: any, monthName, monthDate: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMonthDetailList");
     let totalKM: number = 0;
     let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
     if (monthDetails != undefined) {
@@ -1322,6 +1342,7 @@ export class RouteTrackingComponent {
         driverData => {
           driverTracking.unsubscribe();
           if (driverData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthDetailList", driverData);
             monthDetails.driver = driverData;
           }
           let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
@@ -1329,6 +1350,7 @@ export class RouteTrackingComponent {
             data => {
               workPersentageInstance.unsubscribe();
               if (data != null) {
+                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthDetailList", data);
                 if (data["workPercentage"] != null) {
                   monthDetails.percentage = data["workPercentage"].toString();
                 }
@@ -1380,11 +1402,13 @@ export class RouteTrackingComponent {
 
 
   getWorkPercentage(year: any, monthName: any, monthDate: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkPercentage");
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary/workPercentage";
     let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         workPersentageInstance.unsubscribe();
         if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkPercentage", data);
           let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
           if (monthDetails != undefined) {
             monthDetails.percentage = data.toString();
@@ -1395,11 +1419,13 @@ export class RouteTrackingComponent {
   }
 
   getDriverName(year: any, monthName: any, monthDate: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDriverName");
     let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
     let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
       driverData => {
         driverTracking.unsubscribe();
         if (driverData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDriverName", driverData);
           let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
           if (monthDetails != undefined) {
             monthDetails.driver = driverData;

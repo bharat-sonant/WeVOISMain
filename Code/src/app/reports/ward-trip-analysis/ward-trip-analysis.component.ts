@@ -455,7 +455,7 @@ export class WardTripAnalysisComponent implements OnInit {
             let manualRemarks = "";
             let overLoad = "";
             let analysisStatus = "Ok";
-            let vehicleType = data[tripID]["vehicle"].split('-')[0];
+            let vehicleType = data[tripID]["vehicle"]?data[tripID]["vehicle"]:"";
             if (data[tripID]["filledStatus"] != null) {
               filledStatus = data[tripID]["filledStatus"];
             }

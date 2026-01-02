@@ -6,6 +6,7 @@ import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute } from "@angular/router";
+import { BackEndServiceUsesHistoryService } from '../services/common/back-end-service-uses-history.service';
 
 @Component({
   selector: 'app-ward-work-tracking',
@@ -15,7 +16,7 @@ import { ActivatedRoute } from "@angular/router";
 export class WardWorkTrackingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private actRoute: ActivatedRoute, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private actRoute: ActivatedRoute, private commonService: CommonService, private modalService: NgbModal, public httpService: HttpClient) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -89,6 +90,7 @@ export class WardWorkTrackingComponent {
   divScannedHouses = "#divScannedHouses";
   chkIsTimerEnable = "chkIsTimerEnable";
   divNearByWard = "#divNearByWard";
+  serviceName = "ward-work-tracking";
   wardLinesDataObj: any;
   isShowAllHouse = false;
   isShowHouses: any;
@@ -375,14 +377,17 @@ export class WardWorkTrackingComponent {
   }
 
   getVehicleLocation(vehicle: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getVehicleLocation");
     let dbPath = "CurrentLocationInfo/" + this.selectedZone + "/latLng";
     let vehicleLocationInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       this.instancesList.push({ instances: vehicleLocationInstance });
       if (data != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVehicleLocation", data);
         dbPath = "RealTimeDetails/WardDetails/" + this.selectedZone + "/activityStatus";
         let vehicleStatusInstance = this.db.object(dbPath).valueChanges().subscribe((vehicleStatusData) => {
           vehicleStatusInstance.unsubscribe();
           if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVehicleLocation", data);
             if (this.vehicleMarker != null) {
               this.vehicleMarker.setMap(null);
             }
@@ -491,6 +496,7 @@ export class WardWorkTrackingComponent {
   }
 
   getScanedHouses() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScanedHouses");
     if (this.houseMarkerList.length > 0) {
       for (let i = 0; i < this.houseMarkerList.length; i++) {
         let cardNo = this.houseMarkerList[i]["cardNo"];
@@ -498,6 +504,7 @@ export class WardWorkTrackingComponent {
         let scanInfoInstance = this.db.object(scanCardPath).valueChanges().subscribe((scanBy) => {
           this.instancesList.push({ instances: scanInfoInstance });
           if (scanBy != undefined) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanedHouses", scanBy);
             let houseDetail = this.houseMarkerList.find(item => item.cardNo == cardNo);
             if (houseDetail != undefined) {
               houseDetail.scanBy = scanBy;
@@ -524,12 +531,14 @@ export class WardWorkTrackingComponent {
   }
 
   getRecentScanedCard() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRecentScanedCard");
     if (this.houseMarkerList.length > 0) {
       let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/recentScanned";
       let recentScanCardInstance = this.db.object(dbPath).valueChanges().subscribe(
         recentScanData => {
           this.instancesList.push({ instances: recentScanCardInstance });
           if (recentScanData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRecentScanedCard", recentScanData);
             let cardNo = recentScanData["cardNo"];
             for (let i = 0; i < this.houseMarkerList.length; i++) {
               this.houseMarkerList[i]["marker"].setAnimation(null);
@@ -587,16 +596,19 @@ export class WardWorkTrackingComponent {
   }
 
   showScanedHouseMessage(cardNo: any, scanTime: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showScanedHouseMessage");
     let dbPath = "CardWardMapping/" + cardNo;
     let mapInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       mapInstance.unsubscribe();
       if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showScanedHouseMessage", data);
         let lineNo = data["line"];
         let ward = data["ward"];
         dbPath = "Houses/" + ward + "/" + lineNo + "/" + cardNo;
         let houseInstance = this.db.object(dbPath).valueChanges().subscribe((dataHouse) => {
           houseInstance.unsubscribe();
           if (dataHouse != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showScanedHouseMessage", dataHouse);
             let name = dataHouse["name"];
             let time = scanTime.split(":")[0] + ":" + scanTime.split(":")[1];
             let message = name + " के यहां से " + time + " बजे कचरा उठा लिया गया है";
@@ -670,11 +682,13 @@ export class WardWorkTrackingComponent {
     if (this.cardNotScanedList.length > 0) {
       return;
     }
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getCardNotScanedImages");
     this.progressData.cardNotScanedImages = 0;
     let dbPath = "HousesCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/ImagesData";
     let notScanCardInstance = this.db.object(dbPath).valueChanges().subscribe((notScanedImageData) => {
       this.instancesList.push({ instances: notScanCardInstance });
       if (notScanedImageData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getCardNotScanedImages", notScanedImageData);
         let count = 0;
         let city = this.commonService.getFireStoreCity();
         let keyArray = Object.keys(notScanedImageData);
@@ -760,6 +774,7 @@ export class WardWorkTrackingComponent {
   }
 
   getRoute() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRoute");
     let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     this.commonService.getStorageLocationHistory(dbPath).then((response) => {
       if (response["status"] == "Fail") {
@@ -767,6 +782,7 @@ export class WardWorkTrackingComponent {
           routeData => {
             routeInstance.unsubscribe();
             if (routeData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRoute", routeData);
               let lineData = [];
               let keyArray = Object.keys(routeData);
               if (keyArray.length > 0) {
@@ -876,11 +892,13 @@ export class WardWorkTrackingComponent {
   }
 
   getWardCoveredLengthAndCompletedLinesFromSummary() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardCoveredLengthAndCompletedLinesFromSummary");
     let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
     let summaryInstance = this.db.object(dbPath).valueChanges().subscribe(
       summaryData => {
         this.instancesList.push({ instances: summaryInstance });
         if (summaryData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardCoveredLengthAndCompletedLinesFromSummary", summaryData);
           if (summaryData["completedLines"] != null) {
             this.progressData.completedLines = summaryData["completedLines"];
           }
@@ -958,10 +976,12 @@ export class WardWorkTrackingComponent {
   }
 
   getIsEnableTimeFeature() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getIsEnableTimeFeature");
     let dbPath = "Settings/WardSettings/" + this.selectedZone + "/isLineStopFeatureEnabled";
     let instance = this.db.object(dbPath).valueChanges().subscribe(isLineStopFeatureEnabled => {
       instance.unsubscribe();
       if (isLineStopFeatureEnabled != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getIsEnableTimeFeature", isLineStopFeatureEnabled);
         if (isLineStopFeatureEnabled == "yes") {
           (<HTMLInputElement>document.getElementById(this.chkIsTimerEnable)).checked = true;
         }
@@ -1073,10 +1093,12 @@ export class WardWorkTrackingComponent {
   }
 
   getLineActualCoveredTime(lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineActualCoveredTime");
     let dbPathLineStatus = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo;
     let lineStatusInstance = this.db.object(dbPathLineStatus).valueChanges().subscribe((lineData) => {
       this.instancesList.push({ instances: lineStatusInstance });
       if (lineData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineActualCoveredTime", lineData);
         if (lineData["end-time"] != null) {
           let lineDetail = this.zoneLineList.find(item => item.lineNo == lineNo);
           if (lineDetail != undefined) {
@@ -1092,6 +1114,7 @@ export class WardWorkTrackingComponent {
   }
 
   getScanCardCounts(lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getScanCardCounts");
     let lineDetail = this.lineSummaryList.find(item => item.lineNo == lineNo);
     if (lineDetail != undefined) {
       let houses = lineDetail.houses;
@@ -1102,6 +1125,7 @@ export class WardWorkTrackingComponent {
           let scanInfoInstance = this.db.object(scanCardPath).valueChanges().subscribe((scanBy) => {
             this.instancesList.push({ instances: scanInfoInstance });
             if (scanBy != undefined) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanCardCounts", scanBy);
               if (scanBy != "-1") {
                 lineDetail.scanCount = Number(lineDetail.scanCount) + 1;
                 let scanPercentage = ((lineDetail.scanCount / lineDetail.houseCount) * 100).toFixed(2);
@@ -1322,12 +1346,14 @@ export class WardWorkTrackingComponent {
   }
 
   getWardAssignedDustbin() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardAssignedDustbin");
     if (this.dustbinList.length > 0) {
       let dbPath = "DustbinData/DustbinAssignToWard/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + this.selectedZone;
       let dustbinAssignedInstance = this.db.object(dbPath).valueChanges().subscribe(
         dustbinAssignedData => {
           this.instancesList.push({ instances: dustbinAssignedInstance });
           if (dustbinAssignedData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardAssignedDustbin", dustbinAssignedData);
             if (dustbinAssignedData["bins"] != null) {
               let bins = dustbinAssignedData["bins"].split(',');
               let binList = [];
@@ -1570,11 +1596,13 @@ export class WardWorkTrackingComponent {
   }
 
   plotLineOnMap(lineNo: any, latlng: any, index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "plotLineOnMap");
     let dbPathLineStatus = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + lineNo + "/Status";
     let lineStatusInstance = this.db.object(dbPathLineStatus).valueChanges().subscribe((lineStatus) => {
       this.instancesList.push({ instances: lineStatusInstance });
       let strokeColor = this.commonService.getLineColor(null);
       if (lineStatus != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "plotLineOnMap", lineStatus);
         strokeColor = this.commonService.getLineColor(lineStatus);
         if (this.polylines[index] != undefined) {
           this.polylines[index].setMap(null);
@@ -1741,10 +1769,12 @@ export class WardWorkTrackingComponent {
   }
 
   getEmployeeData() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getEmployeeData");
     let workDetailsPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/WorkerDetails";
     let workDetails = this.db.object(workDetailsPath).valueChanges().subscribe((workerData) => {
       workDetails.unsubscribe();
       if (workerData != undefined) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEmployeeData", workerData);
         let driverList = workerData["driver"].toString().split(",");
         let helperList = workerData["helper"].toString().split(",");
         let driverId = driverList[driverList.length - 1].trim();
@@ -1891,12 +1921,14 @@ export class WardWorkTrackingComponent {
   }
 
   showSkipLineDetail(content: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showSkipLineDetail");
     this.skipLineList = [];
     let dbPath = "SkipCaptureImage/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
     let skipLineInstance = this.db.object(dbPath).valueChanges().subscribe(
       skipLineData => {
         skipLineInstance.unsubscribe();
         if (skipLineData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showSkipLineDetail", skipLineData);
           let keyArray = Object.keys(skipLineData);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
