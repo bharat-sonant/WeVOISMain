@@ -47,7 +47,8 @@ export class WardTripAnalysisComponent implements OnInit {
     penaltyAmount: 0,
     penaltyReason: '',
     overLoad: "",
-    analysisStatus: 'Ok'
+    analysisStatus: 'Ok',
+    yardTime: "00:00:00",
   };
   cityName: any;
   db: any;
@@ -246,6 +247,7 @@ export class WardTripAnalysisComponent implements OnInit {
                 let imageName = "";
                 let imageName2 = "";
                 let yardImageName = "";
+                let yardTime = "00:00:00";
                 let yardImageName2 = "";
                 let manualRemarks = "";
                 let overLoad = "";
@@ -256,6 +258,9 @@ export class WardTripAnalysisComponent implements OnInit {
                 }
                 if (data[tripID]["analysisAt"] != null) {
                   analysisAt = data[tripID]["analysisAt"];
+                }
+                if (data[tripID]["yardTime"] != null) {
+                  yardTime = data[tripID]["yardTime"];
                 }
                 if (data[tripID]["analysisBy"] != null) {
                   analysisBy = data[tripID]["analysisBy"];
@@ -310,7 +315,8 @@ export class WardTripAnalysisComponent implements OnInit {
                     vehicleType: vehicleType,
                     manualRemarks: manualRemarks,
                     overLoad: overLoad,
-                    analysisStatus: analysisStatus
+                    analysisStatus: analysisStatus,
+                    yardTime: yardTime
                   });
                 });
               }
@@ -455,6 +461,7 @@ export class WardTripAnalysisComponent implements OnInit {
             let manualRemarks = "";
             let overLoad = "";
             let analysisStatus = "Ok";
+            let yardTime = "00:00:00";
             let vehicleType = data[tripID]["vehicle"]?data[tripID]["vehicle"]:"";
             if (data[tripID]["filledStatus"] != null) {
               filledStatus = data[tripID]["filledStatus"];
@@ -468,6 +475,9 @@ export class WardTripAnalysisComponent implements OnInit {
             }
             if (data[tripID]["analysisStatus"] != null) {
               analysisStatus = data[tripID]["analysisStatus"];
+            }
+            if (data[tripID]["yardTime"] != null) {
+              yardTime = data[tripID]["yardTime"];
             }
             if (data[tripID]["remark"] != null) {
               remark = data[tripID]["remark"];
@@ -515,7 +525,8 @@ export class WardTripAnalysisComponent implements OnInit {
                 vehicleType: vehicleType,
                 manualRemarks: manualRemarks,
                 overLoad: overLoad,
-                analysisStatus: analysisStatus
+                analysisStatus: analysisStatus,
+                yardTime: yardTime
               });
             });
           }
@@ -652,6 +663,7 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.driverName = tripDetails.driverName;
       this.tripData.driverMobile = "+91 " + tripDetails.driverMobile;
       this.tripData.startTime = tripDetails.time;
+      this.tripData.yardTime = tripDetails.yardTime;
       this.tripData.filledStatus = tripDetails.filledStatus;
       this.tripData.remark = tripDetails.remark;
       this.tripData.manualRemarks = tripDetails.manualRemarks;
@@ -916,6 +928,7 @@ export class WardTripAnalysisComponent implements OnInit {
     this.tripData.imageUrl3 = this.imageNotAvailablePath;
     this.tripData.remark = "";
     this.tripData.startTime = "00:00:00";
+    this.tripData.yardTime = "00:00:00";
     this.tripData.wasteCollection = 0;
     this.tripData.tripCount = 0;
     this.tripData.overLoad = "";
@@ -967,6 +980,7 @@ export class tripDetail {
   driverId: string;
   startTime: string;
   analysisDetail: string;
+  yardTime: string;
   imageUrl: string;
   imageUrl1: string;
   imageUrl2: string;

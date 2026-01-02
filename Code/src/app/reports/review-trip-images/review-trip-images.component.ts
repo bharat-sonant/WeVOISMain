@@ -103,8 +103,12 @@ export class ReviewTripImagesComponent implements OnInit {
             for (let i = 0; i < keyArray.length; i++) {
               let key = keyArray[i];
               let time = "";
+              let yardTime="";
               if(tripData[key]["time"]!=null){
                 time=tripData[key]["time"].split(':')[0] + ":" + tripData[key]["time"].split(':')[1];
+              }
+              if(tripData[key]["yardTime"]!=null){
+                yardTime=tripData[key]["yardTime"].split(':')[0] + ":" + tripData[key]["yardTime"].split(':')[1];
               }
               let vehicle = tripData[key]["vehicle"];
               let wasteCollection=this.getWasteCollectionByVehicle(vehicle);
@@ -121,7 +125,7 @@ export class ReviewTripImagesComponent implements OnInit {
               let imageUrl2 =imageName2!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName2 + "?alt=media":this.imageNotAvailablePath;
               let imageUrl3 =yardImageName!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + yardImageName + "?alt=media":this.imageNotAvailablePath;
               let imageUrl4 =yardImageName2!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + yardImageName2 + "?alt=media":this.imageNotAvailablePath;
-              tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---", imageUrl: imageUrl,imageUrl2:imageUrl2,imageUrl3:imageUrl3,imageUrl4:imageUrl4,wasteCollection });
+              tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---",yardTime:yardTime, imageUrl: imageUrl,imageUrl2:imageUrl2,imageUrl3:imageUrl3,imageUrl4:imageUrl4,wasteCollection });
             }
             this.totalWasteCollected += Number(collectedZoneWaste)
             resolve({ status: "success", data: {zoneNo:zoneNo,tripImageList:tripImageList,collectedZoneWaste} });

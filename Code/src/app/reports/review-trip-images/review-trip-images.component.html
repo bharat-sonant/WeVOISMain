@@ -118,8 +118,13 @@
                                                                 </div>
                                                                 <div class="col-md-12"><b>Vehicle : </b>
                                                                     {{dtImage.vehicle}}</div>
-                                                                <div class="col-md-12"><b>Trip Time : </b>
+                                                                <div class="col-md-12"><b>Ward Trip Time : </b>
                                                                     {{dtImage.time}}</div>
+                                                                <div class="col-md-12" *ngIf="dtImage?.yardTime">
+                                                                    <b>Dumping Yard / Transfer Station Time :</b>
+                                                                    {{ dtImage.yardTime }}
+                                                                </div>
+
                                                                 <div class="col-md-12"><b>Collected Waste : </b>
                                                                     {{dtImage.wasteCollection}} Kg.</div>
                                                             </div>
