@@ -21,7 +21,7 @@ export class CardScanningReportComponent implements OnInit {
 
   wardList: any[] = [];
   scannedList: any[] = [];
-  cardTypeList:any[]=[];
+  cardTypeList: any[] = [];
   selectedDate: any;
   db: any;
   cityName: any;
@@ -50,19 +50,19 @@ export class CardScanningReportComponent implements OnInit {
     this.selectedDate = this.commonService.setTodayDate();
     $(this.txtDate).val(this.selectedDate);
     this.getWards();
-    if(this.cityName=="hisar"){
+    if (this.cityName == "hisar") {
       this.getCartTypeMapping();
     }
   }
 
-  getCartTypeMapping(){
-    let dbPath="CardTypeMapping";
-    let cardTypeInstance=this.db.object(dbPath).valueChanges().subscribe(data=>{
+  getCartTypeMapping() {
+    let dbPath = "CardTypeMapping";
+    let cardTypeInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       cardTypeInstance.unsubscribe();
-      if(data!=null){
-        let keyArray=Object.keys(data);
-        for(let i=0;i<keyArray.length;i++){
-          this.cardTypeList.push({cardNo:keyArray[i], cardType:data[keyArray[i]]["cardType"]});
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 0; i < keyArray.length; i++) {
+          this.cardTypeList.push({ cardNo: keyArray[i], cardType: data[keyArray[i]]["cardType"] });
         }
       }
     });
@@ -227,37 +227,44 @@ export class CardScanningReportComponent implements OnInit {
             return;
           }
 
-          let scannedCardCount = 0;
-
           let keyArray = Object.keys(scannedCardObj)
-            .filter(k => !["ImagesData", "recentScanned", "totalScanned"].includes(k));
+            .filter(k => !["ImagesData", "recentScanned", "totalScanned", "totalActualScanned"].includes(k));
 
+          let scannedCardCount = 0;
           let cardsForTypeCount: string[] = [];
 
-          /* ===== External User ===== */
-
+          /* ===============================
+             EXTERNAL USER
+             =============================== */
           if (this.userType === "External User") {
 
-            scannedCardCount = scannedCardObj["totalScanned"];
+            // ❗ NO scanBy filter
+            scannedCardCount = keyArray.length || 0;
 
             if (this.cityName.toLowerCase().trim() === 'hisar') {
-              cardsForTypeCount = keyArray.slice();
+              cardsForTypeCount = keyArray.slice(); // all cards
             }
           }
 
-          /* ===== Internal User ===== */
-
+          /* ===============================
+             INTERNAL USER
+             =============================== */
           else {
 
             for (let cardNo of keyArray) {
-              if (scannedCardObj[cardNo]["scanBy"] != "-1") {
+
+              // ❗ ONLY CHANGE: exclude scanBy = -1
+              if (scannedCardObj[cardNo].scanBy != "-1") {
+
                 scannedCardCount++;
+
                 if (this.cityName.toLowerCase().trim() === 'hisar') {
                   cardsForTypeCount.push(cardNo);
                 }
               }
             }
           }
+
 
           let detail = this.scannedList.find(x => x.ward == ward);
           if (detail) {
@@ -327,26 +334,26 @@ export class CardScanningReportComponent implements OnInit {
 
     detail.residentialCount = 0;
     detail.commercialCount = 0;
-    
+
 
     let promises: Promise<string | null>[] = [];
 
     for (let cardNo of cardNos) {
-      let cardTypeDetail=this.cardTypeList.find(item=>item.cardNo==cardNo);
-      if(cardTypeDetail!=undefined){
-        if(cardTypeDetail.cardType=="Commercial"){
+      let cardTypeDetail = this.cardTypeList.find(item => item.cardNo == cardNo);
+      if (cardTypeDetail != undefined) {
+        if (cardTypeDetail.cardType == "Commercial") {
           detail.commercialCount++;
         }
-        else{
+        else {
           detail.residentialCount++;
         }
       }
       //promises.push(this.updateCardTypeCount(cardNo));
     }
 
-   // const results = await Promise.all(promises);
+    // const results = await Promise.all(promises);
 
-   // for (let type of results) {
+    // for (let type of results) {
     //  if (type === 'Commercial') {
     //    detail.commercialCount++;
     //  }

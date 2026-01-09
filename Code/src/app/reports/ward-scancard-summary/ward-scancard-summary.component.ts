@@ -73,7 +73,7 @@ export class WardScancardSummaryComponent implements OnInit {
     if (circleWardList.length > 0) {
       for (let i = 0; i < circleWardList.length; i++) {
         if (circleWardList[i]["wardNo"] != undefined) {
-          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0,isPenaltyRemarkChange:false, notScanned: 0, scannedTotalCards: 0, workPercentage: "0", helperCode: "", helperId: '0', helper: "", penalty: "", remark: "",isDataFound:false });
+          this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, isPenaltyRemarkChange: false, notScanned: 0, scannedTotalCards: 0, workPercentage: "0", helperCode: "", helperId: '0', helper: "", penalty: "", remark: "", isDataFound: false });
         }
       }
       this.getWardDetail();
@@ -119,34 +119,57 @@ export class WardScancardSummaryComponent implements OnInit {
                       empCode = empCodeData.toString();
 
                     }
-                    dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/totalCount";
+                    dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/";
                     let notScannedInstance = this.db.object(dbPath).valueChanges().subscribe(
                       notScannedData => {
                         notScannedInstance.unsubscribe();
                         if (notScannedData != null) {
 
-                          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", notScannedData);
-                          notScanned = Number(notScannedData);
-                          scannedTotalCards += notScanned
+                          this.besuh.saveBackEndFunctionDataUsesHistory(
+                            this.serviceName,
+                            "getWardDetail",
+                            notScannedData
+                          );
+
+                          let keyArray = Object.keys(notScannedData)
+                            .filter(key => key !== 'lastKey' && key !== 'totalCount');
+
+                          notScanned = keyArray.length;          // ✅ correct count
+                          scannedTotalCards += notScanned;
                         }
+
                         dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
                         let scannedInstance = this.db.object(dbPath).valueChanges().subscribe(
                           scannedData => {
                             scannedInstance.unsubscribe();
                             if (scannedData != null) {
                               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", scannedData);
-                              let keyArray = Object.keys(scannedData);
+                              let keyArray = Object.keys(scannedData).filter(key => key !== 'recentScanned' && key !== 'totalScanned' && key !== 'ImagesData' && key !== 'totalActualScanned');
+
                               for (let j = 0; j < keyArray.length; j++) {
                                 let index = keyArray[j];
-                                if (index != "recentScanned" && index != "totalScanned" && index != "ImagesData" && index != "totalActualScanned") {
-                                  if (scannedData[index]["scanBy"] != "-1") {
-                                    scanned = scanned + 1;
+                                /* ===============================
+                                     INTERNAL USER → filter scanBy
+                                  =============================== */
+                                if (localStorage.getItem("userType") !== "External User") {
 
+                                  if (scannedData[index].scanBy != "-1") {
+
+                                    scanned++;
                                   }
+
                                 }
+                                /* ===============================
+                                   EXTERNAL USER → NO scanBy filter
+                                   =============================== */
+                                else {
+
+                                  scanned++;
+                                }
+
                               }
                             }
-                            dbPath = "/WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + "Summary" + "/" + "workPercentage"
+                            dbPath = "/WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + "Summary" + "/" + "workPercentage";
                             let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
                               workPercentageData => {
                                 workPercentageInstance.unsubscribe();
@@ -154,7 +177,7 @@ export class WardScancardSummaryComponent implements OnInit {
                                   this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", workPercentageData);
                                   workPercentage = workPercentageData;
                                 }
-                                dbPath = "WardScanCardPenalties" + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + helperId + "/" + wardNo + "/"
+                                dbPath = "WardScanCardPenalties" + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + helperId + "/" + wardNo + "/";
                                 let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(penaltyData => {
                                   penaltyInstance.unsubscribe();
                                   let detail = this.wardDataList.find(item => item.wardNo == wardNo);
@@ -165,38 +188,38 @@ export class WardScancardSummaryComponent implements OnInit {
                                   }
                                   if (detail != undefined) {
 
-                                    scannedTotalCards += scanned
+                                    scannedTotalCards += scanned;
                                     detail.helper = helper;
                                     detail.helperCode = empCode;
                                     detail.helperId = helperId;
                                     detail.scanned = scanned;
-                                    detail.isDataFound=true;
+                                    detail.isDataFound = true;
                                     detail.notScanned = notScanned;
                                     detail.workPercentage = workPercentage + "%";
                                     detail.scannedTotalCards = scannedTotalCards ? scannedTotalCards : 0;
                                     this.totalNotScannedCards += Number(notScanned);
                                     this.totalScannedCards += Number(scanned);
                                   }
-                                })
+                                });
 
                               }
-                            )
+                            );
                           }
                         );
 
                       }
                     );
                   }
-                )
+                );
               }
-              else{
+              else {
                 let detail = this.wardDataList.find(item => item.wardNo == wardNo);
                 if (detail) {
-                        detail.isDataFound =false;                  
+                  detail.isDataFound = false;
                 }
               }
 
-            })
+            });
         }
       );
     }
@@ -341,21 +364,21 @@ export class WardScancardSummaryComponent implements OnInit {
     if (this.wardDataList.length === 0) return;
     let userId = localStorage.getItem('userID');
     let data: any = {};
-    let isPenalty = this.wardDataList.some((item) => item.penalty!==''&&Number(item.penalty) === 0);
-    if (isPenalty) return this.commonService.setAlertMessage('error', 'Please enter penalty greater than 0')
+    let isPenalty = this.wardDataList.some((item) => item.penalty !== '' && Number(item.penalty) === 0);
+    if (isPenalty) return this.commonService.setAlertMessage('error', 'Please enter penalty greater than 0');
     let detail = this.wardDataList.some(item => item.penalty && item.remark === '');
     if (detail) return this.commonService.setAlertMessage('error', "Please write remark");
     let savePenaltyList = this.wardDataList.filter(item => item.penalty !== '' && item.remark !== '');
     if (savePenaltyList.length === 0) return this.commonService.setAlertMessage('error', "Please fill penalty and remark");
     let validate = savePenaltyList.every((item) => item.helperId !== '0' && item.penalty && item.remark);
     if (!validate) return this.commonService.setAlertMessage('error', 'Something went wrong');
-    let isSaved=false;
+    let isSaved = false;
     for (let i = 0; i < savePenaltyList.length; i++) {
       let monthName = this.commonService.getCurrentMonthName(new Date(this.selectedDate).getMonth());
       let year = this.selectedDate.split("-")[0];
       let ward = savePenaltyList[i];
-      if (ward.penalty && ward.remark && ward.helperId !== '0'&&ward.isPenaltyRemarkChange) {
-        let dbPath = 'WardScanCardPenalties' + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + ward.helperId + "/" +ward.wardNo+"/"
+      if (ward.penalty && ward.remark && ward.helperId !== '0' && ward.isPenaltyRemarkChange) {
+        let dbPath = 'WardScanCardPenalties' + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + ward.helperId + "/" + ward.wardNo + "/";
         data = {
           amount: Number(ward.penalty),
           reason: ward.remark,
@@ -363,22 +386,22 @@ export class WardScancardSummaryComponent implements OnInit {
           createdOn: this.commonService.getTodayDateTime(),
           penaltyType: 'Penalty',
           isCardScanPenalty: 1
-        }
+        };
         this.db.object(dbPath).update(data);
         isSaved = true;
-        let detail = this.wardDataList.find(item=>item.wardNo===ward.wardNo);
+        let detail = this.wardDataList.find(item => item.wardNo === ward.wardNo);
         if (detail) {
-          detail.isPenaltyRemarkChange =false;
+          detail.isPenaltyRemarkChange = false;
         }
       }
     }
     if (isSaved) {
       this.commonService.setAlertMessage('success', 'Penalty updated successfully');
-      isSaved=false;
-      return
+      isSaved = false;
+      return;
     }
-    else{
-     return this.commonService.setAlertMessage('error', "No Changes Found");
+    else {
+      return this.commonService.setAlertMessage('error', "No Changes Found");
     }
   }
 }

@@ -46,7 +46,7 @@ export class WardScancardReportComponent implements OnInit {
   tableData = [[]];
   selectedWard: any;
   cardExportList: any[] = [];
-  wasteCategoryList:any[]=[];
+  wasteCategoryList: any[] = [];
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -54,11 +54,11 @@ export class WardScancardReportComponent implements OnInit {
       this.isEcogram = "1";
       $("#divEcogram").show();
       this.totalScanedCards = 0;
-      if(this.cityName=="chennai"){
-        this.wasteCategoryList=[{ category: "All Segregated" }, { category: "Wet, Dry & Hazardous Segregated" }, { category: "Wet, Dry & Sanitary Segregated" }, { category: "Wet & Dry Segregated" }, { category: "No-Segregated" }, { category: "No Waste" }];
+      if (this.cityName == "chennai") {
+        this.wasteCategoryList = [{ category: "All Segregated" }, { category: "Wet, Dry & Hazardous Segregated" }, { category: "Wet, Dry & Sanitary Segregated" }, { category: "Wet & Dry Segregated" }, { category: "No-Segregated" }, { category: "No Waste" }];
       }
-      else{
-        this.wasteCategoryList=[{ category: "Segregated" }, { category: "Non-Segregated" }, { category: "No Waste" }];
+      else {
+        this.wasteCategoryList = [{ category: "Segregated" }, { category: "Non-Segregated" }, { category: "No Waste" }];
       }
     }
     else {
@@ -122,7 +122,7 @@ export class WardScancardReportComponent implements OnInit {
           }
         }
       }
-    })
+    });
   }
 
   getScanCardData(cardNo: any, date: any) {
@@ -139,7 +139,7 @@ export class WardScancardReportComponent implements OnInit {
           scanObj = { cardNo: cardNo, date: date, wasteCategory: wasteCategory };
         }
         resolve(scanObj);
-      })
+      });
     });
   }
 
@@ -580,11 +580,12 @@ export class WardScancardReportComponent implements OnInit {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", empData);
             let name = empData.split(',')[empData.split(',').length - 1];
 
-            let keyArray = Object.keys(data);
-            for (let i = 0; i < keyArray.length; i++) {
-              let cardNo = keyArray[i];
-              let cardNumber = "";
-              if (cardNo != "ImagesData" && cardNo != "recentScanned" && cardNo != "totalScanned") {
+            let keyArray = Object.keys(data).filter(key => key !== 'recentScanned' && key !== 'totalScanned' && key !== 'ImagesData' && key !== 'totalActualScanned');
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let cardNo = keyArray[i];
+                let cardNumber = "";
+
                 let cardNoList = cardNo.split("~");
                 if (cardNoList.length > 1) {
                   for (let p = 0; p < cardNoList.length; p++) {
@@ -601,14 +602,23 @@ export class WardScancardReportComponent implements OnInit {
                 }
                 let scanTime = data[cardNo]["scanTime"].split(":")[0] + ":" + data[cardNo]["scanTime"].split(":")[1];
                 let date = Number(new Date(this.selectedDate + " " + scanTime).getTime()) / 10000;
+                // =======================================================
+                // CASE 1: EXTERNAL USER
+                // Rule:
+                // - scanBy ka koi check NAHI
+                // - jo data aata hai, wahi show hoga
+                // =======================================================
                 if (this.userType == "External User") {
+
+                  // -------- Ecogram City --------
                   if (this.isEcogram == "1") {
+
                     let wasteCategory = "";
                     if (data[cardNo]["wasteCategory"] != undefined) {
                       wasteCategory = data[cardNo]["wasteCategory"];
                     }
 
-
+                    // ✅ Direct push (NO scanBy filter)
                     this.wardScaanedList.push({
                       wardNo: wardNo,
                       cardNo: cardNumber,
@@ -619,67 +629,80 @@ export class WardScancardReportComponent implements OnInit {
                       sno: Number(date),
                       wasteCategory: wasteCategory
                     });
+
+                    // Sorting latest first
                     this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
                       Number(b.sno) < Number(a.sno) ? 1 : -1
                     );
                     this.wardScanedListFiltered = this.wardScaanedList;
                     this.totalScanedCards = this.wardScanedListFiltered.length;
+
                   }
+                  // -------- Non-Ecogram City --------
                   else {
 
+                    // Card → Ward mapping
                     let dbPath = "CardWardMapping/" + cardNo;
-
                     let mapInstance = this.db.object(dbPath).valueChanges().subscribe((mapData) => {
                       mapInstance.unsubscribe();
+
                       if (mapData != null) {
-                        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", mapData);
                         let line = mapData["line"];
                         let ward = mapData["ward"];
 
+                        // Fetch house details
                         dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
-
                         let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
                           houseInstance.unsubscribe();
-                          let rfId = "";
-                          let personName = "";
-                          if (houseData != null) {
-                            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", houseData);
-                            rfId = houseData["rfid"];
-                            personName = houseData["name"];
-                            const notAllowAutoScan = houseData['notAllowAutoScan']=='yes'?true:false;
-                            if (!notAllowAutoScan) {
-                            this.wardScaanedList.push({
-                              wardNo: wardNo,
-                              cardNo: cardNumber,
-                              time: scanTime,
-                              name: name,
-                              rfId: rfId,
-                              personName: personName,
-                              sno: Number(date),
-                              wasteCategory: ""
-                            });
-                            this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
-                              Number(b.sno) < Number(a.sno) ? 1 : -1
-                            );
-                            this.wardScanedListFiltered = this.wardScaanedList;
-                            this.totalScanedCards = this.wardScanedListFiltered.length;
-                          }
-                          }
 
+                          if (houseData != null) {
+                            const notAllowAutoScan = houseData['notAllowAutoScan'] == 'yes';
+
+                            // ✅ Skip auto-scan restricted houses only
+                            if (!notAllowAutoScan) {
+
+                              this.wardScaanedList.push({
+                                wardNo: wardNo,
+                                cardNo: cardNumber,
+                                time: scanTime,
+                                name: name,
+                                rfId: houseData["rfid"],
+                                personName: houseData["name"],
+                                sno: Number(date),
+                                wasteCategory: ""
+                              });
+
+                              this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
+                                Number(b.sno) < Number(a.sno) ? 1 : -1
+                              );
+                              this.wardScanedListFiltered = this.wardScaanedList;
+                              this.totalScanedCards = this.wardScanedListFiltered.length;
+                            }
+                          }
                         });
                       }
                     });
-
                   }
                 }
+
+                // =======================================================
+                // CASE 2: INTERNAL USER
+                // Rule:
+                // - scanBy = "-1" EXCLUDE karna hai
+                // =======================================================
                 else {
 
+                  // ❌ Exclude auto / invalid scans
                   if (data[cardNo]["scanBy"] != "-1") {
+
+                    // -------- Ecogram City --------
                     if (this.isEcogram == "1") {
+
                       let wasteCategory = "";
                       if (data[cardNo]["wasteCategory"] != undefined) {
                         wasteCategory = data[cardNo]["wasteCategory"];
                       }
+
                       this.wardScaanedList.push({
                         wardNo: wardNo,
                         cardNo: cardNumber,
@@ -690,50 +713,52 @@ export class WardScancardReportComponent implements OnInit {
                         sno: Number(date),
                         wasteCategory: wasteCategory
                       });
+
                       this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
                         Number(b.sno) < Number(a.sno) ? 1 : -1
                       );
                       this.wardScanedListFiltered = this.wardScaanedList;
                       this.totalScanedCards = this.wardScanedListFiltered.length;
+
                     }
+                    // -------- Non-Ecogram City --------
                     else {
+
                       let dbPath = "CardWardMapping/" + cardNo;
                       let mapInstance = this.db.object(dbPath).valueChanges().subscribe((mapData) => {
                         mapInstance.unsubscribe();
+
                         if (mapData != null) {
-                          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", mapData);
                           let line = mapData["line"];
                           let ward = mapData["ward"];
 
                           dbPath = "Houses/" + ward + "/" + line + "/" + cardNo;
-
                           let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData) => {
                             houseInstance.unsubscribe();
-                            let rfId = "";
-                            let personName = "";
-                            if (houseData != null) {
-                              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", houseData);
-                              rfId = houseData["rfid"];
-                              personName = houseData["name"];
-                              const notAllowAutoScan = houseData['notAllowAutoScan']=='yes'?true:false;
-                              if (!notAllowAutoScan) {
-                              this.wardScaanedList.push({
-                                wardNo: wardNo,
-                                cardNo: cardNumber,
-                                time: scanTime,
-                                name: name,
-                                rfId: rfId,
-                                personName: personName,
-                                sno: Number(date),
-                              });
-                              this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
-                                Number(b.sno) < Number(a.sno) ? 1 : -1
-                              );
-                              this.wardScanedListFiltered = this.wardScaanedList;
-                              this.totalScanedCards = this.wardScanedListFiltered.length;
-                            }
-                            }
 
+                            if (houseData != null) {
+                              const notAllowAutoScan = houseData['notAllowAutoScan'] == 'yes';
+
+                              // ✅ Valid manual scans only
+                              if (!notAllowAutoScan) {
+
+                                this.wardScaanedList.push({
+                                  wardNo: wardNo,
+                                  cardNo: cardNumber,
+                                  time: scanTime,
+                                  name: name,
+                                  rfId: houseData["rfid"],
+                                  personName: houseData["name"],
+                                  sno: Number(date),
+                                });
+
+                                this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
+                                  Number(b.sno) < Number(a.sno) ? 1 : -1
+                                );
+                                this.wardScanedListFiltered = this.wardScaanedList;
+                                this.totalScanedCards = this.wardScanedListFiltered.length;
+                              }
+                            }
                           });
                         }
                       });
@@ -742,6 +767,7 @@ export class WardScancardReportComponent implements OnInit {
                 }
               }
             }
+
           }
         });
       }
