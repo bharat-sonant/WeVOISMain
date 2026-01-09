@@ -223,9 +223,11 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Owner Name";
       htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Mobile No.";
-      htmlString += "</td>";
+      if (this.cityName != 'hisar') {
+        htmlString += "<td>";
+        htmlString += "Mobile No.";
+        htmlString += "</td>";
+      }
       htmlString += "<td>";
       htmlString += "House No.";
       htmlString += "</td>";
@@ -277,7 +279,6 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "</td>";
       }
 
-      htmlString += "<td>";
       if (this.cityName == 'hisar') {
         htmlString += "<td>";
         htmlString += "Marking Date";
@@ -318,9 +319,12 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["ownerName"];
         htmlString += "</td>";
-        htmlString += "<td t=s>";
-        htmlString += this.markerExportList[i]["mobileNo"];
-        htmlString += "</td>";
+        if (this.cityName != 'hisar') {
+          htmlString += "<td t='s'>";
+          htmlString += this.markerExportList[i]["mobileNo"];
+          htmlString += "</td>";
+        }
+
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["houseNo"];
         htmlString += "</td>";
@@ -371,7 +375,6 @@ export class WardMarkingSummaryComponent implements OnInit {
           htmlString += this.markerExportList[i]["totalArea"];
           htmlString += "</td>";
         }
-        htmlString += "<td>";
         if (this.cityName == 'hisar') {
           htmlString += "<td t='s'>";
           htmlString += this.markerExportList[i]["markingDate"];
@@ -379,7 +382,7 @@ export class WardMarkingSummaryComponent implements OnInit {
         }
         htmlString += "</tr>";
       }
-      htmlString += "<table>";
+      htmlString += "</table>";
       let fileName = this.commonService.getFireStoreCity() + "-" + type + "-MarkersData.xlsx";
       this.commonService.exportExcel(htmlString, fileName);
       $(this.divLoaderMain).hide();
@@ -433,9 +436,9 @@ export class WardMarkingSummaryComponent implements OnInit {
                     let plotDepth = lineData[markerNo]["plotDepth"] || '';
                     let propId = lineData[markerNo]['propId'] || '';
                     let markingDate = "";
-                    if (lineData[markerNo]["date"]!= null) {
-                      markingDate=lineData[markerNo]["date"].split(" ")[0];
-                      markingDate = markingDate.split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(markingDate.split("-")[1])) + " " + markingDate.split("-")[0] ;
+                    if (lineData[markerNo]["date"] != null) {
+                      markingDate = lineData[markerNo]["date"].split(" ")[0];
+                      markingDate = markingDate.split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(markingDate.split("-")[1])) + " " + markingDate.split("-")[0];
                     }
 
                     let totalArea = lineData[markerNo]['totalArea'] || '';

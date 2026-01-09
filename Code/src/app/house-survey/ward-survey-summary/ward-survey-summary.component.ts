@@ -105,7 +105,7 @@ export class WardSurveySummaryComponent implements OnInit {
           }
         }
       }
-    })
+    });
   }
 
   getLastUpdate() {
@@ -740,9 +740,11 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "<td>";
         htmlString += "LatLng";
         htmlString += "</td>";
-        htmlString += "<td>";
-        htmlString += "Mobile";
-        htmlString += "</td>";
+        if (this.cityName != 'hisar') {
+          htmlString += "<td>";
+          htmlString += "Mobile";
+          htmlString += "</td>";
+        }
         if (localStorage.getItem("userType") == "Internal User") {
           htmlString += "<td>";
           htmlString += "Date";
@@ -775,9 +777,11 @@ export class WardSurveySummaryComponent implements OnInit {
           htmlString += "<td>";
           htmlString += this.cardHousesList[i]["latLng"];
           htmlString += "</td>";
-          htmlString += "<td>";
-          htmlString += this.cardHousesList[i]["mobile"];
-          htmlString += "</td>";
+          if (this.cityName != 'hisar') {
+            htmlString += "<td>";
+            htmlString += this.cardHousesList[i]["mobile"];
+            htmlString += "</td>";
+          }
           if (localStorage.getItem("userType") == "Internal User") {
             htmlString += "<td>";
             htmlString += this.cardHousesList[i]["date"];
@@ -1094,7 +1098,7 @@ export class WardSurveySummaryComponent implements OnInit {
                   // let houseHoldCount = 0;
                   // let complexCount = 0;  
 
-                  const { marksCount = 0, actualMarksCount = 0, surveyedCount = 0, actualSurveyedCount = 0, houseCount = 0, actualHouseCount = 0, lineRevisitCount = 0, actualLineRevisitCount = 0, houseHoldCount = 0, actualHouseHoldCount = 0, complexCount = 0, actualComplexCount = 0, lineRfidNotFoundCount = 0, alreadyInstalledCount = 0 } = markedHouseData[i] || {}
+                  const { marksCount = 0, actualMarksCount = 0, surveyedCount = 0, actualSurveyedCount = 0, houseCount = 0, actualHouseCount = 0, lineRevisitCount = 0, actualLineRevisitCount = 0, houseHoldCount = 0, actualHouseHoldCount = 0, complexCount = 0, actualComplexCount = 0, lineRfidNotFoundCount = 0, alreadyInstalledCount = 0 } = markedHouseData[i] || {};
 
                   // if (parseInt(markedHouseData[i]["marksCount"])) {
                   //   markedCount = markedHouseData[i]["marksCount"];
@@ -1464,7 +1468,7 @@ export class WardSurveySummaryComponent implements OnInit {
     let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
     if (houseTypeDetail != undefined) {
       if (houseTypeDetail.entityType == "residential") {
-        cardType = "आवासीय"
+        cardType = "आवासीय";
       }
       this.surveyedDetailList[Number(index)]["entityType"] = houseTypeDetail.houseType;
     }
