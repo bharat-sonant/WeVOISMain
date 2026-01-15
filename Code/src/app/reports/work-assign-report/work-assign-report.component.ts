@@ -39,7 +39,7 @@ export class WorkAssignReportComponent implements OnInit {
   getWorkAssignment() {
     let list = [];
     let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
-    console.log(dbPath)
+
     let workInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       workInstance.unsubscribe();
       if (data != null) {
@@ -96,16 +96,64 @@ export class WorkAssignReportComponent implements OnInit {
             b.ward < a.ward ? 1 : -1
           );
           for (let i = 0; i < this.workList.length; i++) {
-            this.getEmployeeName(i, this.workList[i]["dutyOnBy"], "dutyOn");
-            if (this.workList[i]["dutyOffBy"] != "") {
-              this.getEmployeeName(i, this.workList[i]["dutyOffBy"], "dutyOff");
+
+            let dutyOnBy = this.workList[i].dutyOnBy;
+            let dutyOffBy = this.workList[i].dutyOffBy;
+
+            /* -------- DUTY ON -------- */
+            if (this.isEmployeeId(dutyOnBy)) {
+
+              this.getEmployeeName(i, dutyOnBy, "dutyOn");
+
+            } else {
+
+              // ✅ empty / null / blank check
+              if (dutyOnBy && dutyOnBy.toString().trim() !== "") {
+
+                const cleanName = dutyOnBy.toString().trim();
+                this.workList[i].dutyOnByName = cleanName;
+
+                // ✅ stable unique id (name based)
+                const id = cleanName.toLowerCase().replace(/\s+/g, "_");
+
+                let detail = this.dutyOnByList.find(item => item.id === id);
+                if (detail === undefined) {
+                  this.dutyOnByList.push({ id, name: cleanName });
+                }
+              }
             }
-            if (i == this.workList.length - 1) {
+
+            /* -------- DUTY OFF -------- */
+            if (this.isEmployeeId(dutyOffBy)) {
+
+              this.getEmployeeName(i, dutyOffBy, "dutyOff");
+
+            } else {
+
+              // ✅ empty / null / blank check
+              if (dutyOffBy && dutyOffBy.toString().trim() !== "") {
+
+                const cleanName = dutyOffBy.toString().trim();
+                this.workList[i].dutyOffByName = cleanName;
+
+                // ✅ stable unique id (name based)
+                const id = cleanName.toLowerCase().replace(/\s+/g, "_");
+
+                let detail = this.dutyOffByList.find(item => item.id === id);
+                if (detail === undefined) {
+                  this.dutyOffByList.push({ id, name: cleanName });
+                }
+              }
+            }
+
+            if (i === this.workList.length - 1) {
               setTimeout(() => {
                 this.workFilterList = this.workList;
               }, 200);
             }
           }
+
+
         }
         else {
           this.commonService.setAlertMessage("error", "No record found !!!");
@@ -114,22 +162,40 @@ export class WorkAssignReportComponent implements OnInit {
       else {
         this.commonService.setAlertMessage("error", "No record found !!!");
       }
-    })
+    });
 
   }
+  normalizeName(value: any): string | null {
+    if (!value) return null;
 
-  getFilteredData(empId: any, type: any) {
+    const name = value.toString().trim();
+    return name.length > 0 ? name : null;
+  }
+  generateId(name: string): string {
+    return name.toLowerCase().replace(/\s+/g, "_");
+  }
+
+  isEmployeeId(value: any) {
+    return (
+      value !== null &&
+      value !== undefined &&
+      value !== "" &&
+      !isNaN(value)
+    );
+  }
+
+  getFilteredData(empName: any, type: any) {
     let list = this.workList;
     if (type == "dutyOn") {
       $("#drpDutyOff").val("0");
-      if (empId != "0") {
-        list = list.filter(item => item.dutyOnBy == empId);
+      if (empName != "0") {
+        list = list.filter(item => item.dutyOnByName == empName);
       }
     }
     else {
       $("#drpDutyOn").val("0");
-      if (empId != "0") {
-        list = list.filter(item => item.dutyOffBy == empId);
+      if (empName != "0") {
+        list = list.filter(item => item.dutyOffByName == empName);
       }
     }
     this.workFilterList = list;
@@ -159,7 +225,7 @@ export class WorkAssignReportComponent implements OnInit {
     });
   }
 
-  resetData(){
+  resetData() {
     $("#drpDutyOn").val("0");
     $("#drpDutyOff").val("0");
     this.workList = [];

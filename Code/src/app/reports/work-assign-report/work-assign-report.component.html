@@ -1,14 +1,15 @@
 <section class="header">
     <div class="row no-gutters">
-      <div class="col-md-5" style=" padding-left: 20px; margin-top: -3px;">
-      </div>
-      <div class="col-md-4" style="font-size: 20px;text-transform: uppercase;letter-spacing: 2px; font-weight: bold; text-align: left;">
-        <b> Work Assign Detail </b>
-      </div>
-      <div class="col-md-2" style="text-align: right; padding-right: 15px;">
-      </div>
+        <div class="col-md-5" style=" padding-left: 20px; margin-top: -3px;">
+        </div>
+        <div class="col-md-4"
+            style="font-size: 20px;text-transform: uppercase;letter-spacing: 2px; font-weight: bold; text-align: left;">
+            <b> Work Assign Detail </b>
+        </div>
+        <div class="col-md-2" style="text-align: right; padding-right: 15px;">
+        </div>
     </div>
-  </section>
+</section>
 <section class="halts" style="padding-left: 10px;">
     <div class="row">
         <div class="col-md-9">
@@ -20,31 +21,37 @@
                                 <div class="col-md-12 text-left p-r ml-20" style="padding-left: 20px!important;">
                                     <button (click)="setPreviousDate();" class="btn-hvr arrow-btn">
                                         << </button>
-                                    <input id="txtDate" class="filter-select filter-input" type="date" (change)="setDate($event.target.value);" />
-                                    <button (click)="setNextDate();" class="btn-hvr arrow-btn2">
+                                            <input id="txtDate" class="filter-select filter-input" type="date"
+                                                (change)="setDate($event.target.value);" />
+                                            <button (click)="setNextDate();" class="btn-hvr arrow-btn2">
                                                 >>
                                             </button>
-        
-                                            <select id="drpDutyOn" class="filter-select filter-input" style="width: 200px;" (change)="getFilteredData($event.target.value,'dutyOn')">
+
+                                            <select id="drpDutyOn" class="filter-select filter-input"
+                                                style="width: 200px;"
+                                                (change)="getFilteredData($event.target.value,'dutyOn')">
                                                 <option value="0">Select Duty On By</option>
-                                                <option value="{{data.id}}" *ngFor="let data of dutyOnByList">
+                                                <option value="{{data.name}}" *ngFor="let data of dutyOnByList">
                                                     {{data.name}}</option>
-        
+
                                             </select>
-        
-                                            <select id="drpDutyOff" class="filter-select filter-input" style="width: 200px;" (change)="getFilteredData($event.target.value,'dutyOff')">
+
+                                            <select id="drpDutyOff" class="filter-select filter-input"
+                                                style="width: 200px;"
+                                                (change)="getFilteredData($event.target.value,'dutyOff')">
                                                 <option value="0">Select Duty Off By</option>
-                                                <option value="{{data.id}}" *ngFor="let data of dutyOffByList">
+                                                <option value="{{data.name}}" *ngFor="let data of dutyOffByList">
                                                     {{data.name}}</option>
                                             </select>
-        
-        
+
+
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 text-left" style="padding-right:0px!important;">
                             <span style="float: right; text-align: center; font-size: 10px; padding-right: 20px">
-                              <img style="cursor: pointer;" (click)="exportToExcel();" src="../../../assets/icons/file-export-solid.svg" alt="not found"><br />
+                                <img style="cursor: pointer;" (click)="exportToExcel();"
+                                    src="../../../assets/icons/file-export-solid.svg" alt="not found"><br />
                                 Export to Excel
                                 <!-- <i class="fa-solid fa-file-export"
                                 style="cursor:pointer; color:green;  font-size: 24px; "
@@ -100,7 +107,8 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none;">
+                                    <div id="divMessage" class="col-md-12 pr-1 text-center"
+                                        style="padding-top: 20vh; display: none;">
                                         <div class="form-group">
                                             <h5>No data available</h5>
                                         </div>
@@ -116,5 +124,5 @@
     </div>
 
 
-   
+
 </section>
