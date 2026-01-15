@@ -110,7 +110,7 @@ export class WorkAssignReportComponent implements OnInit {
               // ✅ empty / null / blank check
               if (dutyOnBy && dutyOnBy.toString().trim() !== "") {
 
-                const cleanName = dutyOnBy.toString().trim();
+                const cleanName = dutyOnBy.toString().trim().toUpperCase();
                 this.workList[i].dutyOnByName = cleanName;
 
                 // ✅ stable unique id (name based)
@@ -133,7 +133,7 @@ export class WorkAssignReportComponent implements OnInit {
               // ✅ empty / null / blank check
               if (dutyOffBy && dutyOffBy.toString().trim() !== "") {
 
-                const cleanName = dutyOffBy.toString().trim();
+                const cleanName = dutyOffBy.toString().trim().toUpperCase();
                 this.workList[i].dutyOffByName = cleanName;
 
                 // ✅ stable unique id (name based)
@@ -189,13 +189,13 @@ export class WorkAssignReportComponent implements OnInit {
     if (type == "dutyOn") {
       $("#drpDutyOff").val("0");
       if (empName != "0") {
-        list = list.filter(item => item.dutyOnByName == empName);
+        list = list.filter(item => item.dutyOnByName.toUpperCase().trim() == empName.toUpperCase().trim());
       }
     }
     else {
       $("#drpDutyOn").val("0");
       if (empName != "0") {
-        list = list.filter(item => item.dutyOffByName == empName);
+        list = list.filter(item => item.dutyOffByName.toUpperCase().trim() == empName.toUpperCase().trim());
       }
     }
     this.workFilterList = list;
@@ -207,16 +207,16 @@ export class WorkAssignReportComponent implements OnInit {
         this.workList[index]["dutyOnByName"] = employee["name"];
         let detail = this.dutyOnByList.find(item => item.id == empId);
         if (detail == undefined) {
-          this.dutyOnByList.push({ id: empId, name: employee["name"] });
+          this.dutyOnByList.push({ id: empId, name: employee["name"].toUpperCase() });
           this.dutyOnByList = this.dutyOnByList.sort((a, b) =>
             b.name < a.name ? 1 : -1
           );
         }
       } else {
-        this.workList[index]["dutyOffByName"] = employee["name"];
+        this.workList[index]["dutyOffByName"] = employee["name"].toUpperCase();
         let detail = this.dutyOffByList.find(item => item.id == empId);
         if (detail == undefined) {
-          this.dutyOffByList.push({ id: empId, name: employee["name"] });
+          this.dutyOffByList.push({ id: empId, name: employee["name"].toUpperCase() });
           this.dutyOffByList = this.dutyOffByList.sort((a, b) =>
             b.name < a.name ? 1 : -1
           );
@@ -230,6 +230,8 @@ export class WorkAssignReportComponent implements OnInit {
     $("#drpDutyOff").val("0");
     this.workList = [];
     this.workFilterList = [];
+    this.dutyOffByList = [];
+    this.dutyOnByList = [];
   }
 
   setDate(filterVal: any) {
