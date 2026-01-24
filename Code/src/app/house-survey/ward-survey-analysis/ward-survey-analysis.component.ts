@@ -72,6 +72,8 @@ export class WardSurveyAnalysisComponent {
   txtHouseOwnerMobile = "#txtHouseOwnerMobile";
   markerUpdateHistoryList: any = [];
   divMarkerUpdateHistory = "#divMarkerUpdateHistory";
+  selectedEntityId: any = null;
+  confirmationPopup = "#confirmationPopup";
 
   progressData: progressDetail = {
     totalMarkers: 0,
@@ -973,10 +975,10 @@ export class WardSurveyAnalysisComponent {
                   className = "commercial-list";
                   isCommercial = true;
                   if (data[i]["Entities"] != null) {
-                    houseHoldCount = data[i]["Entities"].length - 1;
                     let entityData = data[i]["Entities"];
-                    for (let j = 1; j < entityData.length; j++) {
-                      let keyIndex = j;
+                    let entityKeyArray = Object.keys(entityData);
+                    houseHoldCount = entityKeyArray.length;
+                    entityKeyArray.map((keyIndex)=>{
                       let entityImageURL = "../../../assets/img/system-generated-image.jpg";
                       let entityHouseImage = "";
                       if (entityData[keyIndex]["house image"] != null) {
@@ -992,8 +994,9 @@ export class WardSurveyAnalysisComponent {
                         entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + entityData[keyIndex]["houseImage"] + "?alt=media";
                       }
 
-                      entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL, keyIndex: keyIndex });
-                    }
+                      entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL, keyIndex: keyIndex, canBeDeleted: false, cardNo: data[i]["cardNo"] });
+
+                    });
                   }
                 }
                 let date = data[i]["createdDate"].split(' ')[0];
@@ -1026,10 +1029,10 @@ export class WardSurveyAnalysisComponent {
                   formattedApprovedDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
                 }
                 this.scannedCardList.push({ houseImageURL: houseImageURL, imageURL: imageURL, markerImageURL: markerImageURL, cardNo: data[i]["cardNo"], cardType: data[i]["cardType"], name: data[i]["name"], surveyDate: surveyDate, mobile: data[i]["mobile"], address: data[i]["address"], entityList: entityList, surveyorName: surveyorName, class: className, servingCount: servingCount, entityType: entityType, isCommercial: isCommercial, houseHoldCount: houseHoldCount, houseType: data[i]["houseType"], approvedBy: approvedByName, approvedDate: formattedApprovedDate, length: "---", breadth: "---", landType: "---", underGroundArea: "---", groundFloorArea: "---", noOfFloors: "---" });
-                
+
               }
             }
-            if(this.scannedCardList.length>0){
+            if (this.scannedCardList.length > 0) {
               this.getBuildingDetail();
             }
           }
@@ -1047,7 +1050,7 @@ export class WardSurveyAnalysisComponent {
         for (let i = 0; i < keyArray.length; i++) {
           let markerId = keyArray[i];
           if (data[markerId]["cardNumber"] != null) {
-            let cardNo=data[markerId]["cardNumber"];
+            let cardNo = data[markerId]["cardNumber"];
             if (data[markerId]["BuildingDetails"] != null) {
               let length = data[markerId]["BuildingDetails"]["plotLength"] ? data[markerId]["BuildingDetails"]["plotLength"] : "---";
               let breadth = data[markerId]["BuildingDetails"]["plotDepth"] ? data[markerId]["BuildingDetails"]["plotDepth"] : "---";
@@ -1276,6 +1279,7 @@ export class WardSurveyAnalysisComponent {
     let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
     if (detail != undefined) {
       this.entityList = detail.entityList;
+      this.getEntityPaymentStatus(cardNo)
       $(this.divEntityList).show();
     }
   }
@@ -1283,6 +1287,7 @@ export class WardSurveyAnalysisComponent {
   hideEntity() {
     this.entityList = [];
     $(this.divEntityList).hide();
+    this.closeConfirmationPopup()
   }
 
   getOldCard() {
@@ -1313,7 +1318,7 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  openModel(content: any, type: any) {
+  openModel(content: any, type: any, id: any) {
 
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -1336,6 +1341,19 @@ export class WardSurveyAnalysisComponent {
       $("#divStatus").css("height", divHeight);
       this.getOldCard();
     }
+    // else if(type=='DeleteEntity'){
+    //   this.modalService.open(content, { size: "lg" });
+    //   let windowHeight = $(window).height();
+    //   let height = 170;
+    //   let width = 400;
+    //   let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    //   $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    //   $("div .modal-dialog-centered").css("margin-top", "26px");
+    //   // if (id != "0") {
+    //   //   $("#deleteId").val(id);
+    //   // }
+    // }
     else {
       let mapHeight = height - 80 + "px";
       let divHeight = height - 80 + "px";
@@ -2330,6 +2348,52 @@ export class WardSurveyAnalysisComponent {
   }
   closeSubModel(id: any) {
     $(id).hide();
+  }
+  getEntityPaymentStatus = async (cardNo: any) => {
+
+    await Promise.all(this.entityList.map(item => {
+      let path = `/PaymentCollectionInfo/PaymentTransactionHistory/${cardNo}/Entities/${item.keyIndex}`;
+      let paymentInstance = this.db.object(path).valueChanges().subscribe((data: any) => {
+        paymentInstance.unsubscribe();
+        if (!data) {
+          item.canBeDeleted = true;
+        }
+      })
+    }));
+
+  }
+  openConfirmationPopup(entityId: any) {
+    this.selectedEntityId = entityId;
+    $(this.confirmationPopup).show();
+  }
+  closeConfirmationPopup() {
+    this.selectedEntityId = null;
+    $(this.confirmationPopup).hide();
+  }
+  deleteEntity = () => {
+    let detail = this.entityList.find(item => item.keyIndex == this.selectedEntityId);
+    if (detail && detail.cardNo && this.selectedEntityId && this.selectedZone && this.lineNo) {
+      let path = `/PaymentCollectionInfo/PaymentTransactionHistory/${detail.cardNo}/Entities/${this.selectedEntityId}`;
+      let paymentInstance = this.db.object(path).valueChanges().subscribe((data: any) => {
+        paymentInstance.unsubscribe();
+        if (!data) {
+          this.db.object(`/Houses/${this.selectedZone}/${this.lineNo}/${detail.cardNo}/Entities/${this.selectedEntityId}`).remove();
+          this.commonService.setAlertMessage("success", "Entity deleted successfully.");
+          this.entityList = this.entityList.filter(item => item.keyIndex != this.selectedEntityId);
+          let mainDetail = this.scannedCardList.find(item => item.cardNo == detail.cardNo);
+          if (mainDetail != undefined) {
+            mainDetail.entityList = this.entityList;
+            mainDetail.houseHoldCount = this.entityList.length;
+          }
+          this.closeConfirmationPopup();
+          return ;
+        }
+        detail.canBeDeleted = false;
+        this.commonService.setAlertMessage("error", "This entity can not be deleted.");
+        this.closeConfirmationPopup()
+        return;
+      })
+    }
   }
 }
 

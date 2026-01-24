@@ -390,8 +390,12 @@
                                     </a>
                                 </div>
                                 <div class="main-tag">
-                                    <div class="f-left">
-                                        <h3 class="f-left-heading"> {{data.name}} </h3><br />
+                                    <div class="f-left d-flex justify-content-between align-items-center">
+                                        <h3 class="f-left-heading"> {{data.name}} </h3>
+                                        <span type="button" *ngIf="data.canBeDeleted" (click)="openConfirmationPopup(data.keyIndex)">
+                                            <img class="btn-delete" src="../../../assets/icons/dustbin.svg" alt="delete"/>
+                                        </span>
+                                        <br />
                                     </div>
                                 </div>
                             </div>
@@ -755,9 +759,34 @@
             </div>
 
         </div>
+        <div id="confirmationPopup"
+            style="display: none; position: absolute;z-index: 9999; width: 380px;background-color: #fff; margin-left: 38%; padding: 20px; border: 1px solid lightgray; top: 30vh;">
+            <div >
+                <h5 class="confirmation-title" id="exampleModalLongTitle">Delete Entity</h5>
+            </div>
+            <div class="modal-body">
+                <div class="Delete-device">
+                    <img class="deleteImg" src="../../assets/img/deleteImg.png">
+                    <p class="title-assignment text-center">
+                        Are you sure you want to delete this entity?<br/> 
+                        <span style="color: red;">Note : This action cannot be undone.</span>
+                    </p>
+                </div>
+
+                <input type="hidden" id="deleteId" value="0" />
+                <div class="buttonAss">
+                    <div class="Confirm">
+                        <button type="button" class="btn  w-100 submit-btn assignment-btn" (click)="deleteEntity()">
+                            Confirm</button>
+                    </div>
+                    <div class="cancel-btn-popup">
+                        <button type="button" class="btn  w-100 cancel-btn ass-cancel-btn" (click)="closeConfirmationPopup()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-
 </ng-template>
 <!--Surveyed Markers End-->
 

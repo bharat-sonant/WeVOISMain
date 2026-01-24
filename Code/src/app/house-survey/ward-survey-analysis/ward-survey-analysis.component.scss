@@ -1,3 +1,5 @@
+@import '../../../assets/scss/variable';
+@import '../../../assets//scss/fonts';
 .header {
     height: 62px;
     width: 100%;
@@ -1698,4 +1700,115 @@ table tr:hover {
 
 .table-data5 {
     border-right: 1px solid #dee2e6;
+}
+.btn-delete{
+    height: 16px;
+    width: auto;
+    &:hover{
+        @extend .icon-red;
+        cursor: pointer;
+    }
+}
+
+
+
+
+// .modal-content-width {
+//     height: auto !important;
+// }
+
+// .modal {
+//     display: flex;
+//     align-items: center;
+//     margin: 0px;
+// }
+
+// .modal-body {
+//     padding: 30px;
+// }
+
+
+// .modal-footer {
+//     padding: 0px;
+//     margin-top: 30px;
+//     border-top: 0px;
+// }
+.confirmation-title {
+    font-size: 18px;
+    font-family: $fontGraphikSemibold;
+    color: $darkBlack;
+}
+// .modal-heading {
+//     font-size: 14px;
+//     font-weight: bold;
+// }
+// .confirmation-header {
+//     align-items: center;
+//     border-radius: 0px;
+//     padding: 16px 16px;
+//     box-shadow: 0 8px 20px 0 #0000000a;
+//     border-bottom: none;
+// }
+
+// .modal-dialog {
+//     margin-top: 0px !important;
+// }
+
+// .modal-content {
+//     border: none;
+// }
+.Delete-device {
+    flex-direction: column !important;
+    display: flex;
+    align-items: center;
+}
+.deleteImg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+}
+
+.cancel-btn {
+    height: 48px;
+}
+
+.title-assignment {
+    font-size: 14px;
+    color: $darkBlack;
+    font-family: $fontGraphik;
+}
+.buttonAss{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.assignment-btn{
+    background-color: #f06548 !important;
+    font-family: $fontGraphikMedium;
+     font-weight: normal !important;
+     height: 40px !important;
+
+}
+.assignment-btn:hover{
+    background-color: #db4b2e !important;
+    
+    
+}
+.ass-cancel-btn{
+    background-color: $white;
+    border: 1px solid $borderColor;
+    color:$black70;
+    font-family: $fontGraphikSemibold;
+    font-weight: normal !important;
+      height: 40px !important;
+;
+    
+}
+.ass-cancel-btn:hover{
+    box-shadow: none;
+}
+.ass-cancel-btn:focus{
+    background-color: $white !important;
+    color:$black70;
 }
