@@ -29,6 +29,9 @@ export class AccountDetailComponent implements OnInit {
   key = "#key";
   divSolved = "#divSolved";
   divLoader = "#divLoader";
+  empHistoryName = "#empHistoryName";
+  empHistoryCode = "#empHistoryCode";
+  tblEmpBankDetailUpdateHistory = "#tblEmpBankDetailUpdateHistory";
   fireStoreCity: any;
   fireStorePath: any;
   toDayDate: any;
@@ -42,7 +45,7 @@ export class AccountDetailComponent implements OnInit {
     date: "",
     lastUpdate: "",
     lastUpdateBy: ""
-  }
+  };
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -54,7 +57,7 @@ export class AccountDetailComponent implements OnInit {
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
-    this.isLockUnlock = localStorage.getItem("isLock")
+    this.isLockUnlock = localStorage.getItem("isLock");
     this.toDayDate = this.commonService.setTodayDate();
     this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStorePath = this.commonService.fireStoragePath;
@@ -202,6 +205,10 @@ export class AccountDetailComponent implements OnInit {
     if (type == "remark") {
       height = 275;
     }
+    else if (type == "bankHistory") {
+      height = 460;
+      width = 1100;
+    }
 
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -231,7 +238,7 @@ export class AccountDetailComponent implements OnInit {
         }
       }
     }
-    else {
+    else if (type == "remarkDetail") {
       let userDetail = this.accountList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         this.remarkDetail.remark = userDetail.remark;
@@ -239,10 +246,28 @@ export class AccountDetailComponent implements OnInit {
         let userData = this.commonService.getPortalUserDetailById(userDetail.remarkBy);
         if (userData != undefined) {
           let name = userData["name"];
-          this.remarkDetail.by = name
+          this.remarkDetail.by = name;
         }
       }
     }
+    else if (type == "bankHistory") {
+      let userDetail = this.accountList.find((item) => item.empId == id);
+      if (userDetail != undefined) {
+        $(this.empHistoryName).text(userDetail.name ? userDetail.name : "");
+        $(this.empHistoryCode).text(userDetail.empCode ? "[" + userDetail.empCode + "]" : "");
+      }
+      this.getBankDetailUpdateHistory(id);
+    }
+  }
+
+  openBankDetailHistoryPopup(content: any, empId: any) {
+    this.hasBankDetailHistory(empId).then((isExists: any) => {
+      if (isExists == false) {
+        this.commonService.setAlertMessage("error", "No history found");
+        return;
+      }
+      this.openModel(content, empId, "bankHistory");
+    });
   }
 
   saveAccountDetail() {
@@ -259,6 +284,11 @@ export class AccountDetailComponent implements OnInit {
         let portalUserDetail = portalUserList.find(item => item.userId == this.userId);
         if (portalUserDetail != undefined) {
           let name = portalUserDetail.name;
+          let preAccountNumber = $(this.preAccountNo).val();
+          let preIFSCCOde = $(this.preIFSC).val();
+          if (preAccountNumber != accountNo || preIFSCCOde != ifsc) {
+            this.saveBankDetailUpdateHistory(id, preAccountNumber, preIFSCCOde, accountNo, ifsc, name, time);
+          }
           this.saveEmployeeModificationHistory(id, name, time);
           this.updateEmployeeSummary(id, name, time);
           this.updateAccountListData(id, name, time, accountNo, ifsc);
@@ -280,7 +310,7 @@ export class AccountDetailComponent implements OnInit {
     const data = {
       by: name,
       date: time
-    }
+    };
     this.db.object(dbPath).update(data);
   }
 
@@ -323,12 +353,99 @@ export class AccountDetailComponent implements OnInit {
     });
   }
 
+  saveBankDetailUpdateHistory(employeeId: any, preAccountNumber: any, preIFSCCOde: any, updatedAccountNumber: any, updateIFSCode: any, updateBy: any, updateDate: any) {
+    let dbPath = "BankDetailUpdateHistory/" + employeeId + "/lastKey";
+    let lastKeyInstance = this.db.object(dbPath).valueChanges().subscribe((lastKeyData: any) => {
+      lastKeyInstance.unsubscribe();
+      let lastKey = 1;
+      if (lastKeyData != null) {
+        lastKey = Number(lastKeyData) + 1;
+      }
+
+      const data = {
+        preAccountNumber: preAccountNumber,
+        preIFSCCOde: preIFSCCOde,
+        updateDate: updateDate,
+        updateIFSCode: updateIFSCode,
+        updatedAccountNumber: updatedAccountNumber,
+        updateBy: updateBy
+      };
+
+      this.db.object("BankDetailUpdateHistory/" + employeeId + "/" + lastKey).update(data);
+      this.db.object("BankDetailUpdateHistory/" + employeeId).update({ lastKey: lastKey });
+      this.setBankDetailHistoryFlag(employeeId);
+    });
+  }
+
+  hasBankDetailHistory(empId: any) {
+    return new Promise((resolve) => {
+      let dbPath = "BankDetailUpdateHistory/" + empId;
+      let historyInstance = this.db.object(dbPath).valueChanges().subscribe((historyData: any) => {
+        historyInstance.unsubscribe();
+        let isExists = false;
+        if (historyData != null) {
+          const keyList = Object.keys(historyData).filter(key => key != "lastKey");
+          if (keyList.length > 0) {
+            isExists = true;
+          }
+        }
+        resolve(isExists);
+      }, () => {
+        resolve(false);
+      });
+    });
+  }
+
+  setBankDetailHistoryFlag(empId: any) {
+    let detail = this.accountList.find(item => item.empId == empId);
+    if (detail != undefined) {
+      detail.hasBankDetailHistory = true;
+    }
+    let allDetail = this.allAccountList.find(item => item.empId == empId);
+    if (allDetail != undefined) {
+      allDetail.hasBankDetailHistory = true;
+    }
+  }
+
+  getBankDetailUpdateHistory(empId: any) {
+    $(this.tblEmpBankDetailUpdateHistory).html("");
+    let dbPath = "BankDetailUpdateHistory/" + empId;
+    let historyInstance = this.db.object(dbPath).valueChanges().subscribe((historyData: any) => {
+      historyInstance.unsubscribe();
+      let html = "";
+      if (historyData != null) {
+        const keyList = Object.keys(historyData).filter(key => key != "lastKey")
+          .sort((a: any, b: any) => Number(b) - Number(a));
+        if (keyList.length > 0) {
+          for (let i = 0; i < keyList.length; i++) {
+            const data = historyData[keyList[i]];
+            html += "<tr>";
+            html += "<td class='text-left br-1'>" + (i + 1) + "</td>";
+            html += "<td class='text-left br-1'>" + (data["preAccountNumber"] ? data["preAccountNumber"] : "---") + "</td>";
+            html += "<td class='text-left br-1'>" + (data["preIFSCCOde"] ? data["preIFSCCOde"] : "---") + "</td>";
+            html += "<td class='text-left br-1'>" + (data["updatedAccountNumber"] ? data["updatedAccountNumber"] : "---") + "</td>";
+            html += "<td class='text-left br-1'>" + (data["updateIFSCode"] ? data["updateIFSCode"] : "---") + "</td>";
+            html += "<td class='text-left br-1'><div>" + (data["updateBy"] ? data["updateBy"] : "---") + "</div><div style='font-size:12px;'>" + (data["updateDate"] ? data["updateDate"] : "---") + "</div></td>";
+            html += "</tr>";
+          }
+        }
+        else {
+          html = "<tr><td class='text-center br-1' colspan='6'>No history found</td></tr>";
+        }
+      }
+      else {
+        html = "<tr><td class='text-center br-1' colspan='6'>No history found</td></tr>";
+      }
+      $(this.tblEmpBankDetailUpdateHistory).html(html);
+    });
+  }
+
   saveRemarkData(id: any, remarkBy: any, remark: any, remarkDate: any) {
     const data = {
       remarkBy: remarkBy,
       remark: remark,
       remarkDate: remarkDate
-    }
+    };
     if (this.remarkJsonObject == null) {
       const obj = {};
       obj[id.toString()] = data;
@@ -386,7 +503,7 @@ export class AccountDetailComponent implements OnInit {
             remarkDate: userDetail.remarkDate,
             solvedDate: remarkDate,
             solvedBy: remarkBy
-          }
+          };
 
           const path = this.fireStorePath + this.fireStoreCity + "%2FEmployeeAccountIssue%2FHistory%2F" + id + ".json?alt=media";
           let accountIssueInstance = this.httpService.get(path).subscribe(remarkData => {
@@ -532,8 +649,10 @@ export class AccountDetailComponent implements OnInit {
                   }
                 }
               }
-              employeeData = { empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType, dateOfLeave: dateOfLeave, salaryType: salaryType,payroll:payroll,isDummyId:isDummyId };
-              resolve({ status: "success", data: employeeData });
+              this.hasBankDetailHistory(empId).then((isExists: any) => {
+                employeeData = { empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType, dateOfLeave: dateOfLeave, salaryType: salaryType, payroll: payroll, isDummyId: isDummyId, hasBankDetailHistory: isExists };
+                resolve({ status: "success", data: employeeData });
+              });
             }
             else {
               resolve({ status: "fail", data: employeeData });
