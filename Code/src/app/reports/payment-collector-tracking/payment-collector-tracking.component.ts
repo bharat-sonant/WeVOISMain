@@ -565,12 +565,19 @@ export class PaymentCollectorTrackingComponent {
           for (let j = 0; j < dateKeyArray.length; j++) {
             let date = dateKeyArray[j];
             if (date == this.selectedDate) {
-              let list = dateData[date];
-              for (let k = 1; k < list.length; k++) {
-                if (list[k]["cardNo"] != null) {
-                  this.cardList.push({ cardNo: list[k]["cardNo"], payMethod: list[k]["payMethod"] ? list[k]["payMethod"] : "", transactionAmount: list[k]["transactionAmount"] ? list[k]["transactionAmount"] : "0", entityId: key, merchantTransactionId: list[k]["merchantTransactionId"] ? list[k]["merchantTransactionId"] : "" });
+              let rawList = dateData[date];
+              let list = Object.values(rawList || []);
+              list.forEach((item:any) => {
+                if (item && item.cardNo) {
+                  this.cardList.push({
+                    cardNo: item.cardNo,
+                    payMethod: item.payMethod || "",
+                    transactionAmount: item.transactionAmount || "0",
+                    entityId: key,
+                    merchantTransactionId: item.merchantTransactionId || "",
+                  });
                 }
-              }
+              });
             }
           }
         }
