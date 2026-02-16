@@ -240,6 +240,11 @@
                                                 History </span></button>
                                     </a>
                                 </div>
+                                <div class="col-md-12 mt-10 pl-0 pr-0 dustbin-history"
+                                    [hidden]="canRemoveNotPickedDustbin=='0' || (cityName!='kuchaman' && cityName!='devtest')"
+                                    (click)="openDeleteAllConfirmationModel(contentDeleteAllConfirmation);">
+                                    <button class="button"><span>Delete all unpicked dustbin</span></button>
+                                </div>
                                 <div id="updateDustbinDiv" [hidden]="showUpdateDetailButton==0"
                                     class="col-md-12 mt-10 pl-0 pr-0"
                                     (click)="openModel(UpdateDustbinPickedDetail,binDetail,'UpdateDustbinPickedDetail');">
@@ -391,7 +396,8 @@
 
                                         <span [innerHTML]="data.duration" style="font-size: 10px;"></span>
 
-                                        <input type="checkbox" *ngIf="data.duration" [hidden]="userType=='External User'"
+                                        <input type="checkbox" *ngIf="data.duration"
+                                            [hidden]="userType=='External User'"
                                             [(ngModel)]="data.isVerifiedDustbinChecked"
                                             (change)="updateVerifiedDustbins(data.dustbinId, data.planId, data.isVerifiedDustbinChecked)"
                                             [title]="data.isVerifiedDustbinChecked ? 'Click to unverify this dustbin' : 'Click to verify this dustbin'"
@@ -441,6 +447,35 @@
                     <div class="col-md-6">
                         <input type="button" class="btn w-100 btn-success submit-btn" value="Confirm"
                             (click)="removeUnpickedDustbin();" style="height: 45px;margin-left: 0px;" />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="button" class="btn w-100 btn-danger" value="Cancel" (click)="closeModel();"
+                            style="height: 45px;margin-left: 0px;margin-top: 0px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #contentDeleteAllConfirmation>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="border-radius: 8px; overflow: hidden;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+              
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div class="wrap-input-effects"
+                    style="display:flex; align-items:flex-start; gap:8px; padding-bottom: 20px; line-height: 1.5;">
+                    <input id="chkConfirmDeleteAll" type="checkbox" style="margin-top: 3px;">
+                    <label for="chkConfirmDeleteAll" style="margin-bottom: 0; cursor: pointer;">
+                        You want to delete all unpicked dustbin from plan. Are you sure?
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="button" class="btn w-100 btn-success submit-btn" value="Confirm"
+                            (click)="confirmDeleteAllUnpickedDustbin();" style="height: 45px;margin-left: 0px;" />
                     </div>
                     <div class="col-md-6">
                         <input type="button" class="btn w-100 btn-danger" value="Cancel" (click)="closeModel();"

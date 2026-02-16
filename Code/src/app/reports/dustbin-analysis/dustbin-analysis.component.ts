@@ -218,16 +218,68 @@ export class DustbinAnalysisComponent implements OnInit {
       bins: bins,
       pickingSequence: pickingSequence
     };
-    if (bins == "") {
-      this.db.object(dbPath).set(null);
-      this.resetData();
-      this.getBinsForSelectedPlan(this.planList[0]["planId"]);
-    }
-    else {
-      this.db.object(dbPath).update(obj);
-    }
+
+    this.db.object(dbPath).update(obj);
     this.commonService.setAlertMessage("success", "Dustbin removed from plan!!!");
 
+  }
+
+  removeAllUnpickedDustbinFromPlan(planId: any, dustbinIdList: any[], planData: any, dbPath: any) {
+    let removeIds = dustbinIdList.map(x => x.toString().trim());
+    let binList = planData["bins"].split(",");
+    let sequenceList = planData["pickingSequence"].split(",");
+    let bins = "";
+    let pickingSequence = "";
+
+    for (let i = 0; i < binList.length; i++) {
+      if (removeIds.indexOf(binList[i].trim()) == -1) {
+        if (bins == "") {
+          bins = binList[i].trim();
+        }
+        else {
+          bins += "," + binList[i].trim();
+        }
+      }
+    }
+
+    for (let i = 0; i < sequenceList.length; i++) {
+      if (removeIds.indexOf(sequenceList[i].trim()) == -1) {
+        if (pickingSequence == "") {
+          pickingSequence = sequenceList[i].trim();
+        }
+        else {
+          pickingSequence += "," + sequenceList[i].trim();
+        }
+      }
+    }
+
+    let obj = {
+      bins: bins,
+      pickingSequence: pickingSequence
+    };
+
+
+    this.db.object(dbPath).update(obj);
+    this.commonService.setAlertMessage("success", "All unpicked dustbin removed from plan!!!");
+  }
+
+  getRemoveAllUnpickedDustbinFromPlan(planId: any, dustbinIdList: any[]) {
+    let dbPath = "DustbinData/DustbinPickingPlanHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + planId;
+    let planDateInstance = this.db.object(dbPath).valueChanges().subscribe((historyData:any) => {
+      planDateInstance.unsubscribe();
+      if (historyData == null) {
+        dbPath = "DustbinData/DustbinPickingPlans/" + this.selectedDate + "/" + planId;
+        let planInstance = this.db.object(dbPath).valueChanges().subscribe((planData:any) => {
+          planInstance.unsubscribe();
+          if (planData != null) {
+            this.removeAllUnpickedDustbinFromPlan(planId, dustbinIdList, planData, dbPath);
+          }
+        });
+      }
+      else {
+        this.removeAllUnpickedDustbinFromPlan(planId, dustbinIdList, historyData, dbPath);
+      }
+    });
   }
 
   openConfirmationModel(content: any, id: any, planId: any) {
@@ -241,6 +293,73 @@ export class DustbinAnalysisComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", "26px");
     $("#hddRemoveIndex").val(id);
     $("#hddRemovePlanId").val(planId);
+  }
+
+  openDeleteAllConfirmationModel(content: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 200;
+    let width = 450;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+  }
+
+  confirmDeleteAllUnpickedDustbin() {
+    let element = <HTMLInputElement>document.getElementById("chkConfirmDeleteAll");
+    if (element == null || element.checked == false) {
+      this.commonService.setAlertMessage("error", "Please check confirmation!!!");
+      return;
+    }
+
+    let selectedPlanId = this.planId ? this.planId : this.planDetail.planId;
+    if (selectedPlanId == null || selectedPlanId == "") {
+      this.commonService.setAlertMessage("error", "No plan selected.");
+      return;
+    }
+
+    let unpickedDustbinIdList = this.dustbinList
+      .filter(item => item.planId == selectedPlanId && item.iconClass == "fas fa-ellipsis-h")
+      .map(item => item.dustbinId);
+
+    if (unpickedDustbinIdList.length == 0) {
+      this.commonService.setAlertMessage("error", "No unpicked dustbin found for delete.");
+      this.closeModel();
+      return;
+    }
+
+    // Local list update without full page refresh
+    let removeIds = unpickedDustbinIdList.map(item => item.toString().trim());
+    this.dustbinList = this.dustbinList.filter(item => {
+      if (item.planId != selectedPlanId) {
+        return true;
+      }
+      return removeIds.indexOf(item.dustbinId.toString().trim()) == -1;
+    });
+    if (this.dustbinList.length == 0) {
+      this.resetData();
+    }
+    else if (removeIds.indexOf(this.binDetail.binId.toString().trim()) != -1) {
+      this.showDustbinData(0);
+    }
+
+    let selectedPlan = this.planList.find(item => item.planId == selectedPlanId);
+    if (selectedPlan != undefined) {
+      let binList = selectedPlan["bins"] ? selectedPlan["bins"].split(",") : [];
+      let sequenceList = selectedPlan["pickingSequence"] ? selectedPlan["pickingSequence"].split(",") : [];
+      selectedPlan["bins"] = binList
+        .map((item:any) => item.toString().trim())
+        .filter((item:any) => removeIds.indexOf(item) == -1)
+        .join(",");
+      selectedPlan["pickingSequence"] = sequenceList
+        .map((item:any) => item.toString().trim())
+        .filter((item:any) => removeIds.indexOf(item) == -1)
+        .join(",");
+    }
+
+    this.getRemoveAllUnpickedDustbinFromPlan(selectedPlanId, unpickedDustbinIdList);
+    this.closeModel();
   }
 
   getAssignedPlans() {
