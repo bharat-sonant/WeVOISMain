@@ -35,6 +35,7 @@ export class CardScanningReportComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.userType = localStorage.getItem("userType");
+    
 
     this.commonService.savePageLoadHistory(
       "General-Reports",
@@ -232,6 +233,7 @@ export class CardScanningReportComponent implements OnInit {
 
           let scannedCardCount = 0;
           let cardsForTypeCount: string[] = [];
+          console.log(this.userType)
 
           /* ===============================
              EXTERNAL USER

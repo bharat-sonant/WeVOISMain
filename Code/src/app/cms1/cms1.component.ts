@@ -992,6 +992,40 @@ export class Cms1Component implements OnInit {
     return scanTime;
   }
 
+  deleteHisarMarker(){
+    let count=0;
+    let element = <HTMLInputElement>document.getElementById("fileUpload");
+    let file = element.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(file);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      var workbook = XLSX.read(bstr, { type: "binary" });
+      this.first_sheet_name = workbook.SheetNames[0];
+      console.log(this.first_sheet_name);
+      var worksheet = workbook.Sheets[this.first_sheet_name];
+      let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      console.log("arrey length => " + fileList.length);
+      for (let i = 0; i < fileList.length; i++) {
+        count++;
+        let ward = fileList[i]["Zone"];
+        let lineNo = fileList[i]["Line"];
+        let markerNo = fileList[i]["MarkerKey"];
+        let ownerName = fileList[i]["Owner Name"];
+        let dbPath="EntityMarkingData/MarkedHouses/"+ward+"/"+lineNo+"/"+markerNo;
+        //console.log(ownerName);
+        console.log(dbPath);
+        this.db.object(dbPath).remove();
+        
+      }
+    }
+
+  }
+
   hisarMarkerUpload() {
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];

@@ -53,6 +53,8 @@ export class SetNearbyWardComponent implements OnInit {
   getNearByWards() {
     this.nearByWards = [];
     const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FNearByWards%2FNearByWards.json?alt=media";
+    console.log("get path")
+    console.log(path)
     let nearByWardsInstance = this.httpService.get(path).subscribe((data) => {
       nearByWardsInstance.unsubscribe();
       this.nearByWardJsonObj = data;
@@ -187,6 +189,8 @@ export class SetNearbyWardComponent implements OnInit {
   saveData() {
     $(this.divLoaderUpdate).show();
     const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FNearByWards%2FNearByWards.json?alt=media";
+    console.log("save path")
+    console.log(path)
     let nearByWardsInstance = this.httpService.get(path).subscribe(
       (data) => {
         nearByWardsInstance.unsubscribe();
@@ -196,7 +200,7 @@ export class SetNearbyWardComponent implements OnInit {
         }
         if (data != undefined) {
           data[this.selectedZone.toString()] = this.nearByWards;
-          this.commonService.saveCommonJsonFile(data, "NearByWards.json", this.commonService.getFireStoreCity() + "/NearByWards/");
+          this.commonService.saveJsonFile(data, "NearByWards.json", "/NearByWards/");
           this.commonService.setAlertMessage("success", "Near by ward saved Successfully !!!");
         }
         $(this.divLoaderUpdate).hide();
@@ -204,7 +208,7 @@ export class SetNearbyWardComponent implements OnInit {
       (error) => {
         const data = {};
         data[this.selectedZone.toString()] = this.nearByWards;
-        this.commonService.saveCommonJsonFile(data, "NearByWards.json", this.commonService.getFireStoreCity() + "/NearByWards/");
+        this.commonService.saveJsonFile(data, "NearByWards.json", "/NearByWards/");
         this.commonService.setAlertMessage("success", "Near by ward saved Successfully !!!");
         $(this.divLoaderUpdate).hide();
       }

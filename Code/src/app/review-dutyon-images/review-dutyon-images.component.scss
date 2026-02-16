@@ -836,3 +836,80 @@ table tr:hover {
     opacity: 0.8;
     margin-bottom: 15px;
 }
+
+.compare-btn {
+  margin-left: 10px;
+  padding: 5px 12px;
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Slider width increased for single row */
+.slider-window {
+  position: fixed;
+  top: 0;
+  right: -700px;
+  width: 490px;
+  height: 100vh;
+  background: #ffffff;
+  box-shadow: -4px 0 12px rgba(0,0,0,0.15);
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.slider-window.open {
+  right: 0;
+}
+
+.slider-header {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.slider-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.close-btn {
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Single row layout */
+.single-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 12px;
+}
+
+/* Person card */
+.person-card {
+  flex: 0 0 50%;     /* exact 50% width */
+  max-width: 50%;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.person-card img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+

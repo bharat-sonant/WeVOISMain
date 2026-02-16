@@ -810,7 +810,36 @@ export class EmployeeSalaryComponent implements OnInit {
     }
   }
 
-  updateAccountDetail() {
+  
+    openExportSalary(content: any) {
+      let isChecked = false;
+    let checkArray = [];
+    for (let i = 0; i < this.salaryList.length; i++) {
+      let empId = this.salaryList[i]["empId"];
+      let element = <HTMLInputElement>document.getElementById("chk" + empId);
+      if (element.checked == true) {
+        isChecked = true;
+        checkArray.push({ empId: empId });
+      }
+    }
+    if (isChecked == false) {
+      this.commonService.setAlertMessage("error", "Please check at least 1 employee for salary !!!");
+      return;
+    }
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 400;
+      let width = 500;
+      //height = (windowHeight * 90) / 100;
+      let divHeight = height - 90 + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px");
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "29px");
+      $("#divVehicle").css("height", divHeight);
+      //this.getAvgSpeedOfLines();
+    }
+
+  updateAccountDetail(bankName:any) {
     let isChecked = false;
     let checkArray = [];
     for (let i = 0; i < this.salaryList.length; i++) {
@@ -858,14 +887,206 @@ export class EmployeeSalaryComponent implements OnInit {
             let time = this.toDayDate + " " + this.commonService.getCurrentTimeWithSecond();
             const obj = { lastUpdate: time };
             this.commonService.saveJsonFile(obj, "LastUpdate.json", filePath);
-            this.downloadNEFTSalary();
+            if(bankName=="idfc"){
+            this.downloadIDFCNEFTSalary();
+            }
+            else if(bankName=="hdfc"){
+              this.downloadHDFCFCNEFTSalary();
+            }
           }
         }
       );
     }
   }
 
-  downloadNEFTSalary() {
+  
+  downloadHDFCFCNEFTSalary() {
+    let htmlString = "";
+    if (this.salaryList.length > 0) {
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      //htmlString += "<td>";
+      //htmlString += "EMP ID";
+      //htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Transaction Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Beneficiary Code";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Beneficiary Account Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Instrument Amount";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Beneficiary Name";
+      htmlString += "</td>";
+      htmlString += "<td style'display:none'>";
+      htmlString += "Drawee Location";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Print Location";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Bene Address 1";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Bene Address 2";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Bene Address 3";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Bene Address 4";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Bene Address 5";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Instruction Reference Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Customer Reference Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment details 1";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment details 2";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment details 3";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment details 4";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment details 5";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment details 6";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Payment details 7";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Cheque Number";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Cheque Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "MICR NO";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "IFSC COD";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "BENE BANK";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Bene Bank Branch";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Bene Email Id";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      let month=$(this.ddlMonth).val();
+      let dateSalary=this.commonService.getCurrentMonthShortName(Number(month))+" "+$(this.ddlYear).val()+" Salary";
+      let checkDate= this.toDayDate.split('-')[2]+"/"+this.toDayDate.split('-')[1]+"/"+this.toDayDate.split('-')[0];
+      let empBanificiaryCode=1;
+      for (let i = 0; i < this.salaryList.length; i++) {
+        let empId = this.salaryList[i]["empId"];
+        let element = <HTMLInputElement>document.getElementById("chk" + empId);
+        if (element.checked == true) {
+          htmlString += "<tr>";
+          //htmlString += "<td t='s'>";
+          //htmlString += this.salaryList[i]["empCode"];
+          //htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "N";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += (empBanificiaryCode < 10 ? '0' : '') + empBanificiaryCode;
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.salaryList[i]["accountNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.salaryList[i]["uploadedSalary"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.salaryList[i]["empCode"] + " " + this.salaryList[i]["name"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += dateSalary;
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += dateSalary
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += checkDate;
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString+=this.salaryList[i]["ifsc"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString+="wevoishdfcenet@gmail.com"
+          htmlString += "</td>";          
+          htmlString += "</tr>";
+          empBanificiaryCode++;
+        }
+      }
+      htmlString += "</table>";
+
+      $(this.divLoader).hide();
+      let fileName = "HDFC Bank Salary-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
+      this.exportExcel(htmlString, fileName);
+      setTimeout(() => {
+        this.closeModel();        
+      }, 200);
+    }
+  }
+
+  downloadIDFCNEFTSalary() {
     let htmlString = "";
     if (this.salaryList.length > 0) {
       htmlString = "<table>";
@@ -955,7 +1176,7 @@ export class EmployeeSalaryComponent implements OnInit {
       htmlString += "</table>";
 
       $(this.divLoader).hide();
-      let fileName = "Salary-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
+      let fileName = "IDFC Bank Salary-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
       this.exportExcel(htmlString, fileName);
     }
   }

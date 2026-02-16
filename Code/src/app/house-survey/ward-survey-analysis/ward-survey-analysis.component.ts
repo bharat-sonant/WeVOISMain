@@ -978,7 +978,7 @@ export class WardSurveyAnalysisComponent {
                     let entityData = data[i]["Entities"];
                     let entityKeyArray = Object.keys(entityData);
                     houseHoldCount = entityKeyArray.length;
-                    entityKeyArray.map((keyIndex)=>{
+                    entityKeyArray.map((keyIndex) => {
                       let entityImageURL = "../../../assets/img/system-generated-image.jpg";
                       let entityHouseImage = "";
                       if (entityData[keyIndex]["house image"] != null) {
@@ -1279,7 +1279,9 @@ export class WardSurveyAnalysisComponent {
     let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
     if (detail != undefined) {
       this.entityList = detail.entityList;
-      this.getEntityPaymentStatus(cardNo)
+      if (this.cityName == "pali") {
+        this.getEntityPaymentStatus(cardNo);
+      }
       $(this.divEntityList).show();
     }
   }
@@ -1318,7 +1320,7 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
-  openModel(content: any, type: any, id: any) {
+  openModel(content: any, type: any) {
 
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
@@ -2386,7 +2388,7 @@ export class WardSurveyAnalysisComponent {
             mainDetail.houseHoldCount = this.entityList.length;
           }
           this.closeConfirmationPopup();
-          return ;
+          return;
         }
         detail.canBeDeleted = false;
         this.commonService.setAlertMessage("error", "This entity can not be deleted.");

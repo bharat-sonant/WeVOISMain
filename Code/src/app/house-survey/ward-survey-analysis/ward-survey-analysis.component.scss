@@ -1704,6 +1704,7 @@ table tr:hover {
 .btn-delete{
     height: 16px;
     width: auto;
+    color:"red important";
     &:hover{
         @extend .icon-red;
         cursor: pointer;

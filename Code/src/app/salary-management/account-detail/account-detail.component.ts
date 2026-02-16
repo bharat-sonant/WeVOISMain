@@ -414,18 +414,21 @@ export class AccountDetailComponent implements OnInit {
       historyInstance.unsubscribe();
       let html = "";
       if (historyData != null) {
-        const keyList = Object.keys(historyData).filter(key => key != "lastKey")
-          .sort((a: any, b: any) => Number(b) - Number(a));
+        const keyList = Object.keys(historyData).filter(key => key != "lastKey");
         if (keyList.length > 0) {
           for (let i = 0; i < keyList.length; i++) {
             const data = historyData[keyList[i]];
+            let updateDate = data["updateDate"];
+            let date = updateDate.split(" ")[0];
+            let time = updateDate.split(" ")[1];
+            date = date.split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split("-")[1])) + " " + date.split("-")[0] + " " + time;
             html += "<tr>";
             html += "<td class='text-left br-1'>" + (i + 1) + "</td>";
             html += "<td class='text-left br-1'>" + (data["preAccountNumber"] ? data["preAccountNumber"] : "---") + "</td>";
             html += "<td class='text-left br-1'>" + (data["preIFSCCOde"] ? data["preIFSCCOde"] : "---") + "</td>";
             html += "<td class='text-left br-1'>" + (data["updatedAccountNumber"] ? data["updatedAccountNumber"] : "---") + "</td>";
             html += "<td class='text-left br-1'>" + (data["updateIFSCode"] ? data["updateIFSCode"] : "---") + "</td>";
-            html += "<td class='text-left br-1'><div>" + (data["updateBy"] ? data["updateBy"] : "---") + "</div><div style='font-size:12px;'>" + (data["updateDate"] ? data["updateDate"] : "---") + "</div></td>";
+            html += "<td class='text-left br-1'><div>" + (data["updateBy"] ? data["updateBy"] : "---") + "</div><div style='font-size:12px;'>" + date + "</div></td>";
             html += "</tr>";
           }
         }

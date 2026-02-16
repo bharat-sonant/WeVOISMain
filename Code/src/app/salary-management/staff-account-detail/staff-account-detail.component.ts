@@ -25,6 +25,9 @@ export class StaffAccountDetailComponent implements OnInit {
   txtAccountNo = "#txtAccountNo";
   txtIFSC = "#txtIFSC";
   txtRemarks = "#txtRemarks";
+  empHistoryName = "#empHistoryName";
+  empHistoryCode = "#empHistoryCode";
+  tblEmpBankDetailUpdateHistory = "#tblEmpBankDetailUpdateHistory";
   key = "#key";
   divSolved = "#divSolved";
   divLoader = "#divLoader";
@@ -196,6 +199,10 @@ export class StaffAccountDetailComponent implements OnInit {
     if (type == "remark") {
       height = 275;
     }
+    else if (type == "bankHistory") {
+      height = 460;
+      width = 1100;
+    }
 
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
@@ -225,6 +232,14 @@ export class StaffAccountDetailComponent implements OnInit {
         }
       }
     }
+    else if (type == "bankHistory") {
+      let userDetail = this.accountList.find((item) => item.empId == id);
+      if (userDetail != undefined) {
+        $(this.empHistoryName).text(userDetail.name ? userDetail.name : "");
+        $(this.empHistoryCode).text(userDetail.empCode ? "[" + userDetail.empCode + "]" : "");
+      }
+      this.getBankDetailUpdateHistory(id);
+    }
     else {
       let userDetail = this.accountList.find((item) => item.empId == id);
       if (userDetail != undefined) {
@@ -253,6 +268,11 @@ export class StaffAccountDetailComponent implements OnInit {
         let portalUserDetail = portalUserList.find(item => item.userId == this.userId);
         if (portalUserDetail != undefined) {
           let name = portalUserDetail.name;
+          let preAccountNumber = $(this.preAccountNo).val();
+          let preIFSCCOde = $(this.preIFSC).val();
+          if (preAccountNumber != accountNo || preIFSCCOde != ifsc) {
+            this.saveBankDetailUpdateHistory(id, preAccountNumber, preIFSCCOde, accountNo, ifsc, name, time);
+          }
           this.saveEmployeeModificationHistory(id, name, time);
           this.updateEmployeeSummary(id, name, time);
           this.updateAccountListData(id, name, time, accountNo, ifsc);
@@ -262,6 +282,92 @@ export class StaffAccountDetailComponent implements OnInit {
         this.closeModel();
       }
     }
+  }
+
+  saveBankDetailUpdateHistory(employeeId: any, preAccountNumber: any, preIFSCCOde: any, updatedAccountNumber: any, updateIFSCode: any, updateBy: any, updateDate: any) {
+    let dbPath = "BankDetailUpdateHistory/" + employeeId + "/lastKey";
+    let lastKeyInstance = this.db.object(dbPath).valueChanges().subscribe((lastKeyData: any) => {
+      lastKeyInstance.unsubscribe();
+      let lastKey = 1;
+      if (lastKeyData != null) {
+        lastKey = Number(lastKeyData) + 1;
+      }
+
+      const data = {
+        preAccountNumber: preAccountNumber,
+        preIFSCCOde: preIFSCCOde,
+        updateDate: updateDate,
+        updateIFSCode: updateIFSCode,
+        updatedAccountNumber: updatedAccountNumber,
+        updateBy: updateBy
+      };
+
+      this.db.object("BankDetailUpdateHistory/" + employeeId + "/" + lastKey).update(data);
+      this.db.object("BankDetailUpdateHistory/" + employeeId).update({ lastKey: lastKey });
+      this.setBankDetailHistoryFlag(employeeId);
+    });
+  }
+
+
+  setBankDetailHistoryFlag(empId: any) {
+    let detail = this.accountList.find(item => item.empId == empId);
+    if (detail != undefined) {
+      detail.hasBankDetailHistory = true;
+    }
+    let allDetail = this.allAccountList.find(item => item.empId == empId);
+    if (allDetail != undefined) {
+      allDetail.hasBankDetailHistory = true;
+    }
+  }
+
+
+  getBankDetailUpdateHistory(empId: any) {
+    $(this.tblEmpBankDetailUpdateHistory).html("");
+    let dbPath = "BankDetailUpdateHistory/" + empId;
+    let historyInstance = this.db.object(dbPath).valueChanges().subscribe((historyData: any) => {
+      historyInstance.unsubscribe();
+      let html = "";
+      if (historyData != null) {
+        const keyList = Object.keys(historyData).filter(key => key != "lastKey");
+        if (keyList.length > 0) {
+          for (let i = 0; i < keyList.length; i++) {
+            const data = historyData[keyList[i]];
+            let updateDate = data["updateDate"];
+            let date = updateDate.split(" ")[0];
+            let time = updateDate.split(" ")[1];
+            date = date.split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split("-")[1])) + " " + date.split("-")[0] + " " + time;
+            
+            html += "<tr>";
+            html += "<td class='text-left br-1'>" + (i + 1) + "</td>";
+            html += "<td class='text-left br-1'>" + (data["preAccountNumber"] ? data["preAccountNumber"] : "---") + "</td>";
+            html += "<td class='text-left br-1'>" + (data["preIFSCCOde"] ? data["preIFSCCOde"] : "---") + "</td>";
+            html += "<td class='text-left br-1'>" + (data["updatedAccountNumber"] ? data["updatedAccountNumber"] : "---") + "</td>";
+            html += "<td class='text-left br-1'>" + (data["updateIFSCode"] ? data["updateIFSCode"] : "---") + "</td>";
+            html += "<td class='text-left br-1'><div>" + (data["updateBy"] ? data["updateBy"] : "---") + "</div><div style='font-size:12px;'>" + date + "</div></td>";
+            html += "</tr>";
+          }
+        }
+        else {
+          html = "<tr><td class='text-center br-1' colspan='6'>No history found</td></tr>";
+        }
+      }
+      else {
+        html = "<tr><td class='text-center br-1' colspan='6'>No history found</td></tr>";
+      }
+      $(this.tblEmpBankDetailUpdateHistory).html(html);
+    });
+  }
+
+
+  openBankDetailHistoryPopup(content: any, empId: any) {
+    console.log(empId);
+    this.hasBankDetailHistory(empId).then((isExists: any) => {
+      if (isExists == false) {
+        this.commonService.setAlertMessage("error", "No history found");
+        return;
+      }
+      this.openModel(content, empId, "bankHistory");
+    });
   }
 
   updateBankDetail(id: any, accountNo: any, ifsc: any) {
@@ -518,8 +624,10 @@ export class StaffAccountDetailComponent implements OnInit {
                   }
                 }
               }
-              employeeData = { empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType };
-              resolve({ status: "success", data: employeeData });
+              this.hasBankDetailHistory(empId).then((isExists: any) => {
+                employeeData = { empId: empId, empCode: empCode, name: name, email: email, designation: designation, status: status, accountNo: accountNo, ifsc: ifsc, modifyBy: modifyBy, modifyDate: modifyDate, isLock: isLock, empType: empType, hasBankDetailHistory: isExists };
+                resolve({ status: "success", data: employeeData });
+              });
             }
             else {
               resolve({ status: "fail", data: employeeData });
@@ -531,6 +639,26 @@ export class StaffAccountDetailComponent implements OnInit {
         }
       );
 
+    });
+  }
+
+  
+  hasBankDetailHistory(empId: any) {
+    return new Promise((resolve) => {
+      let dbPath = "BankDetailUpdateHistory/" + empId;
+      let historyInstance = this.db.object(dbPath).valueChanges().subscribe((historyData: any) => {
+        historyInstance.unsubscribe();
+        let isExists = false;
+        if (historyData != null) {
+          const keyList = Object.keys(historyData).filter(key => key != "lastKey");
+          if (keyList.length > 0) {
+            isExists = true;
+          }
+        }
+        resolve(isExists);
+      }, () => {
+        resolve(false);
+      });
     });
   }
 

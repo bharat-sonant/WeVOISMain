@@ -906,6 +906,7 @@ export class DailyFuelReportComponent implements OnInit {
               let driverList = workerData["driver"].split(",");
               let vehicleList = workerData["vehicle"].split(",");
               let driverNameList = workerData["driverName"].split(",");
+              console.log(zone,workerData["vehicle"])
               for (let i = 0; i < driverList.length; i++) {
                 if (
                   empId == driverList[i].trim() &&

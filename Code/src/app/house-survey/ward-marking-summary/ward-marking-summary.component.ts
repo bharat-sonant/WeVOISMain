@@ -198,6 +198,9 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "Line";
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "MarkerKey";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "Marker ID";
       htmlString += "</td>";
       if (this.cityName == 'hisar') {
@@ -292,6 +295,9 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += this.markerExportList[i]["Line"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.markerExportList[i]["MarkerNo"];
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["markerId"];

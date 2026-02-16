@@ -91,6 +91,12 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.modifyBy}}
+                                                    <img src="../../../assets/img/iconHistory.png"
+                                                        title="Bank detail update history" alt="history" width="18"
+                                                        height="18" style="float:right;cursor: pointer;"
+                                                        [hidden]="!data.hasBankDetailHistory"
+                                                        (click)="openBankDetailHistoryPopup(empBankDetailUpdateHistoryContent,data.empId);"
+                                                        >
                                                 </td>
                                                 <td class="text-left br-1">
                                                     <i class="far fa-edit" [hidden]="data.isLock==1" (click)="openModel(contentEmployee,data.empId,'account');" title="Edit Entry" style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>                                                    &nbsp;
@@ -152,6 +158,48 @@
                     </span>
                 </div>
                 <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT" (click)="saveAccountDetail();" style="height: 45px;margin-left: 0px;" />
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--employee End-->
+
+
+<!--employee  Start-->
+<ng-template #empBankDetailUpdateHistoryContent>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="width: calc(100% - 28px);">
+                    <div style="font-size: 14px; margin-top: 2px;">
+                        <span id="empHistoryName" style="margin-right: 7px;">Name</span>
+                        <b id="empHistoryCode">[Emp Code]</b>
+                    </div>
+                    <span  style="font-size: 12px; font-weight: bold;">Bank Detail Update History</span>
+                </div>
+                <img src="../../../assets/icons/circle-xmark-regular.svg" alt="close" width="18" height="18" style="cursor: pointer;"
+                 (click)="closeModel();">
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-line">
+                        <thead>
+                            <th class="text-left br-1">S.No</th>
+                            <th class="text-left br-1">Previous Account Number</th>
+                            <th class="text-left br-1">Previous IFSC Code</th>
+                            <th class="text-left br-1">Updated Account Number</th>
+                            <th class="text-left br-1">Updated IFSC Code</th>
+                            <th class="text-left br-1">Updated By</th>
+                        </thead>
+                        <tbody id="tblEmpBankDetailUpdateHistory">
+                            <!-- Update By cell format:
+                            <td>
+                                <div>User Name</div>
+                                <div style="font-size:12px;">DD-MM-YYYY HH:mm:ss</div>
+                            </td> -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

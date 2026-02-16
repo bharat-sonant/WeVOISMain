@@ -254,6 +254,7 @@ export class RouteTrackingComponent {
       $(this.lblVTS).html("Hide VTS Routes");
       $("#divVTSRoute").show();
       let latLngCity = this.commonService.getDefaultCityLatLng();
+      console.log(latLngCity)
       let latCity = latLngCity[0]["lat"];
       let lngCity = latLngCity[0]["lng"];
       if (this.vtsVehicleList.length == 0) {

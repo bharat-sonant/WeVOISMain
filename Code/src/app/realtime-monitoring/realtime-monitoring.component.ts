@@ -346,7 +346,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
   openAllWardMapPage(wardName: any) {
     // https://main-wevois.firebaseapp.com/
-    const baseUrl = `https://main-wevois.firebaseapp.com/${this.cityName}/${this.userId}/all-wards-tracking`;
+    let userTypeId = "2";
+    if (this.userType == "External User") {
+      userTypeId = "1";
+    }
+    const baseUrl = `https://main-wevois.firebaseapp.com/${this.cityName}/${this.userId}/${userTypeId}/all-wards-tracking`;
 
     const url = `${baseUrl}?route=${encodeURIComponent(wardName)}`;
 

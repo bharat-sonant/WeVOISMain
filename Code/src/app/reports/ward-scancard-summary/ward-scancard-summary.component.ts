@@ -76,6 +76,7 @@ export class WardScancardSummaryComponent implements OnInit {
           this.wardDataList.push({ wardNo: circleWardList[i]["wardNo"], scanned: 0, isPenaltyRemarkChange: false, notScanned: 0, scannedTotalCards: 0, workPercentage: "0", helperCode: "", helperId: '0', helper: "", penalty: "", remark: "", isDataFound: false });
         }
       }
+
       this.getWardDetail();
     }
   }

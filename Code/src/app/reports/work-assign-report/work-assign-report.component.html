@@ -72,6 +72,8 @@
                                             <th class="text-left br-1" style="border:none!important;">
                                                 Work</th>
                                             <th class="text-left br-1" style="border:none!important;">
+                                                Name</th>
+                                            <th class="text-left br-1" style="border:none!important;">
                                                 Duty On Time
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
@@ -91,6 +93,12 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.ward}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    <div style="width:100%; "
+                                                        *ngFor="let empList of data.empList ">
+                                                      (<b>{{empList.empId}}</b>) {{empList.name}}
+                                                    </div>
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.inTime}}

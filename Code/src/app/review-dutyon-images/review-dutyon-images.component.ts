@@ -25,6 +25,23 @@ export class ReviewDutyonImagesComponent implements OnInit {
   divMainLoader = "#divMainLoader";
   serviceName = "review-duty-on-images";
   isActualData: any;
+  selectedDetail: selectedDetail = {
+    driver: "---",
+    helper: "---",
+    driverImageURL: "---",
+    helperImageURL: "---",
+    secondHelper: "---",
+    secondHelperImageURL: "---",
+    thirdHelper: "---",
+    thirdHelperImageURL: "---",
+    fourthHelper: "---",
+    fourthHelperImageURL: "---",
+    fifthHelper: "---",
+    fifthHelperImageURL: "---",
+    sixthHelper: "---",
+    sixthHelperImageURL: "---",
+  };
+
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -46,6 +63,67 @@ export class ReviewDutyonImagesComponent implements OnInit {
       this.isActualData = 1;
     }
     this.getZones();
+  }
+
+  isSliderOpen = false;
+  imageNotAvailablePath = "../../../assets/img/avtar-user.png";
+
+  setDefaultImage(event: any) {
+    event.target.src = this.imageNotAvailablePath;
+  }
+
+  resetDetail() {
+    this.selectedDetail.driver = "---";
+    this.selectedDetail.helper = "---";
+    this.selectedDetail.secondHelper = "---";
+    this.selectedDetail.thirdHelper = "---";
+    this.selectedDetail.fourthHelper = "---";
+    this.selectedDetail.fifthHelper = "---";
+    this.selectedDetail.sixthHelper = "---";
+    this.selectedDetail.driverImageURL = this.imageNotAvailablePath;
+    this.selectedDetail.helperImageURL = this.imageNotAvailablePath;
+    this.selectedDetail.secondHelperImageURL = this.imageNotAvailablePath;
+    this.selectedDetail.thirdHelperImageURL =this.imageNotAvailablePath;
+    this.selectedDetail.fourthHelperImageURL = this.imageNotAvailablePath;
+    this.selectedDetail.fifthHelperImageURL = this.imageNotAvailablePath;
+    this.selectedDetail.sixthHelperImageURL = this.imageNotAvailablePath;
+  }
+
+  openSlider(data: any) {
+    this.resetDetail();
+    this.selectedDetail.driver = data.driver;
+    this.selectedDetail.helper = data.helper;
+    this.selectedDetail.secondHelper = data.secondHelper;
+    this.selectedDetail.thirdHelper = data.thirdHelper;
+    this.selectedDetail.fourthHelper = data.fourthHelper;
+    this.selectedDetail.fifthHelper = data.fifthHelper;
+    this.selectedDetail.sixthHelper = data.sixthHelper;
+    if (data.driverId != "---") {
+      this.selectedDetail.driverImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + data.driverId + "%2FprofilePhoto.jpg?alt=media";
+    }
+    if (data.helperId != "---") {
+      this.selectedDetail.helperImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + data.helperId + "%2FprofilePhoto.jpg?alt=media";
+    }
+    if (data.secondHelperId != "---") {
+      this.selectedDetail.secondHelperImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + data.secondHelperId + "%2FprofilePhoto.jpg?alt=media";
+    }
+    if (data.thirdHelperId != "---") {
+      this.selectedDetail.thirdHelperImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + data.thirdHelperId + "%2FprofilePhoto.jpg?alt=media";
+    }
+    if (data.fourthHelperId != "---") {
+      this.selectedDetail.fourthHelperImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + data.fourthHelperId + "%2FprofilePhoto.jpg?alt=media";
+    }
+    if (data.fifthHelperId != "---") {
+      this.selectedDetail.fifthHelperImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + data.fifthHelperId + "%2FprofilePhoto.jpg?alt=media";
+    }
+    if (data.sixthHelperId != "---") {
+      this.selectedDetail.sixthHelperImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + data.sixthHelperId + "%2FprofilePhoto.jpg?alt=media";
+    }
+    this.isSliderOpen = true;
+  }
+
+  closeSlider() {
+    this.isSliderOpen = false;
   }
 
   getZones() {
@@ -163,7 +241,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                     dutyOutMeterImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutMeterReadingImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
                   }
                   let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
-                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl, imageDutyOnMeterUrl: dutyOnMeterImageUrl,imageDutyOutMeterUrl:dutyOutMeterImageUrl });
+                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl, imageDutyOnMeterUrl: dutyOnMeterImageUrl, imageDutyOutMeterUrl: dutyOutMeterImageUrl, driverImageURL: this.imageNotAvailablePath, helperImageURL: this.imageNotAvailablePath, secondHelperImageURL: this.imageNotAvailablePath, thirdHelperImageURL: this.imageNotAvailablePath, fourthHelperImageURL: this.imageNotAvailablePath, fifthHelperImageURL: this.imageNotAvailablePath, sixthHelperImageURL: this.imageNotAvailablePath });
                 }
               }
             }
@@ -260,24 +338,31 @@ export class ReviewDutyonImagesComponent implements OnInit {
       for (let i = 0; i < list.length; i++) {
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["driverId"]).then((employee) => {
           list[i]["driver"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+          list[i]["driverImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["driverId"] + "%2FprofilePhoto.jpg?alt=media";
         });
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["helperId"]).then((employee) => {
           list[i]["helper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+          list[i]["helperImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["helperId"] + "%2FprofilePhoto.jpg?alt=media";
         });
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["secondHelperId"]).then((employee) => {
           list[i]["secondHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+          list[i]["secondHelperImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["secondHelperId"] + "%2FprofilePhoto.jpg?alt=media";
         });
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["thirdHelperId"]).then((employee) => {
           list[i]["thirdHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+          list[i]["thirdHelperImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["thirdHelperId"] + "%2FprofilePhoto.jpg?alt=media";
         });
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["fourthHelperId"]).then((employee) => {
           list[i]["fourthHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+          list[i]["fourthHelperImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["fourthHelperId"] + "%2FprofilePhoto.jpg?alt=media";
         });
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["fifthHelperId"]).then((employee) => {
           list[i]["fifthHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+          list[i]["fifthHelperImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["fifthHelperId"] + "%2FprofilePhoto.jpg?alt=media";
         });
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["sixthHelperId"]).then((employee) => {
           list[i]["sixthHelper"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+          list[i]["sixthHelperImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["sixthHelperId"] + "%2FprofilePhoto.jpg?alt=media";
         });
       }
     }
@@ -295,19 +380,27 @@ export class ReviewDutyonImagesComponent implements OnInit {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDutyOnImages", summaryData);
             if (summaryData["dutyInTime"] != null) {
               let timeList = summaryData["dutyInTime"].split(',');
-              let remarkArray = summaryData['workPercentageRemark']&&summaryData['workPercentageRemark']!==undefined?summaryData['workPercentageRemark'].split(','):'';
+              let remarkArray = summaryData['workPercentageRemark'] && summaryData['workPercentageRemark'] !== undefined ? summaryData['workPercentageRemark'].split(',') : '';
               let outTimeList = [];
               if (summaryData["dutyOutTime"] != null) {
                 outTimeList = summaryData["dutyOutTime"].split(',');
               }
               for (let i = 0; i < timeList.length; i++) {
                 let time = timeList[i];
-                let workPercentageRemark = remarkArray[i]?remarkArray[i]:'';
+                let workPercentageRemark = remarkArray[i] ? remarkArray[i] : '';
                 let offTime = "";
                 if (outTimeList[i] != undefined) {
                   offTime = outTimeList[i];
                 }
-                dutyOnImages.push({ binPlanId: "", imageUrl: "",workPercentageRemark:workPercentageRemark, time: time, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "", imageDutyOnMeterUrl: "",imageDutyOutMeterUrl:"" });
+
+                let driverId = "---";
+                let helperId = "---";
+                let secondHelperId = "---";
+                let thirdHelperId = "---";
+                let fourthHelperId = "---";
+                let fifthHelperId = "---";
+                let sixthHelperId = "---";
+                dutyOnImages.push({ binPlanId: "", imageUrl: "", workPercentageRemark: workPercentageRemark, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "", imageDutyOnMeterUrl: "", imageDutyOutMeterUrl: "", driverImageURL: this.imageNotAvailablePath, helperImageURL: this.imageNotAvailablePath, secondHelperImageURL: this.imageNotAvailablePath, thirdHelperImageURL: this.imageNotAvailablePath, fourthHelperImageURL: this.imageNotAvailablePath, fifthHelperImageURL: this.imageNotAvailablePath, sixthHelperImageURL: this.imageNotAvailablePath });
               }
             }
             if (summaryData["dutyOnImage"] != null) {
@@ -437,6 +530,15 @@ export class ReviewDutyonImagesComponent implements OnInit {
         workerDetailInstance.unsubscribe();
         if (workerData != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDriverHelper", workerData);
+
+          let driverIDList = workerData["driver"].split(',');
+          let helperIDList = workerData["helper"].split(',');
+          let seconHelperIDList = workerData["secondHelper"] ? workerData["secondHelper"].split(',') : [];
+          let thirdHelperIDList = workerData["thirdHelper"] ? workerData["thirdHelper"].split(',') : [];
+          let fourthHelperIDList = workerData["fourthHelper"] ? workerData["fourthHelper"].split(',') : [];
+          let fifthHelperIDList = workerData["fifthHelper"] ? workerData["fifthHelper"].split(',') : [];
+          let sixthHelperIDList = workerData["sixthHelper"] ? workerData["sixthHelper"].split(',') : [];
+
           let driverList = workerData["driverName"].split(',');
           let helperList = workerData["helperName"].split(',');
           let secondHelperList = workerData["secondHelperName"] ? workerData["secondHelperName"].split(',') : [];
@@ -449,6 +551,13 @@ export class ReviewDutyonImagesComponent implements OnInit {
           if (detail != undefined) {
             let list = detail.dutyOnImages;
             for (let i = 0; i < list.length; i++) {
+              let driverId = "---";
+              let helperId = "---";
+              let secondHelperId = "---";
+              let thirdHelperId = "---";
+              let fourthHelperId = "---";
+              let fifthHelperId = "---";
+              let sixthHelperId = "---";
               let driver = "---";
               let helper = "---";
               let secondHelper = "---";
@@ -457,6 +566,32 @@ export class ReviewDutyonImagesComponent implements OnInit {
               let fifthHelper = "---";
               let sixthHelper = "---";
               let vehicle = "---";
+
+
+              if (driverIDList[i] != null) {
+                driverId = driverIDList[i];
+              }
+              if (helperIDList[i] != null) {
+                helperId = helperIDList[i];
+              }
+              if (seconHelperIDList[i] != null) {
+                secondHelperId = seconHelperIDList[i];
+              }
+              if (thirdHelperIDList[i] != null) {
+                thirdHelperId = thirdHelperIDList[i];
+              }
+              if (fourthHelperIDList[i] != null) {
+                fourthHelperId = fourthHelperIDList[i];
+              }
+              if (fifthHelperIDList[i] != null) {
+                fifthHelperId = fifthHelperIDList[i];
+              }
+              if (sixthHelperIDList[i] != null) {
+                sixthHelperId = sixthHelperIDList[i];
+              }
+
+
+
               if (driverList[i] != null) {
                 driver = driverList[i];
               }
@@ -481,6 +616,15 @@ export class ReviewDutyonImagesComponent implements OnInit {
               if (vehicleList[i] != null) {
                 vehicle = vehicleList[i];
               }
+
+              detail.dutyOnImages[i]["driverId"] = driverId;
+              detail.dutyOnImages[i]["helperId"] = helperId;
+              detail.dutyOnImages[i]["secondHelperId"] = secondHelperId;
+              detail.dutyOnImages[i]["thirdHelperId"] = thirdHelperId;
+              detail.dutyOnImages[i]["fourthHelperId"] = fourthHelperId;
+              detail.dutyOnImages[i]["fifthHelperId"] = fifthHelperId;
+              detail.dutyOnImages[i]["sixthHelperId"] = sixthHelperId;
+
               detail.dutyOnImages[i]["driver"] = driver;
               detail.dutyOnImages[i]["helper"] = helper;
               detail.dutyOnImages[i]["secondHelper"] = secondHelper;
@@ -522,6 +666,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
   }
 
   setDate(type: string) {
+    this.closeSlider();
+    this.resetDetail();
     if (type == "previous") {
       this.selectedDate = this.commonService.getPreviousDate(this.selectedDate, 1);
     }
@@ -537,4 +683,21 @@ export class ReviewDutyonImagesComponent implements OnInit {
     this.getZones();
   }
 
+}
+
+export class selectedDetail {
+  driver: string;
+  helper: string;
+  driverImageURL: string;
+  helperImageURL: string;
+  secondHelper: string;
+  secondHelperImageURL: string;
+  thirdHelper: string;
+  thirdHelperImageURL: string;
+  fourthHelper: string;
+  fourthHelperImageURL: string;
+  fifthHelper: string;
+  fifthHelperImageURL: string;
+  sixthHelper: string;
+  sixthHelperImageURL: string;
 }

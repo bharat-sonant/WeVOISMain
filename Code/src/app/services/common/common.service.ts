@@ -1720,6 +1720,7 @@ export class CommonService {
   saveJsonFile(listArray: any, fileName: any, filePath: any) {
     return new Promise((resolve) => {
       let fireStorePath = this.fireStoragePath;
+      console.log(this.fireStoragePath);
       var jsonFile = JSON.stringify(listArray);
       var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
       const path = this.getFireStoreCity() + filePath + fileName;

@@ -39,7 +39,6 @@ export class WorkAssignReportComponent implements OnInit {
   getWorkAssignment() {
     let list = [];
     let dbPath = "DailyWorkDetail/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate;
-
     let workInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       workInstance.unsubscribe();
       if (data != null) {
@@ -50,11 +49,13 @@ export class WorkAssignReportComponent implements OnInit {
             if (data[key]["task" + i] != null) {
               if (data[key]["task" + i]["task"] != null) {
                 let ward = data[key]["task" + i]["task"];
+                let time = "";
                 let startTime = "";
                 let endTime = "";
                 if (Object.keys(data[key]["task" + i + ""]["in-out"])[0] != null) {
                   if (Object.values(data[key]["task" + i + ""]["in-out"])[0] == "In") {
                     startTime = this.commonService.tConvert(Object.keys(data[key]["task" + i + ""]["in-out"])[0]);
+                    time = Object.keys(data[key]["task" + i + ""]["in-out"])[0];
                     let removeSecond = startTime.split(" ");
                     startTime = removeSecond[0].slice(0, -3) + " " + removeSecond[1];
                   }
@@ -81,16 +82,20 @@ export class WorkAssignReportComponent implements OnInit {
                 if (data[key]["task" + i]["task-dutyoff-by"] != null) {
                   dutyOffBy = data[key]["task" + i]["task-dutyoff-by"];
                 }
-                let detail = list.find(item => item.ward == ward && item.inTime == startTime);
+                let detail = list.find(item => item.ward == ward && item.time == time);
                 if (detail == undefined) {
-                  list.push({ ward: ward, inTime: startTime, outTime: endTime, dutyOnBy: data[key]["task" + i]["task-assigned-by"], dutyOffBy: dutyOffBy, dutyOnByName: "", dutyOffByName: "" });
+                  let empList = [];
+                  empList.push({ empId: key, name: "" });
+                  list.push({ empList: empList, ward: ward, time: time, inTime: startTime, outTime: endTime, dutyOnBy: data[key]["task" + i]["task-assigned-by"], dutyOffBy: dutyOffBy, dutyOnByName: "", dutyOffByName: "" });
+                }
+                else {
+                  detail.empList.push({ empId: key, name: "" });
                 }
               }
             }
-
           }
-
         }
+
         if (list.length > 0) {
           this.workList = list.sort((a, b) =>
             b.ward < a.ward ? 1 : -1
@@ -149,6 +154,7 @@ export class WorkAssignReportComponent implements OnInit {
             if (i === this.workList.length - 1) {
               setTimeout(() => {
                 this.workFilterList = this.workList;
+                this.getWorkerEmpId();
               }, 200);
             }
           }
@@ -165,6 +171,36 @@ export class WorkAssignReportComponent implements OnInit {
     });
 
   }
+
+  getWorkerEmpId() {
+    if (this.workList.length > 0) {
+      for (let i = 0; i < this.workList.length; i++) {
+        let listIndex = i;
+        let empList = this.workList[listIndex]["empList"];
+        if (empList.length > 0) {
+          for (let j = 0; j < empList.length; j++) {
+            let empIndex = j;
+            this.getWorkerName(listIndex, empIndex, empList[j]["empId"]);
+          }
+        }
+      }
+    }
+  }
+
+
+  getWorkerName(listIndex: any, empIndex: any, empId: any) {
+    console.log(listIndex)
+    console.log(empIndex)
+    console.log(empId)
+    this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
+      this.workList[listIndex]["empList"][empIndex]["name"] = employee["name"];
+      this.workFilterList[listIndex]["empList"][empIndex]["name"] = employee["name"];
+    });
+  }
+
+
+
+
   normalizeName(value: any): string | null {
     if (!value) return null;
 
@@ -200,6 +236,8 @@ export class WorkAssignReportComponent implements OnInit {
     }
     this.workFilterList = list;
   }
+
+
 
   getEmployeeName(index: any, empId: any, type: any) {
     this.commonService.getEmplyeeDetailByEmployeeId(empId).then((employee) => {
@@ -272,6 +310,9 @@ export class WorkAssignReportComponent implements OnInit {
       htmlString += "Work";
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "Duty On Time";
       htmlString += "</td>";
       htmlString += "<td>";
@@ -286,9 +327,24 @@ export class WorkAssignReportComponent implements OnInit {
       htmlString += "</tr>";
 
       for (let i = 0; i < this.workFilterList.length; i++) {
+        let name="";
         htmlString += "<tr>";
         htmlString += "<td t='s'>";
         htmlString += this.workFilterList[i]["ward"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        let empList = this.workFilterList[i]["empList"];
+        if (empList.length > 0) {
+          for (let j = 0; j < empList.length; j++) {
+            if(j==0){
+              name="("+empList[j]["empId"]+")"+" "+empList[j]["name"];
+            }
+            else{
+              name=name+", ("+empList[j]["empId"]+")"+" "+empList[j]["name"];
+            } 
+          }
+        }
+        htmlString += name;
         htmlString += "</td>";
         htmlString += "<td t='s'>";
         htmlString += this.workFilterList[i]["inTime"];
