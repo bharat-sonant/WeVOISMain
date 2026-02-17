@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
@@ -12,7 +12,7 @@ import { AngularFireStorage } from "angularfire2/storage";
   styleUrls: ["./dustbin-analysis.component.scss"],
 })
 export class DustbinAnalysisComponent implements OnInit {
-  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private modalService: NgbModal, private storage: AngularFireStorage, private cdr: ChangeDetectorRef) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private modalService: NgbModal, private storage: AngularFireStorage) { }
 
   planList: any[];
   dustbinList: any[];
@@ -224,7 +224,7 @@ export class DustbinAnalysisComponent implements OnInit {
 
   }
 
-  removeAllUnpickedDustbinFromPlan(planId: any, dustbinIdList: any[], planData: any, dbPath: any) {
+  removeAllUnpickedDustbinFromPlan(dustbinIdList: any[], planData: any, dbPath: any) {
     let removeIds = dustbinIdList.map(x => x.toString().trim());
     let binList = planData["bins"].split(",");
     let sequenceList = planData["pickingSequence"].split(",");
@@ -272,12 +272,12 @@ export class DustbinAnalysisComponent implements OnInit {
         let planInstance = this.db.object(dbPath).valueChanges().subscribe((planData:any) => {
           planInstance.unsubscribe();
           if (planData != null) {
-            this.removeAllUnpickedDustbinFromPlan(planId, dustbinIdList, planData, dbPath);
+            this.removeAllUnpickedDustbinFromPlan(dustbinIdList, planData, dbPath);
           }
         });
       }
       else {
-        this.removeAllUnpickedDustbinFromPlan(planId, dustbinIdList, historyData, dbPath);
+        this.removeAllUnpickedDustbinFromPlan(dustbinIdList, historyData, dbPath);
       }
     });
   }
@@ -340,9 +340,11 @@ export class DustbinAnalysisComponent implements OnInit {
     if (this.dustbinList.length == 0) {
       this.resetData();
     }
-    else {
-      this.cdr.detectChanges();
+    else if (removeIds.indexOf(this.binDetail.binId.toString().trim()) != -1) {
+      setTimeout(() => {
       this.showDustbinData(0);
+        
+      }, 300);
     }
 
     let selectedPlan = this.planList.find(item => item.planId == selectedPlanId);
@@ -1435,7 +1437,9 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   setBackgroundColorForSelectedItem(index: any) {
-    $("[id^='filter']").removeAttr("style");
+    for (let i = 0; i < this.dustbinList.length; i++) {
+      $("#filter" + i).removeAttr("style");
+    }
 
     $("#filter" + index).attr("style", "background :#7dcd5a");
   }
