@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
@@ -12,7 +12,7 @@ import { AngularFireStorage } from "angularfire2/storage";
   styleUrls: ["./dustbin-analysis.component.scss"],
 })
 export class DustbinAnalysisComponent implements OnInit {
-  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private modalService: NgbModal, private storage: AngularFireStorage) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, private modalService: NgbModal, private storage: AngularFireStorage, private cdr: ChangeDetectorRef) { }
 
   planList: any[];
   dustbinList: any[];
@@ -340,7 +340,8 @@ export class DustbinAnalysisComponent implements OnInit {
     if (this.dustbinList.length == 0) {
       this.resetData();
     }
-    else if (removeIds.indexOf(this.binDetail.binId.toString().trim()) != -1) {
+    else {
+      this.cdr.detectChanges();
       this.showDustbinData(0);
     }
 
@@ -1434,9 +1435,7 @@ export class DustbinAnalysisComponent implements OnInit {
   }
 
   setBackgroundColorForSelectedItem(index: any) {
-    for (let i = 0; i < this.dustbinList.length; i++) {
-      $("#filter" + i).removeAttr("style");
-    }
+    $("[id^='filter']").removeAttr("style");
 
     $("#filter" + index).attr("style", "background :#7dcd5a");
   }
