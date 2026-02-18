@@ -219,15 +219,19 @@
                                     <td class="text-right " style="vertical-align: top;">
                                         <div class="diesel-icon" *ngFor="let diesel of data.diesel ">
                                             <div class="d-flex align-items-center mb-1 gap-1">
-                                                <a href="{{diesel.slipImageUrl}}" target="_blank">
-                                                    <img src="../../../assets/icons/file-invoice-solid.svg"
-                                                        alt="file-invoice-solid" width="12" />
+                                                <a *ngIf="diesel.hasVehicleImage" href="{{diesel.vehicleImageUrl}}" target="_blank">
+                                                    <img src="../../../assets/icons/car-solid-full.svg" alt="car-solid-full" width="16" />
                                                 </a>
                                                 &nbsp;
                                                 <a href="{{diesel.meterImageUrl}}" target="_blank"
                                                     style="height: 14px;">
                                                     <i class="bi bi-speedometer"
-                                                        style="font-size: 13x; color: #000;"></i></a>
+                                                        style="font-size: 14x; color: #000;"></i></a>
+                                                &nbsp;
+                                                <a href="{{diesel.slipImageUrl}}" target="_blank">
+                                                    <img src="../../../assets/icons/file-invoice-solid.svg"
+                                                        alt="file-invoice-solid" width="12" />
+                                                </a>
                                                 &nbsp;
                                                 <img src="../../../assets/icons/eye-regular.svg" alt="eye-regular"
                                                     class="icon-red cursor-pointer" width="15px"
@@ -326,25 +330,74 @@
                     <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
                 </div>
                 <div class="modal-body">
+                    <div *ngIf="historyLoading" class="history-loading-wrap">
+                        <div class="spinner-border text-secondary" role="status"></div>
+                        <div class="history-loading-text">Loading history...</div>
+                    </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-12" *ngIf="!historyLoading">
                             <div class="dth">
                                 <div>
+                                    <div class="history-empty-wrap" *ngIf="dieselHistoryList.length == 0">
+                                        No history available
+                                    </div>
                                     <div class="table-wrapper table-two">
                                         <table class="table table-line">
-                                            <tbody style="border: 1px solid lightgray!important;">
+                                            <tbody class="history-table-body">
                                                 <tr *ngFor="let data of dieselHistoryList, let i=index">
-                                                    <td class="text-left"
-                                                        style="width:210px; vertical-align: top; font-weight: normal!important;">
-                                                        <a href="{{data.meterImageUrl}}" target="_blank">
-                                                            <img [src]="data.meterImageUrl"
-                                                                style="max-width: 100px;max-height: 100px;" /></a>
-                                                        <a href="{{data.slipImageUrl}}" target="_blank">
-                                                            <img [src]="data.slipImageUrl"
-                                                                style="max-width: 100px;max-height: 100px; float: right;" /></a>
+                                                    <td class="text-left history-image-cell">
+                                                        <div class="history-images-row">
+                                                            <a *ngIf="data.hasVehicleImage" href="{{data.vehicleImageUrl}}" target="_blank" title="Open vehicle image">
+                                                                <div class="history-image-box">
+                                                                    <img src="../../../assets/img/img-not-available.png"
+                                                                        alt="Vehicle image not available"
+                                                                        class="history-fallback-image" />
+                                                                    <div *ngIf="!data.vehicleImageLoaded"
+                                                                        class="history-image-loader">
+                                                                        <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                                                    </div>
+                                                                    <img *ngIf="!data.vehicleImageError" [src]="data.vehicleImageUrl"
+                                                                        (load)="onHistoryImageLoad(data, 'vehicle')"
+                                                                        (error)="onHistoryImageError(data, 'vehicle')"
+                                                                        alt="Vehicle image"
+                                                                        class="history-main-image" />
+                                                                </div>
+                                                            </a>
+                                                            <a href="{{data.meterImageUrl}}" target="_blank" title="Open meter image">
+                                                                <div class="history-image-box">
+                                                                    <img src="../../../assets/img/img-not-available.png"
+                                                                        alt="Meter image not available"
+                                                                        class="history-fallback-image" />
+                                                                    <div *ngIf="!data.meterImageLoaded"
+                                                                        class="history-image-loader">
+                                                                        <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                                                    </div>
+                                                                    <img *ngIf="!data.meterImageError" [src]="data.meterImageUrl"
+                                                                        (load)="onHistoryImageLoad(data, 'meter')"
+                                                                        (error)="onHistoryImageError(data, 'meter')"
+                                                                        alt="Meter image"
+                                                                        class="history-main-image" />
+                                                                </div>
+                                                            </a>
+                                                            <a href="{{data.slipImageUrl}}" target="_blank" title="Open slip image">
+                                                                <div class="history-image-box">
+                                                                    <img src="../../../assets/img/img-not-available.png"
+                                                                        alt="Slip image not available"
+                                                                        class="history-fallback-image" />
+                                                                    <div *ngIf="!data.slipImageLoaded"
+                                                                        class="history-image-loader">
+                                                                        <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                                                    </div>
+                                                                    <img *ngIf="!data.slipImageError" [src]="data.slipImageUrl"
+                                                                        (load)="onHistoryImageLoad(data, 'slip')"
+                                                                        (error)="onHistoryImageError(data, 'slip')"
+                                                                        alt="Slip image"
+                                                                        class="history-main-image" />
+                                                                </div>
+                                                            </a>
+                                                        </div>
                                                     </td>
-                                                    <td class="text-left"
-                                                        style="vertical-align: top;  font-weight: normal!important;">
+                                                    <td class="text-left history-detail-cell">
                                                         <b>Vehicle :</b> {{data.vehicle}}<br />
                                                         <b> Quantity :</b> {{data.quantity}}<br />
                                                         <b> Amount :</b> {{data.amount}}<br />

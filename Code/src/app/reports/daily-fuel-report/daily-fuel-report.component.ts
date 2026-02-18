@@ -44,6 +44,8 @@ export class DailyFuelReportComponent implements OnInit {
   selectedFuelData: any = null;
   reimbursementNumber: any = "";
   userList: any[] = [];
+  vehicleImageAvailabilityCache: Map<string, boolean> = new Map<string, boolean>();
+  historyLoading: boolean = false;
 
   fuelDetail: fuelDetail = {
     date: "-- --- ----",
@@ -176,6 +178,8 @@ export class DailyFuelReportComponent implements OnInit {
                 amount: dieselList[j].amount,
                 meterImageUrl: dieselList[j].meterImageUrl,
                 slipImageUrl: dieselList[j].slipImageUrl,
+                vehicleImageUrl: dieselList[j].vehicleImageUrl,
+                hasVehicleImage: dieselList[j].hasVehicleImage,
                 isUpdate: dieselList[j].isUpdate,
                 fuelVehicle: dieselList[j].fuelVehicle,
                 petrolPump: dieselList[j].petrolPump,
@@ -221,6 +225,8 @@ export class DailyFuelReportComponent implements OnInit {
                 amount: dieselList[j].amount,
                 meterImageUrl: dieselList[j].meterImageUrl,
                 slipImageUrl: dieselList[j].slipImageUrl,
+                vehicleImageUrl: dieselList[j].vehicleImageUrl,
+                hasVehicleImage: dieselList[j].hasVehicleImage,
                 isUpdate: dieselList[j].isUpdate,
                 fuelVehicle: dieselList[j].fuelVehicle,
                 petrolPump: dieselList[j].petrolPump,
@@ -266,6 +272,8 @@ export class DailyFuelReportComponent implements OnInit {
                 amount: dieselList[j].amount,
                 meterImageUrl: dieselList[j].meterImageUrl,
                 slipImageUrl: dieselList[j].slipImageUrl,
+                vehicleImageUrl: dieselList[j].vehicleImageUrl,
+                hasVehicleImage: dieselList[j].hasVehicleImage,
                 isUpdate: dieselList[j].isUpdate,
                 fuelVehicle: dieselList[j].fuelVehicle,
                 petrolPump: dieselList[j].petrolPump,
@@ -409,6 +417,7 @@ export class DailyFuelReportComponent implements OnInit {
   }
 
   showHistory(content: any, key: any) {
+    this.historyLoading = true;
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
@@ -435,11 +444,57 @@ export class DailyFuelReportComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
+  checkAndSetVehicleImage(item: any, imageUrl: string) {
+    if (this.vehicleImageAvailabilityCache.has(imageUrl)) {
+      item.hasVehicleImage = this.vehicleImageAvailabilityCache.get(imageUrl);
+      return;
+    }
+    this.httpService.get(imageUrl, { responseType: "blob" }).subscribe({
+      next: () => {
+        item.hasVehicleImage = true;
+        this.vehicleImageAvailabilityCache.set(imageUrl, true);
+      },
+      error: () => {
+        item.hasVehicleImage = false;
+        this.vehicleImageAvailabilityCache.set(imageUrl, false);
+      },
+    });
+  }
+
+  getVehicleImageAvailability(imageUrl: string): Promise<boolean> {
+    if (this.vehicleImageAvailabilityCache.has(imageUrl)) {
+      return Promise.resolve(this.vehicleImageAvailabilityCache.get(imageUrl));
+    }
+    return new Promise((resolve) => {
+      this.httpService.get(imageUrl, { responseType: "blob" }).subscribe({
+        next: () => {
+          this.vehicleImageAvailabilityCache.set(imageUrl, true);
+          resolve(true);
+        },
+        error: () => {
+          this.vehicleImageAvailabilityCache.set(imageUrl, false);
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  onHistoryImageLoad(item: any, type: "meter" | "slip" | "vehicle") {
+    item[`${type}ImageLoaded`] = true;
+    item[`${type}ImageError`] = false;
+  }
+
+  onHistoryImageError(item: any, type: "meter" | "slip" | "vehicle") {
+    item[`${type}ImageLoaded`] = true;
+    item[`${type}ImageError`] = true;
+  }
+
   getDiselEntryHistory(key: any) {
     this.dieselHistoryList = [];
     let instance = this.db.object("DieselEntriesData/History/" + this.selectedYear + "/" + this.selectedMonthName +
       "/" + this.selectedDate + "/" + key).valueChanges().subscribe((data) => {
         instance.unsubscribe();
+        let vehicleImageChecks: Promise<any>[] = [];
         if (data != null) {
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
@@ -473,7 +528,24 @@ export class DailyFuelReportComponent implements OnInit {
                 "%2F" +
                 keyArray[i] +
                 "%2FamountSlipImage?alt=media";
-              this.dieselHistoryList.push({
+              let vehicleImageUrl =
+                this.commonService.fireStoragePath +
+                this.commonService.getFireStoreCity() +
+                "%2FDieselEntriesImages%2FHistory%2F" +
+                this.selectedYear +
+                "%2F" +
+                this.selectedMonthName +
+                "%2F" +
+                this.selectedDate +
+                "%2F" +
+                key +
+                "%2F" +
+                keyArray[i] +
+                "%2FvehicleImage?alt=media";
+              let hasVehicleImage = this.vehicleImageAvailabilityCache.has(vehicleImageUrl)
+                ? this.vehicleImageAvailabilityCache.get(vehicleImageUrl)
+                : false;
+              let historyDetail = {
                 key: historyKey,
                 amount: data[historyKey]["amount"],
                 meterReading: data[historyKey]["meterReading"],
@@ -483,17 +555,35 @@ export class DailyFuelReportComponent implements OnInit {
                 creationDate: data[historyKey]["creationDate"],
                 meterImageUrl: meterImageUrl,
                 slipImageUrl: slipImageUrl,
+                vehicleImageUrl: vehicleImageUrl,
+                hasVehicleImage: hasVehicleImage,
+                meterImageLoaded: false,
+                meterImageError: false,
+                slipImageLoaded: false,
+                slipImageError: false,
+                vehicleImageLoaded: false,
+                vehicleImageError: false,
                 time:
                   data[historyKey]["time"] != null
                     ? data[historyKey]["time"]
                     : "",
-              });
+              };
+              this.dieselHistoryList.push(historyDetail);
+              if (!this.vehicleImageAvailabilityCache.has(vehicleImageUrl)) {
+                let checkPromise = this.getVehicleImageAvailability(vehicleImageUrl).then((exists) => {
+                  historyDetail.hasVehicleImage = exists;
+                });
+                vehicleImageChecks.push(checkPromise);
+              }
               if (!isNaN(parseInt(data[historyKey]["createdBy"]))) {
                 this.getUserName(historyKey, data[historyKey]["createdBy"]);
               }
             }
           }
         }
+        Promise.all(vehicleImageChecks).finally(() => {
+          this.historyLoading = false;
+        });
       });
   }
 
@@ -620,17 +710,21 @@ export class DailyFuelReportComponent implements OnInit {
                 this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FmeterReadingImage?alt=media";
               let slipImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2F" +
                 this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FamountSlipImage?alt=media";
+              let vehicleImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDieselEntriesImages%2F" +
+                this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + key + "%2FvehicleImage?alt=media";
               // let dieselDetail = detail.diesel.find( (item) => item.fuelType == fuelType);
               //if (dieselDetail != undefined) {
               //    fuelType = "";
               //  }
-              detail.diesel.push({
+              let dieselDetail = {
                 key: key,
                 fuelType: fuelType,
                 qty: qty,
                 amount: amount,
                 meterImageUrl: meterImageUrl,
                 slipImageUrl: slipImageUrl,
+                vehicleImageUrl: vehicleImageUrl,
+                hasVehicleImage: false,
                 isUpdate: isUpdate,
                 fuelVehicle: fuelVehicle,
                 petrolPump: petrolPump,
@@ -638,7 +732,9 @@ export class DailyFuelReportComponent implements OnInit {
                 remark: remark,
                 rmb_no: rmb_no, rmb_at, rmb_by,
                 meterReading: meterReading
-              });
+              };
+              detail.diesel.push(dieselDetail);
+              this.checkAndSetVehicleImage(dieselDetail, vehicleImageUrl);
             }
           }
         }

@@ -2312,3 +2312,78 @@ input {
     }
     */
 }
+
+.history-table-body {
+    border: 1px solid lightgray !important;
+}
+
+.history-image-cell {
+    width: 1%;
+    white-space: nowrap;
+    vertical-align: top;
+    font-weight: normal !important;
+}
+
+.history-detail-cell {
+    vertical-align: top;
+    font-weight: normal !important;
+}
+
+.history-images-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.history-image-box {
+    position: relative;
+    width: 92px;
+    height: 92px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.history-fallback-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.history-main-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.history-image-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.history-loading-wrap {
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.history-loading-text {
+    font-size: 13px;
+    color: #555;
+}
+
+.history-empty-wrap {
+    padding: 12px;
+    text-align: center;
+    color: #666;
+    font-size: 13px;
+}
