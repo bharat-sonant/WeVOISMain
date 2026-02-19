@@ -61,13 +61,13 @@
                                                                 style="display:flex; justify-content:space-between; align-items:flex-start;">
                                                                 <div style="display:flex; gap:12px; align-items:flex-start;">
                                                                     <div style="width:102px; height:160px;" [hidden]="dtImage.imageUrl==''">
-                                                                        <a href="{{dtImage.imageUrl}}" target="_blank" style="color:#000; width:100px">
+                                                                        <a href="#" (click)="openImagePopup(dtImage.imageUrl, $event)" style="color:#000; width:100px">
                                                                             <img [src]="dtImage.imageUrl" style="width:110px;height:150px;"
                                                                                 (error)="hideBrokenDutyImage($event)" />
                                                                         </a>
                                                                     </div>
                                                                     <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOnMeterUrl==''">
-                                                                        <a href="{{dtImage.imageDutyOnMeterUrl}}" target="_blank" style="color:#000">
+                                                                        <a href="#" (click)="openImagePopup(dtImage.imageDutyOnMeterUrl, $event)" style="color:#000">
                                                                             <img [src]="dtImage.imageDutyOnMeterUrl"
                                                                                 (error)="hideBrokenDutyImage($event)"
                                                                                 style="width:110px; height:150px;" />
@@ -76,14 +76,14 @@
                                                                 </div>
                                                                 <div style="display:flex; gap:12px; align-items:flex-start;">
                                                                     <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOffUrl==''">
-                                                                        <a href="{{dtImage.imageDutyOffUrl}}" target="_blank" style="color:#000">
+                                                                        <a href="#" (click)="openImagePopup(dtImage.imageDutyOffUrl, $event)" style="color:#000">
                                                                             <img [src]="dtImage.imageDutyOffUrl"
                                                                                 (error)="hideBrokenDutyImage($event)"
                                                                                 style="width:110px; height:150px;" />
                                                                         </a>
                                                                     </div>
                                                                     <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOutMeterUrl==''">
-                                                                        <a href="{{dtImage.imageDutyOutMeterUrl}}" target="_blank" style="color:#000">
+                                                                        <a href="#" (click)="openImagePopup(dtImage.imageDutyOutMeterUrl, $event)" style="color:#000">
                                                                             <img [src]="dtImage.imageDutyOutMeterUrl"
                                                                                 (error)="hideBrokenDutyImage($event)"
                                                                                 style="width:110px; height:150px;" />
@@ -94,13 +94,13 @@
                                                             <div *ngIf="dtImage.isOtherDuty"
                                                                 style="display:flex; justify-content:flex-start; gap:12px; flex-wrap:wrap;">
                                                                 <div style="width:102px; height:160px;" [hidden]="dtImage.imageUrl==''">
-                                                                    <a href="{{dtImage.imageUrl}}" target="_blank" style="color:#000; width:100px">
+                                                                    <a href="#" (click)="openImagePopup(dtImage.imageUrl, $event)" style="color:#000; width:100px">
                                                                         <img [src]="dtImage.imageUrl" style="width:110px;height:150px;"
                                                                             (error)="hideBrokenDutyImage($event)" />
                                                                     </a>
                                                                 </div>
                                                                 <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOffUrl==''">
-                                                                    <a href="{{dtImage.imageDutyOffUrl}}" target="_blank" style="color:#000">
+                                                                    <a href="#" (click)="openImagePopup(dtImage.imageDutyOffUrl, $event)" style="color:#000">
                                                                         <img [src]="dtImage.imageDutyOffUrl"
                                                                             (error)="hideBrokenDutyImage($event)"
                                                                             style="width:110px; height:150px;" />
@@ -111,6 +111,10 @@
                                                                 <button class="compare-btn" style="float: right;" [hidden]="dtImage.isOtherDuty"
                                                                     (click)="openSlider(dtImage)">
                                                                     👁 
+                                                                </button><br/>
+                                                                <button class="compare-btn" style="float: right;" [hidden]="!dtImage.isOtherDuty"
+                                                                    (click)="openOtherDutySlider(dtImage)">
+                                                                    👁
                                                                 </button><br/>
                                                                 <b>{{dtImage.isOtherDuty ? 'Name' : 'Driver'}} : </b> {{dtImage.driver}}<br />
                                                                 <span [hidden]="dtImage.helper=='---' || dtImage.isOtherDuty"><b>Helper : </b> {{dtImage.helper}}<br /></span>
@@ -170,6 +174,36 @@
         </div>
     </div>
 
+</div>
+
+
+<div class="image-popup-overlay" *ngIf="isImagePopupOpen"
+    [ngClass]="{'with-slider': isSliderOpen || isOtherDutySliderOpen}" (click)="closeImagePopup()">
+    <div class="image-popup-box" (click)="$event.stopPropagation()">
+        <button class="image-popup-close" (click)="closeImagePopup()">✕</button>
+        <div class="image-popup-loader" *ngIf="isPopupImageLoading">
+            <img src="../../../assets/img/loading.gif" alt="Loading">
+        </div>
+        <img [src]="selectedPopupImageUrl" (load)="onPopupImageLoad()" (error)="onPopupImageError()" alt="Preview Image">
+    </div>
+</div>
+
+
+<!-- OTHER DUTY SLIDER WINDOW -->
+<div class="slider-window other-duty-slider" [class.open]="isOtherDutySliderOpen">
+    <div class="slider-header">
+        <span>Photo Comparision</span>
+        <button class="close-btn" (click)="closeOtherDutySlider()">✕</button>
+    </div>
+    <div class="slider-body">
+        <div class="single-row" style="justify-content: center;">
+            <div class="person-card compare-card">
+                <b>Profile Photo</b>
+                <img [src]="selectedOtherDutyDetail.profileImageURL" (error)="setDefaultImage($event)" alt="Profile Image">
+                <p>{{selectedOtherDutyDetail.name}}</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 

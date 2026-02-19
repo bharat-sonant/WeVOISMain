@@ -41,6 +41,10 @@ export class ReviewDutyonImagesComponent implements OnInit {
     sixthHelper: "---",
     sixthHelperImageURL: "---",
   };
+  selectedOtherDutyDetail: otherDutySelectedDetail = {
+    name: "---",
+    profileImageURL: "---"
+  };
 
 
   ngOnInit() {
@@ -66,6 +70,10 @@ export class ReviewDutyonImagesComponent implements OnInit {
   }
 
   isSliderOpen = false;
+  isOtherDutySliderOpen = false;
+  isImagePopupOpen = false;
+  isPopupImageLoading = false;
+  selectedPopupImageUrl = "";
   imageNotAvailablePath = "../../../assets/img/avtar-user.png";
 
   setDefaultImage(event: any) {
@@ -104,6 +112,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
   }
 
   openSlider(data: any) {
+    this.closeOtherDutySlider();
     this.resetDetail();
     this.selectedDetail.driver = data.driver;
     this.selectedDetail.helper = data.helper;
@@ -138,6 +147,55 @@ export class ReviewDutyonImagesComponent implements OnInit {
 
   closeSlider() {
     this.isSliderOpen = false;
+  }
+
+  resetOtherDutyDetail() {
+    this.selectedOtherDutyDetail.name = "---";
+    this.selectedOtherDutyDetail.profileImageURL = this.imageNotAvailablePath;
+  }
+
+  openOtherDutySlider(data: any) {
+    this.closeSlider();
+    this.resetOtherDutyDetail();
+    this.selectedOtherDutyDetail.name = data.driver || "---";
+    if (data.driverId != null && data.driverId != "" && data.driverId != "---") {
+      this.selectedOtherDutyDetail.profileImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + data.driverId + "%2FprofilePhoto.jpg?alt=media";
+    } else {
+      this.selectedOtherDutyDetail.profileImageURL = this.imageNotAvailablePath;
+    }
+    this.isOtherDutySliderOpen = true;
+  }
+
+  closeOtherDutySlider() {
+    this.isOtherDutySliderOpen = false;
+  }
+
+  openImagePopup(imageUrl: any, event?: any) {
+    if (event != null) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (imageUrl == null || imageUrl.toString().trim() == "") {
+      return;
+    }
+    this.isPopupImageLoading = true;
+    this.selectedPopupImageUrl = imageUrl.toString();
+    this.isImagePopupOpen = true;
+  }
+
+  onPopupImageLoad() {
+    this.isPopupImageLoading = false;
+  }
+
+  onPopupImageError() {
+    this.isPopupImageLoading = false;
+    this.selectedPopupImageUrl = this.imageNotAvailablePath;
+  }
+
+  closeImagePopup() {
+    this.isImagePopupOpen = false;
+    this.isPopupImageLoading = false;
+    this.selectedPopupImageUrl = "";
   }
 
   getZones() {
@@ -819,7 +877,10 @@ export class ReviewDutyonImagesComponent implements OnInit {
 
   setDate(type: string) {
     this.closeSlider();
+    this.closeOtherDutySlider();
+    this.closeImagePopup();
     this.resetDetail();
+    this.resetOtherDutyDetail();
     if (type == "previous") {
       this.selectedDate = this.commonService.getPreviousDate(this.selectedDate, 1);
     }
@@ -852,4 +913,9 @@ export class selectedDetail {
   fifthHelperImageURL: string;
   sixthHelper: string;
   sixthHelperImageURL: string;
+}
+
+export class otherDutySelectedDetail {
+  name: string;
+  profileImageURL: string;
 }

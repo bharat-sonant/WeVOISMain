@@ -892,6 +892,8 @@ table tr:hover {
 .single-row {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: nowrap;
   gap: 20px;
   font-size: 12px;
 }
@@ -907,9 +909,109 @@ table tr:hover {
 
 .person-card img {
   width: 100%;
-  max-height: 250px;
+  height: 300px;
+  max-height: 300px;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #ddd;
+}
+
+.image-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.image-popup-overlay.with-slider {
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 92px 510px 20px 20px;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.image-popup-box {
+  position: relative;
+  width: 400px;
+  height: 470px;
+  max-width: 400px;
+  max-height: 470px;
+  background: #fff;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.image-popup-box > img {
+  width: 384px;
+  height: 454px;
+  max-width: 384px;
+  max-height: 454px;
+  display: block;
+  object-fit: cover;
+  margin: 0 auto;
+}
+
+.image-popup-overlay.with-slider .image-popup-box {
+  margin-right: 8px;
+}
+
+.image-popup-overlay.with-slider .image-popup-box img {
+  width: 384px;
+  height: 454px;
+  max-width: 384px;
+  max-height: 454px;
+}
+
+.other-duty-slider .compare-card {
+  flex: 0 0 auto;
+  max-width: none;
+  width: 300px;
+}
+
+.other-duty-slider .compare-card img {
+  width: 284px;
+  height: 300px;
+  max-width: 284px;
+  max-height: 300px;
+  object-fit: cover;
+  margin: 0 auto;
+}
+
+.image-popup-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  z-index: 2;
+}
+
+.image-popup-loader img {
+  width: 32px;
+  height: 32px;
+  max-width: 32px !important;
+  max-height: 32px !important;
+}
+
+.image-popup-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #1976d2;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
