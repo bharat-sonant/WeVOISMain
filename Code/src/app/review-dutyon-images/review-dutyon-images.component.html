@@ -57,59 +57,79 @@
                                                     <div style="width: 100%; display: flex;flex-wrap: wrap; gap: 10px;">
                                                         <div *ngFor="let dtImage of dt.dutyOnImages;"
                                                             style="width:465px; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
-                                                            <div style="display: flex; justify-content: space-between;">
-                                                                <div style="width:102px; float: left; height:160px;">
-                                                                    <a href="{{dtImage.imageUrl}}" target="_blank"
-                                                                        style="color:#000; width:100px">
-                                                                        <img [src]="dtImage.imageUrl"
-                                                                            style="width:110px;height:150px;"
-                                                                            [hidden]="dtImage.imageUrl==''" /></a>
+                                                            <div *ngIf="!dtImage.isOtherDuty"
+                                                                style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                                                <div style="display:flex; gap:12px; align-items:flex-start;">
+                                                                    <div style="width:102px; height:160px;" [hidden]="dtImage.imageUrl==''">
+                                                                        <a href="{{dtImage.imageUrl}}" target="_blank" style="color:#000; width:100px">
+                                                                            <img [src]="dtImage.imageUrl" style="width:110px;height:150px;"
+                                                                                (error)="hideBrokenDutyImage($event)" />
+                                                                        </a>
+                                                                    </div>
+                                                                    <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOnMeterUrl==''">
+                                                                        <a href="{{dtImage.imageDutyOnMeterUrl}}" target="_blank" style="color:#000">
+                                                                            <img [src]="dtImage.imageDutyOnMeterUrl"
+                                                                                (error)="hideBrokenDutyImage($event)"
+                                                                                style="width:110px; height:150px;" />
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
-                                                                <div style="width:102px; float: right;height:160px;">
-                                                                    <a href="{{dtImage.imageDutyOnMeterUrl}}"
-                                                                        target="_blank" style="color:#000"
-                                                                        [hidden]="dtImage.imageDutyOnMeterUrl==''">
-                                                                        <img [src]="dtImage.imageDutyOnMeterUrl"
-                                                                            style="width:110px; height:150px; margin-right:10px;" /></a>
+                                                                <div style="display:flex; gap:12px; align-items:flex-start;">
+                                                                    <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOffUrl==''">
+                                                                        <a href="{{dtImage.imageDutyOffUrl}}" target="_blank" style="color:#000">
+                                                                            <img [src]="dtImage.imageDutyOffUrl"
+                                                                                (error)="hideBrokenDutyImage($event)"
+                                                                                style="width:110px; height:150px;" />
+                                                                        </a>
+                                                                    </div>
+                                                                    <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOutMeterUrl==''">
+                                                                        <a href="{{dtImage.imageDutyOutMeterUrl}}" target="_blank" style="color:#000">
+                                                                            <img [src]="dtImage.imageDutyOutMeterUrl"
+                                                                                (error)="hideBrokenDutyImage($event)"
+                                                                                style="width:110px; height:150px;" />
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
-                                                                <div style="width:102px; float: right;height:160px;">
-                                                                    <a href="{{dtImage.imageDutyOffUrl}}"
-                                                                        target="_blank" style="color:#000"
-                                                                        [hidden]="dtImage.imageDutyOffUrl==''">
+                                                            </div>
+                                                            <div *ngIf="dtImage.isOtherDuty"
+                                                                style="display:flex; justify-content:flex-start; gap:12px; flex-wrap:wrap;">
+                                                                <div style="width:102px; height:160px;" [hidden]="dtImage.imageUrl==''">
+                                                                    <a href="{{dtImage.imageUrl}}" target="_blank" style="color:#000; width:100px">
+                                                                        <img [src]="dtImage.imageUrl" style="width:110px;height:150px;"
+                                                                            (error)="hideBrokenDutyImage($event)" />
+                                                                    </a>
+                                                                </div>
+                                                                <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOffUrl==''">
+                                                                    <a href="{{dtImage.imageDutyOffUrl}}" target="_blank" style="color:#000">
                                                                         <img [src]="dtImage.imageDutyOffUrl"
-                                                                            style="width:110px; height:150px; margin-right:10px;" /></a>
-                                                                </div>
-                                                                <div style="width:102px; float: right;height:160px;">
-                                                                    <a href="{{dtImage.imageDutyOutMeterUrl}}"
-                                                                        target="_blank" style="color:#000"
-                                                                        [hidden]="dtImage.imageDutyOutMeterUrl==''">
-                                                                        <img [src]="dtImage.imageDutyOutMeterUrl"
-                                                                            style="width:110px; height:150px; margin-right:10px;" /></a>
+                                                                            (error)="hideBrokenDutyImage($event)"
+                                                                            style="width:110px; height:150px;" />
+                                                                    </a>
                                                                 </div>
                                                             </div>
                                                             <div style="text-align: left; float:left; width: 100%;">
-                                                                <button class="compare-btn" style="float: right;"
+                                                                <button class="compare-btn" style="float: right;" [hidden]="dtImage.isOtherDuty"
                                                                     (click)="openSlider(dtImage)">
                                                                     👁 
                                                                 </button><br/>
-                                                                <b>Driver : </b> {{dtImage.driver}}<br />
-                                                                <b>Helper : </b> {{dtImage.helper}}<br />
-                                                                <span [hidden]="dtImage.secondHelper=='---'">
+                                                                <b>{{dtImage.isOtherDuty ? 'Name' : 'Driver'}} : </b> {{dtImage.driver}}<br />
+                                                                <span [hidden]="dtImage.helper=='---' || dtImage.isOtherDuty"><b>Helper : </b> {{dtImage.helper}}<br /></span>
+                                                                <span [hidden]="dtImage.secondHelper=='---' || dtImage.isOtherDuty">
                                                                     <b>Second Helper : </b>
                                                                     {{dtImage.secondHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.thirdHelper=='---'">
+                                                                <span [hidden]="dtImage.thirdHelper=='---' || dtImage.isOtherDuty">
                                                                     <b>Third Helper : </b>
                                                                     {{dtImage.thirdHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.fourthHelper=='---'">
+                                                                <span [hidden]="dtImage.fourthHelper=='---' || dtImage.isOtherDuty">
                                                                     <b>Fourth Helper : </b>
                                                                     {{dtImage.fourthHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.fifthHelper=='---'">
+                                                                <span [hidden]="dtImage.fifthHelper=='---' || dtImage.isOtherDuty">
                                                                     <b>Fifth Helper : </b>
                                                                     {{dtImage.fifthHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.sixthHelper=='---'">
+                                                                <span [hidden]="dtImage.sixthHelper=='---' || dtImage.isOtherDuty">
                                                                     <b>Sixth Helper : </b>
                                                                     {{dtImage.sixthHelper}}<br /></span>
-                                                                <b>Vehicle : </b> {{dtImage.vehicle}}
+                                                                <span [hidden]="dtImage.isOtherDuty"><b>Vehicle : </b> {{dtImage.vehicle}}</span>
                                                                 <div
                                                                     style="display: flex; justify-content: space-between;">
                                                                     <span>

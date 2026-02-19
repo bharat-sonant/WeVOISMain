@@ -72,6 +72,20 @@ export class ReviewDutyonImagesComponent implements OnInit {
     event.target.src = this.imageNotAvailablePath;
   }
 
+  hideBrokenDutyImage(event: any) {
+    const imageElement = event.target as HTMLElement;
+    let imageWrapper: HTMLElement = null;
+    if (imageElement != null && imageElement.parentElement != null && imageElement.parentElement.parentElement != null) {
+      imageWrapper = imageElement.parentElement.parentElement as HTMLElement;
+    }
+    if (imageWrapper != null) {
+      imageWrapper.style.display = "none";
+    }
+    else if (imageElement != null) {
+      imageElement.style.display = "none";
+    }
+  }
+
   resetDetail() {
     this.selectedDetail.driver = "---";
     this.selectedDetail.helper = "---";
@@ -251,17 +265,148 @@ export class ReviewDutyonImagesComponent implements OnInit {
             this.getDutyOnTime(planName, planId);
           }
         }
-        if (this.selectedDate == this.todayDate) {
-          $(this.divMainLoader).hide();
-        }
-        else {
-          setTimeout(() => {
+        this.getSupportServiceDutyFromWasteCollectionInfo().then(() => {
+          if (this.selectedDate == this.todayDate) {
             $(this.divMainLoader).hide();
-            let filePath = "/WardDutyOnImageJSON/" + this.selectedYear + "/" + this.selectedMonthName + "/";
-            this.commonService.saveJsonFile(this.zoneDutyOnList, this.selectedDate + ".json", filePath);
-          }, 3000);
-        }
+          }
+          else {
+            setTimeout(() => {
+              $(this.divMainLoader).hide();
+              let filePath = "/WardDutyOnImageJSON/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+              this.commonService.saveJsonFile(this.zoneDutyOnList, this.selectedDate + ".json", filePath);
+            }, 3000);
+          }
+        });
       });
+  }
+
+  getSupportServiceDutyFromWasteCollectionInfo() {
+    return new Promise((resolve) => {
+      const zoneMasterList = this.zoneList || [];
+      const filteredZones = [];
+      for (let i = 1; i < zoneMasterList.length; i++) {
+        const zoneNo = (zoneMasterList[i]["zoneNo"] || "").toString();
+        const zoneName = (zoneMasterList[i]["zoneName"] || "").toString();
+        const checkValue = (zoneNo + " " + zoneName).toLowerCase();
+        if (checkValue.includes("support") || checkValue.includes("service")) {
+          filteredZones.push(zoneMasterList[i]);
+        }
+      }
+      if (filteredZones.length == 0) {
+        resolve(true);
+        return;
+      }
+
+      const promises = [];
+      for (let i = 0; i < filteredZones.length; i++) {
+        promises.push(Promise.resolve(this.getSupportServiceRowsByZone(filteredZones[i]["zoneNo"])));
+      }
+
+      Promise.all(promises).then((results: any[]) => {
+        for (let i = 0; i < results.length; i++) {
+          const result = results[i];
+          if (result["status"] != "success" || result["rows"].length == 0) {
+            continue;
+          }
+          const zoneNo = result["zoneNo"];
+          let zoneDetail = this.zoneDutyOnList.find(item => item.zoneNo == zoneNo);
+          if (zoneDetail == undefined) {
+            zoneDetail = { zoneNo: zoneNo, zoneName: result["zoneName"], dutyOnImages: [] };
+            this.zoneDutyOnList.push(zoneDetail);
+          }
+          zoneDetail.dutyOnImages = (zoneDetail.dutyOnImages || []).concat(result["rows"]);
+          this.getEmployeeNamebyId(zoneNo);
+        }
+        resolve(true);
+      });
+    });
+  }
+
+  getSupportServiceRowsByZone(zoneNo: any) {
+    return new Promise((resolve) => {
+      const zoneMaster = this.zoneList.find(item => item["zoneNo"] == zoneNo);
+      const zoneName = zoneMaster != null ? zoneMaster["zoneName"] : zoneNo;
+      const dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+      const instance = this.db.object(dbPath).valueChanges().subscribe((zoneData: any) => {
+        instance.unsubscribe();
+        const rows = [];
+        if (zoneData == null) {
+          resolve({ status: "fail", zoneNo: zoneNo, zoneName: zoneName, rows: rows });
+          return;
+        }
+        const employeeIds = Object.keys(zoneData);
+        for (let i = 0; i < employeeIds.length; i++) {
+          const empId = employeeIds[i];
+          if (empId == "Summary" || empId == "WorkerDetails") {
+            continue;
+          }
+          const empData = zoneData[empId];
+          if (empData == null) {
+            continue;
+          }
+          for (let j = 1; j <= 10; j++) {
+            const taskData = empData["task" + j];
+            if (taskData == null) {
+              continue;
+            }
+
+            // Support/Service zones often store task blocks without "task" name.
+            // In these zones, any task block having duty data should be shown.
+            const taskName = (taskData["task"] || "").toString().toLowerCase();
+            const hasDutyData = taskData["dutyInTime"] != null || taskData["dutyOutTime"] != null || taskData["dutyOnImage"] != null || taskData["dutyOutImage"] != null;
+            const isSupportServiceTask = taskName.includes("support") || taskName.includes("service");
+            if (!isSupportServiceTask && !hasDutyData) {
+              continue;
+            }
+            const inTime = taskData["dutyInTime"] != null ? taskData["dutyInTime"].toString() : "---";
+            const outTime = taskData["dutyOutTime"] != null ? taskData["dutyOutTime"].toString() : "---";
+            const inImageName = taskData["dutyOnImage"] != null ? taskData["dutyOnImage"].toString().trim() : "";
+            const outImageName = taskData["dutyOutImage"] != null ? taskData["dutyOutImage"].toString().trim() : "";
+
+            const inImageUrl = inImageName != ""
+              ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + empId + "%2F" + inImageName + "?alt=media"
+              : "";
+            const outImageUrl = outImageName != ""
+              ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + empId + "%2F" + outImageName + "?alt=media"
+              : "";
+
+            rows.push({
+              binPlanId: "",
+              imageUrl: inImageUrl,
+              time: inTime,
+              driverId: empId,
+              helperId: "---",
+              secondHelperId: "---",
+              thirdHelperId: "---",
+              fourthHelperId: "---",
+              fifthHelperId: "---",
+              sixthHelperId: "---",
+              driver: "---",
+              helper: "---",
+              secondHelper: "---",
+              thirdHelper: "---",
+              fourthHelper: "---",
+              fifthHelper: "---",
+              sixthHelper: "---",
+              vehicle: "---",
+              timeDutyOff: outTime,
+              imageDutyOffUrl: outImageUrl,
+              imageDutyOnMeterUrl: "",
+              imageDutyOutMeterUrl: "",
+              driverImageURL: this.imageNotAvailablePath,
+              helperImageURL: this.imageNotAvailablePath,
+              secondHelperImageURL: this.imageNotAvailablePath,
+              thirdHelperImageURL: this.imageNotAvailablePath,
+              fourthHelperImageURL: this.imageNotAvailablePath,
+              fifthHelperImageURL: this.imageNotAvailablePath,
+              sixthHelperImageURL: this.imageNotAvailablePath,
+              isOtherDuty: true
+            });
+          }
+        }
+        resolve({ status: "success", zoneNo: zoneNo, zoneName: zoneName, rows: rows });
+      });
+    });
   }
 
 
@@ -336,6 +481,13 @@ export class ReviewDutyonImagesComponent implements OnInit {
     if (detail != undefined) {
       let list = detail.dutyOnImages;
       for (let i = 0; i < list.length; i++) {
+        if (list[i]["isOtherDuty"] === true) {
+          this.commonService.getEmplyeeDetailByEmployeeId(list[i]["driverId"]).then((employee) => {
+            list[i]["driver"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
+            list[i]["driverImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["driverId"] + "%2FprofilePhoto.jpg?alt=media";
+          });
+          continue;
+        }
         this.commonService.getEmplyeeDetailByEmployeeId(list[i]["driverId"]).then((employee) => {
           list[i]["driver"] = employee["name"] != null ? employee["name"].toUpperCase() : "---";
           list[i]["driverImageURL"] = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FEmployeeImage%2F" + list[i]["driverId"] + "%2FprofilePhoto.jpg?alt=media";
