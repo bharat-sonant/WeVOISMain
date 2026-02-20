@@ -167,6 +167,12 @@ export class WardSurveyAnalysisComponent {
     }
   }
 
+  isIgnoredStreetVendorForHisar(houseTypeId: any) {
+    return (this.cityName == "hisar" || this.cityName == "devtest") &&
+      houseTypeId != null &&
+      houseTypeId.toString() == "30";
+  }
+
   showAllMarkers() {
     if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == true) {
       for (let i = 1; i <= this.wardLineCount; i++) {
@@ -225,6 +231,9 @@ export class WardSurveyAnalysisComponent {
               for (let j = 0; j < keyArray.length; j++) {
                 let markerNo = parseInt(keyArray[j]);
                 if (!isNaN(markerNo)) {
+                  if (this.isIgnoredStreetVendorForHisar(markerData[markerNo]["houseType"])) {
+                    continue;
+                  }
                   if (markerData[markerNo]["cardNumber"] != null) {
                     let image = markerData[markerNo]["image"];
                     this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
@@ -246,7 +255,39 @@ export class WardSurveyAnalysisComponent {
       totalInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalMarkers", data);
-        this.progressData.totalMarkers = Number(data);
+        let markerCount = Number(data);
+        if (this.cityName == "hisar" || this.cityName == "devtest") {
+          let markerPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+          let markerInstance = this.db.object(markerPath).valueChanges().subscribe((markerData: any) => {
+            markerInstance.unsubscribe();
+            let ignoredCount = 0;
+            if (markerData != null) {
+              const lineArray = Object.keys(markerData);
+              for (let i = 0; i < lineArray.length; i++) {
+                const lineNo = lineArray[i];
+                const lineData = markerData[lineNo];
+                if (lineData == null || typeof lineData != "object") {
+                  continue;
+                }
+                const markerArray = Object.keys(lineData);
+                for (let j = 0; j < markerArray.length; j++) {
+                  const markerNo = markerArray[j];
+                  if (!parseInt(markerNo)) {
+                    continue;
+                  }
+                  const markerDetail = lineData[markerNo];
+                  if (markerDetail && this.isIgnoredStreetVendorForHisar(markerDetail["houseType"])) {
+                    ignoredCount++;
+                  }
+                }
+              }
+            }
+            this.progressData.totalMarkers = Math.max(0, markerCount - ignoredCount);
+          });
+        }
+        else {
+          this.progressData.totalMarkers = markerCount;
+        }
       }
     });
 
@@ -385,6 +426,9 @@ export class WardSurveyAnalysisComponent {
           for (let i = 0; i < keyArray.length; i++) {
             let markerNo = keyArray[i];
             if (data[markerNo]["latLng"] != undefined) {
+              if (this.isIgnoredStreetVendorForHisar(data[markerNo]["houseType"])) {
+                continue;
+              }
               if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == false) {
                 this.progressData.totalLineMarkers++;
               }
