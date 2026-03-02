@@ -171,6 +171,11 @@ export class LoginComponent implements OnInit {
       } else {
         localStorage.setItem("isLock", "0");
       }
+      if (userDetails.canUpdateAccountDetail != 0) {
+        localStorage.setItem("canUpdateAccountDetail", userDetails.canUpdateAccountDetail);
+      } else {
+        localStorage.setItem("canUpdateAccountDetail", "0");
+      }
       if (userDetails.isAdmin != 0) {
         localStorage.setItem("isAdmin", userDetails.isAdmin);
       } else {

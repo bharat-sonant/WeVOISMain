@@ -29,6 +29,7 @@ export class UserAddComponent implements OnInit {
   cityList: any[] = [];
   userJsonData: any;
   divLoader = "#divLoader";
+  canUpdateAccountDetail: any = 0;
 
   ngOnInit() {
     this.setDefaults();
@@ -39,7 +40,7 @@ export class UserAddComponent implements OnInit {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.savePageLoadHistory("Users", "Add-Users", localStorage.getItem("userID"));
     this.cityList = JSON.parse(localStorage.getItem("cityList")).sort((a, b) => b.cityName < a.cityName ? 1 : -1);;
-   // this.cityList=this.cityList.sort((a, b) => b.name < a.name ? 1 : -1);
+    // this.cityList=this.cityList.sort((a, b) => b.name < a.name ? 1 : -1);
     this.toDayDate = this.commonService.setTodayDate();
     this.userid = this.actRoute.snapshot.paramMap.get("id");
     this.getRoles();
@@ -130,6 +131,12 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("isLock"))).checked = true;
         }
       }
+      if (data["canUpdateAccountDetail"] != undefined) {
+        if (data["canUpdateAccountDetail"] == 1) {
+          this.canUpdateAccountDetail = 1;
+          (<HTMLInputElement>(document.getElementById("canUpdateAccountDetail"))).checked = true;
+        }
+      }
       if (data["isAdmin"] != undefined) {
         if (data["isAdmin"] == 1) {
           (<HTMLInputElement>(document.getElementById("isAdmin"))).checked = true;
@@ -186,10 +193,10 @@ export class UserAddComponent implements OnInit {
         }
       }
       if (data["canReimburseFuel"] != undefined) {
-         if (data["canReimburseFuel"] == 1) {
-           (<HTMLInputElement>(document.getElementById("canReimburseFuel"))).checked = true;
-          }
-       }
+        if (data["canReimburseFuel"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canReimburseFuel"))).checked = true;
+        }
+      }
       if (data["canUploadDailySalary"] != undefined) {
         if (data["canUploadDailySalary"] == 1) {
           (<HTMLInputElement>(document.getElementById("canUploadDailySalary"))).checked = true;
@@ -215,6 +222,21 @@ export class UserAddComponent implements OnInit {
       }
     }
     $(this.divLoader).hide();
+  }
+
+  checkAccessUser() {
+    console.log(this.userid);
+    const isAdminUser = localStorage.getItem("userID") == "4" || localStorage.getItem("userID") == "6";
+    if (isAdminUser) {
+      return; // allowed users
+    }
+    if (this.canUpdateAccountDetail === 1) {
+      (<HTMLInputElement>(document.getElementById("canUpdateAccountDetail"))).checked = true;
+    }
+    else {
+      (<HTMLInputElement>(document.getElementById("canUpdateAccountDetail"))).checked = false;
+    }
+    this.commonService.setAlertMessage("error", "Access denied. Contact the administrator !!!");
   }
 
   submitData() {
@@ -295,6 +317,7 @@ export class UserAddComponent implements OnInit {
     let isActual: any = 0;
     let isActualWorkPercentage: any = 0;
     let isLock: any = 0;
+    let canUpdateAccountDetail: any = 0;
     let isAdmin: any = 0;
     let isManager: any = 0;
     let isAttendanceApprover: any = 0;
@@ -307,8 +330,8 @@ export class UserAddComponent implements OnInit {
     let canAccessBIDashboard: any = 0;
     let canAddWardDutyOn: any = 0;
     let canReimburseFuel: any = 0;
-    let canUploadDailySalary:any=0;
-    let canApproveDailyWork:any=0;
+    let canUploadDailySalary: any = 0;
+    let canApproveDailyWork: any = 0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -348,6 +371,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isActual = 1;
     element = <HTMLInputElement>document.getElementById("isLock");
     if (element.checked == true) isLock = 1;
+    element = <HTMLInputElement>document.getElementById("canUpdateAccountDetail");
+    if (element.checked == true) canUpdateAccountDetail = 1;
     element = <HTMLInputElement>document.getElementById("isAdmin");
     if (element.checked == true) isAdmin = 1;
     element = <HTMLInputElement>document.getElementById("isActualWorkPercentage");
@@ -405,6 +430,7 @@ export class UserAddComponent implements OnInit {
       isActual: isActual,
       isActualWorkPercentage: isActualWorkPercentage,
       isLock: isLock,
+      canUpdateAccountDetail: canUpdateAccountDetail,
       isAdmin: isAdmin,
       isManager: isManager,
       roleId: roleId,
@@ -419,8 +445,8 @@ export class UserAddComponent implements OnInit {
       canAccessBIDashboard: canAccessBIDashboard,
       canAddWardDutyOn: canAddWardDutyOn,
       canReimburseFuel: canReimburseFuel,
-      canUploadDailySalary:canUploadDailySalary,
-      canApproveDailyWork:canApproveDailyWork,
+      canUploadDailySalary: canUploadDailySalary,
+      canApproveDailyWork: canApproveDailyWork,
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

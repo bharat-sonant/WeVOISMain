@@ -107,7 +107,8 @@
                                                 <td class="text-left br-1">
                                                     <!-- <i class="far fa-edit" [hidden]="data.isLock==1" (click)="openModel(contentEmployee,data.empId,'account');" title="Edit Entry" style="cursor:pointer !important; font-size: 14px;color: royalblue;"></i>         -->
                                                     <img src="../../../assets/icons/pen-to-square-regular.svg"
-                                                        alt="Edit" [hidden]="data.isLock==1"
+                                                        alt="Edit"
+                                                        [hidden]="data.isLock==1 || canUpdateAccountDetail==0"
                                                         (click)="openModel(contentEmployee,data.empId,'account');"
                                                         title="Edit Entry" class="cursor-pointer"> &nbsp;
                                                     <!-- <i class="fas fa-registered" style="cursor: pointer;font-size: 20px; color: green;" (click)="openModel(contentRemarks,data.empId,'remark');"></i>  -->
@@ -152,9 +153,11 @@
 </div>
 
 
+
 <!--employee  Start-->
 <ng-template #contentEmployee>
     <div class="modal-dialog modal-dialog-centered" role="document">
+
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Account Detail</h5>
@@ -163,6 +166,41 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div id="divConfirm" style="
+        display: none;
+        position: absolute;
+        z-index: 9999;
+        background-color: #fff;
+        margin-top: -4%;
+        margin-left: 1%;
+        padding: 20px;
+        border: 1px solid lightgray;
+      ">
+                    <h5 class="modal-title" style="text-align: center; padding-bottom: 20px">
+                        Verify account details before confirming.
+                    </h5>
+                    <div class="col-md-12" style="
+          padding-top: 10px;
+          border-top: 1px solid rgba(128, 128, 128, 0.471);
+        ">
+                        <div style="width:100%; padding: 2px;">Account No.&nbsp;&nbsp;: <label
+                                id="lblUpdateAccountNo"></label></div>
+                        <div style="width:100%; padding: 2px;"> IFSC Code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <label
+                                id="lblUpdateIFSC"></label></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: center; margin-top: 7px">
+                            <button class="btn btn-success" style="margin-top: 10px;" (click)="saveAccountDetail();">
+                                Confirm
+                            </button>&nbsp;&nbsp;&nbsp;
+                             <button class="btn btn-danger" style="text-transform: uppercase"
+                                (click)="cancelConfirmation();">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <input id="key" type="hidden" value="0" />
                 <input id="preAccountNo" type="hidden" value="" />
                 <input id="preIFSC" type="hidden" value="" />
@@ -184,7 +222,7 @@
                     </span>
                 </div>
                 <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT"
-                    (click)="saveAccountDetail();" style="height: 45px;margin-left: 0px;" />
+                    (click)="confirmAccountDetail();" style="height: 45px;margin-left: 0px;" />
             </div>
         </div>
     </div>
@@ -201,7 +239,7 @@
                         <span id="empHistoryName" style="margin-right: 7px;">Name</span>
                         <b id="empHistoryCode">[Emp Code]</b>
                     </div>
-                    <span  style="font-size: 12px; font-weight: bold;">Bank Detail Update History</span>
+                    <span style="font-size: 12px; font-weight: bold;">Bank Detail Update History</span>
                 </div>
                 <img src="../../../assets/icons/circle-xmark-regular.svg" alt="close" width="18" height="18"
                     class="cursor-pointer" (click)="closeModel();">

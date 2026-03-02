@@ -37,7 +37,8 @@ export class AccountDetailComponent implements OnInit {
   toDayDate: any;
   remarkJsonObject: any;
   userId: any;
-  public isLockUnlock: any;
+  public isLockUnlock: any = 0;
+  public canUpdateAccountDetail: any;
   serviceName = "account-detail";
   remarkDetail: remarkDetail = {
     by: "",
@@ -57,7 +58,12 @@ export class AccountDetailComponent implements OnInit {
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
-    this.isLockUnlock = localStorage.getItem("isLock");
+    if (this.userId == "4" || this.userId == "6") {
+      this.isLockUnlock = 1;
+    }
+    console.log(this.isLockUnlock);
+    // this.isLockUnlock = localStorage.getItem("isLock");
+    this.canUpdateAccountDetail = localStorage.getItem("canUpdateAccountDetail") ? localStorage.getItem("canUpdateAccountDetail") : 0;
     this.toDayDate = this.commonService.setTodayDate();
     this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStorePath = this.commonService.fireStoragePath;
@@ -177,13 +183,16 @@ export class AccountDetailComponent implements OnInit {
   setLockUnlock(empId: any, type: any) {
     let dbPath = "Employees/" + empId + "/BankDetails";
     let isLock = 0;
+    let message = "";
     if (type == "lock") {
       isLock = 1;
+      message = "Account locked successfully !!!";
       this.db.object(dbPath).update({ isLock: 1 });
     }
     else {
       isLock = 0;
-      this.db.object(dbPath).update({ isLock: null });
+      this.db.object(dbPath).update({ isLock: 0 });
+      message = "Account unlocked successfully !!!";
     }
     let detail = this.allAccountList.find(item => item.empId == empId);
     if (detail != undefined) {
@@ -195,13 +204,14 @@ export class AccountDetailComponent implements OnInit {
     }
     let path = "/EmployeeAccount/";
     this.commonService.saveJsonFile(this.allAccountList, "accountDetail.json", path);
+    this.commonService.setAlertMessage("success", message);
   }
 
   openModel(content: any, id: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 250;
-    let width = 400;
+    let height = 330;
+    let width = 450;
     if (type == "remark") {
       height = 275;
     }
@@ -216,6 +226,7 @@ export class AccountDetailComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", "26px");
     $(this.key).val(id);
     if (type == "account") {
+       $("div .modal-body").css("overflow", "hidden");
       let userDetail = this.accountList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         setTimeout(() => {
@@ -270,6 +281,21 @@ export class AccountDetailComponent implements OnInit {
     });
   }
 
+  confirmAccountDetail() {
+    let accountNo = $(this.txtAccountNo).val();
+    let ifsc = $(this.txtIFSC).val();
+    $("#lblUpdateAccountNo").html(accountNo.toString());
+    $("#lblUpdateIFSC").html(ifsc.toString());
+
+    $("#divConfirm").show();
+  }
+
+  cancelConfirmation() {
+    $("#lblUpdateAccountNo").html("");
+    $("#lblUpdateIFSC").html("");
+    $("#divConfirm").hide();
+  }
+
   saveAccountDetail() {
     let id = $(this.key).val();
     if (id != "0") {
@@ -278,6 +304,8 @@ export class AccountDetailComponent implements OnInit {
         let accountNo = $(this.txtAccountNo).val();
         let ifsc = $(this.txtIFSC).val();
         this.updateBankDetail(id, accountNo, ifsc);
+        this.setDefaultLockAccount(id);
+        userDetail.isLock=1;
         let time = this.commonService.getCurrentTimeWithSecond();
         time = this.commonService.setTodayDate() + " " + time;
         let portalUserList = JSON.parse(localStorage.getItem("webPortalUserList"));
@@ -572,7 +600,9 @@ export class AccountDetailComponent implements OnInit {
       let merged = [];
       for (let i = 0; i < results.length; i++) {
         if (results[i]["status"] == "success") {
-          merged = merged.concat(results[i]["data"]);
+          if (results[i]["data"]["isDummyId"] == 0) {
+            merged = merged.concat(results[i]["data"]);
+          }
         }
       }
       this.allAccountList = merged;
@@ -586,7 +616,6 @@ export class AccountDetailComponent implements OnInit {
 
   getEmployeeDetail(empId: any) {
     return new Promise((resolve) => {
-
       let employeeData = {};
       let dbPath = "Employees/" + empId;
       let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -608,8 +637,6 @@ export class AccountDetailComponent implements OnInit {
               let isLock = 0;
               let payroll = employeeDetail["GeneralDetails"]["payroll"] ? employeeDetail["GeneralDetails"]["payroll"] : "WeVOIS";
               let isDummyId = employeeDetail["GeneralDetails"]["isDummyId"] ? employeeDetail["GeneralDetails"]["isDummyId"] : 0;
-
-
               if (employeeDetail["BankDetails"] != null) {
                 if (employeeDetail["BankDetails"]["AccountDetails"] != null) {
                   if (employeeDetail["BankDetails"]["AccountDetails"]["accountNumber"] != null) {
@@ -622,6 +649,14 @@ export class AccountDetailComponent implements OnInit {
                 if (employeeDetail["BankDetails"]["isLock"] != null) {
                   isLock = employeeDetail["BankDetails"]["isLock"];
                 }
+                else {
+                  isLock = 1;
+                  this.setDefaultLockAccount(empId);
+                }
+              }
+              else {
+                isLock = 1;
+                this.setDefaultLockAccount(empId);
               }
 
               if (employeeDetail["updateSummary"] != null) {
@@ -668,6 +703,11 @@ export class AccountDetailComponent implements OnInit {
       );
 
     });
+  }
+
+  setDefaultLockAccount(empId: any) {
+    let dbPath = "Employees/" + empId + "/BankDetails/";
+    this.db.object(dbPath).update({ isLock: 1 });
   }
 }
 

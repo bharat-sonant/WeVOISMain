@@ -36,7 +36,8 @@ export class StaffAccountDetailComponent implements OnInit {
   toDayDate: any;
   remarkJsonObject: any;
   userId: any;
-  public isLockUnlock: any;
+  public isLockUnlock: any=0;
+  public canUpdateAccountDetail: any;
   remarkDetail: remarkDetail = {
     by: "",
     remark: "",
@@ -53,7 +54,13 @@ export class StaffAccountDetailComponent implements OnInit {
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.userId = localStorage.getItem("userID");
-    this.isLockUnlock = localStorage.getItem("isLock")
+    if (this.userId == "4" || this.userId == "6") {
+      this.isLockUnlock = 1;
+    }
+    console.log(this.isLockUnlock);
+    // this.isLockUnlock = localStorage.getItem("isLock");
+    this.canUpdateAccountDetail = localStorage.getItem("canUpdateAccountDetail") ? localStorage.getItem("canUpdateAccountDetail") : 0;
+    console.log(this.canUpdateAccountDetail)
     this.toDayDate = this.commonService.setTodayDate();
     this.fireStoreCity = this.commonService.getFireStoreCity();
     this.fireStorePath = this.commonService.fireStoragePath;
@@ -169,33 +176,37 @@ export class StaffAccountDetailComponent implements OnInit {
   }
 
   setLockUnlock(empId: any, type: any) {
-    let dbPath = "Employees/" + empId + "/BankDetails";
-    let isLock = 0;
-    if (type == "lock") {
-      isLock = 1;
-      this.db.object(dbPath).update({ isLock: 1 });
-    }
-    else {
-      isLock = 0;
-      this.db.object(dbPath).update({ isLock: null });
-    }
-    let detail = this.allAccountList.find(item => item.empId == empId);
-    if (detail != undefined) {
-      detail.isLock = isLock;
-    }
-    detail = this.accountList.find(item => item.empId == empId);
-    if (detail != undefined) {
-      detail.isLock = isLock;
-    }
-    let path = "/EmployeeAccount/";
-    this.commonService.saveJsonFile(this.allAccountList, "accountDetail.json", path);
+      let dbPath = "Employees/" + empId + "/BankDetails";
+      let isLock = 0;
+      let message = "";
+      if (type == "lock") {
+        isLock = 1;
+        this.db.object(dbPath).update({ isLock: 1 });
+        message = "Account locked successfully !!!";
+      }
+      else {
+        isLock = 0;
+        this.db.object(dbPath).update({ isLock: 0 });
+        message = "Account unlocked successfully !!!";
+      }
+      let detail = this.allAccountList.find(item => item.empId == empId);
+      if (detail != undefined) {
+        detail.isLock = isLock;
+      }
+      detail = this.accountList.find(item => item.empId == empId);
+      if (detail != undefined) {
+        detail.isLock = isLock;
+      }
+      let path = "/EmployeeAccount/";
+      this.commonService.saveJsonFile(this.allAccountList, "accountDetail.json", path);
+      this.commonService.setAlertMessage("success", message);
   }
 
   openModel(content: any, id: any, type: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 250;
-    let width = 400;
+    let height = 330;
+    let width = 450;
     if (type == "remark") {
       height = 275;
     }
@@ -210,6 +221,7 @@ export class StaffAccountDetailComponent implements OnInit {
     $("div .modal-dialog-centered").css("margin-top", "26px");
     $(this.key).val(id);
     if (type == "account") {
+       $("div .modal-body").css("overflow", "hidden");
       let userDetail = this.accountList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         setTimeout(() => {
@@ -254,6 +266,21 @@ export class StaffAccountDetailComponent implements OnInit {
     }
   }
 
+  confirmAccountDetail() {
+    let accountNo = $(this.txtAccountNo).val();
+    let ifsc = $(this.txtIFSC).val();
+    $("#lblUpdateAccountNo").html(accountNo.toString());
+    $("#lblUpdateIFSC").html(ifsc.toString());
+
+    $("#divConfirm").show();
+  }
+
+  cancelConfirmation() {
+    $("#lblUpdateAccountNo").html("");
+    $("#lblUpdateIFSC").html("");
+    $("#divConfirm").hide();
+  }
+
   saveAccountDetail() {
     let id = $(this.key).val();
     if (id != "0") {
@@ -262,6 +289,8 @@ export class StaffAccountDetailComponent implements OnInit {
         let accountNo = $(this.txtAccountNo).val();
         let ifsc = $(this.txtIFSC).val();
         this.updateBankDetail(id, accountNo, ifsc);
+        this.setDefaultLockAccount(id);
+        userDetail.isLock=1;
         let time = this.commonService.getCurrentTimeWithSecond();
         time = this.commonService.setTodayDate() + " " + time;
         let portalUserList = JSON.parse(localStorage.getItem("webPortalUserList"));
@@ -336,7 +365,7 @@ export class StaffAccountDetailComponent implements OnInit {
             let date = updateDate.split(" ")[0];
             let time = updateDate.split(" ")[1];
             date = date.split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split("-")[1])) + " " + date.split("-")[0] + " " + time;
-            
+
             html += "<tr>";
             html += "<td class='text-left br-1'>" + (i + 1) + "</td>";
             html += "<td class='text-left br-1'>" + (data["preAccountNumber"] ? data["preAccountNumber"] : "---") + "</td>";
@@ -594,6 +623,14 @@ export class StaffAccountDetailComponent implements OnInit {
                 if (employeeDetail["BankDetails"]["isLock"] != null) {
                   isLock = employeeDetail["BankDetails"]["isLock"];
                 }
+                else {
+                  isLock = 1;
+                  this.setDefaultLockAccount(empId);
+                }
+              }
+              else {
+                isLock = 1;
+                this.setDefaultLockAccount(empId);
               }
 
               if (employeeDetail["updateSummary"] != null) {
@@ -642,7 +679,12 @@ export class StaffAccountDetailComponent implements OnInit {
     });
   }
 
-  
+  setDefaultLockAccount(empId: any) {
+    let dbPath = "Employees/" + empId + "/BankDetails/";
+    this.db.object(dbPath).update({ isLock: 1 });
+  }
+
+
   hasBankDetailHistory(empId: any) {
     return new Promise((resolve) => {
       let dbPath = "BankDetailUpdateHistory/" + empId;

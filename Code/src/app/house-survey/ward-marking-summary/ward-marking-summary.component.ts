@@ -115,13 +115,6 @@ export class WardMarkingSummaryComponent implements OnInit {
     }
   }
 
-  isIgnoredStreetVendorForHisar(houseTypeId: any) {
-    const shouldIgnore = (this.cityName == "hisar" || this.cityName == "devtest") &&
-      houseTypeId != null &&
-      houseTypeId.toString() == "30";
-    return shouldIgnore;
-  }
-
   showHideAlreadyCardInstalled() {
     if (this.cityName == "sikar" || this.cityName == "reengus") {
       this.isAlreadyShow = true;
@@ -204,9 +197,9 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Line";
       htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "MarkerKey";
-      htmlString += "</td>";
+     // htmlString += "<td>";
+    //  htmlString += "MarkerKey";
+    //  htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Marker ID";
       htmlString += "</td>";
@@ -290,9 +283,11 @@ export class WardMarkingSummaryComponent implements OnInit {
       }
 
       if (this.cityName == 'hisar') {
-        htmlString += "<td>";
-        htmlString += "Marking Date";
-        htmlString += "</td>";
+        if (this.userIsExternal == false) {
+          htmlString += "<td>";
+          htmlString += "Marking Date";
+          htmlString += "</td>";
+        }
       }
       htmlString += "</tr>";
       for (let i = 0; i < this.markerExportList.length; i++) {
@@ -303,11 +298,13 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "<td t='s'>";
         htmlString += this.markerExportList[i]["Line"];
         htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.markerExportList[i]["MarkerNo"];
-        htmlString += "</td>";
+      //  htmlString += "<td t='s'>";
+      //  htmlString += this.markerExportList[i]["MarkerNo"];
+      //  htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += this.markerExportList[i]["markerId"];
+        if (!this.markerExportList[i]["markerId"].includes("HISARM")) {
+          htmlString += this.markerExportList[i]["markerId"];
+        }
         htmlString += "</td>";
         if (this.cityName == 'hisar') {
           htmlString += "<td>";
@@ -389,9 +386,12 @@ export class WardMarkingSummaryComponent implements OnInit {
           htmlString += "</td>";
         }
         if (this.cityName == 'hisar') {
-          htmlString += "<td t='s'>";
-          htmlString += this.markerExportList[i]["markingDate"];
-          htmlString += "</td>";
+          if (this.userIsExternal == false) {
+            htmlString += "<td t='s'>";
+            htmlString += this.markerExportList[i]["markingDate"];
+            htmlString += "</td>"
+          }
+          ;
         }
         htmlString += "</tr>";
       }
@@ -419,9 +419,6 @@ export class WardMarkingSummaryComponent implements OnInit {
                   let markerNo = markerKeyArray[j];
                   const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;//condition for excluding data if external user
                   if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
-                    if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-                      continue;
-                    }
                     let houseType = "";
                     let detail = this.houseTypeList.find(item => item.id == lineData[markerNo]["houseType"]);
                     if (detail != undefined) {
@@ -569,81 +566,23 @@ export class WardMarkingSummaryComponent implements OnInit {
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
           const { marked = 0, actualMarked = 0, houseCount = 0, actualHouseCount = 0, complexCount = 0, actualComplexCount = 0, housesInComplex = 0, actualHousesInComplex = 0, alreadyInstalled = 0, approved = 0 } = data || {};
-          const hasActualMarked = actualMarked !== null && actualMarked !== undefined;
-          const hasActualHouseCount = actualHouseCount !== null && actualHouseCount !== undefined;
-          const hasActualComplexCount = actualComplexCount !== null && actualComplexCount !== undefined;
-          const hasActualHousesInComplex = actualHousesInComplex !== null && actualHousesInComplex !== undefined;
-          let markerCount = this.userIsExternal ? Number(hasActualMarked ? actualMarked : marked) : Number(marked);
-          let housesCount = this.userIsExternal ? Number(hasActualHouseCount ? actualHouseCount : houseCount) : Number(houseCount);
-          const complexCountValue = this.userIsExternal ? Number(hasActualComplexCount ? actualComplexCount : complexCount) : Number(complexCount);
-          const housesInComplexValue = this.userIsExternal ? Number(hasActualHousesInComplex ? actualHousesInComplex : housesInComplex) : Number(housesInComplex);
-          if (this.cityName == "hisar" || this.cityName == "devtest") {
-            let linePath = "EntityMarkingData/MarkedHouses/" + wardNo;
-            let lineInstance = this.db.object(linePath).valueChanges().subscribe((lineData: any) => {
-              lineInstance.unsubscribe();
-              markerCount = 0;
-              housesCount = 0;
-              if (lineData != null) {
-                const lineArray = Object.keys(lineData);
-                for (let i = 0; i < lineArray.length; i++) {
-                  const lineNo = lineArray[i];
-                  const markerObj = lineData[lineNo];
-                  if (markerObj == null || typeof markerObj != "object") {
-                    continue;
-                  }
-                  const markerKeyArray = Object.keys(markerObj);
-                  for (let j = 0; j < markerKeyArray.length; j++) {
-                    const markerNo = markerKeyArray[j];
-                    if (!parseInt(markerNo)) {
-                      continue;
-                    }
-                    if (markerObj[markerNo]["houseType"] == null) {
-                      continue;
-                    }
-                    const isUserAllowed = this.userIsExternal ? parseInt(markerObj[markerNo]["userId"]) !== -4 : true;
-                    if (!isUserAllowed) {
-                      continue;
-                    }
-                    if (this.isIgnoredStreetVendorForHisar(markerObj[markerNo]["houseType"])) {
-                      continue;
-                    }
-                    markerCount++;
-                    let markerHouseType = markerObj[markerNo]["houseType"];
-                    if (markerHouseType == "19" || markerHouseType == "20") {
-                      let totalHouses = parseInt(markerObj[markerNo]["totalHouses"]);
-                      if (isNaN(totalHouses) || totalHouses == 0) {
-                        totalHouses = 1;
-                      }
-                      housesCount += totalHouses;
-                    }
-                    else {
-                      housesCount++;
-                    }
-                  }
-                }
-              }
-              this.wardProgressList[index]["markers"] = markerCount;
-              this.wardProgressList[index]["houses"] = housesCount;
-              this.markerData.totalMarkers = Number(this.markerData.totalMarkers) + Number(markerCount);
-              this.markerData.totalHouses = Number(this.markerData.totalHouses) + Number(housesCount);
-            });
-          }
-          else {
-            this.wardProgressList[index]["markers"] = markerCount;
-            this.wardProgressList[index]["houses"] = housesCount;
-            this.markerData.totalMarkers = Number(this.markerData.totalMarkers) + Number(markerCount);
-            this.markerData.totalHouses = Number(this.markerData.totalHouses) + Number(housesCount);
-          }
           this.markerData.totalAlreadyCard += Number(alreadyInstalled);
+          this.wardProgressList[index]["markers"] = this.userIsExternal ? parseInt(actualMarked != 0 ? actualMarked : marked) : parseInt(marked);
           this.wardProgressList[index]["alreadyInstalled"] = Number(alreadyInstalled);
-          this.wardProgressList[index]["complex"] = complexCountValue;
-          this.wardProgressList[index]["houseInComplex"] = housesInComplexValue;
+          this.wardProgressList[index]["houses"] = this.userIsExternal ? parseInt(actualHouseCount != 0 ? actualHouseCount : houseCount) : parseInt(houseCount);
+          this.wardProgressList[index]["complex"] = this.userIsExternal ? parseInt(actualComplexCount != 0 ? actualComplexCount : complexCount) : parseInt(complexCount);
+          this.wardProgressList[index]["houseInComplex"] = this.userIsExternal ? parseInt(actualHousesInComplex != 0 ? actualHousesInComplex : housesInComplex) : parseInt(housesInComplex);
           this.wardProgressList[index]["approvedLines"] = Number(approved);
           this.wardProgressList[index]["status"] = this.wardProgressList[index]["markers"] > 0 ? "In progress" : this.wardProgressList[index]["status"];
           if (approved && Number(approved) == Number(this.wardProgressList[index]["wardLines"])) {
             this.wardProgressList[index]["status"] = "Marking done";
             this.wardProgressList[index]["cssClass"] = "marking-done";
           }
+
+          // if (this.cityName == "jaipur-malviyanagar") {
+          this.markerData.totalMarkers = Number(this.markerData.totalMarkers) + Number(this.wardProgressList[index]["markers"]);
+          this.markerData.totalHouses = Number(this.markerData.totalHouses) + Number(this.wardProgressList[index]["houses"]);
+          // }
 
 
 
@@ -716,15 +655,11 @@ export class WardMarkingSummaryComponent implements OnInit {
     let dbPath = "EntityMarkingData/LastScanTime/Ward/" + wardNo;
     let totalmarkingInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       totalmarkingInstance.unsubscribe();
+      let lastscandata = data.split(":");
+      let scandata = lastscandata[0] + ":" + lastscandata[1];
       if (data != null) {
-        const scanValue = data.toString();
-        const lastscandata = scanValue.split(":");
-        const scandata = lastscandata.length >= 2 ? lastscandata[0] + ":" + lastscandata[1] : scanValue;
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkingDetail", data);
         this.markerData.lastScan = scandata;
-      }
-      else {
-        this.markerData.lastScan = "";
       }
     });
     this.selectedZone = wardNo;
@@ -786,38 +721,6 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   getLineMarkers(wardNo: any, lineNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineMarkers");
-    if (this.cityName == "hisar" || this.cityName == "devtest") {
-      let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
-      let lineInstance = this.db.object(dbPath).valueChanges().subscribe((lineData: any) => {
-        lineInstance.unsubscribe();
-        let markerCount = 0;
-        if (lineData != null && typeof lineData == "object") {
-          const markerKeyArray = Object.keys(lineData);
-          for (let j = 0; j < markerKeyArray.length; j++) {
-            let markerNo = markerKeyArray[j];
-            if (!parseInt(markerNo)) {
-              continue;
-            }
-            if (lineData[markerNo]["houseType"] == null) {
-              continue;
-            }
-            const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
-            if (!isUserAllowed) {
-              continue;
-            }
-            if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-              continue;
-            }
-            markerCount++;
-          }
-        }
-        let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
-        if (lineDetail != undefined) {
-          lineDetail.markers = markerCount;
-        }
-      });
-      return;
-    }
     let dataKey = this.userIsExternal ? 'actualMarksCount' : 'marksCount';
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + dataKey;
     let markedInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -850,48 +753,6 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   getLineHouses(wardNo: any, lineNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineHouses");
-    if (this.cityName == "hisar" || this.cityName == "devtest") {
-      let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
-      let lineInstance = this.db.object(dbPath).valueChanges().subscribe((lineData: any) => {
-        lineInstance.unsubscribe();
-        let houseCount = 0;
-        if (lineData != null && typeof lineData == "object") {
-          const markerKeyArray = Object.keys(lineData);
-          for (let j = 0; j < markerKeyArray.length; j++) {
-            let markerNo = markerKeyArray[j];
-            if (!parseInt(markerNo)) {
-              continue;
-            }
-            if (lineData[markerNo]["houseType"] == null) {
-              continue;
-            }
-            const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
-            if (!isUserAllowed) {
-              continue;
-            }
-            if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-              continue;
-            }
-            const houseTypeId = lineData[markerNo]["houseType"];
-            if (houseTypeId == "19" || houseTypeId == "20") {
-              let totalHouses = parseInt(lineData[markerNo]["totalHouses"]);
-              if (isNaN(totalHouses) || totalHouses == 0) {
-                totalHouses = 1;
-              }
-              houseCount += totalHouses;
-            }
-            else {
-              houseCount++;
-            }
-          }
-        }
-        let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
-        if (lineDetail != undefined) {
-          lineDetail.houses = houseCount;
-        }
-      });
-      return;
-    }
     let dataKey = this.userIsExternal ? 'actualMarksHouse' : 'marksHouse';
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + dataKey;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1153,14 +1014,11 @@ export class WardMarkingSummaryComponent implements OnInit {
             let lineNo = keyArray[i];
             let lineData = markerData[lineNo];
 
-              let markerKeyArray = Object.keys(lineData);
-              for (let j = 0; j < markerKeyArray.length; j++) {
-                let markerNo = markerKeyArray[j];
-                const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;//condition for excluding data if external user
-                if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
-                if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-                  continue;
-                }
+            let markerKeyArray = Object.keys(lineData);
+            for (let j = 0; j < markerKeyArray.length; j++) {
+              let markerNo = markerKeyArray[j];
+              const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;//condition for excluding data if external user
+              if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
                 houseTypeCount++;
                 let houseTypeId = lineData[markerNo]["houseType"];
                 let servingCount = 1;
@@ -1307,9 +1165,6 @@ export class WardMarkingSummaryComponent implements OnInit {
                 let markerNo = markerKeyArray[j];
                 const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true; //condition for excluding data if external user
                 if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
-                  if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-                    continue;
-                  }
                   let houseTypeId = lineData[markerNo]["houseType"];
                   let servingCount = 1;
                   if (houseTypeId == "19" || houseTypeId == "20") {
@@ -1363,16 +1218,13 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.markerData.totalMarkers = 0;
     this.markerData.totalHouses = 0;
 
-    const allZoneList = JSON.parse(localStorage.getItem("allZoneList"));
-    const markingWards = JSON.parse(localStorage.getItem("markingWards"));
-    const sourceWardList = allZoneList && allZoneList.length > 0 ? allZoneList : markingWards;
-    this.wardList = (sourceWardList || []).filter(item => item && item["zoneNo"] != "0" && item["zoneNo"] != "--All--");
-    this.updateCounts(0);
+    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
+    this.updateCounts(1);
   }
 
 
   updateCounts(index: any) {
-    if (index >= this.wardList.length) {
+    if (index == this.wardList.length) {
       let date = this.commonService.setTodayDate();
       let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
       let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
@@ -1424,8 +1276,6 @@ export class WardMarkingSummaryComponent implements OnInit {
               let totalComplexCount = 0;
               let totalHouseInComplexCount = 0;
               let totalModifiedHouseTypeCount = 0;
-              let ignoredStreetVendorCount = 0;
-              let foundStreetVendorCount = 0;
               let actualTotalMarkerCount = 0;
               let actualTotalHouseCount = 0;
               let actualTotalComplexCount = 0;
@@ -1449,13 +1299,6 @@ export class WardMarkingSummaryComponent implements OnInit {
                   let markerNo = markerKeyArray[j];
                   if (parseInt(markerNo)) {
                     if (lineData[markerNo]["houseType"] != null) {
-                      if (lineData[markerNo]["houseType"].toString() == "30") {
-                        foundStreetVendorCount++;
-                      }
-                      if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-                        ignoredStreetVendorCount++;
-                        continue;
-                      }
                       let userId = lineData[markerNo]["userId"] ? parseInt(lineData[markerNo]["userId"]) : null;
                       let internalUser = userId != -4 ? true : false;
 

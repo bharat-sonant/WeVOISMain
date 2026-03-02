@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
+import { TinyUrlService } from "../../services/common/tiny-url";
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
@@ -12,7 +13,7 @@ import { AngularFireStorage } from "angularfire2/storage";
   styleUrls: ["./ward-survey-summary.component.scss"],
 })
 export class WardSurveySummaryComponent implements OnInit {
-  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private storage: AngularFireStorage, public tinyURL: TinyUrlService, public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
 
   selectedCircle: any;
   wardList: any[];
@@ -30,6 +31,8 @@ export class WardSurveySummaryComponent implements OnInit {
   zoneHouseTypeList: any[];
   entityList: any[] = [];
   employeeSurvey: any[] = [];
+  rfidMarkerList: any = [];
+  rfidList: any[];
   db: any;
   selectedWard: any;
   public isAlreadyShow = false;
@@ -69,6 +72,7 @@ export class WardSurveySummaryComponent implements OnInit {
   isActionShow: any;
   userIsExternal: any;
   cardPrefix: any;
+  public showRfID: any = false;
 
 
   ngOnInit() {
@@ -81,8 +85,15 @@ export class WardSurveySummaryComponent implements OnInit {
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       //this.isActionShow = false;
     }
+    if (localStorage.getItem("userID") == "4" || localStorage.getItem("userID") == "32") {
+      if (this.cityName == "hisar") {
+        $("#divRFID").show();
+      }
+    }
 
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
+    
     this.getScanCardSettings();
     this.showHideAlreadyCardInstalled();
     this.getLastUpdate();
@@ -178,12 +189,6 @@ export class WardSurveySummaryComponent implements OnInit {
     });
   }
 
-  isIgnoredStreetVendorForHisar(houseTypeId: any) {
-    return (this.cityName == "hisar" || this.cityName == "devtest") &&
-      houseTypeId != null &&
-      houseTypeId.toString() == "30";
-  }
-
   clearAll() {
     this.wardProgressList = [];
     this.lineSurveyList = [];
@@ -269,13 +274,183 @@ export class WardSurveySummaryComponent implements OnInit {
           }
         }
         htmlString += "</table>";
-        // console.log(htmlString);
         this.commonService.exportExcel(htmlString, "CardWardMappingNotInMArkedHouses.xlsx");
 
 
 
       }
     );
+  }
+
+  downloadRFID() {
+    $(this.divLoaderMain).show();
+    this.rfidMarkerList = [];
+    this.rfidList = [];
+    this.getMarkerData(0);
+
+  }
+
+  getCardData(index: any) {
+    if (index == this.wardList.length) {
+      let htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "RFIDNo";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "PID";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "MCCode";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "RFIDTYPE";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "InstallationDateTime";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "PropertyRfidPhoto";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Latitude";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Longitude";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "AgencyGstNumber";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.rfidList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["cardNumber"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["PID"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["mcCode"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["RFIDTYPE"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["date"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["cardImageURL"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["lat"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["lng"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.rfidList[i]["agencyGstNumber"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+
+      htmlString += "</table>";
+
+      let fileName = "Hisar-PropertyData.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+      $(this.divLoaderMain).hide();
+    }
+    else {
+      let zoneNo = this.wardList[index]["zoneNo"];
+      let dbPath = "Houses/" + zoneNo;
+      let cardInstance = this.db.object(dbPath).valueChanges().subscribe(
+        cardData => {
+          cardInstance.unsubscribe();
+          if (cardData != null) {
+            let keyArray = Object.keys(cardData);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let lineData = cardData[lineNo];
+                let cardKeyArray = Object.keys(lineData);
+                let agencyGstNumber = "08AACCW3281C1ZH";
+                let mcCode = "017";
+                let RFIDTYPE = "HardTag";
+                for (let j = 0; j < cardKeyArray.length; j++) {
+                  let cardNumber = cardKeyArray[j];
+                  //if (lineData[cardNumber]["latLng"] != null) {
+                    let PID = "";
+                    let lat = lineData[cardNumber]["latLng"].replace("(", "").replace(")", "").split(",")[0];
+                    let lng = lineData[cardNumber]["latLng"].replace("(", "").replace(")", "").split(",")[1];
+                    let cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + lineData[cardNumber]["cardImage"] + "?alt=media";
+                    //let cardImageURL = this.tinyURL.generateShortUrl(url);
+                    let date = lineData[cardNumber]["createdDate"];
+                    let markserDetail = this.rfidMarkerList.find(item => item.cardNumber == cardNumber);
+                    if (markserDetail != null) {
+                      PID = markserDetail.propId;
+                    }
+                    this.rfidList.push({ cardNumber: cardNumber, PID: PID, mcCode: mcCode, RFIDTYPE: RFIDTYPE, date: date, cardImageURL: cardImageURL, lat: lat, lng: lng, agencyGstNumber: agencyGstNumber });
+                 // }
+                }
+              }
+              index++;
+              this.getCardData(index);
+            }
+            else {
+              index++;
+              this.getCardData(index);
+            }
+          }
+          else {
+            index++;
+            this.getCardData(index);
+          }
+        }
+      );
+    }
+  }
+
+  getMarkerData(index: any) {
+    if (index == this.wardList.length) {
+      this.getCardData(0);
+    }
+    else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
+      let zoneNo = this.wardList[index]["zoneNo"];
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+        markerData => {
+          markerInstance.unsubscribe();
+          if (markerData != null) {
+            let keyArray = Object.keys(markerData);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let lineData = markerData[lineNo];
+                let markerKeyArray = Object.keys(lineData);
+                for (let j = 0; j < markerKeyArray.length; j++) {
+                  let markerNo = markerKeyArray[j];
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    let propId = lineData[markerNo]["propId"] ? lineData[markerNo]["propId"] : "";
+                    let cardNumber = lineData[markerNo]["cardNumber"] ? lineData[markerNo]["cardNumber"] : "";
+                    this.rfidMarkerList.push({ cardNumber: cardNumber, propId: propId });
+                  }
+                }
+              }
+              index++;
+              this.getMarkerData(index);
+            }
+            else {
+              index++;
+              this.getMarkerData(index);
+            }
+          }
+          else {
+            index++;
+            this.getMarkerData(index);
+          }
+        });
+    }
   }
 
   updateCounts_Bharat(index: any) {
@@ -353,9 +528,6 @@ export class WardSurveySummaryComponent implements OnInit {
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
                 if (parseInt(markerNo)) {
-                  if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-                    continue;
-                  }
                   isMarker = true;
 
                   let userId = lineData[markerNo]["userId"] ? parseInt(lineData[markerNo]["userId"]) : null;
@@ -512,9 +684,6 @@ export class WardSurveySummaryComponent implements OnInit {
                 let cardNo = cardKeyArray[j];
 
                 if (!cardNo.includes(this.cardPrefix)) {
-                  if (this.isIgnoredStreetVendorForHisar(cardObj[cardNo]["houseType"])) {
-                    continue;
-                  }
 
                   //if (cardObj[cardNo]["houseType"] == null || cardObj[cardNo]["houseType"] == "") {
                   //  console.log(zoneNo + " >> " + line + " >> " + cardNo);
@@ -850,10 +1019,6 @@ export class WardSurveySummaryComponent implements OnInit {
                 let cardNo = cardKeyArray[j];
                 // const isUserAllowed = this.userIsExternal ? parseInt(cardObj[cardNo]["surveyorId"]) !== -4 : true;//condition for excluding data if external user
                 if (!cardNo.includes(this.cardPrefix)) {
-                  const houseType = cardObj[cardNo]["houseType"];
-                  if (this.isIgnoredStreetVendorForHisar(houseType)) {
-                    continue;
-                  }
                   let name = cardObj[cardNo]["name"];
                   let address = cardObj[cardNo]["address"];
                   let cardType = "";
@@ -864,6 +1029,7 @@ export class WardSurveySummaryComponent implements OnInit {
                   if (cardObj[cardNo]["createdDate"] != null) {
                     date = cardObj[cardNo]["createdDate"].split(' ')[0];
                   }
+                  let houseType = cardObj[cardNo]["houseType"];
                   if (houseType == "19" || houseType == "20") {
                     if (cardObj[cardNo]["servingCount"] != null) {
                       let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
@@ -922,59 +1088,8 @@ export class WardSurveySummaryComponent implements OnInit {
       markerInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
-        let markerCount = Number(data);
-        if (this.cityName == "hisar" || this.cityName == "devtest") {
-          const markerPath = "EntityMarkingData/MarkedHouses/" + wardNo;
-          const wardMarkerInstance = this.db.object(markerPath).valueChanges().subscribe((markerData: any) => {
-            wardMarkerInstance.unsubscribe();
-            let ignoredCount = 0;
-            if (markerData != null) {
-              const lineArray = Object.keys(markerData);
-              for (let i = 0; i < lineArray.length; i++) {
-                const lineNo = lineArray[i];
-                const lineData = markerData[lineNo];
-                if (lineData == null || typeof lineData != "object") {
-                  continue;
-                }
-                const markerArray = Object.keys(lineData);
-                for (let j = 0; j < markerArray.length; j++) {
-                  const markerNo = markerArray[j];
-                  if (!parseInt(markerNo)) {
-                    continue;
-                  }
-                  const markerDetail = lineData[markerNo];
-                  if (markerDetail == null || markerDetail["houseType"] == null) {
-                    continue;
-                  }
-                  if (this.isIgnoredStreetVendorForHisar(markerDetail["houseType"])) {
-                    const userId = markerDetail["userId"] ? parseInt(markerDetail["userId"]) : null;
-                    const isAllowedForExternal = this.userIsExternal ? userId !== -4 : true;
-                    if (isAllowedForExternal) {
-                      ignoredCount++;
-                    }
-                  }
-                }
-              }
-            }
-            markerCount = Math.max(0, markerCount - ignoredCount);
-            this.wardProgressList[index]["markers"] = markerCount;
-            this.surveyData.totalMarkers = this.surveyData.totalMarkers + markerCount;
-            const surveyedCount = Number(this.wardProgressList[index]["surveyed"] || 0);
-            this.wardProgressList[index]["status"] = markerCount > 0 ? "In Progress" : "";
-            if (markerCount == surveyedCount && markerCount > 0) {
-              this.wardProgressList[index]["status"] = "Survey Done";
-            }
-          });
-        }
-        else {
-          this.wardProgressList[index]["markers"] = markerCount;
-          this.surveyData.totalMarkers = this.surveyData.totalMarkers + markerCount;
-          const surveyedCount = Number(this.wardProgressList[index]["surveyed"] || 0);
-          this.wardProgressList[index]["status"] = markerCount > 0 ? "In Progress" : "";
-          if (markerCount == surveyedCount && markerCount > 0) {
-            this.wardProgressList[index]["status"] = "Survey Done";
-          }
-        }
+        this.wardProgressList[index]["markers"] = Number(data);
+        this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(data);
         dataKey = this.userIsExternal ? 'ActualTotalHouseCount' : 'TotalHouseCount';//conditional path for actual count
         dataKey = 'TotalHouseCount';
         dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
@@ -1122,32 +1237,19 @@ export class WardSurveySummaryComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSurveyDetail");
     this.clearWardDetailData();
     this.selectedWard = wardNo;
-    const hideLoader = () => {
-      $('#divLoaderMain').hide();
-    };
     $('#divLoaderMain').show();
-    // setTimeout(() => {
-    //   hideLoader();
-    // }, 15000);
     if (this.isFirst == false) {
       this.setActiveClass(listIndex);
     } else {
       this.isFirst = false;
     }
 
-    Promise.race([
-      this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()),
-      new Promise(resolve => setTimeout(() => resolve(JSON.stringify({ totalLines: 0 })), 5000))
-    ]).then((data: any) => {
+    this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
       let wardLines = JSON.parse(data);
       let lineCount = Number(wardLines["totalLines"]);
       if (lineCount != undefined) {
         this.wardLineCount = Number(lineCount);
         this.surveyData.totalLines = this.wardLineCount;
-        if (this.wardLineCount == 0) {
-          hideLoader();
-          return;
-        }
         let wardSummary = this.wardProgressList.find(item => item.wardNo == wardNo);
         if (wardSummary != undefined) {
           this.surveyData.wardMarkers = wardSummary.markers;
@@ -1156,16 +1258,6 @@ export class WardSurveySummaryComponent implements OnInit {
           this.surveyData.wardAlreadyCard = wardSummary.already;
           this.surveyData.wardOldCards = wardSummary.oldCard;
           this.surveyData.wardNameNotCorrect = wardSummary.nameNotCorrect;
-          const hasNoWardData = Number(wardSummary.markers || 0) == 0 &&
-            Number(wardSummary.surveyed || 0) == 0 &&
-            Number(wardSummary.houses || 0) == 0 &&
-            Number(wardSummary.revisit || 0) == 0 &&
-            Number(wardSummary.oldCard || 0) == 0 &&
-            Number(wardSummary.already || 0) == 0;
-          if (hasNoWardData) {
-            hideLoader();
-            return;
-          }
         }
 
         let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
@@ -1227,29 +1319,6 @@ export class WardSurveySummaryComponent implements OnInit {
                     if (Number(lineDetail.markers != Number(lineDetail.survyed))) {
                       lineDetail.class = "not-matched";
                     }
-                    if (this.cityName == "hisar" || this.cityName == "devtest") {
-                      let ignoredCount = 0;
-                      const markerKeys = Object.keys(markedHouseData[i]);
-                      for (let k = 0; k < markerKeys.length; k++) {
-                        const markerNo = markerKeys[k];
-                        if (!parseInt(markerNo)) {
-                          continue;
-                        }
-                        const markerDetail = markedHouseData[i][markerNo];
-                        if (markerDetail == null || markerDetail["houseType"] == null) {
-                          continue;
-                        }
-                        if (this.isIgnoredStreetVendorForHisar(markerDetail["houseType"])) {
-                          const userId = markerDetail["userId"] ? parseInt(markerDetail["userId"]) : null;
-                          const isAllowedForExternal = this.userIsExternal ? userId !== -4 : true;
-                          if (isAllowedForExternal) {
-                            ignoredCount++;
-                          }
-                        }
-                      }
-                      lineDetail.markers = Math.max(0, Number(lineDetail.markers) - ignoredCount);
-                      lineDetail.class = Number(lineDetail.markers) != Number(lineDetail.survyed) ? "not-matched" : "";
-                    }
                   }
                   let markerData = markedHouseData[i];
                   let keyArray = Object.keys(markerData);
@@ -1267,20 +1336,10 @@ export class WardSurveySummaryComponent implements OnInit {
                 }
               }
             }
-            hideLoader();
-          },
-          () => {
-            hideLoader();
+            $('#divLoaderMain').hide();
           }
         );
       }
-      else {
-        hideLoader();
-      }
-    }).catch(() => {
-      hideLoader();
-    }).finally(() => {
-      hideLoader();
     });
   }
 
@@ -1842,9 +1901,6 @@ export class WardSurveySummaryComponent implements OnInit {
             let markerNo = markerKeyArray[j];
             const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
             if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
-              if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-                continue;
-              }
               let houseTypeId = lineData[markerNo]["houseType"];
               let detail = this.houseTypeList.find(item => item.id == houseTypeId);
               if (detail != undefined) {
@@ -1916,9 +1972,6 @@ export class WardSurveySummaryComponent implements OnInit {
             let markerNo = markerKeyArray[j];
             const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
             if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
-              if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-                continue;
-              }
               let houseTypeId = lineData[markerNo]["houseType"];
               let detail = this.houseTypeList.find(item => item.id == houseTypeId);
               if (detail != undefined) {
@@ -2073,9 +2126,6 @@ export class WardSurveySummaryComponent implements OnInit {
               const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true; //condition for excluding data if external user
               if (parseInt(markerNo) && isUserAllowed) {
                 if (lineData[markerNo]["houseType"] != null) {
-                  if (this.isIgnoredStreetVendorForHisar(lineData[markerNo]["houseType"])) {
-                    continue;
-                  }
                   if (lineData[markerNo]["cardNumber"] != null && !lineData[markerNo]["cardNumber"].includes(this.cardPrefix)) {
                     let houseTypeId = lineData[markerNo]["houseType"];
                     let detail = this.houseTypeList.find(item => item.id == houseTypeId);

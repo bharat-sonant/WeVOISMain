@@ -58,6 +58,19 @@
         />
       </div>
 
+      <div id="divRFID" style="display: none;"
+        class="btn-default btn-export"
+        (click)="downloadRFID()"
+      >
+        RFID
+        <img
+          src="../../../assets/img/iconExport.png"
+          class="img-fluid icon-default"
+          alt="File"
+          width="24"
+        />
+      </div>
+
       <div
         class="btn-default btn-export"
         [hidden]="isActionShow == false"
