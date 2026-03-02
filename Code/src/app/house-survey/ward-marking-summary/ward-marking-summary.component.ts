@@ -197,9 +197,9 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "<td>";
       htmlString += "Line";
       htmlString += "</td>";
-     // htmlString += "<td>";
-    //  htmlString += "MarkerKey";
-    //  htmlString += "</td>";
+      // htmlString += "<td>";
+      //  htmlString += "MarkerKey";
+      //  htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Marker ID";
       htmlString += "</td>";
@@ -213,6 +213,9 @@ export class WardMarkingSummaryComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Latitude";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Geo Address";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Address";
@@ -298,9 +301,9 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "<td t='s'>";
         htmlString += this.markerExportList[i]["Line"];
         htmlString += "</td>";
-      //  htmlString += "<td t='s'>";
-      //  htmlString += this.markerExportList[i]["MarkerNo"];
-      //  htmlString += "</td>";
+        //  htmlString += "<td t='s'>";
+        //  htmlString += this.markerExportList[i]["MarkerNo"];
+        //  htmlString += "</td>";
         htmlString += "<td>";
         if (!this.markerExportList[i]["markerId"].includes("HISARM")) {
           htmlString += this.markerExportList[i]["markerId"];
@@ -316,6 +319,9 @@ export class WardMarkingSummaryComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["Latitude"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["imageCaptureLocation"];
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.markerExportList[i]["address"];
@@ -389,7 +395,7 @@ export class WardMarkingSummaryComponent implements OnInit {
           if (this.userIsExternal == false) {
             htmlString += "<td t='s'>";
             htmlString += this.markerExportList[i]["markingDate"];
-            htmlString += "</td>"
+            htmlString += "</td>";
           }
           ;
         }
@@ -434,6 +440,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                     const mobileNo = lineData[markerNo]['mobileNumber'] || '';
                     const houseNo = lineData[markerNo]['houseNumber'] || '';
                     const streetColony = lineData[markerNo]['streetColony'] || '';
+                    const imageCaptureLocation = lineData[markerNo]['imageCaptureLocation'] || '';
                     const buildingName = lineData[markerNo]['buildingName'] || '';
                     const totalHouses = lineData[markerNo]['totalHouses'] || '';
                     const wardNumber = lineData[markerNo]['wardNumber'] || '';
@@ -512,7 +519,7 @@ export class WardMarkingSummaryComponent implements OnInit {
                               dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                               this.db.object(dbPath).update({ address: address });
                             }
-                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate });
+                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, imageCaptureLocation, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate });
                           }
                         );
                       }
@@ -520,11 +527,11 @@ export class WardMarkingSummaryComponent implements OnInit {
                         address = this.markerCityName;
                         let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                         this.db.object(dbPath).update({ address: address });
-                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate });
+                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, imageCaptureLocation, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate });
                       }
                     }
                     else {
-                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate });
+                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, imageCaptureLocation, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate });
                     }
                   }
                 }

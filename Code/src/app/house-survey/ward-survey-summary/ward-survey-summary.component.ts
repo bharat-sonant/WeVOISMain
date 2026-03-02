@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonService } from "../../services/common/common.service";
-import { TinyUrlService } from "../../services/common/tiny-url";
+
 import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
@@ -13,7 +13,7 @@ import { AngularFireStorage } from "angularfire2/storage";
   styleUrls: ["./ward-survey-summary.component.scss"],
 })
 export class WardSurveySummaryComponent implements OnInit {
-  constructor(private storage: AngularFireStorage, public tinyURL: TinyUrlService, public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
 
   selectedCircle: any;
   wardList: any[];
@@ -93,7 +93,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
-    
+
     this.getScanCardSettings();
     this.showHideAlreadyCardInstalled();
     this.getLastUpdate();
@@ -379,18 +379,18 @@ export class WardSurveySummaryComponent implements OnInit {
                 for (let j = 0; j < cardKeyArray.length; j++) {
                   let cardNumber = cardKeyArray[j];
                   //if (lineData[cardNumber]["latLng"] != null) {
-                    let PID = "";
-                    let lat = lineData[cardNumber]["latLng"].replace("(", "").replace(")", "").split(",")[0];
-                    let lng = lineData[cardNumber]["latLng"].replace("(", "").replace(")", "").split(",")[1];
-                    let cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + lineData[cardNumber]["cardImage"] + "?alt=media";
-                    //let cardImageURL = this.tinyURL.generateShortUrl(url);
-                    let date = lineData[cardNumber]["createdDate"];
-                    let markserDetail = this.rfidMarkerList.find(item => item.cardNumber == cardNumber);
-                    if (markserDetail != null) {
-                      PID = markserDetail.propId;
-                    }
-                    this.rfidList.push({ cardNumber: cardNumber, PID: PID, mcCode: mcCode, RFIDTYPE: RFIDTYPE, date: date, cardImageURL: cardImageURL, lat: lat, lng: lng, agencyGstNumber: agencyGstNumber });
-                 // }
+                  let PID = "";
+                  let lat = lineData[cardNumber]["latLng"].replace("(", "").replace(")", "").split(",")[0];
+                  let lng = lineData[cardNumber]["latLng"].replace("(", "").replace(")", "").split(",")[1];
+                  let cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + lineData[cardNumber]["cardImage"] + "?alt=media";
+
+                  let date = lineData[cardNumber]["createdDate"];
+                  let markserDetail = this.rfidMarkerList.find(item => item.cardNumber == cardNumber);
+                  if (markserDetail != null) {
+                    PID = markserDetail.propId;
+                  }
+                  this.rfidList.push({ cardNumber: cardNumber, PID: PID, mcCode: mcCode, RFIDTYPE: RFIDTYPE, date: date, cardImageURL: cardImageURL, lat: lat, lng: lng, agencyGstNumber: agencyGstNumber });
+                  // }
                 }
               }
               index++;
@@ -913,6 +913,9 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "Name";
         htmlString += "</td>";
         htmlString += "<td>";
+        htmlString += "Geo Address";
+        htmlString += "</td>";
+        htmlString += "<td>";
         htmlString += "Address";
         htmlString += "</td>";
         htmlString += "<td>";
@@ -948,6 +951,9 @@ export class WardSurveySummaryComponent implements OnInit {
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.cardHousesList[i]["name"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.cardHousesList[i]["imageCaptureLocation"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.cardHousesList[i]["address"];
@@ -1011,6 +1017,26 @@ export class WardSurveySummaryComponent implements OnInit {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getExportCardData", houseData);
           let keyArray = Object.keys(houseData);
           if (keyArray.length > 0) {
+            let pendingCalls = 0;
+            let totalCardsToProcess = 0;
+            let isLoopCompleted = false;
+            let hasMovedNext = false;
+            const processNextZone = () => {
+              if (hasMovedNext) {
+                return;
+              }
+              hasMovedNext = true;
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportCardData(index, type);
+            };
+            const tryProcessNextZone = () => {
+              if (isLoopCompleted && pendingCalls === 0) {
+                processNextZone();
+              }
+            };
             for (let i = 0; i < keyArray.length; i++) {
               let line = keyArray[i];
               let cardObj = houseData[line];
@@ -1049,15 +1075,42 @@ export class WardSurveySummaryComponent implements OnInit {
                   if (detail != undefined) {
                     cardType = detail.houseType;
                   }
-                  this.cardHousesList.push({ zoneNo: zoneNo, lineNo: line, cardNo: cardNo, name: name, address: address, cardType: cardType, latLng: latLng, mobile: mobile, date: date, houseCount: houseCount });
+                  totalCardsToProcess++;
+                  pendingCalls++;
+                  this.getOrCreateImageCaptureLocation(
+                    cardObj[cardNo]["imageCaptureLocation"],
+                    cardObj[cardNo]["latLng"],
+                    zoneNo,
+                    line,
+                    cardNo,
+                    (imageCaptureLocation: string) => {
+                      this.cardHousesList.push({
+                        zoneNo: zoneNo,
+                        lineNo: line,
+                        cardNo: cardNo,
+                        name: name,
+                        address: address,
+                        cardType: cardType,
+                        latLng: latLng,
+                        imageCaptureLocation: imageCaptureLocation,
+                        mobile: mobile,
+                        date: date,
+                        houseCount: houseCount
+                      });
+                      pendingCalls--;
+                      tryProcessNextZone();
+                    }
+                  );
+
                 }
               }
             }
-            index++;
-            if (type != "All") {
-              index = this.wardList.length;
+            isLoopCompleted = true;
+            if (totalCardsToProcess === 0) {
+              processNextZone();
+            } else {
+              tryProcessNextZone();
             }
-            this.getExportCardData(index, type);
           }
           else {
             index++;
@@ -2217,6 +2270,49 @@ export class WardSurveySummaryComponent implements OnInit {
     }
     );
   }
+  private getOrCreateImageCaptureLocation(
+    imageCaptureLocation: any,
+    latLng: any,
+    zoneNo: any,
+    line: any,
+    cardNo: any,
+    callback: (address: string) => void
+  ) {
+    const existing = (imageCaptureLocation || "").toString().trim();
+    if (existing) {
+      callback(existing);
+      return;
+    }
+
+    const parts = (latLng || "").toString().replace("(", "").replace(")", "").split(",");
+    if (parts.length !== 2) {
+      callback("");
+      return;
+    }
+
+    const lat = Number(parts[0].trim());
+    const lng = Number(parts[1].trim());
+    if (isNaN(lat) || isNaN(lng)) {
+      callback("");
+      return;
+    }
+
+    const API_KEY = "AIzaSyAEQ6Y1RVEcJrUNzdf2UzNyCARoyPwRzw8";
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`;
+
+    this.httpService.get(url).subscribe(
+      (res: any) => {
+        const address = (res.status === "OK" && res.results.length > 0) ? (res.results[0].formatted_address || "") : "";
+        if (address) {
+          this.db.object("Houses/" + zoneNo + "/" + line + "/" + cardNo).update({ imageCaptureLocation: address });
+        }
+        callback(address);
+      },
+      () => callback("")
+    );
+  }
+
+
 }
 
 export class surveyDatail {
