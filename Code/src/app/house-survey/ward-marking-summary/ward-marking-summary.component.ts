@@ -73,6 +73,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   inProgressWards: any[] = [];
   serviceName = "marking-summary";
   isShowEntityExport: any;
+  pendingGeoRequestsForExport = 0;
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -169,6 +170,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   exportMarkers() {
     this.markerExportList = [];
+    this.pendingGeoRequestsForExport = 0;
     $(this.divLoaderMain).show();
     let zoneNo = $(this.ddlZone).val();
     if (zoneNo == "--All--") {
@@ -188,6 +190,12 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   getExportMarkerData(index: any, type: any) {
     if (index == this.wardList.length) {
+      if (this.pendingGeoRequestsForExport > 0) {
+        setTimeout(() => {
+          this.getExportMarkerData(index, type);
+        }, 300);
+        return;
+      }
       let htmlString = "";
       htmlString = "<table>";
       htmlString += "<tr>";
@@ -441,6 +449,18 @@ export class WardMarkingSummaryComponent implements OnInit {
                     const houseNo = lineData[markerNo]['houseNumber'] || '';
                     const streetColony = lineData[markerNo]['streetColony'] || '';
                     const imageCaptureLocation = lineData[markerNo]['imageCaptureLocation'] || '';
+                    if (!imageCaptureLocation && lat !== "" && lng !== "") {
+                      this.pendingGeoRequestsForExport++;
+                      this.getAddressFromCoords(Number(lat), Number(lng)).then((geoAddress: string) => {
+                        if (geoAddress) {
+                          const path = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+                          this.db.object(path).update({ imageCaptureLocation: geoAddress });
+                          this.updateExportRowImageCaptureLocation(zoneNo, lineNo, markerNo, geoAddress);
+                        }
+                      }).catch(() => { }).finally(() => {
+                        this.pendingGeoRequestsForExport = Math.max(0, this.pendingGeoRequestsForExport - 1);
+                      });
+                    }
                     const buildingName = lineData[markerNo]['buildingName'] || '';
                     const totalHouses = lineData[markerNo]['totalHouses'] || '';
                     const wardNumber = lineData[markerNo]['wardNumber'] || '';
@@ -560,7 +580,39 @@ export class WardMarkingSummaryComponent implements OnInit {
         });
     }
   }
+getAddressFromCoords(lat: number, lng: number): Promise<string> {
+  return new Promise((resolve) => {
+      const API_KEY = "AIzaSyAEQ6Y1RVEcJrUNzdf2UzNyCARoyPwRzw8";
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`;
 
+    this.httpService.get(url).subscribe(
+      (response: any) => {
+        if (response.status === 'OK' && response.results.length > 0) {
+          resolve(response.results[0].formatted_address);
+        } else {
+          resolve('');
+        }
+      },
+      (error) => {
+        console.error('Geocoding Error:', error);
+        resolve('');
+      }
+    );
+  });
+}
+
+  private updateExportRowImageCaptureLocation(zoneNo: any, lineNo: any, markerNo: any, geoAddress: string, attempt: number = 0) {
+    const row = this.markerExportList.find(item => item["Zone"] == zoneNo && item["Line"] == lineNo && item["MarkerNo"] == markerNo);
+    if (row) {
+      row["imageCaptureLocation"] = geoAddress;
+      return;
+    }
+    if (attempt < 10) {
+      setTimeout(() => {
+        this.updateExportRowImageCaptureLocation(zoneNo, lineNo, markerNo, geoAddress, attempt + 1);
+      }, 150);
+    }
+  }
   getWardSummary(index: any, wardNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardSummary");
     this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
