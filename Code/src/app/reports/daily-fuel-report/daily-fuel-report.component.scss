@@ -2317,28 +2317,102 @@ input {
     border: 1px solid lightgray !important;
 }
 
+::ng-deep .history-modal-window {
+    --history-modal-width: 70vw;
+    --history-modal-height: 80vh;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+::ng-deep .history-modal-window .modal-dialog {
+    width: calc(var(--history-modal-width, 96vw)) !important;
+    max-width: calc(var(--history-modal-width, 96vw)) !important;
+    min-width: calc(var(--history-modal-width, 96vw)) !important;
+    height: calc(var(--history-modal-height, 66vh)) !important;
+    min-height: calc(var(--history-modal-height, 66vh)) !important;
+    max-height: calc(var(--history-modal-height, 66vh)) !important;
+    margin: 0 !important;
+    display: flex;
+    align-items: stretch;
+}
+
+::ng-deep .history-modal-window .modal-content {
+    height: calc(var(--history-modal-height, 66vh)) !important;
+    max-height: calc(var(--history-modal-height, 66vh)) !important;
+    min-height: calc(var(--history-modal-height, 66vh)) !important;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+}
+
+.history-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.history-modal-body .table-wrapper.table-two {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+}
+
+.history-modal-body .table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.history-modal-body .history-table-body {
+    display: block;
+}
+
+.history-modal-body .history-table-body tr {
+    display: flex;
+    align-items: stretch;
+}
+
 .history-image-cell {
-    width: 1%;
-    white-space: nowrap;
+    width: 56%;
+    white-space: normal;
     vertical-align: top;
     font-weight: normal !important;
 }
 
 .history-detail-cell {
+    width: 44%;
     vertical-align: top;
     font-weight: normal !important;
+    word-break: break-word;
+}
+
+.history-value-small {
+    font-size: 11px;
 }
 
 .history-images-row {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: nowrap;
+    align-items: stretch;
+    overflow: hidden;
+    height: 100%;
+}
+
+.history-images-row a {
+    flex: 1 1 calc((100% - 20px) / 3);
+    min-width: 0;
+    display: block;
+    height: 100%;
 }
 
 .history-image-box {
     position: relative;
-    width: 92px;
-    height: 92px;
+    width: 100%;
+    min-height: 0;
+    height: 100%;
     border: 1px solid #d9d9d9;
     border-radius: 6px;
     overflow: hidden;
@@ -2368,7 +2442,8 @@ input {
 }
 
 .history-loading-wrap {
-    min-height: 320px;
+    height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;

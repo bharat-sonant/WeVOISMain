@@ -326,14 +326,12 @@
     </div>
 
     <ng-template #contentHistory>
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">History :
-                    </h5>
-                    <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
-                </div>
-                <div class="modal-body">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">History :
+            </h5>
+            <img src="../../../assets/img/close-grey.png" class="img-close" (click)="closeMapModelHalt();">
+        </div>
+        <div class="modal-body history-modal-body">
                     <div *ngIf="historyLoading" class="history-loading-wrap">
                         <div class="spinner-border text-secondary" role="status"></div>
                         <div class="history-loading-text">Loading history...</div>
@@ -413,16 +411,15 @@
                                                         <span> <b>Vehicle :</b> {{data.vehicle}}</span><br />
                                                         <span *ngIf="hasDisplayValue(data, 'fuelType')"><b>Fuel Type :</b> {{data.fuelType}}<br /></span>
                                                         <span *ngIf="hasDisplayValue(data, 'fuelVehicle')"><b>Fuel Vehicle :</b> {{data.fuelVehicle}}<br /></span>
-                                                        <span *ngIf="hasDisplayValue(data, 'payMethod')"><b>Pay Method :</b> {{data.payMethod}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'payMethod')"><b>Pay Method :</b> <span class="history-value-small">{{data.payMethod}}</span><br /></span>
                                                         <span *ngIf="hasDisplayValue(data, 'petrolPump')"><b>Petrol Pump :</b> {{data.petrolPump}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'meterReading')"><b> Meter Reading :</b> {{data.meterReading}}<br /></span>
                                                         <span *ngIf="hasDisplayValue(data, 'quantity')"><b> Quantity :</b> {{data.quantity}}<br /></span>
                                                         <span *ngIf="hasDisplayValue(data, 'amount')"><b> Amount :</b> {{data.amount}}<br /></span>
-                                                        <span *ngIf="hasDisplayValue(data, 'meterReading')"><b> Meter Reading :</b> {{data.meterReading}}<br /></span>
                                                         <span *ngIf="hasDisplayValue(data, 'createdBy') || hasDisplayValue(data, 'creationDate') || hasDisplayValue(data, 'time')">
                                                             <b *ngIf="hasDisplayValue(data, 'createdBy')"> By </b>{{hasDisplayValue(data, 'createdBy') ? data.createdBy : ''}}
                                                             <b *ngIf="hasDisplayValue(data, 'creationDate') || hasDisplayValue(data, 'time')">on </b>
-                                                            {{hasDisplayValue(data, 'creationDate') ? data.creationDate : ''}}
-                                                            {{hasDisplayValue(data, 'time') ? data.time : ''}}
+                                                            {{formatHistoryDateTime(data)}}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -433,9 +430,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
-        </div>
     </ng-template>
 
     <!--Fuel Reimbursement-->

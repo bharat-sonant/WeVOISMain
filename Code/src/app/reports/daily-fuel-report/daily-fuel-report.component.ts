@@ -418,25 +418,8 @@ export class DailyFuelReportComponent implements OnInit {
 
   showHistory(content: any, key: any) {
     this.historyLoading = true;
-    this.modalService.open(content, { size: "lg" });
-    let windowHeight = $(window).height();
-    let windowWidth = $(window).width();
-    let height = 400;
-    let width = 600;
-    let mapHeight = height - 40 + "px";
-    let divHeight = height - 40 + "px";
-    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
-
-    $("div .modal-content")
-      .parent()
-      .css("max-width", "" + width + "px")
-      .css("margin-top", marginTop);
-    $("div .modal-content")
-      .css("height", height + "px")
-      .css("width", "" + width + "px");
-    $("div .modal-dialog-centered").css("margin-top", "26px");
-    $("#haltMap").css("height", mapHeight);
-    $("#divSequence").css("height", divHeight);
+    this.modalService.dismissAll();
+    this.modalService.open(content, { centered: true, windowClass: "history-modal-window" });
     this.getDiselEntryHistory(key);
   }
 
@@ -1560,6 +1543,22 @@ export class DailyFuelReportComponent implements OnInit {
 
   hasDisplayValue(obj: any, key: string): boolean {
     return !!obj && obj[key] !== undefined;
+  }
+
+  formatHistoryDateTime(data: any): string {
+    if (!data) {
+      return "";
+    }
+    const rawDate = data.creationDate != null ? data.creationDate.toString().trim() : "";
+    const rawTime = data.time != null ? data.time.toString().trim() : "";
+    if (!rawDate && !rawTime) {
+      return "";
+    }
+    if (!rawDate) {
+      return rawTime;
+    }
+    const dateTimeValue = `${rawDate}${rawTime ? " " + rawTime : ""}`;
+    return this.commonService.convertDateWithMonthName(dateTimeValue);
   }
 }
 
