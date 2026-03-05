@@ -25,35 +25,35 @@
             </nav> -->
             <!-- Breadcrumb ends -->
         </div>
-        
+
         <div class="header-right">
             <div class=" count-fuel-table">
-                     <div class="text-center">
-                        <h4 class="amount-fuel"> {{fuelDetail.totalCNG}}</h4>
-                        <p class="title-heading"> CNG</p>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="amount-fuel"> {{fuelDetail.totalPetrol}}</h4>
-                        <p class="title-heading"> Petrol</p>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="amount-fuel"> {{fuelDetail.totalDiesel}}</h4>
-                        <p class="title-heading"> Diesel Qty</p>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="amount-fuel"> {{fuelDetail.totalFuel}}</h4>
-                        <p class="title-heading"> Total Fuel</p>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="amount-fuel"> {{fuelDetail.totalAmount}}</h4>
-                        <p class="title-heading"> Fuel Amount</p>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="amount-fuel"> {{fuelDetail.totalKm}}</h4>
-                        <p class="title-heading"> KM
-                            Running</p>
-                    </div>
+                <div class="text-center">
+                    <h4 class="amount-fuel"> {{fuelDetail.totalCNG}}</h4>
+                    <p class="title-heading"> CNG</p>
                 </div>
+                <div class="text-center">
+                    <h4 class="amount-fuel"> {{fuelDetail.totalPetrol}}</h4>
+                    <p class="title-heading"> Petrol</p>
+                </div>
+                <div class="text-center">
+                    <h4 class="amount-fuel"> {{fuelDetail.totalDiesel}}</h4>
+                    <p class="title-heading"> Diesel Qty</p>
+                </div>
+                <div class="text-center">
+                    <h4 class="amount-fuel"> {{fuelDetail.totalFuel}}</h4>
+                    <p class="title-heading"> Total Fuel</p>
+                </div>
+                <div class="text-center">
+                    <h4 class="amount-fuel"> {{fuelDetail.totalAmount}}</h4>
+                    <p class="title-heading"> Fuel Amount</p>
+                </div>
+                <div class="text-center">
+                    <h4 class="amount-fuel"> {{fuelDetail.totalKm}}</h4>
+                    <p class="title-heading"> KM
+                        Running</p>
+                </div>
+            </div>
             <div class="btn-default btn-export" (click)="exportToExcel();">
                 Export to Excel
                 <img src="../../../assets/img/iconExport.png" class="img-fluid icon-default" alt="File" width="24" />
@@ -192,8 +192,7 @@
                                     </td>
                                     <td class="text-left " style="vertical-align: top;"
                                         [hidden]="isPetrolPumpDetail==false">
-                                        <div style="width:100%; "
-                                            *ngFor="let diesel of data.diesel ">
+                                        <div style="width:100%; " *ngFor="let diesel of data.diesel ">
                                             <div style="width:100%; font-weight: bold;" [hidden]="diesel.fuelType==''">
                                                 {{diesel.fuelType}}</div>
                                             <div style="width:100%" [hidden]="diesel.fuelVehicle==''">-
@@ -219,8 +218,10 @@
                                     <td class="text-right " style="vertical-align: top;">
                                         <div class="diesel-icon" *ngFor="let diesel of data.diesel ">
                                             <div class="d-flex align-items-center mb-1 gap-1">
-                                                <a *ngIf="diesel.hasVehicleImage" href="{{diesel.vehicleImageUrl}}" target="_blank">
-                                                    <img src="../../../assets/icons/car-solid-full.svg" alt="car-solid-full" width="16" />
+                                                <a *ngIf="diesel.hasVehicleImage" href="{{diesel.vehicleImageUrl}}"
+                                                    target="_blank">
+                                                    <img src="../../../assets/icons/car-solid-full.svg"
+                                                        alt="car-solid-full" width="16" />
                                                 </a>
                                                 &nbsp;
                                                 <a href="{{diesel.meterImageUrl}}" target="_blank"
@@ -279,11 +280,14 @@
                                                 <!-- <div style="width:100%" [hidden]="diesel.rmb_by==''">
                                                     By - {{diesel.rmb_by}}</div> -->
                                             </div>
-                                            <button class="btn-success mb-2 ms-0" *ngIf="!diesel.rmb_no && canReimburseFuel==1 " (click)="showFuelReimbursement(contentFuelReimbursement,diesel)" style="padding: 6px 10px !important;width: 140px;">
+                                            <button class="btn-success mb-2 ms-0"
+                                                *ngIf="!diesel.rmb_no && canReimburseFuel==1 "
+                                                (click)="showFuelReimbursement(contentFuelReimbursement,diesel)"
+                                                style="padding: 6px 10px !important;width: 140px;">
                                                 Reimburse {{diesel.fuelType}}
                                             </button>
                                         </div>
-                                        
+
                                     </td>
                                 </tr>
                             </tbody>
@@ -347,64 +351,79 @@
                                                 <tr *ngFor="let data of dieselHistoryList, let i=index">
                                                     <td class="text-left history-image-cell">
                                                         <div class="history-images-row">
-                                                            <a *ngIf="data.hasVehicleImage" href="{{data.vehicleImageUrl}}" target="_blank" title="Open vehicle image">
+                                                            <a *ngIf="data.hasVehicleImage"
+                                                                href="{{data.vehicleImageUrl}}" target="_blank"
+                                                                title="Open vehicle image">
                                                                 <div class="history-image-box">
                                                                     <img src="../../../assets/img/img-not-available.png"
                                                                         alt="Vehicle image not available"
                                                                         class="history-fallback-image" />
                                                                     <div *ngIf="!data.vehicleImageLoaded"
                                                                         class="history-image-loader">
-                                                                        <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                                                        <div class="spinner-border spinner-border-sm text-secondary"
+                                                                            role="status"></div>
                                                                     </div>
-                                                                    <img *ngIf="!data.vehicleImageError" [src]="data.vehicleImageUrl"
+                                                                    <img *ngIf="!data.vehicleImageError"
+                                                                        [src]="data.vehicleImageUrl"
                                                                         (load)="onHistoryImageLoad(data, 'vehicle')"
                                                                         (error)="onHistoryImageError(data, 'vehicle')"
                                                                         alt="Vehicle image"
                                                                         class="history-main-image" />
                                                                 </div>
                                                             </a>
-                                                            <a href="{{data.meterImageUrl}}" target="_blank" title="Open meter image">
+                                                            <a href="{{data.meterImageUrl}}" target="_blank"
+                                                                title="Open meter image">
                                                                 <div class="history-image-box">
                                                                     <img src="../../../assets/img/img-not-available.png"
                                                                         alt="Meter image not available"
                                                                         class="history-fallback-image" />
                                                                     <div *ngIf="!data.meterImageLoaded"
                                                                         class="history-image-loader">
-                                                                        <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                                                        <div class="spinner-border spinner-border-sm text-secondary"
+                                                                            role="status"></div>
                                                                     </div>
-                                                                    <img *ngIf="!data.meterImageError" [src]="data.meterImageUrl"
+                                                                    <img *ngIf="!data.meterImageError"
+                                                                        [src]="data.meterImageUrl"
                                                                         (load)="onHistoryImageLoad(data, 'meter')"
                                                                         (error)="onHistoryImageError(data, 'meter')"
-                                                                        alt="Meter image"
-                                                                        class="history-main-image" />
+                                                                        alt="Meter image" class="history-main-image" />
                                                                 </div>
                                                             </a>
-                                                            <a href="{{data.slipImageUrl}}" target="_blank" title="Open slip image">
+                                                            <a href="{{data.slipImageUrl}}" target="_blank"
+                                                                title="Open slip image">
                                                                 <div class="history-image-box">
                                                                     <img src="../../../assets/img/img-not-available.png"
                                                                         alt="Slip image not available"
                                                                         class="history-fallback-image" />
                                                                     <div *ngIf="!data.slipImageLoaded"
                                                                         class="history-image-loader">
-                                                                        <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                                                        <div class="spinner-border spinner-border-sm text-secondary"
+                                                                            role="status"></div>
                                                                     </div>
-                                                                    <img *ngIf="!data.slipImageError" [src]="data.slipImageUrl"
+                                                                    <img *ngIf="!data.slipImageError"
+                                                                        [src]="data.slipImageUrl"
                                                                         (load)="onHistoryImageLoad(data, 'slip')"
                                                                         (error)="onHistoryImageError(data, 'slip')"
-                                                                        alt="Slip image"
-                                                                        class="history-main-image" />
+                                                                        alt="Slip image" class="history-main-image" />
                                                                 </div>
                                                             </a>
                                                         </div>
                                                     </td>
                                                     <td class="text-left history-detail-cell">
-                                                        <b>Vehicle :</b> {{data.vehicle}}<br />
-                                                        <b> Quantity :</b> {{data.quantity}}<br />
-                                                        <b> Amount :</b> {{data.amount}}<br />
-                                                        <b> Meter Reading :</b> {{data.meterReading}}<br />
-                                                        <b> By </b> {{data.createdBy}} <b>on </b>
-                                                        {{data.creationDate}}
-                                                        {{data.time}}
+                                                        <span> <b>Vehicle :</b> {{data.vehicle}}</span><br />
+                                                        <span *ngIf="hasDisplayValue(data, 'fuelType')"><b>Fuel Type :</b> {{data.fuelType}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'fuelVehicle')"><b>Fuel Vehicle :</b> {{data.fuelVehicle}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'payMethod')"><b>Pay Method :</b> {{data.payMethod}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'petrolPump')"><b>Petrol Pump :</b> {{data.petrolPump}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'quantity')"><b> Quantity :</b> {{data.quantity}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'amount')"><b> Amount :</b> {{data.amount}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'meterReading')"><b> Meter Reading :</b> {{data.meterReading}}<br /></span>
+                                                        <span *ngIf="hasDisplayValue(data, 'createdBy') || hasDisplayValue(data, 'creationDate') || hasDisplayValue(data, 'time')">
+                                                            <b *ngIf="hasDisplayValue(data, 'createdBy')"> By </b>{{hasDisplayValue(data, 'createdBy') ? data.createdBy : ''}}
+                                                            <b *ngIf="hasDisplayValue(data, 'creationDate') || hasDisplayValue(data, 'time')">on </b>
+                                                            {{hasDisplayValue(data, 'creationDate') ? data.creationDate : ''}}
+                                                            {{hasDisplayValue(data, 'time') ? data.time : ''}}
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -449,7 +468,7 @@
                             </div>
                         </div>
                     </div>
-    
+
                     <!-- Details Section -->
                     <div class="details-section">
                         <div class="row">
@@ -472,7 +491,7 @@
                                 </div>
                             </div>
                         </div>
-    
+
                         <!-- Reimbursement Input -->
                         <div class="row mt-3">
                             <div class="col-md-6 mx-auto">
@@ -480,7 +499,8 @@
                                     <label class="fw-bold required">Reimbursement Number</label>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text" id="basic-addon1">ER-</span>
-                                        <input type="number" class="form-control" [(ngModel)]="reimbursementNumber" placeholder="Enter reimbursement number" >
+                                        <input type="number" class="form-control" [(ngModel)]="reimbursementNumber"
+                                            placeholder="Enter reimbursement number">
                                     </div>
                                     <!-- <input type="text" class="form-control" [(ngModel)]="reimbursementNumber"
                                         placeholder="Enter reimbursement number"> -->
@@ -503,7 +523,7 @@
                 </div>
             </div>
         </div>
-    
+
     </ng-template>
     <!-- <div class="modal fade" id="contentFuelReimbursement" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">

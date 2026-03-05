@@ -553,6 +553,10 @@ export class DailyFuelReportComponent implements OnInit {
                 vehicle: data[historyKey]["vehicle"],
                 createdBy: data[historyKey]["createdBy"],
                 creationDate: data[historyKey]["creationDate"],
+                fuelType: data[historyKey]["fuelType"],
+                fuelVehicle: data[historyKey]["fuelVehicle"],
+                payMethod: data[historyKey]["payMethod"],
+                petrolPump: data[historyKey]["petrolPump"],
                 meterImageUrl: meterImageUrl,
                 slipImageUrl: slipImageUrl,
                 vehicleImageUrl: vehicleImageUrl,
@@ -746,7 +750,7 @@ export class DailyFuelReportComponent implements OnInit {
 
         this.fuelDetail.vendorPumpFuel = vendorFuel.toFixed(2);
         this.fuelDetail.reimbursedFuel = reimbursedFuel.toFixed(2);
-        this.fuelDetail.vendorAmount = vendorAmount.toFixed(2)
+        this.fuelDetail.vendorAmount = vendorAmount.toFixed(2);
         this.fuelDetail.reimbursedAmount = reimbursedAmount.toFixed(2);
         $("#divLoader").hide();
       }
@@ -1002,7 +1006,7 @@ export class DailyFuelReportComponent implements OnInit {
               let driverList = workerData["driver"].split(",");
               let vehicleList = workerData["vehicle"].split(",");
               let driverNameList = workerData["driverName"].split(",");
-              console.log(zone,workerData["vehicle"])
+              console.log(zone, workerData["vehicle"]);
               for (let i = 0; i < driverList.length; i++) {
                 if (
                   empId == driverList[i].trim() &&
@@ -1346,7 +1350,7 @@ export class DailyFuelReportComponent implements OnInit {
                 zone: wardDetailList[j]["zone"],
                 km: wardDetailList[j]["km"],
                 driver: wardDetailList[j]["driver"],
-                meterReading:''
+                meterReading: ''
               });
             }
           }
@@ -1498,7 +1502,7 @@ export class DailyFuelReportComponent implements OnInit {
         ".xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
-  }
+  };
   showFuelReimbursement = (content: any, fuelData: any) => {
     this.reimbursementNumber = '';
     this.selectedFuelData = fuelData;
@@ -1512,7 +1516,7 @@ export class DailyFuelReportComponent implements OnInit {
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
-  }
+  };
   saveFuelReimbursement() {
     if (!this.reimbursementNumber) {
       this.commonService.setAlertMessage("error", "Please enter reimbursement number");
@@ -1539,7 +1543,7 @@ export class DailyFuelReportComponent implements OnInit {
       this.reimbursementNumber = "";
       this.selectedFuelData = null;
 
-      this.closeModel()
+      this.closeModel();
 
       // Refresh the data
       this.clearList();
@@ -1552,6 +1556,10 @@ export class DailyFuelReportComponent implements OnInit {
   }
   closeModel = () => {
     this.modalService.dismissAll();
+  };
+
+  hasDisplayValue(obj: any, key: string): boolean {
+    return !!obj && obj[key] !== undefined;
   }
 }
 
