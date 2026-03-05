@@ -917,9 +917,14 @@ export class Cms1Component implements OnInit {
   }
 
   updateChennaiScanCardData() {
-    let ward = "134-R6";
-    let date = "2025-10-08";
-
+    let ward = "134-R1";
+    let date = "2025-09-05";
+    let year = "2025";
+    let monthName = "September";
+    let sheetDate = "9/5/2025";
+    let scanBy = "109";
+    let startTime = "08:50:00";
+    let endTime = "11:22:00";
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -934,32 +939,32 @@ export class Cms1Component implements OnInit {
       this.first_sheet_name = workbook.SheetNames[0];
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
-      const jsonObj = {};
       for (let i = 0; i < fileList.length; i++) {
         let cardNo = fileList[i]["Card No."];
-        let wasteCategory = fileList[i]["08-10-2025"];
-        let dbPath = "HousesCollectionInfo/" + ward + "/2025/October/" + date + "/" + cardNo;
+        let wasteCategory = fileList[i][sheetDate] ? fileList[i][sheetDate] : "";
+        console.log(cardNo);
+        let dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + date + "/" + cardNo;
         let cardInsatnce = this.db.object(dbPath).valueChanges().subscribe(data => {
           cardInsatnce.unsubscribe();
           if (data == null) {
-            //  console.log(cardNo);
-            this.getCardWardLine(cardNo, wasteCategory, date);
+            this.getCardWardLine(ward, cardNo, wasteCategory, date, year, monthName, scanBy, startTime, endTime);
           }
-
-        })
-
+          else {
+            if (wasteCategory != "") {
+              this.db.object(dbPath).update({ wasteCategory: wasteCategory });
+            }
+          }
+        });
       }
     }
-
   }
 
-  getCardWardLine(cardNo: any, wasteCategory: any, date: any) {
-    let toDayDate=this.commonService.setTodayDate();
+  getCardWardLine(ward: any, cardNo: any, wasteCategory: any, date: any, year: any, monthName: any, scanBy: any, sTime: any, eTime: any) {
+    let toDayDate = this.commonService.setTodayDate();
     let dbPath = "CardWardMapping/" + cardNo;
     let cardWardLineInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       cardWardLineInstance.unsubscribe();
       if (data != null) {
-        let ward = data["ward"];
         let line = data["line"];
         dbPath = "Houses/" + ward + "/" + line + "/" + cardNo + "/latLng";
         let latlngInstance = this.db.object(dbPath).valueChanges().subscribe(latLngData => {
@@ -967,23 +972,23 @@ export class Cms1Component implements OnInit {
           if (latLngData != null) {
             let latLng = latLngData.toString().replace("(", "").replace(")", "");
             console.log(cardNo);
-            let scanStartTime = new Date(toDayDate + " " + "10:00:00").getTime();
-            let scanEndTime = new Date(toDayDate + " " + "12:00:00").getTime();
+            let scanStartTime = new Date(toDayDate + " " + sTime).getTime();
+            let scanEndTime = new Date(toDayDate + " " + eTime).getTime();
             let scanTime = this.getRandomScanTime(scanStartTime, scanEndTime);
             let obj = {
               latLng: latLng,
-              scanBy: "110",
+              scanBy: scanBy.toString(),
               scanTime: scanTime,
               wasteCategory: wasteCategory
             }
-            dbPath="HousesCollectionInfo/"+ward+"/2025/October/"+date+"/"+cardNo;
+            dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + date + "/" + cardNo;
             console.log(dbPath)
             console.log(obj)
-           //this.db.object(dbPath).update(obj);
+            this.db.object(dbPath).update(obj);
           }
         })
       }
-    })
+    });
   }
 
   getRandomScanTime(scanStartTime: any, scanEndTime: any) {
@@ -992,8 +997,8 @@ export class Cms1Component implements OnInit {
     return scanTime;
   }
 
-  deleteHisarMarker(){
-    let count=0;
+  deleteHisarMarker() {
+    let count = 0;
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -1016,11 +1021,11 @@ export class Cms1Component implements OnInit {
         let lineNo = fileList[i]["Line"];
         let markerNo = fileList[i]["MarkerKey"];
         let ownerName = fileList[i]["Owner Name"];
-        let dbPath="EntityMarkingData/MarkedHouses/"+ward+"/"+lineNo+"/"+markerNo;
+        let dbPath = "EntityMarkingData/MarkedHouses/" + ward + "/" + lineNo + "/" + markerNo;
         //console.log(ownerName);
         console.log(dbPath);
         this.db.object(dbPath).remove();
-        
+
       }
     }
 
