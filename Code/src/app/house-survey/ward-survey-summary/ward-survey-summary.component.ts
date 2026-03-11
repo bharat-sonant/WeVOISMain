@@ -86,7 +86,7 @@ export class WardSurveySummaryComponent implements OnInit {
       //this.isActionShow = false;
     }
     if (localStorage.getItem("userID") == "4" || localStorage.getItem("userID") == "32") {
-      if (this.cityName == "hisar") {
+      if (this.cityName == "hisar" || this.cityName == "devtest") {
         $("#divRFID").show();
       }
     }
@@ -290,6 +290,13 @@ export class WardSurveySummaryComponent implements OnInit {
 
   }
 
+  setCardPropertyIDMapping(cardNumber: any, propId: any) {
+    if (cardNumber != "") {
+      let dbPath = "CardPropertyMapping/" + cardNumber;
+      this.db.object(dbPath).set(propId);
+    }
+  }
+
   getCardData(index: any) {
     if (index == this.wardList.length) {
       let htmlString = "<table>";
@@ -352,6 +359,9 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += this.rfidList[i]["agencyGstNumber"];
         htmlString += "</td>";
         htmlString += "</tr>";
+        if (this.rfidList[i]["PID"] != "") {
+          this.setCardPropertyIDMapping(this.rfidList[i]["cardNumber"], this.rfidList[i]["PID"]);
+        }
       }
 
       htmlString += "</table>";

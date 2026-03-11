@@ -917,14 +917,14 @@ export class Cms1Component implements OnInit {
   }
 
   updateChennaiScanCardData() {
-    let ward = "134-R1";
-    let date = "2025-09-05";
+    let ward = "134-R12";
+    let date = "2025-11-14";
     let year = "2025";
-    let monthName = "September";
-    let sheetDate = "9/5/2025";
-    let scanBy = "109";
-    let startTime = "08:50:00";
-    let endTime = "11:22:00";
+    let monthName = "November";
+    let sheetDate = "11/14/25";
+    let scanBy = "117";
+    let startTime = "10:05:00";
+    let endTime = "12:08:00";
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -936,25 +936,29 @@ export class Cms1Component implements OnInit {
       for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
       var bstr = arr.join("");
       var workbook = XLSX.read(bstr, { type: "binary" });
-      this.first_sheet_name = workbook.SheetNames[0];
+      this.first_sheet_name = workbook.SheetNames[11];
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+      console.log(fileList)
       for (let i = 0; i < fileList.length; i++) {
         let cardNo = fileList[i]["Card No."];
         let wasteCategory = fileList[i][sheetDate] ? fileList[i][sheetDate] : "";
-        console.log(cardNo);
-        let dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + date + "/" + cardNo;
-        let cardInsatnce = this.db.object(dbPath).valueChanges().subscribe(data => {
-          cardInsatnce.unsubscribe();
-          if (data == null) {
-            this.getCardWardLine(ward, cardNo, wasteCategory, date, year, monthName, scanBy, startTime, endTime);
-          }
-          else {
-            if (wasteCategory != "") {
-              this.db.object(dbPath).update({ wasteCategory: wasteCategory });
+        console.log(cardNo, wasteCategory);
+        if (wasteCategory != "") {
+          let dbPath = "HousesCollectionInfo/" + ward + "/" + year + "/" + monthName + "/" + date + "/" + cardNo;
+          console.log(dbPath)
+          let cardInsatnce = this.db.object(dbPath).valueChanges().subscribe(data => {
+            cardInsatnce.unsubscribe();
+            if (data == null) {
+              this.getCardWardLine(ward, cardNo, wasteCategory, date, year, monthName, scanBy, startTime, endTime);
             }
-          }
-        });
+            else {
+              if (wasteCategory != "") {
+                this.db.object(dbPath).update({ wasteCategory: wasteCategory });
+              }
+            }
+          });
+        }
       }
     }
   }
