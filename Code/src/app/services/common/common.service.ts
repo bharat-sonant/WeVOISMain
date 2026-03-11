@@ -1059,7 +1059,7 @@ export class CommonService {
 
   setAllZones(newDb: any) {
     let zoneList = [];
-    let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }, { zone: "QRT" }, { zone: "Rickshaw" }];
+    let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }, { zone: "QRT" }];
     zoneList.push({ zoneNo: "0", zoneName: "-- Select --" });
     let dbPath = "Tasks";
     let zoneInstance = newDb.object(dbPath).valueChanges().subscribe(data => {
@@ -1720,7 +1720,6 @@ export class CommonService {
   saveJsonFile(listArray: any, fileName: any, filePath: any) {
     return new Promise((resolve) => {
       let fireStorePath = this.fireStoragePath;
-      console.log(this.fireStoragePath);
       var jsonFile = JSON.stringify(listArray);
       var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(jsonFile);
       const path = this.getFireStoreCity() + filePath + fileName;

@@ -344,7 +344,8 @@ export class RealtimeMonitoringComponent implements OnInit {
       }
     });
   }
-  openAllWardMapPage(wardName: any) {
+  
+   openAllWardMapPage(wardName: any) {
     // https://main-wevois.firebaseapp.com/
     let userTypeId = "2";
     if (this.userType == "External User") {
@@ -356,6 +357,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
     window.open(url, '_blank'); // opens React page in new tab
   }
+
   getWardDisatnceTimeByLine(zoneNo: any) {
     let avgSpeed = 0;
     let distanceCovered = 0;

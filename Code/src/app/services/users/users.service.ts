@@ -108,7 +108,6 @@ export class UsersService {
               let haltDisableAccess = 0;
               let isActual = 0;
               let isLock = 0;
-              let canUpdateAccountDetail=0;
               let isAdmin = 0;
               let isDelete=0;
               let isActualWorkPercentage=0;
@@ -142,9 +141,6 @@ export class UsersService {
               }
               if (data[key]["isLock"] != undefined) {
                 isLock = data[key]["isLock"];
-              }
-              if (data[key]["canUpdateAccountDetail"] != undefined) {
-                canUpdateAccountDetail = data[key]["canUpdateAccountDetail"];
               }
               if (data[key]["isAdmin"] != undefined) {
                 isAdmin = data[key]["isAdmin"];
@@ -206,7 +202,6 @@ export class UsersService {
                   isActualWorkPercentage:isActualWorkPercentage,
                   isAttendanceApprover:isAttendanceApprover,
                   isLock: isLock,
-                  canUpdateAccountDetail:canUpdateAccountDetail,
                   isAdmin: isAdmin,
                   isManager: isManager,
                   isDelete:isDelete,
