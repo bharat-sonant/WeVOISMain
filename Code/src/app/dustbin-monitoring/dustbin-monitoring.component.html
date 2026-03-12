@@ -112,7 +112,7 @@
 </button>
 
 <div id="myBox">
-
+   
   <div class="accordion" id="accordionExample">
     <div class="card" *ngFor="let pd of planDetail">
       <div class="card-header" id="headingOne{{pd.id}}" style="margin-bottom: 2px;">
@@ -140,7 +140,7 @@
               <div class="icon-bg">
                 <img src="../../assets/img/vehicle.svg" style="margin-top:10px">
               </div>
-              <h1>{{pd.vehicle}}<br />
+              <h1>{{pd.vehicle}}<span *ngIf="pd.vehicleRegNo"> / R.N. ({{pd.vehicleRegNo}})</span><br/>
                 <p>Vehicle Number</p>
               </h1>
             </div>

@@ -103,6 +103,7 @@ export class RealtimeMonitoringComponent implements OnInit {
     totalTime: "0 hr 0 min",
     wardTime: "0 hr 0 min",
     vehicleNo: "",
+    vehicleRegNo:"",
     driverName: "",
     driverMobile: "",
     helperName: "",
@@ -1314,6 +1315,9 @@ export class RealtimeMonitoringComponent implements OnInit {
       this.getEmployee(driverList[driverList.length - 1], "driver");
       this.getEmployee(helperList[helperList.length - 1], "helper");
       this.workerDetails.vehicleNo = vehicleList[vehicleList.length - 1];
+      this.commonService.getVehicleRegistrationNumber(vehicleList[vehicleList.length - 1]).then((regNo: any) => {
+                          this.workerDetails.vehicleRegNo = regNo;
+                      });
       this.getApplicationStatus(driverList[driverList.length - 1]);
     }
   }
@@ -2085,8 +2089,10 @@ export class RealtimeMonitoringComponent implements OnInit {
                 textAreaClass = "remark-active";
                 isChecked = true;
               }
-              this.unAssignedVehicle.push({ name: vehicleName, total: 0, reason: reason, entryId: userId, userId: this.userId, textAreaClass: textAreaClass, isChecked: isChecked, });
-              this.unAssignedVehicle[0]["total"] = this.unAssignedVehicle.length;
+              this.commonService.getVehicleRegistrationNumber(vehicleName).then((regNo: any) => {
+                this.unAssignedVehicle.push({ name: vehicleName, regNo: regNo || '', total: 0, reason: reason, entryId: userId, userId: this.userId, textAreaClass: textAreaClass, isChecked: isChecked, });
+                this.unAssignedVehicle[0]["total"] = this.unAssignedVehicle.length;
+              });
             });
           }
         }
@@ -2896,6 +2902,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
 export class WorkderDetails {
   vehicleNo: string;
+  vehicleRegNo:string;
   driverName: string;
   driverMobile: string;
   driverImageUrl: string;

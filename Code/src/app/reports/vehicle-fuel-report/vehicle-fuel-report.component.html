@@ -300,10 +300,13 @@
                         (click)="list.cssClass!='' && getFuelList(list.vehicle,i);" style="cursor:not-allowed;">
                         <div class="ward-details">
                             <h6>{{list.vehicle}}</h6>
+                            <small *ngIf="list.regNo">R.N. ({{list.regNo}})</small>
                         </div>
                     </div>
                 </div>
             </div>
+
+                                     
             <!------------- Ward Scroll List End ---------->
         </div>
     </div>

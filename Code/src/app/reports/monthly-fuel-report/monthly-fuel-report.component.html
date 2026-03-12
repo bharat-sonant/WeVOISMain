@@ -103,6 +103,8 @@
                                                     Sr. No.</th>
                                                 <th class="text-left br-1 border-none">
                                                     Vehicle Number</th>
+                                                <th class="text-left br-1 border-none">
+                                                    Registration No.</th>
 
                                                 <th class="text-left br-1 border-none">
                                                     Fuel Type - Qty
@@ -130,6 +132,9 @@
                                                     </td>
                                                     <td class="text-left br-1">
                                                         {{data.vehicle}}
+                                                    </td>
+                                                    <td class="text-left br-1">
+                                                        {{data.regNo}}
                                                     </td>
                                                     <td class="text-left br-1">
                                                         <div style="width:100% " *ngFor="let dt of data.fuelList ">

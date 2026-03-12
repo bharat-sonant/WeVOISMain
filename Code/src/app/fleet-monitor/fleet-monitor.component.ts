@@ -35,7 +35,8 @@ export class FleetMonitorComponent {
       helperMobile: '',
       wardMonitorUrl: '',
       driverImageUrl: '../../assets/img/driver.jfif',
-      helperImageUrl: '../../assets/img/driver.jfif'
+      helperImageUrl: '../../assets/img/driver.jfif',
+      vehicleRegNo:'',
     };
 
   ngOnInit() {
@@ -283,6 +284,7 @@ export class FleetMonitorComponent {
 
                     let details = this.workerDetails;
                     let cityName = this.cityName;
+                    let commonService = this.commonService;
                     marker.addListener('click', function () {
                       if (zoneNo.includes('(')) {
                         zoneNo = zoneNo.toString().replace("(", "~").replace(")", "");
@@ -291,6 +293,9 @@ export class FleetMonitorComponent {
                       details.driverName = zoneDetail.driverName;
                       details.helperName = zoneDetail.helperName;
                       details.vehicleNo = zoneDetail.vehicle;
+                      commonService.getVehicleRegistrationNumber(zoneDetail.vehicle).then((regNo: any) => {
+                        details.vehicleRegNo = regNo;
+                      });
                       details.driverImageUrl = zoneDetail.driverImageUrl;
                       details.helperImageUrl = zoneDetail.helperImageUrl;
                       details.driverMobile = zoneDetail.driverMobile;
@@ -318,4 +323,5 @@ export class WorkderDetails {
   helperMobile: string;
   helperImageUrl: string;
   wardMonitorUrl: string;
+  vehicleRegNo:string
 }

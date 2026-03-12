@@ -149,7 +149,13 @@ export class VehicleFuelReportComponent implements OnInit {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
     let cssClass = "";
     for (let i = 3; i < vehicles.length; i++) {
-      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass, isEntry: 0 });
+      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass, isEntry: 0, regNo: "" });
+      this.commonService.getVehicleRegistrationNumber(vehicles[i]["vehicle"]).then((regNo: any) => {
+        let item = this.vehicleList.find(v => v.vehicle == vehicles[i]["vehicle"]);
+        if (item && regNo) {
+          item.regNo = regNo;
+        }
+      });
     }
     this.getFuelMonthData();
     this.getMonthSummary();

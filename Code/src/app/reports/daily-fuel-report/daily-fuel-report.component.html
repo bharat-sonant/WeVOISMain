@@ -162,6 +162,7 @@
                                     <th scope="col">
                                         Sr.No</th>
                                     <th scope="col" class="text-left">Vehicle Number</th>
+                                    <th scope="col" class="text-left">Registration No.</th>
                                     <th scope="col" class="text-left" [hidden]="isPetrolPumpDetail==true">Fuel Type</th>
                                     <th scope="col" class="text-left" [hidden]="isPetrolPumpDetail==false">Fuel Detail
                                     </th>
@@ -183,6 +184,9 @@
                                     </td>
                                     <td class="text-left " style="vertical-align: top;">
                                         {{data.vehicle}}
+                                    </td>
+                                    <td class="text-left " style="vertical-align: top;">
+                                        {{data.regNo}}
                                     </td>
                                     <td class="text-left " style="vertical-align: top;"
                                         [hidden]="isPetrolPumpDetail==true">

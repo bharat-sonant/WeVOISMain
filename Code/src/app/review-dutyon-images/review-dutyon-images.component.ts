@@ -856,6 +856,16 @@ export class ReviewDutyonImagesComponent implements OnInit {
               detail.dutyOnImages[i]["sixthHelper"] = sixthHelper;
               detail.dutyOnImages[i]["vehicle"] = vehicle;
 
+              if (vehicle !== "---") {
+                this.commonService.getVehicleRegistrationNumber(vehicle).then((regNo: any) => {
+                  detail.dutyOnImages[i]["vehicleRegNumber"] = regNo || "---";
+                }).catch(() => {
+                  detail.dutyOnImages[i]["vehicleRegNumber"] = "---";
+                });
+              } else {
+                detail.dutyOnImages[i]["vehicleRegNumber"] = "---";
+              }
+
               setTimeout(() => {
                 this.getDutyAssigned(zone, time);
               }, 1000);

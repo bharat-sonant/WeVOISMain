@@ -8,6 +8,7 @@ import { HttpClient } from "@angular/common/http";
 import * as CryptoJS from 'crypto-js';
 import { AngularFireStorage } from "angularfire2/storage";
 import * as XLSX from 'xlsx';
+import { resolve } from "dns";
 
 @Injectable({
   providedIn: "root",
@@ -2037,4 +2038,35 @@ export class CommonService {
       });
     });
   }
+
+getVehicleRegistrationNumber(vehicleNo: any) {
+  return new Promise((resolve, reject) => {
+   let user = localStorage.getItem('userType')
+   if(user==='Internal User'){
+      this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+    let dbPath = "VehicleRegistrationNumber/" + vehicleNo;
+    
+    const vehicleRegistrationInstance = this.fsDb.object(dbPath)
+      .valueChanges()
+      .subscribe({
+        next: (data) => {
+          vehicleRegistrationInstance.unsubscribe();
+          resolve(data || null);
+        },
+        error: (err) => {
+          vehicleRegistrationInstance.unsubscribe();
+          reject(err);
+        }
+      });
+   }else{
+    resolve(null)
+   }
+    
+  });
 }
+
+ 
+}
+
+
+

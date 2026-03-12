@@ -78,7 +78,11 @@ export class MonthlyFuelReportComponent implements OnInit {
   getVehicles() {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
     for (let i = 3; i < vehicles.length; i++) {
-      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], qty: "0.00", km: "0.000", amount: "0.00", avg: "", fuelList: [] });
+      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], qty: "0.00", km: "0.000", amount: "0.00", avg: "", fuelList: [], regNo: "" });
+      this.commonService.getVehicleRegistrationNumber(vehicles[i]["vehicle"]).then((regNo: any) => {
+        let item = this.vehicleList.find(v => v.vehicle == vehicles[i]["vehicle"]);
+        if (item != undefined) { item.regNo = regNo; }
+      });
     }
     this.getFuelData();
   }

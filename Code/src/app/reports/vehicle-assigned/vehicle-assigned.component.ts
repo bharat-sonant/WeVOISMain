@@ -78,11 +78,12 @@ export class VehicleAssignedComponent implements OnInit {
             let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
             if (vehicleDetail == undefined) {
               let driverDetail = [];
-              this.assignedVehicleList.push({ vehicle: vehicle, driverDetail: driverDetail });
+              this.assignedVehicleList.push({ vehicle: vehicle, driverDetail: driverDetail, regNumber: "---" });
               this.assignedVehicleList = this.commonService.transformNumeric(this.assignedVehicleList, "vehicle");
+              this.setVehicleRegNumber(vehicle);
             }
             this.getEmployeeDetail(driverId, vehicle);
-          }          
+          }
         }
         // ward assign vehicle
         let zoneList = JSON.parse(localStorage.getItem("latest-zones"));
@@ -101,8 +102,9 @@ export class VehicleAssignedComponent implements OnInit {
                   let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
                   if (vehicleDetail == undefined) {
                     let driverDetail = [];
-                    this.assignedVehicleList.push({ vehicle: vehicle, driverDetail: driverDetail });
+                    this.assignedVehicleList.push({ vehicle: vehicle, driverDetail: driverDetail, regNumber: "---" });
                     this.assignedVehicleList = this.commonService.transformNumeric(this.assignedVehicleList, "vehicle");
+                    this.setVehicleRegNumber(vehicle);
                   }
                   let driverId = drivers[k];
                   this.getEmployeeDetail(driverId, vehicle);
@@ -113,6 +115,15 @@ export class VehicleAssignedComponent implements OnInit {
         }
       }
     );
+  }
+
+  setVehicleRegNumber(vehicle: any) {
+    this.commonService.getVehicleRegistrationNumber(vehicle).then((regNumber: any) => {
+      let vehicleDetail = this.assignedVehicleList.find(item => item.vehicle == vehicle);
+      if (vehicleDetail != undefined) {
+        vehicleDetail.regNumber = regNumber || "---";
+      }
+    });
   }
 
   getEmployeeDetail(empId: any, vehicle: any) {

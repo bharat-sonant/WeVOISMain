@@ -67,6 +67,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     helper: "",
     secondHelper: "",
     vehicle: "",
+    vehicleRegNo: "",
     dutyStartTime: "",
     dutyEndTime: "",
     pickedCount: "",
@@ -392,6 +393,7 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
     // now reset plan data
     this.planDetail.driverName = "--";
     this.planDetail.vehicle = "--";
+    this.planDetail.vehicleRegNo = "";
     this.planDetail.pickedCount = "";
     this.planDetail.assignedCount = " -- ";
     this.planDetail.notAtLocationCount = " -- ";
@@ -648,6 +650,9 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
 
     this.planDetail.planId = planId;
     this.planDetail.vehicle = plan.vehicle;
+    this.commonService.getVehicleRegistrationNumber(plan.vehicle).then((regNo: any) => {
+      this.planDetail.vehicleRegNo = regNo ? regNo : "";
+    });
     this.planDetail.pickedCount = this.getDustbinCounts("picked").toString() + "/";
     this.planDetail.assignedCount = this.getDustbinCounts("totalAssigned").toString();
     this.planDetail.notAtLocationCount = this.getDustbinCounts("notAtLocation").toString();
@@ -1485,6 +1490,7 @@ export class planDetails {
   helper: string;
   secondHelper: string;
   vehicle: string;
+  vehicleRegNo: string;
   dutyStartTime: string;
   dutyEndTime: string;
   pickedCount: string;

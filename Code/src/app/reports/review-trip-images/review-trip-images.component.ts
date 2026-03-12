@@ -93,15 +93,14 @@ export class ReviewTripImagesComponent implements OnInit {
     return new Promise((resolve) => {
       let dbPath = "WardTrips/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + zoneNo;
       let tripInstance = this.db.object(dbPath).valueChanges().subscribe(
-        tripData => {
+        async (tripData: any) => {
           tripInstance.unsubscribe();
           if (tripData != null) {
             let tripImageList=[];
             let collectedZoneWaste=0;
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTripImages", tripData);
             let keyArray = Object.keys(tripData);
-            for (let i = 0; i < keyArray.length; i++) {
-              let key = keyArray[i];
+            let promises = keyArray.map(async (key) => {
               let time = "";
               let yardTime="";
               if(tripData[key]["time"]!=null){
@@ -113,10 +112,10 @@ export class ReviewTripImagesComponent implements OnInit {
               let vehicle = tripData[key]["vehicle"];
               let wasteCollection=this.getWasteCollectionByVehicle(vehicle);
               collectedZoneWaste+= Number(wasteCollection);
-              
+
               let imageName =tripData[key]["imageName"]? tripData[key]["imageName"]:"";
               let imageName2 =tripData[key]["imageName2"]?tripData[key]["imageName2"]:"";
-              
+
               let yardImageName =tripData[key]["yardImageName1"]? tripData[key]["yardImageName1"]:"";
               let yardImageName2 =tripData[key]["yardImageName2"]?tripData[key]["yardImageName2"]:"";
 
@@ -125,8 +124,10 @@ export class ReviewTripImagesComponent implements OnInit {
               let imageUrl2 =imageName2!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + imageName2 + "?alt=media":this.imageNotAvailablePath;
               let imageUrl3 =yardImageName!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + yardImageName + "?alt=media":this.imageNotAvailablePath;
               let imageUrl4 =yardImageName2!=""? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FWardTrips%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + zoneNo + "%2F" + key + "%2F" + yardImageName2 + "?alt=media":this.imageNotAvailablePath;
-              tripImageList.push({ time: time, vehicle: vehicle, driverId: driverId, driver: "---",yardTime:yardTime, imageUrl: imageUrl,imageUrl2:imageUrl2,imageUrl3:imageUrl3,imageUrl4:imageUrl4,wasteCollection });
-            }
+              let vehicleRegNo = await this.commonService.getVehicleRegistrationNumber(vehicle);
+              tripImageList.push({ time: time, vehicle: vehicle, vehicleRegNo: vehicleRegNo || "", driverId: driverId, driver: "---",yardTime:yardTime, imageUrl: imageUrl,imageUrl2:imageUrl2,imageUrl3:imageUrl3,imageUrl4:imageUrl4,wasteCollection });
+            });
+            await Promise.all(promises);
             this.totalWasteCollected += Number(collectedZoneWaste)
             resolve({ status: "success", data: {zoneNo:zoneNo,tripImageList:tripImageList,collectedZoneWaste} });
           }

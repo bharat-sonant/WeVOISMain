@@ -353,7 +353,8 @@ export class DustbinMonitoringComponent {
               classes = "collapse show";
             }
             this.pickkingPlanList.push({ planId: list[i]["id"], vehicle: list[i]["vehicle"], planName: list[i]["planName"] + " [" + list[i]["vehicle"] + "]" });
-            this.planDetail.push({ id: list[i]["id"], planName: list[i]["planName"], vehicle: list[i]["vehicle"], driver: list[i]["driver"], totDistance: 0, totTime: 0, driverName: "", mobileNo: "", totHalt: 0, assigned: 0, picked: 0, classes: classes, startTime: "00:00", endTime: "00:00" });
+            this.planDetail.push({ id: list[i]["id"], planName: list[i]["planName"], vehicle: list[i]["vehicle"], driver: list[i]["driver"], totDistance: 0, totTime: 0, driverName: "", mobileNo: "", totHalt: 0, assigned: 0, picked: 0, classes: classes, startTime: "00:00", endTime: "00:00", vehicleRegNo: "" });
+            this.getVehicleRegNo(list[i]["vehicle"], list[i]["id"]);
             this.getHalt(list[i]["vehicle"], list[i]["id"]);
             this.getDriverDetail(list[i]["driver"], list[i]["id"]);
             this.getStartTime(list[i]["driver"], list[i]["id"]);
@@ -366,8 +367,11 @@ export class DustbinMonitoringComponent {
                     if (this.selectedDate == this.todayDate) {
                       let lat = vehicleLocationData["lat"];
                       let lng = vehicleLocationData["lng"];
-                      let contentString = 'Vehicle: ' + list[i]["vehicle"];
-                      this.setMarker(lat, lng, null, this.vehicleUrl, 60, 60, contentString, "vehicle", 0, 15, 25);
+                      let vehicle = 'Vehicle: ' + list[i]["vehicle"];
+                      this.commonService.getVehicleRegistrationNumber(list[i]["vehicle"]).then((regNo) => {
+                        let contentString = regNo ? `${vehicle} (${regNo})` : vehicle;
+                        this.setMarker(lat, lng, null, this.vehicleUrl, 60, 60, contentString, "vehicle", 0, 15, 25);
+                      });
                     }
                   }
                   vehicleLocation.unsubscribe();
@@ -378,6 +382,7 @@ export class DustbinMonitoringComponent {
         }
       });
     }
+    
   }
 
   getPickedDustbin(planData: any, planIndex: any, index: any, planName: any, year: any, monthName: any, vehicle: any, driver: any) {
@@ -560,6 +565,24 @@ export class DustbinMonitoringComponent {
         }
       });
   }
+
+  getVehicleRegNo(vehicleNo: any, planId: any) {
+    this.commonService.getVehicleRegistrationNumber(vehicleNo).then((regNo) => {
+      if(planId!==''){
+              let planDetails = this.planDetail.find(item => item.id == planId);
+      if (planDetails != undefined) {
+        planDetails.vehicleRegNo =  regNo != null ? regNo : "";
+      }
+      }
+      else{
+        console.log('ahgauyhgy')
+        return  regNo != null ? regNo : "";
+      }
+     
+    });
+  }
+
+  
 
   getDriverDetail(driver: any,index:any) {
     this.commonService.getEmplyeeDetailByEmployeeId(driver).then((employee) => {
@@ -802,6 +825,7 @@ export class DustbinMonitoringComponent {
   }
 
   setMarker(lat: any, lng: any, markerLabel: any, markerURL: any, scaledHeight: any, scaledWidth: any, contentString: any, type: any, assiged: any, labelHeight: any, labelWidth: any) {
+    console.log(contentString)
     if (markerLabel != null) {
       markerLabel = markerLabel + '';
     }

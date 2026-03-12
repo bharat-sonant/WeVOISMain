@@ -21,6 +21,7 @@ export class VehicleReportComponent implements OnInit {
   vehicleList: any[];
   vehicleDataList: any[] = [];
   vehicleDetailList: any[];
+  vehicleRegMap: any = {};
   yearList: any[];
   db: any;
   cityName: any;
@@ -47,17 +48,24 @@ export class VehicleReportComponent implements OnInit {
     }
   }
 
-  getVehicleList() {
+  async getVehicleList() {
     this.vehicleList = [];
     let vehicleList = JSON.parse(localStorage.getItem('vehicle'));
     if (vehicleList != null) {
       this.vehicleList.push({ vehicle: "All Vehicle" });
+      const promises = [];
       for (let i = 1; i < vehicleList.length; i++) {
         if (vehicleList[i]["vehicle"] != "Drum/Can" && vehicleList[i]["vehicle"] != "Motor Cycle") {
-          this.vehicleList.push({ vehicle: vehicleList[i]["vehicle"] });
-          this.vehicleDataList.push({ vehicle: vehicleList[i]["vehicle"] });
+          const vNo = vehicleList[i]["vehicle"];
+          this.vehicleList.push({ vehicle: vNo });
+          promises.push(
+            this.commonService.getVehicleRegistrationNumber(vNo).then((regNo: any) => {
+              if (regNo) { this.vehicleRegMap[vNo] = regNo; }
+            })
+          );
         }
       }
+      await Promise.all(promises);
       this.getReason(this.vehicleList[0]["vehicle"]);
     }
   }
@@ -73,7 +81,8 @@ export class VehicleReportComponent implements OnInit {
 
     if (vehicle == "All Vehicle") {
       for (let i = 1; i < this.vehicleList.length; i++) {
-        this.vehicleDataList.push({ vehicle: this.vehicleList[i]["vehicle"] });
+        const vNo = this.vehicleList[i]["vehicle"];
+        this.vehicleDataList.push({ vehicle: vNo, regNumber: this.vehicleRegMap[vNo] || '' });
         for (let j = 1; j <= rowTo; j++) {
           let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (j < 10 ? '0' : '') + j;
           let monthName = this.commonService.getCurrentMonthName(parseInt(monthDate.split('-')[1]) - 1);
@@ -82,7 +91,7 @@ export class VehicleReportComponent implements OnInit {
       }
     }
     else {
-      this.vehicleDataList.push({ vehicle: vehicle });
+      this.vehicleDataList.push({ vehicle: vehicle, regNumber: this.vehicleRegMap[vehicle] || '' });
       for (let j = 1; j <= rowTo; j++) {
         let monthDate = this.selectedYear + '-' + this.selectedMonth + '-' + (j < 10 ? '0' : '') + j;
         let monthName = this.commonService.getCurrentMonthName(parseInt(monthDate.split('-')[1]) - 1);
@@ -151,7 +160,8 @@ export class VehicleReportComponent implements OnInit {
     $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
     $('div .modal-dialog-centered').css("margin-top", "26px");
     $('#divStatus').css("height", divHeight);
-    let title = vehicle;
+    let regNo = this.vehicleRegMap[vehicle];
+    let title = vehicle + (regNo ? ' <span style="font-weight:normal; font-size:13px; color:#555;">(R.N. ' + regNo + ')</span>' : '');
     $('#exampleModalLongTitle').html(title);
     this.vehicleDetailList = [];
     let vehicleDetails = this.vehicleDataList.find(item => item.vehicle == vehicle);

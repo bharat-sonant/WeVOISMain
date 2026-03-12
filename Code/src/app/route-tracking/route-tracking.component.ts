@@ -279,14 +279,18 @@ export class RouteTrackingComponent {
               }
               let detail = this.vtsVehicleList.find(item => item.vehicle == vehicles[i].toString().trim());
               if (detail == undefined) {
-                this.vtsVehicleList.push({ vehicle: vehicles[i].toString().trim(), color: color, km: '0.00', routeList: [], chasisNumber: "" });
+                this.vtsVehicleList.push({vehicle:vehicles[i].toString().trim(),color: color, km: '0.00', routeList: [], chasisNumber: "", vehicleRegNo: "" });
+                this.commonService.getVehicleRegistrationNumber(vehicles[i].toString().trim()).then((regNo: any) => {
+                  let vReg = this.vtsVehicleList.find(item => item.vehicle == vehicles[i].toString().trim());
+                  if (vReg != undefined) { vReg.vehicleRegNo = regNo || ""; }
+                }).catch(() => {});
                 if (localStorage.getItem("cityName") == "hisar") {
                   let chasisInstance = this.db.object("VehicleChesisNumber/" + vehicles[i].toString().trim()).valueChanges().subscribe(chasisData => {
                     chasisInstance.unsubscribe();
                     if (chasisData != null) {
                       let chasisNumber = chasisData.toString();
                       let vDetail = this.vtsVehicleList.find(item => item.vehicle == vehicles[i].toString().trim());
-                      if (vDetail != undefined) {
+                      if (vDetail != undefined){
                             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVTSRoute", vDetail);
                         vDetail.chasisNumber = chasisNumber;
                         path = "https://wevois-vts-default-rtdb.firebaseio.com/VehicleRoute/" + chasisNumber + "/" + this.selectedDate + ".json";

@@ -34,6 +34,8 @@
                                             <th style="border-right:1px solid #dee2e6; width:10%;">S No.</th>
                                             <th class="text-left" style="border-right:1px solid #dee2e6; width:20%;">
                                                 Vehicle</th>
+                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:25%;">
+                                                Reg. Number</th>
                                             <th class="text-left" style="border-right:1px solid #dee2e6; width:40%;">
                                                 <span>Driver</span>
                                                 <span class="export-span"  >
@@ -50,6 +52,8 @@
                                                     {{i+1}}</td>
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
                                                     {{data.vehicle}}</td>
+                                                <td class="text-left" style="border-right:1px solid #dee2e6">
+                                                    {{data.regNumber}}</td>
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
                                                     <div *ngFor="let dt of data.driverDetail;">
                                                         {{dt.driver}} <b>-</b> {{dt.driverMobile}}

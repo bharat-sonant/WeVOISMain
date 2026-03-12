@@ -194,6 +194,7 @@ export class DailyFuelReportComponent implements OnInit {
           if (diesel.length > 0) {
             list.push({
               vehicle: this.allVehicleList[i]["vehicle"],
+              regNo: this.allVehicleList[i]["regNo"],
               diesel: diesel,
               wardList: this.allVehicleList[i]["wardList"],
             });
@@ -241,6 +242,7 @@ export class DailyFuelReportComponent implements OnInit {
           if (diesel.length > 0) {
             list.push({
               vehicle: filterList[i]["vehicle"],
+              regNo: filterList[i]["regNo"],
               diesel: diesel,
               wardList: filterList[i]["wardList"],
             });
@@ -288,6 +290,7 @@ export class DailyFuelReportComponent implements OnInit {
           if (diesel.length > 0) {
             list.push({
               vehicle: filterList[i]["vehicle"],
+              regNo: filterList[i]["regNo"],
               diesel: diesel,
               wardList: filterList[i]["wardList"],
             });
@@ -401,8 +404,13 @@ export class DailyFuelReportComponent implements OnInit {
     for (let i = 3; i < vehicles.length; i++) {
       this.allVehicleList.push({
         vehicle: vehicles[i]["vehicle"],
+        regNo: "",
         diesel: [],
         wardList: [],
+      });
+      this.commonService.getVehicleRegistrationNumber(vehicles[i]["vehicle"]).then((regNo: any) => {
+        let item = this.allVehicleList.find(v => v.vehicle == vehicles[i]["vehicle"]);
+        if (item) { item.regNo = regNo || ""; }
       });
     }
     this.vehicleList = this.allVehicleList;
