@@ -263,6 +263,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 let fifthHelperList = dataList[i]["fifthHelper"] ? dataList[i]["fifthHelper"].split(',') : [];
                 let sixthHelperList = dataList[i]["sixthHelper"] ? dataList[i]["sixthHelper"].split(',') : [];
                 let vehicleList = dataList[i]["vehicle"].split(',');
+                let dutyOnMeterReadingList = dataList[i]["dutyOnMeterReading"] ? dataList[i]["dutyOnMeterReading"].toString().split(',') : [];
+                let dutyOutMeterReadingList = dataList[i]["dutyOutMeterReading"] ? dataList[i]["dutyOutMeterReading"].toString().split(',') : [];
                 for (let j = 0; j < imageList.length; j++) {
                   let imageName = imageList[j].toString().trim();
                   let driverId = "---";
@@ -276,6 +278,8 @@ export class ReviewDutyonImagesComponent implements OnInit {
                   let time = "---";
                   let dutyOnBy = "---";
                   let dutyOffBy = "---";
+                  let dutyOnMeterReading = dutyOnMeterReadingList[j] != null ? dutyOnMeterReadingList[j].toString().trim() : "";
+                  let dutyOutMeterReading = dutyOutMeterReadingList[j] != null ? dutyOutMeterReadingList[j].toString().trim() : "";
                   if (driverList[j] != null) {
                     driverId = driverList[j];
                   }
@@ -315,7 +319,15 @@ export class ReviewDutyonImagesComponent implements OnInit {
                     dutyOutMeterImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutMeterReadingImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
                   }
                   let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2FBinLifting%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + planId + "%2F" + imageName + "?alt=media";
-                  dutyOnImages.push({ planId: binPlanId, imageUrl: imageUrl, dutyOnBy, dutyOffBy, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl, imageDutyOnMeterUrl: dutyOnMeterImageUrl, imageDutyOutMeterUrl: dutyOutMeterImageUrl, driverImageURL: this.imageNotAvailablePath, helperImageURL: this.imageNotAvailablePath, secondHelperImageURL: this.imageNotAvailablePath, thirdHelperImageURL: this.imageNotAvailablePath, fourthHelperImageURL: this.imageNotAvailablePath, fifthHelperImageURL: this.imageNotAvailablePath, sixthHelperImageURL: this.imageNotAvailablePath });
+                  let entry: any = { planId: binPlanId, imageUrl: imageUrl, dutyOnBy, dutyOffBy, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: vehicle, imageDutyOffUrl: dutyOffImageUrl, imageDutyOnMeterUrl: dutyOnMeterImageUrl, imageDutyOutMeterUrl: dutyOutMeterImageUrl, dutyOnMeterReading: dutyOnMeterReading, dutyOutMeterReading: dutyOutMeterReading, vehicleRegNumber: "---", driverImageURL: this.imageNotAvailablePath, helperImageURL: this.imageNotAvailablePath, secondHelperImageURL: this.imageNotAvailablePath, thirdHelperImageURL: this.imageNotAvailablePath, fourthHelperImageURL: this.imageNotAvailablePath, fifthHelperImageURL: this.imageNotAvailablePath, sixthHelperImageURL: this.imageNotAvailablePath };
+                  if (vehicle !== "---") {
+                    this.commonService.getVehicleRegistrationNumber(vehicle).then((regNo: any) => {
+                      entry["vehicleRegNumber"] = regNo || "---";
+                    }).catch(() => {
+                      entry["vehicleRegNumber"] = "---";
+                    });
+                  }
+                  dutyOnImages.push(entry);
                 }
               }
             }

@@ -147,7 +147,7 @@
                                                                         dtImage.actualDutyOnTime }}</span>
                                                                 </div>
                                                                 <span *ngIf="dtImage.dutyOnMeterReading"><b>Duty On Meter Reading : </b> {{dtImage.dutyOnMeterReading}}<br /></span>
-                                                                <div [hidden]="dtImage.timeDutyOff==''"
+                                                                <div [hidden]="!dtImage.timeDutyOff || dtImage.timeDutyOff=='' || dtImage.timeDutyOff=='---'"
                                                                     style="display: flex; justify-content: space-between;">
                                                                     <span>
                                                                         <b>Off Time : </b> {{dtImage.timeDutyOff}} <b>Duty Off By</b> {{dtImage.dutyOffBy}}
