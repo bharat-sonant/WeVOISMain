@@ -621,7 +621,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
                 let fourthHelperId = "---";
                 let fifthHelperId = "---";
                 let sixthHelperId = "---";
-                dutyOnImages.push({ binPlanId: "", imageUrl: "", dutyOnBy: "---", dutyOffBy: "---", workPercentageRemark: workPercentageRemark, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "", imageDutyOnMeterUrl: "", imageDutyOutMeterUrl: "", driverImageURL: this.imageNotAvailablePath, helperImageURL: this.imageNotAvailablePath, secondHelperImageURL: this.imageNotAvailablePath, thirdHelperImageURL: this.imageNotAvailablePath, fourthHelperImageURL: this.imageNotAvailablePath, fifthHelperImageURL: this.imageNotAvailablePath, sixthHelperImageURL: this.imageNotAvailablePath });
+                dutyOnImages.push({ binPlanId: "", imageUrl: "", dutyOnBy: "---", dutyOffBy: "---", workPercentageRemark: workPercentageRemark, time: time, driverId: driverId, helperId: helperId, secondHelperId: secondHelperId, thirdHelperId: thirdHelperId, fourthHelperId: fourthHelperId, fifthHelperId: fifthHelperId, sixthHelperId: sixthHelperId, driver: "---", helper: "---", secondHelper: "---", thirdHelper: "---", fourthHelper: "---", fifthHelper: "---", sixthHelper: "---", vehicle: "---", timeDutyOff: offTime, imageDutyOffUrl: "", imageDutyOnMeterUrl: "", imageDutyOutMeterUrl: "", dutyOnMeterReading: "", dutyOutMeterReading: "", driverImageURL: this.imageNotAvailablePath, helperImageURL: this.imageNotAvailablePath, secondHelperImageURL: this.imageNotAvailablePath, thirdHelperImageURL: this.imageNotAvailablePath, fourthHelperImageURL: this.imageNotAvailablePath, fifthHelperImageURL: this.imageNotAvailablePath, sixthHelperImageURL: this.imageNotAvailablePath });
               }
             }
             if (summaryData["dutyOnImage"] != null) {
@@ -730,6 +730,18 @@ export class ReviewDutyonImagesComponent implements OnInit {
                     dutyOnImages[4]["imageDutyOutMeterUrl"] = imageUrl;
                   }
                 }
+              }
+            }
+            if (summaryData["dutyOnMeterReading"] != null) {
+              let readingList = summaryData["dutyOnMeterReading"].toString().split(',');
+              for (let i = 0; i < readingList.length && i < dutyOnImages.length; i++) {
+                dutyOnImages[i]["dutyOnMeterReading"] = readingList[i].toString().trim();
+              }
+            }
+            if (summaryData["dutyOutMeterReading"] != null) {
+              let readingList = summaryData["dutyOutMeterReading"].toString().split(',');
+              for (let i = 0; i < readingList.length && i < dutyOnImages.length; i++) {
+                dutyOnImages[i]["dutyOutMeterReading"] = readingList[i].toString().trim();
               }
             }
             resolve({ status: "success", data: { zoneNo: zoneNo, dutyOnImages: dutyOnImages } });

@@ -146,6 +146,7 @@
                                                                             style="color: green">Actual Time : </b> {{
                                                                         dtImage.actualDutyOnTime }}</span>
                                                                 </div>
+                                                                <span *ngIf="dtImage.dutyOnMeterReading"><b>Duty On Meter Reading : </b> {{dtImage.dutyOnMeterReading}}<br /></span>
                                                                 <div [hidden]="dtImage.timeDutyOff==''"
                                                                     style="display: flex; justify-content: space-between;">
                                                                     <span>
@@ -159,6 +160,7 @@
                                                                         dtImage.actualDutyOffTime }}
                                                                     </span>
                                                                 </div>
+                                                                <span *ngIf="dtImage.dutyOutMeterReading"><b>Duty Out Meter Reading : </b> {{dtImage.dutyOutMeterReading}}<br /></span>
                                                                 <span *ngIf="dtImage.workPercentageRemark"><b>Remark :
                                                                     </b> {{dtImage.workPercentageRemark}}<br /></span>
                                                             </div>
