@@ -204,7 +204,7 @@
                                         <div id="haltMap" style="width:100%;height:85vh; ">
                                             <div class="dth">
                                                 <div class="table-bg">
-                                                    <div class="tableFixHead" style="overflow-x: hidden;">
+                                                    <div class="tableFixHead" >
                                                         <table class="table table-hover"
                                                             style="margin-top: 0px!important;">
                                                             <thead>
@@ -232,6 +232,9 @@
                                                                     </th>
                                                                     <th class="text-left" scope="col">
                                                                         GPS KM
+                                                                    </th>
+                                                                    <th class="text-left" scope="col">
+                                                                        Meter Reading KM
                                                                     </th>
                                                                     <th class="text-right" scope="col">
                                                                         Distance Covered
@@ -272,6 +275,11 @@
                                                                     <td class="text-left"
                                                                         style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
                                                                         {{data.gps_km}}
+                                                                    </td>
+                                                                    <td class="text-left"
+                                                                        [style.color]="data.meterReadingDistance < 0 ? 'red' : ''"
+                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
+                                                                        {{data.meterReadingDistance}}
                                                                     </td>
                                                                     <td class="text-right"
                                                                         style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
