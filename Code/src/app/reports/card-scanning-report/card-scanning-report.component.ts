@@ -29,6 +29,7 @@ export class CardScanningReportComponent implements OnInit {
 
   txtDate = "#txtDate";
   serviceName = "card-scanning-report";
+  scanCardsJsonData: any = null;
 
   /* ================= INIT ================= */
 
@@ -50,10 +51,24 @@ export class CardScanningReportComponent implements OnInit {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.selectedDate = this.commonService.setTodayDate();
     $(this.txtDate).val(this.selectedDate);
-    this.getWards();
+    if (this.cityName === 'ajmer' && this.userType === 'External User') {
+      this.loadScanCardsJson().then(() => this.getWards());
+    } else {
+      this.getWards();
+    }
     if (this.cityName == "hisar") {
       this.getCartTypeMapping();
     }
+  }
+
+  loadScanCardsJson(): Promise<void> {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + "Ajmer%2FDefaults%2Fscan_cards.json?alt=media&token=0a86b421-09ce-47b9-867b-566134eeda90";
+      let sub = this.httpService.get(path).subscribe(
+        (data: any) => { sub.unsubscribe(); this.scanCardsJsonData = data; resolve(); },
+        () => resolve()
+      );
+    });
   }
 
   getCartTypeMapping() {
@@ -162,6 +177,15 @@ export class CardScanningReportComponent implements OnInit {
         this.serviceName,
         "getCardsData"
       );
+
+      if (this.cityName === 'ajmer' && this.userType === 'External User' && this.scanCardsJsonData != null) {
+        let detail = this.scannedList.find(x => x.ward == ward);
+        if (detail) {
+          detail.cards = this.scanCardsJsonData[ward] || 0;
+        }
+        this.getScannedCardsNew(ward).then(() => resolve(true));
+        return;
+      }
 
       let dbPath = "EntitySurveyData/TotalHouseCount/" + ward;
 
