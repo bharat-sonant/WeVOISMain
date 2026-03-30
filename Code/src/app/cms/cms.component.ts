@@ -241,8 +241,8 @@ export class CmsComponent implements OnInit {
       if (localStorage.getItem("cityName") == "ajmer" && pageId == "10A19") {
         this.goToOuterURL(url + "s");
       }
-      else if(this.cityName=="hisar" && pageId=="10A19"){
-        url=url.replace("daily-work-report","hisar-work-report")
+      else if (this.cityName == "hisar" && pageId == "10A19") {
+        url = url.replace("daily-work-report", "hisar-work-report")
         this.goToOuterURL(url);
       }
       else {
@@ -255,7 +255,6 @@ export class CmsComponent implements OnInit {
         this.getPage("/" + this.cityName + "/" + pageId + url1);
       }
       else if (pageId == "2U") {
-        console.log(pageId)
         let dutyOnReportInstance = this.db.object("Settings/GeneralSettings").valueChanges().subscribe(dataSetting => {
           dutyOnReportInstance.unsubscribe();
           if (dataSetting != null) {
@@ -303,9 +302,16 @@ export class CmsComponent implements OnInit {
   }
 
   goToOuterURL(url: any) {
-    let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
-    url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
-    window.open(url, "_blank");
+    if (url.includes("#city")) {
+      let newUrl = url.replace("#city", this.cityName);
+      window.open(newUrl, "_blank");
+    }
+    else {
+      let newUrl = url.split("https://mainportal-react.web.app/userId/")[1];
+      url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + this.userType + "/" + this.isActual + "/" + newUrl;
+      window.open(url, "_blank");
+    }
+
   }
 
   getPage(value: any) {

@@ -21,7 +21,7 @@
 </section>
 <div class="main-content">
     <div class="row">
-        <div class="col-md-5" style="padding-left: 0px;padding-right:7px;">
+        <div class="col-md-6" style="padding-left: 0px;padding-right:7px;">
             <div class="card" style="margin-top:-6px;  height: 88vh!important">
                 <div class="card-body" style="height:88vh; padding: 0px 10px 0px 0px;">
                     <form>
@@ -34,7 +34,7 @@
                                             <th style="border-right:1px solid #dee2e6; width:10%;">S No.</th>
                                             <th class="text-left" style="border-right:1px solid #dee2e6; width:20%;">
                                                 Vehicle</th>
-                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:25%;">
+                                            <th class="text-left" style="border-right:1px solid #dee2e6; width:25%;" [hidden]="userType=='External User'">
                                                 Reg. Number</th>
                                             <th class="text-left" style="border-right:1px solid #dee2e6; width:40%;">
                                                 <span>Driver</span>
@@ -52,7 +52,7 @@
                                                     {{i+1}}</td>
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
                                                     {{data.vehicle}}</td>
-                                                <td class="text-left" style="border-right:1px solid #dee2e6">
+                                                <td class="text-left" style="border-right:1px solid #dee2e6" [hidden]="userType=='External User'">
                                                     {{data.regNumber}}</td>
                                                 <td class="text-left" style="border-right:1px solid #dee2e6">
                                                     <div *ngFor="let dt of data.driverDetail;">

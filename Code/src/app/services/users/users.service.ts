@@ -70,15 +70,15 @@ export class UsersService {
     this.commonService.saveCommonJsonFile(portalUsersJSONData, "PortalUsers.json", "/Common/");
   }
 
-  getUserLastLogin(userId:any){
+  getUserLastLogin(userId: any) {
     return new Promise((resolve) => {
-      let lastLogin="---";
-      const path = this.commonService.fireStorageCommonPath + "Common%2FEmployeeLastLogin%2F"+userId+".json?alt=media";
+      let lastLogin = "---";
+      const path = this.commonService.fireStorageCommonPath + "Common%2FEmployeeLastLogin%2F" + userId + ".json?alt=media";
       let lastLoginJSONInstance = this.httpService.get(path).subscribe(lastLoginJsonData => {
-        lastLoginJSONInstance.unsubscribe();        
-        if(lastLoginJsonData["lastLogin"]!=null){
-          let days=this.commonService.getDaysBetweenDates(lastLoginJsonData["lastLogin"].split(" ")[0],this.commonService.setTodayDate());
-          lastLogin=days === 0 ? 'Today' : days === 1 ? 'Yesterday' : `${days} Days Ago`;
+        lastLoginJSONInstance.unsubscribe();
+        if (lastLoginJsonData["lastLogin"] != null) {
+          let days = this.commonService.getDaysBetweenDates(lastLoginJsonData["lastLogin"].split(" ")[0], this.commonService.setTodayDate());
+          lastLogin = days === 0 ? 'Today' : days === 1 ? 'Yesterday' : `${days} Days Ago`;
         }
         resolve(lastLogin);
       }, error => {
@@ -90,7 +90,7 @@ export class UsersService {
   }
 
   setWebPortalUsers() {
-    
+
     let userList = [];
     this.getPortalUsers().then((data: any) => {
       if (data != null) {
@@ -109,23 +109,25 @@ export class UsersService {
               let isActual = 0;
               let isLock = 0;
               let isAdmin = 0;
-              let isDelete=0;
-              let isActualWorkPercentage=0;
-              let isAttendanceApprover=0;
+              let isDelete = 0;
+              let isActualWorkPercentage = 0;
+              let isAttendanceApprover = 0;
               let isManager = 0;
               let roleId = 0;
               let accessCities = "";
-              let canUpdateOpendepotPickDetail=0;
-              let canViewAttendance=0;
-              let canUpdateDustbinPickDetail=0;
-              let canRemoveNotPickedDustbin=0;
-              let canAccessBIDashboard=0;
-              let canAddWardDutyOn=0;
-              let canReimburseFuel=0;
-              let canUploadDailySalary=0;
-              let canApproveDailyWork=0;
-              if(data[key]["isDelete"]!=undefined){
-                isDelete=data[key]["isDelete"];
+              let canUpdateOpendepotPickDetail = 0;
+              let canViewAttendance = 0;
+              let canUpdateDustbinPickDetail = 0;
+              let canRemoveNotPickedDustbin = 0;
+              let canAccessBIDashboard = 0;
+              let canAddWardDutyOn = 0;
+              let canReimburseFuel = 0;
+              let canUploadDailySalary = 0;
+              let canApproveDailyWork = 0;
+              let canAcessVendorAgreement = 0;
+              let canUpdateAccountDetail=0;
+              if (data[key]["isDelete"] != undefined) {
+                isDelete = data[key]["isDelete"];
               }
               if (data[key]["haltDisableAccess"] != undefined) {
                 haltDisableAccess = data[key]["haltDisableAccess"];
@@ -157,72 +159,80 @@ export class UsersService {
               if (data[key]["canUpdateOpendepotPickDetail"] != undefined) {
                 canUpdateOpendepotPickDetail = data[key]["canUpdateOpendepotPickDetail"];
               }
-              if(data[key]["canViewAttendance"]!=undefined){
-                canViewAttendance=data[key]["canViewAttendance"];
+              if (data[key]["canViewAttendance"] != undefined) {
+                canViewAttendance = data[key]["canViewAttendance"];
               }
-              if(data[key]["canUpdateDustbinPickDetail"]!=undefined){
-                canUpdateDustbinPickDetail=data[key]["canUpdateDustbinPickDetail"];
+              if (data[key]["canUpdateDustbinPickDetail"] != undefined) {
+                canUpdateDustbinPickDetail = data[key]["canUpdateDustbinPickDetail"];
               }
-              if(data[key]["canRemoveNotPickedDustbin"]!=undefined){
-                canRemoveNotPickedDustbin=data[key]["canRemoveNotPickedDustbin"];
+              if (data[key]["canRemoveNotPickedDustbin"] != undefined) {
+                canRemoveNotPickedDustbin = data[key]["canRemoveNotPickedDustbin"];
               }
-              if(data[key]["canAccessBIDashboard"]!=undefined){
-                canAccessBIDashboard=data[key]["canAccessBIDashboard"];
+              if (data[key]["canAccessBIDashboard"] != undefined) {
+                canAccessBIDashboard = data[key]["canAccessBIDashboard"];
               }
-              if(data[key]["canAddWardDutyOn"]!=undefined){
-                canAddWardDutyOn=data[key]["canAddWardDutyOn"];
+              if (data[key]["canAddWardDutyOn"] != undefined) {
+                canAddWardDutyOn = data[key]["canAddWardDutyOn"];
               }
-              if(data[key]["canReimburseFuel"]!=undefined){
-                canReimburseFuel=data[key]["canReimburseFuel"];
+              if (data[key]["canReimburseFuel"] != undefined) {
+                canReimburseFuel = data[key]["canReimburseFuel"];
               }
-              if(data[key]["canUploadDailySalary"]!=undefined){
-                canUploadDailySalary=data[key]["canUploadDailySalary"];
+              if (data[key]["canUploadDailySalary"] != undefined) {
+                canUploadDailySalary = data[key]["canUploadDailySalary"];
               }
-               if(data[key]["canApproveDailyWork"]!=undefined){
-                canApproveDailyWork=data[key]["canApproveDailyWork"];
+              if (data[key]["canApproveDailyWork"] != undefined) {
+                canApproveDailyWork = data[key]["canApproveDailyWork"];
               }
-             // if (data[key]["isDelete"] == "0") {
-                userList.push({
-                  userKey: data[key]["userId"],
-                  userId: data[key]["userId"],
-                  name: data[key]["name"],
-                  email: data[key]["email"],
-                  password: data[key]["password"],
-                  userType: data[key]["userType"],
-                  expiryDate: data[key]["expiryDate"],
-                  notificationHalt: data[key]["notificationHalt"],
-                  notificationMobileDataOff: data[key]["notificationMobileDataOff"],
-                  notificationSkippedLines: data[key]["notificationSkippedLines"],
-                  notificationPickDustbins: data[key]["notificationPickDustbins"],
-                  notificationGeoSurfing: data[key]["notificationGeoSurfing"],
-                  officeAppUserId: data[key]["officeAppUserId"],
-                  isTaskManager: data[key]["isTaskManager"],
-                  haltDisableAccess: haltDisableAccess,
-                  isActual: isActual,
-                  isActualWorkPercentage:isActualWorkPercentage,
-                  isAttendanceApprover:isAttendanceApprover,
-                  isLock: isLock,
-                  isAdmin: isAdmin,
-                  isManager: isManager,
-                  isDelete:isDelete,
-                  roleId: roleId,
-                  accessCities: accessCities,
-                  imgUrl:imgUrl,
-                  utitle:utitle,
-                  canUpdateOpendepotPickDetail:canUpdateOpendepotPickDetail,
-                  canViewAttendance:canViewAttendance,
-                  canUpdateDustbinPickDetail:canUpdateDustbinPickDetail,
-                  canRemoveNotPickedDustbin:canRemoveNotPickedDustbin,
-                  canAccessBIDashboard:canAccessBIDashboard,
-                  canAddWardDutyOn:canAddWardDutyOn,
-                  canReimburseFuel:canReimburseFuel,
-                  canUploadDailySalary:canUploadDailySalary,
-                  canApproveDailyWork:canApproveDailyWork,
-                });
+              if (data[key]["canAcessVendorAgreement"] != undefined) {
+                canAcessVendorAgreement = data[key]["canAcessVendorAgreement"];
+              }
+              if (data[key]["canUpdateAccountDetail"] != undefined) {
+                canUpdateAccountDetail = data[key]["canUpdateAccountDetail"];
+              }
+              // if (data[key]["isDelete"] == "0") {
+              userList.push({
+                userKey: data[key]["userId"],
+                userId: data[key]["userId"],
+                name: data[key]["name"],
+                email: data[key]["email"],
+                password: data[key]["password"],
+                userType: data[key]["userType"],
+                expiryDate: data[key]["expiryDate"],
+                notificationHalt: data[key]["notificationHalt"],
+                notificationMobileDataOff: data[key]["notificationMobileDataOff"],
+                notificationSkippedLines: data[key]["notificationSkippedLines"],
+                notificationPickDustbins: data[key]["notificationPickDustbins"],
+                notificationGeoSurfing: data[key]["notificationGeoSurfing"],
+                officeAppUserId: data[key]["officeAppUserId"],
+                isTaskManager: data[key]["isTaskManager"],
+                haltDisableAccess: haltDisableAccess,
+                isActual: isActual,
+                isActualWorkPercentage: isActualWorkPercentage,
+                isAttendanceApprover: isAttendanceApprover,
+                isLock: isLock,
+                isAdmin: isAdmin,
+                isManager: isManager,
+                isDelete: isDelete,
+                roleId: roleId,
+                accessCities: accessCities,
+                imgUrl: imgUrl,
+                utitle: utitle,
+                canUpdateOpendepotPickDetail: canUpdateOpendepotPickDetail,
+                canViewAttendance: canViewAttendance,
+                canUpdateDustbinPickDetail: canUpdateDustbinPickDetail,
+                canRemoveNotPickedDustbin: canRemoveNotPickedDustbin,
+                canAccessBIDashboard: canAccessBIDashboard,
+                canAddWardDutyOn: canAddWardDutyOn,
+                canReimburseFuel: canReimburseFuel,
+                canUploadDailySalary: canUploadDailySalary,
+                canApproveDailyWork: canApproveDailyWork,
+                canAcessVendorAgreement:canAcessVendorAgreement,
+                canUpdateAccountDetail:canUpdateAccountDetail,
+              });
               //}
             }
           }
-        }        
+        }
         localStorage.setItem("webPortalUserList", JSON.stringify(userList));
       }
     });

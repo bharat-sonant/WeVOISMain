@@ -307,8 +307,8 @@
                     <div class="{{list.cssClass}}" *ngFor="let list of vehicleList, let i=index"
                         (click)="list.cssClass!='' && getFuelList(list.vehicle,i);" style="cursor:not-allowed;">
                         <div class="ward-details">
-                            <h6>{{list.vehicle}}</h6>
-                            <small *ngIf="list.regNo">R.N. ({{list.regNo}})</small>
+                            <h6>{{list.vehicle}}<span *ngIf="list.regNo"> / {{list.regNo}}</span></h6>
+                            
                         </div>
                     </div>
                 </div>

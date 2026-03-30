@@ -183,7 +183,7 @@
             <th class="text-right">Houses</th>
             <th class="text-right">Revisit</th>
             <th class="text-right" style="display: none">RFID Not Matched</th>
-            <th class="text-right">Complex(s)</th>
+            <th class="text-right"  [hidden]="hideComplex==1">Complex(s)</th>
           </thead>
           <tbody>
             <tr
@@ -212,7 +212,7 @@
               <td class="text-right" style="display: none">
                 {{ data.oldCard }}
               </td>
-              <td class="text-right">
+              <td class="text-right"  [hidden]="hideComplex==1">
                 <span [hidden]="data.complex == ''"
                   >{{ data.complex }} ({{ data.houseHold }})</span
                 >
@@ -285,7 +285,7 @@
               <th class="text-right">Houses</th>
               <th class="text-right">Revisit</th>
               <th class="text-right" style="display: none">RFID Not Matched</th>
-              <th class="text-right">Complex(s)</th>
+              <th class="text-right"  [hidden]="hideComplex==1">Complex(s)</th>
               <th class="text-center">#</th>
             </thead>
             <tbody>
@@ -314,7 +314,7 @@
                 <td class="text-right" style="display: none">
                   {{ data.oldCard }}
                 </td>
-                <td class="text-right">
+                <td class="text-right"  [hidden]="hideComplex==1">
                   <span [hidden]="data.complexCount == '0'">
                     {{ data.complexCount }} ({{ data.houseHoldCount }})</span
                   >

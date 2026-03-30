@@ -73,6 +73,7 @@ export class WardSurveySummaryComponent implements OnInit {
   userIsExternal: any;
   cardPrefix: any;
   public showRfID: any = false;
+  public hideComplex: any;
 
 
   ngOnInit() {
@@ -89,6 +90,12 @@ export class WardSurveySummaryComponent implements OnInit {
       if (this.cityName == "hisar") {
         $("#divRFID").show();
       }
+    }
+    if (this.userIsExternal == true && this.cityName == "ajmer") {
+      this.hideComplex = 1;
+    }
+    else {
+      this.hideComplex = 0;
     }
 
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -514,7 +521,7 @@ export class WardSurveySummaryComponent implements OnInit {
               let markerCount = 0;
               let cardCount = 0;
               let revisitCount = 0;
-              //let actualMarkerCount = 0;//count variable to actual data
+              let actualMarkerCount = 0;//count variable to actual data
               // let actualCardCount = 0;//count variable to actual data
               // let actualRevisitCount = 0;//count variable to actual data
 
@@ -528,32 +535,43 @@ export class WardSurveySummaryComponent implements OnInit {
               for (let j = 0; j < markerKeyArray.length; j++) {
                 let markerNo = markerKeyArray[j];
                 if (parseInt(markerNo)) {
-                  isMarker = true;
+                  if (lineData[markerNo]["houseType"] != null) {
+                    isMarker = true;
 
-                  let userId = lineData[markerNo]["userId"] ? parseInt(lineData[markerNo]["userId"]) : null;
-                  let internalUser = userId != -4 ? true : false;
+                    let userId = lineData[markerNo]["userId"] ? parseInt(lineData[markerNo]["userId"]) : null;
+                    let internalUser = userId != -4 ? true : false;
 
-                  markerCount = markerCount + 1;
-                  // actualMarkerCount += internalUser ? 1 : 0; // to upate actual count data
-                  lastMarkerKey = Number(markerNo);
-                  if (lineData[markerNo]["cardNumber"] != null) {
-                    if (lineData[markerNo]["houseType"] == null) {
+                    markerCount = markerCount + 1;
+                    actualMarkerCount += internalUser ? 1 : 0; // to upate actual count data
+                    lastMarkerKey = Number(markerNo);
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      if (lineData[markerNo]["houseType"] == null) {
+                      }
+                      if (!lineData[markerNo]["cardNumber"].includes(this.cardPrefix)) {
+                        cardCount = cardCount + 1;
+                      }
+                      //actualCardCount += internalUser ? 1 : 0; // to upate actual count data
+
+                    } else if (lineData[markerNo]["revisitKey"] != null) {
+                      revisitCount = revisitCount + 1;
+                      // actualRevisitCount += internalUser ? 1 : 0; // to upate actual count data
                     }
-                    if (!lineData[markerNo]["cardNumber"].includes(this.cardPrefix)) {
-                      cardCount = cardCount + 1;
-                    }
-                    //actualCardCount += internalUser ? 1 : 0; // to upate actual count data
-
-                  } else if (lineData[markerNo]["revisitKey"] != null) {
-                    revisitCount = revisitCount + 1;
-                    // actualRevisitCount += internalUser ? 1 : 0; // to upate actual count data
                   }
                 }
               }
 
+              console.log(isMarker);
               if (isMarker == false) {
                 let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
                 //this.db.object(dbPath).remove();
+                this.db.object(dbPath).update({
+                  marksCount: markerCount,
+                  surveyedCount: cardCount,
+                  lineRevisitCount: revisitCount,
+                  actualMarksCount: actualMarkerCount,       // to update actual count in marking data
+                  //actualSurveyedCount: actualCardCount,      // to update actual count in marking data
+                  // actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
+                });
               }
               else {
                 let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
@@ -561,7 +579,7 @@ export class WardSurveySummaryComponent implements OnInit {
                   marksCount: markerCount,
                   surveyedCount: cardCount,
                   lineRevisitCount: revisitCount,
-                  // actualMarksCount: actualMarkerCount,       // to update actual count in marking data
+                  actualMarksCount: actualMarkerCount,       // to update actual count in marking data
                   //actualSurveyedCount: actualCardCount,      // to update actual count in marking data
                   // actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
                 });
@@ -571,7 +589,7 @@ export class WardSurveySummaryComponent implements OnInit {
               totalCardCount = totalCardCount + cardCount;
               totalRevisit = totalRevisit + revisitCount;
 
-              // actualTotalMarkerCount += actualMarkerCount;// to upate actual count data
+              actualTotalMarkerCount += actualMarkerCount;// to upate actual count data
               //  actualTotalCardCount += actualCardCount;    // to upate actual count data
               //  actualTotalRevisit += actualRevisitCount;  // to upate actual count data
 
@@ -1135,14 +1153,38 @@ export class WardSurveySummaryComponent implements OnInit {
   getWardSummary(index: any, wardNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardSummary");
     let dataKey = this.userIsExternal ? 'actualMarked' : 'marked'; //conditional path for actual count
-    dataKey = 'marked';
+    //dataKey = 'marked';
     let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/" + dataKey;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       markerInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
-        this.wardProgressList[index]["markers"] = Number(data);
-        this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(data);
+        let markers = Number(data);
+        dataKey = this.userIsExternal ? 'actualHouseCount' : 'houseCount';
+        dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/" + dataKey;
+        let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData: any) => {
+          houseInstance.unsubscribe();
+          if (this.userIsExternal == true && this.cityName == "ajmer") {
+            let houses = 0;
+            if (houseData != null) {
+              houses = Number(houseData);
+            }
+            if ((houses - markers) > 0) {
+              this.wardProgressList[index]["markers"] = houses;
+              this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(houses);
+            }
+            else {
+              this.wardProgressList[index]["markers"] = markers;
+              this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(markers);
+            }
+          }
+          else{
+            this.wardProgressList[index]["markers"] = markers;
+              this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(markers);
+          }
+        });
+
+
         dataKey = this.userIsExternal ? 'ActualTotalHouseCount' : 'TotalHouseCount';//conditional path for actual count
         dataKey = 'TotalHouseCount';
         dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
@@ -1151,23 +1193,27 @@ export class WardSurveySummaryComponent implements OnInit {
           if (data != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
             this.wardProgressList[index]["surveyed"] = Number(data);
+            this.wardProgressList[index]["surveyed"] = Number(data);
             this.surveyData.totalSurveyed = this.surveyData.totalSurveyed + Number(data);
+            this.surveyData.totalHouses = this.surveyData.totalHouses + Number(data);
             this.wardProgressList[index]["status"] = "In Progress";
             if (Number(this.wardProgressList[index]["markers"]) == Number(data)) {
               this.wardProgressList[index]["status"] = "Survey Done";
             }
           }
         });
-        dataKey = this.userIsExternal ? 'ActualTotalHouseWithComplexCount' : 'totalHouseWithComplexCount';//conditional path for actual count
+        //  dataKey = this.userIsExternal ? 'ActualTotalHouseWithComplexCount' : 'totalHouseWithComplexCount';//conditional path for actual count
 
-        dataKey = 'totalHouseWithComplexCount';
-        dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+        // dataKey = 'totalHouseWithComplexCount';
+        // dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+        dataKey = this.userIsExternal ? 'actualHouseCount' : 'houseCount';
+        dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/" + dataKey;
         let housesInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
           housesInstance.unsubscribe();
           if (data != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
             this.wardProgressList[index]["houses"] = Number(data);
-            this.surveyData.totalHouses = this.surveyData.totalHouses + Number(data);
+            //this.surveyData.totalHouses = this.surveyData.totalHouses + Number(data);
           }
         });
       }
@@ -1321,7 +1367,7 @@ export class WardSurveySummaryComponent implements OnInit {
               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSurveyDetail", markedHouseData);
               for (let i = 1; i <= this.wardLineCount; i++) {
 
-                this.lineSurveyList.push({ lineNo: i, markers: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
+                this.lineSurveyList.push({ lineNo: i, markers: 0, diff: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
                 if (markedHouseData[i] != null) {
                   // let markedCount = 0;
                   // let surveyedCount = 0;
@@ -1361,7 +1407,18 @@ export class WardSurveySummaryComponent implements OnInit {
 
                   let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
                   if (lineDetail != undefined) {
-                    lineDetail.markers = this.userIsExternal ? parseInt(actualMarksCount) : parseInt(marksCount); //conditioal variable for actual count
+
+                    let markers = this.userIsExternal ? parseInt(actualMarksCount) : parseInt(marksCount); //conditioal variable for actual count
+                    let houses = this.userIsExternal ? parseInt(actualHouseCount) : parseInt(houseCount);//conditioal variable for actual count
+                    let diff = 0;
+                    if (this.hideComplex == 1) {
+                      diff = houses - markers;
+                      if (diff > 0) {
+                        markers = houses;
+                      }
+                    }
+                    lineDetail.diff = diff;
+                    lineDetail.markers = markers;
                     lineDetail.survyed = this.userIsExternal ? parseInt(actualSurveyedCount) : parseInt(surveyedCount);//conditioal variable for actual count
                     lineDetail.houses = this.userIsExternal ? parseInt(actualHouseCount) : parseInt(houseCount);//conditioal variable for actual count
                     lineDetail.revisit = this.userIsExternal ? parseInt(actualLineRevisitCount) : parseInt(lineRevisitCount);//conditioal variable for actual count

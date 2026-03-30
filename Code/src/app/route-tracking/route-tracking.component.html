@@ -91,7 +91,7 @@
                 <tbody>
                   <tr *ngFor="let dt of vtsVehicleList; let i=index ">
                     <td style="vertical-align: top; width: 20px;"><input type="checkbox" id="chk{{i}}" (change)="drowVTSRoute(i)"/> </td>
-                    <td class="text-left">{{dt.vehicle}}<span *ngIf="dt.vehicleRegNo"> / R.N. ({{dt.vehicleRegNo}})</span>    <b style="float: right;">{{dt.km}} km</b></td>   
+                    <td class="text-left">{{dt.vehicle}}<span *ngIf="dt.vehicleRegNo"> / {{dt.vehicleRegNo}}</span>    <b style="float: right;">{{dt.km}} km</b></td>   
                                      
                   </tr>
                 </tbody>

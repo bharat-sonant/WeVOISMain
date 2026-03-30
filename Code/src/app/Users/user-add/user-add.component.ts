@@ -207,6 +207,11 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canApproveDailyWork"))).checked = true;
         }
       }
+      if (data["canAcessVendorAgreement"] != undefined) {
+        if (data["canAcessVendorAgreement"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canAcessVendorAgreement"))).checked = true;
+        }
+      }
       if (data["accessCities"] != undefined) {
         let list = data["accessCities"].split(',');
         for (let i = 0; i < list.length; i++) {
@@ -332,6 +337,7 @@ export class UserAddComponent implements OnInit {
     let canReimburseFuel: any = 0;
     let canUploadDailySalary: any = 0;
     let canApproveDailyWork: any = 0;
+    let canAcessVendorAgreement:any=0;
     if (officeAppUserId == "") {
       officeAppUserId = 0;
     }
@@ -403,6 +409,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canUploadDailySalary = 1;
     element = <HTMLInputElement>document.getElementById("canApproveDailyWork");
     if (element.checked == true) canApproveDailyWork = 1;
+    element = <HTMLInputElement>document.getElementById("canAcessVendorAgreement");
+    if (element.checked == true) canAcessVendorAgreement = 1;
 
     if (this.userid == null) {
       let lastKey = Number(this.userJsonData["lastKey"]) + 1;
@@ -447,6 +455,7 @@ export class UserAddComponent implements OnInit {
       canReimburseFuel: canReimburseFuel,
       canUploadDailySalary: canUploadDailySalary,
       canApproveDailyWork: canApproveDailyWork,
+      canAcessVendorAgreement:canAcessVendorAgreement,
     };
 
     if (this.actRoute.snapshot.paramMap.get("id") != null) {

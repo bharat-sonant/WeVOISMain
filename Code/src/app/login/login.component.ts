@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.setCityDetailList();
-   // this.setCommonCityData();
+    this.setCommonCityData();
     this.getRoles();
     this.getMessage();
     this.getRendomBackground();
@@ -175,6 +175,11 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("canUpdateAccountDetail", userDetails.canUpdateAccountDetail);
       } else {
         localStorage.setItem("canUpdateAccountDetail", "0");
+      }
+      if (userDetails.canAcessVendorAgreement != 0) {
+        localStorage.setItem("canAcessVendorAgreement", userDetails.canAcessVendorAgreement);
+      } else {
+        localStorage.setItem("canAcessVendorAgreement", "0");
       }
       if (userDetails.isAdmin != 0) {
         localStorage.setItem("isAdmin", userDetails.isAdmin);

@@ -180,6 +180,9 @@ export class CommonService {
       let lng = cityLatLng.split(",")[1];
       latLng.push({ lat: Number(lat), lng: Number(lng) });
     }
+    else{
+      latLng.push({ lat: 26.912434, lng: 75.787270 });
+    }
 
 
     return latLng;
@@ -2028,44 +2031,44 @@ export class CommonService {
         });
 
     });
-  }  
+  }
 
   getWardTotalCards(zoneNo: any, date: any) {
     return new Promise((resolve) => {
       this.getWardLine(zoneNo, date).then((linesData: any) => {
         let wardLinesDataObj = JSON.parse(linesData);
-        resolve({totalCards:wardLinesDataObj["totalHouseCount"]});
+        resolve({ totalCards: wardLinesDataObj["totalHouseCount"] });
       });
     });
   }
 
-getVehicleRegistrationNumber(vehicleNo: any) {
-  return new Promise((resolve, reject) => {
-   let user = localStorage.getItem('userType')
-   if(user==='Internal User'){
-      this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
-    let dbPath = "VehicleRegistrationNumber/" + vehicleNo;
-    
-    const vehicleRegistrationInstance = this.fsDb.object(dbPath)
-      .valueChanges()
-      .subscribe({
-        next: (data) => {
-          vehicleRegistrationInstance.unsubscribe();
-          resolve(data || null);
-        },
-        error: (err) => {
-          vehicleRegistrationInstance.unsubscribe();
-          reject(err);
-        }
-      });
-   }else{
-    resolve(null)
-   }
-    
-  });
-}
+  getVehicleRegistrationNumber(vehicleNo: any) {
+    return new Promise((resolve, reject) => {
+      let user = localStorage.getItem('userType')
+      if (user === 'Internal User') {
+        this.fsDb = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+        let dbPath = "VehicleDetails/" + vehicleNo + "/regNumber";
 
- 
+        const vehicleRegistrationInstance = this.fsDb.object(dbPath)
+          .valueChanges()
+          .subscribe({
+            next: (data) => {
+              vehicleRegistrationInstance.unsubscribe();
+              resolve(data || null);
+            },
+            error: (err) => {
+              vehicleRegistrationInstance.unsubscribe();
+              reject(err);
+            }
+          });
+      } else {
+        resolve(null)
+      }
+
+    });
+  }
+
+
 }
 
 

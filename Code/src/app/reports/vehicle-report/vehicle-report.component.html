@@ -83,7 +83,7 @@
                                 <tbody>
                                     <tr *ngFor="let dt of vehicleDataList">
                                         <td class=" thFixed" style="vertical-align: top; font-weight: bold;border-right: 1px solid lightgray;">
-                                            <div style="width: 200px!important; cursor: pointer;" (click)="showVehicleDetail(contentDetail,dt.vehicle);">{{dt.vehicle}}<span *ngIf="dt.regNumber" style="font-weight: normal; font-size: 11px; color: #555;"><br/>R.N. ({{dt.regNumber}})</span></div>
+                                            <div style="width: 200px!important; cursor: pointer;" (click)="showVehicleDetail(contentDetail,dt.vehicle);">{{dt.vehicle}}<span *ngIf="dt.regNumber" style="font-weight: normal; font-size: 11px; color: #555;"><br/>Reg.Number ({{dt.regNumber}})</span></div>
                                         </td>
                                         <td class=" text-left" style="vertical-align: top; border-right: 1px solid lightgray;">
                                             <div [innerHTML]="dt.day1" class="rowWidth"></div>

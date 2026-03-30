@@ -351,7 +351,14 @@ export class SidebarComponent implements OnInit {
                   }
                 }
                 else {
-                  this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
+                  if (userAccessList[i]["pageId"] == "28") {
+                    if (localStorage.getItem("canAcessVendorAgreement") == "1"  && this.cityName=="jaipur-office") {
+                      this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
+                    }
+                  }
+                  else {
+                    this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], isOuterUrl: isOuterUrl });
+                  }
                 }
               }
               else {

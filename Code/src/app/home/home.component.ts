@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit {
   cityName: any;
   isDehradun: boolean;
   db: any;
+  canAcessVendorAgreement: any;
   userDetail: userDetail = {
     name: "",
     cityName: "",
@@ -30,16 +31,17 @@ export class HomeComponent implements OnInit {
     this.isDehradun = false;
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.canAcessVendorAgreement = localStorage.getItem("canAcessVendorAgreement");
     this.userid = localStorage.getItem("userID");
-    if(this.userid=="4" || this.userid=="182"){
+    if (this.userid == "4" || this.userid == "182") {
       $("#devendraLink").show();
     }
     this.userType = localStorage.getItem("userType");
     this.userDetail.name = localStorage.getItem("userName");
     this.portalAccessList = [];
     this.portalAccessList = JSON.parse(localStorage.getItem("portalAccess"));
-   let instance= this.db.object("AuthorizationData").valueChanges().subscribe(data=>{
-    instance.unsubscribe();
+    let instance = this.db.object("AuthorizationData").valueChanges().subscribe(data => {
+      instance.unsubscribe();
     })
     if (localStorage.getItem("isCityChange") == "yes") {
       localStorage.setItem("isCityChange", "no");
@@ -73,9 +75,9 @@ export class HomeComponent implements OnInit {
           if (userAccessList[i]["url"].includes("https")) {
             isOuterUrl = "yes";
             let newUrl = userAccessList[i]["url"].split("https://mainportal-react.web.app/userId/")[1];
-            
-              url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
-            
+
+            url = "https://main-wevois.firebaseapp.com/" + this.cityName + "/" + this.userid + "/" + newUrl;
+
             if (userAccessList[i]["url"].includes("dehradun-pmc")) {
               if (this.isDehradun == true) {
                 let userType = "1";
@@ -87,7 +89,14 @@ export class HomeComponent implements OnInit {
               }
             }
             else {
-              this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+              if (userAccessList[i]["pageId"] == "28") {
+                if (this.canAcessVendorAgreement == "1" && this.cityName=="jaipur-office") {
+                  this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+                }
+              }
+              else {
+                this.accessList.push({ name: userAccessList[i]["name"], url: url, isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+              }
             }
           }
           else {
@@ -102,11 +111,19 @@ export class HomeComponent implements OnInit {
               }
             }
             else if (userAccessList[i]["url"].includes("/cms/21")) {
-              if (this.cityName == "jaipur-greater"  || this.cityName=="dehradun" || this.cityName=="test") {
+              if (this.cityName == "jaipur-greater" || this.cityName == "dehradun" || this.cityName == "test") {
                 this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
               }
             } else {
-              this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+
+              if (userAccessList[i]["pageId"] == "28") {
+                if (this.canAcessVendorAgreement == "1" && this.cityName=="jaipur-office") {
+                  this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+                }
+              }
+              else {
+                this.accessList.push({ name: userAccessList[i]["name"], url: "/" + this.cityName + "/" + userAccessList[i]["pageId"] + userAccessList[i]["url"], isShow: this.isShow, position: userAccessList[i]["position"], img: userAccessList[i]["img"], dataClass: dataClass, isOuterUrl: isOuterUrl });
+              }
             }
           }
         }

@@ -20,10 +20,12 @@ export class VehicleAssignedComponent implements OnInit {
   currentMonth: any[];
   db: any;
   cityName: any;
+  public userType:any;
   serviceName = "vehicle-assigned-report";
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.userType = localStorage.getItem("userType");
     this.commonService.savePageLoadHistory("General-Reports","Vehicle-Assigned-Report",localStorage.getItem("userID"));
     this.toDayDate = this.commonService.setTodayDate();
     this.selectedDate = this.toDayDate;
