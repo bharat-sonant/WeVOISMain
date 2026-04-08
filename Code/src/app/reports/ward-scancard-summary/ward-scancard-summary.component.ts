@@ -109,74 +109,118 @@ export class WardScancardSummaryComponent implements OnInit {
               helperIdInstance.unsubscribe();
               if (helperdata != null) {
                 this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", helperdata);
-                helperId = helperdata.toString().split(',')[0];
-                dbPath = "Employees/" + helperId + "/GeneralDetails/empCode";
-                let empInstance = this.db.object(dbPath).valueChanges().subscribe(
-                  empCodeData => {
-                    empInstance.unsubscribe();
+                let helperIdList = helperdata.toString().split(',').map(item => item.trim()).filter(item => item !== "");
+                let helperNameList = helper.toString().split(',').map(item => item.trim()).filter(item => item !== "");
+                let scanByCount = {};
+                helperId = helperIdList.length > 0 ? helperIdList[0] : "0";
+                dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/";
+                let notScannedInstance = this.db.object(dbPath).valueChanges().subscribe(
+                  notScannedData => {
+                    notScannedInstance.unsubscribe();
+                    if (notScannedData != null) {
 
-                    if (empCodeData != null) {
-                      empCode = empCodeData.toString();
+                      this.besuh.saveBackEndFunctionDataUsesHistory(
+                        this.serviceName,
+                        "getWardDetail",
+                        notScannedData
+                      );
 
-                    }
-                    dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/ImagesData/";
-                    let notScannedInstance = this.db.object(dbPath).valueChanges().subscribe(
-                      notScannedData => {
-                        notScannedInstance.unsubscribe();
-                        if (notScannedData != null) {
+                      let keyArray = Object.keys(notScannedData)
+                        .filter(key => key !== 'lastKey' && key !== 'totalCount');
 
-                          this.besuh.saveBackEndFunctionDataUsesHistory(
-                            this.serviceName,
-                            "getWardDetail",
-                            notScannedData
-                          );
+                      notScanned = keyArray.length;          // ✅ correct count
+                      scannedTotalCards += notScanned;
 
-                          let keyArray = Object.keys(notScannedData)
-                            .filter(key => key !== 'lastKey' && key !== 'totalCount');
-
-                          notScanned = keyArray.length;          // ✅ correct count
-                          scannedTotalCards += notScanned;
-                        }
-
-                        dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
-                        let scannedInstance = this.db.object(dbPath).valueChanges().subscribe(
-                          scannedData => {
-                            scannedInstance.unsubscribe();
-                            if (scannedData != null) {
-                              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", scannedData);
-                              let keyArray = Object.keys(scannedData).filter(key => key !== 'recentScanned' && key !== 'totalScanned' && key !== 'ImagesData' && key !== 'totalActualScanned');
-
-                              for (let j = 0; j < keyArray.length; j++) {
-                                let index = keyArray[j];
-                                /* ===============================
-                                     INTERNAL USER → filter scanBy
-                                  =============================== */
-                                if (localStorage.getItem("userType") !== "External User") {
-
-                                  if (scannedData[index].scanBy != "-1") {
-
-                                    scanned++;
-                                  }
-
-                                }
-                                /* ===============================
-                                   EXTERNAL USER → NO scanBy filter
-                                   =============================== */
-                                else {
-
-                                  scanned++;
-                                }
-
+                      // Keep helper selection aligned with actual scanner even when only ImagesData is present.
+                      for (let j = 0; j < keyArray.length; j++) {
+                        let imgKey = keyArray[j];
+                        let imgData = notScannedData[imgKey];
+                        if (imgData != null && imgData.scanBy != undefined && imgData.scanBy != null) {
+                          let scanBy = imgData.scanBy.toString().trim();
+                          if (scanBy !== "" && scanBy !== "-1") {
+                            scanByCount[scanBy] = scanByCount[scanBy] ? Number(scanByCount[scanBy]) + 1 : 1;
+                          }
+                        } else if (imgData != null && typeof imgData === "object") {
+                          let innerKeys = Object.keys(imgData);
+                          for (let k = 0; k < innerKeys.length; k++) {
+                            let innerData = imgData[innerKeys[k]];
+                            if (innerData != null && innerData.scanBy != undefined && innerData.scanBy != null) {
+                              let innerScanBy = innerData.scanBy.toString().trim();
+                              if (innerScanBy !== "" && innerScanBy !== "-1") {
+                                scanByCount[innerScanBy] = scanByCount[innerScanBy] ? Number(scanByCount[innerScanBy]) + 1 : 1;
                               }
                             }
-                            dbPath = "/WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + "Summary" + "/" + "workPercentage";
-                            let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
-                              workPercentageData => {
-                                workPercentageInstance.unsubscribe();
-                                if (workPercentageData !== null && workPercentageData !== undefined) {
-                                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", workPercentageData);
-                                  workPercentage = workPercentageData;
+                          }
+                        }
+                      }
+                    }
+
+                    dbPath = "HousesCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
+                    let scannedInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      scannedData => {
+                        scannedInstance.unsubscribe();
+                        if (scannedData != null) {
+                          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", scannedData);
+                          let keyArray = Object.keys(scannedData).filter(key => key !== 'recentScanned' && key !== 'totalScanned' && key !== 'ImagesData' && key !== 'totalActualScanned');
+
+                          for (let j = 0; j < keyArray.length; j++) {
+                            let index = keyArray[j];
+                            let scanBy = "";
+                            if (scannedData[index] != undefined && scannedData[index].scanBy != undefined && scannedData[index].scanBy != null) {
+                              scanBy = scannedData[index].scanBy.toString().trim();
+                            }
+
+                            if (localStorage.getItem("userType") !== "External User") {
+                              if (scanBy !== "" && scanBy !== "-1") {
+                                scanned++;
+                                scanByCount[scanBy] = scanByCount[scanBy] ? Number(scanByCount[scanBy]) + 1 : 1;
+                              }
+                            } else {
+                              scanned++;
+                              if (scanBy !== "" && scanBy !== "-1") {
+                                scanByCount[scanBy] = scanByCount[scanBy] ? Number(scanByCount[scanBy]) + 1 : 1;
+                              }
+                            }
+                          }
+                        }
+
+                        let matchedHelperIds = Object.keys(scanByCount);
+                        if (matchedHelperIds.length > 0) {
+                          matchedHelperIds.sort((a, b) => Number(scanByCount[b]) - Number(scanByCount[a]));
+                          helperId = matchedHelperIds[0];
+                          let helperIndex = helperIdList.indexOf(helperId);
+                          if (helperIndex > -1 && helperNameList[helperIndex] != undefined) {
+                            helper = helperNameList[helperIndex];
+                          }
+                        }
+
+                        dbPath = "/WasteCollectionInfo/" + wardNo + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + "Summary" + "/" + "workPercentage";
+                        let workPercentageInstance = this.db.object(dbPath).valueChanges().subscribe(
+                          workPercentageData => {
+                            workPercentageInstance.unsubscribe();
+                            if (workPercentageData !== null && workPercentageData !== undefined) {
+                              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", workPercentageData);
+                              workPercentage = workPercentageData;
+                            }
+
+                            dbPath = "Employees/" + helperId + "/GeneralDetails";
+                            let empInstance = this.db.object(dbPath).valueChanges().subscribe(
+                              empData => {
+                                empInstance.unsubscribe();
+                                if (empData != null) {
+                                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardDetail", empData);
+                                  if (empData["empCode"] != undefined && empData["empCode"] != null) {
+                                    empCode = empData["empCode"].toString();
+                                  } else {
+                                    empCode = "";
+                                  }
+                                  if (empData["name"] != undefined && empData["name"] != null) {
+                                    helper = empData["name"].toString().toUpperCase();
+                                  }
+                                } else {
+                                  empCode = "";
                                 }
+
                                 dbPath = "WardScanCardPenalties" + "/" + year + "/" + monthName + "/" + this.selectedDate + "/" + helperId + "/" + wardNo + "/";
                                 let penaltyInstance = this.db.object(dbPath).valueChanges().subscribe(penaltyData => {
                                   penaltyInstance.unsubscribe();
@@ -187,7 +231,6 @@ export class WardScancardSummaryComponent implements OnInit {
                                     detail.remark = penaltyData.reason;
                                   }
                                   if (detail != undefined) {
-
                                     scannedTotalCards += scanned;
                                     detail.helper = helper;
                                     detail.helperCode = empCode;
@@ -201,14 +244,13 @@ export class WardScancardSummaryComponent implements OnInit {
                                     this.totalScannedCards += Number(scanned);
                                   }
                                 });
-
                               }
                             );
                           }
                         );
-
                       }
                     );
+
                   }
                 );
               }
