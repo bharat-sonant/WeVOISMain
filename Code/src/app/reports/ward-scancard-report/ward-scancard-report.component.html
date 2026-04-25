@@ -5,42 +5,25 @@
   <div class="row no-gutters">
     <div class="col-md-6" style="padding-left: 18px; margin-top: -15px">
       <button class="btn btn-primary" (click)="setDate('', 'previous')">
-        <<
-      </button>
-      <input
-        id="txtDate"
-        class="date-input"
-        type="date"
-        (change)="setDate($event.target.value, 'current')"
-      />
-      <button
-        class="btn btn-primary"
-        (click)="setDate('', 'next')"
-        style="margin-left: 0px !important"
-      >
-        >>
-      </button>
-      &nbsp;
-      <select
-        class="caret-select"
-        id="ddlZone"
-        (change)="changeCircleSelection($event.target.value)"
-        style="width: 150px"
-      >
-        <option value="Circle1" selected>Circle1</option>
-        <option value="Circle2" [hidden]="cityName != 'sikar'">Circle2</option>
-        <option value="Circle3" [hidden]="cityName != 'sikar'">Circle3</option>
-      </select>
+        << </button>
+          <input id="txtDate" class="date-input" type="date" (change)="setDate($event.target.value, 'current')" />
+          <button class="btn btn-primary" (click)="setDate('', 'next')" style="margin-left: 0px !important">
+            >>
+          </button>
+          &nbsp;
+          <select class="caret-select" id="ddlZone" (change)="changeCircleSelection($event.target.value)"
+            style="width: 150px">
+            <option value="Circle1" selected>Circle1</option>
+            <option value="Circle2" [hidden]="cityName != 'sikar'">Circle2</option>
+            <option value="Circle3" [hidden]="cityName != 'sikar'">Circle3</option>
+          </select>
     </div>
-    <div
-      class="col-md-6"
-      style="
+    <div class="col-md-6" style="
         text-align: center;
         margin-top: -2px;
         font-size: 20px;
         letter-spacing: 1px;
-      "
-    ></div>
+      "></div>
   </div>
 </section>
 <div class="main-content">
@@ -52,76 +35,44 @@
             <div class="row">
               <div class="col-md-12 pr-1">
                 <div class="table-wrapper table-one">
-                  <table
-                    class="table"
-                    style="
+                  <table class="table" style="
                       border-bottom: 1px solid #dee2e6;
                       border-left: 1px solid #dee2e6;
                       margin-bottom: 0px !important;
                       font-size: 10px;
-                    "
-                  >
+                    ">
                     <thead>
                       <th style="border-right: 1px solid #dee2e6; width: 20%">
                         Ward No.
                       </th>
-                      <th
-                        class="text-right"
-                        style="border-right: 1px solid #dee2e6; width: 40%"
-                      >
+                      <th class="text-right" style="border-right: 1px solid #dee2e6; width: 40%">
                         Ward Length(km)
                       </th>
-                      <th
-                        class="text-right"
-                        style="border-right: 1px solid #dee2e6; width: 40%"
-                      >
+                      <th class="text-right" style="border-right: 1px solid #dee2e6; width: 40%">
                         Covered Length(km)
-                        <img
-                          class="pdfIcon"
-                          src="../../../assets/icons/file-pdf-regular.svg"
-                          width="37px"
-                          style="
+                        <img class="pdfIcon" src="../../../assets/icons/file-pdf-regular.svg" width="37px" style="
                             float: right;
                             color: #f96332;
                             margin-left: 10px;
                             cursor: pointer;
-                          "
-                          (click)="SavePDF('main')"
-                          alt=""
-                        />
+                          " (click)="SavePDF('main')" alt="" />
                         <!-- <i class="far fa-file-pdf" style="float: right; font-size: 20px; color:#f96332; margin-left: 10px; cursor: pointer;" (click)="SavePDF('main');"></i></th> -->
                       </th>
                     </thead>
 
                     <tbody>
-                      <tr
-                        id="tr{{ i }}"
-                        *ngFor="let data of wardDataList; let i = index"
-                        style="cursor: pointer"
-                        (click)="getScanDetail(data.wardNo, i)"
-                      >
+                      <tr id="tr{{ i }}" *ngFor="let data of wardDataList; let i = index" style="cursor: pointer"
+                        (click)="getScanDetail(data.wardNo, i)">
                         <td style="border-right: 1px solid #dee2e6">
                           {{ data.wardNo }}
                         </td>
-                        <td
-                          class="text-right"
-                          style="border-right: 1px solid #dee2e6"
-                        >
+                        <td class="text-right" style="border-right: 1px solid #dee2e6">
                           {{ data.wardLength }}
                         </td>
                         <td class="text-right">
-                          <div
-                            class="progress progress-float"
-                            style="text-align: right !important; float: left"
-                          >
-                            <div
-                              class="progress-bar progress-success"
-                              role="progressbar"
-                              [style.width]="data.workPer"
-                              aria-valuenow="25"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            >
+                          <div class="progress progress-float" style="text-align: right !important; float: left">
+                            <div class="progress-bar progress-success" role="progressbar" [style.width]="data.workPer"
+                              aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
                               {{ data.workPer }}
                             </div>
                           </div>
@@ -132,11 +83,7 @@
                   </table>
                 </div>
               </div>
-              <div
-                id="divMessage"
-                class="col-md-12 pr-1 text-center"
-                style="padding-top: 20vh; display: none"
-              >
+              <div id="divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none">
                 <div class="form-group">
                   <h5>No data available</h5>
                 </div>
@@ -147,23 +94,16 @@
       </div>
     </div>
     <div class="col-md-7" style="padding-left: 7px; padding-right: 0px">
-      <div
-        class="card"
-        style="margin-top: -6px; height: 88vh !important; overflow: hidden"
-      >
+      <div class="card" style="margin-top: -6px; height: 88vh !important; overflow: hidden">
         <div id="divEcogram" class="card-header custom-header">
           <div class="row">
             <div class="col-md-6 text-left">
-              <select
-                class="caret-select"
-                id="ddlWasteCategory"
-                (change)="getFilterScanData($event.target.value)"
-                style="width: 200px"
-              >
+              <select class="caret-select" id="ddlWasteCategory" (change)="getFilterScanData($event.target.value)"
+                style="width: 200px">
                 <option value="0" selected>--All Waste Category--</option>
                 <option *ngFor="let cat of wasteCategoryList" value={{cat.category}}>
-          {{cat.category}}
-        </option>
+                  {{cat.category}}
+                </option>
               </select>
             </div>
             <div class="col-md-6 text-right d-flex justify-content-end">
@@ -173,138 +113,81 @@
                   Scanned Cards
                 </h6>
               </div>
-              <div
-                style="padding-right: 20px; text-align: right"
-                [hidden]="cityName != 'chennai'"
-              >
-                <img
-                  src="../../../assets/icons/file-export-solid.svg"
-                  alt="export-excel"
-                  class="icon-green cursor-pointer"
-                  width="22"
-                  (click)="openModel(contentExport)"
-                  style="cursor: pointer; margin-bottom: 3px"
-                />
+              <div style="padding-right: 20px; text-align: right;"
+                [hidden]="cityName != 'chennai' && cityName != 'devtest' && cityName!='bharatpur'">
+                <img src="../../../assets/icons/file-export-solid.svg" alt="export-excel"
+                  class="icon-green cursor-pointer" width="22" (click)="openModel(contentExport)"
+                  style="cursor: pointer; margin-bottom: 3px" />
                 <h6 style="font-size: 9px; text-align: right">Export Excel</h6>
               </div>
 
               <div style="padding-right: 20px; text-align: right">
-                <img
-                  class="far fa-file-pdf"
-                  src="../../../assets/icons/file-pdf-regular.svg"
-                  width="22"
-                  style="cursor: pointer; margin-bottom: 3px"
-                  (click)="SavePDF('detail')"
-                  alt=""
-                />
+                <img class="far fa-file-pdf" src="../../../assets/icons/file-pdf-regular.svg" width="22"
+                  style="cursor: pointer; margin-bottom: 3px" (click)="SavePDF('detail')" alt="" />
                 <h6 style="font-size: 9px; text-align: right">Export PDF</h6>
               </div>
             </div>
           </div>
         </div>
-        <div
-          id="content"
-          #content
-          class="card-body"
-          style="padding: 3px 11px 15px 0px; font-size: 10px !important"
-        >
+        <div id="content" #content class="card-body" style="padding: 3px 11px 15px 0px; font-size: 10px !important">
           <div class="row">
             <div class="col-md-12">
               <form>
                 <div class="row">
                   <div class="col-md-12 pr-1">
-                    <div
-                      class="table-wrapper table-scroll"
-                      style="padding: 0px 0px 20px 0px"
-                    >
-                      <table
-                        class="table"
-                        style="
+                    <div class="table-wrapper table-scroll" style="padding: 0px 0px 20px 0px">
+                      <table class="table" style="
                           border-bottom: 1px solid #dee2e6;
                           border-left: 1px solid #dee2e6;
-                        "
-                      >
+                        ">
                         <thead>
-                          <th
-                            class="border-right"
-                            style="border-right: 1px solid #dee2e6; width: 20%"
-                          >
+                          <th class="border-right" style="border-right: 1px solid #dee2e6; width: 20%">
                             Card No.
                           </th>
-                          <th
-                            class="border-right"
-                            style="border-right: 1px solid #dee2e6; width: 20%"
-                            [hidden]="isEcogram == '1'"
-                          >
+                          <th class="border-right" style="border-right: 1px solid #dee2e6; width: 20%"
+                            [hidden]="isEcogram == '1'">
                             Name
                           </th>
-                          <th
-                            class="border-right"
-                            style="border-right: 1px solid #dee2e6; width: 20%"
-                            [hidden]="isEcogram == '1'"
-                          >
+                          <th class="border-right" style="border-right: 1px solid #dee2e6; width: 20%"
+                            [hidden]="isEcogram == '1'">
                             RFID
                           </th>
-                          <th
-                            class="border-right"
-                            style="border-right: 1px solid #dee2e6; width: 20%"
-                            [hidden]="isEcogram == '0'"
-                          >
+                          <th class="border-right" style="border-right: 1px solid #dee2e6; width: 20%"
+                            [hidden]="isEcogram == '0'">
                             Waste Category
                           </th>
-                          <th
-                            class="border-right"
-                            style="border-right: 1px solid #dee2e6; width: 20%"
-                          >
+                          <th class="border-right" style="border-right: 1px solid #dee2e6; width: 20%">
                             Time
                           </th>
-                          <th
-                            class="border-right"
-                            style="border-right: 1px solid #dee2e6; width: 20%"
-                          >
+                          <th class="border-right" style="border-right: 1px solid #dee2e6; width: 20%">
                             Scaned By
-                            <img
-                              class="far fa-file-pdf"
-                              src="../../../assets/icons/file-pdf-regular.svg"
-                              width="37px"
-                              [hidden]="isEcogram == '1'"
-                              style="
+                            <img class="far fa-file-pdf" src="../../../assets/icons/file-pdf-regular.svg" width="37px"
+                              [hidden]="isEcogram == '1'" style="
                                 float: right;
                                 margin-left: 10px;
                                 cursor: pointer;
-                              "
-                              (click)="SavePDF('detail')"
-                              alt=""
-                            />
+                              " (click)="SavePDF('detail')" alt="" />
                             <!-- <i class="far fa-file-pdf" style="float: right; font-size: 20px; color:#f96332; cursor: pointer;" (click)="SavePDF('detail');"></i> -->
+                          </th>
+                          <th class="border-right" style="border-right: 1px solid #dee2e6; width: 10%" [hidden]="isImage=='0'">
+
                           </th>
                         </thead>
                         <tbody>
-                          <tr
-                            *ngFor="
+                          <tr *ngFor="
                               let data of wardScanedListFiltered;
                               let i = index
-                            "
-                          >
+                            ">
                             <td style="border-right: 1px solid #dee2e6">
                               {{ data.cardNo }}
                             </td>
-                            <td
-                              style="border-right: 1px solid #dee2e6"
-                              [hidden]="isEcogram == '1'"
-                            >
+                            <td style="border-right: 1px solid #dee2e6" [hidden]="isEcogram == '1'">
                               {{ data.personName }}
                             </td>
-                            <td
-                              style="border-right: 1px solid #dee2e6"
-                              [hidden]="isEcogram == '1'"
-                            >
+                            <td style="border-right: 1px solid #dee2e6" [hidden]="isEcogram == '1'">
                               {{ data.rfId }}
                             </td>
-                            <td
-                              style="border-right: 1px solid #dee2e6"
-                              [hidden]="isEcogram == '0'"
-                            >
+                            <td style="border-right: 1px solid #dee2e6" [hidden]="isEcogram == '0'">
                               {{ data.wasteCategory }}
                             </td>
                             <td style="border-right: 1px solid #dee2e6">
@@ -313,21 +196,22 @@
                             <td style="border-right: 1px solid #dee2e6">
                               {{ data.name }}
                             </td>
+                            <td style="border-right: 1px solid #dee2e6"  [hidden]="isImage=='0'">
+                              <img src="../../../assets/icons/eye-regular.svg" alt="eye" class="cursor-pointer" style="cursor: pointer;"
+                                [hidden]="!data.image" (click)="openImageModal(imageModal, data.image)" width="18" />
+                            </td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
                   </div>
                   <div
-                    id="divMessage"
-                    class="col-md-12 pr-1 text-center"
-                    style="padding-top: 20vh; display: none"
-                  >
-                    <div class="form-group">
-                      <h5>No data available</h5>
+                    id=" divMessage" class="col-md-12 pr-1 text-center" style="padding-top: 20vh; display: none">
+                              <div class="form-group">
+                                <h5>No data available</h5>
+                              </div>
                     </div>
                   </div>
-                </div>
               </form>
             </div>
           </div>
@@ -337,19 +221,30 @@
   </div>
 </div>
 
+<!--Image Preview Modal Start-->
+<ng-template #imageModal>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="padding: 8px 12px">
+        <h6 class="modal-title">Waste Image</h6>
+        <button type="button" class="btn-close" (click)="closeModel()" style="border: none"></button>
+      </div>
+      <div class="modal-body" style="padding: 10px; line-height: 0">
+        <img [src]="selectedImage" alt="Waste Photo" style="width: 100%; display: block; border-radius: 0 0 4px 4px" />
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Image Preview Modal End-->
+
 <!--Plan Dustbin Form Start-->
 <ng-template #contentExport>
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Export Excel</h5>
-        <button
-          type="button"
-          class="btn-close"
-          (click)="closeModel()"
-          style="border: none"
-        >
-    
+        <button type="button" class="btn-close" (click)="closeModel()" style="border: none">
+
           <!-- <span aria-hidden="true">&times;</span> -->
         </button>
       </div>
@@ -357,28 +252,15 @@
         <div class="row">
           <div class="col-md-6 pe-1">
             <label class="label">Date From</label>
-            <input
-              id="txtDateFrom"
-              class="date-input filter-date-input"
-              type="date"
-            />
+            <input id="txtDateFrom" class="date-input filter-date-input" type="date" />
           </div>
           <div class="col-md-6 ps-1">
             <label class="label">Date To</label>
-            <input
-              id="txtDateTo"
-              class="date-input filter-date-input"
-              type="date"
-            />
+            <input id="txtDateTo" class="date-input filter-date-input" type="date" />
           </div>
         </div>
 
-        <input
-          type="button"
-          class="btn btn-success btnExport"
-          value="Export"
-          (click)="exportDateRangeExcel()"
-        />
+        <input type="button" class="btn btn-success btnExport" value="Export" (click)="exportDateRangeExcel()" />
       </div>
     </div>
   </div>

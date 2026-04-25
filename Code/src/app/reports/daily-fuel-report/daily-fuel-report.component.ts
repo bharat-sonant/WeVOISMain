@@ -861,7 +861,7 @@ export class DailyFuelReportComponent implements OnInit {
 
   getWorkDetailList(workData: any) {
     return new Promise(async (resolve) => {
-      let workDetailList = [];
+      let workDetailList: any[] = [];
       let keyArray = Object.keys(workData);
       if (keyArray.length > 0) {
         for (let index = 0; index < keyArray.length; index++) {
@@ -907,6 +907,7 @@ export class DailyFuelReportComponent implements OnInit {
                   endTime: endTime,
                   orderBy: orderBy,
                   distance: 0,
+                  meterReading: "",
                 });
               }
             }
@@ -936,9 +937,92 @@ export class DailyFuelReportComponent implements OnInit {
               }
             }
             workDetailList = workDetailList.filter((item) => item.name != "");
-            resolve(workDetailList);
+
+            const meterPromises = [];
+            for (let i = 0; i < workDetailList.length; i++) {
+              meterPromises.push(
+                Promise.resolve(
+                  this.getDutyOnOffMeterReading(
+                    workDetailList[i]["zone"],
+                    workDetailList[i]["empId"],
+                    workDetailList[i]["binLiftingPlanId"],
+                    workDetailList[i]["vehicle"],
+                    i
+                  )
+                )
+              );
+            }
+            Promise.all(meterPromises).then((meterResults: any[]) => {
+              for (let i = 0; i < workDetailList.length; i++) {
+                let meterDetail = meterResults.find((item: any) => item.index == i);
+                if (meterDetail != undefined) {
+                  workDetailList[i]["meterReading"] = meterDetail.meterReading;
+                }
+              }
+              resolve(workDetailList);
+            });
           });
         }
+      }
+    });
+  }
+
+  
+  getDutyOnOffMeterReading(
+    zone: any,
+    empId: any,
+    binLiftingPlanId: any,
+    vehicle: any,
+    index: any
+  ) {
+    return new Promise((resolve) => {
+      let meterReading = "";
+      if (binLiftingPlanId != "") {
+        let dbPath =
+          "DustbinData/DustbinAssignment/" +
+          this.selectedYear +
+          "/" +
+          this.selectedMonthName +
+          "/" +
+          this.selectedDate +
+          "/" +
+          binLiftingPlanId;
+        let instance = this.db
+          .object(dbPath)
+          .valueChanges()
+          .subscribe(async (planData) => {
+            instance.unsubscribe();
+            if (planData != null) {
+              let dutyOnMeterReading = planData["dutyOnMeterReading"]?planData["dutyOnMeterReading"]:"0";
+              let dutyOutMeterReading=planData["dutyOutMeterReading"]?planData["dutyOutMeterReading"]:"0";
+              meterReading=dutyOnMeterReading+" - "+dutyOutMeterReading;  
+              
+            }
+            resolve({ index: index, meterReading: meterReading });
+          });
+      } else {
+        let dbPath =
+          "WasteCollectionInfo/" +
+          zone +
+          "/" +
+          this.selectedYear +
+          "/" +
+          this.selectedMonthName +
+          "/" +
+          this.selectedDate +
+          "/Summary";
+        let instance = this.db
+          .object(dbPath)
+          .valueChanges()
+          .subscribe(async (summaryData) => {
+            instance.unsubscribe();
+            if (summaryData != null) {
+              let dutyOnMeterReading = summaryData["dutyOnMeterReading"]?summaryData["dutyOnMeterReading"]:"0";
+              let dutyOutMeterReading=summaryData["dutyOutMeterReading"]?summaryData["dutyOutMeterReading"]:"0";
+              meterReading=dutyOnMeterReading+" - "+dutyOutMeterReading;              
+            }
+            resolve({ index: index, meterReading: meterReading });
+          });
       }
     });
   }
@@ -1180,6 +1264,7 @@ export class DailyFuelReportComponent implements OnInit {
               detail.wardList.push({
                 zone: workDetailList[i]["zone"],
                 km: workDetailList[i]["distance"],
+                meterReading: workDetailList[i]["meterReading"] || "",
                 driver:
                   workDetailList[i]["name"] +
                   " <b>(" +
@@ -1316,6 +1401,7 @@ export class DailyFuelReportComponent implements OnInit {
               remark: diesel[j]["remark"],
               zone: "",
               km: "",
+              dutyMeterReading: "",
               driver: "",
               meterReading: diesel[j]["meterReading"]
             });
@@ -1327,6 +1413,7 @@ export class DailyFuelReportComponent implements OnInit {
             if (list[j] != undefined) {
               list[j]["zone"] = wardDetailList[j]["zone"];
               list[j]["km"] = wardDetailList[j]["km"];
+              list[j]["dutyMeterReading"] = wardDetailList[j]["meterReading"] || "";
               list[j]["driver"] = wardDetailList[j]["driver"];
             } else {
               list.push({
@@ -1340,6 +1427,7 @@ export class DailyFuelReportComponent implements OnInit {
                 remark: "",
                 zone: wardDetailList[j]["zone"],
                 km: wardDetailList[j]["km"],
+                dutyMeterReading: wardDetailList[j]["meterReading"] || "",
                 driver: wardDetailList[j]["driver"],
                 meterReading: ''
               });
@@ -1361,6 +1449,7 @@ export class DailyFuelReportComponent implements OnInit {
               remark: "",
               zone: "",
               km: "",
+              dutyMeterReading: "",
               driver: "",
               meterReading: "",
             });
@@ -1380,6 +1469,7 @@ export class DailyFuelReportComponent implements OnInit {
               amount: list[j]["amount"],
               zone: list[j]["zone"],
               km: list[j]["km"],
+              dutyMeterReading: list[j]["dutyMeterReading"],
               driver: list[j]["driver"],
               meterReading: list[j]["meterReading"],
             });
@@ -1400,7 +1490,7 @@ export class DailyFuelReportComponent implements OnInit {
       htmlString += "Fuel Quantity";
       htmlString += "</td>";
       htmlString += "<td>";
-      htmlString += "Meter Reading";
+      htmlString += "Fuel Meter Reading";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Diesel Amount";
@@ -1421,6 +1511,9 @@ export class DailyFuelReportComponent implements OnInit {
       }
       htmlString += "<td>";
       htmlString += "Ward No.";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Meter Reading";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "KM";
@@ -1466,6 +1559,9 @@ export class DailyFuelReportComponent implements OnInit {
           }
           htmlString += "<td t='s'>";
           htmlString += exportList[i]["zone"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["dutyMeterReading"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["km"];

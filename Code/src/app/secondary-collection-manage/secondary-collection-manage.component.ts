@@ -4,6 +4,7 @@ import { DustbinService } from "../services/dustbin/dustbin.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "@angular/fire/storage";
 import * as QRCode from 'qrcode';
+import { FirebaseService } from "../firebase.service";
 
 @Component({
   selector: 'app-secondary-collection-manage',
@@ -11,7 +12,7 @@ import * as QRCode from 'qrcode';
   styleUrls: ['./secondary-collection-manage.component.scss']
 })
 export class SecondaryCollectionManageComponent implements OnInit {
-  constructor(private dustbinService: DustbinService, private commonService: CommonService, private storage: AngularFireStorage, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private dustbinService: DustbinService, private commonService: CommonService, private storage: AngularFireStorage, private modalService: NgbModal) { }
   selectedZone: any;
   selectedStatus: any;
   zoneList: any[] = [];
@@ -28,7 +29,11 @@ export class SecondaryCollectionManageComponent implements OnInit {
   txtFreq = "#txtFreq";
   ddlDustbinType = "#ddlDustbinType";
   isShowDisabledBy: any;
- public cityName:any;
+  public cityName: any;
+  db: any;
+  allDustbinList: any[] = [];
+  dustbinFilterList: any[] = [];
+  userList: any[] = [];
 
   dustbinSummary: dustbinSummary = {
     totalDustbin: 0,
@@ -38,9 +43,11 @@ export class SecondaryCollectionManageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cityName=localStorage.getItem("cityName");
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
     this.commonService.chkUserPageAccess(window.location.href, localStorage.getItem("cityName"));
     this.commonService.savePageLoadHistory("Secondary-Collection-Management", "Manage-Secondary-Collection", localStorage.getItem("userID"));
+    this.userList = JSON.parse(localStorage.getItem("webPortalUserList"));
     this.getZoneList();
   }
 
@@ -55,62 +62,152 @@ export class SecondaryCollectionManageComponent implements OnInit {
         }
         this.zoneList = this.commonService.transformNumeric(this.zoneList, 'zone');
         this.selectedZone = this.zoneList[0]["zoneNo"];
-        this.dustbinStorageList = [];
-        this.dustbinStorageList = JSON.parse(localStorage.getItem("openDepot"));
-        this.dustbinAllStorageList = [];
-        this.dustbinAllStorageList = JSON.parse(localStorage.getItem("allDustbin"));
-        if (this.dustbinStorageList != null) {
-          this.dustbinSummary.totalDustbin = this.dustbinStorageList.filter(item => item.isDisabled != "yes").length;
-          this.selectedStatus = "enabled";
-          this.getDustbins();
-        }
+        this.selectedStatus = "enabled";
+        this.getDustbins();
       }
-
     });
-
   }
 
   changeZoneSelection(filterVal: any) {
     this.selectedZone = filterVal;
-    this.getDustbins();
+    this.filterDustbin();
   }
 
   changeStatusSelection(filterVal: any) {
     this.selectedStatus = filterVal;
-    this.getDustbins();
+    this.filterDustbin();
   }
+
+
+  filterDustbin() {
+    this.dustbinFilterList = [];
+    let list = this.dustbinList.filter(item => item.zone.toString().trim() == this.selectedZone.toString().trim());
+    this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
+    if (this.selectedStatus == "enabled") {
+      list = list.filter(item => item.isDisabled != "yes");
+      this.isShowDisabledBy = "0";
+    }
+    else if (this.selectedStatus == "disabled") {
+      list = list.filter(item => item.isDisabled == "yes");
+      this.isShowDisabledBy = "1";
+    }
+    else {
+      this.isShowDisabledBy = "1";
+    }
+    for (let i = 0; i < list.length; i++) {
+      let disabledByName = "";
+      if (list[i]["disabledBy"] != "") {
+        let detail = this.userList.find(item => item.userId == list[i]["disabledBy"]);
+        if (detail != undefined) {
+          disabledByName = detail.name;
+        }
+
+      }
+      this.dustbinFilterList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"], disabledBy: list[i]["disabledBy"], disabledByName: disabledByName });
+    }
+  }
+
 
   getDustbins() {
     this.dustbinList = [];
+    this.allDustbinList = [];
     let list = [];
-    let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-    if (this.dustbinStorageList.length > 0) {
-      list = this.dustbinStorageList.filter(item => item.zone.toString().trim() == this.selectedZone.toString().trim());
-      this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
-      if (this.selectedStatus == "enabled") {
-        list = list.filter(item => item.isDisabled != "yes");
-        this.isShowDisabledBy = "0";
-      }
-      else if (this.selectedStatus == "disabled") {
-        list = list.filter(item => item.isDisabled == "yes");
-        this.isShowDisabledBy = "1";
-      }
-      else {
-        this.isShowDisabledBy = "1";
+    let dbPath = "DustbinData/DustbinDetails";
+    let dustbinInstance = this.db.object(dbPath).valueChanges().subscribe((dustbin) => {
+      dustbinInstance.unsubscribe();
+      if (dustbin != null) {
+        let keyArray = Object.keys(dustbin);
+        for (let i = 0; i < keyArray.length; i++) {
+          let dustbinId = keyArray[i];
+          if (dustbin[dustbinId]["lat"] != null) {
+            let pickFrequency = 0;
+            let isDisabled = "no";
+            let disabledBy = "";
+            let isBroken = false;
+            let disabledDate = "";
+            if (dustbin[dustbinId]["pickFrequency"] != null) {
+              pickFrequency = Number(dustbin[dustbinId]["pickFrequency"]);
+            }
+            if (dustbin[dustbinId]["isDisabled"] != null) {
+              isDisabled = dustbin[dustbinId]["isDisabled"];
+            }
+            if (dustbin[dustbinId]["isBroken"] != null) {
+              isBroken = dustbin[dustbinId]["isBroken"];
+            }
+            if (dustbin[dustbinId]["disabledBy"] != null) {
+              disabledBy = dustbin[dustbinId]["disabledBy"];
+            }
+            if (dustbin[dustbinId]["disabledDate"] != null) {
+              disabledDate = dustbin[dustbinId]["disabledDate"];
+            }
+            this.allDustbinList.push({
+              zone: dustbin[dustbinId]["zone"],
+              dustbin: dustbinId,
+              address: dustbin[dustbinId]["address"],
+              type: dustbin[dustbinId]["type"],
+              pickFrequency: pickFrequency,
+              lat: dustbin[dustbinId]["lat"],
+              lng: dustbin[dustbinId]["lng"],
+              isAssigned: dustbin[dustbinId]["isAssigned"],
+              spelledRight: dustbin[dustbinId]["spelledRight"],
+              ward: dustbin[dustbinId]["ward"],
+              isDisabled: isDisabled,
+              isBroken: isBroken,
+              disabledBy: disabledBy,
+              disabledDate: disabledDate
+            });
 
-      }
-      for (let i = 0; i < list.length; i++) {
-        let disabledByName = "";
-        if (list[i]["disabledBy"] != "") {
-          let detail = userList.find(item => item.userId == list[i]["disabledBy"]);
-          if (detail != undefined) {
-            disabledByName = detail.name;
+            if (dustbin[dustbinId]["dustbinType"] != null) {
+              if (dustbin[dustbinId]["dustbinType"] == "Open Depot") {
+                this.dustbinList.push({
+                  zone: dustbin[dustbinId]["zone"],
+                  dustbin: dustbinId,
+                  address: dustbin[dustbinId]["address"],
+                  type: dustbin[dustbinId]["type"],
+                  pickFrequency: pickFrequency,
+                  lat: dustbin[dustbinId]["lat"],
+                  lng: dustbin[dustbinId]["lng"],
+                  isAssigned: dustbin[dustbinId]["isAssigned"],
+                  spelledRight: dustbin[dustbinId]["spelledRight"],
+                  ward: dustbin[dustbinId]["ward"],
+                  isDisabled: isDisabled,
+                  isBroken: isBroken,
+                  disabledBy: disabledBy,
+                  disabledDate: disabledDate
+                });
+              }
+            }
           }
+        }
+        list = this.dustbinList.filter(item => item.zone.toString().trim() == this.selectedZone.toString().trim());
+        this.dustbinSummary.totalDustbin = this.dustbinList.filter(item => item.isDisabled != "yes").length;
+        this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
+        if (this.selectedStatus == "enabled") {
+          list = list.filter(item => item.isDisabled != "yes");
+          this.isShowDisabledBy = "0";
+        }
+        else if (this.selectedStatus == "disabled") {
+          list = list.filter(item => item.isDisabled == "yes");
+          this.isShowDisabledBy = "1";
+        }
+        else {
+          this.isShowDisabledBy = "1";
 
         }
-        this.dustbinList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"], disabledBy: list[i]["disabledBy"], disabledByName: disabledByName });
+        for (let i = 0; i < list.length; i++) {
+          let disabledByName = "";
+          if (list[i]["disabledBy"] != "") {
+            let detail = this.userList.find(item => item.userId == list[i]["disabledBy"]);
+            if (detail != undefined) {
+              disabledByName = detail.name;
+            }
+
+          }
+          this.dustbinFilterList.push({ zoneNo: list[i]["zone"], type: list[i]["type"], dustbin: list[i]["dustbin"], ward: list[i]["ward"], lat: list[i]["lat"], lng: list[i]["lng"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isDisabled: list[i]["isDisabled"], disabledBy: list[i]["disabledBy"], disabledByName: disabledByName });
+        }
+
       }
-    }
+    });
   }
 
   downloadQRCode(dustbinId: any) {
@@ -182,7 +279,7 @@ export class SecondaryCollectionManageComponent implements OnInit {
 
 
   exportToExcel() {
-    let exportList = this.commonService.transformNumeric(this.dustbinStorageList, "zone");
+    let exportList = this.commonService.transformNumeric(this.dustbinList, "zone");
     if (exportList.length > 0) {
       let htmlString = "";
       htmlString = "<table>";
@@ -265,34 +362,67 @@ export class SecondaryCollectionManageComponent implements OnInit {
 
   addDustbin(data: any) {
     let dustbin = 1;
-    if (this.dustbinAllStorageList.length > 0) {
-      dustbin = Number(this.dustbinAllStorageList[this.dustbinAllStorageList.length - 1]["dustbin"]) + 1;
-      if (isNaN(dustbin)) {
-        this.commonService.setAlertMessage("error", "Please try again !!!");
-        return;
+    let dbPath = "DustbinData/DustbinDetails";
+    let dustbinInstance = this.db.object(dbPath).valueChanges().subscribe((dustbin) => {
+      dustbinInstance.unsubscribe();
+      if (dustbin != null) {
+        let keyArray = Object.keys(dustbin);
+        if (keyArray.length > 0) {
+          dustbin = Number(keyArray[keyArray.length - 1]) + 1;
+        }
       }
-    }
-    this.dustbinService.updateDustbinDetail(dustbin, data, 'add');
-    this.dustbinStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone, dustbinType: "Open Depot" });
-    localStorage.setItem("openDepot", JSON.stringify(this.dustbinStorageList));
-    this.dustbinAllStorageList.push({ address: data.address, dustbin: dustbin.toString(), isApproved: false, isAssigned: "false", isBroken: false, isDisabled: "no", lat: data.lat, lng: data.lng, pickFrequency: data.pickFrequency, type: data.type, ward: data.ward, zone: data.zone, dustbinType: "Open Depot" });
-    localStorage.setItem("allDustbin", JSON.stringify(this.dustbinAllStorageList));
-    this.getDustbins();
-    this.commonService.setAlertMessage("success", "Open depot detail added successfully !!!");
-    this.closeModel();
+      this.dustbinService.updateDustbinDetail(dustbin, data, 'add');
+      data.isDisabled = "no";
+      data.disabledBy = "";
+      data.isBroken = false;
+      data.disabledDate = "";
+      this.dustbinList.push(data);
+      this.allDustbinList.push(data);
+      this.updateLocalStorageDustbin();
+      this.filterDustbin();
+      this.commonService.setAlertMessage("success", "Dustbin detail added successfully !!!");
+      this.closeModel();
+    });
   }
 
   updateDustbin(dustbin: any, data: any) {
-
     this.dustbinService.updateDustbinDetail(dustbin, data, 'update');
-    this.updateLocalStorageDustbin(dustbin, data);
-    this.getDustbins();
-    this.commonService.setAlertMessage("success", "Open depot detail updated successfully !!!");
+    let detail = this.allDustbinList.find(item => item.dustbin == dustbin);
+    if (detail != undefined) {
+      detail.zone = data.zone;
+      detail.type = data.type;
+      detail.ward = data.ward;
+      detail.lat = data.lat;
+      detail.lng = data.lng;
+      detail.address = data.address;
+      detail.pickFrequency = data.pickFrequency;
+      detail.dustbinType = "dustbin";
+    }
+    detail = this.dustbinList.find(item => item.dustbin == dustbin);
+    if (detail != undefined) {
+      detail.zone = data.zone;
+      detail.type = data.type;
+      detail.ward = data.ward;
+      detail.lat = data.lat;
+      detail.lng = data.lng;
+      detail.address = data.address;
+      detail.pickFrequency = data.pickFrequency;
+      detail.dustbinType = "dustbin";
+    }
+    this.updateLocalStorageDustbin();
+    this.filterDustbin();
+    this.closeModel();
+    $(this.dustbinId).val("0");
+    this.commonService.setAlertMessage("success", "Dustbin detail updated successfully !!!");
   }
 
   updateDustbinStatus(dustbin: any, status: any) {
-    this.dustbinService.updateDustbinStatus(dustbin, status);
-    let detail = this.dustbinStorageList.find(item => item.dustbin == dustbin);
+    let disabledBy = "";
+    if (status == "yes") {
+      disabledBy = localStorage.getItem("userID");
+    }
+    this.dustbinService.updateDustbinStatus(dustbin, status, disabledBy);
+    let detail = this.allDustbinList.find(item => item.dustbin == dustbin);
     if (detail != undefined) {
       detail.isDisabled = status;
       if (status == "yes") {
@@ -302,10 +432,22 @@ export class SecondaryCollectionManageComponent implements OnInit {
         detail.disabledBy = "";
       }
     }
-    localStorage.setItem("openDepot", JSON.stringify(this.dustbinStorageList));
-    this.getDustbins();
-    this.commonService.setAlertMessage("susscee", "Open depot status updated !!!");
+    detail = this.dustbinList.find(item => item.dustbin == dustbin);
+    if (detail != undefined) {
+      detail.isDisabled = status;
+      if (status == "yes") {
+        detail.disabledBy = localStorage.getItem("userID");
+      }
+      else {
+        detail.disabledBy = "";
+      }
+    }
+    this.updateLocalStorageDustbin();
+    this.filterDustbin();
+    this.commonService.setAlertMessage("susscee", "Dustbin staus updated !!!");
   }
+
+
 
   isValidate() {
     let isValid = true;
@@ -336,19 +478,9 @@ export class SecondaryCollectionManageComponent implements OnInit {
     return isValid;
   }
 
-  updateLocalStorageDustbin(dustbin: any, data: any) {
-    let dustbinStorageDetail = this.dustbinStorageList.find((item) => item.dustbin == dustbin);
-    if (dustbinStorageDetail != undefined) {
-      dustbinStorageDetail.zone = data.zone;
-      dustbinStorageDetail.type = data.type;
-      dustbinStorageDetail.ward = data.ward;
-      dustbinStorageDetail.lat = data.lat;
-      dustbinStorageDetail.lng = data.lng;
-      dustbinStorageDetail.address = data.address;
-      dustbinStorageDetail.pickFrequency = data.pickFrequency;
-    }
-    localStorage.setItem("openDepot", JSON.stringify(this.dustbinStorageList));
-    this.closeModel();
+  updateLocalStorageDustbin() {
+    localStorage.setItem("openDepot", JSON.stringify(this.dustbinList));
+    localStorage.setItem("allDustbin", JSON.stringify(this.allDustbinList));
   }
 
   openModel(content: any, id: any, type: any) {

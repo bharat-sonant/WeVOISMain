@@ -35,6 +35,7 @@ export class WardScancardReportComponent implements OnInit {
   db: any;
   public cityName: any;
   public isEcogram: any;
+  public isImage:any;
   serviceName = "ward-scan-card-report";
   userType: any;
   header = [["Card No.", "Name", "RFID", "Time", "Scaned By"]];
@@ -47,15 +48,20 @@ export class WardScancardReportComponent implements OnInit {
   selectedWard: any;
   cardExportList: any[] = [];
   wasteCategoryList: any[] = [];
+  selectedImage: string = '';
 
   ngOnInit() {
+    this.isImage="0";
     this.cityName = localStorage.getItem("cityName");
-    if (this.cityName == "test" || this.cityName == "ecogram" || this.cityName == "jaipur-civil-line" || this.cityName == "jaipur-kishanpole" || this.cityName == "chennai") {
+    if (this.cityName == "devtest" || this.cityName == "ecogram" || this.cityName == "jaipur-civil-line" || this.cityName == "jaipur-kishanpole" || this.cityName == "chennai" || this.cityName == "bharatpur") {
       this.isEcogram = "1";
       $("#divEcogram").show();
       this.totalScanedCards = 0;
       if (this.cityName == "chennai") {
         this.wasteCategoryList = [{ category: "All Segregated" }, { category: "Wet, Dry & Hazardous Segregated" }, { category: "Wet, Dry & Sanitary Segregated" }, { category: "Wet & Dry Segregated" }, { category: "No-Segregated" }, { category: "No Waste" }];
+      } if (this.cityName == "bharatpur" || this.cityName == "devtest") {
+        this.isImage="1";
+        this.wasteCategoryList = [{ category: "Segregated" }, { category: "Non-Segregated" }, { category: "No Waste" }];
       }
       else {
         this.wasteCategoryList = [{ category: "Segregated" }, { category: "Non-Segregated" }, { category: "No Waste" }];
@@ -234,6 +240,22 @@ export class WardScancardReportComponent implements OnInit {
       let fileName = "Card Scan Report - Ward.xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
+  }
+
+  openImageModal(content: any, imageUrl: string) {
+   this.modalService.open(content, { size: 'lg' });
+    let windowHeight = $(window).height();
+    let windowWidth = $(window).width();
+    let height = 580;
+    let width = 400;
+    let marginTop = "0px";
+    marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $('div .modal-content').parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $('div .modal-content').css("height", height + "px").css("width", "" + width + "px");
+    $('div .modal-dialog-centered').css("margin-top", "26px");
+
+    this.selectedImage = imageUrl;
+    console.log(imageUrl)
   }
 
   closeModel() {
@@ -566,6 +588,7 @@ export class WardScancardReportComponent implements OnInit {
 
     let scannedHouseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       scannedHouseInstance.unsubscribe();
+      console.log(data)
       if (data != null) {
 
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getScanDetail", data);
@@ -614,8 +637,12 @@ export class WardScancardReportComponent implements OnInit {
                   if (this.isEcogram == "1") {
 
                     let wasteCategory = "";
+                    let wastePhoto = "";
                     if (data[cardNo]["wasteCategory"] != undefined) {
                       wasteCategory = data[cardNo]["wasteCategory"];
+                      if (wasteCategory == "Segregated") {
+                        wastePhoto = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FScanCardImages%2F" + wardNo + "%2F" + year + "%2F" + monthName + "%2F" + this.selectedDate + "%2F" + cardNumber + ".jpg?alt=media";;
+                      }
                     }
 
                     // ✅ Direct push (NO scanBy filter)
@@ -627,7 +654,8 @@ export class WardScancardReportComponent implements OnInit {
                       rfId: "",
                       personName: "",
                       sno: Number(date),
-                      wasteCategory: wasteCategory
+                      wasteCategory: wasteCategory,
+                      image: wastePhoto,
                     });
 
                     // Sorting latest first
@@ -669,7 +697,7 @@ export class WardScancardReportComponent implements OnInit {
                                 rfId: houseData["rfid"],
                                 personName: houseData["name"],
                                 sno: Number(date),
-                                wasteCategory: ""
+                                wasteCategory: "",
                               });
 
                               this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
@@ -699,8 +727,12 @@ export class WardScancardReportComponent implements OnInit {
                     if (this.isEcogram == "1") {
 
                       let wasteCategory = "";
+                      let wastePhoto = "";
                       if (data[cardNo]["wasteCategory"] != undefined) {
                         wasteCategory = data[cardNo]["wasteCategory"];
+                        if (wasteCategory == "Segregated") {
+                          wastePhoto = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FScanCardImages%2F" + wardNo + "%2F" + year + "%2F" + monthName + "%2F" + this.selectedDate + "%2F" + cardNumber + ".jpg?alt=media";;
+                        }
                       }
 
                       this.wardScaanedList.push({
@@ -711,7 +743,8 @@ export class WardScancardReportComponent implements OnInit {
                         rfId: "",
                         personName: "",
                         sno: Number(date),
-                        wasteCategory: wasteCategory
+                        wasteCategory: wasteCategory,
+                        image: wastePhoto,
                       });
 
                       this.wardScaanedList = this.wardScaanedList.sort((a, b) =>

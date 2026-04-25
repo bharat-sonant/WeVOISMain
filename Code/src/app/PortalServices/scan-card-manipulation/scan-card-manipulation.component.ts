@@ -181,6 +181,7 @@ export class ScanCardManipulationComponent implements OnInit {
 
   updateLineCard(lineNo: any, date: any, endDate: any, wardHouses: any, wardTotalLines: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateLineCard");
+    console.log(date);
     if (lineNo > wardTotalLines) {
       date = this.commonService.getNextDate(date, 1);
       this.saveScanCardManipulation(date, endDate, wardHouses, wardTotalLines);

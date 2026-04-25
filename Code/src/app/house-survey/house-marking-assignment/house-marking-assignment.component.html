@@ -96,7 +96,9 @@
                                                                 style="margin-right: 16px;" />
                                                         </span>
                                                         <span class="Inactive-span"
-                                                            [hidden]="data.isActive==true">Inactive</span>
+                                                            [hidden]="data.isActive==true"
+                                                            style="cursor: pointer;"
+                                                            (click)="openActivateConfirmation(contentActivate, data.userId)">Inactive</span>
                                                         <span [hidden]="data.isActive==false"
                                                             style="margin-right: 50px;">
                                                             <!-- <i class="fas fa-map-marked-alt marked-icon"
@@ -259,6 +261,32 @@
     </div>
 </ng-template>
 <!--Delete Confirmation End-->
+
+<!--Activate Confirmation Start-->
+<ng-template #contentActivate>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title modal-header-title" id="activateModalTitle">Are you sure you want to activate
+                    this surveyor ?</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="activateId" value="0" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-success w-100 submit-btn" (click)="confirmActivate()">
+                            Confirm</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger w-100 cancel-btn" (click)="closeModel()">
+                            Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--Activate Confirmation End-->
 
 <!--Assign  Start-->
 <ng-template #contentAssign>

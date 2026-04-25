@@ -73,7 +73,8 @@
                                                     {{data.ward}}
                                                 </td>
                                                 <td class="text-right br-1">
-                                                    {{data.cards}}
+                                                    <span *ngIf="data.houseCount!==''">{{data.houseCount}}</span>
+                                                    <span *ngIf="data.houseCount===''">{{data.cards}}</span>
                                                 </td>
                                                 <td class="text-right br-1">
                                                     {{data.scanned}}

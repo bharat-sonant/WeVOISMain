@@ -180,7 +180,7 @@ export class CommonService {
       let lng = cityLatLng.split(",")[1];
       latLng.push({ lat: Number(lat), lng: Number(lng) });
     }
-    else{
+    else {
       latLng.push({ lat: 26.912434, lng: 75.787270 });
     }
 
@@ -970,23 +970,24 @@ export class CommonService {
               if (dustbin[index]["disabledDate"] != null) {
                 disabledDate = dustbin[index]["disabledDate"];
               }
+              allDustbinList.push({
+                zone: dustbin[index]["zone"],
+                dustbin: keyArrray[i],
+                address: dustbin[index]["address"],
+                type: dustbin[index]["type"],
+                pickFrequency: pickFrequency,
+                lat: dustbin[index]["lat"],
+                lng: dustbin[index]["lng"],
+                isAssigned: dustbin[index]["isAssigned"],
+                spelledRight: dustbin[index]["spelledRight"],
+                ward: dustbin[index]["ward"],
+                isDisabled: isDisabled,
+                isBroken: isBroken,
+                disabledBy: disabledBy,
+                disabledDate: disabledDate
+              });
               if (dustbin[index]["dustbinType"] != null) {
-                allDustbinList.push({
-                  zone: dustbin[index]["zone"],
-                  dustbin: keyArrray[i],
-                  address: dustbin[index]["address"],
-                  type: dustbin[index]["type"],
-                  pickFrequency: pickFrequency,
-                  lat: dustbin[index]["lat"],
-                  lng: dustbin[index]["lng"],
-                  isAssigned: dustbin[index]["isAssigned"],
-                  spelledRight: dustbin[index]["spelledRight"],
-                  ward: dustbin[index]["ward"],
-                  isDisabled: isDisabled,
-                  isBroken: isBroken,
-                  disabledBy: disabledBy,
-                  disabledDate: disabledDate
-                });
+
                 if (dustbin[index]["dustbinType"] == "Open Depot") {
                   openDepotList.push({
                     zone: dustbin[index]["zone"],
@@ -1049,6 +1050,7 @@ export class CommonService {
             }
           }
         }
+
         localStorage.setItem("dustbin", JSON.stringify(dustbinList));
         localStorage.setItem("openDepot", JSON.stringify(openDepotList));
         localStorage.setItem("allDustbin", JSON.stringify(allDustbinList));
@@ -1063,7 +1065,10 @@ export class CommonService {
 
   setAllZones(newDb: any) {
     let zoneList = [];
-    let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }, { zone: "QRT" }];
+    let hiddenList = [{ zone: "Beed-Tractor" }, { zone: "BinLifting" }, { zone: "Service" }, { zone: "Support" }, { zone: "Commercial" }, { zone: "Compactor" }, { zone: "FixedWages" }, { zone: "GarageWork" }, { zone: "GeelaKachra" }, { zone: "Maint" }, { zone: "Market" }, { zone: "SegregationWork" }, { zone: "UIT" }, { zone: "WetWaste" }, { zone: "mkt" }, { zone: "QRT" }];
+    if (localStorage.getItem("cityName") == "parbatsar") {
+      hiddenList = hiddenList.filter(item => item.zone != "Commercial");
+    }
     zoneList.push({ zoneNo: "0", zoneName: "-- Select --" });
     let dbPath = "Tasks";
     let zoneInstance = newDb.object(dbPath).valueChanges().subscribe(data => {
@@ -1086,7 +1091,7 @@ export class CommonService {
     let markingWards = [];
     markingWards.push({ zoneNo: "0", zoneName: "-- Select --" });
     let cityName = localStorage.getItem("cityName");
-    let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWard.json?alt=media";
+    let path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FAvailableWardForMarking.json?alt=media";
     if (cityName == "jodhpur") {
       path = this.fireStoragePath + this.getFireStoreCity() + "%2FDefaults%2FMarkingWards.json?alt=media";
     }

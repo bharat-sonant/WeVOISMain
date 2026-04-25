@@ -36,6 +36,7 @@ export class PortalServicesComponent implements OnInit {
   getUserAccess() {
     let userAccessList = JSON.parse(localStorage.getItem("userAccessList"));
     if (userAccessList != null) {
+      console.log(userAccessList.length);
       for (let i = 0; i < userAccessList.length; i++) {
         if (userAccessList[i]["pageId"] == "8M" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divPenalty").show();
@@ -65,7 +66,7 @@ export class PortalServicesComponent implements OnInit {
           $("#divChangeLineMarkerData").show();
         }
         if (userAccessList[i]["pageId"] == "8Y" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divScanCardManipulation").show();
+            $("#divScanCardManipulation").show();
         }
         if (userAccessList[i]["pageId"] == "8Z" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divSetNearbyWard").show();
@@ -112,6 +113,12 @@ export class PortalServicesComponent implements OnInit {
         }
         if (userAccessList[i]["pageId"] == "8A12" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
           $("#divAddVehicleDetail").show();
+        }
+        if (userAccessList[i]["pageId"] == "8A13" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divHisarNewCardMapping").show();
+        }
+        if (userAccessList[i]["pageId"] == "8A14" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
+          $("#divSetLsatLineCompleted").show();
         }
       }
     }

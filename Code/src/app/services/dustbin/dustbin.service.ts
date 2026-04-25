@@ -48,14 +48,14 @@ export class DustbinService {
     }
   }
 
-  updateDustbinStatus(dustbinId: any, status: any) {
+  updateDustbinStatus(dustbinId: any, status: any,disabledBy:any) {
     let disabledDate = null;
     if (status == "yes") {
       disabledDate = this.commonService.setTodayDate();
     }
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
     let dbPath = "DustbinData/DustbinDetails/" + dustbinId;
-    this.db.object(dbPath).update({ isDisabled: status, disabledDate: disabledDate });
+    this.db.object(dbPath).update({ isDisabled: status, disabledDate: disabledDate,disabledBy:disabledBy });
   }
 
   getDustbinWardMappingJson() {

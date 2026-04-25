@@ -36,7 +36,7 @@ export class CardScanningReportComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.userType = localStorage.getItem("userType");
-    
+
 
     this.commonService.savePageLoadHistory(
       "General-Reports",
@@ -106,7 +106,8 @@ export class CardScanningReportComponent implements OnInit {
           scanned: '',
           percentage: '',
           residentialCount: '',
-          commercialCount: ''
+          commercialCount: '',
+          houseCount: ''
         });
       }
     }
@@ -143,6 +144,7 @@ export class CardScanningReportComponent implements OnInit {
       item.percentage = "";
       item.residentialCount = '';
       item.commercialCount = '';
+      item.houseCount = '';
     }
 
     this.processAllWardsParallel();
@@ -181,10 +183,10 @@ export class CardScanningReportComponent implements OnInit {
       if (this.cityName === 'ajmer' && this.userType === 'External User' && this.scanCardsJsonData != null) {
         let detail = this.scannedList.find(x => x.ward == ward);
         if (detail) {
-          detail.cards = this.scanCardsJsonData[ward] || 0;
+          detail.houseCount = this.scanCardsJsonData[ward] || 0;
         }
-        this.getScannedCardsNew(ward).then(() => resolve(true));
-        return;
+       // this.getScanCardAjmerExternal(ward).then(() => resolve(true));
+       // return;
       }
 
       let dbPath = "EntitySurveyData/TotalHouseCount/" + ward;
@@ -197,7 +199,7 @@ export class CardScanningReportComponent implements OnInit {
           let detail = this.scannedList.find(x => x.ward == ward);
           if (!detail) {
             resolve(null);
-            return;
+            // return;
           }
 
           if (houseCountData != null) {
@@ -218,6 +220,10 @@ export class CardScanningReportComponent implements OnInit {
         });
     });
   }
+
+
+
+
 
   /* ================= SCANNED CARDS ================= */
 
@@ -257,7 +263,6 @@ export class CardScanningReportComponent implements OnInit {
 
           let scannedCardCount = 0;
           let cardsForTypeCount: string[] = [];
-          console.log(this.userType)
 
           /* ===============================
              EXTERNAL USER
@@ -294,18 +299,33 @@ export class CardScanningReportComponent implements OnInit {
 
           let detail = this.scannedList.find(x => x.ward == ward);
           if (detail) {
-
-            detail.scanned = scannedCardCount;
-
-            if (Number(detail.scanned) > Number(detail.cards)) {
-              detail.scanned = detail.cards;
+            if (this.cityName === 'ajmer' && this.userType === 'External User') {
+              let scanPercentage = (Number(scannedCardCount) / Number(detail.cards)) * 100;
+              if (scanPercentage > 100) {
+                scanPercentage = 100;
+              }
+              if (scanPercentage == 100) {
+                detail.percentage = scanPercentage.toFixed(0);
+                detail.scanned = detail.houseCount;
+              }
+              else {
+                let cards = (Number(scanPercentage.toFixed(0)) * Number(detail.houseCount)) / 100;
+                detail.scanned = cards.toFixed(0);
+                detail.percentage = scanPercentage.toFixed(0);
+              }
             }
+            else {
+              detail.scanned = scannedCardCount;
+              let scanPercentage =
+                (Number(detail.scanned) / Number(detail.cards)) * 100;
 
-            let scanPercentage =
-              (Number(detail.scanned) / Number(detail.cards)) * 100;
+              if (!isNaN(scanPercentage)) {
+                detail.percentage = scanPercentage.toFixed(0);
+              }
 
-            if (!isNaN(scanPercentage)) {
-              detail.percentage = scanPercentage.toFixed(0);
+              if (Number(detail.scanned) > Number(detail.cards)) {
+                detail.scanned = detail.cards;
+              }
             }
           }
 
@@ -332,6 +352,50 @@ export class CardScanningReportComponent implements OnInit {
             resolve(true);
           }
 
+        });
+    });
+  }
+
+  /* ================= SCANNED CARDS (AJMER EXTERNAL) ================= */
+
+  getScanCardAjmerExternal(ward: any): Promise<any> {
+
+    return new Promise((resolve) => {
+
+      this.besuh.saveBackEndFunctionCallingHistory(
+        this.serviceName,
+        "getScanCardAjmerExternal"
+      );
+
+      let year = this.selectedDate.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(
+        Number(this.selectedDate.split('-')[1]) - 1
+      );
+
+      let summaryPath =
+        "WasteCollectionInfo/" +
+        ward + "/" +
+        year + "/" +
+        monthName + "/" +
+        this.selectedDate + "/Summary";
+
+      let summSub = this.db.object(summaryPath).valueChanges()
+        .subscribe((summary: any) => {
+
+          summSub.unsubscribe();
+
+          let workPercentage = summary && summary.workPercentage != null ? summary.workPercentage : null;
+          let updatedWorkPercentage = summary && summary.updatedWorkPercentage != null ? summary.updatedWorkPercentage : null;
+          let finalWorkPercentage = updatedWorkPercentage != null ? updatedWorkPercentage : workPercentage;
+
+          let detail = this.scannedList.find(x => x.ward == ward);
+          if (detail && finalWorkPercentage != null && Number(detail.houseCount) != 0) {
+            let scanned = (Number(finalWorkPercentage) * Number(detail.houseCount)) / 100;
+            detail.scanned = scanned.toFixed(0);
+            detail.percentage = Number(finalWorkPercentage).toFixed(0);
+          }
+
+          resolve(true);
         });
     });
   }
@@ -410,7 +474,12 @@ export class CardScanningReportComponent implements OnInit {
 
       htmlString += "<tr>";
       htmlString += "<td>" + item.ward + "</td>";
-      htmlString += "<td>" + item.cards + "</td>";
+      if (this.cityName === 'ajmer' && this.userType === 'External User' && this.scanCardsJsonData != null) {
+        htmlString += "<td>" + item.houseCount + "</td>";
+      }
+      else {
+        htmlString += "<td>" + item.cards + "</td>";
+      }
       htmlString += "<td>" + item.scanned + "</td>";
       htmlString += "<td>" + item.percentage + "</td>";
 

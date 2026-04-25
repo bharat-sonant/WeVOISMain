@@ -651,6 +651,35 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     this.deleteEntry(id);
   }
 
+  openActivateConfirmation(content: any, userId: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 170;
+    let width = 450;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", "26px");
+    $("#activateId").val(userId);
+  }
+
+  confirmActivate() {
+    let userId = $("#activateId").val();
+    let dbPath = "Surveyors/" + userId;
+    this.db.object(dbPath).update({ status: "2" });
+    let userDetail = this.surveyorList.find((item) => item.userId == userId);
+    if (userDetail != undefined) {
+      userDetail.isActive = true;
+      this.assignedList = this.surveyorList.filter((item) => item.isActive == true);
+      let element = <HTMLInputElement>document.getElementById("chkAll");
+      if (element != null && element.checked) {
+        this.assignedList = this.surveyorList;
+      }
+    }
+    this.commonService.setAlertMessage("success", "Surveyor activated successfully !!");
+    this.closeModel();
+  }
+
   exportEmployeeSurveyedData() {
     if (this.lineMarkerList.length > 0) {
       let htmlString = "<table>";

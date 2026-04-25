@@ -167,9 +167,10 @@
                                     <th scope="col" class="text-left" [hidden]="isPetrolPumpDetail==false">Fuel Detail
                                     </th>
                                     <th scope="col" class="text-right">Fuel Qty</th>
-                                    <th scope="col" class="text-right">Meter Reading</th>
+                                    <th scope="col" class="text-right">Fuel Meter Reading</th>
                                     <th scope="col" class="text-right">Fuel Amount</th>
                                     <th scope="col" class="text-left">Ward No.</th>
+                                    <th scope="col" class="text-left" style="width:150px">Meter Reading</th>
                                     <th scope="col" class="text-left">KM</th>
                                     <th scope="col" class="text-left">GPS KM</th>
                                     <th scope="col" class="text-left">Driver Name</th>
@@ -253,6 +254,11 @@
                                     <td class="text-left " style="vertical-align: top;">
                                         <div style="width:100% " *ngFor="let dt of data.wardList "
                                             [innerHTML]="dt.zone">
+                                        </div>
+                                    </td>
+                                    <td class="text-left" style="vertical-align: top;">
+                                        <div style="width:100% " *ngFor="let dt of data.wardList ">
+                                            {{dt.meterReading}}
                                         </div>
                                     </td>
                                     <td class="text-left" style="vertical-align: top;">
