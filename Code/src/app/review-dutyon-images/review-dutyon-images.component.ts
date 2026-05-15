@@ -80,17 +80,33 @@ export class ReviewDutyonImagesComponent implements OnInit {
     event.target.src = this.imageNotAvailablePath;
   }
 
-  hideBrokenDutyImage(event: any) {
-    const imageElement = event.target as HTMLElement;
-    let imageWrapper: HTMLElement = null;
-    if (imageElement != null && imageElement.parentElement != null && imageElement.parentElement.parentElement != null) {
-      imageWrapper = imageElement.parentElement.parentElement as HTMLElement;
+  // hideBrokenDutyImage(event: any) {
+  //   const imageElement = event.target as HTMLElement;
+  //   let imageWrapper: HTMLElement = null;
+  //   if (imageElement != null && imageElement.parentElement != null && imageElement.parentElement.parentElement != null) {
+  //     imageWrapper = imageElement.parentElement.parentElement as HTMLElement;
+  //   }
+  //   if (imageWrapper != null) {
+  //     imageWrapper.style.display = "none";
+  //   }
+  //   else if (imageElement != null) {
+  //     imageElement.style.display = "none";
+  //   }
+  // }
+
+  onDutyImageError(_event: any, dtImage: any, type: 'on' | 'off') {
+    if (type === 'on') {
+      dtImage.imageError = true;
+    } else {
+      dtImage.imageDutyOffError = true;
     }
-    if (imageWrapper != null) {
-      imageWrapper.style.display = "none";
-    }
-    else if (imageElement != null) {
-      imageElement.style.display = "none";
+  }
+
+  onMeterImageError(_event: any, dtImage: any, type: 'on' | 'off') {
+    if (type === 'on') {
+      dtImage.meterOnError = true;
+    } else {
+      dtImage.meterOutError = true;
     }
   }
 
@@ -640,6 +656,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
               let list = summaryData["dutyOnImage"].split(',');
               for (let i = 0; i < list.length; i++) {
                 let imageName = list[i].toString().trim();
+
                 let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOnImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
                 if (imageName.includes("1")) {
                   dutyOnImages[0]["imageUrl"] = imageUrl;
@@ -684,6 +701,7 @@ export class ReviewDutyonImagesComponent implements OnInit {
               let list = summaryData["dutyOutImage"].split(',');
               for (let i = 0; i < list.length; i++) {
                 let imageName = list[i].toString().trim();
+                
                 let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDutyOutImages%2F" + zoneNo + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + this.selectedDate + "%2F" + imageName + "?alt=media";
                 if (imageName.includes("1")) {
                   if (dutyOnImages.length > 0) {

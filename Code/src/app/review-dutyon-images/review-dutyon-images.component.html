@@ -54,57 +54,117 @@
                                                     {{dt.zoneName}}
                                                 </td>
                                                 <td class="table-data-3">
-                                                    <div style="width: 100%; display: flex;flex-wrap: wrap; gap: 10px;">
+                                                    <div style="width: 100%; display: flex; flex-wrap: nowrap; gap: 10px; overflow-x: auto; overflow-y: hidden;">
                                                         <div *ngFor="let dtImage of dt.dutyOnImages;"
-                                                            style="width:465px; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
+                                                            style="width:600px; flex-shrink: 0; text-align: left; padding: 10px 10px; border: 1px solid lightgray; margin-right: 10px; ">
                                                             <div *ngIf="!dtImage.isOtherDuty"
                                                                 style="display:flex; justify-content:space-between; align-items:flex-start;">
                                                                 <div style="display:flex; gap:12px; align-items:flex-start;">
-                                                                    <div style="width:102px; height:160px;" [hidden]="dtImage.imageUrl==''">
-                                                                        <a href="#" (click)="openImagePopup(dtImage.imageUrl, $event)" style="color:#000; width:100px">
-                                                                            <img [src]="dtImage.imageUrl" style="width:110px;height:150px;"
-                                                                                (error)="hideBrokenDutyImage($event)" />
+                                                                    <div *ngIf="dtImage.imageUrl != '' || (dtImage.time && dtImage.time != '' && dtImage.time != '---')" style="width:130px; height:200px;">
+                                                                        <a *ngIf="dtImage.imageUrl != '' && !dtImage.imageError; else dutyOnFallback" href="#" (click)="openImagePopup(dtImage.imageUrl, $event)" style="color:#000; width:100px">
+                                                                            <img [src]="dtImage.imageUrl" style="width:140px;height:190px;"
+                                                                                (error)="onDutyImageError($event, dtImage, 'on')" />
                                                                         </a>
+                                                                        <ng-template #dutyOnFallback>
+                                                                            <div *ngIf="dtImage.imageUrl == ''" class="duty-image-placeholder placeholder-missing">
+                                                                                <div class="placeholder-icon">!</div>
+                                                                                <div class="placeholder-text">Due to a network issue, the Duty On image could not be saved. We apologize for the inconvenience.</div>
+                                                                            </div>
+                                                                            <div *ngIf="dtImage.imageUrl != '' && dtImage.imageError" class="duty-image-placeholder placeholder-failed">
+                                                                                <div class="placeholder-icon">!</div>
+                                                                                <div class="placeholder-text">Due to a network issue, the Duty On image could not be saved. We apologize for the inconvenience.</div>
+                                                                            </div>
+                                                                        </ng-template>
                                                                     </div>
-                                                                    <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOnMeterUrl==''">
-                                                                        <a href="#" (click)="openImagePopup(dtImage.imageDutyOnMeterUrl, $event)" style="color:#000">
+                                                                    <div *ngIf="dtImage.imageDutyOnMeterUrl != '' || (dtImage.time && dtImage.time != '' && dtImage.time != '---')" style="width:130px; height:200px;">
+                                                                        <a *ngIf="dtImage.imageDutyOnMeterUrl != '' && !dtImage.meterOnError; else meterOnFallback" href="#" (click)="openImagePopup(dtImage.imageDutyOnMeterUrl, $event)" style="color:#000">
                                                                             <img [src]="dtImage.imageDutyOnMeterUrl"
-                                                                                (error)="hideBrokenDutyImage($event)"
-                                                                                style="width:110px; height:150px;" />
+                                                                                (error)="onMeterImageError($event, dtImage, 'on')"
+                                                                                style="width:140px; height:190px;" />
                                                                         </a>
+                                                                        <ng-template #meterOnFallback>
+                                                                            <div *ngIf="dtImage.imageDutyOnMeterUrl == ''" class="duty-image-placeholder placeholder-missing">
+                                                                                <div class="placeholder-icon">!</div>
+                                                                                <div class="placeholder-text">Due to a network issue, the Duty On Meter Reading image could not be saved. We apologize for the inconvenience.</div>
+                                                                            </div>
+                                                                            <div *ngIf="dtImage.imageDutyOnMeterUrl != '' && dtImage.meterOnError" class="duty-image-placeholder placeholder-failed">
+                                                                                <div class="placeholder-icon">!</div>
+                                                                                <div class="placeholder-text">Due to a network issue, the Duty On Meter Reading image could not be saved. We apologize for the inconvenience.</div>
+                                                                            </div>
+                                                                        </ng-template>
                                                                     </div>
                                                                 </div>
                                                                 <div style="display:flex; gap:12px; align-items:flex-start;">
-                                                                    <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOffUrl==''">
-                                                                        <a href="#" (click)="openImagePopup(dtImage.imageDutyOffUrl, $event)" style="color:#000">
+                                                                    <div *ngIf="dtImage.imageDutyOffUrl != '' || (dtImage.timeDutyOff && dtImage.timeDutyOff != '' && dtImage.timeDutyOff != '---')" style="width:130px; height:200px;">
+                                                                        <a *ngIf="dtImage.imageDutyOffUrl != '' && !dtImage.imageDutyOffError; else dutyOffFallback" href="#" (click)="openImagePopup(dtImage.imageDutyOffUrl, $event)" style="color:#000">
                                                                             <img [src]="dtImage.imageDutyOffUrl"
-                                                                                (error)="hideBrokenDutyImage($event)"
-                                                                                style="width:110px; height:150px;" />
+                                                                                (error)="onDutyImageError($event, dtImage, 'off')"
+                                                                                style="width:140px; height:190px;" />
                                                                         </a>
+                                                                        <ng-template #dutyOffFallback>
+                                                                            <div *ngIf="dtImage.imageDutyOffUrl == ''" class="duty-image-placeholder placeholder-missing">
+                                                                                <div class="placeholder-icon">!</div>
+                                                                                <div class="placeholder-text">Due to a network issue, the Duty Off image could not be saved. We apologize for the inconvenience.</div>
+                                                                            </div>
+                                                                            <div *ngIf="dtImage.imageDutyOffUrl != '' && dtImage.imageDutyOffError" class="duty-image-placeholder placeholder-failed">
+                                                                                <div class="placeholder-icon">!</div>
+                                                                                <div class="placeholder-text">Due to a network issue, the Duty Off image could not be saved. We apologize for the inconvenience.</div>
+                                                                            </div>
+                                                                        </ng-template>
                                                                     </div>
-                                                                    <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOutMeterUrl==''">
-                                                                        <a href="#" (click)="openImagePopup(dtImage.imageDutyOutMeterUrl, $event)" style="color:#000">
+                                                                    <div *ngIf="dtImage.imageDutyOutMeterUrl != '' || (dtImage.timeDutyOff && dtImage.timeDutyOff != '' && dtImage.timeDutyOff != '---')" style="width:130px; height:200px;">
+                                                                        <a *ngIf="dtImage.imageDutyOutMeterUrl != '' && !dtImage.meterOutError; else meterOutFallback" href="#" (click)="openImagePopup(dtImage.imageDutyOutMeterUrl, $event)" style="color:#000">
                                                                             <img [src]="dtImage.imageDutyOutMeterUrl"
-                                                                                (error)="hideBrokenDutyImage($event)"
-                                                                                style="width:110px; height:150px;" />
+                                                                                (error)="onMeterImageError($event, dtImage, 'off')"
+                                                                                style="width:140px; height:190px;" />
                                                                         </a>
+                                                                        <ng-template #meterOutFallback>
+                                                                            <div *ngIf="dtImage.imageDutyOutMeterUrl == ''" class="duty-image-placeholder placeholder-missing">
+                                                                                <div class="placeholder-icon">!</div>
+                                                                                <div class="placeholder-text">Due to a network issue, the Duty Out Meter Reading image could not be saved. We apologize for the inconvenience.</div>
+                                                                            </div>
+                                                                            <div *ngIf="dtImage.imageDutyOutMeterUrl != '' && dtImage.meterOutError" class="duty-image-placeholder placeholder-failed">
+                                                                                <div class="placeholder-icon">!</div>
+                                                                                <div class="placeholder-text">Due to a network issue, the Duty Out Meter Reading image could not be saved. We apologize for the inconvenience.</div>
+                                                                            </div>
+                                                                        </ng-template>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div *ngIf="dtImage.isOtherDuty"
                                                                 style="display:flex; justify-content:flex-start; gap:12px; flex-wrap:wrap;">
-                                                                <div style="width:102px; height:160px;" [hidden]="dtImage.imageUrl==''">
-                                                                    <a href="#" (click)="openImagePopup(dtImage.imageUrl, $event)" style="color:#000; width:100px">
-                                                                        <img [src]="dtImage.imageUrl" style="width:110px;height:150px;"
-                                                                            (error)="hideBrokenDutyImage($event)" />
+                                                                <div *ngIf="dtImage.imageUrl != '' || (dtImage.time && dtImage.time != '' && dtImage.time != '---')" style="width:130px; height:200px;">
+                                                                    <a *ngIf="dtImage.imageUrl != '' && !dtImage.imageError; else dutyOnFallbackOther" href="#" (click)="openImagePopup(dtImage.imageUrl, $event)" style="color:#000; width:100px">
+                                                                        <img [src]="dtImage.imageUrl" style="width:140px;height:190px;"
+                                                                            (error)="onDutyImageError($event, dtImage, 'on')" />
                                                                     </a>
+                                                                    <ng-template #dutyOnFallbackOther>
+                                                                        <div *ngIf="dtImage.imageUrl == ''" class="duty-image-placeholder placeholder-missing">
+                                                                            <div class="placeholder-icon">!</div>
+                                                                            <div class="placeholder-text">Due to a network issue, the Duty On image could not be saved. We apologize for the inconvenience.</div>
+                                                                        </div>
+                                                                        <div *ngIf="dtImage.imageUrl != '' && dtImage.imageError" class="duty-image-placeholder placeholder-failed">
+                                                                            <div class="placeholder-icon">!</div>
+                                                                            <div class="placeholder-text">Due to a network issue, the Duty On image could not be saved. We apologize for the inconvenience.</div>
+                                                                        </div>
+                                                                    </ng-template>
                                                                 </div>
-                                                                <div style="width:102px; height:160px;" [hidden]="dtImage.imageDutyOffUrl==''">
-                                                                    <a href="#" (click)="openImagePopup(dtImage.imageDutyOffUrl, $event)" style="color:#000">
+                                                                <div *ngIf="dtImage.imageDutyOffUrl != '' || (dtImage.timeDutyOff && dtImage.timeDutyOff != '' && dtImage.timeDutyOff != '---')" style="width:130px; height:200px;">
+                                                                    <a *ngIf="dtImage.imageDutyOffUrl != '' && !dtImage.imageDutyOffError; else dutyOffFallbackOther" href="#" (click)="openImagePopup(dtImage.imageDutyOffUrl, $event)" style="color:#000">
                                                                         <img [src]="dtImage.imageDutyOffUrl"
-                                                                            (error)="hideBrokenDutyImage($event)"
-                                                                            style="width:110px; height:150px;" />
+                                                                            (error)="onDutyImageError($event, dtImage, 'off')"
+                                                                            style="width:140px; height:190px;" />
                                                                     </a>
+                                                                    <ng-template #dutyOffFallbackOther>
+                                                                        <div *ngIf="dtImage.imageDutyOffUrl == ''" class="duty-image-placeholder placeholder-missing">
+                                                                            <div class="placeholder-icon">!</div>
+                                                                            <div class="placeholder-text">Due to a network issue, the Duty Off image could not be saved. We apologize for the inconvenience.</div>
+                                                                        </div>
+                                                                        <div *ngIf="dtImage.imageDutyOffUrl != '' && dtImage.imageDutyOffError" class="duty-image-placeholder placeholder-failed">
+                                                                            <div class="placeholder-icon">!</div>
+                                                                            <div class="placeholder-text">Due to a network issue, the Duty Off image could not be saved. We apologize for the inconvenience.</div>
+                                                                        </div>
+                                                                    </ng-template>
                                                                 </div>
                                                             </div>
                                                             <div style="text-align: left; float:left; width: 100%;">
@@ -116,53 +176,58 @@
                                                                     (click)="openOtherDutySlider(dtImage)">
                                                                     👁
                                                                 </button><br/>
-                                                                <b>{{dtImage.isOtherDuty ? 'Name' : 'Driver'}} : </b> {{dtImage.driver}}<br />
-                                                                <span [hidden]="dtImage.helper=='---' || dtImage.isOtherDuty"><b>Helper : </b> {{dtImage.helper}}<br /></span>
-                                                                <span [hidden]="dtImage.secondHelper=='---' || dtImage.isOtherDuty">
-                                                                    <b>Second Helper : </b>
-                                                                    {{dtImage.secondHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.thirdHelper=='---' || dtImage.isOtherDuty">
-                                                                    <b>Third Helper : </b>
-                                                                    {{dtImage.thirdHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.fourthHelper=='---' || dtImage.isOtherDuty">
-                                                                    <b>Fourth Helper : </b>
-                                                                    {{dtImage.fourthHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.fifthHelper=='---' || dtImage.isOtherDuty">
-                                                                    <b>Fifth Helper : </b>
-                                                                    {{dtImage.fifthHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.sixthHelper=='---' || dtImage.isOtherDuty">
-                                                                    <b>Sixth Helper : </b>
-                                                                    {{dtImage.sixthHelper}}<br /></span>
-                                                                <span [hidden]="dtImage.isOtherDuty"><b>Vehicle : </b> {{dtImage.vehicle}} <br/></span>
-                                                                 <span [hidden]="dtImage.isOtherDuty"><b>Vehicle R.N. : </b> {{dtImage.vehicleRegNumber}}</span>
-                                                                
-                                        
-                                                                <div
-                                                                    style="display: flex; justify-content: space-between;">
-                                                                    <span>
-                                                                        <b>In Time : </b> {{dtImage.time}} <b>Duty On By</b> {{dtImage.dutyOnBy}}
-                                                                    </span>
-                                                                    <span *ngIf="dtImage.actualDutyOnTime"> <b
-                                                                            style="color: green">Actual Time : </b> {{
-                                                                        dtImage.actualDutyOnTime }}</span>
+                                                                <div style="display: flex; flex-wrap: wrap; row-gap: 2px; clear: both;">
+                                                                    <div class="detail-item-half">
+                                                                        <b><i class="bi bi-person-fill" style="margin-right:5px; color:#1976d2;"></i>{{dtImage.isOtherDuty ? 'Name' : 'Driver'}} : </b> {{dtImage.driver}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" [hidden]="dtImage.helper=='---' || dtImage.isOtherDuty">
+                                                                        <b><i class="bi bi-person" style="margin-right:5px; color:#0288d1;"></i>Helper : </b> {{dtImage.helper}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" [hidden]="dtImage.secondHelper=='---' || dtImage.isOtherDuty">
+                                                                        <b><i class="bi bi-person" style="margin-right:5px; color:#0288d1;"></i>Second Helper : </b> {{dtImage.secondHelper}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" [hidden]="dtImage.thirdHelper=='---' || dtImage.isOtherDuty">
+                                                                        <b><i class="bi bi-person" style="margin-right:5px; color:#0288d1;"></i>Third Helper : </b> {{dtImage.thirdHelper}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" [hidden]="dtImage.fourthHelper=='---' || dtImage.isOtherDuty">
+                                                                        <b><i class="bi bi-person" style="margin-right:5px; color:#0288d1;"></i>Fourth Helper : </b> {{dtImage.fourthHelper}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" [hidden]="dtImage.fifthHelper=='---' || dtImage.isOtherDuty">
+                                                                        <b><i class="bi bi-person" style="margin-right:5px; color:#0288d1;"></i>Fifth Helper : </b> {{dtImage.fifthHelper}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" [hidden]="dtImage.sixthHelper=='---' || dtImage.isOtherDuty">
+                                                                        <b><i class="bi bi-person" style="margin-right:5px; color:#0288d1;"></i>Sixth Helper : </b> {{dtImage.sixthHelper}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" [hidden]="dtImage.isOtherDuty">
+                                                                        <b><i class="bi bi-truck" style="margin-right:5px; color:#5d4037;"></i>Vehicle : </b> {{dtImage.vehicle}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" [hidden]="dtImage.isOtherDuty">
+                                                                        <b><i class="bi bi-card-text" style="margin-right:5px; color:#5d4037;"></i>Vehicle R.N. : </b> {{dtImage.vehicleRegNumber}}
+                                                                    </div>
+                                                                    <div style="width: 100%; display: flex; justify-content: space-between;">
+                                                                        <span>
+                                                                            <b><i class="bi bi-box-arrow-in-right" style="margin-right:5px; color:#2e7d32;"></i>In Time : </b> {{dtImage.time}} <b><i class="bi bi-person-check" style="margin-right:5px; color:#2e7d32;"></i>Duty On By :</b> {{dtImage.dutyOnBy}}
+                                                                        </span>
+                                                                        <span *ngIf="dtImage.actualDutyOnTime"> <b style="color: green"><i class="bi bi-clock-history" style="margin-right:5px;"></i>Actual Time : </b> {{dtImage.actualDutyOnTime}}</span>
+                                                                    </div>
+                                                                    <div class="detail-item-half" *ngIf="dtImage.dutyOnMeterReading">
+                                                                        <b><i class="bi bi-speedometer2" style="margin-right:5px; color:#6a1b9a;"></i>Duty On Meter Reading : </b> {{dtImage.dutyOnMeterReading}}
+                                                                    </div>
+                                                                    <div style="width: 100%; display: flex; justify-content: space-between;" [hidden]="!dtImage.timeDutyOff || dtImage.timeDutyOff=='' || dtImage.timeDutyOff=='---'">
+                                                                        <span>
+                                                                            <b><i class="bi bi-box-arrow-right" style="margin-right:5px; color:#d32f2f;"></i>Off Time : </b> {{dtImage.timeDutyOff}} <b><i class="bi bi-person-x" style="margin-right:5px; color:#d32f2f;"></i>Duty Off By :</b> {{dtImage.dutyOffBy}}
+                                                                        </span>
+                                                                        <span *ngIf="dtImage.actualDutyOffTime">
+                                                                            <b style="color: green"><i class="bi bi-clock-history" style="margin-right:5px;"></i>Actual Time : </b> {{dtImage.actualDutyOffTime}}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="detail-item-half" *ngIf="dtImage.dutyOutMeterReading">
+                                                                        <b><i class="bi bi-speedometer2" style="margin-right:5px; color:#6a1b9a;"></i>Duty Out Meter Reading : </b> {{dtImage.dutyOutMeterReading}}
+                                                                    </div>
+                                                                    <div class="detail-item-half" *ngIf="dtImage.workPercentageRemark">
+                                                                        <b><i class="bi bi-chat-left-text" style="margin-right:5px; color:#616161;"></i>Remark : </b> {{dtImage.workPercentageRemark}}
+                                                                    </div>
                                                                 </div>
-                                                                <span *ngIf="dtImage.dutyOnMeterReading"><b>Duty On Meter Reading : </b> {{dtImage.dutyOnMeterReading}}<br /></span>
-                                                                <div [hidden]="!dtImage.timeDutyOff || dtImage.timeDutyOff=='' || dtImage.timeDutyOff=='---'"
-                                                                    style="display: flex; justify-content: space-between;">
-                                                                    <span>
-                                                                        <b>Off Time : </b> {{dtImage.timeDutyOff}} <b>Duty Off By</b> {{dtImage.dutyOffBy}}
-                                                                    </span>
-
-                                                                    <span *ngIf="dtImage.actualDutyOffTime">
-                                                                        <b style="color: green">Actual Time :
-                                                                        </b>
-                                                                        {{
-                                                                        dtImage.actualDutyOffTime }}
-                                                                    </span>
-                                                                </div>
-                                                                <span *ngIf="dtImage.dutyOutMeterReading"><b>Duty Out Meter Reading : </b> {{dtImage.dutyOutMeterReading}}<br /></span>
-                                                                <span *ngIf="dtImage.workPercentageRemark"><b>Remark :
-                                                                    </b> {{dtImage.workPercentageRemark}}<br /></span>
                                                             </div>
                                                         </div>
                                                     </div>
