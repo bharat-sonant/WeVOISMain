@@ -237,12 +237,11 @@ export class CmsComponent implements OnInit {
 
 
   goToURL(url: any, pageId: any) {
-    console.log(pageId)
-    if (pageId == "10A19" && localStorage.getItem("userType") == "Internal User") {
-      let d2dUrl = "https://d2d-portal-qa.web.app/" + this.cityName + "/d2dMonitoring/daily-work-report";
-      window.open(d2dUrl, "_blank");
-      return;
-    }
+    // if (pageId == "10A19" && localStorage.getItem("userType") == "Internal User") {
+    //   let d2dUrl = "https://d2d-portal-qa.web.app/" + this.cityName + "/d2dMonitoring/daily-work-report";
+    //   window.open(d2dUrl, "_blank");
+    //   return;
+    // }
     if (url.toString().includes("https")) {
       if (localStorage.getItem("cityName") == "ajmer" && pageId == "10A19") {
         this.goToOuterURL(url + "s");
