@@ -1078,16 +1078,20 @@ export class DailyFuelReportComponent implements OnInit {
           .subscribe(async (workerData) => {
             instance.unsubscribe();
             if (workerData != null) {
-              let driverList = workerData["driver"].split(",");
-              let vehicleList = workerData["vehicle"].split(",");
-              let driverNameList = workerData["driverName"].split(",");
+              let driverList = workerData["driver"] ? workerData["driver"].split(",") : [];
+              let vehicleList = workerData["vehicle"] ? workerData["vehicle"].split(",") : [];
+              let driverNameList = workerData["driverName"] ? workerData["driverName"].split(",") : [];
               console.log(zone, workerData["vehicle"]);
               for (let i = 0; i < driverList.length; i++) {
+                let driverItem = driverList[i] != null ? driverList[i].toString().trim() : "";
+                let vehicleItem = vehicleList[i] != null ? vehicleList[i].toString().trim() : "";
                 if (
-                  empId == driverList[i].trim() &&
-                  vehicle == vehicleList[i].trim()
+                  driverItem != "" &&
+                  vehicleItem != "" &&
+                  empId == driverItem &&
+                  vehicle == vehicleItem
                 ) {
-                  driverName = driverNameList[i];
+                  driverName = driverNameList[i] != null ? driverNameList[i] : "";
                 }
               }
             }
