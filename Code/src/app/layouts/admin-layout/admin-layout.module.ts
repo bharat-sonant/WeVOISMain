@@ -72,6 +72,7 @@ import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-perc
 import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
+import { SurveyAppSettingsComponent } from '../../PortalServices/settings/survey-app-settings/survey-app-settings.component';
 import { EmployeesComponent } from '../../EmployeeManagement/employees/employees.component';
 import { SpecialUsersComponent } from '../../EmployeeManagement/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
@@ -273,6 +274,7 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     ChangeLineSurveyedDataComponent,
     WardWorkDoneComponent,
     SettingsComponent,
+    SurveyAppSettingsComponent,
     EmployeesComponent,
     SpecialUsersComponent,
     DustbinPlaningComponent,

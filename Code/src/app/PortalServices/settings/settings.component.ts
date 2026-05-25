@@ -383,6 +383,7 @@ export class SettingsComponent implements OnInit {
     $("#Reader").hide();
     $("#Halt").hide();
     $("#Salary").hide();
+    $("#SurveyApp").hide();
 
     let element = <HTMLButtonElement>document.getElementById("tabNavigator");
     let className = element.className;
@@ -403,6 +404,11 @@ export class SettingsComponent implements OnInit {
     className = element.className;
     $("#tabSalary").removeClass(className);
     $("#tabSalary").addClass("nav-link");
+
+    element = <HTMLButtonElement>document.getElementById("tabSurveyApp");
+    className = element.className;
+    $("#tabSurveyApp").removeClass(className);
+    $("#tabSurveyApp").addClass("nav-link");
 
     if (tab == "Navigator") {
       $("#Navigator").show();
@@ -448,6 +454,17 @@ export class SettingsComponent implements OnInit {
       className = element.className;
       $("#Salary").removeClass(className);
       $("#Salary").addClass("tab-pane fade show active save");
+    } else if (tab == "SurveyApp") {
+      $("#SurveyApp").show();
+      element = <HTMLButtonElement>document.getElementById("tabSurveyApp");
+      className = element.className;
+      $("#tabSurveyApp").removeClass(className);
+      $("#tabSurveyApp").addClass("nav-link active");
+
+      element = <HTMLButtonElement>document.getElementById("SurveyApp");
+      className = element.className;
+      $("#SurveyApp").removeClass(className);
+      $("#SurveyApp").addClass("tab-pane fade show active save");
     }
   }
 

@@ -1,0 +1,414 @@
+$brand: #0ba118;
+$brand-light: #e8f5e9;
+$brand-dark: #088c14;
+$text: #2c3e50;
+$text-light: #6c7a89;
+$border: #e3e7ec;
+$bg: #f8faf9;
+$card-bg: #ffffff;
+$radius: 8px;
+$shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+
+.survey-settings-page {
+  background: $bg;
+  padding: 20px 18px 90px 18px;
+  min-height: calc(100vh - 200px);
+
+  /* ============ SECTION CARD ============ */
+  .sec-card {
+    background: $card-bg;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    margin-bottom: 18px;
+    overflow: hidden;
+    border: 1px solid $border;
+  }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 14px 20px;
+    background: linear-gradient(to right, $brand-light, transparent);
+    border-bottom: 1px solid $border;
+
+    .sec-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: $brand;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .sec-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: $text;
+      letter-spacing: 0.2px;
+    }
+
+    .sec-note {
+      margin-left: auto;
+      font-size: 11px;
+      color: $text-light;
+      font-weight: 400;
+
+      code {
+        background: #fff3cd;
+        color: #856404;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-size: 11px;
+        margin: 0 2px;
+      }
+    }
+  }
+
+  .sec-body {
+    padding: 18px 20px 14px 20px;
+  }
+
+  .sub-head {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-light;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 14px 0 8px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed $border;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  /* ============ FIELD GRID ============ */
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px 16px;
+    margin-bottom: 4px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      color: $text;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+
+      .unit {
+        font-weight: 400;
+        font-size: 11px;
+        color: $text-light;
+      }
+    }
+
+    &.field-wide {
+      grid-column: span 2;
+    }
+  }
+
+  .ipt {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid $border;
+    border-radius: 6px;
+    font-size: 13px;
+    color: $text;
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+
+    &:hover {
+      border-color: #c5d3d8;
+    }
+
+    &:focus {
+      border-color: $brand;
+      box-shadow: 0 0 0 3px rgba(11, 161, 24, 0.12);
+    }
+
+    &::placeholder {
+      color: #aab2b8;
+    }
+  }
+
+  /* ============ TOGGLE GRID ============ */
+  .toggle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 8px 0 14px 0;
+  }
+
+  .toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #fafbfc;
+    border: 1px solid $border;
+    border-radius: 6px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    margin: 0;
+
+    &:hover {
+      background: $brand-light;
+      border-color: lighten($brand, 30%);
+    }
+
+    input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-ui {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      background: #d1d8de;
+      border-radius: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: background 0.2s;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s;
+      }
+    }
+
+    input[type="checkbox"]:checked + .toggle-ui {
+      background: $brand;
+
+      &::after {
+        transform: translateX(16px);
+      }
+    }
+
+    .toggle-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      line-height: 1.4;
+
+      strong {
+        font-size: 13px;
+        font-weight: 600;
+        color: $text;
+      }
+
+      small {
+        font-size: 11px;
+        color: $text-light;
+        font-weight: 400;
+      }
+    }
+  }
+
+  /* ============ MESSAGE GRID ============ */
+  .msg-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 18px;
+  }
+
+  .msg-field {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: $text;
+      margin-bottom: 2px;
+    }
+
+    .ph {
+      font-size: 10.5px;
+      color: $text-light;
+      margin-bottom: 6px;
+      font-weight: 400;
+
+      code {
+        background: #fff3cd;
+        color: #856404;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-size: 10.5px;
+        margin: 0 2px;
+      }
+    }
+
+    .ipt {
+      margin-top: 4px;
+    }
+  }
+
+  /* ============ SAVE BAR ============ */
+  .save-bar {
+    position: sticky;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid $border;
+    padding: 14px 20px;
+    margin: 20px -18px -20px -18px;
+    text-align: right;
+    z-index: 10;
+  }
+
+  .btn-save {
+    background: $brand;
+    color: #fff;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 2px 6px rgba(11, 161, 24, 0.25);
+
+    &:hover {
+      background: $brand-dark;
+      box-shadow: 0 4px 10px rgba(11, 161, 24, 0.35);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  /* ============ HUF COLLAPSIBLE CARD ============ */
+  .huf-card {
+    margin-top: 22px;
+    border: 1px solid lighten($brand, 35%);
+
+    .huf-head {
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+      background: linear-gradient(to right, lighten($brand, 48%), #fff);
+      transition: background 0.15s;
+
+      &:hover {
+        background: linear-gradient(to right, lighten($brand, 42%), #fafffa);
+      }
+
+      .huf-dot {
+        background: #e67e22;
+      }
+
+      .sec-note {
+        font-style: italic;
+        color: $brand;
+        font-size: 11px;
+      }
+
+      .chev {
+        margin-left: auto;
+        font-size: 10px;
+        color: $brand;
+        transition: transform 0.25s ease;
+        display: inline-block;
+        padding-left: 10px;
+
+        &.open {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    &.huf-open {
+      box-shadow: 0 2px 8px rgba(11, 161, 24, 0.12), 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .huf-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.expanded {
+      max-height: 6000px;
+    }
+  }
+
+  .huf-save {
+    text-align: right;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed $border;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1200px) {
+    .field-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .toggle-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .field-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .toggle-grid {
+      grid-template-columns: 1fr;
+    }
+    .msg-grid {
+      grid-template-columns: 1fr;
+    }
+    .field.field-wide {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 12px 10px 90px 10px;
+
+    .field-grid {
+      grid-template-columns: 1fr;
+    }
+    .field.field-wide {
+      grid-column: span 1;
+    }
+    .sec-head {
+      padding: 12px 14px;
+
+      .sec-note {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 6px;
+      }
+    }
+    .sec-body {
+      padding: 14px 14px 10px 14px;
+    }
+  }
+}

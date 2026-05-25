@@ -1,0 +1,794 @@
+<div class="survey-settings-page">
+  <form>
+
+    <!-- ============ SECTION: SURVEY SETTINGS ============ -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <span class="sec-dot"></span>
+        <span class="sec-title">Survey Settings</span>
+      </div>
+      <div class="sec-body">
+        <div class="field-grid">
+          <div class="field">
+            <label for="minimumDistanceBetweenMarkerAndSurvey">Minimum Survey Distance <span class="unit">(meters)</span></label>
+            <input id="minimumDistanceBetweenMarkerAndSurvey" class="ipt" type="number"
+              title="Minimum Survey Distance in meters"
+              [(ngModel)]="surveyAppSetting.settings.minimumDistanceBetweenMarkerAndSurvey"
+              name="minimumDistanceBetweenMarkerAndSurvey" />
+          </div>
+          <div class="field" *ngIf="isDeveloper">
+            <label for="minAccForSurvey">Survey Minimum Accuracy</label>
+            <input id="minAccForSurvey" class="ipt" type="number"
+              title="Survey Minimum Accuracy"
+              [(ngModel)]="surveyAppSetting.settings.minAccForSurvey"
+              name="minAccForSurvey" />
+          </div>
+          <div class="field" *ngIf="isDeveloper">
+            <label for="redirectGoogleMapAccuracy">Map Redirect Accuracy</label>
+            <input id="redirectGoogleMapAccuracy" class="ipt" type="number"
+              title="Map Redirect Accuracy"
+              [(ngModel)]="surveyAppSetting.settings.redirectGoogleMapAccuracy"
+              name="redirectGoogleMapAccuracy" />
+          </div>
+          <div class="field" *ngIf="isDeveloper">
+            <label for="showCurrentLocationAccuracy">Show Location Accuracy</label>
+            <input id="showCurrentLocationAccuracy" class="ipt" type="number"
+              title="Show Location Accuracy"
+              [(ngModel)]="surveyAppSetting.settings.showCurrentLocationAccuracy"
+              name="showCurrentLocationAccuracy" />
+          </div>
+        </div>
+
+        <div class="toggle-grid">
+          <label class="toggle">
+            <input type="checkbox" title="Building Detail Required"
+              [(ngModel)]="buildingDetailBool" name="isBuildingDetailRequired" />
+            <span class="toggle-ui"></span>
+            <span class="toggle-text">
+              <strong>Building Detail Required</strong>
+              <small>Survey ke time building detail capture kare</small>
+            </span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" title="Survey By QR Code"
+              [(ngModel)]="surveyByQrBool" name="surveyByQrCode" />
+            <span class="toggle-ui"></span>
+            <span class="toggle-text">
+              <strong>Survey By QR Code</strong>
+              <small>QR scan se survey enable kare</small>
+            </span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" title="UHF Card Scan"
+              [(ngModel)]="uhfCardScanBool" name="isUhfCardScan" />
+            <span class="toggle-ui"></span>
+            <span class="toggle-text">
+              <strong>UHF Card Scan</strong>
+              <small>UHF cards scan feature</small>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SECTION: GPS / LOCATION TRACKING ============ -->
+    <div class="sec-card" *ngIf="isDeveloper">
+      <div class="sec-head">
+        <span class="sec-dot"></span>
+        <span class="sec-title">GPS &amp; Location Tracking</span>
+      </div>
+      <div class="sec-body">
+        <div class="toggle-grid">
+          <label class="toggle">
+            <input type="checkbox" title="High Accuracy Mode"
+              [(ngModel)]="surveyAppSetting.locationTrackingSettings.enableHighAccuracy"
+              name="enableHighAccuracy" />
+            <span class="toggle-ui"></span>
+            <span class="toggle-text">
+              <strong>High Accuracy Mode</strong>
+              <small>GPS high-accuracy on (battery zyada use karega)</small>
+            </span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" title="Use Significant Changes"
+              [(ngModel)]="surveyAppSetting.locationTrackingSettings.useSignificantChanges"
+              name="useSignificantChanges" />
+            <span class="toggle-ui"></span>
+            <span class="toggle-text">
+              <strong>Use Significant Changes</strong>
+              <small>Significant location change par hi update kare</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="distanceFilter">Distance Filter <span class="unit">(meters)</span></label>
+            <input id="distanceFilter" class="ipt" type="number"
+              title="Distance Filter in meters"
+              [(ngModel)]="surveyAppSetting.locationTrackingSettings.distanceFilter"
+              name="distanceFilter" />
+          </div>
+          <div class="field">
+            <label for="interval">Update Interval <span class="unit">(ms)</span></label>
+            <input id="interval" class="ipt" type="number"
+              title="Update Interval in milliseconds"
+              [(ngModel)]="surveyAppSetting.locationTrackingSettings.interval"
+              name="interval" />
+          </div>
+          <div class="field">
+            <label for="fastestInterval">Fastest Interval <span class="unit">(ms)</span></label>
+            <input id="fastestInterval" class="ipt" type="number"
+              title="Fastest Interval in milliseconds"
+              [(ngModel)]="surveyAppSetting.locationTrackingSettings.fastestInterval"
+              name="fastestInterval" />
+          </div>
+          <div class="field">
+            <label for="maximumAge">Maximum Age <span class="unit">(ms)</span></label>
+            <input id="maximumAge" class="ipt" type="number"
+              title="Maximum Age in milliseconds"
+              [(ngModel)]="surveyAppSetting.locationTrackingSettings.maximumAge"
+              name="maximumAge" />
+          </div>
+          <div class="field">
+            <label for="trackingAccuracy">Tracking Accuracy</label>
+            <input id="trackingAccuracy" class="ipt" type="number"
+              title="Tracking Accuracy"
+              [(ngModel)]="surveyAppSetting.locationTrackingSettings.accuracy"
+              name="trackingAccuracy" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SECTION: APP MESSAGES ============ -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <span class="sec-dot"></span>
+        <span class="sec-title">App Messages</span>
+        <span class="sec-note">
+          <code>${{ '{' }}variableName{{ '}' }}</code> placeholders dynamic values ke liye hain — unhe waise hi rakho
+        </span>
+      </div>
+      <div class="sec-body">
+        <div class="msg-grid">
+          <div class="msg-field">
+            <label for="msg_minDist">Distance Warning Message</label>
+            <small class="ph">Placeholders: <code>${{ '{' }}currentDistance{{ '}' }}</code>, <code>${{ '{' }}requiredDistance{{ '}' }}</code></small>
+            <input id="msg_minDist" class="ipt" type="text"
+              title="Distance Warning Message"
+              [(ngModel)]="surveyAppSetting.messages.messageMinimumDistanceMarkerAndSurvey.template"
+              name="msg_minDist" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_sameCard">Card On Other Marker Message</label>
+            <small class="ph">Placeholder: <code>${{ '{' }}cardNumber{{ '}' }}</code></small>
+            <input id="msg_sameCard" class="ipt" type="text"
+              title="Card On Other Marker Message"
+              [(ngModel)]="surveyAppSetting.messages.sameCardOnTwoMarkerMessage.template"
+              name="msg_sameCard" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_scanByCamera">Scan Card Note</label>
+            <input id="msg_scanByCamera" class="ipt" type="text"
+              title="Scan Card Note"
+              [(ngModel)]="surveyAppSetting.messages.scanByCameraNoteMessage.template"
+              name="msg_scanByCamera" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_alreadyRevisited">Revisit Already Done Message</label>
+            <input id="msg_alreadyRevisited" class="ipt" type="text"
+              title="Revisit Already Done Message"
+              [(ngModel)]="surveyAppSetting.messages.alreadyRevisited.template"
+              name="msg_alreadyRevisited" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_alreadySurveyed">Survey Already Done Message</label>
+            <input id="msg_alreadySurveyed" class="ipt" type="text"
+              title="Survey Already Done Message"
+              [(ngModel)]="surveyAppSetting.messages.alreadySurveyed.template"
+              name="msg_alreadySurveyed" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_versionExpired">App Version Expired Message</label>
+            <input id="msg_versionExpired" class="ipt" type="text"
+              title="App Version Expired Message"
+              [(ngModel)]="surveyAppSetting.messages.versionExperiedMessage.template"
+              name="msg_versionExpired" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_noWork">No Work Assigned Message</label>
+            <input id="msg_noWork" class="ipt" type="text"
+              title="No Work Assigned Message"
+              [(ngModel)]="surveyAppSetting.messages.NoWorkAssignedPopupMessage.template"
+              name="msg_noWork" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_logout">Logout Confirmation Message</label>
+            <input id="msg_logout" class="ipt" type="text"
+              title="Logout Confirmation Message"
+              [(ngModel)]="surveyAppSetting.messages.logOutPopupText.template"
+              name="msg_logout" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_locationOff">GPS Off Message</label>
+            <input id="msg_locationOff" class="ipt" type="text"
+              title="GPS Off Message"
+              [(ngModel)]="surveyAppSetting.messages.locationOffPopupmessage.template"
+              name="msg_locationOff" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_lowAcc">Low GPS Accuracy Message</label>
+            <input id="msg_lowAcc" class="ipt" type="text"
+              title="Low GPS Accuracy Message"
+              [(ngModel)]="surveyAppSetting.messages.lowAccuracyMessage.template"
+              name="msg_lowAcc" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_locationError">GPS Error Message</label>
+            <input id="msg_locationError" class="ipt" type="text"
+              title="GPS Error Message"
+              [(ngModel)]="surveyAppSetting.messages.locationErrorMessage.template"
+              name="msg_locationError" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_networkOff">Network Off Message</label>
+            <input id="msg_networkOff" class="ipt" type="text"
+              title="Network Off Message"
+              [(ngModel)]="surveyAppSetting.messages.networkOffPopupmessage.template"
+              name="msg_networkOff" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_noData">No Data Found Message</label>
+            <input id="msg_noData" class="ipt" type="text"
+              title="No Data Found Message"
+              [(ngModel)]="surveyAppSetting.messages.noDataFoundMessage.template"
+              name="msg_noData" />
+          </div>
+          <div class="msg-field">
+            <label for="msg_exitApp">Exit App Confirmation Message</label>
+            <input id="msg_exitApp" class="ipt" type="text"
+              title="Exit App Confirmation Message"
+              [(ngModel)]="surveyAppSetting.messages.exitAppMessage.template"
+              name="msg_exitApp" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SECTION: QR SCANNER ============ -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <span class="sec-dot"></span>
+        <span class="sec-title">QR Scanner</span>
+      </div>
+      <div class="sec-body">
+        <div class="field-grid" *ngIf="isDeveloper">
+          <div class="field">
+            <label for="qr_scanLineSpeed">Scan Line Speed <span class="unit">(ms)</span></label>
+            <input id="qr_scanLineSpeed" class="ipt" type="number"
+              title="QR Scan Line Speed in milliseconds"
+              [(ngModel)]="surveyAppSetting.NativeSettings.qrScannerSettings.scanConfig.scanLineSpeed"
+              name="qr_scanLineSpeed" />
+          </div>
+          <div class="field">
+            <label for="qr_frameSizeRatio">Frame Size Ratio <span class="unit">(0 - 1)</span></label>
+            <input id="qr_frameSizeRatio" class="ipt" type="number" step="0.01"
+              title="QR Frame Size Ratio (0 to 1)"
+              [(ngModel)]="surveyAppSetting.NativeSettings.qrScannerSettings.scanConfig.frameSizeRatio"
+              name="qr_frameSizeRatio" />
+          </div>
+          <div class="field field-wide">
+            <label for="qr_supportedCodes">Supported Codes <span class="unit">(comma separated)</span></label>
+            <input id="qr_supportedCodes" class="ipt" type="text"
+              title="Supported Codes comma separated"
+              [(ngModel)]="supportedCodesText"
+              name="qr_supportedCodes" />
+          </div>
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="qr_permDenied">Permission Denied Message</label>
+            <input id="qr_permDenied" class="ipt" type="text"
+              title="QR Permission Denied Message"
+              [(ngModel)]="surveyAppSetting.NativeSettings.qrScannerSettings.messages.permissionDenied"
+              name="qr_permDenied" />
+          </div>
+          <div class="field">
+            <label for="qr_camLoading">Camera Loading Message</label>
+            <input id="qr_camLoading" class="ipt" type="text"
+              title="QR Camera Loading Message"
+              [(ngModel)]="surveyAppSetting.NativeSettings.qrScannerSettings.messages.cameraLoading"
+              name="qr_camLoading" />
+          </div>
+          <div class="field">
+            <label for="qr_alignQR">Align QR Message</label>
+            <input id="qr_alignQR" class="ipt" type="text"
+              title="Align QR Message"
+              [(ngModel)]="surveyAppSetting.NativeSettings.qrScannerSettings.messages.alignQR"
+              name="qr_alignQR" />
+          </div>
+          <div class="field">
+            <label for="qr_camPermReq">Permission Required Message</label>
+            <input id="qr_camPermReq" class="ipt" type="text"
+              title="QR Permission Required Message"
+              [(ngModel)]="surveyAppSetting.NativeSettings.qrScannerSettings.messages.cameraPermissionRequired"
+              name="qr_camPermReq" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SECTION: IMAGE CAPTURE ============ -->
+    <div class="sec-card" *ngIf="isDeveloper">
+      <div class="sec-head">
+        <span class="sec-dot"></span>
+        <span class="sec-title">Image Capture</span>
+      </div>
+      <div class="sec-body">
+        <div class="sub-head">Compression</div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="ic_maxFileSizeKB">Max File Size <span class="unit">(KB)</span></label>
+            <input id="ic_maxFileSizeKB" class="ipt" type="number"
+              title="Image Max File Size in KB"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.maxFileSizeKB"
+              name="ic_maxFileSizeKB" />
+          </div>
+          <div class="field">
+            <label for="ic_initialQuality">Initial Quality <span class="unit">(1 - 100)</span></label>
+            <input id="ic_initialQuality" class="ipt" type="number"
+              title="Image Initial Quality 1 to 100"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.initialQuality"
+              name="ic_initialQuality" />
+          </div>
+          <div class="field">
+            <label for="ic_minQuality">Minimum Quality <span class="unit">(1 - 100)</span></label>
+            <input id="ic_minQuality" class="ipt" type="number"
+              title="Image Minimum Quality 1 to 100"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.minQuality"
+              name="ic_minQuality" />
+          </div>
+          <div class="field">
+            <label for="ic_qualityStep">Quality Step</label>
+            <input id="ic_qualityStep" class="ipt" type="number"
+              title="Image Quality Step"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.qualityStep"
+              name="ic_qualityStep" />
+          </div>
+          <div class="field">
+            <label for="ic_initialWidth">Initial Width <span class="unit">(px)</span></label>
+            <input id="ic_initialWidth" class="ipt" type="number"
+              title="Image Initial Width in pixels"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.initialWidth"
+              name="ic_initialWidth" />
+          </div>
+          <div class="field">
+            <label for="ic_initialHeight">Initial Height <span class="unit">(px)</span></label>
+            <input id="ic_initialHeight" class="ipt" type="number"
+              title="Image Initial Height in pixels"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.initialHeight"
+              name="ic_initialHeight" />
+          </div>
+          <div class="field">
+            <label for="ic_minWidth">Minimum Width <span class="unit">(px)</span></label>
+            <input id="ic_minWidth" class="ipt" type="number"
+              title="Image Minimum Width in pixels"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.minWidth"
+              name="ic_minWidth" />
+          </div>
+          <div class="field">
+            <label for="ic_minHeight">Minimum Height <span class="unit">(px)</span></label>
+            <input id="ic_minHeight" class="ipt" type="number"
+              title="Image Minimum Height in pixels"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.minHeight"
+              name="ic_minHeight" />
+          </div>
+          <div class="field">
+            <label for="ic_resolutionStep">Resolution Step <span class="unit">(px)</span></label>
+            <input id="ic_resolutionStep" class="ipt" type="number"
+              title="Image Resolution Step in pixels"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.compression.resolutionStep"
+              name="ic_resolutionStep" />
+          </div>
+        </div>
+
+        <div class="sub-head">Layout</div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="ic_popupHeightRatio">Popup Height Ratio <span class="unit">(0 - 1)</span></label>
+            <input id="ic_popupHeightRatio" class="ipt" type="number" step="0.01"
+              title="Image Popup Height Ratio (0 to 1)"
+              [(ngModel)]="surveyAppSetting.NativeSettings.imageCapture.layout.popupHeightRatio"
+              name="ic_popupHeightRatio" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SECTION: CARD OCR ============ -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <span class="sec-dot"></span>
+        <span class="sec-title">Card OCR</span>
+      </div>
+      <div class="sec-body">
+        <ng-container *ngIf="isDeveloper">
+        <div class="sub-head">Layout</div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="oc_popupWidthRatio">Popup Width Ratio <span class="unit">(0 - 1)</span></label>
+            <input id="oc_popupWidthRatio" class="ipt" type="number" step="0.01"
+              title="OCR Popup Width Ratio (0 to 1)"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.layout.popupWidthRatio"
+              name="oc_popupWidthRatio" />
+          </div>
+          <div class="field">
+            <label for="oc_frameHeight">Frame Height <span class="unit">(px)</span></label>
+            <input id="oc_frameHeight" class="ipt" type="number"
+              title="OCR Frame Height in pixels"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.layout.frameHeight"
+              name="oc_frameHeight" />
+          </div>
+        </div>
+
+        <div class="sub-head">Scan Config</div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="oc_maxRetries">Max Retries</label>
+            <input id="oc_maxRetries" class="ipt" type="number"
+              title="OCR Max Retries"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.scanConfig.maxRetries"
+              name="oc_maxRetries" />
+          </div>
+          <div class="field">
+            <label for="oc_retryDelay">Retry Delay <span class="unit">(ms)</span></label>
+            <input id="oc_retryDelay" class="ipt" type="number"
+              title="OCR Retry Delay in milliseconds"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.scanConfig.retryDelay"
+              name="oc_retryDelay" />
+          </div>
+          <div class="field">
+            <label for="oc_fps">Frame Processor FPS</label>
+            <input id="oc_fps" class="ipt" type="number"
+              title="OCR Frame Processor FPS"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.scanConfig.frameProcessorFps"
+              name="oc_fps" />
+          </div>
+          <div class="field">
+            <label for="oc_initDelay">Init Delay <span class="unit">(ms)</span></label>
+            <input id="oc_initDelay" class="ipt" type="number"
+              title="OCR Init Delay in milliseconds"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.scanConfig.initDelay"
+              name="oc_initDelay" />
+          </div>
+        </div>
+        </ng-container>
+
+        <div class="sub-head">Messages</div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="oc_loadingMsg">Loading Device Message</label>
+            <input id="oc_loadingMsg" class="ipt" type="text"
+              title="OCR Loading Device Message"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.messages.loadingDeviceMessage"
+              name="oc_loadingMsg" />
+          </div>
+          <div class="field">
+            <label for="oc_permDeniedMsg">Permission Denied Message</label>
+            <input id="oc_permDeniedMsg" class="ipt" type="text"
+              title="OCR Permission Denied Message"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.messages.permissionDeniedMessage"
+              name="oc_permDeniedMsg" />
+          </div>
+          <div class="field">
+            <label for="oc_camPermReq">Permission Required Message</label>
+            <input id="oc_camPermReq" class="ipt" type="text"
+              title="OCR Permission Required Message"
+              [(ngModel)]="surveyAppSetting.NativeSettings.CardOcrSettings.messages.cameraPermissionRequired"
+              name="oc_camPermReq" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SAVE BAR ============ -->
+    <div class="save-bar">
+      <button type="button" class="btn-save" (click)="saveSurveyAppSetting()">
+        <span>SAVE SETTINGS</span>
+      </button>
+    </div>
+
+    <!-- ============ COLLAPSIBLE: HUF SURVEY APP ============ -->
+    <div class="sec-card huf-card" [class.huf-open]="uhfExpanded">
+      <div class="sec-head huf-head" (click)="toggleUhf()">
+        <span class="sec-dot huf-dot"></span>
+        <span class="sec-title">HUF Survey App Settings</span>
+        <span class="sec-note" *ngIf="!uhfExpanded">Click to expand &amp; edit</span>
+        <span class="chev" [class.open]="uhfExpanded">▼</span>
+      </div>
+      <div class="huf-body" [class.expanded]="uhfExpanded">
+        <div class="sec-body">
+
+          <!-- Survey -->
+          <div class="sub-head">Survey</div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="huf_reqDistance">Required Distance <span class="unit">(meters)</span></label>
+              <input id="huf_reqDistance" class="ipt" type="number"
+                title="HUF Required Distance in meters"
+                [(ngModel)]="uhfSurveySetting.survey.requiredDistanceMeters"
+                name="huf_reqDistance" />
+            </div>
+            <div class="field" *ngIf="isDeveloper">
+              <label for="huf_maxAcc">Max Acceptable Accuracy <span class="unit">(meters)</span></label>
+              <input id="huf_maxAcc" class="ipt" type="number"
+                title="HUF Max Acceptable Accuracy in meters"
+                [(ngModel)]="uhfSurveySetting.survey.maxAcceptableAccuracyMeters"
+                name="huf_maxAcc" />
+            </div>
+          </div>
+
+          <ng-container *ngIf="isDeveloper">
+          <!-- Map - Default Region -->
+          <div class="sub-head">Map — Default Region</div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="huf_dr_lat">Latitude</label>
+              <input id="huf_dr_lat" class="ipt" type="number" step="0.0001"
+                title="Default Region Latitude"
+                [(ngModel)]="uhfSurveySetting.map.defaultRegion.latitude"
+                name="huf_dr_lat" />
+            </div>
+            <div class="field">
+              <label for="huf_dr_lng">Longitude</label>
+              <input id="huf_dr_lng" class="ipt" type="number" step="0.0001"
+                title="Default Region Longitude"
+                [(ngModel)]="uhfSurveySetting.map.defaultRegion.longitude"
+                name="huf_dr_lng" />
+            </div>
+            <div class="field">
+              <label for="huf_dr_latD">Latitude Delta</label>
+              <input id="huf_dr_latD" class="ipt" type="number" step="0.001"
+                title="Default Region Latitude Delta"
+                [(ngModel)]="uhfSurveySetting.map.defaultRegion.latitudeDelta"
+                name="huf_dr_latD" />
+            </div>
+            <div class="field">
+              <label for="huf_dr_lngD">Longitude Delta</label>
+              <input id="huf_dr_lngD" class="ipt" type="number" step="0.001"
+                title="Default Region Longitude Delta"
+                [(ngModel)]="uhfSurveySetting.map.defaultRegion.longitudeDelta"
+                name="huf_dr_lngD" />
+            </div>
+          </div>
+
+          <!-- Map - Location Animate Region -->
+          <div class="sub-head">Map — Location Animate Region</div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="huf_lar_latD">Latitude Delta</label>
+              <input id="huf_lar_latD" class="ipt" type="number" step="0.0001"
+                title="Animate Region Latitude Delta"
+                [(ngModel)]="uhfSurveySetting.map.locationAnimateRegion.latitudeDelta"
+                name="huf_lar_latD" />
+            </div>
+            <div class="field">
+              <label for="huf_lar_lngD">Longitude Delta</label>
+              <input id="huf_lar_lngD" class="ipt" type="number" step="0.0001"
+                title="Animate Region Longitude Delta"
+                [(ngModel)]="uhfSurveySetting.map.locationAnimateRegion.longitudeDelta"
+                name="huf_lar_lngD" />
+            </div>
+            <div class="field">
+              <label for="huf_lar_dur">Animate Duration <span class="unit">(ms)</span></label>
+              <input id="huf_lar_dur" class="ipt" type="number"
+                title="Location Animate Duration in milliseconds"
+                [(ngModel)]="uhfSurveySetting.map.locationAnimateRegion.animateDuration"
+                name="huf_lar_dur" />
+            </div>
+            <div class="field">
+              <label for="huf_markerDur">Marker Animate Duration <span class="unit">(ms)</span></label>
+              <input id="huf_markerDur" class="ipt" type="number"
+                title="Marker Animate Duration in milliseconds"
+                [(ngModel)]="uhfSurveySetting.map.markerAnimateDuration"
+                name="huf_markerDur" />
+            </div>
+          </div>
+
+          <!-- Location - Watch Position -->
+          <div class="sub-head">Location — Watch Position</div>
+          <div class="toggle-grid">
+            <label class="toggle">
+              <input type="checkbox" title="Watch Position High Accuracy"
+                [(ngModel)]="uhfSurveySetting.location.watchPosition.enableHighAccuracy"
+                name="huf_wp_highAcc" />
+              <span class="toggle-ui"></span>
+              <span class="toggle-text">
+                <strong>High Accuracy</strong>
+                <small>Watch position high-accuracy mode</small>
+              </span>
+            </label>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="huf_wp_dist">Distance Filter <span class="unit">(meters)</span></label>
+              <input id="huf_wp_dist" class="ipt" type="number"
+                title="Watch Position Distance Filter in meters"
+                [(ngModel)]="uhfSurveySetting.location.watchPosition.distanceFilter"
+                name="huf_wp_dist" />
+            </div>
+            <div class="field">
+              <label for="huf_wp_int">Interval <span class="unit">(ms)</span></label>
+              <input id="huf_wp_int" class="ipt" type="number"
+                title="Watch Position Interval in milliseconds"
+                [(ngModel)]="uhfSurveySetting.location.watchPosition.interval"
+                name="huf_wp_int" />
+            </div>
+            <div class="field">
+              <label for="huf_wp_fInt">Fastest Interval <span class="unit">(ms)</span></label>
+              <input id="huf_wp_fInt" class="ipt" type="number"
+                title="Watch Position Fastest Interval in milliseconds"
+                [(ngModel)]="uhfSurveySetting.location.watchPosition.fastestInterval"
+                name="huf_wp_fInt" />
+            </div>
+            <div class="field">
+              <label for="huf_wp_timeout">Timeout <span class="unit">(ms)</span></label>
+              <input id="huf_wp_timeout" class="ipt" type="number"
+                title="Watch Position Timeout in milliseconds"
+                [(ngModel)]="uhfSurveySetting.location.watchPosition.timeout"
+                name="huf_wp_timeout" />
+            </div>
+            <div class="field">
+              <label for="huf_wp_maxAge">Maximum Age <span class="unit">(ms)</span></label>
+              <input id="huf_wp_maxAge" class="ipt" type="number"
+                title="Watch Position Maximum Age in milliseconds"
+                [(ngModel)]="uhfSurveySetting.location.watchPosition.maximumAge"
+                name="huf_wp_maxAge" />
+            </div>
+          </div>
+
+          <!-- Location - Get Current Position -->
+          <div class="sub-head">Location — Get Current Position</div>
+          <div class="toggle-grid">
+            <label class="toggle">
+              <input type="checkbox" title="Get Current Position High Accuracy"
+                [(ngModel)]="uhfSurveySetting.location.getCurrentPosition.enableHighAccuracy"
+                name="huf_gp_highAcc" />
+              <span class="toggle-ui"></span>
+              <span class="toggle-text">
+                <strong>High Accuracy</strong>
+                <small>Get current position high-accuracy mode</small>
+              </span>
+            </label>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="huf_gp_timeout">Timeout <span class="unit">(ms)</span></label>
+              <input id="huf_gp_timeout" class="ipt" type="number"
+                title="Get Current Position Timeout in milliseconds"
+                [(ngModel)]="uhfSurveySetting.location.getCurrentPosition.timeout"
+                name="huf_gp_timeout" />
+            </div>
+            <div class="field">
+              <label for="huf_gp_maxAge">Maximum Age <span class="unit">(ms)</span></label>
+              <input id="huf_gp_maxAge" class="ipt" type="number"
+                title="Get Current Position Maximum Age in milliseconds"
+                [(ngModel)]="uhfSurveySetting.location.getCurrentPosition.maximumAge"
+                name="huf_gp_maxAge" />
+            </div>
+          </div>
+
+          <!-- Sync -->
+          <div class="sub-head">Sync</div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="huf_sync_int">Sync Interval <span class="unit">(ms)</span></label>
+              <input id="huf_sync_int" class="ipt" type="number"
+                title="Sync Interval in milliseconds"
+                [(ngModel)]="uhfSurveySetting.sync.intervalMs"
+                name="huf_sync_int" />
+            </div>
+          </div>
+          </ng-container>
+
+          <!-- Messages - Survey -->
+          <div class="sub-head">Messages — Survey</div>
+          <div class="msg-grid">
+            <div class="msg-field">
+              <label for="huf_msg_missing">Missing Fields Message</label>
+              <input id="huf_msg_missing" class="ipt" type="text"
+                title="Missing Fields Message"
+                [(ngModel)]="uhfSurveySetting.messages.survey.missingFields"
+                name="huf_msg_missing" />
+            </div>
+            <div class="msg-field" *ngIf="isDeveloper">
+              <label for="huf_msg_saveOk">Save Success Message</label>
+              <input id="huf_msg_saveOk" class="ipt" type="text"
+                title="Save Success Message"
+                [(ngModel)]="uhfSurveySetting.messages.survey.saveSuccess"
+                name="huf_msg_saveOk" />
+            </div>
+            <div class="msg-field" *ngIf="isDeveloper">
+              <label for="huf_msg_saveFail">Save Failed Message</label>
+              <input id="huf_msg_saveFail" class="ipt" type="text"
+                title="Save Failed Message"
+                [(ngModel)]="uhfSurveySetting.messages.survey.saveFailed"
+                name="huf_msg_saveFail" />
+            </div>
+          </div>
+
+          <!-- Messages - Location -->
+          <div class="sub-head">Messages — Location</div>
+          <div class="msg-grid">
+            <div class="msg-field">
+              <label for="huf_msg_gpsUnav">GPS Unavailable Message</label>
+              <input id="huf_msg_gpsUnav" class="ipt" type="text"
+                title="GPS Unavailable Message"
+                [(ngModel)]="uhfSurveySetting.messages.location.gpsUnavailable"
+                name="huf_msg_gpsUnav" />
+            </div>
+            <div class="msg-field">
+              <label for="huf_msg_gpsOn">GPS Turn On Message</label>
+              <input id="huf_msg_gpsOn" class="ipt" type="text"
+                title="GPS Turn On Message"
+                [(ngModel)]="uhfSurveySetting.messages.location.gpsTurnOn"
+                name="huf_msg_gpsOn" />
+            </div>
+            <div class="msg-field">
+              <label for="huf_msg_lowAcc">Low Accuracy Message</label>
+              <input id="huf_msg_lowAcc" class="ipt" type="text"
+                title="Low Accuracy Message"
+                [(ngModel)]="uhfSurveySetting.messages.location.accuracyLow"
+                name="huf_msg_lowAcc" />
+            </div>
+            <div class="msg-field">
+              <label for="huf_msg_permDenied">Permission Denied Message</label>
+              <input id="huf_msg_permDenied" class="ipt" type="text"
+                title="Location Permission Denied Message"
+                [(ngModel)]="uhfSurveySetting.messages.location.permissionDenied"
+                name="huf_msg_permDenied" />
+            </div>
+            <div class="msg-field">
+              <label for="huf_msg_lineStart">Line Start Unavailable Message</label>
+              <input id="huf_msg_lineStart" class="ipt" type="text"
+                title="Line Start Unavailable Message"
+                [(ngModel)]="uhfSurveySetting.messages.location.lineStartUnavailable"
+                name="huf_msg_lineStart" />
+            </div>
+          </div>
+
+          <!-- Messages - Distance & Card -->
+          <div class="sub-head">Messages — Distance &amp; Card</div>
+          <div class="msg-grid">
+            <div class="msg-field">
+              <label for="huf_msg_outRange">Out Of Range Message</label>
+              <small class="ph">Placeholders: <code ngNonBindable>{{currentDistance}}</code>, <code ngNonBindable>{{requiredDistance}}</code></small>
+              <input id="huf_msg_outRange" class="ipt" type="text"
+                title="Out Of Range Message"
+                [(ngModel)]="uhfSurveySetting.messages.distance.outOfRange"
+                name="huf_msg_outRange" />
+            </div>
+            <div class="msg-field">
+              <label for="huf_msg_dupCard">Duplicate Card Message</label>
+              <small class="ph">Placeholder: <code>${{ '{' }}cardNumber{{ '}' }}</code></small>
+              <input id="huf_msg_dupCard" class="ipt" type="text"
+                title="Duplicate Card Message"
+                [(ngModel)]="uhfSurveySetting.messages.card.duplicateCardTemplate"
+                name="huf_msg_dupCard" />
+            </div>
+          </div>
+
+          <!-- Save -->
+          <div class="huf-save">
+            <button type="button" class="btn-save" (click)="saveUhfSurveySetting()">
+              <span>SAVE HUF SETTINGS</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
