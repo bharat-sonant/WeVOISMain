@@ -92,28 +92,25 @@
 
                         <div class="row" style="margin-top: 10px;" *ngIf="historyDisplayList.length > 0 && !isLoadingHistory">
                             <div class="col-md-12" style="overflow: auto; max-height: calc(100vh - 320px);">
-                                <table class="table table-bordered table-hover" style="font-size: 13px;">
+                                <table class="table table-bordered table-hover">
                                     <thead style="background-color: #f5f5f5;">
                                         <tr>
-                                            <th style="width: 40px;">#</th>
-                                            <th>Update Time</th>
-                                            <th>User</th>
-                                            <th>Zone</th>
-                                            <th>Target Date</th>
-                                            <th>Entered %</th>
-                                            <th>Work %</th>
-                                            <th>Completed Lines</th>
-                                            <th>Covered Distance</th>
-                                            <th>Status</th>
-                                            <th></th>
+                                            <th style="width: 40px; font-size: 14px;">#</th>
+                                            <th style="font-size: 14px;">Update Time</th>
+                                            <th style="font-size: 14px;">User</th>
+                                            <th style="font-size: 14px;">Target Date</th>
+                                            <th style="font-size: 14px;">Entered %</th>
+                                            <th style="font-size: 14px;">Work %</th>
+                                            <th style="font-size: 14px;">Completed Lines</th>
+                                            <th style="font-size: 14px;">Covered Distance</th>
+                                            <th style="font-size: 14px;">Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody style="font-size: 12px;">
                                         <tr *ngFor="let row of historyDisplayList; let i = index">
                                             <td>{{i + 1}}</td>
-                                            <td>{{row.updateDateTime}}</td>
+                                            <td>{{formatUpdateDateTime(row.updateDateTime)}}</td>
                                             <td>{{row.userName}}</td>
-                                            <td>{{getZoneNameById(row.zone)}}</td>
                                             <td>{{row.targetDate}}</td>
                                             <td>{{row.enteredPercentage}}%</td>
                                             <td>
@@ -135,9 +132,6 @@
                                                 <span *ngIf="!row.detail?.old">&mdash;</span>
                                             </td>
                                             <td>{{row.status}}</td>
-                                            <td>
-                                                <b *ngIf="row.isNew" style="font-size: 11px;">NEW</b>
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

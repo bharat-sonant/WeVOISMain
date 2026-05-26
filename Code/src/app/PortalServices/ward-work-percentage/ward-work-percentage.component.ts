@@ -768,6 +768,32 @@ export class WardWorkPercentageComponent implements OnInit {
       }
     }
 
+    let byDate: { [date: string]: any[] } = {};
+    for (let entry of entries) {
+      if (!byDate[entry.targetDate]) byDate[entry.targetDate] = [];
+      byDate[entry.targetDate].push(entry);
+    }
+    for (let date of Object.keys(byDate)) {
+      let dateEntries = byDate[date];
+      dateEntries.sort((a, b) => (a.historyKey < b.historyKey ? -1 : 1));
+      for (let i = 1; i < dateEntries.length; i++) {
+        let prev = dateEntries[i - 1];
+        let curr = dateEntries[i];
+        if (curr.detail && prev.detail && prev.detail.afterUpdate) {
+          if (!curr.detail.old) curr.detail.old = {};
+          if (prev.detail.afterUpdate.updatedWorkPercentage !== undefined) {
+            curr.detail.old.workPercentage = prev.detail.afterUpdate.updatedWorkPercentage;
+          }
+          if (prev.detail.afterUpdate.completedLines !== undefined) {
+            curr.detail.old.completedLines = prev.detail.afterUpdate.completedLines;
+          }
+          if (prev.detail.afterUpdate.wardCoveredDistance !== undefined) {
+            curr.detail.old.wardCoveredDistance = prev.detail.afterUpdate.wardCoveredDistance;
+          }
+        }
+      }
+    }
+
     entries.sort((a, b) => (a.historyKey < b.historyKey ? 1 : -1));
 
     this.historyDisplayList = entries.map(e => ({
@@ -808,6 +834,28 @@ export class WardWorkPercentageComponent implements OnInit {
   getZoneNameById(zoneNo: any): string {
     let z = this.zoneList.find(item => item.zoneNo == zoneNo);
     return z ? z.zoneName : zoneNo;
+  }
+
+  formatUpdateDateTime(dateTimeStr: string): string {
+    if (!dateTimeStr) return "";
+    let isoStr = dateTimeStr.replace(" ", "T");
+    let d = new Date(isoStr);
+    if (isNaN(d.getTime())) return dateTimeStr;
+
+    let monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let day = (d.getDate() < 10 ? '0' : '') + d.getDate();
+    let month = monthNames[d.getMonth()];
+    let year = d.getFullYear();
+
+    let hours = d.getHours();
+    let minutes = (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+    let seconds = (d.getSeconds() < 10 ? '0' : '') + d.getSeconds();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    let hoursStr = (hours < 10 ? '0' : '') + hours;
+
+    return day + " " + month + " " + year + ", " + hoursStr + ":" + minutes + ":" + seconds + " " + ampm;
   }
 
 }
