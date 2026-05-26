@@ -14,6 +14,11 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
+                        <div class="row" style="margin-bottom: 10px;">
+                            <div class="col-md-12">
+                                <b style="font-size: 16px;">Ward Work Percentage</b>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-2">
                                 <label>Date</label>
@@ -24,7 +29,7 @@
                             <div class="col-md-2">
                                 <label>Zone</label>
                                 <div class="wrap-input-effects" required>
-                                    <select class="caret-select" id="ddlZone">
+                                    <select class="caret-select" id="ddlZone" (change)="onZoneChange($event)">
                                         <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
                                     </select>
                                 </div>
@@ -35,21 +40,107 @@
                                     <input id="txtPercentage" class="caret-select" type="number" max="100" />
                                 </div>
                             </div>
-                        </div>
-                        <div class="row" style="margin-top: 15px;">
-                            <div class="col-md-12 pr-1">
-                                <div class="form-group">
-                                    <label id="lblMsg" style="color:red; font-size: 14px;"></label>
-                                </div>
+                            <div class="col-md-4" style="padding-top: 18px;">
+                                <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">SAVE</button>
+                                <button *ngIf="selectedZoneValue && selectedZoneValue !== '0'" class="btn btn-primary btn-xs" (click)="showHistoryForSelectedZone();">SHOW HISTORY</button>
+                                <img id="divLoader" src="../../../assets/img/loading.gif" width="30" style="display: none;">
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 15px;">
+                        <div class="row" style="margin-top: 4px;">
                             <div class="col-md-12 pr-1">
-                                <div class="form-group">
-                                    <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">SAVE</button>
+                                <label id="lblMsg" style="color:red; font-size: 14px; margin-bottom: 0;"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                    <img id="divLoader" src="../../../assets/img/loading.gif" width="30" style="display: none;">
-                                </div>
+        <div class="row" style="margin-top: 2px;">
+            <div class="col-md-12">
+                <div class="card" style="min-height: calc(100vh - 200px);">
+                    <div class="card-body">
+                        <div class="row" style="margin-bottom: 10px;">
+                            <div class="col-md-12">
+                                <b style="font-size: 16px;">
+                                    Update History
+                                    <span *ngIf="currentHistoryZone" style="font-weight: normal; color: #555;">
+                                        &mdash; {{getZoneNameById(currentHistoryZone)}}
+                                    </span>
+                                </b>
+                            </div>
+                        </div>
+
+                        <div class="row" *ngIf="!currentHistoryZone && !isLoadingHistory">
+                            <div class="col-md-12 text-center" style="color: gray;">
+                                Select a zone above and click <b>SHOW HISTORY</b> to view its update history.
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 15px;" *ngIf="isLoadingHistory">
+                            <div class="col-md-12 text-center">
+                                <img src="../../../assets/img/loading.gif" width="30">
+                                <span style="margin-left:8px;">Loading history...</span>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 15px;" *ngIf="historyLoaded && historyDisplayList.length === 0 && !isLoadingHistory && currentHistoryZone">
+                            <div class="col-md-12 text-center" style="color: gray;">
+                                No update history found for this zone yet.
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 10px;" *ngIf="historyDisplayList.length > 0 && !isLoadingHistory">
+                            <div class="col-md-12" style="overflow: auto; max-height: calc(100vh - 320px);">
+                                <table class="table table-bordered table-hover" style="font-size: 13px;">
+                                    <thead style="background-color: #f5f5f5;">
+                                        <tr>
+                                            <th style="width: 40px;">#</th>
+                                            <th>Update Time</th>
+                                            <th>User</th>
+                                            <th>Zone</th>
+                                            <th>Target Date</th>
+                                            <th>Entered %</th>
+                                            <th>Work %</th>
+                                            <th>Completed Lines</th>
+                                            <th>Covered Distance</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let row of historyDisplayList; let i = index">
+                                            <td>{{i + 1}}</td>
+                                            <td>{{row.updateDateTime}}</td>
+                                            <td>{{row.userName}}</td>
+                                            <td>{{getZoneNameById(row.zone)}}</td>
+                                            <td>{{row.targetDate}}</td>
+                                            <td>{{row.enteredPercentage}}%</td>
+                                            <td>
+                                                <span *ngIf="row.detail?.old?.workPercentage !== undefined">
+                                                    {{row.detail.old.workPercentage}}% &rarr; {{row.detail.afterUpdate?.updatedWorkPercentage}}%
+                                                </span>
+                                                <span *ngIf="row.detail?.old?.workPercentage === undefined">&mdash;</span>
+                                            </td>
+                                            <td>
+                                                <span *ngIf="row.detail?.old">
+                                                    {{row.detail.old.completedLines}} &rarr; {{row.detail.afterUpdate?.completedLines}}
+                                                </span>
+                                                <span *ngIf="!row.detail?.old">&mdash;</span>
+                                            </td>
+                                            <td>
+                                                <span *ngIf="row.detail?.old">
+                                                    {{row.detail.old.wardCoveredDistance || 0}} m &rarr; {{row.detail.afterUpdate?.wardCoveredDistance || 0}} m
+                                                </span>
+                                                <span *ngIf="!row.detail?.old">&mdash;</span>
+                                            </td>
+                                            <td>{{row.status}}</td>
+                                            <td>
+                                                <b *ngIf="row.isNew" style="font-size: 11px;">NEW</b>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

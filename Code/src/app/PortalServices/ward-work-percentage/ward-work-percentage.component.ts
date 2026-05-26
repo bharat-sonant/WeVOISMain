@@ -24,6 +24,27 @@ export class WardWorkPercentageComponent implements OnInit {
   lblMsg = "#lblMsg";
   serviceName = "portal-service-work-percentage";
 
+  private historyKey: string = "";
+  private historySnapshot: any = {};
+  private rawEnteredPercentage: any = "";
+  private newlyCompletedLineNosLocal: any[] = [];
+  private skippedConvertedToCompletedLocal: any[] = [];
+  private locationHistoryEntriesAdded: number = 0;
+  private isSaveInProgress: boolean = false;
+  private preFetchedOldSummary: any = null;
+  private saveSafetyTimer: any = null;
+
+  historyDisplayList: any[] = [];
+  isLoadingHistory: boolean = false;
+  historyLoaded: boolean = false;
+  currentHistoryZone: string = "";
+  private historyLoadToken: number = 0;
+  selectedZoneValue: string = "0";
+
+  onZoneChange(event: any) {
+    this.selectedZoneValue = event && event.target ? event.target.value : "0";
+  }
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
@@ -99,7 +120,7 @@ export class WardWorkPercentageComponent implements OnInit {
 
   }
 
-  saveData() {
+  async saveData() {
     $(this.lblMsg).html("");
     if ($("#txtDate").val() == "") {
       this.commonService.setAlertMessage("error", "Please enter date !!!");
@@ -113,15 +134,55 @@ export class WardWorkPercentageComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please enter expected percentage !!!");
       return;
     }
+    this.rawEnteredPercentage = $("#txtPercentage").val();
     this.expectedPercentage = $("#txtPercentage").val();
-    if (Number(this.expectedPercentage) > 100) {
-      $("#txtPercentage").val("100");
-      this.expectedPercentage = 100;
+    let pctNum = Number(this.expectedPercentage);
+    if (isNaN(pctNum) || pctNum > 100 || pctNum < 0) {
+      this.commonService.setAlertMessage("error", "Percentage must be a valid number between 0 and 100 !!!");
+      return;
     }
     this.selectedDate = $("#txtDate").val();
     this.selectedZone = $("#ddlZone").val();
     this.selectedYear = this.selectedDate.split("-")[0];
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split("-")[1]) - 1);
+
+    if (this.isSaveInProgress) {
+      this.commonService.setAlertMessage("info", "A save is already in progress, please wait...");
+      return;
+    }
+    this.isSaveInProgress = true;
+    if (this.saveSafetyTimer) clearTimeout(this.saveSafetyTimer);
+    this.saveSafetyTimer = setTimeout(() => { this.isSaveInProgress = false; }, 15000);
+
+    this.historyKey = this.getHistoryTimestampKey();
+    this.newlyCompletedLineNosLocal = [];
+    this.skippedConvertedToCompletedLocal = [];
+    this.locationHistoryEntriesAdded = 0;
+    this.historySnapshot = {
+      userID: localStorage.getItem("userID") || "unknown",
+      userName: localStorage.getItem("userName") || "unknown",
+      cityName: this.cityName,
+      updateDateTime: this.commonService.setTodayDate() + " " + this.commonService.getCurrentTimeWithSecond(),
+      input: {
+        selectedDate: this.selectedDate,
+        selectedZone: this.selectedZone,
+        enteredPercentage: this.rawEnteredPercentage,
+        appliedPercentage: this.expectedPercentage
+      },
+      afterUpdate: {
+        completedLines: 0,
+        skippedLines: 0,
+        wardCoveredDistance: 0,
+        updatedWorkPercentage: "0",
+        newlyCompletedLineNos: [],
+        skippedConvertedToCompleted: [],
+        locationHistoryEntriesAdded: 0,
+        defaultedWorkPercentageToZero: false
+      }
+    };
+
+    this.preFetchedOldSummary = await this.fetchOldSummary();
+
     this.getWardLines();
   }
 
@@ -204,6 +265,23 @@ export class WardWorkPercentageComponent implements OnInit {
                 }
                 let updateLines = expectedLines - (completedLines + skippedLines);
 
+                let oldSummaryData = this.preFetchedOldSummary;
+                let oldWorkPct = oldSummaryData && oldSummaryData["workPercentage"] != null ? oldSummaryData["workPercentage"] : "0";
+                let oldCoveredDistance = oldSummaryData && oldSummaryData["wardCoveredDistance"] != null ? oldSummaryData["wardCoveredDistance"] : 0;
+                this.historySnapshot.old = {
+                  wardTotalLines: wardTotalLines,
+                  completedLines: completedLines,
+                  skippedLines: skippedLines,
+                  workPercentage: oldWorkPct,
+                  wardCoveredDistance: oldCoveredDistance,
+                  skippedLineNos: skipLineList.map(item => item.lineNo),
+                  dutyInTime: dutyInTime
+                };
+                this.historySnapshot.calculations = {
+                  expectedLines: expectedLines,
+                  updateLinesNeeded: updateLines
+                };
+
                 //$("#divLoader").hide();
                 this.updateLineStatus(dutyInTime, wardTotalLines, updateLines, wardLines, lineStatusList, skipLineList, expectedLines);
               }
@@ -232,6 +310,7 @@ export class WardWorkPercentageComponent implements OnInit {
           }
           let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + i;
           this.db.object(dbPath).update({ Status: "LineCompleted", "line-distance": lineLength.toString() });
+          this.newlyCompletedLineNosLocal.push(i);
           count++;
           isNewLine = 1;
         }
@@ -241,6 +320,7 @@ export class WardWorkPercentageComponent implements OnInit {
       for (let i = 0; i < skipLineList.length; i++) {
         let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + skipLineList[i]["lineNo"];
         this.db.object(dbPath).update({ Status: "LineCompleted", "line-distance": skipLineList[i]["distance"] });
+        this.skippedConvertedToCompletedLocal.push(skipLineList[i]["lineNo"]);
       }
       setTimeout(() => {
         this.updateSummary(wardLines, wardTotalLines, dutyInTime, lineStatusList, expectedLine);
@@ -259,6 +339,7 @@ export class WardWorkPercentageComponent implements OnInit {
             if (i < skipLineList.length) {
               let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/LineStatus/" + skipLineList[i]["lineNo"];
               this.db.object(dbPath).update({ Status: "LineCompleted", "line-distance": skipLineList[i]["distance"] });
+              this.skippedConvertedToCompletedLocal.push(skipLineList[i]["lineNo"]);
             }
           }
         }
@@ -305,6 +386,15 @@ export class WardWorkPercentageComponent implements OnInit {
             if (data == null) {
               this.db.object(dbPath).update({ workPercentage: "0" });
             }
+            this.historySnapshot.afterUpdate = {
+              completedLines: completedLines,
+              skippedLines: skippedLines,
+              wardCoveredDistance: coveredLength,
+              updatedWorkPercentage: percentage,
+              newlyCompletedLineNos: this.newlyCompletedLineNosLocal,
+              skippedConvertedToCompleted: this.skippedConvertedToCompletedLocal,
+              defaultedWorkPercentageToZero: data == null
+            };
           })
         }
         this.updateLocationHistoryNew(dutyInTime, lineStatusList, expectedLine, wardLines);
@@ -402,6 +492,7 @@ export class WardWorkPercentageComponent implements OnInit {
                   time = (dateTime.getHours() < 10 ? '0' : '') + dateTime.getHours() + ":" + (dateTime.getMinutes() < 10 ? '0' : '') + dateTime.getMinutes();
                   dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + time + "-" + lineNo;
                   this.db.object(dbPath).update(data[locationTime]);
+                  this.locationHistoryEntriesAdded++;
                 }
               }
             }
@@ -423,6 +514,7 @@ export class WardWorkPercentageComponent implements OnInit {
           time = (dateTime.getHours() < 10 ? '0' : '') + dateTime.getHours() + ":" + (dateTime.getMinutes() < 10 ? '0' : '') + dateTime.getMinutes();
           let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + time + "-" + lineNo;
           this.db.object(dbPath).update(data);
+          this.locationHistoryEntriesAdded++;
         }
         index++;
         this.getPreviousLocationHistory(index, list, time, wardLines);
@@ -431,6 +523,12 @@ export class WardWorkPercentageComponent implements OnInit {
     else {
       $("#divLoader").hide();
       this.commonService.setAlertMessage("success", "Ward work percentage updated !!!");
+      if (!this.historySnapshot.afterUpdate) {
+        this.historySnapshot.afterUpdate = {};
+      }
+      this.historySnapshot.afterUpdate.locationHistoryEntriesAdded = this.locationHistoryEntriesAdded;
+      this.historySnapshot.status = "completed";
+      this.writeHistory();
     }
   }
 
@@ -553,4 +651,163 @@ export class WardWorkPercentageComponent implements OnInit {
     let newDate = new Date(oldDate.getTime() + min * 60000);
     return (newDate.getHours() < 10 ? "0" : "") + newDate.getHours() + ":" + (newDate.getMinutes() < 10 ? "0" : "") + newDate.getMinutes()
   }
+
+  private getHistoryTimestampKey(): string {
+    let date = this.commonService.setTodayDate();
+    let time = this.commonService.getCurrentTimeWithSecond();
+    return date + "_" + time.split(":").join("-");
+  }
+
+  private fetchOldSummary(): Promise<any> {
+    return new Promise(resolve => {
+      let resolved = false;
+      let path = "WasteCollectionInfo/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/Summary";
+      let inst = this.db.object(path).valueChanges().subscribe(data => {
+        if (resolved) return;
+        resolved = true;
+        try { inst.unsubscribe(); } catch (e) {}
+        resolve(data);
+      });
+      setTimeout(() => {
+        if (resolved) return;
+        resolved = true;
+        try { inst.unsubscribe(); } catch (e) {}
+        resolve(null);
+      }, 5000);
+    });
+  }
+
+  private clearSaveInProgress() {
+    this.isSaveInProgress = false;
+    if (this.saveSafetyTimer) {
+      clearTimeout(this.saveSafetyTimer);
+      this.saveSafetyTimer = null;
+    }
+  }
+
+  private writeHistory() {
+    if (!this.historyKey) return;
+
+    let detailedPath = "WardWorkPercentageUpdateHistory/" + this.selectedZone +
+      "/" + this.selectedYear + "/" + this.selectedMonthName +
+      "/" + this.selectedDate + "/" + this.historyKey;
+    this.db.object(detailedPath).set(this.historySnapshot);
+
+    let updateDate = this.historyKey.split("_")[0];
+    let updateYear = updateDate.split("-")[0];
+    let updateMonthName = this.commonService.getCurrentMonthName(Number(updateDate.split("-")[1]) - 1);
+    let indexPath = "WardWorkPercentageUpdateHistory/_Index/" + updateYear +
+      "/" + updateMonthName + "/" + updateDate + "/" + this.historyKey;
+
+    let snap = this.historySnapshot;
+    let indexData: any = {
+      zone: this.selectedZone,
+      targetDate: this.selectedDate,
+      userID: snap.userID,
+      userName: snap.userName,
+      cityName: snap.cityName,
+      updateDateTime: snap.updateDateTime,
+      status: snap.status
+    };
+    if (snap.input) {
+      indexData.enteredPercentage = snap.input.enteredPercentage;
+      indexData.appliedPercentage = snap.input.appliedPercentage;
+    }
+    this.db.object(indexPath).set(indexData);
+
+    this.clearSaveInProgress();
+
+    if (this.currentHistoryZone && this.currentHistoryZone == this.selectedZone) {
+      this.loadHistoryForZone(this.selectedZone);
+    }
+  }
+
+  showHistoryForSelectedZone() {
+    let zone = $("#ddlZone").val();
+    if (!zone || zone == "0") {
+      this.commonService.setAlertMessage("error", "Please select a zone first !!!");
+      return;
+    }
+    this.loadHistoryForZone(zone.toString());
+  }
+
+  async loadHistoryForZone(zone: string) {
+    this.historyLoadToken++;
+    const myToken = this.historyLoadToken;
+
+    this.currentHistoryZone = zone;
+    this.isLoadingHistory = true;
+    this.historyLoaded = false;
+    this.historyDisplayList = [];
+
+    let zoneData = await this.fetchHistoryByZone(zone);
+
+    if (myToken !== this.historyLoadToken) {
+      return;
+    }
+
+    let entries: any[] = [];
+    if (zoneData != null) {
+      for (let year of Object.keys(zoneData)) {
+        let yearData = zoneData[year];
+        if (!yearData || typeof yearData !== 'object') continue;
+        for (let month of Object.keys(yearData)) {
+          let monthData = yearData[month];
+          if (!monthData || typeof monthData !== 'object') continue;
+          for (let date of Object.keys(monthData)) {
+            let dateData = monthData[date];
+            if (!dateData || typeof dateData !== 'object') continue;
+            for (let key of Object.keys(dateData)) {
+              let detail = dateData[key];
+              if (detail && typeof detail === 'object') {
+                entries.push({ historyKey: key, targetDate: date, detail: detail });
+              }
+            }
+          }
+        }
+      }
+    }
+
+    entries.sort((a, b) => (a.historyKey < b.historyKey ? 1 : -1));
+
+    this.historyDisplayList = entries.map(e => ({
+      historyKey: e.historyKey,
+      updateDateTime: e.detail.updateDateTime,
+      userID: e.detail.userID,
+      userName: e.detail.userName,
+      zone: zone,
+      targetDate: e.targetDate,
+      enteredPercentage: e.detail.input ? e.detail.input.enteredPercentage : "",
+      appliedPercentage: e.detail.input ? e.detail.input.appliedPercentage : "",
+      status: e.detail.status,
+      detail: e.detail,
+      isNew: this.isHistoryRecordNew(e.detail.updateDateTime)
+    }));
+
+    this.isLoadingHistory = false;
+    this.historyLoaded = true;
+  }
+
+  private fetchHistoryByZone(zone: string): Promise<any> {
+    return new Promise(resolve => {
+      let path = "WardWorkPercentageUpdateHistory/" + zone;
+      let inst = this.db.object(path).valueChanges().subscribe(data => {
+        inst.unsubscribe();
+        resolve(data);
+      });
+    });
+  }
+
+  private isHistoryRecordNew(updateDateTime: string): boolean {
+    if (!updateDateTime) return false;
+    let updateMs = new Date(updateDateTime.replace(" ", "T")).getTime();
+    if (isNaN(updateMs)) return false;
+    return (Date.now() - updateMs) < 24 * 60 * 60 * 1000;
+  }
+
+  getZoneNameById(zoneNo: any): string {
+    let z = this.zoneList.find(item => item.zoneNo == zoneNo);
+    return z ? z.zoneName : zoneNo;
+  }
+
 }
