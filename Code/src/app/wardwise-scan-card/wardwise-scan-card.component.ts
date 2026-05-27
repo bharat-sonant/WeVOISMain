@@ -293,8 +293,8 @@ export class WardwiseScanCardComponent implements OnInit {
         if (lineNo != undefined) {
           oldPath = this.commonService.getFireStoreCity() + "/HousesCollectionImagesData/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate + "/" + lineNo + "/";
         }
-        const oldRef = this.storage.ref(oldPath + preImageName);
-        const newRef = this.storage.ref(newPath + newImageName);
+        const oldRef = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(oldPath + preImageName);
+        const newRef = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(newPath + newImageName);
         this.renameScanCardImages(oldRef, newRef);
       }
     );
@@ -361,31 +361,30 @@ export class WardwiseScanCardComponent implements OnInit {
 
   renameScanCardImages(oldRef: any, newRef: any) {
     // Rename the file
-    oldRef.getDownloadURL().toPromise().then((url) => {
+    oldRef.getDownloadURL().then((url) => {
       // Copy the file to the new location
       const xhr = new XMLHttpRequest();
       xhr.responseType = 'blob';
       xhr.onload = () => {
         const blob = xhr.response;
         newRef.put(blob).then(() => {
+          // Delete the old file after successful copy (skip if same path)
+          if (oldRef.fullPath !== newRef.fullPath) {
+            oldRef.delete().then(() => {
+            }).catch(() => {
+            });
+          }
           this.commonService.setAlertMessage("success", "Scan card updated successfully !!!");
           $(this.divLoader).hide();
-          /*
-          // Delete the old file
-          oldRef.delete().toPromise().then(() => {
-            console.log('File renamed successfully');
-
-          }).catch((error) => {
-            console.error('Error deleting old file:', error);
-          });
-          */
-        }).catch((error) => {
+        }).catch(() => {
           this.commonService.setAlertMessage("success", "Scan card updated successfully !!!");
+          $(this.divLoader).hide();
         });
       };
       xhr.open('GET', url);
       xhr.send();
-    }).catch((error) => {
+    }).catch(() => {
+      $(this.divLoader).hide();
     });
   }
 
