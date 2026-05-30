@@ -1,124 +1,313 @@
-.card-scan-disable {
-  margin-top: 24px;
-  border: 1px solid #e3e6ec;
-  border-radius: 10px;
+$green: #0ba118;
+$green-soft: #eaf7ec;
+$ink: #1f2a24;
+
+.csd {
+  margin: 18px 6px 6px;
+  padding: 20px;
+  border: 1px solid #ececec;
+  border-radius: 14px;
   background: #fff;
-  overflow: hidden;
+  font-family: inherit;
 
-  .csd-head {
+  /* ===== Header ===== */
+  .csd-top {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 14px 18px;
-    background: #f6f8fb;
-    border-bottom: 1px solid #e3e6ec;
+    gap: 12px;
+    margin-bottom: 20px;
 
-    .csd-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #2e7d32;
-      display: inline-block;
+    .csd-bar {
+      width: 4px;
+      border-radius: 4px;
+      background: linear-gradient(180deg, $green, #3fce4d);
+      flex: 0 0 auto;
     }
 
-    .csd-title {
-      font-weight: 600;
-      font-size: 15px;
-      color: #1f2937;
+    h4 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: $ink;
     }
 
-    .csd-note {
+    p {
+      margin: 4px 0 0;
       font-size: 12px;
-      color: #6b7280;
+      color: #98a2a8;
+      line-height: 1.45;
     }
   }
 
-  .csd-body {
-    padding: 18px;
+  /* ===== Controls row ===== */
+  .csd-controls {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
   }
 
-  .csd-row {
-    margin-bottom: 16px;
-  }
-
-  .csd-field {
+  .csd-select-box {
     display: flex;
     flex-direction: column;
-    max-width: 320px;
+    flex: 0 1 240px;
+    min-width: 190px;
 
     label {
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
-      color: #374151;
+      color: #8a949a;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
       margin-bottom: 6px;
     }
   }
 
-  .csd-select {
-    height: 38px;
-    border: 1px solid #cbd2dc;
-    border-radius: 6px;
-    padding: 0 10px;
-    font-size: 14px;
-    outline: none;
+  .csd-select-wrap {
+    position: relative;
 
-    &:focus {
-      border-color: #2e7d32;
+    select {
+      width: 100%;
+      height: 34px;
+      border: 1px solid #dfe3e6;
+      border-radius: 7px;
+      padding: 0 30px 0 11px;
+      font-size: 13px;
+      color: $ink;
+      background: #fff;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+
+      &:hover { border-color: #c2c9cd; }
+      &:focus {
+        border-color: $green;
+        box-shadow: 0 0 0 3px rgba(11, 161, 24, 0.13);
+      }
+    }
+
+    .csd-caret {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      border-right: 2px solid #98a2a8;
+      border-bottom: 2px solid #98a2a8;
+      transform: translateY(-65%) rotate(45deg);
+      pointer-events: none;
     }
   }
 
-  .csd-check {
+  /* ===== Complete ward ===== */
+  .csd-whole {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex: 0 1 auto;
+    margin: 0;
+    padding: 0 12px;
+    height: 34px;
+    border: 1px solid #dfe3e6;
+    border-radius: 7px;
+    background: #fafbfb;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+
+    .csd-whole-text b {
+      font-size: 12.5px;
+      color: $ink;
+      font-weight: 600;
+    }
+
+    &.on {
+      border-color: #f4c9c4;
+      background: #fff6f5;
+
+      .csd-whole-text b { color: #d92d20; }
+    }
+  }
+
+  /* ===== Warning ===== */
+  .csd-warning {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #fff8eb;
+    border: 1px solid #f6dca0;
+    color: #b54708;
+    font-size: 12px;
+
+    .csd-warn-i {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f7b955;
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+  }
+
+  /* ===== Lines ===== */
+  .csd-lines {
+    transition: opacity 0.2s;
+
+    &.locked { opacity: 0.5; }
+
+    .csd-lines-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 4px 0 12px;
+    }
+
+    .csd-lines-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #5a656b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .csd-chip {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #5a656b;
+      background: #f0f2f3;
+      padding: 2px 9px;
+      border-radius: 20px;
+    }
+
+    .csd-msg {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: #98a2a8;
+      padding: 6px 0;
+    }
+  }
+
+  .csd-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #e4e7ec;
+    border-top-color: $green;
+    border-radius: 50%;
+    animation: csd-spin 0.7s linear infinite;
+  }
+
+  @keyframes csd-spin { to { transform: rotate(360deg); } }
+
+  .csd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+
+  .csd-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0;
+    padding: 11px 13px;
+    border: 1px solid #e8ebed;
+    border-radius: 11px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+
+    &:hover { border-color: #cfd5d8; }
+
+    .csd-line-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .csd-line-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3a444a;
+    }
+
+    .csd-status {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #98a2a8;
+      letter-spacing: 0.2px;
+    }
+
+    &.on {
+      border-color: #b7e3c0;
+      background: $green-soft;
+      box-shadow: 0 1px 2px rgba(11, 161, 24, 0.08);
+
+      .csd-line-name { color: #0a7a14; }
+      .csd-status { color: $green; }
+    }
+  }
+
+  /* ===== Toggle switch ===== */
+  .csd-switch {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #374151;
+    flex: 0 0 auto;
     cursor: pointer;
 
     input {
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
 
-    &.csd-disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    .csd-switch-ui {
+      position: relative;
+      width: 34px;
+      height: 19px;
+      border-radius: 19px;
+      background: #d4d9dc;
+      transition: background 0.18s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+        transition: transform 0.18s ease;
+      }
     }
-  }
 
-  .csd-whole {
-    font-weight: 600;
-    color: #b91c1c;
-  }
+    input:checked + .csd-switch-ui { background: $green; }
+    input:checked + .csd-switch-ui::after { transform: translateX(15px); }
 
-  .csd-lines {
-    border-top: 1px dashed #e3e6ec;
-    padding-top: 14px;
-    margin-bottom: 16px;
+    &.danger input:checked + .csd-switch-ui { background: #d92d20; }
 
-    .csd-lines-head {
-      font-size: 13px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 10px;
+    &.sm .csd-switch-ui {
+      width: 32px;
+      height: 18px;
+
+      &::after { width: 14px; height: 14px; }
     }
-
-    .csd-loading,
-    .csd-empty {
-      font-size: 13px;
-      color: #6b7280;
-    }
-  }
-
-  .csd-line-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px 16px;
-  }
-
-  .csd-save {
-    margin-top: 8px;
+    &.sm input:checked + .csd-switch-ui::after { transform: translateX(14px); }
   }
 }

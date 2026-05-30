@@ -13,7 +13,9 @@ export class CardScanDisableComponent implements OnInit {
   // Feature sirf in cities ke liye visible hoga (cityName lowercase store hota hai)
   allowedCities = ['hisar', 'devtest'];
 
-  // Realtime Database node jahan data save hoga
+  // Realtime Database base node. Iske andar do sub-node:
+  //   Ward -> { wardName: "YYYY-MM-DD HH:mm:ss" }            (poora ward disabled)
+  //   Line -> { wardName: { lineNo: "YYYY-MM-DD HH:mm:ss" } } (line-wise disabled)
   dbBasePath = 'Settings/MinimumScanSettings';
 
   cityName: any = '';
@@ -24,8 +26,8 @@ export class CardScanDisableComponent implements OnInit {
   lines: { lineNo: number }[] = [];
   loadingLines = false;
 
-  // DB se loaded object: { wardNo: dateString | { lineNo: dateString } }
-  scanSettings: any = {};
+  // DB se loaded object: { Ward: {...}, Line: {...} }
+  scanSettings: any = { Ward: {}, Line: {} };
 
   // Current ward ka UI state
   disableWholeWard = false;
@@ -55,6 +57,20 @@ export class CardScanDisableComponent implements OnInit {
     return d.getFullYear() + '-' + month + '-' + day;
   }
 
+  // YYYY-MM-DD HH:mm:ss format (DB mein save hone wali value)
+  getCurrentDateTime(): string {
+    let d = new Date();
+    let h = ('0' + d.getHours()).slice(-2);
+    let m = ('0' + d.getMinutes()).slice(-2);
+    let s = ('0' + d.getSeconds()).slice(-2);
+    return this.getCurrentDate() + ' ' + h + ':' + m + ':' + s;
+  }
+
+  // Stored datetime ka date-part aaj ke barabar hai ya nahi (current-day-only check)
+  isToday(value: any): boolean {
+    return value != null && value.toString().substring(0, 10) === this.currentDate;
+  }
+
   // Ward list AvailableWard.json se: data ek string array hai jaise [null,"Bharat","Anil",...]
   loadWards() {
     const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + '%2FDefaults%2FAvailableWard.json?alt=media';
@@ -78,8 +94,10 @@ export class CardScanDisableComponent implements OnInit {
     let instance = this.db.object(this.dbBasePath).valueChanges().subscribe((data: any) => {
       instance.unsubscribe();
       this.scanSettings = (data != null) ? data : {};
+      if (this.scanSettings.Ward == null) { this.scanSettings.Ward = {}; }
+      if (this.scanSettings.Line == null) { this.scanSettings.Line = {}; }
     }, () => {
-      this.scanSettings = {};
+      this.scanSettings = { Ward: {}, Line: {} };
     });
   }
 
@@ -122,80 +140,86 @@ export class CardScanDisableComponent implements OnInit {
     });
   }
 
-  // scanSettings se current ward ka saved state checkboxes mein reflect karo.
-  // Disable sirf current day ke liye valid hai -> sirf aaj ki date wali entry checked dikhegi.
-  // Purani date (kal/pehle) wali entries expired maani jaati hain -> unchecked (reset).
+  // scanSettings se current ward ka saved state toggles mein reflect karo.
+  // Disable sirf current day ke liye valid hai -> sirf aaj ki datetime wali entry ON dikhegi.
+  // Purani date (kal/pehle) wali entries expired maani jaati hain -> OFF (reset).
   hydrateWardState(wardNo: any) {
-    let saved = this.scanSettings ? this.scanSettings[wardNo] : null;
     this.disableWholeWard = false;
     this.disabledLineMap = {};
-    if (saved == null) {
-      return;
+
+    // Poora ward disabled?
+    let wardVal = this.scanSettings.Ward ? this.scanSettings.Ward[wardNo] : null;
+    if (this.isToday(wardVal)) {
+      this.disableWholeWard = true;
     }
-    if (typeof saved === 'string') {
-      // poora ward disabled -> sirf tab checked jab date == aaj
-      if (saved === this.currentDate) {
-        this.disableWholeWard = true;
-      }
-    } else if (typeof saved === 'object') {
-      // line-wise disabled -> sirf wahi lines checked jinki date == aaj
-      let lineKeys = Object.keys(saved);
+
+    // Line-wise disabled?
+    let lineVal = this.scanSettings.Line ? this.scanSettings.Line[wardNo] : null;
+    if (lineVal != null && typeof lineVal === 'object') {
+      let lineKeys = Object.keys(lineVal);
       for (let i = 0; i < lineKeys.length; i++) {
-        if (saved[lineKeys[i]] === this.currentDate) {
+        if (this.isToday(lineVal[lineKeys[i]])) {
           this.disabledLineMap[lineKeys[i]] = true;
         }
       }
     }
   }
 
+  // Complete-ward toggle -> turant DB update (auto-save, koi save button nahi)
   onWholeWardToggle() {
+    const ward = this.selectedWard;
+    if (ward == null || ward === '') {
+      return;
+    }
     if (this.disableWholeWard) {
-      // poora ward disable hone par line selection clear
-      this.disabledLineMap = {};
+      // Poora ward disable: sirf Ward node set karo. Line data ko bilkul mat chhedo
+      // (Line aur Ward dono independent hain).
+      let now = this.getCurrentDateTime();
+      if (this.scanSettings.Ward == null) { this.scanSettings.Ward = {}; }
+      this.scanSettings.Ward[ward] = now;
+      this.writeResult(this.db.object(this.dbBasePath + '/Ward/' + ward).set(now), 'पूरा वार्ड कार्ड स्कैनिंग के लिए बंद कर दिया गया।');
+    } else {
+      // Ward enable: Ward node hata do
+      if (this.scanSettings.Ward) { delete this.scanSettings.Ward[ward]; }
+      this.writeResult(this.db.object(this.dbBasePath + '/Ward/' + ward).remove(), 'पूरा वार्ड फिर से चालू कर दिया गया।');
     }
   }
 
-  saveSettings() {
-    if (this.selectedWard == null || this.selectedWard === '') {
-      this.commonService.setAlertMessage('error', 'Please select a ward first !!!');
+  // Line toggle -> turant DB update. Poora ward disabled ho to allowed nahi.
+  onLineToggle(lineNo: any) {
+    const ward = this.selectedWard;
+    if (ward == null || ward === '') {
       return;
     }
-    if (this.scanSettings == null) {
-      this.scanSettings = {};
-    }
-
-    const wardPath = this.dbBasePath + '/' + this.selectedWard;
-
     if (this.disableWholeWard) {
-      // poora ward disable -> value = current date string (line object replace ho jayega)
-      this.scanSettings[this.selectedWard] = this.currentDate;
-      this.writeWard(this.db.object(wardPath).set(this.currentDate));
+      // Poora ward disabled ho to lines change nahi kar sakte (toggle UI mein disabled hai;
+      // ye sirf safety guard hai). Line data waisa hi rahega.
+      this.commonService.setAlertMessage('error', 'पूरा वार्ड पहले से बंद है। लाइन के हिसाब से बंद करने के लिए पहले वार्ड को चालू करें।');
+      return;
+    }
+    let linePath = this.dbBasePath + '/Line/' + ward + '/' + lineNo;
+    if (this.disabledLineMap[lineNo]) {
+      // Line disable
+      let now = this.getCurrentDateTime();
+      if (this.scanSettings.Line == null) { this.scanSettings.Line = {}; }
+      if (this.scanSettings.Line[ward] == null) { this.scanSettings.Line[ward] = {}; }
+      this.scanSettings.Line[ward][lineNo] = now;
+      this.writeResult(this.db.object(linePath).set(now), 'लाइन ' + lineNo + ' कार्ड स्कैनिंग के लिए बंद कर दी गई।');
     } else {
-      // line-wise disable -> sirf checked lines ka object
-      let lineEntry: { [lineNo: string]: string } = {};
-      for (let i = 0; i < this.lines.length; i++) {
-        let lineNo = this.lines[i].lineNo;
-        if (this.disabledLineMap[lineNo]) {
-          lineEntry[lineNo] = this.currentDate;
-        }
+      // Line enable
+      if (this.scanSettings.Line && this.scanSettings.Line[ward]) {
+        delete this.scanSettings.Line[ward][lineNo];
       }
-      if (Object.keys(lineEntry).length > 0) {
-        this.scanSettings[this.selectedWard] = lineEntry;
-        this.writeWard(this.db.object(wardPath).set(lineEntry));
-      } else {
-        // kuch bhi disabled nahi -> ward node hata do
-        delete this.scanSettings[this.selectedWard];
-        this.writeWard(this.db.object(wardPath).remove());
-      }
+      this.writeResult(this.db.object(linePath).remove(), 'लाइन ' + lineNo + ' फिर से चालू कर दी गई।');
     }
   }
 
   // DB write ka result handle karo
-  writeWard(promise: any) {
+  writeResult(promise: any, successMsg: string) {
     promise.then(() => {
-      this.commonService.setAlertMessage('success', 'Card scan disable setting updated !!!');
+      this.commonService.setAlertMessage('success', successMsg);
     }).catch(() => {
-      this.commonService.setAlertMessage('error', 'Failed to update card scan disable setting.');
+      this.commonService.setAlertMessage('error', 'सेटिंग अपडेट करने में समस्या हुई।');
     });
   }
 }

@@ -1,51 +1,69 @@
-<div class="card-scan-disable" *ngIf="isAllowedCity">
-  <div class="csd-head">
-    <span class="csd-dot"></span>
-    <span class="csd-title">Card Scan Disable (Ward / Line wise)</span>
-    <span class="csd-note">Selected ward/line current date ({{ currentDate }})</span>
+<div class="csd" *ngIf="isAllowedCity">
+
+  <!-- Header -->
+  <div class="csd-top">
+    <span class="csd-bar"></span>
+    <div class="csd-top-text">
+      <h4>Card Scan Disable</h4>
+      <p>किसी वार्ड या उसकी लाइन को कार्ड स्कैनिंग के लिए बंद करें। यह सिर्फ़ आज ({{ currentDate }}) के लिए लागू रहेगा — अगले दिन अपने आप फिर से चालू हो जाएगा।</p>
+    </div>
   </div>
 
-  <div class="csd-body">
-    <div class="csd-row">
-      <div class="csd-field">
-        <label for="csdWard">Select Ward</label>
-        <select id="csdWard" class="csd-select" [(ngModel)]="selectedWard" name="csdWard"
-          (change)="onWardChange(selectedWard)">
-          <option value="">-- Select Ward --</option>
+  <!-- Ward + complete ward -->
+  <div class="csd-controls">
+    <div class="csd-select-box">
+      <label>Select Ward</label>
+      <div class="csd-select-wrap">
+        <select title="Select Ward" [(ngModel)]="selectedWard" name="csdWard" (change)="onWardChange(selectedWard)">
+          <option value="">Select Ward…</option>
           <option *ngFor="let ward of wardList" [value]="ward.wardNo">{{ ward.wardNo }}</option>
         </select>
+        <i class="csd-caret"></i>
       </div>
     </div>
 
-    <div class="csd-row" *ngIf="selectedWard">
-      <label class="csd-check csd-whole">
-        <input type="checkbox" [(ngModel)]="disableWholeWard" name="csdWholeWard"
-          (change)="onWholeWardToggle()" />
-        <span>Disable Complete Ward (current date)</span>
+    <label class="csd-whole" *ngIf="selectedWard" [class.on]="disableWholeWard">
+      <span class="csd-whole-text">
+        <b>Disable Complete Ward</b>
+      </span>
+      <span class="csd-switch danger">
+        <input type="checkbox" title="पूरा वार्ड बंद करें" [(ngModel)]="disableWholeWard"
+          name="csdWholeWard" (change)="onWholeWardToggle()" />
+        <span class="csd-switch-ui"></span>
+      </span>
+    </label>
+  </div>
+
+  <!-- Warning -->
+  <div class="csd-warning" *ngIf="selectedWard && disableWholeWard">
+    <i class="csd-warn-i">!</i>
+    <span>लाइन के हिसाब से बंद करने के लिए पहले "Disable Complete Ward" को बंद (off) करें।</span>
+  </div>
+
+  <!-- Lines -->
+  <div class="csd-lines" *ngIf="selectedWard" [class.locked]="disableWholeWard">
+    <div class="csd-lines-head">
+      <span class="csd-lines-title">Lines</span>
+      <span class="csd-chip" *ngIf="!loadingLines && lines.length > 0">Total {{ lines.length }}</span>
+    </div>
+
+    <div class="csd-msg" *ngIf="loadingLines"><span class="csd-spinner"></span> Loading lines…</div>
+    <div class="csd-msg" *ngIf="!loadingLines && lines.length === 0">No lines found for this ward.</div>
+
+    <div class="csd-grid" *ngIf="!loadingLines && lines.length > 0">
+      <label class="csd-line" *ngFor="let line of lines"
+        [class.on]="disabledLineMap[line.lineNo]">
+        <span class="csd-line-left">
+          <span class="csd-line-name">Line {{ line.lineNo }}</span>
+          <span class="csd-status">{{ disabledLineMap[line.lineNo] ? 'Disabled' : 'Active' }}</span>
+        </span>
+        <span class="csd-switch sm">
+          <input type="checkbox" title="Disable line {{ line.lineNo }}" [disabled]="disableWholeWard"
+            [(ngModel)]="disabledLineMap[line.lineNo]"
+            name="csdLine{{ line.lineNo }}" (change)="onLineToggle(line.lineNo)" />
+          <span class="csd-switch-ui"></span>
+        </span>
       </label>
-    </div>
-
-    <div class="csd-lines" *ngIf="selectedWard">
-      <div class="csd-lines-head">Lines</div>
-
-      <div class="csd-loading" *ngIf="loadingLines">Loading lines...</div>
-
-      <div class="csd-empty" *ngIf="!loadingLines && lines.length === 0">
-        Is ward ki koi line nahi mili.
-      </div>
-
-      <div class="csd-line-grid" *ngIf="!loadingLines && lines.length > 0">
-        <label class="csd-check" *ngFor="let line of lines"
-          [class.csd-disabled]="disableWholeWard">
-          <input type="checkbox" [(ngModel)]="disabledLineMap[line.lineNo]"
-            name="csdLine{{ line.lineNo }}" [disabled]="disableWholeWard" />
-          <span>Line {{ line.lineNo }}</span>
-        </label>
-      </div>
-    </div>
-
-    <div class="csd-save" *ngIf="selectedWard">
-      <button type="button" class="btn btn-success btn-xs" (click)="saveSettings()">SAVE</button>
     </div>
   </div>
 </div>
