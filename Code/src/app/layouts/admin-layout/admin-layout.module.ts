@@ -73,6 +73,7 @@ import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-lin
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
 import { SurveyAppSettingsComponent } from '../../PortalServices/settings/survey-app-settings/survey-app-settings.component';
+import { CardScanDisableComponent } from '../../PortalServices/settings/card-scan-disable/card-scan-disable.component';
 import { EmployeesComponent } from '../../EmployeeManagement/employees/employees.component';
 import { SpecialUsersComponent } from '../../EmployeeManagement/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
@@ -275,6 +276,7 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     WardWorkDoneComponent,
     SettingsComponent,
     SurveyAppSettingsComponent,
+    CardScanDisableComponent,
     EmployeesComponent,
     SpecialUsersComponent,
     DustbinPlaningComponent,
