@@ -110,6 +110,13 @@ export class CardScanDisableComponent implements OnInit {
     if (wardNo == null || wardNo === '') {
       return;
     }
+
+    // 1) DB se fresh status check karo — ward/line aaj disabled hai ya nahi.
+    //    Ye lines-load se independent hai, taaki line file na milne par bhi disabled
+    //    status sahi dikhe.
+    this.refreshWardStatus(wardNo);
+
+    // 2) Lines list load karo (kaun-kaun si line toggles dikhani hain)
     this.loadingLines = true;
     this.commonService.getWardLine(wardNo, this.currentDate).then((linesData: any) => {
       // Agar tab tak user ne dusra ward select kar liya, to ye purana response ignore karo
@@ -130,13 +137,30 @@ export class CardScanDisableComponent implements OnInit {
         lineList.sort((a, b) => a.lineNo - b.lineNo);
         this.lines = lineList;
       }
-      this.hydrateWardState(wardNo);
     }, () => {
       if (this.selectedWard != wardNo) {
         return;
       }
       this.loadingLines = false;
+    });
+  }
+
+  // Ward change par DB se taaza data padho aur is ward ka disabled-status hydrate karo
+  refreshWardStatus(wardNo: any) {
+    let instance = this.db.object(this.dbBasePath).valueChanges().subscribe((data: any) => {
+      instance.unsubscribe();
+      this.scanSettings = (data != null) ? data : {};
+      if (this.scanSettings.Ward == null) { this.scanSettings.Ward = {}; }
+      if (this.scanSettings.Line == null) { this.scanSettings.Line = {}; }
+      // Agar tab tak dusra ward select ho gaya to ignore
+      if (this.selectedWard != wardNo) {
+        return;
+      }
       this.hydrateWardState(wardNo);
+    }, () => {
+      if (this.selectedWard == wardNo) {
+        this.hydrateWardState(wardNo);
+      }
     });
   }
 
