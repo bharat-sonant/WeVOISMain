@@ -32,6 +32,7 @@ export class WardSurveySummaryComponent implements OnInit {
   entityList: any[] = [];
   employeeSurvey: any[] = [];
   rfidMarkerList: any = [];
+  rfidMarkerMap: any = {};
   rfidList: any[];
   db: any;
   selectedWard: any;
@@ -292,6 +293,7 @@ export class WardSurveySummaryComponent implements OnInit {
   downloadRFID() {
     $(this.divLoaderMain).show();
     this.rfidMarkerList = [];
+    this.rfidMarkerMap = {};
     this.rfidList = [];
     this.getMarkerData(0);
 
@@ -388,9 +390,8 @@ export class WardSurveySummaryComponent implements OnInit {
                   }
 
                   let date = cardDetail["createdDate"] != null ? cardDetail["createdDate"] : "";
-                  let markserDetail = this.rfidMarkerList.find((item: any) => item.cardNumber == cardNumber);
-                  if (markserDetail != null) {
-                    PID = markserDetail.propId;
+                  if (this.rfidMarkerMap[cardNumber] != null) {
+                    PID = this.rfidMarkerMap[cardNumber];
                   }
 
                   // Photo Link (HUFCardData) -> ward/line/card/hufRfidNumber se banta hai
@@ -446,46 +447,133 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   getMarkerData(index: any) {
-    if (index == this.wardList.length) {
-      this.getCardData(0);
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
+    // Saari wards ke markers PARALLEL padho (sequential ki jagah)
+    let promises = [];
+    for (let w = 0; w < this.wardList.length; w++) {
+      promises.push(this.readMarkerWard(this.wardList[w]["zoneNo"]));
     }
-    else {
-      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
-      let zoneNo = this.wardList[index]["zoneNo"];
+    Promise.all(promises).then(() => {
+      this.loadAllCards();
+    });
+  }
+
+  // Ek ward ke markers padho aur rfidMarkerMap (cardNumber -> propId) bharo
+  readMarkerWard(zoneNo: any) {
+    return new Promise((resolve) => {
       let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-        markerData => {
+        (markerData: any) => {
           markerInstance.unsubscribe();
           if (markerData != null) {
             let keyArray = Object.keys(markerData);
-            if (keyArray.length > 0) {
-              for (let i = 0; i < keyArray.length; i++) {
-                let lineNo = keyArray[i];
-                let lineData = markerData[lineNo];
-                let markerKeyArray = Object.keys(lineData);
-                for (let j = 0; j < markerKeyArray.length; j++) {
-                  let markerNo = markerKeyArray[j];
-                  if (lineData[markerNo]["cardNumber"] != null) {
-                    let propId = lineData[markerNo]["propId"] ? lineData[markerNo]["propId"] : "";
-                    let cardNumber = lineData[markerNo]["cardNumber"] ? lineData[markerNo]["cardNumber"] : "";
-                    this.rfidMarkerList.push({ cardNumber: cardNumber, propId: propId });
-                  }
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineData = markerData[keyArray[i]];
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                if (lineData[markerNo]["cardNumber"] != null) {
+                  let propId = lineData[markerNo]["propId"] ? lineData[markerNo]["propId"] : "";
+                  let cardNumber = lineData[markerNo]["cardNumber"] ? lineData[markerNo]["cardNumber"] : "";
+                  this.rfidMarkerMap[cardNumber] = propId;
                 }
               }
-              index++;
-              this.getMarkerData(index);
-            }
-            else {
-              index++;
-              this.getMarkerData(index);
             }
           }
-          else {
-            index++;
-            this.getMarkerData(index);
-          }
-        });
+          resolve(true);
+        },
+        () => resolve(true)
+      );
+    });
+  }
+
+  // Saari wards ke cards PARALLEL padho, rfidList ward-order mein bharo, fir build+export
+  loadAllCards() {
+    let promises = [];
+    for (let w = 0; w < this.wardList.length; w++) {
+      promises.push(this.readCardWard(this.wardList[w]["zoneNo"]));
     }
+    Promise.all(promises).then((results: any[]) => {
+      for (let r = 0; r < results.length; r++) {
+        if (results[r] != null) {
+          for (let k = 0; k < results[r].length; k++) {
+            this.rfidList.push(results[r][k]);
+          }
+        }
+      }
+      // build + export (existing build branch)
+      this.getCardData(this.wardList.length);
+    });
+  }
+
+  // Ek ward ke cards padho aur us ward ki rows return karo
+  readCardWard(zoneNo: any) {
+    return new Promise((resolve) => {
+      let dbPath = "Houses/" + zoneNo;
+      let cardInstance = this.db.object(dbPath).valueChanges().subscribe(
+        (cardData: any) => {
+          cardInstance.unsubscribe();
+          let rows: any[] = [];
+          if (cardData != null) {
+            let keyArray = Object.keys(cardData);
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineData = cardData[lineNo];
+              let cardKeyArray = Object.keys(lineData);
+              let agencyGstNumber = "08AACCW3281C1ZH";
+              let mcCode = "017";
+              let RFIDTYPE = "HardTag";
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNumber = cardKeyArray[j];
+                let cardDetail = lineData[cardNumber];
+                if (cardDetail == null) { continue; }
+                let PID = "";
+                let lat = "";
+                let lng = "";
+                if (cardDetail["latLng"] != null && cardDetail["latLng"] != "") {
+                  let latLngParts = cardDetail["latLng"].toString().replace("(", "").replace(")", "").split(",");
+                  lat = latLngParts[0] != null ? latLngParts[0].trim() : "";
+                  lng = latLngParts[1] != null ? latLngParts[1].trim() : "";
+                }
+                let cardImageURL = "";
+                if (cardDetail["cardImage"] != null && cardDetail["cardImage"] != "") {
+                  cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardDetail["cardImage"] + "?alt=media";
+                }
+                let date = cardDetail["createdDate"] != null ? cardDetail["createdDate"] : "";
+                if (this.rfidMarkerMap[cardNumber] != null) {
+                  PID = this.rfidMarkerMap[cardNumber];
+                }
+                let ward = cardDetail["ward"] != null ? cardDetail["ward"] : zoneNo;
+                let hufRfidNumber = cardDetail["hufRfidNumber"] != null ? cardDetail["hufRfidNumber"] : "";
+                // Photo Link -> fixed houseImg.jpg (huf number wali image ki jagah)
+                let photoLink = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Hisar%2FHUFCardData%2F" + ward + "%2F" + lineNo + "%2F" + cardNumber + "%2FhouseImg.jpg?alt=media&token";
+                let locationLink = "";
+                if (lat != "" && lng != "") {
+                  locationLink = "https://www.google.com/maps?q=" + lat + "," + lng;
+                }
+                let owner = cardDetail["name"] != null ? cardDetail["name"] : "";
+                let address = cardDetail["address"] != null ? cardDetail["address"] : "";
+                let colony = cardDetail["streetColony"] != null ? cardDetail["streetColony"] : "";
+                let propertyType = cardDetail["cardType"] != null ? cardDetail["cardType"] : "";
+                if (propertyType == "आवासीय") {
+                  propertyType = "Residential";
+                } else if (propertyType == "व्यावसायिक") {
+                  propertyType = "Commercial";
+                }
+                let property = "";
+                let houseTypeDetail = this.houseTypeList.find((item: any) => item.id == cardDetail["houseType"]);
+                if (houseTypeDetail != null) {
+                  property = houseTypeDetail.houseType;
+                }
+                rows.push({ cardNumber: cardNumber, PID: PID, rfidTagNo: hufRfidNumber, owner: owner, address: address, colony: colony, wardNo: ward, property: property, propertyType: propertyType, mcCode: mcCode, RFIDTYPE: RFIDTYPE, date: date, cardImageURL: cardImageURL, lat: lat, lng: lng, agencyGstNumber: agencyGstNumber, photoLink: photoLink, locationLink: locationLink });
+              }
+            }
+          }
+          resolve(rows);
+        },
+        () => resolve([])
+      );
+    });
   }
 
   updateCounts_Bharat(index: any) {
