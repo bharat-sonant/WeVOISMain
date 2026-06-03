@@ -301,63 +301,47 @@ export class WardSurveySummaryComponent implements OnInit {
     if (index == this.wardList.length) {
       let htmlString = "<table>";
       htmlString += "<tr>";
-      htmlString += "<td>";
-      htmlString += "RFIDNo";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "PID";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "MCCode";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "RFIDTYPE";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "InstallationDateTime";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "PropertyRfidPhoto";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Latitude";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "Longitude";
-      htmlString += "</td>";
-      htmlString += "<td>";
-      htmlString += "AgencyGstNumber";
-      htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "S.N"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "PID"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "RFID Tag No"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Owner"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Address"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Colony"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Ward"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Property"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Property Type"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "RFIDNo"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "MCCode"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "RFIDTYPE"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "InstallationDateTime"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "PropertyRfidPhoto"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Photo Link"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Latitude"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Longitude"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Location Link"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "AgencyGstNumber"; htmlString += "</td>";
       htmlString += "</tr>";
       for (let i = 0; i < this.rfidList.length; i++) {
         htmlString += "<tr>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["cardNumber"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["PID"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["mcCode"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["RFIDTYPE"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["date"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["cardImageURL"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["lat"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["lng"];
-        htmlString += "</td>";
-        htmlString += "<td t='s'>";
-        htmlString += this.rfidList[i]["agencyGstNumber"];
-        htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += (i + 1); htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["PID"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["rfidTagNo"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["owner"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["address"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["colony"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["wardNo"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["property"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["propertyType"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["cardNumber"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["mcCode"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["RFIDTYPE"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["date"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["cardImageURL"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["photoLink"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["lat"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["lng"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["locationLink"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["agencyGstNumber"]; htmlString += "</td>";
         htmlString += "</tr>";
       }
 
@@ -385,19 +369,63 @@ export class WardSurveySummaryComponent implements OnInit {
                 let RFIDTYPE = "HardTag";
                 for (let j = 0; j < cardKeyArray.length; j++) {
                   let cardNumber = cardKeyArray[j];
-                  //if (lineData[cardNumber]["latLng"] != null) {
+                  let cardDetail = lineData[cardNumber];
+                  if (cardDetail == null) {
+                    continue;
+                  }
                   let PID = "";
-                  let lat = lineData[cardNumber]["latLng"].replace("(", "").replace(")", "").split(",")[0];
-                  let lng = lineData[cardNumber]["latLng"].replace("(", "").replace(")", "").split(",")[1];
-                  let cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + lineData[cardNumber]["cardImage"] + "?alt=media";
+                  let lat = "";
+                  let lng = "";
+                  // latLng kuch cards mein missing ho sakta hai -> guard
+                  if (cardDetail["latLng"] != null && cardDetail["latLng"] != "") {
+                    let latLngParts = cardDetail["latLng"].toString().replace("(", "").replace(")", "").split(",");
+                    lat = latLngParts[0] != null ? latLngParts[0].trim() : "";
+                    lng = latLngParts[1] != null ? latLngParts[1].trim() : "";
+                  }
+                  let cardImageURL = "";
+                  if (cardDetail["cardImage"] != null && cardDetail["cardImage"] != "") {
+                    cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardDetail["cardImage"] + "?alt=media";
+                  }
 
-                  let date = lineData[cardNumber]["createdDate"];
-                  let markserDetail = this.rfidMarkerList.find(item => item.cardNumber == cardNumber);
+                  let date = cardDetail["createdDate"] != null ? cardDetail["createdDate"] : "";
+                  let markserDetail = this.rfidMarkerList.find((item: any) => item.cardNumber == cardNumber);
                   if (markserDetail != null) {
                     PID = markserDetail.propId;
                   }
-                  this.rfidList.push({ cardNumber: cardNumber, PID: PID, mcCode: mcCode, RFIDTYPE: RFIDTYPE, date: date, cardImageURL: cardImageURL, lat: lat, lng: lng, agencyGstNumber: agencyGstNumber });
-                  // }
+
+                  // Photo Link (HUFCardData) -> ward/line/card/hufRfidNumber se banta hai
+                  let ward = cardDetail["ward"] != null ? cardDetail["ward"] : zoneNo;
+                  let hufRfidNumber = cardDetail["hufRfidNumber"] != null ? cardDetail["hufRfidNumber"] : "";
+                  let photoLink = "";
+                  if (hufRfidNumber != "") {
+                    photoLink = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Hisar%2FHUFCardData%2F" + ward + "%2F" + lineNo + "%2F" + cardNumber + "%2F" + hufRfidNumber + ".jpg?alt=media&token";
+                  }
+
+                  // Location Link -> latLng se Google Maps link
+                  let locationLink = "";
+                  if (lat != "" && lng != "") {
+                    locationLink = "https://www.google.com/maps?q=" + lat + "," + lng;
+                  }
+
+                  // Performa columns (Property aur Area chhod ke)
+                  let owner = cardDetail["name"] != null ? cardDetail["name"] : "";
+                  let address = cardDetail["address"] != null ? cardDetail["address"] : "";
+                  let colony = cardDetail["streetColony"] != null ? cardDetail["streetColony"] : "";
+                  let propertyType = cardDetail["cardType"] != null ? cardDetail["cardType"] : "";
+                  if (propertyType == "आवासीय") {
+                    propertyType = "Residential";
+                  } else if (propertyType == "व्यावसायिक") {
+                    propertyType = "Commercial";
+                  }
+
+                  // Property -> houseType id ko houseTypeList se match karke naam (jaise "Independent House")
+                  let property = "";
+                  let houseTypeDetail = this.houseTypeList.find((item: any) => item.id == cardDetail["houseType"]);
+                  if (houseTypeDetail != null) {
+                    property = houseTypeDetail.houseType;
+                  }
+
+                  this.rfidList.push({ cardNumber: cardNumber, PID: PID, rfidTagNo: hufRfidNumber, owner: owner, address: address, colony: colony, wardNo: ward, property: property, propertyType: propertyType, mcCode: mcCode, RFIDTYPE: RFIDTYPE, date: date, cardImageURL: cardImageURL, lat: lat, lng: lng, agencyGstNumber: agencyGstNumber, photoLink: photoLink, locationLink: locationLink });
                 }
               }
               index++;
