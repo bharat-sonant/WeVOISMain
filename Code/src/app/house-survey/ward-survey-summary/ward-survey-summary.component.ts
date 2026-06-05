@@ -545,8 +545,17 @@ export class WardSurveySummaryComponent implements OnInit {
                 }
                 let ward = cardDetail["ward"] != null ? cardDetail["ward"] : zoneNo;
                 let hufRfidNumber = cardDetail["hufRfidNumber"] != null ? cardDetail["hufRfidNumber"] : "";
-                // Photo Link -> fixed houseImg.jpg (huf number wali image ki jagah)
-                let photoLink = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Hisar%2FHUFCardData%2F" + ward + "%2F" + lineNo + "%2F" + cardNumber + "%2FhouseImg.jpg?alt=media&token";
+                // Photo Link: HUF card laga ho (hufRfidNumber present) -> HUFCardData ka houseImg.jpg;
+                // warna survey house image (SurveyHouseImage/<houseImage>)
+                let photoLink = "";
+                if (hufRfidNumber != "") {
+                  photoLink = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Hisar%2FHUFCardData%2F" + ward + "%2F" + lineNo + "%2F" + cardNumber + "%2FhouseImg.jpg?alt=media&token";
+                } else {
+                  let houseImage = cardDetail["houseImage"] != null ? cardDetail["houseImage"] : "";
+                  if (houseImage != "") {
+                    photoLink = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Hisar%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+                  }
+                }
                 let locationLink = "";
                 if (lat != "" && lng != "") {
                   locationLink = "https://www.google.com/maps?q=" + lat + "," + lng;
