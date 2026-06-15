@@ -491,6 +491,11 @@ export class PaymentCollectorTrackingComponent {
                   let latLngString = latlngList[j].replace("(", "").replace(")", "");
                   let lat = Number(latLngString.split(",")[0]);
                   let lng = Number(latLngString.split(",")[1]);
+                  // skip invalid/incomplete points (e.g. trailing "~" or missing coordinate)
+                  // so a single NaN doesn't break the whole Google Maps polyline
+                  if (!isFinite(lat) || !isFinite(lng)) {
+                    continue;
+                  }
                   if (preLat1 == 0) {
                     latLng.push({ lat: lat, lng: lng, time: index });
                     preLat1 = lat;
