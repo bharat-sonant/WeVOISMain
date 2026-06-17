@@ -83,7 +83,7 @@ export class DustbinManageComponent implements OnInit {
 
   filterDustbin() {
     this.dustbinFilterList = [];
-    let list = this.dustbinList.filter(item => item.zone.toString().trim() == this.selectedZone.toString().trim());
+    let list = this.dustbinList.filter(item => item.zone != null && item.zone.toString().trim() == this.selectedZone.toString().trim());
     this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
     if (this.selectedStatus == "enabled") {
       list = list.filter(item => item.isDisabled != "yes");
@@ -198,7 +198,7 @@ export class DustbinManageComponent implements OnInit {
             }
           }
         }
-        list = this.dustbinList.filter(item => item.zone.toString().trim() == this.selectedZone.toString().trim());
+        list = this.dustbinList.filter(item => item.zone != null && item.zone.toString().trim() == this.selectedZone.toString().trim());
         this.dustbinSummary.totalDustbin = this.dustbinList.filter(item => item.isDisabled != "yes").length;
         this.dustbinSummary.wardDustbin = list.filter(item => item.isDisabled != "yes").length;
         if (this.selectedStatus == "enabled") {
@@ -313,17 +313,23 @@ export class DustbinManageComponent implements OnInit {
   }
 
   addDustbin(data: any) {
-    let dustbin = 1;
     let dbPath = "DustbinData/DustbinDetails";
-    let dustbinInstance = this.db.object(dbPath).valueChanges().subscribe((dustbin) => {
+    let dustbinInstance = this.db.object(dbPath).valueChanges().subscribe((dustbinData: any) => {
       dustbinInstance.unsubscribe();
-      if (dustbin != null) {
-        let keyArray = Object.keys(dustbin);
-        if (keyArray.length > 0) {
-          dustbin = Number(keyArray[keyArray.length - 1]) + 1;
+      let newDustbinId = 1;
+      if (dustbinData != null) {
+        let keyArray = Object.keys(dustbinData);
+        let maxId = 0;
+        for (let i = 0; i < keyArray.length; i++) {
+          let id = Number(keyArray[i]);
+          if (!isNaN(id) && id > maxId) {
+            maxId = id;
+          }
         }
+        newDustbinId = maxId + 1;
       }
-      this.dustbinService.updateDustbinDetail(dustbin, data, 'add');
+      this.dustbinService.updateDustbinDetail(newDustbinId, data, 'add');
+      data.dustbin = newDustbinId;
       data.isDisabled = "no";
       data.disabledBy = "";
       data.isBroken = false;
