@@ -149,16 +149,7 @@ export class DustbinPlaningComponent implements OnInit {
         }
         if (isBroken != "") { isBroken = "(" + isBroken + ")"; }
 
-        if (list[i]["isDisabled"] == "yes") {
-          if (list[i]["disabledDate"] != "") {
-            let date = new Date(this.selectedYear + "/" + this.selectedMonth + "/01");
-            let disabledDate = new Date(list[i]["disabledDate"]);
-            if (disabledDate > date) {
-              this.dustbinList.push({ zoneNo: list[i]["zone"], dustbin: list[i]["dustbin"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isBroken: isBroken, isDisabled: list[i]["isDisabled"] });
-            }
-          }
-        }
-        else {
+        if (list[i]["isDisabled"] != "yes") {
           this.dustbinList.push({ zoneNo: list[i]["zone"], dustbin: list[i]["dustbin"], address: list[i]["address"], pickFrequency: list[i]["pickFrequency"], isBroken: isBroken, isDisabled: list[i]["isDisabled"] });
         }
       }
