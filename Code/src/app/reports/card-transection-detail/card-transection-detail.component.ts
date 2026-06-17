@@ -258,7 +258,7 @@ export class CardTransectionDetailComponent implements OnInit {
                       houseImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentHouseImage%2F" + cardNo + "%2F" + date + "%2F" + houseImage + "?alt=media";
                     }
 
-                    
+
                     let timestemp = new Date(date).getTime();
                     this.transactionList.push({ timestemp: timestemp, key: key, transDate: "", year: year, month: month, date, transId: dateData[key]["merchantTransactionId"], referId: referId, payMethod: payMethod, collectedBy: dateData[key]["paymentCollectionByName"], amount: Number(dateData[key]["transactionAmount"]).toFixed(2), monthYear: dateData[key]["monthYear"], houseImageURL: houseImageURL ,type:"card"});
                     this.transactionList = this.transactionList.sort((a, b) =>
@@ -353,6 +353,13 @@ export class CardTransectionDetailComponent implements OnInit {
   }
 
   getDateTimeFormat(key: any, transDate: any, date: any, year: any, month: any) {
+    if (transDate == null || transDate.toString().trim() == "") {
+      let detail = this.transactionList.find(item => item.key == key && item.year == year && item.month == month && item.date == date);
+      if (detail != undefined) {
+        detail.transDate = date;
+      }
+      return;
+    }
     let list = transDate.split(" ");
     let time = "";
     if (list.length > 1) {
