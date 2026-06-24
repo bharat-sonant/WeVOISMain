@@ -448,13 +448,27 @@ export class WardSurveySummaryComponent implements OnInit {
 
   getMarkerData(index: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
-    // Saari wards ke markers PARALLEL padho (sequential ki jagah)
+    // Fallback PID source: MarkedHouses (cardNumber -> propId) rfidMarkerMap me bharo.
+    // Primary PID source per-card direct CardPropertyMapping/<cardNumber> hit (readCardWard me).
     let promises = [];
     for (let w = 0; w < this.wardList.length; w++) {
       promises.push(this.readMarkerWard(this.wardList[w]["zoneNo"]));
     }
     Promise.all(promises).then(() => {
       this.loadAllCards();
+    });
+  }
+
+  // Direct hit: CardPropertyMapping/<cardNumber> ki value (na mile to null)
+  getCardPropertyId(cardNumber: any): Promise<any> {
+    return new Promise((resolve) => {
+      let inst = this.db.object("CardPropertyMapping/" + cardNumber).valueChanges().subscribe(
+        (val: any) => {
+          inst.unsubscribe();
+          resolve(val);
+        },
+        () => resolve(null)
+      );
     });
   }
 
@@ -578,7 +592,19 @@ export class WardSurveySummaryComponent implements OnInit {
               }
             }
           }
-          resolve(rows);
+          // Primary PID: MarkedHouses (loop me already set).
+          // Fallback: jinka MarkedHouses se PID nahi mila, sirf un cards par
+          // direct CardPropertyMapping/<cardNumber> hit.
+          let pidPromises = rows
+            .filter((row: any) => row.PID == null || row.PID.toString().trim() === "" || row.PID.toString().trim() === "00")
+            .map((row: any) =>
+              this.getCardPropertyId(row.cardNumber).then((pid: any) => {
+                if (pid != null && pid.toString().trim() !== "") {
+                  row.PID = pid;
+                }
+              })
+            );
+          Promise.all(pidPromises).then(() => resolve(rows));
         },
         () => resolve([])
       );

@@ -50,6 +50,9 @@ export class WardScancardReportComponent implements OnInit {
   wasteCategoryList: any[] = [];
   selectedImage: string = '';
 
+  // In wasteCategory values ke liye scan card image available hoti hai
+  wastePhotoCategories: string[] = ["Segregated", "Two Bin Segregation", "Three Bin Segregation", "Four Bin Segregation", "No Segregation"];
+
   ngOnInit() {
     this.isImage="0";
     this.cityName = localStorage.getItem("cityName");
@@ -640,7 +643,7 @@ export class WardScancardReportComponent implements OnInit {
                     let wastePhoto = "";
                     if (data[cardNo]["wasteCategory"] != undefined) {
                       wasteCategory = data[cardNo]["wasteCategory"];
-                      if (wasteCategory == "Segregated") {
+                      if (this.wastePhotoCategories.indexOf(wasteCategory) !== -1) {
                         wastePhoto = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FScanCardImages%2F" + wardNo + "%2F" + year + "%2F" + monthName + "%2F" + this.selectedDate + "%2F" + cardNumber + ".jpg?alt=media";;
                       }
                     }
@@ -730,7 +733,7 @@ export class WardScancardReportComponent implements OnInit {
                       let wastePhoto = "";
                       if (data[cardNo]["wasteCategory"] != undefined) {
                         wasteCategory = data[cardNo]["wasteCategory"];
-                        if (wasteCategory == "Segregated") {
+                        if (this.wastePhotoCategories.indexOf(wasteCategory) !== -1) {
                           wastePhoto = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FScanCardImages%2F" + wardNo + "%2F" + year + "%2F" + monthName + "%2F" + this.selectedDate + "%2F" + cardNumber + ".jpg?alt=media";;
                         }
                       }

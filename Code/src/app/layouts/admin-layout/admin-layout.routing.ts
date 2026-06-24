@@ -94,6 +94,7 @@ import { SurveyHousesComponent } from '../../house-survey/survey-houses/survey-h
 import { MarkerApprovalTestComponent } from '../../marker-approval-test/marker-approval-test.component';
 import { SupervisorReportComponent } from '../../house-survey/supervisor-report/supervisor-report.component';
 import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set-nearby-ward.component';
+import { WardRouteAutoScanComponent } from '../../PortalServices/ward-route-auto-scan/ward-route-auto-scan.component';
 import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
 import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
@@ -397,6 +398,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/marker-approval-test', component: MarkerApprovalTestComponent },
     { path: ':cityId/:id/supervisor-report', component: SupervisorReportComponent },
     { path: ':cityId/:id/set-nearby-ward', component: SetNearbyWardComponent },
+    { path: ':cityId/:id/ward-route-auto-scan', component: WardRouteAutoScanComponent },
     { path: ':cityId/:id/manage-marking-data', component: ManageMarkingDataComponent },
     { path: ':cityId/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: ':cityId/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },

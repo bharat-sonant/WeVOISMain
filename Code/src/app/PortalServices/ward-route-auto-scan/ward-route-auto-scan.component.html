@@ -1,0 +1,134 @@
+<div class="page-wrap">
+    <section class="header">
+        <div class="row no-gutters">
+            <div class="offset-3 col-6 heading text-center">
+                <b class="header-text">Auto Card Scanning Management</b>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <!-- Aggregate summary cards -->
+        <div class="summary-cards">
+            <div class="sum-card">
+                <span class="sum-icon wards">&#9783;</span>
+                <div class="sum-info">
+                    <span class="sum-value">{{ totalWards }}</span>
+                    <span class="sum-label">Total Wards</span>
+                </div>
+            </div>
+            <div class="sum-card">
+                <span class="sum-icon total">&#9636;</span>
+                <div class="sum-info">
+                    <span class="sum-value">{{ sumCardsInWard }}</span>
+                    <span class="sum-label">Total Cards (All Wards)</span>
+                </div>
+            </div>
+            <div class="sum-card">
+                <span class="sum-icon avail">&#10003;</span>
+                <div class="sum-info">
+                    <span class="sum-value">{{ sumCardsAvailable }}</span>
+                    <span class="sum-label">Cards Available (Completed)</span>
+                </div>
+            </div>
+            <div class="sum-card">
+                <span class="sum-icon scan">&#9883;</span>
+                <div class="sum-info">
+                    <span class="sum-value">{{ sumCardsScanned }}</span>
+                    <span class="sum-label">Cards Scanned (Completed)</span>
+                </div>
+            </div>
+            <div class="sum-card">
+                <span class="sum-icon on">&#9211;</span>
+                <div class="sum-info">
+                    <span class="sum-value">{{ enabledCount }}</span>
+                    <span class="sum-label">Auto Scan Enabled</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="panel table-panel">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Ward</th>
+                            <th class="text-center">Total Cards</th>
+                            <th class="text-center">Completed Lines</th>
+                            <th class="text-center">Cards Available</th>
+                            <th class="text-center">Cards Scanned</th>
+                            <th class="text-center">Scan %</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="rows.length === 0">
+                            <td colspan="8" class="empty-row">No wards available</td>
+                        </tr>
+                        <tr *ngFor="let row of rows">
+                            <td class="route-name">{{ row.wardName }}</td>
+                            <td class="text-center">{{ row.totalCardsInWard }}</td>
+                            <td class="text-center">{{ row.totalCompletedLines }}</td>
+                            <td class="text-center">{{ row.cardsAvailable }}</td>
+                            <td class="text-center">{{ row.cardsScanned }}</td>
+                            <td class="text-center">
+                                <select class="row-select" title="Card Scanning %" [(ngModel)]="row.range"
+                                    (ngModelChange)="onRowCriteriaChange(row)">
+                                    <option value="">-- Select --</option>
+                                    <option value="95-100">95% - 100%</option>
+                                    <option value="90-100">90% - 100%</option>
+                                    <option value="80-90">80% - 90%</option>
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <span class="status-badge enabled" *ngIf="row.autoScanEnabled">
+                                    <span class="status-dot"></span> Enabled
+                                </span>
+                                <span class="status-badge disabled" *ngIf="!row.autoScanEnabled">
+                                    <span class="status-dot"></span> Disabled
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <label class="switch" [title]="row.autoScanEnabled ? 'Disable Auto Scan' : 'Start Auto Scan'">
+                                    <input type="checkbox" title="Auto Scan" [(ngModel)]="row.autoScanEnabled"
+                                        (ngModelChange)="onRowToggle(row)">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-loading" *ngIf="loading">Loading wards...</div>
+        </div>
+    </div>
+
+    <!-- Floating Sync button (bottom-right) -->
+    <button type="button" class="fab-sync" (click)="syncAll()" [disabled]="syncing || rows.length === 0"
+        title="Sync House Cards">
+        <svg class="sync-icon" [class.spin]="syncing" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="currentColor"
+                d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5 0 .65-.13 1.27-.36 1.83l1.52 1.52A6.94 6.94 0 0 0 19 13c0-3.87-3.13-7-7-7zm0 12c-2.76 0-5-2.24-5-5 0-.65.13-1.27.36-1.83L5.84 9.65A6.94 6.94 0 0 0 5 13c0 3.87 3.13 7 7 7v3l4-4-4-4v3z" />
+        </svg>
+        <span>{{ syncing ? 'Syncing ' + syncProgress : 'Sync' }}</span>
+    </button>
+
+    <!-- Themed confirmation modal -->
+    <div class="acsm-modal-overlay" *ngIf="confirmVisible">
+        <div class="acsm-modal">
+            <div class="acsm-modal-head">
+                <span class="acsm-modal-title">Confirmation</span>
+            </div>
+            <div class="acsm-modal-body">
+                {{ confirmMessage }}
+            </div>
+            <div class="acsm-modal-actions">
+                <button type="button" class="m-btn m-no" (click)="onConfirmNo()">No</button>
+                <button type="button" class="m-btn m-yes" (click)="onConfirmYes()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -74,6 +74,7 @@ import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-do
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
 import { SurveyAppSettingsComponent } from '../../PortalServices/settings/survey-app-settings/survey-app-settings.component';
 import { CardScanDisableComponent } from '../../PortalServices/settings/card-scan-disable/card-scan-disable.component';
+import { WardRouteAutoScanComponent } from '../../PortalServices/ward-route-auto-scan/ward-route-auto-scan.component';
 import { EmployeesComponent } from '../../EmployeeManagement/employees/employees.component';
 import { SpecialUsersComponent } from '../../EmployeeManagement/special-users/special-users.component';
 import { DustbinPlaningComponent } from '../../Dustbin/dustbin-planing/dustbin-planing.component';
@@ -306,6 +307,7 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     MarkerApprovalTestComponent,
     SupervisorReportComponent,
     SetNearbyWardComponent,
+    WardRouteAutoScanComponent,
     ManageMarkingDataComponent,
     WardwiseScanCardComponent,
     ReviewDutyonImagesComponent,
