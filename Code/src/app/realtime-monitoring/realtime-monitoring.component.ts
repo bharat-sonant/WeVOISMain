@@ -1043,7 +1043,13 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   getWardTotalCards(zoneNo: any) {
-    let dbPath = "EntitySurveyData/TotalHouseCount/" + zoneNo;
+    const isHisarCommercial =
+      this.cityName.toLowerCase().trim() === 'hisar' &&
+      /^Commercial-\d+$/.test(zoneNo);
+
+    let dbPath = isHisarCommercial
+      ? "CommercialWardData/TotalHouseCount/" + zoneNo
+      : "EntitySurveyData/TotalHouseCount/" + zoneNo;
     let totalCardInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       totalCardInstance.unsubscribe();
       if (data != null) {

@@ -93,9 +93,14 @@ export class CardScanningReportComponent implements OnInit {
 
     for (let i = 1; i < this.wardList.length; i++) {
 
+      const zoneNo = this.wardList[i]["zoneNo"];
+      const isHisarCommercial =
+        this.cityName.toLowerCase().trim() === 'hisar' &&
+        /^Commercial-\d+$/.test(zoneNo);
+
       if (
-        !this.wardList[i]["zoneNo"].includes("Commercial") &&
-        !this.wardList[i]["zoneNo"].includes("Dummy")
+        !zoneNo.includes("Dummy") &&
+        (!zoneNo.includes("Commercial") || isHisarCommercial)
       ) {
 
         let ward = this.wardList[i]["zoneNo"];
@@ -189,7 +194,13 @@ export class CardScanningReportComponent implements OnInit {
        // return;
       }
 
-      let dbPath = "EntitySurveyData/TotalHouseCount/" + ward;
+      const isHisarCommercial =
+        this.cityName.toLowerCase().trim() === 'hisar' &&
+        /^Commercial-\d+$/.test(ward);
+
+      let dbPath = isHisarCommercial
+        ? "CommercialWardData/TotalHouseCount/" + ward
+        : "EntitySurveyData/TotalHouseCount/" + ward;
 
       let sub = this.db.object(dbPath).valueChanges()
         .subscribe(houseCountData => {
@@ -202,9 +213,9 @@ export class CardScanningReportComponent implements OnInit {
             // return;
           }
 
-          if (houseCountData != null) {
+          if (houseCountData != null || isHisarCommercial) {
 
-            detail.cards = Number(houseCountData);
+            detail.cards = houseCountData != null ? Number(houseCountData) : 0;
             this.getScannedCardsNew(ward).then(() => resolve(true));
           }
           else {
