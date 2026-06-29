@@ -28,18 +28,21 @@ export class WebPortalSettingComponent implements OnInit {
   workPercentage: any = 0;
   runKM: any = 0;
   zoneRunKM: any = 0;
+
+  vtsRouteCityList: any[] = [];
+  vtsRouteLoaded: boolean = false;
+  vtsRouteLoading: boolean = false;
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Portal-Services", "Settings", localStorage.getItem("userID"));
     this.setDefault();
   }
-
   setDefault() {
     this.firestotagePath = this.commonService.fireStoragePath;
     this.getDailyWorkPercentagePermissions();
   }
-
   getDailyWorkPercentagePermissions() {
     const path = this.firestotagePath + this.commonService.getFireStoreCity() + "%2FSettings%2FDailyWorkReport.json?alt=media";
     let instance = this.httpService.get(path).subscribe(dailyWorkDetailJsonData => {
@@ -77,7 +80,6 @@ export class WebPortalSettingComponent implements OnInit {
       }
     });
   }
-
   saveDailyWorkPermission() {
     let element = <HTMLInputElement>document.getElementById("chkStartTime");
     if (element.checked == true) this.startTime = 1;
@@ -127,10 +129,9 @@ export class WebPortalSettingComponent implements OnInit {
     this.commonService.saveJsonFile(obj, fileName, path);
     this.commonService.setAlertMessage("success", "Daily work report permissions updated !!!");
   }
-
-
   setActiveTab(tab: any) {
     $("#DailyWorkReport").hide();
+    $("#VTSRoute").hide();
     $("#Reader").hide();
     $("#Halt").hide();
     $("#Salary").hide();
@@ -138,20 +139,72 @@ export class WebPortalSettingComponent implements OnInit {
     let element = <HTMLButtonElement>document.getElementById("tabDailyWorkReport");
     let className = element.className;
     $("#tabDailyWorkReport").removeClass(className);
-    $("#tabDailyWorkReport").addClass("nav-link");
+    $("#tabDailyWorkReport").addClass("nav-link buttons");
 
+    element = <HTMLButtonElement>document.getElementById("tabVTSRoute");
+    className = element.className;
+    $("#tabVTSRoute").removeClass(className);
+    $("#tabVTSRoute").addClass("nav-link buttons");
 
     if (tab == "DailyWorkReport") {
       $("#DailyWorkReport").show();
       element = <HTMLButtonElement>document.getElementById("tabDailyWorkReport");
       className = element.className;
       $("#tabDailyWorkReport").removeClass(className);
-      $("#tabDailyWorkReport").addClass("nav-link active");
+      $("#tabDailyWorkReport").addClass("nav-link active buttons");
 
       element = <HTMLButtonElement>document.getElementById("DailyWorkReport");
       className = element.className;
       $("#DailyWorkReport").removeClass(className);
       $("#DailyWorkReport").addClass("tab-pane fade show active save");
+    } else if (tab == "VTSRoute") {
+      $("#VTSRoute").show();
+      element = <HTMLButtonElement>document.getElementById("tabVTSRoute");
+      className = element.className;
+      $("#tabVTSRoute").removeClass(className);
+      $("#tabVTSRoute").addClass("nav-link active buttons");
+
+      element = <HTMLButtonElement>document.getElementById("VTSRoute");
+      className = element.className;
+      $("#VTSRoute").removeClass(className);
+      $("#VTSRoute").addClass("tab-pane fade show active");
+
+      this.loadVTSRouteCitySettings();
     }
+  }
+
+  async loadVTSRouteCitySettings() {
+    if (this.vtsRouteLoaded) return;
+    this.vtsRouteLoaded = true;
+    this.vtsRouteLoading = true;
+    const rawList: any[] = JSON.parse(localStorage.getItem("CityDetailList") || "[]");
+    this.vtsRouteCityList = rawList.map((item: any) => ({
+      city: item.city,
+      cityName: item.cityName,
+      databaseURL: item.databaseURL,
+      isEnabled: false,
+      hasError: false
+    }));
+
+    await Promise.all(this.vtsRouteCityList.map(async (city: any, index: number) => {
+      if (!city.databaseURL) { this.vtsRouteCityList[index].hasError = true; return; }
+      try {
+        const url = `${city.databaseURL}/Settings/VTSRouteVisibility/externalUser.json`;
+        const data: any = await this.httpService.get(url).toPromise();
+        this.vtsRouteCityList[index].isEnabled = data === true;
+      } catch {
+        this.vtsRouteCityList[index].hasError = true;
+      }
+    }));
+
+    this.vtsRouteLoading = false;
+  }
+
+  saveVTSCitySetting(city: any) {
+    if (city.hasError || !city.databaseURL) return;
+    const url = `${city.databaseURL}/Settings/VTSRouteVisibility/externalUser.json`;
+    this.httpService.put(url, city.isEnabled).subscribe(() => {
+      this.commonService.setAlertMessage("success", city.cityName + " – VTS Route visibility updated !!!");
+    });
   }
 }

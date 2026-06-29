@@ -85,6 +85,8 @@ export class RouteTrackingComponent {
   lblVTS = "#lblVTS";
   chkVTS = "#chkVTS";
   userType: any;
+  vtsRouteEnabledForExternal: boolean = false;
+  vtsSettingInstance: any;
   serviceName = "route-tracking";
   trackData: trackDetail =
     {
@@ -96,14 +98,15 @@ export class RouteTrackingComponent {
 
   ngOnInit() {
     this.userType = localStorage.getItem("userType");
-    if (this.userType == "External User") {
-      $(this.chkVTS).hide();
-      $(this.lblVTS).hide();
-      $("#divVTSRoute").hide();
-      // this.router.navigate(["/" + localStorage.getItem("cityName") + "/something-wrong"]);
-    }
     this.instancesList = [];
     this.db = this.fs.getDatabaseByCity(localStorage.getItem("cityName"));
+
+    if (this.userType == "External User") {
+      this.vtsSettingInstance = this.db.object("Settings/VTSRouteVisibility/externalUser").valueChanges().subscribe((data: any) => {
+        this.vtsRouteEnabledForExternal = data === true;
+        this.applyVTSVisibilityForExternal();
+      });
+    }
     this.commonService.savePageLoadHistory("Monitoring", "Route-Tracking", localStorage.getItem("userID"));
     //this.commonService.chkUserPageAccess(window.location.href,localStorage.getItem("cityName"));
     this.isActualData = localStorage.getItem("isActual");
@@ -141,6 +144,37 @@ export class RouteTrackingComponent {
       setTimeout(() => {
         this.selectedZone = "0";
       }, 2000);
+    }
+  }
+
+  applyVTSVisibilityForExternal() {
+    console.log(this.vtsRouteEnabledForExternal);
+    if (this.vtsRouteEnabledForExternal) {
+      for (let i = 0; i < this.routePolyline.length; i++) {
+        this.routePolyline[i].setMap(null);
+      }
+      this.routePolyline = [];
+      this.vtsRouteList = [];
+      this.vtsVehicleList = [];
+      this.vtsRouteKM = "0.00";
+      (<HTMLInputElement>document.getElementById("chkVTS")).checked = true;
+      $(this.lblVTS).html("Hide VTS Routes");
+      $("#divVTSCheck").show();
+      if (this.selectedZoneNo) {
+        $("#divVTSRoute").show();
+        this.getVTSRoute();
+      }
+    } else {
+      for (let i = 0; i < this.routePolyline.length; i++) {
+        this.routePolyline[i].setMap(null);
+      }
+      this.routePolyline = [];
+      this.vtsRouteList = [];
+      this.vtsVehicleList = [];
+      this.vtsRouteKM = "0.00";
+      (<HTMLInputElement>document.getElementById("chkVTS")).checked = false;
+      $("#divVTSCheck").hide();
+      $("#divVTSRoute").hide();
     }
   }
 
@@ -539,13 +573,12 @@ export class RouteTrackingComponent {
     this.isTiming = false;
     this.isPreviousTime = false;
     this.totalTiminingKM = 0;
-    if (this.userType != "External User") {
+    if (this.userType != "External User" || this.vtsRouteEnabledForExternal) {
       (<HTMLInputElement>document.getElementById("chkVTS")).checked = true;
       $("#divVTSCheck").show();
       $(this.lblVTS).html("Hide VTS Routes");
       $("#divVTSRoute").show();
-    }
-    else {
+    } else {
       $("#divVTSCheck").hide();
     }
 
@@ -1722,6 +1755,7 @@ export class RouteTrackingComponent {
   }
 
   ngOnDestroy() {
+    if (this.vtsSettingInstance) this.vtsSettingInstance.unsubscribe();
     if (this.instancesList.length > 0) {
       for (let i = 0; i < this.instancesList.length; i++) {
         this.instancesList[i]["instances"].unsubscribe();

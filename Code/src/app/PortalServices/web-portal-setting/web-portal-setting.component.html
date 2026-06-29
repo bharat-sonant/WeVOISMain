@@ -12,7 +12,10 @@
                 <nav class="main1">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <button class="nav-link active buttons" id="tabDailyWorkReport" data-bs-toggle="tab" data-bs-target="#DailyWorkReport" type="button" role="tab" aria-controls="DailyWorkReport" aria-selected="true" (click)="setActiveTab('DailyWorkReport');">Daily Work Report
-                                                </button>
+                        </button>
+
+                        <button class="nav-link buttons" id="tabVTSRoute" data-bs-toggle="tab" data-bs-target="#VTSRoute" type="button" role="tab" aria-controls="VTSRoute" aria-selected="false" (click)="setActiveTab('VTSRoute');">VTS Route
+                        </button>
                                                 <!--
                         <button class="nav-link buttons" id="tabReader" data-bs-toggle="tab" data-bs-target="#Reader" type="button" role="tab" aria-controls="Reader" aria-selected="false" (click)="setActiveTab('Reader');">Reader</button>
                         <button class="nav-link buttons" id="tabHalt" data-bs-toggle="tab" data-bs-target="#Halt" type="button" role="tab" aria-controls="Halt" aria-selected="false" (click)="setActiveTab('Halt');">Halt</button>
@@ -149,6 +152,46 @@
                             </div>
                         </form>
 
+                    </div>
+                    <div class="tab-pane fade" id="VTSRoute" role="tabpanel" aria-labelledby="tabVTSRoute">
+                        <div class="vrs">
+
+                            <!-- Section Header -->
+                            <div class="vrs-top">
+                                <span class="vrs-bar"></span>
+                                <div class="vrs-top-text">
+                                    <h4>External Viewer – Show VTS Routes</h4>
+                                    <p>Control whether External Viewer users can see VTS routes. Configured per city.</p>
+                                </div>
+                            </div>
+
+                            <!-- Loading -->
+                            <div class="vrs-msg" *ngIf="vtsRouteLoading">
+                                <span class="vrs-spinner"></span> Loading city settings…
+                            </div>
+
+                            <!-- City Grid -->
+                            <div class="vrs-grid" *ngIf="!vtsRouteLoading && vtsRouteCityList.length > 0">
+                                <label class="vrs-city" *ngFor="let city of vtsRouteCityList; let i = index"
+                                    [class.on]="city.isEnabled && !city.hasError"
+                                    [class.vrs-city-error]="city.hasError">
+                                    <span class="vrs-city-left">
+                                        <span class="vrs-city-name">{{city.cityName}}</span>
+                                        <span class="vrs-status" *ngIf="!city.hasError">{{city.isEnabled ? 'Enabled' : 'Disabled'}}</span>
+                                        <span class="vrs-status vrs-status-error" *ngIf="city.hasError">Unavailable</span>
+                                    </span>
+                                    <span class="vrs-switch">
+                                        <input type="checkbox" [(ngModel)]="city.isEnabled"
+                                            [name]="'vrsToggle_' + i"
+                                            [disabled]="city.hasError"
+                                            (change)="saveVTSCitySetting(city)" />
+                                        <span class="vrs-switch-ui"></span>
+                                    </span>
+                                </label>
+                            </div>
+
+
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="Reader" role="tabpanel" aria-labelledby="tabReader">
                         <form>

@@ -18,8 +18,8 @@
 
 .bg-color{
     background: #fff !important;
-    height: 88vh !important;
-
+    min-height: 88vh !important;
+    overflow-y: auto;
 }
 .main1{
    
@@ -123,6 +123,173 @@ label{
 
 
 
+
+/* ===== VTS Route Settings (vrs-*) ===== */
+$vrs-green: #0ba118;
+$vrs-green-soft: #eaf7ec;
+$vrs-ink: #1f2a24;
+
+.vrs {
+  margin: 18px 6px 6px;
+  padding: 20px;
+  border: 1px solid #ececec;
+  border-radius: 14px;
+  background: #fff;
+
+  .vrs-top {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    .vrs-bar {
+      width: 4px;
+      border-radius: 4px;
+      background: linear-gradient(180deg, $vrs-green, #3fce4d);
+      flex: 0 0 auto;
+    }
+
+    h4 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: $vrs-ink;
+    }
+
+    p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: #98a2a8;
+      line-height: 1.45;
+    }
+  }
+
+  .vrs-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #98a2a8;
+    padding: 6px 0;
+  }
+
+  .vrs-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #e4e7ec;
+    border-top-color: $vrs-green;
+    border-radius: 50%;
+    animation: vrs-spin 0.7s linear infinite;
+  }
+
+  @keyframes vrs-spin { to { transform: rotate(360deg); } }
+
+  .vrs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .vrs-city {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0;
+    padding: 11px 13px;
+    border: 1px solid #e8ebed;
+    border-radius: 11px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+
+    &:hover { border-color: #cfd5d8; }
+
+    .vrs-city-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .vrs-city-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3a444a;
+    }
+
+    .vrs-status {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #98a2a8;
+      letter-spacing: 0.2px;
+    }
+
+    &.on {
+      border-color: #b7e3c0;
+      background: $vrs-green-soft;
+      box-shadow: 0 1px 2px rgba(11, 161, 24, 0.08);
+
+      .vrs-city-name { color: #0a7a14; }
+      .vrs-status { color: $vrs-green; }
+    }
+
+    &.vrs-city-error {
+      background: #fafafa;
+      border-color: #e8ebed;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .vrs-status-error { color: #98a2a8 !important; }
+  }
+
+  .vrs-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    cursor: pointer;
+
+    input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .vrs-switch-ui {
+      position: relative;
+      width: 34px;
+      height: 19px;
+      border-radius: 19px;
+      background: #d4d9dc;
+      transition: background 0.18s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+        transition: transform 0.18s ease;
+      }
+    }
+
+    input:checked + .vrs-switch-ui { background: $vrs-green; }
+    input:checked + .vrs-switch-ui::after { transform: translateX(15px); }
+  }
+
+  .vrs-footer {
+    margin-top: 4px;
+  }
+}
 
 @media only screen and (min-width:270px) and (max-width:415px){
     .nav-tabs .nav-link {
