@@ -267,11 +267,11 @@
                                                         [hidden]="data.isAttendanceApprover=='0'"
                                                         (click)="openApprovePopup(contentApprove,i,data.approverStatus);"></i> -->
                                                         <div class="d-flex align-items-center float-right">
-                                                            <img src="../../../assets/icons/user-gear-solid.svg"
+                                                            <img *ngIf="data.isModificationRequired && data.isAttendanceApprover=='1'"
+                                                                src="../../../assets/icons/user-gear-solid.svg"
                                                                 width="16px" title="Modification"
                                                                 (click)="openModificationPopup(contentModification,i,data.approverStatus);"
-                                                                class="me-2  cursor-pointer icon-red" alt="person"
-                                                                [hidden]="!data.isModificationRequired" alt="">
+                                                                class="me-2  cursor-pointer icon-red" alt="person">
                                                             <img src="
                                                                 ../../../assets/icons/person-circle-check-solid.svg"
                                                                 class="me-2  cursor-pointer" alt="person"

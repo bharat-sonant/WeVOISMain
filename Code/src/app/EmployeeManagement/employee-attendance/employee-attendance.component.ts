@@ -900,6 +900,9 @@ export class EmployeeAttendanceComponent implements OnInit {
   Written date : 26 Dec 2024
    */
   openModificationPopup(content: any, index: any, approverStatus: any) {
+    if (this.attendanceList[index]["isAttendanceApprover"] !== '1') {
+      return;
+    }
     this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
     let height = 450;
