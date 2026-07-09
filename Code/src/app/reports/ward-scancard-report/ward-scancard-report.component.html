@@ -177,7 +177,7 @@
                           <tr *ngFor="
                               let data of wardScanedListFiltered;
                               let i = index
-                            ">
+                            " [ngClass]="{ 'active': selectedScanRow === data }">
                             <td style="border-right: 1px solid #dee2e6">
                               {{ data.cardNo }}
                             </td>
@@ -198,7 +198,7 @@
                             </td>
                             <td style="border-right: 1px solid #dee2e6"  [hidden]="isImage=='0'">
                               <img src="../../../assets/icons/eye-regular.svg" alt="eye" class="cursor-pointer" style="cursor: pointer;"
-                                [hidden]="!data.image" (click)="openImageModal(imageModal, data.image)" width="18" />
+                                [hidden]="!data.image" (click)="openImageModal(imageModal, data.image, data)" width="18" />
                             </td>
                           </tr>
                         </tbody>

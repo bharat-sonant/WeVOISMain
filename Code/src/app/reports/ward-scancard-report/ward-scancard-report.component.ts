@@ -49,6 +49,7 @@ export class WardScancardReportComponent implements OnInit {
   cardExportList: any[] = [];
   wasteCategoryList: any[] = [];
   selectedImage: string = '';
+  selectedScanRow: any = null;
 
   // In wasteCategory values ke liye scan card image available hoti hai
   wastePhotoCategories: string[] = ["Segregated", "Two Bin Segregation", "Three Bin Segregation", "Four Bin Segregation", "No Segregation"];
@@ -245,7 +246,8 @@ export class WardScancardReportComponent implements OnInit {
     }
   }
 
-  openImageModal(content: any, imageUrl: string) {
+  openImageModal(content: any, imageUrl: string, rowData?: any) {
+   this.selectedScanRow = rowData;
    this.modalService.open(content, { size: 'lg' });
     let windowHeight = $(window).height();
     let windowWidth = $(window).width();
@@ -569,6 +571,7 @@ export class WardScancardReportComponent implements OnInit {
     this.wardScaanedList = [];
     this.wardScanedListFiltered = [];
     this.totalScanedCards = 0;
+    this.selectedScanRow = null;
   }
 
   getScanDetail(wardNo: any, index: any) {
