@@ -469,7 +469,9 @@ textarea:focus-visible {
 
 .table-scroll {
   padding: 0px;
-  height: 88vh;
+  // Card 88vh hai aur usme 55px ka header + card-body padding bhi hai; isliye list ki
+  // height header/padding ghata ke rakhte hain, warna aakhri row card ke overflow:hidden se clip ho jaati thi.
+  height: calc(88vh - 75px);
   overflow: hidden;
   overflow-y: scroll;
 }
