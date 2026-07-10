@@ -52,7 +52,7 @@ export class WardScancardReportComponent implements OnInit {
   selectedScanRow: any = null;
 
   // In wasteCategory values ke liye scan card image available hoti hai
-  wastePhotoCategories: string[] = ["Segregated", "Two Bin Segregation", "Three Bin Segregation", "Four Bin Segregation", "No Segregation"];
+  wastePhotoCategories: string[] = ["Segregated", "Two Bin Segregation", "Three Bin Segregation", "Four Bin Segregation", "No Segregation", "No Waste"];
 
   ngOnInit() {
     this.isImage="0";
@@ -567,6 +567,37 @@ export class WardScancardReportComponent implements OnInit {
 
   }
 
+  // Dropdown ko loaded scan data se banate hain: jo wasteCategory values actual
+  // data mein aayi, sirf wahi filter options dikhein (bharatpur/devtest ke liye).
+  buildWasteCategoryList() {
+    if (this.cityName != "bharatpur" && this.cityName != "devtest") {
+      return;
+    }
+    let list = [];
+    for (let i = 0; i < this.wardScaanedList.length; i++) {
+      let cat = this.wardScaanedList[i]["wasteCategory"];
+      if (cat != undefined && cat != null && cat.toString().trim() != "") {
+        if (list.findIndex(item => item.category == cat) === -1) {
+          list.push({ category: cat });
+        }
+      }
+    }
+    this.wasteCategoryList = list;
+  }
+
+  // URL ko preload karke check karte hain ki image actually storage mein hai ya nahi.
+  // row.image tabhi set hota hai jab image load ho jaye, warna khaali rehta hai —
+  // isse "no image" waale case mein eye-icon hidden rehta hai.
+  verifyImageExists(row: any, url: string) {
+    if (!url) {
+      return;
+    }
+    let img = new Image();
+    img.onload = () => { row.image = url; };
+    img.onerror = () => { row.image = ""; };
+    img.src = url;
+  }
+
   clearScanCardDetail() {
     this.wardScaanedList = [];
     this.wardScanedListFiltered = [];
@@ -652,7 +683,7 @@ export class WardScancardReportComponent implements OnInit {
                     }
 
                     // ✅ Direct push (NO scanBy filter)
-                    this.wardScaanedList.push({
+                    let scanRow = {
                       wardNo: wardNo,
                       cardNo: cardNumber,
                       time: scanTime,
@@ -661,8 +692,14 @@ export class WardScancardReportComponent implements OnInit {
                       personName: "",
                       sno: Number(date),
                       wasteCategory: wasteCategory,
-                      image: wastePhoto,
-                    });
+                      // No Waste ke alawa baaki categories purane tareeke se seedhe URL (koi check nahi).
+                      image: wasteCategory == "No Waste" ? "" : wastePhoto,
+                    };
+                    this.wardScaanedList.push(scanRow);
+                    // Sirf No Waste ke liye verify karo ki image storage mein hai ya nahi.
+                    if (wasteCategory == "No Waste") {
+                      this.verifyImageExists(scanRow, wastePhoto);
+                    }
 
                     // Sorting latest first
                     this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
@@ -741,7 +778,7 @@ export class WardScancardReportComponent implements OnInit {
                         }
                       }
 
-                      this.wardScaanedList.push({
+                      let scanRow = {
                         wardNo: wardNo,
                         cardNo: cardNumber,
                         time: scanTime,
@@ -750,8 +787,14 @@ export class WardScancardReportComponent implements OnInit {
                         personName: "",
                         sno: Number(date),
                         wasteCategory: wasteCategory,
-                        image: wastePhoto,
-                      });
+                        // No Waste ke alawa baaki categories purane tareeke se seedhe URL (koi check nahi).
+                        image: wasteCategory == "No Waste" ? "" : wastePhoto,
+                      };
+                      this.wardScaanedList.push(scanRow);
+                      // Sirf No Waste ke liye verify karo ki image storage mein hai ya nahi.
+                      if (wasteCategory == "No Waste") {
+                        this.verifyImageExists(scanRow, wastePhoto);
+                      }
 
                       this.wardScaanedList = this.wardScaanedList.sort((a, b) =>
                         Number(b.sno) < Number(a.sno) ? 1 : -1
@@ -806,6 +849,8 @@ export class WardScancardReportComponent implements OnInit {
                 }
               }
             }
+
+            this.buildWasteCategoryList();
 
           }
         });
