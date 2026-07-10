@@ -147,6 +147,33 @@ export class WardMarkingSummaryComponent implements OnInit {
   getWards() {
 
     this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
+    // For Sikar, also show the Market/Commercial marking routes. These are hidden
+    // from the shared allZoneList (setAllZones) and actually live in the marking
+    // defaults (markingWards), so re-add them here only for this screen.
+    if (this.cityName == "sikar") {
+      this.addSikarSpecialZones();
+    }
+    this.buildWardProgress();
+  }
+
+  addSikarSpecialZones() {
+    let showList = ["Market", "mkt", "Commercial"];
+    let markingWardsData = localStorage.getItem("markingWards");
+    let markingWards = markingWardsData ? JSON.parse(markingWardsData) : [];
+    for (let i = 0; i < markingWards.length; i++) {
+      let zoneNo = markingWards[i]["zoneNo"];
+      if (zoneNo == null) {
+        continue;
+      }
+      let match = showList.find(name => zoneNo.toString().includes(name));
+      let already = this.wardList.find(item => item["zoneNo"] == zoneNo);
+      if (match != undefined && already == undefined) {
+        this.wardList.push({ zoneNo: zoneNo, zoneName: markingWards[i]["zoneName"] });
+      }
+    }
+  }
+
+  buildWardProgress() {
     this.wardProgressList = [];
     if (this.wardList.length > 0) {
       for (let i = 0; i < this.wardList.length; i++) {
