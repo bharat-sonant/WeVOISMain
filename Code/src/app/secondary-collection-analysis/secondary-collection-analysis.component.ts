@@ -1250,8 +1250,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       filledFarFromImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FfilledFarFromImage.jpg?alt=media&token=" + token + "";
       urlObj["filledFarFromImageUrl"] = filledFarFromImageUrl;
       let filePath = "/" + storageCityName + "/DustbinImages/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/filledFarFromImage.jpg";
-      const fileRef = this.storage.ref(filePath);
-      const task = this.storage.upload(filePath, file);
+      const fileRef = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(filePath);
+      const task = fileRef.put(file);
     }
 
 
@@ -1259,8 +1259,8 @@ export class SecondaryCollectionAnalysisComponent implements OnInit {
       emptyFarFromImageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDustbinImages%2FDustbinPickHistory%2F" + this.currentYear + "%2F" + this.currentMonthName + "%2F" + this.selectedDate + "%2F" + this.binDetail.binId + "%2F" + this.planDetail.planId + "%2FemptyFarFromImage.jpg?alt=media&token=" + token + "";
       urlObj["emptyFarFromImageUrl"] = emptyFarFromImageUrl;
       let filePath = "/" + storageCityName + "/DustbinImages/DustbinPickHistory/" + this.currentYear + "/" + this.currentMonthName + "/" + this.selectedDate + "/" + this.binDetail.binId + "/" + this.planDetail.planId + "/emptyFarFromImage.jpg";
-      const fileRef = this.storage.ref(filePath);
-      const task = this.storage.upload(filePath, file1);
+      const fileRef = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(filePath);
+      const task = fileRef.put(file1);
     }
 
     let keyArray = Object.keys(urlObj);

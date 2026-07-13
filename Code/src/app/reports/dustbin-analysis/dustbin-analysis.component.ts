@@ -1630,7 +1630,7 @@ export class DustbinAnalysisComponent implements OnInit {
         const filePath = `/${storageCityName}/DustbinImages/DustbinPickHistory/${this.currentYear}/${this.currentMonthName}/${this.selectedDate}/${this.binDetail.binId}/${this.planDetail.planId}/${name}`;
 
         urlObj[`${key}ImageUrl`] = url;
-        uploadPromises.push(this.storage.upload(filePath, file));
+        uploadPromises.push(this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(filePath).put(file));
       }
     });
 

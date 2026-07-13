@@ -27,6 +27,8 @@ export class UserAddComponent implements OnInit {
   cityName: any;
   roleList: any[] = [];
   cityList: any[] = [];
+  activeCityList: any[] = [];
+  archivedCityList: any[] = [];
   userJsonData: any;
   divLoader = "#divLoader";
   canUpdateAccountDetail: any = 0;
@@ -41,6 +43,8 @@ export class UserAddComponent implements OnInit {
     this.commonService.savePageLoadHistory("Users", "Add-Users", localStorage.getItem("userID"));
     this.cityList = JSON.parse(localStorage.getItem("cityList")).sort((a, b) => b.cityName < a.cityName ? 1 : -1);;
     // this.cityList=this.cityList.sort((a, b) => b.name < a.name ? 1 : -1);
+    this.activeCityList = this.cityList.filter(item => item.isArchived != "yes");
+    this.archivedCityList = this.cityList.filter(item => item.isArchived == "yes");
     this.toDayDate = this.commonService.setTodayDate();
     this.userid = this.actRoute.snapshot.paramMap.get("id");
     this.getRoles();

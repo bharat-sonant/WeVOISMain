@@ -140,7 +140,13 @@
 
                                 </div>
                                 <div class="col-12 border-bottom" style="margin-top: 20px;">City for access</div>
-                                <div class="col-md-2" style="margin-top: 10px;" *ngFor="let dt of cityList">
+                                <div class="col-md-2" style="margin-top: 10px;" *ngFor="let dt of activeCityList">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="chkCity{{dt.city}}">&nbsp;&nbsp; <label>{{dt.cityName}}</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 border-bottom" style="margin-top: 20px;" *ngIf="archivedCityList.length > 0">Archived Cities</div>
+                                <div class="col-md-2" style="margin-top: 10px;" *ngFor="let dt of archivedCityList">
                                     <div class="form-group">
                                         <input type="checkbox" id="chkCity{{dt.city}}">&nbsp;&nbsp; <label>{{dt.cityName}}</label>
                                     </div>

@@ -297,7 +297,7 @@ export class SalaryTransactionComponent implements OnInit {
     this.commonService.saveJsonFile(obj, "uploadHistory.json", filePath);
 
     const path = "" + this.commonService.getFireStoreCity() + "/EmployeeSalaryTransaction/" + this.uploadYear + "/Files/" + fileName;
-    this.storage.upload(path, excelFile);
+    this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(path).put(excelFile);
   }
 
   saveData(fileList: any) {

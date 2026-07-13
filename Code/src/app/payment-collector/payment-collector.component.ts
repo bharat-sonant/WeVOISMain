@@ -557,8 +557,8 @@ export class PaymentCollectorComponent implements OnInit {
         let file = element.files[0];
         this.fileName = this.lastEmpId + ".jpg";
         const path = this.commonService.getFireStoreCity() + "/CollectionManagement/" + this.lastEmpId + "/" + this.fileName;
-        const storageRef = this.storage.ref(path);
-        const uploadTask = this.storage.upload(path, file);
+        const storageRef = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(path);
+        const uploadTask = storageRef.put(file);
       }
       jsonData["lastKey"] = this.lastEmpId;
       $("#key").val("0");
@@ -571,8 +571,8 @@ export class PaymentCollectorComponent implements OnInit {
         let file = element.files[0];
         this.fileName = this.lastEmpId + ".jpg";
         const path = this.commonService.getFireStoreCity() + "/CollectionManagement/" + this.lastEmpId + "/" + this.fileName;
-        const storageRef = this.storage.ref(path);
-        const uploadTask = this.storage.upload(path, file);
+        const storageRef = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(path);
+        const uploadTask = storageRef.put(file);
       }
       this.commonService.setAlertMessage("success", "User updated successfully !!!");
     }

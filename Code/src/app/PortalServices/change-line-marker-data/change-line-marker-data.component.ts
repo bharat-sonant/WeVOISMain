@@ -402,7 +402,7 @@ export class ChangeLineMarkerDataComponent implements OnInit {
     let instance = this.db.object(path).valueChanges().subscribe(data => {
       instance.unsubscribe();
       if (data != null) {
-        this.commonService.saveCommonJsonFile(data, "MarkerWardMapping.json", this.commonService.getFireStoreCity() + "/MarkerWardMapping/");
+        this.commonService.saveJsonFile(data, "MarkerWardMapping.json", "/MarkerWardMapping/");
         this.commonService.setAlertMessage("success", "File saved successfully.")
       }
     });
