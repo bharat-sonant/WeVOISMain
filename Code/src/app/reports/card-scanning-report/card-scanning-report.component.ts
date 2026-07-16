@@ -330,6 +330,10 @@ export class CardScanningReportComponent implements OnInit {
               let scanPercentage =
                 (Number(detail.scanned) / Number(detail.cards)) * 100;
 
+              if (this.cityName.toLowerCase().trim() === 'hisar' && scanPercentage > 100) {
+                scanPercentage = 100;
+              }
+
               if (!isNaN(scanPercentage)) {
                 detail.percentage = scanPercentage.toFixed(0);
               }

@@ -242,6 +242,11 @@ export class WardMarkingSummaryComponent implements OnInit {
       // htmlString += "<td>";
       //  htmlString += "MarkerKey";
       //  htmlString += "</td>";
+      if (this.cityName == 'sikar') {
+        htmlString += "<td>";
+        htmlString += "Marking Date";
+        htmlString += "</td>";
+      }
       htmlString += "<td>";
       htmlString += "Marker ID";
       htmlString += "</td>";
@@ -346,6 +351,11 @@ export class WardMarkingSummaryComponent implements OnInit {
         //  htmlString += "<td t='s'>";
         //  htmlString += this.markerExportList[i]["MarkerNo"];
         //  htmlString += "</td>";
+        if (this.cityName == 'sikar') {
+          htmlString += "<td t='s'>";
+          htmlString += this.markerExportList[i]["markingDate"];
+          htmlString += "</td>";
+        }
         htmlString += "<td>";
         if (!this.markerExportList[i]["markerId"].includes("HISARM")) {
           htmlString += this.markerExportList[i]["markerId"];
