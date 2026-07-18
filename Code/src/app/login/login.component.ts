@@ -74,6 +74,7 @@ export class LoginComponent implements OnInit {
         let key = keyArray[i];
         list.push({ city: key, latLng: cityCommonDataJsonData[key]["latLng"],cityLogo: cityCommonDataJsonData[key]["cityLogo"]});
         localStorage.setItem("CityCommonDataList", JSON.stringify(list));
+        console.log(list)
       }
     }, error => {
 
@@ -121,8 +122,6 @@ export class LoginComponent implements OnInit {
   }
 
   doLogin() {
-    this.commonService.setAlertMessage("error", "Something went wrong, Please contact to the administrator !!!");
-    return;
     localStorage.setItem("loginDate", this.toDayDate);
     let userName = $("#txtUserName").val();
     let password = $("#txtPassword").val();
