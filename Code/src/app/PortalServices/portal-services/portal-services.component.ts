@@ -124,7 +124,9 @@ export class PortalServicesComponent implements OnInit {
           $("#divWardRouteAutoScan").show();
         }
         if (userAccessList[i]["pageId"] == "8A16" && userAccessList[i]["userId"] == this.userId && userAccessList[i]["city"] == this.cityName) {
-          $("#divBGServices").show();
+          if (this.userId == "4") {
+            $("#divBGServices").show();
+          }
         }
       }
     }
