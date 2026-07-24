@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import { AngularFireStorage } from "angularfire2/storage";
+import { ActivatedRoute, Router } from "@angular/router";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 @Component({
@@ -12,7 +13,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 })
 export class ChangeLineMarkerDataComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient, private route: ActivatedRoute, private router: Router) { }
   cityName: any;
   db: any;
   zoneList: any[] = [];
@@ -38,6 +39,13 @@ export class ChangeLineMarkerDataComponent implements OnInit {
 
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("allZoneList"));
+  }
+
+  // Opens the "Marker Data Move" page, keeping the same cityId/id route segments.
+  goToMoveMarkerData() {
+    let cityId = this.route.snapshot.paramMap.get("cityId");
+    let id = this.route.snapshot.paramMap.get("id");
+    this.router.navigate([cityId, id, "marker-data-move"]);
   }
 
   getAllZones() {

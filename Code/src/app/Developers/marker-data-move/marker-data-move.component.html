@@ -1,0 +1,46 @@
+<div id="divLoader" class="loaderClass">
+    <span class="spanLoader" id="spLoader">
+        <img src="../../../assets/img/loading.gif" width="50"><br />
+        <span style="color:#fff; font-weight: normal;font-size: 18px;"> Moving ward markers to new path....<br /></span>
+        <span style="color:#0ba118; font-size: 24px;"> Please wait...</span>
+    </span>
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-2 header1">
+        </div>
+        <div class="col-md-8 header2">
+            Marker Data Move
+        </div>
+        <div class="col-md-2 header3"></div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="center-wrap">
+        <div class="card card3">
+            <div class="card-header custom-header">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h5> <b>Move Markers Data</b></h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body card-body3">
+                <div class="outer">
+                    <label>Ward No</label>
+                    <div class="d-flex wrap-class">
+                        <div class="wrap-input-effects" required>
+                            <select class="caret-select" id="ddlWard" [(ngModel)]="moveValue">
+                                <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group button">
+                            <button id="btnMove" class="btn btn-success btn-xs" (click)="moveData();">MOVE DATA</button>
+                        </div>
+                    </div>
+                    <small style="color:#707070;">Ward select karo aur MOVE DATA karo. Safe to re-run — already moved markers skip/update honge.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

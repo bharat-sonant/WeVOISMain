@@ -228,6 +228,7 @@ export class HouseMarkingComponent {
     $(this.divLoader).show();
     $('#markerImageBox').hide();
     (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
+    this.markersDataCache = null; // new-path cache: ward badla to fresh load
     this.clearAllData();
     this.clearAllOnMap();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 4).then((data: any) => {
@@ -348,9 +349,12 @@ export class HouseMarkingComponent {
     return new Promise((resolve) => {
       this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "showMarkers");
 
-      const dbPath = `EntityMarkingData/MarkedHouses/${this.selectedZone}/${lineNo}`;
-      const houseInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
-        houseInstance.unsubscribe();
+      // OLD PATH (comment kiya — display ab new path se):
+      // const dbPath = `EntityMarkingData/MarkedHouses/${this.selectedZone}/${lineNo}`;
+      // const houseInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      //   houseInstance.unsubscribe();
+      // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+      this.getNewPathLineData(lineNo).then((data: any) => {
         if (!data) {
           resolve(); // ✅ resolve even if no data
           return;
@@ -363,9 +367,10 @@ export class HouseMarkingComponent {
           return;
         }
 
-        const cityName = this.cityName;
-        const city =
-          cityName === "sikar" ? "Sikar-Survey" : this.commonService.getFireStoreCity();
+        // OLD PATH city (comment kiya — image ab new flat folder se):
+        // const cityName = this.cityName;
+        // const city =
+        //   cityName === "sikar" ? "Sikar-Survey" : this.commonService.getFireStoreCity();
 
         let processed = 0; // ✅ track markers processed
         const total = keyArray.length;
@@ -396,16 +401,18 @@ export class HouseMarkingComponent {
           const mobileNo = entry["mobileNumber"] || "---";
 
 
-          const markerImgURL =
-            this.commonService.fireStoragePath +
-            city +
-            "%2FMarkingSurveyImages%2F" +
-            this.selectedZone +
-            "%2F" +
-            lineNo +
-            "%2F" +
-            imageName +
-            "?alt=media";
+          // OLD PATH image URL (comment kiya):
+          // const markerImgURL =
+          //   this.commonService.fireStoragePath +
+          //   city +
+          //   "%2FMarkingSurveyImages%2F" +
+          //   this.selectedZone +
+          //   "%2F" +
+          //   lineNo +
+          //   "%2F" +
+          //   imageName +
+          //   "?alt=media";
+          const markerImgURL = this.getNewPathImageUrl(entry);
 
           let showMarkingDate = "---";
           if (entry["date"]) {
@@ -600,9 +607,12 @@ export class HouseMarkingComponent {
   }
   getLineApproveStatus(lineNo: any, latLng: any, i: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineApproveStatus");
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/ApproveStatus/status";
-    let approveStatusInstance = this.db.object(dbPath).valueChanges().subscribe(approveStatus => {
-      // approveStatusInstance.unsubscribe();
+    // OLD PATH (comment kiya — line status ab new path LineSummary se):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/ApproveStatus/status";
+    // let approveStatusInstance = this.db.object(dbPath).valueChanges().subscribe(approveStatus => {
+    //   // approveStatusInstance.unsubscribe();
+    // NEW PATH: MarkersMapping/LineSummary/{ward}/{line}/ApproveStatus/status
+    this.getNewPathLineApproveStatus(lineNo).then((approveStatus: any) => {
 
       if (approveStatus != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineApproveStatus", approveStatus);
@@ -630,12 +640,159 @@ export class HouseMarkingComponent {
   setDefaultImage(event: any) {
     event.target.src = '../../../assets/img/image-not-found.jpg'; // fallback image
   }
+
+  // ================= NEW PATH (MarkersData / MarkersMapping) =================
+  // Display ab new path se aata hai; writes (approve/reject/edit/delete) abhi
+  // bhi old path par hain, isliye index = old markerNo hi rakha gaya hai.
+
+  // Whole MarkersData cache — ward change par clear hota hai.
+  markersDataCache: any = null;
+
+  loadMarkersData(): Promise<any> {
+    return new Promise((resolve) => {
+      if (this.markersDataCache != null) {
+        resolve(this.markersDataCache);
+        return;
+      }
+      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((data: any) => {
+        markersInstance.unsubscribe();
+        this.markersDataCache = data != null ? data : {};
+        resolve(this.markersDataCache);
+      });
+    });
+  }
+
+  // Old path jaisa hi shape ({oldMarkerNo: record}) deta hai, par data
+  // MarkersData se aata hai. oldMarkerNo OldMarkerToNewUid mapping se milta
+  // hai, isliye purane action flows (jo old path par likhte hain) bina kisi
+  // change ke kaam karte rehte hain.
+  getNewPathLineData(lineNo: any, zone: any = null): Promise<any> {
+    return new Promise((resolve) => {
+      let ward = zone != null ? zone : this.selectedZone;
+      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + lineNo;
+      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
+        linkInstance.unsubscribe();
+        if (links == null) {
+          resolve(null);
+          return;
+        }
+        this.loadMarkersData().then((markersData: any) => {
+          let lineData = {};
+          let keyArray = Object.keys(links);
+          let found = 0;
+          for (let i = 0; i < keyArray.length; i++) {
+            let markerNo = keyArray[i];
+            let uid = links[markerNo];
+            if (uid == null || uid == "") {
+              continue; // numeric keys ki wajah se aaye array-nulls skip
+            }
+            if (markersData[uid] == null) {
+              continue;
+            }
+            lineData[markerNo] = markersData[uid];
+            found++;
+          }
+          resolve(found > 0 ? lineData : null);
+        });
+      });
+    });
+  }
+
+  // New flat image location: DevTest/MarkingSurveyImages/AllMarkerImages/{imgRef}
+  getNewPathImageUrl(entry: any): string {
+    let imgRef = entry != null && entry["imgRef"] != null ? entry["imgRef"] : "";
+    return this.commonService.fireStoragePath + "DevTest%2FMarkingSurveyImages%2FAllMarkerImages%2F" + imgRef + "?alt=media";
+  }
+
+  // Whole ward ka data old-path jaisa hi shape ({lineNo: {oldMarkerNo: record}})
+  // me deta hai, par MarkersData + OldMarkerToNewUid se. Old path ka
+  // MarkedHouses/{ward} read isse replace hota hai.
+  getNewPathWardData(zone: any = null): Promise<any> {
+    return new Promise((resolve) => {
+      let ward = zone != null ? zone : this.selectedZone;
+      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward;
+      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
+        linkInstance.unsubscribe();
+        if (wardLinks == null) {
+          resolve(null);
+          return;
+        }
+        this.loadMarkersData().then((markersData: any) => {
+          let wardData = {};
+          let found = 0;
+          let lineArray = Object.keys(wardLinks);
+          for (let l = 0; l < lineArray.length; l++) {
+            let lineNo = lineArray[l];
+            let links = wardLinks[lineNo];
+            if (links == null || typeof links != "object") {
+              continue;
+            }
+            let lineData = {};
+            let markerArray = Object.keys(links);
+            for (let m = 0; m < markerArray.length; m++) {
+              let markerNo = markerArray[m];
+              let uid = links[markerNo];
+              if (uid == null || uid == "") {
+                continue; // numeric keys ki wajah se aaye array-nulls skip
+              }
+              if (markersData[uid] == null) {
+                continue;
+              }
+              lineData[markerNo] = markersData[uid];
+              found++;
+            }
+            if (Object.keys(lineData).length > 0) {
+              wardData[lineNo] = lineData;
+            }
+          }
+          resolve(found > 0 ? wardData : null);
+        });
+      });
+    });
+  }
+
+  // Line-level ApproveStatus/status ab new path (LineSummary) se aata hai.
+  getNewPathLineApproveStatus(lineNo: any): Promise<any> {
+    return new Promise((resolve) => {
+      let statusPath = "EntityMarkingData/MarkersMapping/LineSummary/" + this.selectedZone + "/" + lineNo + "/ApproveStatus/status";
+      let statusInstance = this.db.object(statusPath).valueChanges().subscribe((status: any) => {
+        statusInstance.unsubscribe();
+        resolve(status);
+      });
+    });
+  }
+
+  // ---- WRITE helpers (writes ab new path par: MarkersData/{uid} + LineSummary) ----
+  // Old markerNo -> new MarkersData object-path (OldMarkerToNewUid mapping se).
+  // Marker abhi migrate nahi hua (uid nahi mila) to null -> caller write skip kare.
+  getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
+    return new Promise((resolve) => {
+      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + line + "/" + markerNo;
+      let inst = this.db.object(linkPath).valueChanges().subscribe((uid: any) => {
+        inst.unsubscribe();
+        if (uid == null || uid == "") {
+          resolve(null);
+          return;
+        }
+        resolve("EntityMarkingData/MarkersData/" + uid);
+      });
+    });
+  }
+
+  // Line-level data (ApproveStatus, marksCount, alreadyInstalledCount) ka new-path base.
+  getLineSummaryPath(ward: any, line: any): string {
+    return "EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + line;
+  }
+  // ===========================================================================
   getMarkedHouses(lineNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkedHouses");
     $(this.divLoader).show();
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      houseInstance.unsubscribe();
+    // OLD PATH (comment kiya — display ab new path se):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+    //   houseInstance.unsubscribe();
+    // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+    this.getNewPathLineData(lineNo).then((data: any) => {
       this.markerList = [];
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkedHouses", data);
@@ -767,11 +924,13 @@ export class HouseMarkingComponent {
                 plotBreadth = "---";
               }
 
-              let city = this.commonService.getFireStoreCity();
-              if (this.cityName == "sikar") {
-                city = "Sikar-Survey";
-              }
-              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+              // OLD PATH image URL (comment kiya — image ab new flat folder se):
+              // let city = this.commonService.getFireStoreCity();
+              // if (this.cityName == "sikar") {
+              //   city = "Sikar-Survey";
+              // }
+              // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.getNewPathImageUrl(data[index]);
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -945,9 +1104,12 @@ export class HouseMarkingComponent {
 
 
     this.markerList = this.markerList.filter(item => item.lineNo == this.markerData.lineno && item.zoneNo == this.markerData.wardno);
-    let path = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-    let houseInstance = this.db.object(path).valueChanges().subscribe((data) => {
-      houseInstance.unsubscribe();
+    // OLD PATH (comment kiya — display ab new path se):
+    // let path = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+    // let houseInstance = this.db.object(path).valueChanges().subscribe((data) => {
+    //   houseInstance.unsubscribe();
+    // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+    this.getNewPathLineData(lineNo, zoneNo).then((data: any) => {
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOtherMarkerData", data);
         let keyArray = Object.keys(data);
@@ -1071,11 +1233,13 @@ export class HouseMarkingComponent {
               }
 
 
-              let city = this.commonService.getFireStoreCity();
-              if (this.cityName == "sikar") {
-                city = "Sikar-Survey";
-              }
-              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              // OLD PATH image URL (comment kiya — image ab new flat folder se):
+              // let city = this.commonService.getFireStoreCity();
+              // if (this.cityName == "sikar") {
+              //   city = "Sikar-Survey";
+              // }
+              // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.getNewPathImageUrl(data[index]);
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -1251,8 +1415,14 @@ export class HouseMarkingComponent {
         totalArea: totalArea,
         vacantArea: vacantArea
       };
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index + "/BuildingDetails";
-      this.db.object(dbPath).update(buildingObj);
+      // OLD PATH write (comment kiya — ab new path MarkersData par):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index + "/BuildingDetails";
+      // this.db.object(dbPath).update(buildingObj);
+      this.getMarkerNewPath(zoneNo, lineNo, index).then((newPath: any) => {
+        if (newPath != null) {
+          this.db.object(newPath + "/BuildingDetails").update(buildingObj);
+        }
+      });
       let obj = {
         preLandType: preLandType,
         prePlotLength: prePlotLength,
@@ -1285,24 +1455,28 @@ export class HouseMarkingComponent {
       }
       this.db.object(dbPath + "/" + lastKey).update(obj);
       this.db.object(dbPath).update({ lastKey: lastKey });
-      dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-      let markerBuildingUpdateId = lastKey.toString();
-      let markerUpdateInstance = this.db.object(dbPath + "/markerBuildingUpdateId").valueChanges().subscribe(updateId => {
-        markerUpdateInstance.unsubscribe();
-        if (updateId != null) {
-          markerBuildingUpdateId = updateId + "," + lastKey;
-        }
-        let detail;
-        if (type == "marker") {
-          detail = this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
-        }
-        else if (type == "includedMarker") {
-          detail = this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
-        }
-        if (detail != undefined) {
-          detail.markerBuildingUpdateId = markerBuildingUpdateId;
-        }
-        this.db.object(dbPath).update({ markerBuildingUpdateId });
+      // OLD PATH (comment kiya — markerBuildingUpdateId ab new path MarkersData par):
+      // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
+      this.getMarkerNewPath(zoneNo, lineNo, index).then((newPath: any) => {
+        if (newPath == null) { return; }
+        let markerBuildingUpdateId = lastKey.toString();
+        let markerUpdateInstance = this.db.object(newPath + "/markerBuildingUpdateId").valueChanges().subscribe(updateId => {
+          markerUpdateInstance.unsubscribe();
+          if (updateId != null) {
+            markerBuildingUpdateId = updateId + "," + lastKey;
+          }
+          let detail;
+          if (type == "marker") {
+            detail = this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+          }
+          else if (type == "includedMarker") {
+            detail = this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+          }
+          if (detail != undefined) {
+            detail.markerBuildingUpdateId = markerBuildingUpdateId;
+          }
+          this.db.object(newPath).update({ markerBuildingUpdateId });
+        });
       });
     });
   }
@@ -1378,8 +1552,14 @@ export class HouseMarkingComponent {
       return this.commonService.setAlertMessage('error', 'Please add remark');
     }
 
-    const path = `EntityMarkingData/MarkedHouses/${this.toUpdateRemark.zoneNo}/${this.toUpdateRemark.lineNo}/${this.toUpdateRemark.index}`;
-    this.db.object(path).update({ markerRemark });
+    // OLD PATH write (comment kiya — ab new path MarkersData par):
+    // const path = `EntityMarkingData/MarkedHouses/${this.toUpdateRemark.zoneNo}/${this.toUpdateRemark.lineNo}/${this.toUpdateRemark.index}`;
+    // this.db.object(path).update({ markerRemark });
+    this.getMarkerNewPath(this.toUpdateRemark.zoneNo, this.toUpdateRemark.lineNo, this.toUpdateRemark.index).then((newPath: any) => {
+      if (newPath != null) {
+        this.db.object(newPath).update({ markerRemark });
+      }
+    });
 
     // update it locally
     let marker: any;
@@ -1608,8 +1788,14 @@ export class HouseMarkingComponent {
         else {
           objMarker = { houseType: houseTypeId, ownerName: ownerName, mobileNumber: mobileNo, houseNumber: houseNo, address: address, totalHouses: servingCount, totalPerson: totalPerson };
         }
-        let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-        this.db.object(dbPath).update(objMarker);
+        // OLD PATH write (comment kiya — ab new path MarkersData par):
+        // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
+        // this.db.object(dbPath).update(objMarker);
+        this.getMarkerNewPath(zoneNo, lineNo, index).then((newPath: any) => {
+          if (newPath != null) {
+            this.db.object(newPath).update(objMarker);
+          }
+        });
         let obj = {
           preHouseTypeId: preHouseTypeId,
           preOwnerName: preOwnerName,
@@ -1653,14 +1839,18 @@ export class HouseMarkingComponent {
       }
       this.db.object(dbPath + "/" + lastKey).update(obj);
       this.db.object(dbPath).update({ lastKey: lastKey });
-      dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-      let markerUpdateId = lastKey.toString();
-      let markerUpdateInstance = this.db.object(dbPath + "/markerUpdateId").valueChanges().subscribe(updateId => {
-        markerUpdateInstance.unsubscribe();
-        if (updateId != null) {
-          markerUpdateId = updateId + "," + lastKey;
-        }
-        this.db.object(dbPath).update({ markerUpdateId });
+      // OLD PATH (comment kiya — markerUpdateId ab new path MarkersData par):
+      // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
+      this.getMarkerNewPath(zoneNo, lineNo, index).then((newPath: any) => {
+        if (newPath == null) { return; }
+        let markerUpdateId = lastKey.toString();
+        let markerUpdateInstance = this.db.object(newPath + "/markerUpdateId").valueChanges().subscribe(updateId => {
+          markerUpdateInstance.unsubscribe();
+          if (updateId != null) {
+            markerUpdateId = updateId + "," + lastKey;
+          }
+          this.db.object(newPath).update({ markerUpdateId });
+        });
       });
 
     });
@@ -1682,8 +1872,14 @@ export class HouseMarkingComponent {
       let modifiedHouseTypeHistoryId = newRef.key;
       this.db.object("EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId + "/a").remove();
       this.db.list("EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId).push(data);
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-      this.db.object(dbPath).update({ modifiedHouseTypeHistoryId });
+      // OLD PATH write (comment kiya — ab new path MarkersData par):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
+      // this.db.object(dbPath).update({ modifiedHouseTypeHistoryId });
+      this.getMarkerNewPath(zoneNo, lineNo, index).then((newPath: any) => {
+        if (newPath != null) {
+          this.db.object(newPath).update({ modifiedHouseTypeHistoryId });
+        }
+      });
 
       let detail;
       if (type == "marker") {
@@ -1893,7 +2089,9 @@ export class HouseMarkingComponent {
                   }
                 }
               }
-              let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
+              // OLD PATH (comment kiya — ab new path LineSummary par):
+              // let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
+              let dbHouseHoldPath = this.getLineSummaryPath(zoneNo, line);
               this.db.object(dbHouseHoldPath).update({ houseHoldCount: houseHoldCount, complexCount: complexCount });
             }
 
@@ -1953,8 +2151,12 @@ export class HouseMarkingComponent {
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-      let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      let dbPath: any = "";
+      // OLD PATH read (comment kiya — ab new path MarkersData se):
+      // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+      this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
+      if (newMarkerPath == null) { return; }
+      let markerInstance = this.db.object(newMarkerPath).valueChanges().subscribe((data) => {
         markerInstance.unsubscribe();
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "removeMarker", data);
@@ -1965,7 +2167,9 @@ export class HouseMarkingComponent {
           dbPath = "EntityMarkingData/RemovedMarkers/" + zoneNo + "/" + lineNo + "/" + markerNo;
           this.db.object(dbPath).update(data);
 
-          dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/";
+          // OLD PATH (comment kiya — null-out ab new path MarkersData par):
+          // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/";
+          dbPath = newMarkerPath;
           let keyArray = Object.keys(data);
           if (data != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "removeMarker", data);
@@ -1977,7 +2181,9 @@ export class HouseMarkingComponent {
             }
           }
           this.db.object(dbPath).update(data);
-          dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/marksCount";
+          // OLD PATH (comment kiya — marksCount ab new path LineSummary par):
+          // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/marksCount";
+          dbPath = this.getLineSummaryPath(zoneNo, lineNo) + "/marksCount";
           let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
             markerCountInstance.unsubscribe();
             if (data != null) {
@@ -1989,7 +2195,9 @@ export class HouseMarkingComponent {
                 this.markerData.totalLineMarkers = (Number(this.markerData.totalLineMarkers) - 1).toString();
               }
 
-              dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+              // OLD PATH (comment kiya — ab new path LineSummary par):
+              // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+              dbPath = this.getLineSummaryPath(zoneNo, lineNo);
               const data1 = {
                 marksCount: marksCount,
               };
@@ -2062,7 +2270,9 @@ export class HouseMarkingComponent {
               }
             );
 
-            dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/alreadyInstalledCount";
+            // OLD PATH (comment kiya — alreadyInstalledCount ab new path LineSummary par):
+            // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/alreadyInstalledCount";
+            dbPath = this.getLineSummaryPath(zoneNo, lineNo) + "/alreadyInstalledCount";
             let alreadyLineInstance = this.db.object(dbPath).valueChanges().subscribe(
               alreadyLineData => {
                 alreadyLineInstance.unsubscribe();
@@ -2071,7 +2281,7 @@ export class HouseMarkingComponent {
                   this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "removeMarker", alreadyLineData);
                   total = Number(alreadyLineData) - 1;
                 }
-                this.db.object("EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/").update({ alreadyInstalledCount: total });
+                this.db.object(this.getLineSummaryPath(zoneNo, lineNo)).update({ alreadyInstalledCount: total });
               }
             );
           }
@@ -2119,6 +2329,7 @@ export class HouseMarkingComponent {
           $(this.divLoader).hide();
         }
       });
+      }); // getMarkerNewPath().then wrapper close (delete flow new-path read)
     }
   }
 
@@ -2277,8 +2488,14 @@ export class HouseMarkingComponent {
       let date = markerDatails.date.toString().split(" ")[0];
       markerDatails.status = "Reject";
       markerDatails.isApprove = "0";
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ status: "Reject", isApprove: "0" });
+      // OLD PATH write (comment kiya — ab new path MarkersData par):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+      // this.db.object(dbPath).update({ status: "Reject", isApprove: "0" });
+      this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newPath: any) => {
+        if (newPath != null) {
+          this.db.object(newPath).update({ status: "Reject", isApprove: "0" });
+        }
+      });
       this.updateCount(date, userId, zoneNo, "reject");
       this.commonService.setAlertMessage("success", "Marker rejected successfully !!!");
     }
@@ -2313,8 +2530,14 @@ export class HouseMarkingComponent {
       if (this.markerData.wardno == zoneNo && this.markerData.lineno == lineNo) {
         this.markerData.isApprovedCount = (Number(this.markerData.isApprovedCount) + 1).toFixed(0);
       }
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-      this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
+      // OLD PATH write (comment kiya — ab new path MarkersData par):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+      // this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
+      this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newPath: any) => {
+        if (newPath != null) {
+          this.db.object(newPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
+        }
+      });
       (<HTMLInputElement>document.getElementById(Entity)).checked = false;
       (<HTMLInputElement>document.getElementById(Markar)).checked = false;
       this.getApproveUsername(localStorage.getItem("userID"), markerNo, zoneNo, lineNo,);
@@ -2619,7 +2842,9 @@ export class HouseMarkingComponent {
 
   getLineApprove() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineApprove");
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
+    // OLD PATH (comment kiya — marksCount ab new path LineSummary se):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
+    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/marksCount";
     let countInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       countInstance.unsubscribe();
       // let element = <HTMLButtonElement>document.getElementById("btnSave");
@@ -2698,7 +2923,9 @@ export class HouseMarkingComponent {
       return;
     }
     this.lineNo = lineNo;
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+    // OLD PATH write (comment kiya — line status ab new path LineSummary par):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/ApproveStatus";
     this.markerData.lineApprovedBy = localStorage.getItem("userName");
     this.markerData.lineApprovedDate = this.commonService.getTodayDateTime();
     const data = {
@@ -2880,9 +3107,12 @@ export class HouseMarkingComponent {
   getMarkersList(content: any, type: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkersList");
     this.modifiedMarkerList = [];
-    let dbpath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
-    let dataInstance = this.db.object(dbpath).valueChanges().subscribe((data) => {
-      dataInstance.unsubscribe();
+    // OLD PATH (comment kiya — display ab new path se):
+    // let dbpath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    // let dataInstance = this.db.object(dbpath).valueChanges().subscribe((data) => {
+    //   dataInstance.unsubscribe();
+    // NEW PATH: whole ward from MarkersData + OldMarkerToNewUid ({lineNo: {markerNo: record}})
+    this.getNewPathWardData().then((data: any) => {
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkersList", data);
         let lineKeyArray = Object.keys(data);
@@ -2896,12 +3126,14 @@ export class HouseMarkingComponent {
               let key = data[lineKey][marker];
               if (key["modifiedHouseTypeHistoryId"] != null) {
                 // To get image url....
-                let imageName = key["image"];
-                let city = this.commonService.getFireStoreCity();
-                if (this.cityName == "sikar") {
-                  city = "Sikar-Survey";
-                }
-                let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
+                // OLD PATH image URL (comment kiya — image ab new flat folder se):
+                // let imageName = key["image"];
+                // let city = this.commonService.getFireStoreCity();
+                // if (this.cityName == "sikar") {
+                //   city = "Sikar-Survey";
+                // }
+                // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
+                let imageUrl = this.getNewPathImageUrl(key);
 
                 // To get Housetype name from housetype id
                 let houseType = "";
@@ -3002,7 +3234,9 @@ export class HouseMarkingComponent {
       btnElement.disabled = true;
     }
 
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+    // OLD PATH (comment kiya — line status ab new path LineSummary se):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
+    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/ApproveStatus";
     let approveInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       approveInstance.unsubscribe();
       if (data != null) {

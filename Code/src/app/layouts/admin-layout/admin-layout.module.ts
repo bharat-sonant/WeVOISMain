@@ -106,6 +106,7 @@ import {MarkerApprovalTestComponent} from '../../marker-approval-test/marker-app
 import { SupervisorReportComponent } from '../../house-survey/supervisor-report/supervisor-report.component';
 import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set-nearby-ward.component';
 import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
+import { MarkerDataMoveComponent } from '../../Developers/marker-data-move/marker-data-move.component';
 import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
 import { ReviewTripImagesComponent } from '../../reports/review-trip-images/review-trip-images.component';
@@ -309,6 +310,7 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     SetNearbyWardComponent,
     WardRouteAutoScanComponent,
     ManageMarkingDataComponent,
+    MarkerDataMoveComponent,
     WardwiseScanCardComponent,
     ReviewDutyonImagesComponent,
     ReviewTripImagesComponent,

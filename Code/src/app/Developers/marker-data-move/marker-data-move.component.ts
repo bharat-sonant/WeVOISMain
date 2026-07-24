@@ -1,0 +1,425 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
+import { AngularFireStorage } from "angularfire2/storage";
+
+// Moves a whole ward's markers from the old per-line structure
+//   EntityMarkingData/MarkedHouses/{ward}/{line}/{markerNo}
+// into the new global structure:
+//   - Data:    EntityMarkingData/MarkersData/M{n}          (flat, global M-index)
+//   - Image:   DevTest/MarkingSurveyImages/AllMarkerImages/M{n}.jpg
+//   - Mapping: EntityMarkingData/MarkersMapping/MarkerWise/M{n} = { line, ward }
+//              EntityMarkingData/MarkersMapping/WardWise/{ward}/M{n} = line
+//              EntityMarkingData/MarkersMapping/WardWise/{ward}/lastMarkerKey = n
+//              EntityMarkingData/MarkersMapping/OldMarkerToNewUid/{ward}/{line}/{markerNo} = M{n}
+//   - Line:    EntityMarkingData/MarkersMapping/LineSummary/{ward}/{line}
+//              (ApproveStatus node + all line-level count scalars, copied as-is)
+//
+// The M-index is GLOBAL, so the allocation counter lives at
+//   EntityMarkingData/MarkersData/lastMarkerKey
+// (a scalar sibling of the M records, same convention the old lines use).
+// This prevents two wards from both producing "M1" and overwriting each other.
+//
+// Idempotent: once a marker is moved, its old location -> new UID link is
+// recorded in OldMarkerToNewUid (the old MarkedHouses record is NEVER written).
+// On re-run we reuse that UID — if the data is unchanged we skip it, otherwise
+// we update the existing M record in place. For wards moved by the earlier
+// version (which wrote movedMarkerUid on the old record) that key is still
+// honoured as a fallback and backfilled into the mapping.
+@Component({
+  selector: 'app-marker-data-move',
+  templateUrl: './marker-data-move.component.html',
+  styleUrls: ['./marker-data-move.component.scss']
+})
+export class MarkerDataMoveComponent implements OnInit {
+
+  constructor(public fs: FirebaseService, private commonService: CommonService, private storage: AngularFireStorage) { }
+
+  cityName: any;
+  db: any;
+  userName: any;
+  userId: any;
+
+  moveValue: string = "0";
+  zoneList: any[] = [];
+
+  markerList: any[] = [];
+  oldToNewMap: any = {};
+  failureMap: any = {};
+  lastKey = 0;
+  createdCount = 0;
+  updatedCount = 0;
+  skippedCount = 0;
+  noImageCount = 0;
+  invalidSkipCount = 0;
+  failCount = 0;
+  lineSummaryCount = 0;
+  failureList: any[] = [];
+
+  divLoader = "#divLoader";
+
+  ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.userName = localStorage.getItem("userName");
+    this.userId = localStorage.getItem("userID");
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Developers", "Marker-Data-Move", localStorage.getItem("userID"));
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.getZones();
+  }
+
+  // City-wise available wards, same source the other marker pages use.
+  getZones() {
+    this.zoneList = JSON.parse(localStorage.getItem("allZoneList"));
+  }
+
+  // Reads the whole ward, builds the marker list, then processes one-by-one
+  // (image copy is async, so we recurse through processMarker).
+  moveData() {
+    let ward = (this.moveValue || "").trim();
+    if (ward == "" || ward == "0") {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
+      return;
+    }
+
+    this.markerList = [];
+    this.createdCount = 0;
+    this.updatedCount = 0;
+    this.skippedCount = 0;
+    this.noImageCount = 0;
+    this.invalidSkipCount = 0;
+    this.failCount = 0;
+    this.lineSummaryCount = 0;
+    this.failureList = [];
+    $(this.divLoader).show();
+
+    let wardPath = "EntityMarkingData/MarkedHouses/" + ward;
+    let wardInstance = this.db.object(wardPath).valueChanges().subscribe(
+      (data: any) => {
+        wardInstance.unsubscribe();
+        if (data == null) {
+          $(this.divLoader).hide();
+          this.commonService.setAlertMessage("error", "No marker data found for ward: " + ward);
+          return;
+        }
+        let lineArray = Object.keys(data);
+        for (let i = 0; i < lineArray.length; i++) {
+          let lineNo = lineArray[i];
+          let lineData = data[lineNo];
+          if (lineData == null || typeof lineData != "object") {
+            continue; // skips scalars like lastMarkerKey sitting under the ward
+          }
+          let lineSummary: any = {};
+          let hasSummary = false;
+          let markerKeyArray = Object.keys(lineData);
+          for (let j = 0; j < markerKeyArray.length; j++) {
+            let markerNo = markerKeyArray[j];
+            let marker = lineData[markerNo];
+            if (marker == null) {
+              continue;
+            }
+            // Line-level metadata (scalars like marksCount/lastMarkerKey and
+            // the ApproveStatus node) — not markers, collected into LineSummary
+            // so the new path also carries line approval + counts.
+            if (typeof marker != "object" || markerNo == "ApproveStatus") {
+              lineSummary[markerNo] = marker;
+              hasSummary = true;
+              continue;
+            }
+            // Object without houseType = suspicious remnant. Not copied, but
+            // logged to MoveSkipped so silent skips leave an audit trail.
+            if (marker["houseType"] == null) {
+              this.logSkippedEntry(ward, lineNo, markerNo);
+              this.invalidSkipCount++;
+              continue;
+            }
+            this.markerList.push({ line: lineNo, oldMarkerNo: markerNo, data: marker });
+          }
+          // Copy this line's summary (ApproveStatus + counts) to the new path.
+          // set() per line: a re-run always mirrors the latest old-path values
+          // (old path stays the write-side source of truth for now).
+          if (hasSummary) {
+            this.db.object("EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + lineNo).set(lineSummary);
+            this.lineSummaryCount++;
+          }
+        }
+
+        if (this.markerList.length == 0) {
+          $(this.divLoader).hide();
+          this.commonService.setAlertMessage("error", "No valid markers found in ward: " + ward);
+          return;
+        }
+
+        // Date-wise allocation: oldest marker gets the smallest M number, so the
+        // M sequence follows the marking date. "YYYY-MM-DD HH:mm:ss" strings sort
+        // correctly as-is. Markers without a date go last. Already-moved markers
+        // keep their existing UID regardless of this order.
+        this.markerList.sort((a: any, b: any) => {
+          let dateA = a["data"]["date"] != null ? a["data"]["date"].toString() : "";
+          let dateB = b["data"]["date"] != null ? b["data"]["date"].toString() : "";
+          if (dateA == "" && dateB == "") { return 0; }
+          if (dateA == "") { return 1; }
+          if (dateB == "") { return -1; }
+          return dateA < dateB ? -1 : (dateA > dateB ? 1 : 0);
+        });
+
+        // Read this ward's old-location -> new-UID links, so re-runs can
+        // recognize already-moved markers without touching the old records.
+        let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward;
+        let linkInstance = this.db.object(linkPath).valueChanges().subscribe(
+          (linkData: any) => {
+            linkInstance.unsubscribe();
+            this.oldToNewMap = linkData != null ? linkData : {};
+
+            // Read this ward's pending failure history (used for attemptCount
+            // and cleared automatically when a marker finally succeeds).
+            let failPath = "EntityMarkingData/MarkersMapping/MoveFailures/" + ward;
+            let failInstance = this.db.object(failPath).valueChanges().subscribe(
+              (failData: any) => {
+                failInstance.unsubscribe();
+                this.failureMap = failData != null ? failData : {};
+
+                // Read the GLOBAL allocation counter before we start assigning M numbers.
+                let counterPath = "EntityMarkingData/MarkersData/lastMarkerKey";
+                let counterInstance = this.db.object(counterPath).valueChanges().subscribe(
+                  (counterVal: any) => {
+                    counterInstance.unsubscribe();
+                    this.lastKey = counterVal != null ? Number(counterVal) : 0;
+                    this.processMarker(0, ward);
+                  }
+                );
+              }
+            );
+          }
+        );
+      }
+    );
+  }
+
+  processMarker(index: any, ward: any) {
+    if (index >= this.markerList.length) {
+      $(this.divLoader).hide();
+      let msg = "Done. Created: " + this.createdCount + ", Updated: " + this.updatedCount +
+        ", Already up-to-date: " + this.skippedCount + ", No image: " + this.noImageCount +
+        ", Invalid skipped: " + this.invalidSkipCount + ", Failed: " + this.failCount +
+        ", Line summaries: " + this.lineSummaryCount;
+      if (this.failCount > 0) {
+        this.commonService.setAlertMessage("error", msg + ". Re-run to retry failed markers (details in MoveFailures).");
+        console.log("Failed markers:", this.failureList);
+      }
+      else {
+        this.commonService.setAlertMessage("success", msg);
+      }
+      return;
+    }
+
+    let item = this.markerList[index];
+    let old = item["data"];
+
+    // Already moved once -> reuse the same UID (idempotent re-run).
+    // Link comes from the OldMarkerToNewUid mapping; movedMarkerUid on the old
+    // record (written by the earlier version) is honoured as a fallback.
+    let lineLinks = this.oldToNewMap != null ? this.oldToNewMap[item["line"]] : null;
+    let linkedUid = lineLinks != null ? lineLinks[item["oldMarkerNo"]] : null;
+    if ((linkedUid == null || linkedUid == "") && old["movedMarkerUid"] != null && old["movedMarkerUid"] != "") {
+      linkedUid = old["movedMarkerUid"];
+    }
+
+    if (linkedUid != null && linkedUid != "") {
+      let uid = linkedUid;
+      let existingPath = "EntityMarkingData/MarkersData/" + uid;
+      let existingInstance = this.db.object(existingPath).valueChanges().subscribe(
+        (existing: any) => {
+          existingInstance.unsubscribe();
+          let record = this.buildRecord(old, item["line"], ward, uid);
+          if (existing != null && this.isSame(existing, record)) {
+            // Nothing changed -> "already updated". Backfill the link map so
+            // wards moved by the earlier version also end up in the mapping.
+            this.writeOldToNewLink(ward, item["line"], item["oldMarkerNo"], uid);
+            this.clearMoveFailure(ward, item["line"], item["oldMarkerNo"]);
+            this.skippedCount++;
+            this.processMarker(index + 1, ward);
+            return;
+          }
+          // Data changed -> refresh the record + image + mapping under the same UID.
+          this.copyImage(old, item["line"], ward, uid, 0,
+            (hadImage: boolean) => {
+              if (!hadImage) { this.noImageCount++; }
+              this.writeRecordAndMapping(uid, record, item["line"], ward);
+              this.writeOldToNewLink(ward, item["line"], item["oldMarkerNo"], uid);
+              this.clearMoveFailure(ward, item["line"], item["oldMarkerNo"]);
+              this.updatedCount++;
+              this.processMarker(index + 1, ward);
+            },
+            () => {
+              this.failCount++;
+              this.failureList.push({ line: item["line"], oldMarkerNo: item["oldMarkerNo"], uid: uid, reason: "image copy failed (update)" });
+              this.writeMoveFailure(ward, item["line"], item["oldMarkerNo"], uid, "image copy failed (update)");
+              this.processMarker(index + 1, ward);
+            }
+          );
+        }
+      );
+      return;
+    }
+
+    // New marker -> allocate the next GLOBAL M number.
+    this.lastKey = this.lastKey + 1;
+    let uid = "M" + this.lastKey;
+    let record = this.buildRecord(old, item["line"], ward, uid);
+    this.copyImage(old, item["line"], ward, uid, 0,
+      (hadImage: boolean) => {
+        if (!hadImage) { this.noImageCount++; }
+        this.writeRecordAndMapping(uid, record, item["line"], ward);
+        // Link old location -> new UID so a re-run reuses this UID instead of
+        // duplicating. Lives in the mapping; the old record stays untouched.
+        this.writeOldToNewLink(ward, item["line"], item["oldMarkerNo"], uid);
+        this.clearMoveFailure(ward, item["line"], item["oldMarkerNo"]);
+        // Persist the global counter so the number is never reused.
+        this.db.object("EntityMarkingData/MarkersData/lastMarkerKey").set(this.lastKey);
+        this.createdCount++;
+        this.processMarker(index + 1, ward);
+      },
+      () => {
+        this.failCount++;
+        this.failureList.push({ line: item["line"], oldMarkerNo: item["oldMarkerNo"], uid: uid, reason: "image copy failed" });
+        this.writeMoveFailure(ward, item["line"], item["oldMarkerNo"], uid, "image copy failed");
+        // Advance the counter anyway so a failed/partial number is not reused (leaves a gap).
+        this.db.object("EntityMarkingData/MarkersData/lastMarkerKey").set(this.lastKey);
+        this.processMarker(index + 1, ward);
+      }
+    );
+  }
+
+  // Builds the new global record: all old fields + the current line/ward and
+  // the new image reference. Keys match the existing DB (line, ward, imgRef).
+  buildRecord(old: any, line: any, ward: any, uid: string) {
+    let record = Object.assign({}, old);
+    delete record["movedMarkerUid"]; // link stays on the old record, not the new one
+    record["line"] = isNaN(Number(line)) ? line : Number(line);
+    record["ward"] = ward;
+    record["imgRef"] = uid + ".jpg";
+    return record;
+  }
+
+  // Field-by-field compare so a re-run knows whether anything actually changed.
+  isSame(a: any, b: any) {
+    let keys: any = {};
+    Object.keys(a || {}).forEach(k => keys[k] = true);
+    Object.keys(b || {}).forEach(k => keys[k] = true);
+    for (let k in keys) {
+      if (k == "movedMarkerUid") { continue; }
+      let av = a ? a[k] : undefined;
+      let bv = b ? b[k] : undefined;
+      if (typeof av == "object" || typeof bv == "object") {
+        if (JSON.stringify(av) != JSON.stringify(bv)) { return false; }
+      }
+      else if (String(av) != String(bv)) { return false; }
+    }
+    return true;
+  }
+
+  // Records where an old marker went:
+  //   MarkersMapping/OldMarkerToNewUid/{ward}/{line}/{markerNo} = M{n}
+  // This is the re-run guard — the old MarkedHouses record itself is never written.
+  writeOldToNewLink(ward: any, line: any, markerNo: any, uid: string) {
+    this.db.object("EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + line + "/" + markerNo).set(uid);
+  }
+
+  // Persistent failure history:
+  //   MarkersMapping/MoveFailures/{ward}/{line}_{markerNo} = { uid, reason, failedOn, attemptCount }
+  // Whatever is left in this node = markers still pending because of failures.
+  writeMoveFailure(ward: any, line: any, markerNo: any, uid: string, reason: string) {
+    let key = line + "_" + markerNo;
+    let prev = this.failureMap != null ? this.failureMap[key] : null;
+    let attemptCount = (prev != null && prev["attemptCount"] != null ? Number(prev["attemptCount"]) : 0) + 1;
+    this.db.object("EntityMarkingData/MarkersMapping/MoveFailures/" + ward + "/" + key).update({
+      uid: uid,
+      reason: reason,
+      failedOn: this.commonService.getTodayDateTime(),
+      attemptCount: attemptCount
+    });
+  }
+
+  // A marker that finally succeeded clears its own failure entry, so
+  // MoveFailures never carries stale/solved cases.
+  clearMoveFailure(ward: any, line: any, markerNo: any) {
+    let key = line + "_" + markerNo;
+    if (this.failureMap != null && this.failureMap[key] != null) {
+      this.db.object("EntityMarkingData/MarkersMapping/MoveFailures/" + ward + "/" + key).remove();
+    }
+  }
+
+  // Audit trail for entries that were silently skipped (object without houseType):
+  //   MarkersMapping/MoveSkipped/{ward}/{line}_{markerNo} = { reason, skippedOn }
+  logSkippedEntry(ward: any, line: any, markerNo: any) {
+    this.db.object("EntityMarkingData/MarkersMapping/MoveSkipped/" + ward + "/" + line + "_" + markerNo).update({
+      reason: "houseType missing",
+      skippedOn: this.commonService.getTodayDateTime()
+    });
+  }
+
+  // Writes the record + all three mapping locations for one marker.
+  writeRecordAndMapping(uid: string, record: any, line: any, ward: any) {
+    let lineVal = isNaN(Number(line)) ? line : Number(line);
+
+    this.db.object("EntityMarkingData/MarkersData/" + uid).update(record);
+
+    this.db.object("EntityMarkingData/MarkersMapping/MarkerWise/" + uid).update({ line: lineVal, ward: ward });
+    this.db.object("EntityMarkingData/MarkersMapping/WardWise/" + ward + "/" + uid).set(lineVal);
+    this.db.object("EntityMarkingData/MarkersMapping/WardWise/" + ward + "/lastMarkerKey").set(this.lastKey);
+  }
+
+  // Downloads the old per-line image and re-uploads it as M{n}.jpg in the flat
+  // AllMarkerImages folder. Retries up to 3 times. onSuccess(hadImage) is called
+  // when done (hadImage=false when the marker had no source image).
+  copyImage(old: any, line: any, ward: any, uid: string, attempt: number, onSuccess: any, onFail: any) {
+    let oldImageName = old["image"];
+    if (oldImageName == null || oldImageName == "") {
+      // No source image -> still move the data, just no upload.
+      onSuccess(false);
+      return;
+    }
+
+    let city = this.commonService.getFireStoreCity();
+    if (this.cityName == "sikar") {
+      city = "Sikar-Survey";
+    }
+    let pathOld = city + "/MarkingSurveyImages/" + ward + "/" + line + "/" + oldImageName;
+    let pathNew = "DevTest/MarkingSurveyImages/AllMarkerImages/" + uid + ".jpg";
+
+    let ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
+    ref.getDownloadURL()
+      .then((url: any) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = () => {
+          let blob = xhr.response;
+          let refNew = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
+          refNew.put(blob).then(() => {
+            onSuccess(true);
+          }).catch(() => {
+            this.retryOrFail(old, line, ward, uid, attempt, onSuccess, onFail);
+          });
+        };
+        xhr.onerror = () => {
+          this.retryOrFail(old, line, ward, uid, attempt, onSuccess, onFail);
+        };
+        xhr.open('GET', url);
+        xhr.send();
+      })
+      .catch(() => {
+        // Source image missing in storage -> no point retrying the download.
+        onFail();
+      });
+  }
+
+  retryOrFail(old: any, line: any, ward: any, uid: string, attempt: number, onSuccess: any, onFail: any) {
+    if (attempt < 2) {
+      this.copyImage(old, line, ward, uid, attempt + 1, onSuccess, onFail);
+    }
+    else {
+      onFail();
+    }
+  }
+}
