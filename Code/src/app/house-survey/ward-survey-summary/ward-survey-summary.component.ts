@@ -449,7 +449,7 @@ export class WardSurveySummaryComponent implements OnInit {
   getMarkerData(index: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
     // Fallback PID source: MarkedHouses (cardNumber -> propId) rfidMarkerMap me bharo.
-    // Primary PID source per-card direct CardPropertyMapping/<cardNumber> hit (readCardWard me).
+    // Primary PID source: per-card direct CardPropertyMapping/<cardNumber> hit (readCardWard me).
     let promises = [];
     for (let w = 0; w < this.wardList.length; w++) {
       promises.push(this.readMarkerWard(this.wardList[w]["zoneNo"]));
@@ -554,9 +554,7 @@ export class WardSurveySummaryComponent implements OnInit {
                   cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardDetail["cardImage"] + "?alt=media";
                 }
                 let date = cardDetail["createdDate"] != null ? cardDetail["createdDate"] : "";
-                if (this.rfidMarkerMap[cardNumber] != null) {
-                  PID = this.rfidMarkerMap[cardNumber];
-                }
+                // PID neeche set hota hai: pehle CardPropertyMapping, na mile to MarkedHouses ka propId
                 let ward = cardDetail["ward"] != null ? cardDetail["ward"] : zoneNo;
                 let hufRfidNumber = cardDetail["hufRfidNumber"] != null ? cardDetail["hufRfidNumber"] : "";
                 // Photo Link: HUF card laga ho (hufRfidNumber present) -> HUFCardData ka houseImg.jpg;
@@ -592,18 +590,19 @@ export class WardSurveySummaryComponent implements OnInit {
               }
             }
           }
-          // Primary PID: MarkedHouses (loop me already set).
-          // Fallback: jinka MarkedHouses se PID nahi mila, sirf un cards par
-          // direct CardPropertyMapping/<cardNumber> hit.
-          let pidPromises = rows
-            .filter((row: any) => row.PID == null || row.PID.toString().trim() === "" || row.PID.toString().trim() === "00")
-            .map((row: any) =>
-              this.getCardPropertyId(row.cardNumber).then((pid: any) => {
-                if (pid != null && pid.toString().trim() !== "") {
-                  row.PID = pid;
-                }
-              })
-            );
+          // Primary PID: direct CardPropertyMapping/<cardNumber> hit.
+          // Fallback: jinka CardPropertyMapping se PID nahi mila, un cards par
+          // MarkedHouses ka propId (rfidMarkerMap).
+          let pidPromises = rows.map((row: any) =>
+            this.getCardPropertyId(row.cardNumber).then((pid: any) => {
+              if (pid != null && pid.toString().trim() !== "" && pid.toString().trim() !== "00") {
+                row.PID = pid;
+              }
+              else if (this.rfidMarkerMap[row.cardNumber] != null) {
+                row.PID = this.rfidMarkerMap[row.cardNumber];
+              }
+            })
+          );
           Promise.all(pidPromises).then(() => resolve(rows));
         },
         () => resolve([])
