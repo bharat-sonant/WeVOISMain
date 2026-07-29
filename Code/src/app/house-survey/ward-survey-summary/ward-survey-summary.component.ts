@@ -33,6 +33,7 @@ export class WardSurveySummaryComponent implements OnInit {
   employeeSurvey: any[] = [];
   rfidMarkerList: any = [];
   rfidMarkerMap: any = {};
+  rfidCardPropMap: any = {};
   rfidList: any[];
   db: any;
   selectedWard: any;
@@ -294,6 +295,7 @@ export class WardSurveySummaryComponent implements OnInit {
     $(this.divLoaderMain).show();
     this.rfidMarkerList = [];
     this.rfidMarkerMap = {};
+    this.rfidCardPropMap = {};
     this.rfidList = [];
     this.getMarkerData(0);
 
@@ -448,9 +450,10 @@ export class WardSurveySummaryComponent implements OnInit {
 
   getMarkerData(index: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
+    // Primary PID source: CardPropertyMapping (cardNumber -> propId) ek hi baar poora node.
     // Fallback PID source: MarkedHouses (cardNumber -> propId) rfidMarkerMap me bharo.
-    // Primary PID source: per-card direct CardPropertyMapping/<cardNumber> hit (readCardWard me).
-    let promises = [];
+    let promises: any[] = [];
+    promises.push(this.readCardPropertyMapping());
     for (let w = 0; w < this.wardList.length; w++) {
       promises.push(this.readMarkerWard(this.wardList[w]["zoneNo"]));
     }
@@ -459,15 +462,18 @@ export class WardSurveySummaryComponent implements OnInit {
     });
   }
 
-  // Direct hit: CardPropertyMapping/<cardNumber> ki value (na mile to null)
-  getCardPropertyId(cardNumber: any): Promise<any> {
+  // Poora CardPropertyMapping node ek baar padho -> rfidCardPropMap (cardNumber -> propId)
+  readCardPropertyMapping() {
     return new Promise((resolve) => {
-      let inst = this.db.object("CardPropertyMapping/" + cardNumber).valueChanges().subscribe(
-        (val: any) => {
+      let inst = this.db.object("CardPropertyMapping").valueChanges().subscribe(
+        (data: any) => {
           inst.unsubscribe();
-          resolve(val);
+          if (data != null) {
+            this.rfidCardPropMap = data;
+          }
+          resolve(true);
         },
-        () => resolve(null)
+        () => resolve(true)
       );
     });
   }
@@ -554,7 +560,14 @@ export class WardSurveySummaryComponent implements OnInit {
                   cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardDetail["cardImage"] + "?alt=media";
                 }
                 let date = cardDetail["createdDate"] != null ? cardDetail["createdDate"] : "";
-                // PID neeche set hota hai: pehle CardPropertyMapping, na mile to MarkedHouses ka propId
+                // PID: pehle CardPropertyMapping, na mile to MarkedHouses ka propId
+                let mappedPid = this.rfidCardPropMap[cardNumber];
+                if (mappedPid != null && mappedPid.toString().trim() !== "" && mappedPid.toString().trim() !== "00") {
+                  PID = mappedPid;
+                }
+                else if (this.rfidMarkerMap[cardNumber] != null) {
+                  PID = this.rfidMarkerMap[cardNumber];
+                }
                 let ward = cardDetail["ward"] != null ? cardDetail["ward"] : zoneNo;
                 let hufRfidNumber = cardDetail["hufRfidNumber"] != null ? cardDetail["hufRfidNumber"] : "";
                 // Photo Link: HUF card laga ho (hufRfidNumber present) -> HUFCardData ka houseImg.jpg;
@@ -590,20 +603,7 @@ export class WardSurveySummaryComponent implements OnInit {
               }
             }
           }
-          // Primary PID: direct CardPropertyMapping/<cardNumber> hit.
-          // Fallback: jinka CardPropertyMapping se PID nahi mila, un cards par
-          // MarkedHouses ka propId (rfidMarkerMap).
-          let pidPromises = rows.map((row: any) =>
-            this.getCardPropertyId(row.cardNumber).then((pid: any) => {
-              if (pid != null && pid.toString().trim() !== "" && pid.toString().trim() !== "00") {
-                row.PID = pid;
-              }
-              else if (this.rfidMarkerMap[row.cardNumber] != null) {
-                row.PID = this.rfidMarkerMap[row.cardNumber];
-              }
-            })
-          );
-          Promise.all(pidPromises).then(() => resolve(rows));
+          resolve(rows);
         },
         () => resolve([])
       );
