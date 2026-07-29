@@ -249,11 +249,14 @@ export class PaymentCollectorComponent implements OnInit {
                   wardAssignmentList: userJsonData[empId]["wardAssignmentList"]
                     ? userJsonData[empId]["wardAssignmentList"]
                     : {},
+                  isLoggedIn: false,
                 });
 
                 this.getCollectionDetail(empId);
               }
             }
+
+            this.getCollectorLoginStatus();
 
             // ✅ Default: show only ACTIVE users on load
             this.filteredUserList = this.userList.filter(
@@ -700,6 +703,24 @@ export class PaymentCollectorComponent implements OnInit {
         }
       }
 
+    } else if (type == "clearLogin") {
+      let userDetail = this.filteredUserList.find((item) => item.empId == id);
+      if (userDetail != undefined && userDetail.isLoggedIn != true) {
+        this.commonService.setAlertMessage("error", "This collector is not logged in !!!");
+        return;
+      }
+      this.modalService.open(content, { size: "lg" });
+      let windowHeight = $(window).height();
+      let height = 190;
+      let width = 400;
+      let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+      $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+      $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+      $("div .modal-dialog-centered").css("margin-top", "26px");
+      if (id != "0") {
+        $("#logoutId").val(id);
+      }
+
     } else if (type == "delete") {
       let userDetail = this.filteredUserList.find((item) => item.empId == id);
       if (userDetail != undefined) {
@@ -906,6 +927,48 @@ export class PaymentCollectorComponent implements OnInit {
           }
         });
       }
+    });
+  }
+
+  /*
+    The app writes a loginDateTime under CollectorLoginStatus while a collector is logged
+    in for the day. It only blocks another device on the same day, so a collector counts
+    as logged in only when that date is today.
+  */
+  getCollectorLoginStatus() {
+    let loginStatusInstance = this.db.object("PaymentCollectionInfo/CollectorLoginStatus").valueChanges().subscribe((data: any) => {
+      loginStatusInstance.unsubscribe();
+      const today = this.commonService.setTodayDate();
+      for (let i = 0; i < this.userList.length; i++) {
+        let status = data != null ? data[this.userList[i]["empId"]] : null;
+        let loginDateTime = status != null ? status["loginDateTime"] : null;
+        this.userList[i]["isLoggedIn"] = loginDateTime != null && loginDateTime.toString().substring(0, 10) == today;
+      }
+    });
+  }
+
+  /*
+    Clearing only the loginDateTime key frees the account so the collector can log in from
+    a new device; the rest of the node is left untouched.
+  */
+  clearCollectorLogin() {
+    let empID = $("#logoutId").val();
+    if (empID == undefined || empID == "" || empID == "0") {
+      this.commonService.setAlertMessage("error", "Collector not found !!!");
+      return;
+    }
+    const dbPath = "PaymentCollectionInfo/CollectorLoginStatus/" + empID + "/loginDateTime";
+    this.db.object(dbPath).remove().then(() => {
+      this.commonService.setAlertMessage("success", "Collector logged out successfully !!!");
+      let userDetail = this.userList.find((item) => item.empId == empID);
+      if (userDetail != undefined) {
+        userDetail.isLoggedIn = false;
+      }
+      $("#logoutId").val("0");
+      this.closeModel();
+    }).catch((error: any) => {
+      console.error("Error occur while clearing collector login status", error);
+      this.commonService.setAlertMessage("error", "Error occur while logout collector !!!");
     });
   }
 
