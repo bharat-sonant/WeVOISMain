@@ -351,33 +351,54 @@ export class LineMarkerMappingComponent implements OnDestroy {
   }
 
   getLineData() {
+    // Pehle check, phir hi kuch badlo. Line data poori load hone se pehle
+    // line change karne par purana code beech me crash ho jata tha - header
+    // ka box nayi line dikhata tha lekin map aur this.lineNo purani line par
+    // hi atke reh jate the. Us stale this.lineNo ki wajah se move par
+    // "cards can't be move on same line" ka galat error aata tha.
+    let requestedLine = $("#txtLineNo").val();
+    let newLine = this.lines.find((item) => item.lineNo == Number(requestedLine));
+    if (newLine == undefined) {
+      // previousLine hamesha wahi line hai jo map par draw ho chuki hai -
+      // box aur lineNo dono ko usi par wapas le aao
+      this.lineNo = this.previousLine;
+      $("#txtLineNo").val(this.previousLine);
+      this.commonService.setAlertMessage("error", "इस line का data अभी नहीं मिला, थोड़ी देर बाद try करें !!!");
+      return;
+    }
+
     this.cardDetails.selectedMarkerCount = 0;
     this.cardDetails.totalMarkerOnLine = 0;
     // previousLine
+    let oldIndex = Number(this.previousLine) - 1;
     let firstLine = this.lines.find(
       (item) => item.lineNo == Number(this.previousLine)
     );
-    this.polylines[Number(this.previousLine) - 1].setMap(null);
-    let line = new google.maps.Polyline({
-      path: firstLine.latlng,
-      strokeColor: this.commonService.getLineColor(""),
-      strokeWeight: 2,
-    });
-    this.polylines[Number(this.previousLine) - 1] = line;
-    this.polylines[Number(this.previousLine) - 1].setMap(this.map);
+    if (firstLine != undefined && this.polylines[oldIndex] != undefined) {
+      this.polylines[oldIndex].setMap(null);
+      let oldLine = new google.maps.Polyline({
+        path: firstLine.latlng,
+        strokeColor: this.commonService.getLineColor(""),
+        strokeWeight: 2,
+      });
+      this.polylines[oldIndex] = oldLine;
+      this.polylines[oldIndex].setMap(this.map);
+    }
 
     // new Line
-    this.lineNo = $("#txtLineNo").val();
-    this.polylines[Number(this.lineNo) - 1].setMap(null);
-    firstLine = this.lines.find((item) => item.lineNo == Number(this.lineNo));
-    this.centerPoint = firstLine.latlng[0];
-    line = new google.maps.Polyline({
-      path: firstLine.latlng,
+    this.lineNo = requestedLine;
+    let newIndex = Number(this.lineNo) - 1;
+    if (this.polylines[newIndex] != undefined) {
+      this.polylines[newIndex].setMap(null);
+    }
+    this.centerPoint = newLine.latlng[0];
+    let line = new google.maps.Polyline({
+      path: newLine.latlng,
       strokeColor: this.commonService.getLineColor("requestedLine"),
       strokeWeight: 5,
     });
-    this.polylines[Number(this.lineNo) - 1] = line;
-    this.polylines[Number(this.lineNo) - 1].setMap(this.map);
+    this.polylines[newIndex] = line;
+    this.polylines[newIndex].setMap(this.map);
     this.previousLine = this.lineNo;
     this.map.setCenter(this.centerPoint);
     this.getMarkedHouses(this.lineNo);

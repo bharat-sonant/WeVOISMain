@@ -35,7 +35,9 @@
         <div class="div-values" style="border-top: solid 1px #DCDCDC; height: 50px;  padding: 0px;">
             <span style="font-weight: bold;font-size: 30px; padding-right: 5px; margin-left: 8px;">{{cardDetails.selectedHouseCount}}</span> Card Selected
         </div>
-        <div class="div-values" style="border-top: solid 1px #DCDCDC;height: 50px;"><input #chk_wardLine type="checkbox" class="cursor-pointer" id="chk_wardLine" style="height:15px; width:15px;" (click)="showWardLine(chk_wardLine)">&nbsp;&nbsp; <label class="cursor-pointer" for="chk_wardLine" style="width: 150px;">{{chk_wardLine.checked?'Hide':'Show'}} ward boundary</label>
+        <div class="div-values" style="border-top: solid 1px #DCDCDC;height: 50px;display: flex;align-items: center;">
+            <input #chk_wardLine type="checkbox" class="cursor-pointer" id="chk_wardLine" style="height:15px; width:15px;margin: 0px;flex: none;" (click)="showWardLine(chk_wardLine)">
+            <label class="cursor-pointer" for="chk_wardLine" style="margin: 0px 0px 0px 10px;">{{chk_wardLine.checked?'Hide':'Show'}} ward boundary</label>
         </div>
     </div>
 

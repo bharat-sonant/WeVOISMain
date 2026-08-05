@@ -17,7 +17,7 @@
                 <tr>
                     <th>Time</th>
                     <th>Action</th>
-                    <th>Kisne kiya</th>
+                    <th>Moved By</th>
                     <th>Status</th>
                     <th>From &rarr; To</th>
                     <th>Total</th>
@@ -53,15 +53,12 @@
                                 <div class="ah-kv"><b>Start</b> {{ r.startTime || '-' }}</div>
                                 <div class="ah-kv"><b>End</b> {{ r.endTime || '-' }}</div>
                                 <div class="ah-kv"><b>City</b> {{ r.city || '-' }}</div>
-                                <div class="ah-kv"><b>Kisne kiya</b> {{ userText(r) }}</div>
+                                <div class="ah-kv"><b>Moved By</b> {{ userText(r) }}</div>
                                 <div class="ah-kv" *ngIf="r.destinationStartKey != null">
                                     <b>Dest keys</b> {{ r.destinationStartKey }} &ndash; {{ r.destinationEndKey }}
                                 </div>
                                 <div class="ah-kv"><b>Cancelled</b> {{ r.cancelled ? 'yes' : 'no' }}</div>
                                 <div class="ah-kv"><b>Network interrupted</b> {{ r.networkInterrupted ? 'yes' : 'no' }}</div>
-                                <div class="ah-kv ah-full" *ngIf="r.backupFile">
-                                    <b>Backup</b> <span class="ah-path">{{ r.backupFile }}</span>
-                                </div>
                                 <div class="ah-kv ah-full" *ngIf="r.note"><b>Note</b> {{ r.note }}</div>
 
                                 <div class="ah-full" *ngIf="failedCount(r) > 0">

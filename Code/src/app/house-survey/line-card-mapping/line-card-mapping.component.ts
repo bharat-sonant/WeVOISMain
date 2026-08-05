@@ -95,6 +95,9 @@ export class LineCardMappingComponent implements OnDestroy {
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
     this.commonService.savePageLoadHistory("Survey-Management", "Line-Card-Mapping", localStorage.getItem("userID"));
     this.selectedCardDetails = [];
+    // previousLine set na ho to nextPrevious me Number(undefined) se NaN
+    // aa jata tha aur header ka line box "NaN" dikhane lagta tha
+    this.previousLine = 1;
     this.toDayDate = this.commonService.setTodayDate();
     this.setHeight();
     this.getZones();
@@ -130,6 +133,7 @@ export class LineCardMappingComponent implements OnDestroy {
 
   changeZoneSelection(filterVal: any) {
     this.activeZone = filterVal;
+    this.previousLine = 1;                    // box "1" par ja raha hai to state bhi 1 ho
     $("#txtLineNo").val("1");
     $("#chk_wardLine").prop('checked', false);
     if (this.wardBoundary) {
@@ -164,7 +168,7 @@ export class LineCardMappingComponent implements OnDestroy {
     }
     let currentLine = 1;
     let lineNo = this.previousLine;
-    if (lineNo == "") {
+    if (lineNo == "" || lineNo == null || isNaN(Number(lineNo))) {
       $("#txtLineNo").val(currentLine);
       this.getLineData();
     } else if (type == "next") {
@@ -950,33 +954,51 @@ export class LineCardMappingComponent implements OnDestroy {
   }
 
   getLineData() {
+    // Pehle check, phir hi kuch badlo. Line data poori load hone se pehle
+    // line change karne par purana code beech me crash ho jata tha - header
+    // ka box nayi line dikhata tha lekin map aur previousLine purani line par
+    // hi atke reh jate the. Us stale state ki wajah se move par "same line"
+    // ka galat error aata tha.
+    let lineNo = $("#txtLineNo").val();
+    let newLine = this.allLines.find((item) => item.lineNo == Number(lineNo));
+    if (newLine == undefined) {
+      // previousLine hamesha wahi line hai jo map par draw ho chuki hai
+      $("#txtLineNo").val(this.previousLine);
+      this.commonService.setAlertMessage("error", "इस line का data अभी नहीं मिला, थोड़ी देर बाद try करें !!!");
+      return;
+    }
+
     this.cardDetails.selectedHouseCount = 0;
     this.cardDetails.totalCardOnLine = 0;
     // previousLine
+    let oldIndex = Number(this.previousLine) - 1;
     let firstLine = this.allLines.find(
       (item) => item.lineNo == Number(this.previousLine)
     );
-    this.polylines[Number(this.previousLine) - 1].setMap(null);
-    let line = new google.maps.Polyline({
-      path: firstLine.latlng,
-      strokeColor: this.commonService.getLineColor(""),
-      strokeWeight: 2,
-    });
-    this.polylines[Number(this.previousLine) - 1] = line;
-    this.polylines[Number(this.previousLine) - 1].setMap(this.map);
+    if (firstLine != undefined && this.polylines[oldIndex] != undefined) {
+      this.polylines[oldIndex].setMap(null);
+      let oldLine = new google.maps.Polyline({
+        path: firstLine.latlng,
+        strokeColor: this.commonService.getLineColor(""),
+        strokeWeight: 2,
+      });
+      this.polylines[oldIndex] = oldLine;
+      this.polylines[oldIndex].setMap(this.map);
+    }
 
     // new Line
-    let lineNo = $("#txtLineNo").val();
-    this.polylines[Number(lineNo) - 1].setMap(null);
-    firstLine = this.allLines.find((item) => item.lineNo == Number(lineNo));
-    this.centerPoint = firstLine.latlng[0];
-    line = new google.maps.Polyline({
-      path: firstLine.latlng,
+    let newIndex = Number(lineNo) - 1;
+    if (this.polylines[newIndex] != undefined) {
+      this.polylines[newIndex].setMap(null);
+    }
+    this.centerPoint = newLine.latlng[0];
+    let line = new google.maps.Polyline({
+      path: newLine.latlng,
       strokeColor: this.commonService.getLineColor("requestedLine"),
       strokeWeight: 5,
     });
-    this.polylines[Number(lineNo) - 1] = line;
-    this.polylines[Number(lineNo) - 1].setMap(this.map);
+    this.polylines[newIndex] = line;
+    this.polylines[newIndex].setMap(this.map);
     this.previousLine = lineNo;
     this.map.setCenter(this.centerPoint);
     this.showHouses(lineNo);
