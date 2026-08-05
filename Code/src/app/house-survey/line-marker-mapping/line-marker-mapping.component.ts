@@ -1,7 +1,7 @@
 import { AngularFireList } from 'angularfire2/database';
 /// <reference types="@types/googlemaps" />
 
-import { Component, ViewChild } from "@angular/core";
+import { Component, OnDestroy, ViewChild } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { FirebaseService } from "../../firebase.service";
 
@@ -11,18 +11,45 @@ import { MapService } from "../../services/map/map.service";
 import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
 import { AngularFireStorage } from "angularfire2/storage";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { MoveHelperService, MoveRun } from '../../services/common/move-helper.service';
+import { MarkerMoveRow, MarkerMoveSummary } from '../../PortalServices/marker-move-progress/marker-move-progress.component';
 
 @Component({
   selector: 'app-line-marker-mapping',
   templateUrl: './line-marker-mapping.component.html',
   styleUrls: ['./line-marker-mapping.component.scss']
 })
-export class LineMarkerMappingComponent {
+export class LineMarkerMappingComponent implements OnDestroy {
 
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public moveHelper: MoveHelperService, private modalService: NgbModal) { }
+
+  // ---- move progress state ----
+  pageName = "Line-Marker-Mapping";
+  historySection = "SurveyManagement";
+  historyPageKey = "LineMarkerMapping";
+  @ViewChild("moveProgressModal", { static: false }) moveProgressModal: any;
+  @ViewChild("historyModal", { static: false }) historyModal: any;
+  private moveModalRef: any = null;
+  private historyModalRef: any = null;
+  moveRows: MarkerMoveRow[] = [];
+  moveSummary: MarkerMoveSummary = this.getEmptySummary();
+  moveRunning = false;
+  private cancelRequested = false;
+  private moveContext: any = null;
+  private networkInterrupted = false;
+
+  /** MoveHelperService ko cancel/network state batata hai */
+  private run: MoveRun = {
+    isCancelled: () => this.cancelRequested,
+    setWaitingForNetwork: (waiting: boolean) => {
+      this.moveSummary.waitingForNetwork = waiting;
+      if (waiting) { this.networkInterrupted = true; }
+    }
+  };
 
   public selectedZone: any;
   db: any;
@@ -78,6 +105,14 @@ export class LineMarkerMappingComponent {
     this.setHeight();
     this.getZones();
     this.setMap();
+    this.moveHelper.watchConnection(this.db);
+  }
+
+  ngOnDestroy() {
+    this.cancelRequested = true;
+    this.moveHelper.stopWatchingConnection();
+    if (this.moveModalRef != null) { this.moveModalRef.dismiss(); this.moveModalRef = null; }
+    if (this.historyModalRef != null) { this.historyModalRef.dismiss(); this.historyModalRef = null; }
   }
 
   setHeight() {
@@ -406,7 +441,47 @@ export class LineMarkerMappingComponent {
     }
   }
 
-  moveToNewLine() {
+  // =====================================================================
+  // MOVE PROGRESS / HISTORY POPUP
+  // =====================================================================
+
+  private openMoveModal() {
+    if (this.moveModalRef != null) { return; }
+    // move ke dauraan backdrop / ESC se band na ho
+    this.moveModalRef = this.modalService.open(this.moveProgressModal, {
+      size: "lg", backdrop: "static", keyboard: false, windowClass: "marker-move-modal"
+    });
+    this.moveModalRef.result.then(() => { this.moveModalRef = null; }, () => { this.moveModalRef = null; });
+  }
+
+  closeMoveModal() {
+    if (this.moveRunning) { return; }
+    if (this.moveModalRef != null) { this.moveModalRef.close(); this.moveModalRef = null; }
+  }
+
+  openHistoryModal() {
+    if (!this.moveHelper.canViewActionHistory() || this.historyModalRef != null) { return; }
+    this.historyModalRef = this.modalService.open(this.historyModal, { size: "lg", windowClass: "action-history-modal" });
+    this.historyModalRef.result.then(() => { this.historyModalRef = null; }, () => { this.historyModalRef = null; });
+  }
+
+  closeHistoryModal() {
+    if (this.historyModalRef != null) { this.historyModalRef.close(); this.historyModalRef = null; }
+  }
+
+  private getEmptySummary(): MarkerMoveSummary {
+    return {
+      running: false, waitingForNetwork: false, statusText: "",
+      fromZone: "", fromLine: "", toZone: "", toLine: "", backupFile: "",
+      total: 0, moved: 0, failed: 0, pending: 0, imageMissing: 0
+    };
+  }
+
+  // =====================================================================
+  // MOVE SELECTED MARKERS TO NEW LINE
+  // =====================================================================
+
+  async moveToNewLine() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveToNewLine");
     if ($("#txtNewLine").val() == "") {
       this.commonService.setAlertMessage("error", "Please enter line no.");
@@ -428,229 +503,479 @@ export class LineMarkerMappingComponent {
       this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
       return;
     }
-    $(this.divLoaderMarkerMove).show();
-    this.totalMoveMarkerCount = this.selectedCardDetails.length;
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + $("#txtNewLine").val() + "/lastMarkerKey";
-    let lastMarkerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      lastMarkerData => {
-        lastMarkerInstance.unsubscribe();
-        let lastKey = 0;
-        let newLineNo = $("#txtNewLine").val();
-        if (lastMarkerData != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", lastMarkerData);
-          lastKey = Number(lastMarkerData);
-        }
-        this.moveData(0, lastKey, this.selectedZone, this.lineNo, this.selectedZone, newLineNo, 0);
-      }
-    );
+
+    let lineTo = $("#txtNewLine").val();
+    let lineFrom = this.lineNo;
+    // selection ki copy - move ke dauraan user map par kuch aur select kar de
+    // to chal raha move usse prabhavit na ho
+    let selection = this.selectedCardDetails.slice();
+
+    await this.startMove(lineFrom, lineTo, selection, null);
   }
 
-  moveData(index: any, lastKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, failureCount: any) {
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveData");
-    if (index < this.selectedCardDetails.length) {
-      lastKey = lastKey + 1;
-      let markerNo = this.selectedCardDetails[index]["markerNo"];
-      let data = this.selectedCardDetails[index]["data"];
-      let oldImageName = data["image"];
-      data["image"] = lastKey + ".jpg";
-      let newImageName = lastKey + ".jpg";
-      let city = this.commonService.getFireStoreCity();
-      if (this.cityName == "sikar") {
-        city = "Sikar-Survey";
+  /**
+   * onlyMarkerNos = null  -> selected sabhi markers
+   * onlyMarkerNos = [...] -> sirf pehle fail hue markers ka retry
+   */
+  private async startMove(lineFrom: any, lineTo: any, selection: any[], onlyMarkerNos: string[]) {
+    if (this.moveRunning) {
+      this.commonService.setAlertMessage("error", "एक move पहले से चल रहा है !!!");
+      return;
+    }
+
+    let zone = this.selectedZone;
+    this.cancelRequested = false;
+    this.moveRunning = true;
+    this.moveRows = [];
+    this.moveSummary = this.getEmptySummary();
+    this.moveSummary.running = true;
+    this.moveSummary.fromZone = zone;
+    this.moveSummary.fromLine = lineFrom;
+    this.moveSummary.toZone = zone;
+    this.moveSummary.toLine = lineTo;
+    this.openMoveModal();
+
+    let action = (onlyMarkerNos != null) ? "RetryFailed" : "MoveSelectedMarkers";
+    let startTime = new Date();
+    let originalLastKey: any = null;
+    this.networkInterrupted = false;
+
+    try {
+      this.moveSummary.statusText = "डेटा पढ़ा जा रहा है...";
+      await this.moveHelper.waitForNetwork(this.run);
+
+      let markerList = [];
+      for (let i = 0; i < selection.length; i++) {
+        let markerNo = "" + selection[i]["markerNo"];
+        if (onlyMarkerNos != null && onlyMarkerNos.indexOf(markerNo) < 0) { continue; }
+        markerList.push(selection[i]);
       }
-      let markerID = "";
-      if (data["markerId"] != null) {
-        markerID = this.commonService.getDefaultCardPrefix() + data["markerId"];
+      if (markerList.length == 0) {
+        this.commonService.setAlertMessage("error", "move करने लायक कोई marker नहीं मिला।");
+        await this.saveMoveHistory(action, "aborted", startTime, zone, lineFrom, lineTo, null, "move karne layak koi marker nahi mila");
+        this.finishRun();
+        return;
       }
-      if (this.cityName == "hisar") {
-        // ref.delete();
-        this.movedMarkerCount = this.movedMarkerCount + 1;
-        const pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
-        const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
-        ref.getDownloadURL()
-          .then((url) => {
-            var xhr = new XMLHttpRequest();
-            xhr.responseType = 'blob';
-            xhr.onload = (event) => {
-              var blob = xhr.response;
-              const pathNew = city + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
-              const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
-              ref1.put(blob).then((promise) => {
-                // ref.delete();
 
-              }
-              ).catch((error) => {
-
-              });
-            };
-            xhr.open('GET', url);
-            xhr.send();
-          })
-          .catch((error) => {
-
-          });
-        if (data["cardNumber"] != null) {
-          let cardNo = data["cardNumber"];
-          if (markerID != "") {
-            markerID = cardNo;
-          }
-          let dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
-          let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
-            cardInstance.unsubscribe();
-            if (cardData != null) {
-              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveData", cardData);
-              data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
-              cardData["line"] = lineTo;
-              cardData["ward"] = zoneTo;
-              let dbPath = "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo;
-              this.db.object(dbPath).update(cardData);
-
-              dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
-              this.db.object(dbPath).remove();
-
-              // modify card ward mapping
-              this.db.object("CardWardMapping/" + cardNo).set({ line: lineTo, ward: zoneTo });
-
-              if (cardData["mobile"] != "") {
-                // modify house ward mapping
-                this.db.object("HouseWardMapping/" + cardData["mobile"]).set({ line: lineTo, ward: zoneTo });
-              }
-            }
-          });
-        }
-        if (data["revisitKey"] != null) {
-          let revisitKey = data["revisitKey"];
-          let dbPathPre = "EntitySurveyData/RevisitRequest/" + zoneFrom + "/" + lineFrom + "/" + revisitKey;
-          let revisitInstance = this.db.object(dbPathPre).valueChanges().subscribe(revisitData => {
-            revisitInstance.unsubscribe();
-            if (revisitData != null) {
-              let dbPath = "EntitySurveyData/RevisitRequest/" + zoneTo + "/" + lineTo + "/" + revisitKey;
-              this.db.object(dbPath).update(revisitData);
-              this.db.object(dbPathPre).remove();
-            }
-          });
-        }
-
-        let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
-        this.db.object(dbPath).update(data);
-
-        dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-        this.db.object(dbPath).remove();
-
-        if (markerID != "") {
-          dbPath = "EntityMarkingData/MarkerWardMapping/" + markerID;
-          let obj = {
-            image: lastKey + ".jpg",
-            line: lineTo.toString(),
-            markerNo: lastKey.toString(),
-            ward: zoneTo
-          }
-          this.db.object(dbPath).update(obj);
-        }
-
-        index = index + 1;
-        this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
-
-
+      // purane code jaisa hi: lastMarkerKey jaisa hai waisa, phir har marker par +1
+      let lastMarkerData = await this.moveHelper.readOnceWithRetry(this.db,
+        "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo + "/lastMarkerKey", this.run);
+      let lastKey = 0;
+      if (lastMarkerData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", lastMarkerData);
+        lastKey = Number(lastMarkerData);
       }
-      else {
-        const pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
-        const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
-        ref.getDownloadURL()
-          .then((url) => {
-            var xhr = new XMLHttpRequest();
-            xhr.responseType = 'blob';
-            xhr.onload = (event) => {
-              var blob = xhr.response;
-              const pathNew = city + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
-              const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
-              ref1.put(blob).then((promise) => {
-                // ref.delete();
-                this.movedMarkerCount = this.movedMarkerCount + 1;
-                if (data["cardNumber"] != null) {
-                  let cardNo = data["cardNumber"];
-                  if (markerID != "") {
-                    markerID = cardNo;
-                  }
-                  let dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
-                  let cardInstance = this.db.object(dbPath).valueChanges().subscribe(cardData => {
-                    cardInstance.unsubscribe();
-                    if (cardData != null) {
-                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveData", cardData);
-                      data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
-                      cardData["line"] = lineTo;
-                      cardData["ward"] = zoneTo;
-                      let dbPath = "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo;
-                      this.db.object(dbPath).update(cardData);
+      originalLastKey = lastKey;
 
-                      dbPath = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
-                      this.db.object(dbPath).remove();
+      let markerNodeData = await this.moveHelper.readOnceWithRetry(this.db,
+        "EntityMarkingData/MarkedHouses/" + zone + "/" + lineFrom, this.run);
+      let houseData = await this.moveHelper.readOnceWithRetry(this.db, "Houses/" + zone + "/" + lineFrom, this.run);
 
-                      // modify card ward mapping
-                      this.db.object("CardWardMapping/" + cardNo).set({ line: lineTo, ward: zoneTo });
+      // ---------- backup pehle, uske baad hi move ----------
+      this.moveSummary.statusText = "Backup सेव हो रहा है...";
+      let now = new Date();
+      let filePath = this.moveHelper.buildBackupFilePath(this.pageName, now);
+      let fileName = this.moveHelper.buildBackupFileName(zone, lineFrom, zone, lineTo, (onlyMarkerNos != null ? "_retry" : ""), now);
+      let backupData = this.buildBackupData(markerNodeData, houseData, markerList, lastKey, zone, lineFrom, lineTo, now);
 
-                      if (cardData["mobile"] != "") {
-                        // modify house ward mapping
-                        this.db.object("HouseWardMapping/" + cardData["mobile"]).set({ line: lineTo, ward: zoneTo });
-                      }
-                    }
-                  });
-                }
-                if (data["revisitKey"] != null) {
-                  let revisitKey = data["revisitKey"];
-                  let dbPathPre = "EntitySurveyData/RevisitRequest/" + zoneFrom + "/" + lineFrom + "/" + revisitKey;
-                  let revisitInstance = this.db.object(dbPathPre).valueChanges().subscribe(revisitData => {
-                    revisitInstance.unsubscribe();
-                    if (revisitData != null) {
-                      let dbPath = "EntitySurveyData/RevisitRequest/" + zoneTo + "/" + lineTo + "/" + revisitKey;
-                      this.db.object(dbPath).update(revisitData);
-                      this.db.object(dbPathPre).remove();
-                    }
-                  });
-                }
+      try {
+        await this.moveHelper.saveBackupWithRetry(backupData, fileName, filePath, this.run);
+      } catch (e) {
+        let reason = (e && e.message) ? e.message : e;
+        this.commonService.setAlertMessage("error", "Backup सेव नहीं हो पाया, move रद्द कर दिया गया। (" + reason + ")");
+        this.moveSummary.statusText = "Backup फेल हुआ - move शुरू ही नहीं हुआ। डेटाबेस में कुछ नहीं बदला।";
+        await this.saveMoveHistory(action, "aborted", startTime, zone, lineFrom, lineTo, originalLastKey, "backup fail: " + reason);
+        this.finishRun();
+        return;
+      }
+      this.moveSummary.backupFile = filePath + fileName;
 
-                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastKey;
-                this.db.object(dbPath).update(data);
+      this.moveRows = this.buildRows(markerList, zone, lineFrom, lineTo);
+      this.moveSummary.total = this.moveRows.length;
+      this.moveSummary.pending = this.moveRows.length;
+      this.totalMoveMarkerCount = this.moveRows.length;
+      this.movedMarkerCount = 0;
 
-                dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-                this.db.object(dbPath).remove();
+      let dataByMarkerNo = {};
+      for (let i = 0; i < markerList.length; i++) {
+        dataByMarkerNo["" + markerList[i]["markerNo"]] = markerList[i]["data"];
+      }
 
-                if (markerID != "") {
-                  dbPath = "EntityMarkingData/MarkerWardMapping/" + markerID;
-                  let obj = {
-                    image: lastKey + ".jpg",
-                    line: lineTo.toString(),
-                    markerNo: lastKey.toString(),
-                    ward: zoneTo
-                  }
-                  this.db.object(dbPath).update(obj);
-                }
+      this.moveContext = {
+        zone: zone, lineFrom: lineFrom, lineTo: lineTo,
+        dataByMarkerNo: dataByMarkerNo, selection: selection, lastKey: lastKey
+      };
 
-                index = index + 1;
-                this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
+      await this.runMoveLoop(this.moveContext);
 
-              }).catch((error) => {
-                index = index + 1;
-                failureCount = failureCount + 1;
-                this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
-              });
-            };
-            xhr.open('GET', url);
-            xhr.send();
-          })
-          .catch((error) => {
-            index = index + 1;
-            failureCount = failureCount + 1;
-            this.moveData(index, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, failureCount);
-          });
+      // purane code jaisa hi: destination ka lastMarkerKey
+      this.moveSummary.statusText = "Last marker key अपडेट हो रही है...";
+      await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo,
+        { lastMarkerKey: lastKey + this.moveRows.length });
 
+      let status = "success";
+      if (this.cancelRequested) { status = "cancelled"; }
+      else if (this.moveSummary.failed > 0) { status = "partial"; }
+      await this.saveMoveHistory(action, status, startTime, zone, lineFrom, lineTo, originalLastKey, "");
+
+      if (this.cancelRequested) {
+        this.moveSummary.statusText = "Move रद्द कर दिया गया। जो move हो चुके वे सुरक्षित हैं, बाकी source पर ही हैं।";
+      } else if (this.moveSummary.failed > 0) {
+        this.moveSummary.statusText = this.moveSummary.failed + " markers फेल हुए। नीचे table में कारण देखें, फिर 'Retry Failed' दबाएँ।";
+      } else {
+        this.moveSummary.statusText = "सभी markers सफलतापूर्वक move हो गए।";
+        if (this.moveSummary.imageMissing > 0) {
+          this.moveSummary.statusText = this.moveSummary.statusText + " (" + this.moveSummary.imageMissing + " markers की image Storage में नहीं मिली - डेटा move हो गया है।)";
+        }
+      }
+
+      this.finishRun();
+      // purane code jaisa hi: counts recalculate + UI reset + alert
+      this.updateCounts(zone, this.moveSummary.failed);
+      return;
+    } catch (e) {
+      let reason = (e && e.message) ? e.message : e;
+      this.moveSummary.statusText = "Move रोक दिया गया: " + reason;
+      this.commonService.setAlertMessage("error", "Move में समस्या आ गई: " + reason);
+      await this.saveMoveHistory(action, "error", startTime, zone, lineFrom, lineTo, originalLastKey, "" + reason);
+    }
+
+    this.finishRun();
+  }
+
+  private finishRun() {
+    this.moveRunning = false;
+    this.moveSummary.running = false;
+    this.moveSummary.waitingForNetwork = false;
+    if (this.moveSummary.total == 0) { this.closeMoveModal(); }
+  }
+
+  /**
+   * ActionHistory/SurveyManagement/LineMarkerMapping/{date} me ek record.
+   * Fail / cancel / abort sab log hote hain.
+   */
+  private async saveMoveHistory(action: string, status: string, startTime: Date, zone: any, lineFrom: any, lineTo: any, originalLastKey: any, note: string) {
+    let now = new Date();
+    let record: any = {
+      action: action,
+      status: status,
+      startTime: this.moveHelper.getDateTimeString(startTime),
+      endTime: this.moveHelper.getDateTimeString(now),
+      durationSec: Math.round((now.getTime() - startTime.getTime()) / 1000),
+      from: { ward: zone, line: lineFrom },
+      to: { ward: zone, line: lineTo },
+      total: this.moveSummary.total,
+      moved: this.moveSummary.moved,
+      failed: this.moveSummary.failed,
+      pending: this.moveSummary.pending,
+      imageMissing: this.moveSummary.imageMissing,
+      backupFile: this.moveSummary.backupFile,
+      cancelled: this.cancelRequested,
+      networkInterrupted: this.networkInterrupted,
+      failedItems: this.moveHelper.buildFailedItems(this.moveRows)
+    };
+    if (note != "") { record["note"] = note; }
+    if (originalLastKey != null && this.moveRows.length > 0) {
+      record["destinationStartKey"] = Number(originalLastKey) + 1;
+      record["destinationEndKey"] = Number(originalLastKey) + this.moveRows.length;
+    }
+    await this.moveHelper.saveActionHistory(this.db, this.historySection, this.historyPageKey, record);
+  }
+
+  private buildRows(markerList: any[], zone: any, lineFrom: any, lineTo: any): MarkerMoveRow[] {
+    let rows: MarkerMoveRow[] = [];
+    for (let i = 0; i < markerList.length; i++) {
+      let data = markerList[i]["data"];
+      rows.push({
+        srNo: i + 1,
+        markerNo: "" + markerList[i]["markerNo"],
+        newKey: 0,
+        newMarkerNo: "",
+        fromZone: zone,
+        fromLine: lineFrom,
+        toZone: zone,
+        toLine: lineTo,
+        cardNo: (data != null && data["cardNumber"] != null) ? data["cardNumber"] : "",
+        oldImage: (data != null && data["image"] != null) ? data["image"] : "",
+        newImage: "",
+        imageMissing: false,
+        status: "pending",
+        failedStep: "",
+        error: "",
+        attempts: 0
+      });
+    }
+    return rows;
+  }
+
+  private buildBackupData(markerNodeData: any, houseData: any, markerList: any[], lastKey: any, zone: any, lineFrom: any, lineTo: any, now: Date): any {
+    let selectedMarkers = [];
+    for (let i = 0; i < markerList.length; i++) {
+      selectedMarkers.push("" + markerList[i]["markerNo"]);
+    }
+    let meta = this.moveHelper.buildBackupMeta(this.pageName, this.cityName, zone, lineFrom, zone, lineTo, markerList.length, now);
+    meta["destinationLastMarkerKey"] = lastKey;
+    meta["selectedMarkers"] = selectedMarkers;
+    return {
+      meta: meta,
+      markedHouses: markerNodeData,
+      houses: houseData
+    };
+  }
+
+  // =====================================================================
+  // MOVE LOOP
+  // =====================================================================
+
+  /**
+   * Markers ek doosre se independent hain - har marker apne alag paths par
+   * likhta hai. Keys pehle allocate kar dete hain, phir N markers saath-saath
+   * chal sakte hain bina kisi race ke.
+   */
+  private async runMoveLoop(ctx: any) {
+    for (let i = 0; i < this.moveRows.length; i++) {
+      let row = this.moveRows[i];
+      let key = ctx.lastKey + 1 + i;
+      row.newKey = key;
+      row.newMarkerNo = "" + key;
+      row.newImage = key + ".jpg";                   // purane code jaisa - hamesha set
+    }
+
+    await this.moveHelper.runPool(this.moveRows.length, (index: number) => {
+      return this.processRowWithRetry(this.moveRows[index], ctx);
+    }, this.run);
+  }
+
+  private async processRowWithRetry(row: MarkerMoveRow, ctx: any) {
+    let networkRetries = 0;
+
+    while (true) {
+      if (this.cancelRequested) { row.status = "pending"; return; }
+      await this.moveHelper.waitForNetwork(this.run);
+      if (this.cancelRequested) { row.status = "pending"; return; }
+
+      row.status = "moving";
+      row.attempts = row.attempts + 1;
+      this.refreshMoveStatusText();
+
+      let state = {
+        destMarkerWritten: false, destCardWritten: false, destRevisitWritten: false,
+        mappingWritten: false, cleanupStarted: false, revisitKey: "", markerID: "", mobile: ""
+      };
+
+      try {
+        await this.processMarker(row, ctx, state);
+        row.status = "moved";
+        row.failedStep = "";
+        row.error = "";
+        if (row.imageMissing) { this.moveSummary.imageMissing = this.moveSummary.imageMissing + 1; }
+        this.moveSummary.moved = this.moveSummary.moved + 1;
+        this.moveSummary.pending = this.moveSummary.pending - 1;
+        this.movedMarkerCount = this.moveSummary.moved;
+        this.refreshMoveStatusText();
+        return;
+      } catch (e) {
+        if (this.cancelRequested) { row.status = "pending"; return; }
+
+        if (this.moveHelper.isNetworkError(e) && networkRetries < this.moveHelper.MAX_NETWORK_RETRIES) {
+          networkRetries = networkRetries + 1;
+          row.status = "pending";
+          row.imageMissing = false;
+          await this.moveHelper.waitForNetwork(this.run);
+          continue;                                  // wahi marker, wahi key
+        }
+
+        if (!state.cleanupStarted) {
+          await this.rollbackDestination(row, ctx, state);
+          row.newMarkerNo = "";
+          row.newImage = "";
+        }
+
+        row.status = "failed";
+        row.imageMissing = false;
+        row.error = (e && e.message) ? e.message : ("" + e);
+        if (state.cleanupStarted) {
+          row.error = row.error + " (source cleanup अधूरा - इस marker को manually जाँच लें)";
+        }
+        this.moveSummary.failed = this.moveSummary.failed + 1;
+        this.moveSummary.pending = this.moveSummary.pending - 1;
+        this.refreshMoveStatusText();
+        return;
       }
     }
-    else {
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
-      this.db.object(dbPath).update({ lastMarkerKey: lastKey });
-      this.updateCounts(zoneFrom, failureCount);
+  }
+
+  private refreshMoveStatusText() {
+    if (this.moveSummary.waitingForNetwork) { return; }
+    let done = this.moveSummary.moved + this.moveSummary.failed;
+    this.moveSummary.statusText = done + " / " + this.moveSummary.total + " markers हो चुके - "
+      + this.moveHelper.CONCURRENCY + " एक साथ चल रहे हैं...";
+  }
+
+  /**
+   * Ek marker ka poora move. Order: image + saare reads -> saare destination
+   * writes -> sabse aakhir me source removes. Isse beech me kuch fail ho to
+   * source poora salamat rehta hai aur retry saaf chalta hai.
+   */
+  private async processMarker(row: MarkerMoveRow, ctx: any, state: any) {
+    let zone = ctx.zone;
+    let lineFrom = ctx.lineFrom;
+    let lineTo = ctx.lineTo;
+    let data = ctx.dataByMarkerNo[row.markerNo];
+    if (data == null) { throw new Error("marker data not found"); }
+
+    // ---------- IMAGE ----------
+    // Har marker ki image nahi hoti. Image na mile to marker phir bhi move hoga,
+    // bas row par flag lag jayega. Network/upload fail par marker skip hoga.
+    if (row.oldImage != "") {
+      row.failedStep = "Image Copy";
+      let city = this.moveHelper.getImageCity(this.cityName);
+      let pathOld = city + "/MarkingSurveyImages/" + zone + "/" + lineFrom + "/" + row.oldImage;
+      let pathNew = city + "/MarkingSurveyImages/" + zone + "/" + lineTo + "/" + row.newImage;
+      try {
+        await this.moveHelper.copyImageWithRetry(pathOld, pathNew, this.run);
+        row.imageMissing = false;
+      } catch (e) {
+        if (!this.moveHelper.isImageMissingError(e)) { throw e; }
+        row.imageMissing = true;
+      }
+    } else {
+      row.imageMissing = true;
     }
+
+    // ---------- READS ----------
+    let cardNo = (data["cardNumber"] != null) ? data["cardNumber"] : "";
+    let cardData: any = null;
+    if (cardNo != "") {
+      row.failedStep = "Card Read";
+      cardData = await this.moveHelper.readOnce(this.db, "Houses/" + zone + "/" + lineFrom + "/" + cardNo);
+      if (cardData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveData", cardData);
+        if (cardData["mobile"] != null && cardData["mobile"] != "") { state.mobile = cardData["mobile"]; }
+      }
+    }
+
+    let revisitKey = (data["revisitKey"] != null) ? data["revisitKey"] : "";
+    let revisitData: any = null;
+    state.revisitKey = revisitKey;
+    if (revisitKey != "") {
+      row.failedStep = "Revisit Read";
+      revisitData = await this.moveHelper.readOnce(this.db,
+        "EntitySurveyData/RevisitRequest/" + zone + "/" + lineFrom + "/" + revisitKey);
+    }
+
+    // latLng card se - marker write se PEHLE, warna save hi nahi hota tha
+    if (cardData != null && cardData["latLng"] != null) {
+      data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
+    }
+    data["image"] = row.newImage;                    // purane code jaisa - hamesha set
+
+    // ---------- DESTINATION WRITES ----------
+    row.failedStep = "Marker Write";
+    state.destMarkerWritten = true;
+    await this.moveHelper.dbUpdate(this.db,
+      "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo + "/" + row.newKey, data);
+
+    if (cardData != null) {
+      row.failedStep = "Card Write";
+      cardData["line"] = lineTo;
+      cardData["ward"] = zone;
+      state.destCardWritten = true;
+      await this.moveHelper.dbUpdate(this.db, "Houses/" + zone + "/" + lineTo + "/" + cardNo, cardData);
+      await this.moveHelper.dbSet(this.db, "CardWardMapping/" + cardNo, { line: lineTo, ward: zone });
+      if (state.mobile != "") {
+        await this.moveHelper.dbSet(this.db, "HouseWardMapping/" + state.mobile, { line: lineTo, ward: zone });
+      }
+    }
+
+    if (revisitData != null) {
+      row.failedStep = "Revisit Write";
+      state.destRevisitWritten = true;
+      await this.moveHelper.dbUpdate(this.db,
+        "EntitySurveyData/RevisitRequest/" + zone + "/" + lineTo + "/" + revisitKey, revisitData);
+    }
+
+    // markerID nikalne ka logic bilkul purane code jaisa hi
+    row.failedStep = "Ward Mapping";
+    let markerID = "";
+    if (data["markerId"] != null) {
+      markerID = this.commonService.getDefaultCardPrefix() + data["markerId"];
+    }
+    if (cardNo != "" && markerID != "") { markerID = cardNo; }
+    state.markerID = markerID;
+    if (markerID != "") {
+      state.mappingWritten = true;
+      await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + markerID, {
+        image: row.newImage,
+        line: lineTo.toString(),
+        markerNo: row.newKey.toString(),
+        ward: zone
+      });
+    }
+
+    // ---------- SOURCE REMOVES (sabse aakhir me) ----------
+    row.failedStep = "Source Cleanup";
+    state.cleanupStarted = true;
+    await this.moveHelper.dbRemove(this.db,
+      "EntityMarkingData/MarkedHouses/" + zone + "/" + lineFrom + "/" + row.markerNo);
+    if (cardData != null) {
+      await this.moveHelper.dbRemove(this.db, "Houses/" + zone + "/" + lineFrom + "/" + cardNo);
+    }
+    if (revisitData != null) {
+      await this.moveHelper.dbRemove(this.db,
+        "EntitySurveyData/RevisitRequest/" + zone + "/" + lineFrom + "/" + revisitKey);
+    }
+
+    row.failedStep = "";
+  }
+
+  /**
+   * Marker beech me fail hua to destination par likhi gayi aadhi entries hata
+   * kar purani haalat wapas laata hai. Sirf tab jab source se abhi kuch delete
+   * nahi hua - warna data hi chala jayega.
+   */
+  private async rollbackDestination(row: MarkerMoveRow, ctx: any, state: any) {
+    try {
+      if (state.destMarkerWritten) {
+        await this.moveHelper.dbRemove(this.db,
+          "EntityMarkingData/MarkedHouses/" + ctx.zone + "/" + ctx.lineTo + "/" + row.newKey);
+      }
+      if (state.destCardWritten && row.cardNo != "") {
+        await this.moveHelper.dbRemove(this.db, "Houses/" + ctx.zone + "/" + ctx.lineTo + "/" + row.cardNo);
+        await this.moveHelper.dbSet(this.db, "CardWardMapping/" + row.cardNo, { line: ctx.lineFrom, ward: ctx.zone });
+        if (state.mobile != "") {
+          await this.moveHelper.dbSet(this.db, "HouseWardMapping/" + state.mobile, { line: ctx.lineFrom, ward: ctx.zone });
+        }
+      }
+      if (state.destRevisitWritten && state.revisitKey != "") {
+        await this.moveHelper.dbRemove(this.db,
+          "EntitySurveyData/RevisitRequest/" + ctx.zone + "/" + ctx.lineTo + "/" + state.revisitKey);
+      }
+      if (state.mappingWritten && state.markerID != "") {
+        await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + state.markerID, {
+          image: row.oldImage,
+          line: ctx.lineFrom.toString(),
+          markerNo: row.markerNo.toString(),
+          ward: ctx.zone
+        });
+      }
+    } catch (e) {
+      // best effort - rollback fail hua to bhi source salamat hai
+    }
+  }
+
+  async onRetryFailed() {
+    if (this.moveRunning || this.moveContext == null) { return; }
+    let failedMarkerNos = this.moveRows.filter(r => r.status == "failed").map(r => r.markerNo);
+    if (failedMarkerNos.length == 0) { return; }
+    await this.startMove(this.moveContext.lineFrom, this.moveContext.lineTo, this.moveContext.selection, failedMarkerNos);
+  }
+
+  onCancelMove() {
+    if (!this.moveRunning) { return; }
+    this.cancelRequested = true;
+    this.moveSummary.waitingForNetwork = false;
+    this.moveSummary.statusText = "Cancel request भेज दी गई, चल रहे markers पूरे होते ही रुक जाएगा...";
   }
 
   updateCounts(zoneNo: any, failureCount: any) {

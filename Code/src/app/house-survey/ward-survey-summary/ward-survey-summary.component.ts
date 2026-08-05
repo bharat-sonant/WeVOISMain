@@ -1075,6 +1075,12 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "Card No";
         htmlString += "</td>";
         htmlString += "<td>";
+        htmlString += "Surveyor Id";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Surveyor Name";
+        htmlString += "</td>";
+        htmlString += "<td>";
         htmlString += "No of Houses";
         htmlString += "</td>";
         htmlString += "<td>";
@@ -1113,6 +1119,12 @@ export class WardSurveySummaryComponent implements OnInit {
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.cardHousesList[i]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["surveyorId"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["surveyorName"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += this.cardHousesList[i]["houseCount"];
@@ -1155,7 +1167,15 @@ export class WardSurveySummaryComponent implements OnInit {
         htmlString += "<td>";
         htmlString += "</td>";
         htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
         htmlString += totalHouses;
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "</td>";
+        htmlString += "<td>";
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += "</td>";
@@ -1243,6 +1263,14 @@ export class WardSurveySummaryComponent implements OnInit {
                   if (detail != undefined) {
                     cardType = detail.houseType;
                   }
+                  let surveyorId = cardObj[cardNo]["surveyorId"] != null ? cardObj[cardNo]["surveyorId"] : "";
+                  let surveyorName = "";
+                  if (surveyorId != "" && this.surveyorList != null) {
+                    let surveyorDetail = this.surveyorList.find(item => item.surveyorId == surveyorId);
+                    if (surveyorDetail != undefined) {
+                      surveyorName = surveyorDetail.name;
+                    }
+                  }
                   totalCardsToProcess++;
                   pendingCalls++;
                   this.getOrCreateImageCaptureLocation(
@@ -1263,7 +1291,9 @@ export class WardSurveySummaryComponent implements OnInit {
                         imageCaptureLocation: imageCaptureLocation,
                         mobile: mobile,
                         date: date,
-                        houseCount: houseCount
+                        houseCount: houseCount,
+                        surveyorId: surveyorId,
+                        surveyorName: surveyorName
                       });
                       pendingCalls--;
                       tryProcessNextZone();

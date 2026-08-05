@@ -91,6 +91,8 @@ import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
 import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-marker-data/change-line-marker-data.component';
+import { MarkerMoveProgressComponent } from '../../PortalServices/marker-move-progress/marker-move-progress.component';
+import { ActionHistoryComponent } from '../../PortalServices/action-history/action-history.component';
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
@@ -293,6 +295,8 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     SupportQueryComponent,
     MonthlyFuelReportComponent,
     ChangeLineMarkerDataComponent,
+    MarkerMoveProgressComponent,
+    ActionHistoryComponent,
     RolesComponent,
     RolePageAccessComponent,
     MapsComponent,

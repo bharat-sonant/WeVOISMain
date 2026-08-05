@@ -8,7 +8,9 @@
         <div class="col-md-8 header2">
 
         </div>
-        <div class="col-md-2 header3"></div>
+        <div class="col-md-2 header3">
+            <button type="button" class="history-btn" *ngIf="moveHelper.canViewActionHistory()" (click)="openHistoryModal()">Action History</button>
+        </div>
     </div>
 </section>
 <div class="main-content">
@@ -76,7 +78,9 @@
                             <div class="row form-group2">
                                 <div class="col-md-12 pr-1">
                                     <div class="form-group">
-                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="saveData();">SAVE</button>
+                                        <button id="btnSave" type="button" class="btn btn-success btn-xs" [disabled]="moveRunning" (click)="saveData();">
+                                            {{ moveRunning ? 'MOVING...' : 'SAVE' }}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -157,3 +161,37 @@
         </div>
     </div>
 </div>
+
+<!-- marker move progress popup -->
+<ng-template #moveProgressModal>
+    <div class="modal-header move-modal-header">
+        <h5 class="modal-title">
+            Marker Move &mdash; Zone {{ moveSummary.fromZone }} / Line {{ moveSummary.fromLine }}
+            <i class="fa fa-long-arrow-right move-modal-arrow"></i>
+            Zone {{ moveSummary.toZone }} / Line {{ moveSummary.toLine }}
+        </h5>
+        <button type="button" class="close" [disabled]="moveRunning" (click)="closeMoveModal()" title="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body move-modal-body">
+        <app-marker-move-progress [rows]="moveRows" [summary]="moveSummary" [showHeader]="false" (retryFailed)="onRetryFailed()" (cancelMove)="onCancelMove()">
+        </app-marker-move-progress>
+    </div>
+    <div class="modal-footer move-modal-footer">
+        <span class="running-note" *ngIf="moveRunning">Move चल रहा है &mdash; यह window बंद नहीं होगी।</span>
+        <button type="button" class="btn btn-default btn-xs" [disabled]="moveRunning" (click)="closeMoveModal()">Close</button>
+    </div>
+</ng-template>
+<!-- action history popup - sirf userId 4 -->
+<ng-template #historyModal>
+    <div class="modal-header ah-modal-header">
+        <h5 class="modal-title">Action History &mdash; Change Line Marker Data</h5>
+        <button type="button" class="close" (click)="closeHistoryModal()" title="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body ah-modal-body">
+        <app-action-history [db]="db" [section]="historySection" [pageName]="historyPageKey"></app-action-history>
+    </div>
+</ng-template>

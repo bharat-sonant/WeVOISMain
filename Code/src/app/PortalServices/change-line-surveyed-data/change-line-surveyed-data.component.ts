@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { AngularFireStorage } from "angularfire2/storage";
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { MoveHelperService, MoveRun } from '../../services/common/move-helper.service';
+import { MarkerMoveRow, MarkerMoveSummary } from '../marker-move-progress/marker-move-progress.component';
 
 @Component({
   selector: 'app-change-line-surveyed-data',
   templateUrl: './change-line-surveyed-data.component.html',
   styleUrls: ['./change-line-surveyed-data.component.scss']
 })
-export class ChangeLineSurveyedDataComponent implements OnInit {
+export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private storage: AngularFireStorage) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, private storage: AngularFireStorage, public moveHelper: MoveHelperService, private modalService: NgbModal) { }
+
   cityName: any;
   db: any;
   public selectedZone: any;
@@ -24,23 +28,132 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   divLoader = "#divLoader";
   ddlZoneCount = "#ddlZoneCount";
   serviceName = "portal-service-change-line-surveyed-data";
+  pageName = "Change-Line-Surveyed-Data";
+
+  // ---- action history ----
+  historySection = "PortalServices";
+  historyPageKey = "ChangeLineSurveyData";
+  private networkInterrupted = false;
+
+  // ---- move progress state ----
+  @ViewChild("moveProgressModal", { static: false }) moveProgressModal: TemplateRef<any>;
+  private moveModalRef: NgbModalRef = null;
+  moveRows: MarkerMoveRow[] = [];
+  moveSummary: MarkerMoveSummary = this.getEmptySummary();
+  moveRunning = false;
+  private cancelRequested = false;
+  private moveContext: any = null;
+
+  /** MoveHelperService ko batata hai ki cancel hua ya nahi, aur UI ko network wait dikhata hai */
+  private run: MoveRun = {
+    isCancelled: () => this.cancelRequested,
+    setWaitingForNetwork: (waiting: boolean) => {
+      this.moveSummary.waitingForNetwork = waiting;
+      if (waiting) { this.networkInterrupted = true; }
+    }
+  };
+
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
-    this.commonService.savePageLoadHistory("Portal-Services", "Change-Line-Surveyed-Data", localStorage.getItem("userID"));
+    this.commonService.savePageLoadHistory("Portal-Services", this.pageName, localStorage.getItem("userID"));
     this.setDefault();
+  }
+
+  ngOnDestroy() {
+    this.cancelRequested = true;
+    this.moveHelper.stopWatchingConnection();
+    if (this.moveModalRef != null) {
+      this.moveModalRef.dismiss();
+      this.moveModalRef = null;
+    }
   }
 
   setDefault() {
     this.db = this.fs.getDatabaseByCity(this.cityName);
     this.getZones();
+    this.moveHelper.watchConnection(this.db);
   }
 
   getZones() {
     this.zoneList = JSON.parse(localStorage.getItem("allZoneList"));
   }
 
-  saveData() {
+  // =====================================================================
+  // MOVE PROGRESS POPUP
+  // =====================================================================
+
+  private openMoveModal() {
+    if (this.moveModalRef != null) {
+      return;
+    }
+    this.moveModalRef = this.modalService.open(this.moveProgressModal, {
+      size: "lg",
+      backdrop: "static",
+      keyboard: false,
+      windowClass: "house-move-modal"
+    });
+    this.moveModalRef.result.then(
+      () => { this.moveModalRef = null; },
+      () => { this.moveModalRef = null; }
+    );
+  }
+
+  // ---- action history popup (sirf userId 4) ----
+  @ViewChild("historyModal", { static: false }) historyModal: any;
+  private historyModalRef: any = null;
+
+  openHistoryModal() {
+    if (!this.moveHelper.canViewActionHistory() || this.historyModalRef != null) {
+      return;
+    }
+    this.historyModalRef = this.modalService.open(this.historyModal, { size: "lg", windowClass: "action-history-modal" });
+    this.historyModalRef.result.then(
+      () => { this.historyModalRef = null; },
+      () => { this.historyModalRef = null; }
+    );
+  }
+
+  closeHistoryModal() {
+    if (this.historyModalRef != null) {
+      this.historyModalRef.close();
+      this.historyModalRef = null;
+    }
+  }
+
+  closeMoveModal() {
+    if (this.moveRunning) {
+      return;
+    }
+    if (this.moveModalRef != null) {
+      this.moveModalRef.close();
+      this.moveModalRef = null;
+    }
+  }
+
+  private getEmptySummary(): MarkerMoveSummary {
+    return {
+      running: false,
+      waitingForNetwork: false,
+      statusText: "",
+      fromZone: "",
+      fromLine: "",
+      toZone: "",
+      toLine: "",
+      backupFile: "",
+      total: 0,
+      moved: 0,
+      failed: 0,
+      pending: 0,
+      imageMissing: 0
+    };
+  }
+
+  // =====================================================================
+  // UPDATE HOUSE LINE
+  // =====================================================================
+
+  async saveData() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "saveData");
     if ($(this.ddlZoneFrom).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select zone from !!!");
@@ -61,170 +174,567 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please enter line no to !!!");
       return;
     }
-    $(this.divLoader).show();
+
     let zoneFrom = $(this.ddlZoneFrom).val();
     let lineFrom = $(this.txtLineNoFrom).val();
     let zoneTo = $(this.ddlZoneTo).val();
     let lineTo = $(this.txtLineNoTo).val();
-    let lastMarkerKey = 1;
-    let dbPath = "Houses/" + zoneFrom + "/" + lineFrom;
-    let houseFromInstance = this.db.list(dbPath).valueChanges().subscribe(
-      fromDataList => {
-        houseFromInstance.unsubscribe();
-        if (fromDataList.length > 0) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", fromDataList);
-          let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/lastMarkerKey";
-          let lastMarkerKeyInstance = this.db.object(dbPath).valueChanges().subscribe(
-            lastMarkerKeyData => {
-              lastMarkerKeyInstance.unsubscribe();
-              if (lastMarkerKeyData != null) {
-                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", lastMarkerKeyData);
-                lastMarkerKey = Number(lastMarkerKeyData) + 1;
-              }
-              dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom;
-              let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-                markerData => {
-                  let markerList = [];
-                  markerInstance.unsubscribe();
-                  if (markerData != null) {
-                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", markerData);
-                    let keyArray = Object.keys(markerData);
-                    for (let i = 0; i < keyArray.length; i++) {
-                      let markerNo = keyArray[i];
-                      if (markerData[markerNo]["cardNumber"] != null) {
-                        markerList.push({ markerNo: markerNo, cardNumber: markerData[markerNo]["cardNumber"] });
-                      }
-                    }
-                  }
-                  this.moveHouseData(0, zoneFrom, zoneTo, lineFrom, lineTo, lastMarkerKey, markerList, fromDataList);
-                }
-              );
-            }
-          )
-        }
-        else {
-          this.commonService.setAlertMessage("error", "No house find in selected ward and lines !!!");
-        }
-      }
-    );
+
+    if (zoneFrom == zoneTo && lineFrom == lineTo) {
+      this.commonService.setAlertMessage("error", "From और To एक ही हैं, move का कोई मतलब नहीं !!!");
+      return;
+    }
+
+    await this.startMove(zoneFrom, lineFrom, zoneTo, lineTo, null);
   }
 
-  moveHouseData(index: any, zoneFrom: any, zoneTo: any, lineFrom: any, lineTo: any, lastMarkerKey: any, markerList: any, fromDataList: any) {
-    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveHouseData");
-    if (index == fromDataList.length) {
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
-      this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
-      this.commonService.setAlertMessage("success", "Line data moved successfully");
-      $(this.divLoader).hide();
+  /**
+   * onlyCardNos = null  -> poori line ka move
+   * onlyCardNos = [...] -> sirf pehle fail hue houses ka retry
+   */
+  private async startMove(zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, onlyCardNos: string[]) {
+    if (this.moveRunning) {
+      this.commonService.setAlertMessage("error", "एक move पहले से चल रहा है !!!");
+      return;
     }
-    else {
-      let cardNo = fromDataList[index]["cardNo"];
-      let data = fromDataList[index];
-      data["line"] = lineTo;
-      data["ward"] = zoneTo;
-      let latLng = data["latLng"].toString().replace("(", "").replace(")", "");
 
-      this.db.object("Houses/" + zoneTo + "/" + lineTo + "/" + cardNo).set(data);
+    this.cancelRequested = false;
+    this.moveRunning = true;
+    this.moveRows = [];
+    this.moveSummary = this.getEmptySummary();
+    this.moveSummary.running = true;
+    this.moveSummary.fromZone = zoneFrom;
+    this.moveSummary.fromLine = lineFrom;
+    this.moveSummary.toZone = zoneTo;
+    this.moveSummary.toLine = lineTo;
+    this.openMoveModal();
 
-      let path = "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo;
-      this.db.object(path).remove();
+    let action = (onlyCardNos != null) ? "RetryFailed" : "MoveHouseLine";
+    let startTime = new Date();
+    let originalStartKey: any = null;
+    this.networkInterrupted = false;
 
-      // modify card ward mapping
-      this.db.object("CardWardMapping/" + data["cardNo"]).set({ line: lineTo, ward: zoneTo, });
+    try {
+      // ---------- 1. saara data padho ----------
+      this.moveSummary.statusText = "डेटा पढ़ा जा रहा है...";
+      await this.moveHelper.waitForNetwork(this.run);
 
-      if (data["mobile"] != "") {
-        // modify house ward mapping
-        this.db.object("HouseWardMapping/" + data["mobile"]).set({ line: lineTo, ward: zoneTo, });
+      let houseData = await this.moveHelper.readOnceWithRetry(this.db, "Houses/" + zoneFrom + "/" + lineFrom, this.run);
+      if (houseData == null) {
+        this.commonService.setAlertMessage("error", "No house find in selected ward and lines !!!");
+        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, null, "source line par koi house nahi mila");
+        this.finishRun();
+        return;
       }
-      if (markerList.length != 0) {
-        let detail = markerList.find(item => item.cardNumber == cardNo);
-        if (detail != undefined) {
-          let markerNo = detail.markerNo;
-          let dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-          let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-            markerData => {
-              markerInstance.unsubscribe();
-              if (markerData != null) {
-                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveHouseData", markerData);
-                let oldImageName = markerData["image"];
-                markerData["image"] = lastMarkerKey + ".jpg";
-                let newImageName = lastMarkerKey + ".jpg";
-                markerData["latLng"] = latLng;
-                let city = this.commonService.getFireStoreCity();
-                if (this.cityName == "sikar") {
-                  city = "Sikar-Survey";
-                }
-                let markerID = "";
-                if (markerData["markerId"] != null) {
-                  markerID = cardNo;
-                }
-                const pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + oldImageName;
-                const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
-                ref.getDownloadURL()
-                  .then((url) => {
-                    var xhr = new XMLHttpRequest();
-                    xhr.responseType = 'blob';
-                    xhr.onload = (event) => {
-                      var blob = xhr.response;
-                      const pathNew = city + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + newImageName;
-                      const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
-                      ref1.put(blob).then((promise) => {
-                        // ref.delete();
+      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", houseData);
 
-                      }
-                      ).catch((error) => {
-
-                      });
-                    };
-                    xhr.open('GET', url);
-                    xhr.send();
-                  })
-                  .catch((error) => {
-
-                  });
-                let dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + lastMarkerKey;
-                this.db.object(dbPath).update(markerData);
-
-                dbPath = "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + markerNo;
-                this.db.object(dbPath).remove();
-
-                if (markerID != "") {
-                  dbPath = "EntityMarkingData/MarkerWardMapping/" + markerID;
-                  let obj = {
-                    image: lastMarkerKey + ".jpg",
-                    line: lineTo.toString(),
-                    markerNo: lastMarkerKey.toString(),
-                    ward: zoneTo
-                  }
-                  this.db.object(dbPath).update(obj);
-                }
-
-                
-                lastMarkerKey++;
-                index++;
-                this.moveHouseData(index, zoneFrom, zoneTo, lineFrom, lineTo, lastMarkerKey, markerList, fromDataList);
-              }
-              else {
-                lastMarkerKey++;
-                index++;
-                this.moveHouseData(index, zoneFrom, zoneTo, lineFrom, lineTo, lastMarkerKey, markerList, fromDataList);
-              }
-            }
-          );
-        }
-        else {
-          lastMarkerKey++;
-          index++;
-          this.moveHouseData(index, zoneFrom, zoneTo, lineFrom, lineTo, lastMarkerKey, markerList, fromDataList);
-        }
+      let cardNoList = this.buildCardList(houseData, onlyCardNos);
+      if (cardNoList.length == 0) {
+        this.commonService.setAlertMessage("error", "move करने लायक कोई house नहीं मिला।");
+        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, null, "move karne layak koi house nahi mila");
+        this.finishRun();
+        return;
       }
-      else {
-        lastMarkerKey++;
-        index++;
-        this.moveHouseData(index, zoneFrom, zoneTo, lineFrom, lineTo, lastMarkerKey, markerList, fromDataList);
+
+      let lastMarkerKeyData = await this.moveHelper.readOnceWithRetry(this.db, "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/lastMarkerKey", this.run);
+      // purane code jaisa hi: mila to +1 se shuru, warna 1 se
+      let startKey = (lastMarkerKeyData != null) ? (Number(lastMarkerKeyData) + 1) : 1;
+      originalStartKey = startKey;
+
+      let markerData = await this.moveHelper.readOnceWithRetry(this.db, "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom, this.run);
+      let markerByCard = this.buildMarkerIndex(markerData);
+
+      // ---------- 2. backup pehle, uske baad hi move ----------
+      this.moveSummary.statusText = "Backup सेव हो रहा है...";
+      let now = new Date();
+      let filePath = this.moveHelper.buildBackupFilePath(this.pageName, now);
+      let fileName = this.moveHelper.buildBackupFileName(zoneFrom, lineFrom, zoneTo, lineTo, (onlyCardNos != null ? "_retry" : ""), now);
+      let backupData = this.buildBackupData(houseData, markerData, startKey, zoneFrom, lineFrom, zoneTo, lineTo, cardNoList.length, now);
+
+      try {
+        await this.moveHelper.saveBackupWithRetry(backupData, fileName, filePath, this.run);
+      } catch (e) {
+        let reason = (e && e.message) ? e.message : e;
+        this.commonService.setAlertMessage("error", "Backup सेव नहीं हो पाया, move रद्द कर दिया गया। (" + reason + ")");
+        this.moveSummary.statusText = "Backup फेल हुआ - move शुरू ही नहीं हुआ। डेटाबेस में कुछ नहीं बदला।";
+        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, originalStartKey, "backup fail: " + reason);
+        this.finishRun();
+        return;
+      }
+      this.moveSummary.backupFile = filePath + fileName;
+
+      // ---------- 3. rows ----------
+      this.moveRows = this.buildRows(houseData, markerData, markerByCard, cardNoList, zoneFrom, lineFrom, zoneTo, lineTo);
+      this.moveSummary.total = this.moveRows.length;
+      this.moveSummary.pending = this.moveRows.length;
+
+      this.moveContext = {
+        zoneFrom: zoneFrom, lineFrom: lineFrom, zoneTo: zoneTo, lineTo: lineTo,
+        houseData: houseData, markerData: markerData, startKey: startKey
+      };
+
+      // ---------- 4. move ----------
+      await this.runMoveLoop(this.moveContext);
+
+      // ---------- 5. destination ka lastMarkerKey ----------
+      // Purane code jaisa hi vyavhaar: har house ek key consume karta hai chahe
+      // uska marker ho ya na ho, aur ant me start + count likha jata hai.
+      this.moveSummary.statusText = "Last marker key अपडेट हो रही है...";
+      await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo,
+        { lastMarkerKey: this.moveContext.startKey + this.moveRows.length });
+
+      let status = "success";
+      if (this.cancelRequested) { status = "cancelled"; }
+      else if (this.moveSummary.failed > 0) { status = "partial"; }
+      await this.saveMoveHistory(action, status, startTime, zoneFrom, lineFrom, zoneTo, lineTo, originalStartKey, "");
+
+      if (this.cancelRequested) {
+        this.moveSummary.statusText = "Move रद्द कर दिया गया। जो move हो चुके वे सुरक्षित हैं, बाकी source पर ही हैं।";
+        this.commonService.setAlertMessage("error", "Move रद्द कर दिया गया। " + this.moveSummary.moved + " houses move हो चुके थे।");
+      } else if (this.moveSummary.failed > 0) {
+        this.moveSummary.statusText = this.moveSummary.failed + " houses फेल हुए। नीचे table में कारण देखें, फिर 'Retry Failed' दबाएँ।";
+        this.commonService.setAlertMessage("error", this.moveSummary.failed + " houses have some issue to be processed, Please try again.");
+      } else {
+        this.moveSummary.statusText = "Line का डेटा सफलतापूर्वक move हो गया।";
+        if (this.moveSummary.imageMissing > 0) {
+          this.moveSummary.statusText = this.moveSummary.statusText + " (" + this.moveSummary.imageMissing + " markers की image Storage में नहीं मिली - डेटा move हो गया है।)";
+        }
+        this.commonService.setAlertMessage("success", "Line data moved successfully");
+      }
+    } catch (e) {
+      let reason = (e && e.message) ? e.message : e;
+      this.moveSummary.statusText = "Move रोक दिया गया: " + reason;
+      this.commonService.setAlertMessage("error", "Move में समस्या आ गई: " + reason);
+      await this.saveMoveHistory(action, "error", startTime, zoneFrom, lineFrom, zoneTo, lineTo, originalStartKey, "" + reason);
+    }
+
+    this.finishRun();
+  }
+
+  /**
+   * ActionHistory/{section}/{pageKey}/{date} me ek record.
+   * Fail / cancel / abort sab log hote hain - warna audit adhoora reh jayega.
+   */
+  private async saveMoveHistory(action: string, status: string, startTime: Date, wardFrom: any, lineFrom: any, wardTo: any, lineTo: any, startKey: any, note: string) {
+    let now = new Date();
+    let record: any = {
+      action: action,
+      status: status,
+      startTime: this.moveHelper.getDateTimeString(startTime),
+      endTime: this.moveHelper.getDateTimeString(now),
+      durationSec: Math.round((now.getTime() - startTime.getTime()) / 1000),
+      from: { ward: wardFrom, line: lineFrom },
+      to: { ward: wardTo, line: lineTo },
+      total: this.moveSummary.total,
+      moved: this.moveSummary.moved,
+      failed: this.moveSummary.failed,
+      pending: this.moveSummary.pending,
+      imageMissing: this.moveSummary.imageMissing,
+      backupFile: this.moveSummary.backupFile,
+      cancelled: this.cancelRequested,
+      networkInterrupted: this.networkInterrupted,
+      failedItems: this.moveHelper.buildFailedItems(this.moveRows)
+    };
+    if (note != "") {
+      record["note"] = note;
+    }
+    if (startKey != null && this.moveRows.length > 0) {
+      record["destinationStartKey"] = Number(startKey);
+      record["destinationEndKey"] = Number(startKey) + this.moveRows.length - 1;
+    }
+    await this.moveHelper.saveActionHistory(this.db, this.historySection, this.historyPageKey, record);
+  }
+
+  /** Move ke alawa wale actions ka chhota record */
+  private async saveSimpleHistory(action: string, status: string, startTime: Date, detail: any) {
+    let now = new Date();
+    let record: any = {
+      action: action,
+      status: status,
+      startTime: this.moveHelper.getDateTimeString(startTime),
+      endTime: this.moveHelper.getDateTimeString(now),
+      durationSec: Math.round((now.getTime() - startTime.getTime()) / 1000)
+    };
+    if (detail != null) {
+      let keys = Object.keys(detail);
+      for (let i = 0; i < keys.length; i++) {
+        record[keys[i]] = detail[keys[i]];
+      }
+    }
+    await this.moveHelper.saveActionHistory(this.db, this.historySection, this.historyPageKey, record);
+  }
+
+  private finishRun() {
+    this.moveRunning = false;
+    this.moveSummary.running = false;
+    this.moveSummary.waitingForNetwork = false;
+    $(this.divLoader).hide();
+    if (this.moveSummary.total == 0) {
+      this.closeMoveModal();
+    }
+  }
+
+  /** Houses/{zone}/{line} ke keys hi card numbers hain. */
+  private buildCardList(houseData: any, onlyCardNos: string[]): string[] {
+    let list: string[] = [];
+    let keyArray = Object.keys(houseData);
+    for (let i = 0; i < keyArray.length; i++) {
+      let cardNo = keyArray[i];
+      if (houseData[cardNo] == null || typeof houseData[cardNo] != "object") {
+        continue;
+      }
+      if (onlyCardNos != null && onlyCardNos.indexOf(cardNo) < 0) {
+        continue;
+      }
+      list.push(cardNo);
+    }
+    return list;
+  }
+
+  /** cardNumber -> markerNo, taaki har house ka marker turant mil jaye. */
+  private buildMarkerIndex(markerData: any): any {
+    let index = {};
+    if (markerData == null) {
+      return index;
+    }
+    let keyArray = Object.keys(markerData);
+    for (let i = 0; i < keyArray.length; i++) {
+      let markerNo = keyArray[i];
+      if (markerData[markerNo] == null || typeof markerData[markerNo] != "object") {
+        continue;
+      }
+      if (markerData[markerNo]["cardNumber"] != null) {
+        index[markerData[markerNo]["cardNumber"]] = markerNo;
+      }
+    }
+    return index;
+  }
+
+  private buildRows(houseData: any, markerData: any, markerByCard: any, cardNoList: string[], zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any): MarkerMoveRow[] {
+    let rows: MarkerMoveRow[] = [];
+    for (let i = 0; i < cardNoList.length; i++) {
+      let cardNo = cardNoList[i];
+      let markerNo = (markerByCard[cardNo] != undefined) ? markerByCard[cardNo] : "";
+      let oldImage = "";
+      if (markerNo != "" && markerData != null && markerData[markerNo] != null && markerData[markerNo]["image"] != null) {
+        oldImage = markerData[markerNo]["image"];
+      }
+      rows.push({
+        srNo: i + 1,
+        markerNo: markerNo,
+        newKey: 0,
+        newMarkerNo: "",
+        fromZone: zoneFrom,
+        fromLine: lineFrom,
+        toZone: zoneTo,
+        toLine: lineTo,
+        cardNo: cardNo,
+        oldImage: oldImage,
+        newImage: "",
+        imageMissing: false,
+        status: "pending",
+        failedStep: "",
+        error: "",
+        attempts: 0
+      });
+    }
+    return rows;
+  }
+
+  /**
+   * Move me Houses, CardWardMapping, HouseWardMapping, MarkedHouses aur
+   * MarkerWardMapping badalte hain - sabka purana roop backup me jata hai.
+   */
+  private buildBackupData(houseData: any, markerData: any, startKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, itemCount: number, now: Date): any {
+    let cardWardMapping = {};
+    let houseWardMapping = {};
+    let cardKeys = Object.keys(houseData);
+    for (let i = 0; i < cardKeys.length; i++) {
+      let cardNo = cardKeys[i];
+      if (houseData[cardNo] == null || typeof houseData[cardNo] != "object") {
+        continue;
+      }
+      cardWardMapping[cardNo] = { line: lineFrom, ward: zoneFrom };
+      let mobile = houseData[cardNo]["mobile"];
+      if (mobile != null && mobile != "") {
+        houseWardMapping[mobile] = { line: lineFrom, ward: zoneFrom };
+      }
+    }
+    let meta = this.moveHelper.buildBackupMeta(this.pageName, this.cityName, zoneFrom, lineFrom, zoneTo, lineTo, itemCount, now);
+    meta["destinationStartKey"] = startKey;
+    return {
+      meta: meta,
+      houses: houseData,
+      markedHouses: markerData,
+      cardWardMapping: cardWardMapping,
+      houseWardMapping: houseWardMapping
+    };
+  }
+
+  // =====================================================================
+  // MOVE LOOP
+  // =====================================================================
+
+  /**
+   * Houses ek doosre se independent hain - har house apne alag paths par
+   * likhta hai (apna cardNo, apna markerNo, apni key). Keys pehle allocate
+   * kar dete hain, phir N houses saath-saath chal sakte hain bina race ke.
+   */
+  private async runMoveLoop(ctx: any) {
+    // Purane code jaisa hi: har house ek key consume karta hai, chahe uska
+    // marker ho ya na ho. Isse numbering bilkul pehle jaisi rehti hai.
+    for (let i = 0; i < this.moveRows.length; i++) {
+      let row = this.moveRows[i];
+      let key = ctx.startKey + i;
+      row.newKey = key;
+      row.newMarkerNo = (row.markerNo != "") ? ("" + key) : "";
+      // purane code jaisa - marker hai to image name hamesha set hota hai
+      row.newImage = (row.markerNo != "") ? (key + ".jpg") : "";
+    }
+
+    await this.moveHelper.runPool(this.moveRows.length, (index: number) => {
+      return this.processRowWithRetry(this.moveRows[index], ctx);
+    }, this.run);
+  }
+
+  private async processRowWithRetry(row: MarkerMoveRow, ctx: any) {
+    let networkRetries = 0;
+
+    while (true) {
+      if (this.cancelRequested) { row.status = "pending"; return; }
+      await this.moveHelper.waitForNetwork(this.run);
+      if (this.cancelRequested) { row.status = "pending"; return; }
+
+      row.status = "moving";
+      row.attempts = row.attempts + 1;
+      this.refreshMoveStatusText();
+
+      let state = {
+        destHouseWritten: false,
+        destMarkerWritten: false,
+        mappingWritten: false,
+        cleanupStarted: false,
+        markerID: "",
+        mobile: ""
+      };
+
+      try {
+        await this.processHouse(row, ctx, state);
+        row.status = "moved";
+        row.failedStep = "";
+        row.error = "";
+        if (row.imageMissing) {
+          this.moveSummary.imageMissing = this.moveSummary.imageMissing + 1;
+        }
+        this.moveSummary.moved = this.moveSummary.moved + 1;
+        this.moveSummary.pending = this.moveSummary.pending - 1;
+        this.refreshMoveStatusText();
+        return;
+      } catch (e) {
+        if (this.cancelRequested) { row.status = "pending"; return; }
+
+        if (this.moveHelper.isNetworkError(e) && networkRetries < this.moveHelper.MAX_NETWORK_RETRIES) {
+          networkRetries = networkRetries + 1;
+          row.status = "pending";
+          row.imageMissing = false;
+          await this.moveHelper.waitForNetwork(this.run);
+          continue;                                  // wahi house, wahi key
+        }
+
+        if (!state.cleanupStarted) {
+          await this.rollbackDestination(row, ctx, state);
+          row.newMarkerNo = "";
+          row.newImage = "";
+        }
+
+        row.status = "failed";
+        row.imageMissing = false;
+        row.error = (e && e.message) ? e.message : ("" + e);
+        if (state.cleanupStarted) {
+          row.error = row.error + " (source cleanup अधूरा - इस house को manually जाँच लें)";
+        }
+        this.moveSummary.failed = this.moveSummary.failed + 1;
+        this.moveSummary.pending = this.moveSummary.pending - 1;
+        this.refreshMoveStatusText();
+        return;
       }
     }
   }
+
+  private refreshMoveStatusText() {
+    if (this.moveSummary.waitingForNetwork) {
+      return;
+    }
+    let done = this.moveSummary.moved + this.moveSummary.failed;
+    this.moveSummary.statusText = done + " / " + this.moveSummary.total + " houses हो चुके - "
+      + this.moveHelper.CONCURRENCY + " एक साथ चल रहे हैं...";
+  }
+
+  /**
+   * Ek house ka poora move. Order: pehle SAARE reads + image, phir SAARE
+   * destination writes, sabse aakhir me source removes. Isse beech me kuch
+   * fail ho to source poora salamat rehta hai aur retry saaf chalta hai.
+   * Har step idempotent hai, isliye dobara chalane par kuch bigadta nahi.
+   */
+  private async processHouse(row: MarkerMoveRow, ctx: any, state: any) {
+    let zoneFrom = ctx.zoneFrom;
+    let lineFrom = ctx.lineFrom;
+    let zoneTo = ctx.zoneTo;
+    let lineTo = ctx.lineTo;
+    let cardNo = row.cardNo;
+
+    let houseObj = ctx.houseData[cardNo];
+    if (houseObj == null) {
+      throw new Error("house data not found");
+    }
+
+    // ---------- IMAGE ----------
+    // Har marker ki image nahi hoti. Image na mile to house phir bhi move hoga,
+    // bas row par flag lag jayega. Network/upload fail par house skip hoga.
+    if (row.markerNo != "" && row.oldImage != "") {
+      row.failedStep = "Image Copy";
+      let city = this.moveHelper.getImageCity(this.cityName);
+      let pathOld = city + "/MarkingSurveyImages/" + zoneFrom + "/" + lineFrom + "/" + row.oldImage;
+      let pathNew = city + "/MarkingSurveyImages/" + zoneTo + "/" + lineTo + "/" + row.newImage;
+      try {
+        await this.moveHelper.copyImageWithRetry(pathOld, pathNew, this.run);
+        row.imageMissing = false;
+      } catch (e) {
+        if (!this.moveHelper.isImageMissingError(e)) {
+          throw e;
+        }
+        row.imageMissing = true;
+      }
+    } else if (row.markerNo != "") {
+      row.imageMissing = true;
+    }
+
+    // ---------- READS ----------
+    let markerObj: any = null;
+    if (row.markerNo != "") {
+      row.failedStep = "Marker Read";
+      markerObj = await this.moveHelper.readOnce(this.db, "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + row.markerNo);
+      if (markerObj != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveHouseData", markerObj);
+      }
+    }
+
+    // house ka data taiyaar
+    let data = houseObj;
+    data["line"] = lineTo;
+    data["ward"] = zoneTo;
+    let mobile = (data["mobile"] != null) ? data["mobile"] : "";
+    state.mobile = mobile;
+
+    // latLng purane code me bina null check ke .toString() hota tha - ek bhi
+    // house ka latLng missing hone par poora move wahin crash ho jata tha
+    let latLng = "";
+    if (data["latLng"] != null) {
+      latLng = data["latLng"].toString().replace("(", "").replace(")", "");
+    }
+
+    // ---------- DESTINATION WRITES ----------
+    row.failedStep = "House Write";
+    state.destHouseWritten = true;
+    await this.moveHelper.dbSet(this.db, "Houses/" + zoneTo + "/" + lineTo + "/" + cardNo, data);
+
+    row.failedStep = "Card Ward Mapping";
+    await this.moveHelper.dbSet(this.db, "CardWardMapping/" + cardNo, { line: lineTo, ward: zoneTo });
+    if (mobile != "") {
+      await this.moveHelper.dbSet(this.db, "HouseWardMapping/" + mobile, { line: lineTo, ward: zoneTo });
+    }
+
+    if (markerObj != null) {
+      row.failedStep = "Marker Write";
+      markerObj["image"] = row.newImage;           // purane code jaisa - hamesha set hota hai
+      if (latLng != "") {
+        markerObj["latLng"] = latLng;
+      }
+      state.destMarkerWritten = true;
+      await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + row.newKey, markerObj);
+
+      // markerID nikalne ka logic bilkul purane code jaisa hi rakha gaya hai
+      row.failedStep = "Ward Mapping";
+      let markerID = "";
+      if (markerObj["markerId"] != null) {
+        markerID = cardNo;
+      }
+      state.markerID = markerID;
+      if (markerID != "") {
+        state.mappingWritten = true;
+        await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + markerID, {
+          image: row.newImage,
+          line: lineTo.toString(),
+          markerNo: row.newKey.toString(),
+          ward: zoneTo
+        });
+      }
+    }
+
+    // ---------- SOURCE REMOVES (sabse aakhir me) ----------
+    row.failedStep = "Source Cleanup";
+    state.cleanupStarted = true;
+    await this.moveHelper.dbRemove(this.db, "Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo);
+    if (markerObj != null) {
+      await this.moveHelper.dbRemove(this.db, "EntityMarkingData/MarkedHouses/" + zoneFrom + "/" + lineFrom + "/" + row.markerNo);
+    }
+
+    row.failedStep = "";
+  }
+
+  /**
+   * House beech me fail hua to destination par likhi gayi aadhi entries hata
+   * kar purani haalat wapas laata hai. Sirf tab chalta hai jab source se abhi
+   * kuch delete nahi hua - warna data hi chala jayega.
+   */
+  private async rollbackDestination(row: MarkerMoveRow, ctx: any, state: any) {
+    try {
+      if (state.destHouseWritten) {
+        await this.moveHelper.dbRemove(this.db, "Houses/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.cardNo);
+        await this.moveHelper.dbSet(this.db, "CardWardMapping/" + row.cardNo, { line: ctx.lineFrom, ward: ctx.zoneFrom });
+        if (state.mobile != "") {
+          await this.moveHelper.dbSet(this.db, "HouseWardMapping/" + state.mobile, { line: ctx.lineFrom, ward: ctx.zoneFrom });
+        }
+      }
+      if (state.destMarkerWritten) {
+        await this.moveHelper.dbRemove(this.db, "EntityMarkingData/MarkedHouses/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.newKey);
+      }
+      if (state.mappingWritten && state.markerID != "") {
+        await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + state.markerID, {
+          image: row.oldImage,
+          line: ctx.lineFrom.toString(),
+          markerNo: row.markerNo.toString(),
+          ward: ctx.zoneFrom
+        });
+      }
+    } catch (e) {
+      // best effort - rollback fail hua to bhi source salamat hai
+    }
+  }
+
+  async onRetryFailed() {
+    if (this.moveRunning || this.moveContext == null) {
+      return;
+    }
+    let failedCardNos = this.moveRows.filter(r => r.status == "failed").map(r => r.cardNo);
+    if (failedCardNos.length == 0) {
+      return;
+    }
+    await this.startMove(this.moveContext.zoneFrom, this.moveContext.lineFrom, this.moveContext.zoneTo, this.moveContext.lineTo, failedCardNos);
+  }
+
+  onCancelMove() {
+    if (!this.moveRunning) {
+      return;
+    }
+    this.cancelRequested = true;
+    this.moveSummary.waitingForNetwork = false;
+    this.moveSummary.statusText = "Cancel request भेज दी गई, चल रहे houses पूरे होते ही रुक जाएगा...";
+  }
+
+  // =====================================================================
+  // BAAKI PAGE SERVICES (pehle jaisi - inme koi badlav nahi)
+  // =====================================================================
 
   updateCardLineData() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCardLineData");
@@ -233,6 +743,8 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
       return;
     }
     let zoneNo = $(this.ddlZone).val();
+    let historyStart = new Date();
+    let mappingCount = 0;
     let dbPath = "Houses/" + zoneNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
       houseData => {
@@ -251,11 +763,13 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                 let cardNo = cardKeyArray[j];
                 dbPath = "CardWardMapping/" + cardNo;
                 this.db.object(dbPath).update({ line: line, ward: zoneNo });
+                mappingCount = mappingCount + 1;
               }
             }
           }
         }
         this.commonService.setAlertMessage("success", "Card line mapping updated !!!");
+        this.saveSimpleHistory("UpdateCardLineMapping", "success", historyStart, { ward: zoneNo, mappingUpdated: mappingCount });
       }
     );
   }
@@ -267,6 +781,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
       return;
     }
     let zoneNo = $(this.ddlZoneCount).val();
+    let historyStart = new Date();
     let dbPath = "Houses/" + zoneNo;
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
       houseData => {
@@ -317,6 +832,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
                 complexCountData[zoneNo.toString()] = totalComplexCount;
                 this.db.object(dbTotalComplexCountPath).update(complexCountData);
                 this.commonService.setAlertMessage("success", "Card house hold count updated !!!");
+                this.saveSimpleHistory("UpdateHouseHoldCounts", "success", historyStart, { ward: zoneNo, houseHoldCount: totalHouseHoldCount, complexCount: totalComplexCount });
               });
             });
 
@@ -327,7 +843,10 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
   }
 
 
+  private wardJsonStart: Date = null;
+
   updateWardWiseCard() {
+    this.wardJsonStart = new Date();
     $(this.divLoader).show();
     this.getWardWiseCards(1);
   }
@@ -337,6 +856,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit {
     if (index == this.zoneList.length) {
       $(this.divLoader).hide();
       this.commonService.setAlertMessage("success", "Ward wise JSON updated successfully !!!");
+      this.saveSimpleHistory("UpdateWardWiseCardJson", "success", (this.wardJsonStart != null ? this.wardJsonStart : new Date()), { wardCount: this.zoneList.length - 1 });
     }
     else {
       let zoneNo = this.zoneList[index]["zoneNo"];
