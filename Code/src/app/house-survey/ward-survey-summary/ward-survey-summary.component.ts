@@ -1271,6 +1271,10 @@ export class WardSurveySummaryComponent implements OnInit {
                       surveyorName = surveyorDetail.name;
                     }
                   }
+                  // id maujood ho to hi SUR prefix lagao, warna cell blank hi rahe
+                  if (surveyorId != "") {
+                    surveyorId = "SUR" + surveyorId;
+                  }
                   totalCardsToProcess++;
                   pendingCalls++;
                   this.getOrCreateImageCaptureLocation(
