@@ -118,10 +118,19 @@ export class SupervisorReportComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSupervisorReport");
     this.supervisorJsonList = [];
     $(this.divLoaderCounts).show();
-    let dbPath = "EntityMarkingData/MarkedHouses/";
-    let supervisorInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      supervisorInstance.unsubscribe();
-      if (data != undefined) {
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/";
+    // let supervisorInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+    //   supervisorInstance.unsubscribe();
+    //   if (data != undefined) {
+    let mappingPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid";
+    let mappingInstance = this.db.object(mappingPath).valueChanges().subscribe((data) => {
+      mappingInstance.unsubscribe();
+      // Whole MarkersData ek hi baar — uid se record resolve karne ke liye.
+      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((markersData: any) => {
+        markersInstance.unsubscribe();
+        if (markersData == null) { markersData = {}; }
+        if (data != undefined) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSupervisorReport", data);
         let keyArray = Object.keys(data);
         for (let i = 0; i <= keyArray.length; i++) {
@@ -136,7 +145,11 @@ export class SupervisorReportComponent implements OnInit {
                 let keyArray2 = Object.keys(lineData);
                 for (let k = 0; k <= keyArray2.length; k++) {
                   let marker = keyArray2[k];
-                  let markerData = lineData[marker];
+                  // OLD PATH (reference ke liye rakha hai):
+                  // let markerData = lineData[marker];
+                  // new path: mapping se uid, phir MarkersData se actual record
+                  let uid = lineData[marker];
+                  let markerData = (uid != null && uid != "") ? markersData[uid] : null;
                   if (markerData != null) {
                     if (markerData["approveById"] != null && markerData["approveDate"] != null) {
                       let supervisorId = markerData["approveById"];
@@ -180,7 +193,10 @@ export class SupervisorReportComponent implements OnInit {
           this.commonService.setAlertMessage("success", "Supervisor data updated successfully !!!");
           $(this.divLoaderCounts).hide();
         }, 300);
-      }
+        // OLD PATH (reference ke liye rakha hai):
+        // }
+        }
+      });
     });
   }
 }

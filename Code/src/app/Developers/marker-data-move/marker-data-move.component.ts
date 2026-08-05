@@ -13,6 +13,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 //              EntityMarkingData/MarkersMapping/WardWise/{ward}/lastMarkerKey = n
 //              EntityMarkingData/MarkersMapping/OldMarkerToNewUid/{ward}/{line}/{markerNo} = M{n}
 //   - Line:    EntityMarkingData/MarkersMapping/LineSummary/{ward}/{line}
+// OLD PATH (reference ke liye rakha hai):
 //              (ApproveStatus node + all line-level count scalars, copied as-is)
 //
 // The M-index is GLOBAL, so the allocation counter lives at
@@ -26,6 +27,9 @@ import { AngularFireStorage } from "angularfire2/storage";
 // we update the existing M record in place. For wards moved by the earlier
 // version (which wrote movedMarkerUid on the old record) that key is still
 // honoured as a fallback and backfilled into the mapping.
+//              (ApproveStatus node + all line-level count scalars. First run
+//              copies them as-is; a re-run only fills keys that are MISSING on
+//              the new path — see writeLineSummary().)
 @Component({
   selector: 'app-marker-data-move',
   templateUrl: './marker-data-move.component.html',
@@ -45,6 +49,9 @@ export class MarkerDataMoveComponent implements OnInit {
 
   markerList: any[] = [];
   oldToNewMap: any = {};
+  // Permanent original-location -> UID map. OldMarkerToNewUid gets re-pointed
+  // when a marker is moved to another line; this one never does.
+  originalToUidMap: any = {};
   failureMap: any = {};
   lastKey = 0;
   createdCount = 0;
@@ -135,11 +142,14 @@ export class MarkerDataMoveComponent implements OnInit {
             }
             this.markerList.push({ line: lineNo, oldMarkerNo: markerNo, data: marker });
           }
-          // Copy this line's summary (ApproveStatus + counts) to the new path.
+          // OLD PATH (reference ke liye rakha hai):
           // set() per line: a re-run always mirrors the latest old-path values
           // (old path stays the write-side source of truth for now).
+          // Copy this line's summary (ApproveStatus + counts) to the new path.
           if (hasSummary) {
-            this.db.object("EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + lineNo).set(lineSummary);
+            // OLD PATH (reference ke liye rakha hai):
+            // this.db.object("EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + lineNo).set(lineSummary);
+            this.writeLineSummary(ward, lineNo, lineSummary);
             this.lineSummaryCount++;
           }
         }
@@ -171,6 +181,14 @@ export class MarkerDataMoveComponent implements OnInit {
             linkInstance.unsubscribe();
             this.oldToNewMap = linkData != null ? linkData : {};
 
+            // Permanent original-location links, so markers that were later
+            // moved to another line are still recognized (no duplicate UID).
+            let origPath = "EntityMarkingData/MarkersMapping/OriginalToUid/" + ward;
+            let origInstance = this.db.object(origPath).valueChanges().subscribe(
+              (origData: any) => {
+                origInstance.unsubscribe();
+                this.originalToUidMap = origData != null ? origData : {};
+
             // Read this ward's pending failure history (used for attemptCount
             // and cleared automatically when a marker finally succeeds).
             let failPath = "EntityMarkingData/MarkersMapping/MoveFailures/" + ward;
@@ -190,6 +208,8 @@ export class MarkerDataMoveComponent implements OnInit {
                 );
               }
             );
+              } // origInstance callback close
+            ); // origInstance subscribe close
           }
         );
       }
@@ -221,6 +241,16 @@ export class MarkerDataMoveComponent implements OnInit {
     // record (written by the earlier version) is honoured as a fallback.
     let lineLinks = this.oldToNewMap != null ? this.oldToNewMap[item["line"]] : null;
     let linkedUid = lineLinks != null ? lineLinks[item["oldMarkerNo"]] : null;
+    // Fallback 1: OriginalToUid — never re-pointed, so it still resolves even
+    // after the marker was moved to another line/ward from the portal.
+    if (linkedUid == null || linkedUid == "") {
+      let origLineLinks = this.originalToUidMap != null ? this.originalToUidMap[item["line"]] : null;
+      let origUid = origLineLinks != null ? origLineLinks[item["oldMarkerNo"]] : null;
+      if (origUid != null && origUid != "") {
+        linkedUid = origUid;
+      }
+    }
+    // Fallback 2: movedMarkerUid written on the old record by an earlier version.
     if ((linkedUid == null || linkedUid == "") && old["movedMarkerUid"] != null && old["movedMarkerUid"] != "") {
       linkedUid = old["movedMarkerUid"];
     }
@@ -232,16 +262,27 @@ export class MarkerDataMoveComponent implements OnInit {
         (existing: any) => {
           existingInstance.unsubscribe();
           let record = this.buildRecord(old, item["line"], ward, uid);
-          if (existing != null && this.isSame(existing, record)) {
-            // Nothing changed -> "already updated". Backfill the link map so
-            // wards moved by the earlier version also end up in the mapping.
-            this.writeOldToNewLink(ward, item["line"], item["oldMarkerNo"], uid);
+// OLD PATH (reference ke liye rakha hai):
+// if (existing != null && this.isSame(existing, record)) {
+  // Nothing changed -> "already updated". Backfill the link map so
+  // wards moved by the earlier version also end up in the mapping.
+//   this.writeOldToNewLink(ward, item["line"], item["oldMarkerNo"], uid);
+
+          // NEW PATH IS THE SOURCE OF TRUTH: an existing record is never refreshed from the old tree - that would revert approve/edit changes and drag a moved marker back to its original line. Re-run is create-only.
+          if (existing != null) {
+            // Sirf PERMANENT link backfill + failure clear.
+            // OldMarkerToNewUid jaan-boojh kar NAHI likha jaata: agar marker ko
+            // portal se doosri line par move kiya gaya hai, to usse dobara
+            // likhne se wo apni original line par bhi dikhne lagega (duplicate).
+            this.writeOriginalLink(ward, item["line"], item["oldMarkerNo"], uid);
             this.clearMoveFailure(ward, item["line"], item["oldMarkerNo"]);
             this.skippedCount++;
             this.processMarker(index + 1, ward);
             return;
           }
+          // OLD PATH (reference ke liye rakha hai):
           // Data changed -> refresh the record + image + mapping under the same UID.
+          // Record new path par hai hi nahi (pichhli baar likhna fail hua tha) -> usi uid par likho.
           this.copyImage(old, item["line"], ward, uid, 0,
             (hadImage: boolean) => {
               if (!hadImage) { this.noImageCount++; }
@@ -319,11 +360,51 @@ export class MarkerDataMoveComponent implements OnInit {
     return true;
   }
 
+  // Pehli baar poora summary copy; re-run par sirf wahi keys jo new path par missing hain (approve/counts overwrite na ho).
+  writeLineSummary(ward: any, lineNo: any, lineSummary: any) {
+    let summaryPath = "EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + lineNo;
+    let summaryInstance = this.db.object(summaryPath).valueChanges().subscribe(
+      (existing: any) => {
+        summaryInstance.unsubscribe();
+        if (existing == null) {
+          this.db.object(summaryPath).set(lineSummary);
+          return;
+        }
+        let missing: any = {};
+        let hasMissing = false;
+        let keyArray = Object.keys(lineSummary);
+        for (let i = 0; i < keyArray.length; i++) {
+          let key = keyArray[i];
+          if (existing[key] == null) {
+            missing[key] = lineSummary[key];
+            hasMissing = true;
+          }
+        }
+        if (hasMissing) {
+          this.db.object(summaryPath).update(missing);
+        }
+      });
+  }
+
   // Records where an old marker went:
   //   MarkersMapping/OldMarkerToNewUid/{ward}/{line}/{markerNo} = M{n}
   // This is the re-run guard — the old MarkedHouses record itself is never written.
+  //
+  // NOTE: OldMarkerToNewUid doubles as the "which markers are on this line"
+  // index that the display pages read, so a line-move re-points it. That would
+  // break re-run idempotency (the old MarkedHouses tree still shows the marker
+  // at its ORIGINAL line, so the lookup would miss and a duplicate UID would be
+  // allocated). OriginalToUid below is therefore written ONCE at migration time
+  // and never re-pointed — it is the permanent original-location -> UID link.
   writeOldToNewLink(ward: any, line: any, markerNo: any, uid: string) {
     this.db.object("EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + line + "/" + markerNo).set(uid);
+    this.writeOriginalLink(ward, line, markerNo, uid);
+  }
+
+  // Permanent original-location -> UID link. Move ise kabhi nahi badalta,
+  // isliye re-run moved markers ko bhi pehchaan leta hai.
+  writeOriginalLink(ward: any, line: any, markerNo: any, uid: string) {
+    this.db.object("EntityMarkingData/MarkersMapping/OriginalToUid/" + ward + "/" + line + "/" + markerNo).set(uid);
   }
 
   // Persistent failure history:
