@@ -17,8 +17,10 @@ import { AngularFireStorage } from "angularfire2/storage";
 //              (ApproveStatus node + all line-level count scalars, copied as-is)
 //
 // The M-index is GLOBAL, so the allocation counter lives at
-//   EntityMarkingData/MarkersData/lastMarkerKey
-// (a scalar sibling of the M records, same convention the old lines use).
+//   EntityMarkingData/MarkersMapping/lastMarkerKey
+// (MarkersMapping ke andar, taaki MarkersData me sirf M{n} records rahen).
+// Ye counter ek atomic transaction se badhta hai, isliye portal aur marking app
+// ek saath chalein tab bhi dono ko alag M number milta hai.
 // This prevents two wards from both producing "M1" and overwriting each other.
 //
 // Idempotent: once a marker is moved, its old location -> new UID link is
@@ -191,21 +193,34 @@ export class MarkerDataMoveComponent implements OnInit {
 
             // Read this ward's pending failure history (used for attemptCount
             // and cleared automatically when a marker finally succeeds).
-            let failPath = "EntityMarkingData/MarkersMapping/MoveFailures/" + ward;
+            let failPath = "EntityMarkingData/MarkerMovementData/MoveFailures/" + ward;
             let failInstance = this.db.object(failPath).valueChanges().subscribe(
               (failData: any) => {
                 failInstance.unsubscribe();
                 this.failureMap = failData != null ? failData : {};
 
-                // Read the GLOBAL allocation counter before we start assigning M numbers.
-                let counterPath = "EntityMarkingData/MarkersData/lastMarkerKey";
-                let counterInstance = this.db.object(counterPath).valueChanges().subscribe(
-                  (counterVal: any) => {
-                    counterInstance.unsubscribe();
-                    this.lastKey = counterVal != null ? Number(counterVal) : 0;
-                    this.processMarker(0, ward);
+                // GLOBAL counter. Pehle sirf padha jaata tha (padho -> use karo ->
+                // likho), jisse ek saath chalne wale app/portal ko same M number mil
+                // sakta tha. Ab ek hi transaction me is run ke liye poora block
+                // reserve kar lete hain - transaction server par atomic hai, isliye
+                // koi doosra caller usi number par nahi aa sakta.
+                // Block me se kuch numbers use na hon to bas gap reh jaata hai, jo
+                // nuksan nahi karta (M number sirf unique hona chahiye).
+                let counterPath = "EntityMarkingData/MarkersMapping/lastMarkerKey";
+                let blockSize = this.markerList.length;
+                this.db.database.ref(counterPath).transaction(
+                  (current: any) => (Number(current) || 0) + blockSize
+                ).then((res: any) => {
+                  if (res == null || !res.committed) {
+                    $(this.divLoader).hide();
+                    this.commonService.setAlertMessage("error", "Marker counter reserve nahi ho paya, dobara try karein.");
+                    return;
                   }
-                );
+                  // Transaction ne jo value lautayi wahi block ka END hai.
+                  let blockEnd = Number(res.snapshot.val());
+                  this.lastKey = blockEnd - blockSize;
+                  this.processMarker(0, ward);
+                });
               }
             );
               } // origInstance callback close
@@ -316,8 +331,9 @@ export class MarkerDataMoveComponent implements OnInit {
         // duplicating. Lives in the mapping; the old record stays untouched.
         this.writeOldToNewLink(ward, item["line"], item["oldMarkerNo"], uid);
         this.clearMoveFailure(ward, item["line"], item["oldMarkerNo"]);
-        // Persist the global counter so the number is never reused.
-        this.db.object("EntityMarkingData/MarkersData/lastMarkerKey").set(this.lastKey);
+        // Counter yahan NAHI likhte - poora block shuru me transaction se reserve ho
+        // chuka hai. Yahan likhne se counter neeche chala jaata aur koi doosra caller
+        // wahi number dobara le leta.
         this.createdCount++;
         this.processMarker(index + 1, ward);
       },
@@ -325,8 +341,7 @@ export class MarkerDataMoveComponent implements OnInit {
         this.failCount++;
         this.failureList.push({ line: item["line"], oldMarkerNo: item["oldMarkerNo"], uid: uid, reason: "image copy failed" });
         this.writeMoveFailure(ward, item["line"], item["oldMarkerNo"], uid, "image copy failed");
-        // Advance the counter anyway so a failed/partial number is not reused (leaves a gap).
-        this.db.object("EntityMarkingData/MarkersData/lastMarkerKey").set(this.lastKey);
+        // Number pehle hi reserve tha, fail hone par bas gap reh jaata hai.
         this.processMarker(index + 1, ward);
       }
     );
@@ -408,13 +423,13 @@ export class MarkerDataMoveComponent implements OnInit {
   }
 
   // Persistent failure history:
-  //   MarkersMapping/MoveFailures/{ward}/{line}_{markerNo} = { uid, reason, failedOn, attemptCount }
+  //   MarkerMovementData/MoveFailures/{ward}/{line}_{markerNo} = { uid, reason, failedOn, attemptCount }
   // Whatever is left in this node = markers still pending because of failures.
   writeMoveFailure(ward: any, line: any, markerNo: any, uid: string, reason: string) {
     let key = line + "_" + markerNo;
     let prev = this.failureMap != null ? this.failureMap[key] : null;
     let attemptCount = (prev != null && prev["attemptCount"] != null ? Number(prev["attemptCount"]) : 0) + 1;
-    this.db.object("EntityMarkingData/MarkersMapping/MoveFailures/" + ward + "/" + key).update({
+    this.db.object("EntityMarkingData/MarkerMovementData/MoveFailures/" + ward + "/" + key).update({
       uid: uid,
       reason: reason,
       failedOn: this.commonService.getTodayDateTime(),
@@ -427,14 +442,14 @@ export class MarkerDataMoveComponent implements OnInit {
   clearMoveFailure(ward: any, line: any, markerNo: any) {
     let key = line + "_" + markerNo;
     if (this.failureMap != null && this.failureMap[key] != null) {
-      this.db.object("EntityMarkingData/MarkersMapping/MoveFailures/" + ward + "/" + key).remove();
+      this.db.object("EntityMarkingData/MarkerMovementData/MoveFailures/" + ward + "/" + key).remove();
     }
   }
 
   // Audit trail for entries that were silently skipped (object without houseType):
-  //   MarkersMapping/MoveSkipped/{ward}/{line}_{markerNo} = { reason, skippedOn }
+  //   MarkerMovementData/MoveSkipped/{ward}/{line}_{markerNo} = { reason, skippedOn }
   logSkippedEntry(ward: any, line: any, markerNo: any) {
-    this.db.object("EntityMarkingData/MarkersMapping/MoveSkipped/" + ward + "/" + line + "_" + markerNo).update({
+    this.db.object("EntityMarkingData/MarkerMovementData/MoveSkipped/" + ward + "/" + line + "_" + markerNo).update({
       reason: "houseType missing",
       skippedOn: this.commonService.getTodayDateTime()
     });

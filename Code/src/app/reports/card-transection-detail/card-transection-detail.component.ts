@@ -168,11 +168,64 @@ export class CardTransectionDetailComponent implements OnInit {
       });
   }
 
+  // Poori MarkersData ek baar padh kar cache kar leta hai.
+  markersDataCache: any = null;
+
+  loadMarkersData(): Promise<any> {
+    return new Promise((resolve) => {
+      if (this.markersDataCache != null) {
+        resolve(this.markersDataCache);
+        return;
+      }
+      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((data: any) => {
+        markersInstance.unsubscribe();
+        this.markersDataCache = data != null ? data : {};
+        resolve(this.markersDataCache);
+      });
+    });
+  }
+
+  // Ek line ka data old path jaisa shape ({markerNo: record}) me.
+  getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
+    return new Promise((resolve) => {
+      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo + "/" + lineNo;
+      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
+        linkInstance.unsubscribe();
+        if (links == null) {
+          resolve(null);
+          return;
+        }
+        this.loadMarkersData().then((markersData: any) => {
+          let lineData = {};
+          let keyArray = Object.keys(links);
+          let found = 0;
+          for (let i = 0; i < keyArray.length; i++) {
+            let markerNo = keyArray[i];
+            let uid = links[markerNo];
+            if (uid == null || uid == "") {
+              continue; // numeric keys ki wajah se aaye array-nulls skip
+            }
+            if (markersData[uid] == null) {
+              continue;
+            }
+            lineData[markerNo] = markersData[uid];
+            found++;
+          }
+          resolve(found > 0 ? lineData : null);
+        });
+      });
+    });
+  }
+
   getMarkerImage(lineNo: any, cardNo: any) {
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.ward + "/" + lineNo + "/";
-    let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
-      markedHouseData => {
-        markedHouseInstance.unsubscribe();
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.ward + "/" + lineNo + "/";
+    // let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   markedHouseData => {
+    //     markedHouseInstance.unsubscribe();
+    // NEW PATH: MarkersData + OldMarkerToNewUid (shape wahi {markerNo: record})
+    this.getNewPathLineData(this.ward, lineNo).then(
+      (markedHouseData: any) => {
         if (markedHouseData != null) {
           let keyArray = Object.keys(markedHouseData);
           for (let j = 0; j < keyArray.length; j++) {
@@ -185,7 +238,11 @@ export class CardTransectionDetailComponent implements OnInit {
                   if (this.cityName == "sikar") {
                     city = "Sikar-Survey";
                   }
-                  this.imgMarkerURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
+                  // OLD PATH (reference ke liye rakha hai):
+                  // this.imgMarkerURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
+                  // NEW PATH: image ab flat AllMarkerImages folder me hai (imgRef se).
+                  let imgRef = markedHouseData[markerNo]["imgRef"] != null ? markedHouseData[markerNo]["imgRef"] : image;
+                  this.imgMarkerURL = this.commonService.fireStoragePath + "DevTest%2FMarkingSurveyImages%2FAllMarkerImages%2F" + imgRef + "?alt=media";
                   let element = <HTMLImageElement>document.getElementById("imgMarker");
                   element.src = this.imgMarkerURL;
                 }

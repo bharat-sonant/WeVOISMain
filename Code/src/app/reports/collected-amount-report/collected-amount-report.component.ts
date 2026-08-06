@@ -248,6 +248,67 @@ export class CollectedAmountReportComponent implements OnInit {
     }
   }
 
+  // Poori MarkersData ek baar padh kar cache kar leta hai.
+  markersDataCache: any = null;
+
+  loadMarkersData(): Promise<any> {
+    return new Promise((resolve) => {
+      if (this.markersDataCache != null) {
+        resolve(this.markersDataCache);
+        return;
+      }
+      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((data: any) => {
+        markersInstance.unsubscribe();
+        this.markersDataCache = data != null ? data : {};
+        resolve(this.markersDataCache);
+      });
+    });
+  }
+
+  // Poore ward ka data old path jaisa shape ({line: {markerNo: record}}) me.
+  getNewPathWardData(wardNo: any): Promise<any> {
+    return new Promise((resolve) => {
+      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo;
+      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
+        linkInstance.unsubscribe();
+        if (wardLinks == null) {
+          resolve(null);
+          return;
+        }
+        this.loadMarkersData().then((markersData: any) => {
+          let wardData = {};
+          let found = 0;
+          let lineArray = Object.keys(wardLinks);
+          for (let l = 0; l < lineArray.length; l++) {
+            let lineNo = lineArray[l];
+            let links = wardLinks[lineNo];
+            if (links == null || typeof links != "object") {
+              continue;
+            }
+            let lineData = {};
+            let markerArray = Object.keys(links);
+            for (let m = 0; m < markerArray.length; m++) {
+              let markerNo = markerArray[m];
+              let uid = links[markerNo];
+              if (uid == null || uid == "") {
+                continue; // numeric keys ki wajah se aaye array-nulls skip
+              }
+              if (markersData[uid] == null) {
+                continue;
+              }
+              lineData[markerNo] = markersData[uid];
+              found++;
+            }
+            if (Object.keys(lineData).length > 0) {
+              wardData[lineNo] = lineData;
+            }
+          }
+          resolve(found > 0 ? wardData : null);
+        });
+      });
+    });
+  }
+
   updateCardColectionData() {
     $(this.divLoader).show();
     this.setDefaultValues();
@@ -269,10 +330,14 @@ export class CollectedAmountReportComponent implements OnInit {
 
     this.wardCardPaymentList = [];
 
-    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      markerData => {
-        markerInstance.unsubscribe();
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   markerData => {
+    //     markerInstance.unsubscribe();
+    // NEW PATH: MarkersData + OldMarkerToNewUid (shape wahi {line: {markerNo: record}})
+    this.getNewPathWardData(this.selectedZone).then(
+      (markerData: any) => {
         if (markerData != null) {
           let keyArray = Object.keys(markerData);
           if (keyArray.length > 0) {

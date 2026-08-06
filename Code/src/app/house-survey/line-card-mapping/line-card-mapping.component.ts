@@ -437,7 +437,7 @@ export class LineCardMappingComponent {
       movedBy: localStorage.getItem("userID"),
       movedOn: this.commonService.getTodayDateTime()
     };
-    this.db.list("EntityMarkingData/MarkersMapping/MoveHistory/" + uid).push(entry);
+    this.db.list("EntityMarkingData/MarkerMovementData/MoveHistory/" + uid).push(entry);
   }
 
   moveToNewLine() {
