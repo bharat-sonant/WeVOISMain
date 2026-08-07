@@ -271,8 +271,9 @@ export class RealtimeMonitoringComponent implements OnInit {
     this.currentMonthName = this.commonService.getCurrentMonthName(Number(this.toDayDate.toString().split("-")[1]) - 1);
     this.currentYear = new Date().getFullYear();
     let zones = this.mapService.getZones(this.toDayDate);
+    let showRickshawWard = this.cityName == "bharatpur";
     this.allZones = zones.reduce((acc, val) => {
-      if (!val.zoneNo.includes("Service") && !val.zoneNo.includes("Support") && !val.zoneNo.includes("Beed") && !val.zoneNo.includes("Maint") && !val.zoneNo.includes("WetWaste") && !val.zoneNo.includes("Wet") && !val.zoneNo.includes("Qrt") && !val.zoneNo.includes("QRT") && !val.zoneNo.includes("Rickshaw")) {
+      if (!val.zoneNo.includes("Service") && !val.zoneNo.includes("Support") && !val.zoneNo.includes("Beed") && !val.zoneNo.includes("Maint") && !val.zoneNo.includes("WetWaste") && !val.zoneNo.includes("Wet") && !val.zoneNo.includes("Qrt") && !val.zoneNo.includes("QRT") && (showRickshawWard || !val.zoneNo.includes("Rickshaw"))) {
         acc.push(val);
       }
       return acc;

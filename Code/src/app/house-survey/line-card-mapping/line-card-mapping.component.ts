@@ -488,38 +488,6 @@ export class LineCardMappingComponent implements OnDestroy {
     await this.moveHelper.saveActionHistory(this.db, this.historySection, this.historyPageKey, record);
   }
 
-  /**
-   * ActionHistory/{section}/{pageKey}/{date} me ek record.
-   * Fail / cancel / abort sab log hote hain - warna audit adhoora reh jayega.
-   */
-  private async saveMoveHistory(action: string, status: string, startTime: Date, wardFrom: any, lineFrom: any, wardTo: any, lineTo: any, startKey: any, note: string) {
-    let now = new Date();
-    let record: any = {
-      action: action,
-      status: status,
-      startTime: this.moveHelper.getDateTimeString(startTime),
-      endTime: this.moveHelper.getDateTimeString(now),
-      durationSec: Math.round((now.getTime() - startTime.getTime()) / 1000),
-      from: { ward: wardFrom, line: lineFrom },
-      to: { ward: wardTo, line: lineTo },
-      total: this.moveSummary.total,
-      moved: this.moveSummary.moved,
-      failed: this.moveSummary.failed,
-      pending: this.moveSummary.pending,
-      imageMissing: this.moveSummary.imageMissing,
-      backupFile: this.moveSummary.backupFile,
-      cancelled: this.cancelRequested,
-      networkInterrupted: this.networkInterrupted,
-      failedItems: this.moveHelper.buildFailedItems(this.moveRows)
-    };
-    if (note != "") { record["note"] = note; }
-    if (startKey != null && this.moveRows.length > 0) {
-      record["destinationStartKey"] = Number(startKey);
-      record["destinationEndKey"] = Number(startKey) + this.moveRows.length - 1;
-    }
-    await this.moveHelper.saveActionHistory(this.db, this.historySection, this.historyPageKey, record);
-  }
-
   private finishRun() {
     this.moveRunning = false;
     this.moveSummary.running = false;
