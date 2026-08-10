@@ -373,6 +373,9 @@ export class MonthlyAttendanceComponent implements OnInit {
       htmlString += "<tr>";
 
       htmlString += "<td>";
+      htmlString += "Emp Id";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "Name";
       htmlString += "</td>";
       htmlString += "<td>";
@@ -491,6 +494,10 @@ export class MonthlyAttendanceComponent implements OnInit {
 
       for (let i = 0; i < this.reportList.length; i++) {
         htmlString += "<tr>";
+
+        htmlString += "<td t='s'>";
+        htmlString += this.reportList[i]["empId"];
+        htmlString += "</td>";
 
         htmlString += "<td>";
         htmlString += this.reportList[i]["name"];
