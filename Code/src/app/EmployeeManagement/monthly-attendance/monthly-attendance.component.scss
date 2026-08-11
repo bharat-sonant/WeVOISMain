@@ -118,22 +118,54 @@ thead th {
     font-weight: bold;
 }
 
-.thFixed {
+/* Left ke frozen columns - width fix rakhi hai taki left offset exact match kare */
+
+.thFixedSno,
+.thFixedId,
+.thFixed,
+.thFixed2,
+.thFixed3 {
     position: sticky;
-    left: 0px;
-    width: 180px!important;
+    box-sizing: border-box;
     z-index: 1;
     background-color: #f0ffef;
     color: rgb(0, 0, 0);
 }
 
+.thFixedSno {
+    left: 0px;
+    width: 55px!important;
+    min-width: 55px!important;
+    max-width: 55px!important;
+    text-align: center;
+}
+
+.thFixedId {
+    left: 55px;
+    width: 105px!important;
+    min-width: 105px!important;
+    max-width: 105px!important;
+}
+
+.thFixed {
+    left: 160px;
+    width: 210px!important;
+    min-width: 210px!important;
+    max-width: 210px!important;
+}
+
 .thFixed2 {
-    position: sticky;
-    left: 194px;
-    width: 50px;
-    z-index: 1;
-    background-color: #f0ffef;
-    color: rgb(0, 0, 0);
+    left: 370px;
+    width: 70px!important;
+    min-width: 70px!important;
+    max-width: 70px!important;
+}
+
+.thFixed3 {
+    left: 440px;
+    width: 90px!important;
+    min-width: 90px!important;
+    max-width: 90px!important;
 }
 
 table td {

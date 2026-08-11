@@ -171,7 +171,7 @@ export class MonthlyAttendanceComponent implements OnInit {
 
         if (value != null) {
 
-          this.reportList = value.Data.filter(item => item.empId === this.selectedEmployee);
+          this.reportList = this.attachEmpCode(value.Data.filter((item: any) => item.empId === this.selectedEmployee));
           this.employeeName = this.reportList[0].name
 
           const inputDate = new Date(value.lastUpdated)
@@ -266,6 +266,7 @@ export class MonthlyAttendanceComponent implements OnInit {
             resolve({
               status: employee.status,
               empId: employee.empId,
+              empCode: employee.empCode,
               name: employee.name,
               list: dateList,
               total: totalAttendance,
@@ -329,13 +330,13 @@ export class MonthlyAttendanceComponent implements OnInit {
 
       if (value != null) {
         if ((<HTMLInputElement>document.getElementById(this.chkIncludeInactive)).checked == true) {
-          this.reportList = value.Data
+          this.reportList = this.attachEmpCode(value.Data)
         }
         else {
           let list = []
-          list = value.Data.filter(item => item.status == "1");
+          list = value.Data.filter((item: any) => item.status == "1");
 
-          this.reportList = list;
+          this.reportList = this.attachEmpCode(list);
 
 
         }
@@ -350,6 +351,16 @@ export class MonthlyAttendanceComponent implements OnInit {
       this.lastSyncData = '---'
       this.commonService.setAlertMessage("error", "Attendance data is not available. Please synchronize data!!!");
 
+    });
+  }
+
+  // Purani saved JSON files me empCode nahi hota, isliye employee list se map kar dete hain
+  attachEmpCode(list: any) {
+    if (!list) { return []; }
+    return list.map((item: any) => {
+      if (item.empCode) { return item; }
+      let employee = this.allEmployeeList.find(emp => emp.empId == item.empId);
+      return { ...item, empCode: employee ? employee.empCode : '' };
     });
   }
 
@@ -495,8 +506,8 @@ export class MonthlyAttendanceComponent implements OnInit {
       for (let i = 0; i < this.reportList.length; i++) {
         htmlString += "<tr>";
 
-        htmlString += "<td t='s'>";
-        htmlString += this.reportList[i]["empId"];
+        htmlString += "<td>";
+        htmlString += this.reportList[i]["empCode"] || '';
         htmlString += "</td>";
 
         htmlString += "<td>";
