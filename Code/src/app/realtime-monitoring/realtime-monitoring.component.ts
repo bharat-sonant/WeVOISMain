@@ -278,6 +278,10 @@ export class RealtimeMonitoringComponent implements OnInit {
       }
       return acc;
     }, []);
+    console.log("[RT-WARD-DEBUG] 1) city:", this.cityName, "| date:", this.toDayDate, "| latest-zones se aaye:", zones == null ? 0 : zones.length, "| naam-filter ke baad:", this.allZones.length);
+    console.log("[RT-WARD-DEBUG] 1a) latest-zones:", zones == null ? null : zones.map((item: any) => item.zoneNo));
+    console.log("[RT-WARD-DEBUG] 1b) filter me hate zones:", zones == null ? null : zones.filter((item: any) => this.allZones.find(zone => zone.zoneNo == item.zoneNo) == undefined).map((item: any) => item.zoneNo));
+    console.log("[RT-WARD-DEBUG] 1c) hiddenWardList:", this.hiddenWardList.map(item => item.zone), "| loop index 1 se chalta hai isliye pehla zone (", zones == null || zones.length == 0 ? null : zones[0]["zoneNo"], ") hamesha chhut jata hai");
     if (localStorage.getItem("userType") == "External User") {
       $(this.divRemark).hide();
     }
@@ -576,15 +580,23 @@ export class RealtimeMonitoringComponent implements OnInit {
         let stoppedWard = 0;
         let completedWard = 0;
         let totalWard = this.allZones.length - 1;
+        console.log("[RT-WARD-DEBUG] 2) RealTimeDetails/WardDetails me mile wards:", data == null ? 0 : Object.keys(data).length, data == null ? null : Object.keys(data));
+        console.log("[RT-WARD-DEBUG] 2a) loop chalega allZones par:", this.allZones.length - 1, "wards (index 1 se)");
         for (let index = 1; index < this.allZones.length; index++) {
           let zoneNo = this.allZones[index]["zoneNo"];
           let detail = this.hiddenWardList.find(item => item.zone == zoneNo);
           if (detail == undefined) {
+            /*
+              Jis ward ka node RealTimeDetails/WardDetails me abhi bana nahi hai (setWorkNotStarted
+              async hai) uske liye blank object le lete hain, warna undefined padhne par loop wahin
+              tut jata tha aur uske baad ke saare wards list se gayab ho jate the.
+            */
+            let wardData = (data != null && data[zoneNo] != null) ? data[zoneNo] : {};
             let zoneName = this.allZones[index]["zoneName"].replace("Zone ", "");
-            let status = data[zoneNo]["activityStatus"];
+            let status = wardData["activityStatus"];
             let isMic = "notActive";
-            if (data[zoneNo]["micStatus"] != null) {
-              if (data[zoneNo]["micStatus"] == "disabled") {
+            if (wardData["micStatus"] != null) {
+              if (wardData["micStatus"] == "disabled") {
                 isMic = "disabled";
               }
             }
@@ -595,7 +607,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             let borderClass = "";
             let progressClass = "";
             if (status == "active") {
-              if (data[zoneNo]["isOnDuty"] == "no") {
+              if (wardData["isOnDuty"] == "no") {
                 status = "completed";
                 completedWard++;
                 displayOrder = 3;
@@ -616,7 +628,7 @@ export class RealtimeMonitoringComponent implements OnInit {
 
               this.zoneList.push({ zoneNo: zoneNo, zoneName: zoneName, status: status, shortIndex: index, displayOrder: displayOrder, totalLines: 0, completedLines: 0, skippedLines: 0, workPer: "0%", workPerShow: "0", borderClass: "", bgColor: bgColor, iconName: iconName, progressClass: progressClass, wardKM: "0.00", wardKMInMeter: "0", wardTime: "0.00", wardTimeInMinutes: "0", dutyOnTime: "---", dutyOffTime: "---", wardReachTime: "---", driverId: "0", helperId: "0", vehicleNo: "", isMic: isMic, lineWeight: [], totalWardLength: 0, currentLine: 0, totalCards: 0, scanedCard: 0, scanCardPercentage: 0, commercialCards: 0, residencialCards: 0, distanceCovered: 0, avgSpeed: "0" });
             } else if (status == "stopped") {
-              if (data[zoneNo]["isOnDuty"] == "no") {
+              if (wardData["isOnDuty"] == "no") {
                 status = "completed";
                 completedWard++;
                 displayOrder = 3;
@@ -665,6 +677,8 @@ export class RealtimeMonitoringComponent implements OnInit {
           }
         }
 
+        console.log("[RT-WARD-DEBUG] 6) loop poora hua | zoneList me aaye wards:", this.zoneList.length, this.zoneList.map(item => item.zoneNo));
+        console.log("[RT-WARD-DEBUG] 6a) allZones me the:", this.allZones.length - 1, "| list me nahi aaye:", this.allZones.slice(1).filter(zone => this.zoneList.find(item => item.zoneNo == zone.zoneNo) == undefined).map(zone => zone.zoneNo));
         this.zoneList = this.commonService.transform(this.zoneList, "shortIndex");
         this.zoneList = this.commonService.transform(this.zoneList, "displayOrder");
         this.selectedZone = this.zoneList[0]["zoneNo"];

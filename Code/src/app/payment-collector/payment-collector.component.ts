@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonService } from "../services/common/common.service";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
@@ -30,6 +30,11 @@ export class PaymentCollectorComponent implements OnInit {
   wardLineList: any[] = [];
   lineList: any[] = [];
   multipleLineList: any[] = [];
+  entityTypeList: any[] = [];
+  showEntityTypeList: boolean = false;
+  // Entity type selection sirf in cities ke liye hai (cityName lowercase store hota hai)
+  allowedEntityTypeCities = ["hisar", "devtest"];
+  isEntityTypeAllowedCity: boolean = false;
   lastEmpId: any;
   selectedAssignType: any;
   db: any;
@@ -51,8 +56,12 @@ export class PaymentCollectorComponent implements OnInit {
     this.selectedAssignType = "Single";
     this.uploadQRCode("Harendra Singh");
     this.getEmpCodePrefix();
+    this.isEntityTypeAllowedCity = this.allowedEntityTypeCities.indexOf(this.cityName) !== -1;
     this.getDevices();
     this.getZoneList();
+    if (this.isEntityTypeAllowedCity == true) {
+      this.getEntityTypes();
+    }
     this.getEmployee();
   }
 
@@ -199,6 +208,7 @@ export class PaymentCollectorComponent implements OnInit {
                 let deviceNo = "";
                 let lines = "";
                 let officeEmpID = "";
+                let entityTypes = "";
 
                 if (userJsonData[empId]["assignedWard"] != null) {
                   wardNo = userJsonData[empId]["assignedWard"];
@@ -211,6 +221,9 @@ export class PaymentCollectorComponent implements OnInit {
                 }
                 if (userJsonData[empId]["empId"] != null) {
                   officeEmpID = userJsonData[empId]["empId"];
+                }
+                if (userJsonData[empId]["assignedEntityTypes"] != null) {
+                  entityTypes = userJsonData[empId]["assignedEntityTypes"];
                 }
 
                 // 🔹 Push all users to main list
@@ -243,6 +256,7 @@ export class PaymentCollectorComponent implements OnInit {
                   collectedAmount: 0,
                   collectionList: [],
                   lines: lines,
+                  entityTypes: entityTypes,
                   assignType: userJsonData[empId]["assignType"]
                     ? userJsonData[empId]["assignType"]
                     : "Single",
@@ -326,6 +340,101 @@ export class PaymentCollectorComponent implements OnInit {
         resolve("success");
       });
     });
+  }
+
+  /*
+    Entity types city ke FinalHousesType.json se aate hain. Us file me pehla index null hota
+    hai isliye loop 1 se chalta hai aur index hi entity type ki id hoti hai, wahi id marked
+    house ke houseType me save rehti hai.
+  */
+  getEntityTypes() {
+    this.entityTypeList = [];
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let entityTypeInstance = this.httpService.get(path).subscribe((data: any) => {
+      entityTypeInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 1; i < keyArray.length; i++) {
+          let id = keyArray[i];
+          if (data[id] != null) {
+            this.entityTypeList.push({ id: id, name: data[id]["name"], isChecked: true });
+          }
+        }
+      }
+    });
+  }
+
+  toggleEntityTypeList() {
+    this.showEntityTypeList = !this.showEntityTypeList;
+  }
+
+  /*
+    Dropdown ke bahar click hote hi list band ho jati hai. Header aur checkbox dono hi
+    divEntityType ke andar hain, isliye unke click par list khuli rehti hai.
+  */
+  @HostListener("document:click", ["$event"])
+  onDocumentClick(event: any) {
+    if (this.showEntityTypeList == false) {
+      return;
+    }
+    let element = <HTMLElement>document.getElementById("divEntityType");
+    if (element == null || element.contains(event.target) == false) {
+      this.showEntityTypeList = false;
+    }
+  }
+
+  setEntityType(id: any, isChecked: any) {
+    let detail = this.entityTypeList.find(item => item.id == id);
+    if (detail != undefined) {
+      detail.isChecked = isChecked;
+    }
+  }
+
+  setAllEntityType(isChecked: any) {
+    for (let i = 0; i < this.entityTypeList.length; i++) {
+      this.entityTypeList[i]["isChecked"] = isChecked;
+    }
+  }
+
+  isAllEntityTypeSelected() {
+    if (this.entityTypeList.length == 0) {
+      return false;
+    }
+    return this.entityTypeList.filter(item => item.isChecked == true).length == this.entityTypeList.length;
+  }
+
+  getEntityTypeText() {
+    let selectedList = this.entityTypeList.filter(item => item.isChecked == true);
+    if (selectedList.length == 0) {
+      return "--Select Entity Type--";
+    }
+    if (selectedList.length == this.entityTypeList.length) {
+      return "All Entity Types";
+    }
+    if (selectedList.length == 1) {
+      return selectedList[0]["name"];
+    }
+    return selectedList.length + " Entity Types Selected";
+  }
+
+  /*
+    Blank matlab sab entity types allowed hain, isliye jab tak collector ke liye kuch specific
+    save nahi hua tab tak sabhi checkbox checked rehte hain.
+  */
+  setSelectedEntityTypes(entityTypes: any) {
+    this.showEntityTypeList = false;
+    if (entityTypes == null || entityTypes == "") {
+      this.setAllEntityType(true);
+      return;
+    }
+    this.setAllEntityType(false);
+    let list = entityTypes.toString().split(",");
+    for (let i = 0; i < list.length; i++) {
+      let detail = this.entityTypeList.find(item => item.id == list[i].trim());
+      if (detail != undefined) {
+        detail.isChecked = true;
+      }
+    }
   }
 
   getCollectionDetail(empId: any) {
@@ -634,6 +743,8 @@ export class PaymentCollectorComponent implements OnInit {
   openModel(content: any, id: any, type: any) {
     this.wardLineList = [];
     this.lineList = [];
+    this.showEntityTypeList = false;
+    this.setAllEntityType(true);
     if (type == "ward") {
       let userDetail = this.filteredUserList.find((item) => item.empId == id);
       if (userDetail != undefined) {
@@ -654,6 +765,7 @@ export class PaymentCollectorComponent implements OnInit {
       userDetail = this.filteredUserList.find((item) => item.empId == id);
       if (userDetail != undefined) {
         this.setWardAssignType(userDetail.assignType);
+        this.setSelectedEntityTypes(userDetail.entityTypes);
         if (userDetail.deviceNo != "") {
           setTimeout(() => {
             if (userDetail.assignType == "Single") {
@@ -785,6 +897,21 @@ export class PaymentCollectorComponent implements OnInit {
     let empID = $("#empID").val();
     let lines = "";
     let wardAssignmentList = {};
+    /*
+      Sab types selected hone par blank save hota hai, taaki aage city me koi naya entity type
+      jude to wo bhi apne aap is collector ko app me dikhe.
+    */
+    let entityTypes = "";
+    if (this.isEntityTypeAllowedCity == true) {
+      let selectedEntityTypeList = this.entityTypeList.filter(item => item.isChecked == true);
+      if (selectedEntityTypeList.length == 0) {
+        this.commonService.setAlertMessage("error", "Plese select at least one entity type !!!");
+        return;
+      }
+      if (selectedEntityTypeList.length != this.entityTypeList.length) {
+        entityTypes = selectedEntityTypeList.map(item => item.id).join(",");
+      }
+    }
     if (this.cityName != "jodhpur") {
       if ($("#ddlDevice").val() == "0") {
         this.commonService.setAlertMessage("error", "Please select device serial no.!!!");
@@ -846,6 +973,7 @@ export class PaymentCollectorComponent implements OnInit {
         deviceNo = null;
         wardNo = null;
         lines = null;
+        entityTypes = "";
       }
 
       const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FCollectionManagement%2FpaymentCollector.json?alt=media";
@@ -854,6 +982,9 @@ export class PaymentCollectorComponent implements OnInit {
         if (userJsonData != null) {
           userJsonData[empID.toString()]["assignedDevice"] = deviceNo;
           userJsonData[empID.toString()]["assignType"] = this.selectedAssignType;
+          if (this.isEntityTypeAllowedCity == true) {
+            userJsonData[empID.toString()]["assignedEntityTypes"] = entityTypes;
+          }
           if (this.selectedAssignType == "Single") {
             userJsonData[empID.toString()]["assignedWard"] = wardNo;
             userJsonData[empID.toString()]["assignedLines"] = lines;
@@ -875,6 +1006,7 @@ export class PaymentCollectorComponent implements OnInit {
             if (userDetail != undefined) {
               userDetail.deviceNo = deviceNo;
               userDetail.assignType = this.selectedAssignType;
+              userDetail.entityTypes = entityTypes;
               if (this.selectedAssignType == "Single") {
                 userDetail.wardNo = wardNo;
                 userDetail.lines = lines;
@@ -890,6 +1022,8 @@ export class PaymentCollectorComponent implements OnInit {
             this.multipleLineList = [];
             this.wardLineList = [];
             this.selectedAssignType = "Single";
+            this.showEntityTypeList = false;
+            this.setAllEntityType(true);
             this.closeModel();
           });
         }
@@ -910,6 +1044,9 @@ export class PaymentCollectorComponent implements OnInit {
         userJsonData[empID.toString()]["assignedLines"] = "";
         userJsonData[empID.toString()]["wardAssignmentList"] = {};
         userJsonData[empID.toString()]["assignType"] = "Single";
+        if (this.isEntityTypeAllowedCity == true) {
+          userJsonData[empID.toString()]["assignedEntityTypes"] = "";
+        }
 
         let fileName = "paymentCollector.json";
         let filePath = "/CollectionManagement/";
@@ -924,6 +1061,7 @@ export class PaymentCollectorComponent implements OnInit {
             userDetail.lines = "";
             userDetail.wardAssignmentList = {};
             userDetail.assignType = "Single";
+            userDetail.entityTypes = "";
           }
         });
       }

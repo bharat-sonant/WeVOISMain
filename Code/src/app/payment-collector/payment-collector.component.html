@@ -323,6 +323,28 @@
                         </span>
                     </div>
 
+                    <label class="label-title" [hidden]="isEntityTypeAllowedCity==false">Entity Type</label>
+                    <div id="divEntityType" class="wrap-input-effects entity-type-wrap" required
+                        [hidden]="isEntityTypeAllowedCity==false">
+                        <div class="entity-type-selected" (click)="toggleEntityTypeList();">
+                            <span class="entity-type-text">{{getEntityTypeText()}}</span>
+                            <span class="entity-type-arrow" [hidden]="showEntityTypeList==true">&#9662;</span>
+                            <span class="entity-type-arrow" [hidden]="showEntityTypeList==false">&#9652;</span>
+                        </div>
+                        <div class="entity-type-list" [hidden]="showEntityTypeList==false">
+                            <label class="entity-type-option">
+                                <input type="checkbox" [checked]="isAllEntityTypeSelected()"
+                                    (change)="setAllEntityType($event.target.checked);" />
+                                <b>All</b>
+                            </label>
+                            <label class="entity-type-option" *ngFor="let entityType of entityTypeList">
+                                <input type="checkbox" [checked]="entityType.isChecked"
+                                    (change)="setEntityType(entityType.id,$event.target.checked);" />
+                                {{entityType.name}}
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="label-title">
                         <label class="label-title"><b>Assignment For</b></label><br />
                         <input id="rdoSingle" type="radio" checked value="Single Ward"
