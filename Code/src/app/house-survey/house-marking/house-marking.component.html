@@ -445,6 +445,19 @@
           <span class="value">{{ markerData.noOfFloors || '...' }}</span>
         </div>
       </div>
+
+      <!-- Move history: marker kabhi move na hua ho to ye section dikhta hi nahi -->
+      <div class="building-block" *ngIf="markerMoveHistory.length > 0">
+        <h4 class="building-title">Move History</h4>
+        <div class="detail-row" *ngFor="let mh of markerMoveHistory">
+          <span class="label">
+            Ward {{ mh.fromWard }} / Line {{ mh.fromLine }} / No. {{ mh.fromMarkerNo }}
+            &nbsp;&#8594;&nbsp;
+            Ward {{ mh.toWard }} / Line {{ mh.toLine }} / No. {{ mh.toMarkerNo }}
+          </span>
+          <span class="value">{{ mh.movedByName || '...' }}, {{ mh.movedOn || '...' }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

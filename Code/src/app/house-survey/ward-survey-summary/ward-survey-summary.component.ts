@@ -467,7 +467,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo + "/" + lineNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
         linkInstance.unsubscribe();
         if (links == null) {
@@ -498,7 +498,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
   getNewPathWardData(wardNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
         linkInstance.unsubscribe();
         if (wardLinks == null) {
@@ -564,7 +564,7 @@ export class WardSurveySummaryComponent implements OnInit {
   // Old markerNo -> MarkersData/{uid} ka path. Migrate na hua ho to null.
   getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + line + "/" + markerNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo;
       let inst = this.db.object(linkPath).valueChanges().subscribe((uid: any) => {
         inst.unsubscribe();
         if (uid == null || uid == "") {
@@ -608,7 +608,7 @@ export class WardSurveySummaryComponent implements OnInit {
       // OLD PATH (reference ke liye rakha hai):
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      // NEW PATH: MarkersData + OldMarkerToNewUid (same {lineNo:{markerNo:record}} shape)
+      // NEW PATH: MarkersData + LineWise (same {lineNo:{markerNo:record}} shape)
       this.getNewPathWardData(zoneNo).then(
           // OLD PATH (reference ke liye rakha hai):
           // markerInstance.unsubscribe();
@@ -788,7 +788,7 @@ export class WardSurveySummaryComponent implements OnInit {
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
       //   markerInstance.unsubscribe();
-      // NEW PATH: MarkersData + OldMarkerToNewUid
+      // NEW PATH: MarkersData + LineWise
       this.getNewPathWardData(zoneNo).then((markerData: any) => {
 
         if (markerData != null) {
@@ -2124,7 +2124,7 @@ export class WardSurveySummaryComponent implements OnInit {
     // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
     //   data => {
     //     markerInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid
+    // NEW PATH: MarkersData + LineWise
     this.getNewPathLineData(wardNo, lineNo).then(
       (data: any) => {
         if (data != null) {
@@ -2364,7 +2364,7 @@ export class WardSurveySummaryComponent implements OnInit {
     // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
     // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
     //   markerInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid
+    // NEW PATH: MarkersData + LineWise
     this.getNewPathWardData(this.selectedWard).then((markerData: any) => {
       if (markerData == null) {
         this.closeModel();
@@ -2437,7 +2437,7 @@ export class WardSurveySummaryComponent implements OnInit {
     // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
     // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
     //   markerInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid
+    // NEW PATH: MarkersData + LineWise
     this.getNewPathWardData(this.selectedWard).then((markerData: any) => {
       this.zoneHouseTypeList = [];
       if (markerData == null) {
@@ -2587,7 +2587,7 @@ export class WardSurveySummaryComponent implements OnInit {
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
       //   markerInstance.unsubscribe();
-      // NEW PATH: MarkersData + OldMarkerToNewUid
+      // NEW PATH: MarkersData + LineWise
       this.getNewPathWardData(zoneNo).then((markerData: any) => {
         if (markerData == null) {
           if (this.wardProgressList[index] != null) {

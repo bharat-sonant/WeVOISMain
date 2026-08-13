@@ -64,3 +64,9 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# Angular build output (233MB, kabhi track nahi hua)
+dist/
+
+# Cloud Functions ki dependencies
+functions/node_modules/

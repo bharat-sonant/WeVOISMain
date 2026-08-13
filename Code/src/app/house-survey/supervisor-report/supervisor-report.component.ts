@@ -123,7 +123,7 @@ export class SupervisorReportComponent implements OnInit {
     // let supervisorInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
     //   supervisorInstance.unsubscribe();
     //   if (data != undefined) {
-    let mappingPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid";
+    let mappingPath = "EntityMarkingData/MarkersMapping/LineWise";
     let mappingInstance = this.db.object(mappingPath).valueChanges().subscribe((data) => {
       mappingInstance.unsubscribe();
       // Whole MarkersData ek hi baar — uid se record resolve karne ke liye.

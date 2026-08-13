@@ -188,7 +188,7 @@ export class CardTransectionDetailComponent implements OnInit {
   // Ek line ka data old path jaisa shape ({markerNo: record}) me.
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo + "/" + lineNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
         linkInstance.unsubscribe();
         if (links == null) {
@@ -223,7 +223,7 @@ export class CardTransectionDetailComponent implements OnInit {
     // let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
     //   markedHouseData => {
     //     markedHouseInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid (shape wahi {markerNo: record})
+    // NEW PATH: MarkersData + LineWise (shape wahi {markerNo: record})
     this.getNewPathLineData(this.ward, lineNo).then(
       (markedHouseData: any) => {
         if (markedHouseData != null) {

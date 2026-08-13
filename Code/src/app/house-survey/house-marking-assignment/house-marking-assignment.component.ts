@@ -497,7 +497,14 @@ export class HouseMarkingAssignmentComponent implements OnInit {
             let index = keyArray[i];
             if (data[index]["ApproveStatus"] != null) {
               if (data[index]["ApproveStatus"]["status"] == "Confirm") {
-                this.lineList.push({ lineNo: index, isChecked: 0 });
+                // Approve hone ke baad line ke saare marker doosri line par
+                // move ho sakte hain. ApproveStatus LineSummary par pada rehta
+                // hai, isliye aisi khali line bhi list me aa jaati thi aur use
+                // worker ko assign kar dete the - jabki karne ko kuch hai hi
+                // nahi. Marker bache hain ya nahi, ye marksCount batata hai.
+                if (Number(data[index]["marksCount"]) > 0) {
+                  this.lineList.push({ lineNo: index, isChecked: 0 });
+                }
               }
             }
 /*

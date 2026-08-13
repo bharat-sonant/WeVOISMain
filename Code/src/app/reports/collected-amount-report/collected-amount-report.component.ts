@@ -268,7 +268,7 @@ export class CollectedAmountReportComponent implements OnInit {
   // Poore ward ka data old path jaisa shape ({line: {markerNo: record}}) me.
   getNewPathWardData(wardNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
         linkInstance.unsubscribe();
         if (wardLinks == null) {
@@ -335,7 +335,7 @@ export class CollectedAmountReportComponent implements OnInit {
     // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
     //   markerData => {
     //     markerInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid (shape wahi {line: {markerNo: record}})
+    // NEW PATH: MarkersData + LineWise (shape wahi {line: {markerNo: record}})
     this.getNewPathWardData(this.selectedZone).then(
       (markerData: any) => {
         if (markerData != null) {

@@ -10,6 +10,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
 import { NgZone } from '@angular/core';
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 
 @Component({
   selector: "app-house-marking",
@@ -19,7 +20,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 export class HouseMarkingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private ngzone: NgZone, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private ngzone: NgZone, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -354,7 +355,7 @@ export class HouseMarkingComponent {
       // const houseInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
       //   houseInstance.unsubscribe();
 
-      // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+      // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
       this.getNewPathLineData(lineNo).then((data: any) => {
         if (!data) {
           resolve(); // ✅ resolve even if no data
@@ -512,7 +513,8 @@ export class HouseMarkingComponent {
               alreadyCard,
               index,
               markerUID,
-              markerData
+              markerData,
+              iconImage != ""
             );
 
             processed++;
@@ -668,14 +670,14 @@ export class HouseMarkingComponent {
   }
   // OLD PATH (reference ke liye rakha hai):
   // Old path jaisa hi shape ({oldMarkerNo: record}) deta hai, par data
-  // MarkersData se aata hai. oldMarkerNo OldMarkerToNewUid mapping se milta
+  // MarkersData se aata hai. oldMarkerNo LineWise mapping se milta
   // hai, isliye purane action flows (jo old path par likhte hain) bina kisi
   // change ke kaam karte rehte hain.
 
   getNewPathLineData(lineNo: any, zone: any = null): Promise<any> {
     return new Promise((resolve) => {
       let ward = zone != null ? zone : this.selectedZone;
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + lineNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + lineNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
         linkInstance.unsubscribe();
         if (links == null) {
@@ -704,6 +706,32 @@ export class HouseMarkingComponent {
     });
   }
 
+  // Marker popup me dikhne wali move history (purani se nayi).
+  markerMoveHistory: any[] = [];
+
+  // Marker par click hote hi uski move history. Marker kabhi move na hua ho to
+  // list khaali rehti hai aur popup me section dikhta hi nahi.
+  //
+  // movedByName purani entries me nahi hota (wo field baad me add hua), isliye
+  // na mile to userList se id resolve kar lete hain - wahi tarika jo deleted
+  // marker list me removedBy ke liye use hota hai.
+  loadMoveHistory(uid: any) {
+    this.markerMoveHistory = [];
+    if (uid == null || uid == "") {
+      return;
+    }
+    this.markerMapping.getMoveHistory(this.db, uid).then((list: any) => {
+      for (let i = 0; i < list.length; i++) {
+        let entry = list[i];
+        if (entry["movedByName"] == null || entry["movedByName"] == "") {
+          let detail = this.userList.find(item => item.userId == entry["movedBy"]);
+          entry["movedByName"] = detail != undefined ? detail.name : entry["movedBy"];
+        }
+      }
+      this.markerMoveHistory = list;
+    });
+  }
+
   // OLD PATH (reference ke liye rakha hai):
   // New flat image location: DevTest/MarkingSurveyImages/AllMarkerImages/{imgRef}
   // Marker image ka URL: AllMarkerImages/{imgRef}.
@@ -714,13 +742,13 @@ export class HouseMarkingComponent {
 
   // OLD PATH (reference ke liye rakha hai):
   // Whole ward ka data old-path jaisa hi shape ({lineNo: {oldMarkerNo: record}})
-  // me deta hai, par MarkersData + OldMarkerToNewUid se. Old path ka
+  // me deta hai, par MarkersData + LineWise se. Old path ka
   // MarkedHouses/{ward} read isse replace hota hai.
   // Poore ward ka data old path jaisa shape ({line: {markerNo: record}}) me.
   getNewPathWardData(zone: any = null): Promise<any> {
     return new Promise((resolve) => {
       let ward = zone != null ? zone : this.selectedZone;
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
         linkInstance.unsubscribe();
         if (wardLinks == null) {
@@ -776,12 +804,12 @@ export class HouseMarkingComponent {
 
   // OLD PATH (reference ke liye rakha hai):
   // ---- WRITE helpers (writes ab new path par: MarkersData/{uid} + LineSummary) ----
-  // Old markerNo -> new MarkersData object-path (OldMarkerToNewUid mapping se).
+  // Old markerNo -> new MarkersData object-path (LineWise mapping se).
   // Marker abhi migrate nahi hua (uid nahi mila) to null -> caller write skip kare.
   // Old markerNo -> MarkersData/{uid} ka path. Migrate na hua ho to null.
   getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + line + "/" + markerNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo;
       let inst = this.db.object(linkPath).valueChanges().subscribe((uid: any) => {
         inst.unsubscribe();
         if (uid == null || uid == "") {
@@ -809,7 +837,7 @@ export class HouseMarkingComponent {
     // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
     //   houseInstance.unsubscribe();
     $(this.divLoader).show();
-    // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+    // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
     this.getNewPathLineData(lineNo).then((data: any) => {
       this.markerList = [];
       if (data != null) {
@@ -992,7 +1020,7 @@ export class HouseMarkingComponent {
               if (iconImage != "") {
                 markerURL = "../assets/img/" + iconImage;
               }
-              this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index, markerUID, '');
+              this.setMarker(lat, lng, markerURL, houseType, imageName, "marker", lineNo, alreadyCard, index, markerUID, '', iconImage != "");
               this.getUsername(index, userId, this.selectedZone, lineNo);
               this.getApproveUsername(ApproveId, index, this.selectedZone, lineNo);
             }
@@ -1012,6 +1040,29 @@ export class HouseMarkingComponent {
     });
   }
 
+
+  // Default marker icons (marking-house.png, marking-shop.png...) sab ~21px
+  // ke hain aur main marker par scaledSize set nahi hota, isliye wo apni asli
+  // size me render hote hain - aur wahi theek dikhta hai. Par houseType ka apna
+  // iconImage inse kaafi badi file hoti hai, isliye wo marker map par bahut
+  // bada dikhne lagta tha. Custom icon ko yahi size de dete hain; default
+  // icons ko chhedte nahi taaki unka look bilkul wahi rahe jo abhi hai.
+  houseTypeIconSize = 21;
+
+  // Marker ka icon config. isHouseTypeIcon = true tabhi jab URL houseType ke
+  // apne iconImage se bana ho (getMarkerIcon wale default se nahi).
+  buildMarkerIcon(markerURL: any, isHouseTypeIcon: boolean) {
+    let icon: any = {
+      url: markerURL,
+      fillOpacity: 1,
+      strokeWeight: 0,
+      origin: new google.maps.Point(0, 0),
+    };
+    if (isHouseTypeIcon) {
+      icon.scaledSize = new google.maps.Size(this.houseTypeIconSize, this.houseTypeIconSize);
+    }
+    return icon;
+  }
 
   getMarkerIcon(type: any) {
     let url = "../assets/img/marking-house.png";
@@ -1128,7 +1179,7 @@ export class HouseMarkingComponent {
     // let houseInstance = this.db.object(path).valueChanges().subscribe((data) => {
     //   houseInstance.unsubscribe();
     this.markerList = this.markerList.filter(item => item.lineNo == this.markerData.lineno && item.zoneNo == this.markerData.wardno);
-    // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+    // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
     this.getNewPathLineData(lineNo, zoneNo).then((data: any) => {
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getOtherMarkerData", data);
@@ -2058,7 +2109,7 @@ export class HouseMarkingComponent {
   deleteMarker() {
     // DELETE ABHI BAND HAI (new-path migration ke dauraan).
     // Wajah: delete MarkersData/{uid} ko khaali kar deta hai par mapping
-    // entries (OldMarkerToNewUid / MarkerWise / WardWise / OriginalToUid)
+    // entries (LineWise / MarkerWise / WardWise / OriginalToUid)
     // waise hi reh jaati hain — yaani orphan mapping bachti hai. Cleanup
     // banne tak delete rok diya gaya hai.
     // Chalu karne ke liye: neeche wale 2 line hata dein.
@@ -2647,7 +2698,8 @@ export class HouseMarkingComponent {
     alreadyCard: any,
     markerNo: any,
     markerUID?: any,
-    markerData?: any   // ✅ extra data object
+    markerData?: any,   // ✅ extra data object
+    isHouseTypeIcon?: boolean   // houseType ka apna iconImage use ho raha hai
   ) {
     if (type === "lineNo") {
       const marker = new google.maps.Marker({
@@ -2683,12 +2735,7 @@ export class HouseMarkingComponent {
     const marker = new google.maps.Marker({
       position: { lat: Number(lat), lng: Number(lng) },
       map: this.map,
-      icon: {
-        url: markerURL,
-        fillOpacity: 1,
-        strokeWeight: 0,
-        origin: new google.maps.Point(0, 0),
-      },
+      icon: this.buildMarkerIcon(markerURL, isHouseTypeIcon === true),
     });
 
     // ✅ Attach marker to existing entry or store new
@@ -2759,6 +2806,7 @@ export class HouseMarkingComponent {
             markerImgURL: imageURL,
           });
 
+          this.loadMoveHistory(markerUID);
           $("#markerImageBox").show();
         }, 500);
       });
@@ -3161,7 +3209,7 @@ export class HouseMarkingComponent {
     // let dataInstance = this.db.object(dbpath).valueChanges().subscribe((data) => {
     //   dataInstance.unsubscribe();
     this.modifiedMarkerList = [];
-    // NEW PATH: whole ward from MarkersData + OldMarkerToNewUid ({lineNo: {markerNo: record}})
+    // NEW PATH: whole ward from MarkersData + LineWise ({lineNo: {markerNo: record}})
     this.getNewPathWardData().then((data: any) => {
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkersList", data);

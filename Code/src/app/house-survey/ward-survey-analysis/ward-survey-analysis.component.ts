@@ -230,7 +230,7 @@ export class WardSurveyAnalysisComponent {
 
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo + "/" + lineNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
         linkInstance.unsubscribe();
         if (links == null) {
@@ -261,7 +261,7 @@ export class WardSurveyAnalysisComponent {
 
   getNewPathWardData(wardNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
         linkInstance.unsubscribe();
         if (wardLinks == null) {
@@ -316,7 +316,7 @@ export class WardSurveyAnalysisComponent {
   // Old markerNo -> MarkersData/{uid} ka path. Migrate na hua ho to null.
   getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + line + "/" + markerNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo;
       let inst = this.db.object(linkPath).valueChanges().subscribe((uid: any) => {
         inst.unsubscribe();
         if (uid == null || uid == "") {
@@ -336,7 +336,7 @@ export class WardSurveyAnalysisComponent {
     // let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
     //   markedHouseData => {
     //     markedHouseInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid (same {lineNo: {markerNo: record}} shape)
+    // NEW PATH: MarkersData + LineWise (same {lineNo: {markerNo: record}} shape)
     this.getNewPathWardData(this.selectedZone).then(
       (markedHouseData: any) => {
         if (markedHouseData != null) {
@@ -509,7 +509,7 @@ export class WardSurveyAnalysisComponent {
     // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
     // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
     //   houseInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+    // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
     let dbPath = "";
     this.getNewPathLineData(this.selectedZone, lineNo).then((data: any) => {
       if (data != null) {
@@ -1233,7 +1233,7 @@ export class WardSurveyAnalysisComponent {
     // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
     // let insetance = this.db.object(dbPath).valueChanges().subscribe((data) => {
     //   insetance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid
+    // NEW PATH: MarkersData + LineWise
     this.getNewPathLineData(this.selectedZone, this.lineNo).then((data: any) => {
       if (data != null) {
         let keyArray = Object.keys(data);
@@ -1434,7 +1434,7 @@ export class WardSurveyAnalysisComponent {
     // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
     //   data => {
     //     markerInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid
+    // NEW PATH: MarkersData + LineWise
     this.getNewPathLineData(wardNo, lineNo).then(
       (data: any) => {
         if (data != null) {
@@ -1801,7 +1801,7 @@ export class WardSurveyAnalysisComponent {
     // let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
     //   data => {
     //     checkInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid
+    // NEW PATH: MarkersData + LineWise
     this.getNewPathLineData(this.selectedZone, lineNo).then(
       (data: any) => {
         if (data != null) {
@@ -1984,7 +1984,7 @@ export class WardSurveyAnalysisComponent {
     // let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
     //   data => {
     //     checkInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid
+    // NEW PATH: MarkersData + LineWise
     this.getNewPathLineData(this.selectedZone, lineNo).then(
       (data: any) => {
         if (data != null) {
@@ -2472,7 +2472,7 @@ export class WardSurveyAnalysisComponent {
           // let rfidHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
           //   data => {
           //     rfidHouseInstance.unsubscribe();
-          // NEW PATH: MarkersData + OldMarkerToNewUid
+          // NEW PATH: MarkersData + LineWise
           this.getNewPathLineData(this.selectedZone, this.lineNo).then(
             (data: any) => {
               if (data != null) {

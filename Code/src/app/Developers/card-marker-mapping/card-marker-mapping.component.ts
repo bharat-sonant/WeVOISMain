@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from "../../services/common/common.service";
+import { MarkerMappingService } from "../../services/marker/marker-mapping.service";
 import { FirebaseService } from "../../firebase.service";
 import { AngularFireStorage } from "angularfire2/storage";
 
@@ -10,7 +11,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class CardMarkerMappingComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private storage: AngularFireStorage) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private storage: AngularFireStorage, private markerMapping: MarkerMappingService) { }
   cityName: any;
   db: any;
   todayDate: any;
@@ -81,7 +82,7 @@ export class CardMarkerMappingComponent implements OnInit {
 
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo + "/" + lineNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
         linkInstance.unsubscribe();
         if (links == null) {
@@ -113,7 +114,7 @@ export class CardMarkerMappingComponent implements OnInit {
 
   getNewPathWardData(wardNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
         linkInstance.unsubscribe();
         if (wardLinks == null) {
@@ -169,7 +170,7 @@ export class CardMarkerMappingComponent implements OnInit {
         let fromSummary = summaryVal != null ? Number(summaryVal) : 0;
         if (isNaN(fromSummary)) { fromSummary = 0; }
 
-        let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + zoneTo + "/" + lineTo;
+        let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo;
         let lInst = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
           lInst.unsubscribe();
           let maxKey = 0;
@@ -192,7 +193,7 @@ export class CardMarkerMappingComponent implements OnInit {
   // Marker ko nayi line/ward par. Data global rehta hai, sirf mapping re-point hoti hai. OriginalToUid yahan NAHI chhuti, warna migration re-run par duplicate uid ban jaayega.
   moveMarkerOnNewPath(uid: any, zoneFrom: any, lineFrom: any, markerNoFrom: any, zoneTo: any, lineTo: any, newMarkerNo: any, data: any, extra: any = null) {
     // Move history: marker kahan se kahan gaya, iska permanent record.
-    this.writeMoveHistory(uid, zoneFrom, lineFrom, markerNoFrom, zoneTo, lineTo, newMarkerNo);
+    this.markerMapping.recordMove(this.db, uid, zoneFrom, lineFrom, markerNoFrom, zoneTo, lineTo, newMarkerNo);
 
     // line kabhi string ("7") ban kar aa sakti hai, jabki marker-data-move ne
     // migration me line NUMBER (7) likhi thi — Number me convert kar ke likhte hain.
@@ -217,9 +218,9 @@ export class CardMarkerMappingComponent implements OnInit {
     for (let k = 0; k < pKeys.length; k++) { data[pKeys[k]] = patch[pKeys[k]]; }
     this.db.object("EntityMarkingData/MarkersData/" + uid).update(patch);
 
-    // OldMarkerToNewUid: nayi jagah add, purani jagah se hata do
-    this.db.object("EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + zoneTo + "/" + lineTo + "/" + newMarkerNo).set(uid);
-    this.db.database.ref("EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + zoneFrom + "/" + lineFrom + "/" + markerNoFrom).set(null);
+    // LineWise: nayi jagah add, purani jagah se hata do
+    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo + "/" + newMarkerNo).set(uid);
+    this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + markerNoFrom).set(null);
 
     // MarkerWise mapping
     this.db.object("EntityMarkingData/MarkersMapping/MarkerWise/" + uid).update({ line: lineVal, ward: zoneTo });
@@ -229,21 +230,6 @@ export class CardMarkerMappingComponent implements OnInit {
       this.db.database.ref("EntityMarkingData/MarkersMapping/WardWise/" + zoneFrom + "/" + uid).set(null);
     }
     this.db.object("EntityMarkingData/MarkersMapping/WardWise/" + zoneTo + "/" + uid).set(lineVal);
-  }
-
-  // Har move ka permanent record: MoveHistory/{uid}.
-  writeMoveHistory(uid: any, zoneFrom: any, lineFrom: any, markerNoFrom: any, zoneTo: any, lineTo: any, newMarkerNo: any) {
-    let entry = {
-      fromWard: zoneFrom,
-      fromLine: lineFrom,
-      fromMarkerNo: markerNoFrom,
-      toWard: zoneTo,
-      toLine: lineTo,
-      toMarkerNo: newMarkerNo,
-      movedBy: localStorage.getItem("userID"),
-      movedOn: this.commonService.getTodayDateTime()
-    };
-    this.db.list("EntityMarkingData/MarkerMovementData/MoveHistory/" + uid).push(entry);
   }
 
   mapHouseMarkerData() {
@@ -259,7 +245,7 @@ export class CardMarkerMappingComponent implements OnInit {
     // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
     //   data => {
     //     markerInstance.unsubscribe();
-    // NEW PATH: MarkersData + OldMarkerToNewUid (same {lineNo: {markerNo: record}} shape)
+    // NEW PATH: MarkersData + LineWise (same {lineNo: {markerNo: record}} shape)
     this.getNewPathWardData(zoneNo).then(
       (data: any) => {
         if (data != null) {
@@ -480,7 +466,7 @@ export class CardMarkerMappingComponent implements OnInit {
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + i;
       // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
       //   markerInstance.unsubscribe();
-      // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+      // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
       this.getNewPathLineData(zoneNo, i).then((data: any) => {
         if (data != null) {
           let keyArray = Object.keys(data);

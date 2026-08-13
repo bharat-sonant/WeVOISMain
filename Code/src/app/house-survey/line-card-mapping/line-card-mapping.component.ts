@@ -11,6 +11,7 @@ import * as $ from "jquery";
 import { ToastrService } from "ngx-toastr";
 import { AngularFireStorage } from "angularfire2/storage";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 
 @Component({
   selector: "app-line-card-mapping",
@@ -21,7 +22,7 @@ export class LineCardMappingComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService) { }
+  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, private markerMapping: MarkerMappingService) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -166,7 +167,7 @@ export class LineCardMappingComponent {
 
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo + "/" + lineNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
         linkInstance.unsubscribe();
         if (links == null) {
@@ -197,7 +198,7 @@ export class LineCardMappingComponent {
 
   getNewPathWardData(wardNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
         linkInstance.unsubscribe();
         if (wardLinks == null) {
@@ -252,7 +253,7 @@ export class LineCardMappingComponent {
         let fromSummary = summaryVal != null ? Number(summaryVal) : 0;
         if (isNaN(fromSummary)) { fromSummary = 0; }
 
-        let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + zoneTo + "/" + lineTo;
+        let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo;
         let lInst = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
           lInst.unsubscribe();
           let maxKey = 0;
@@ -275,7 +276,7 @@ export class LineCardMappingComponent {
   // Old markerNo -> new uid (M{n}). Migrate na hua ho to null.
   getMarkerUid(ward: any, line: any, markerNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + line + "/" + markerNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo;
       let inst = this.db.object(linkPath).valueChanges().subscribe((uid: any) => {
         inst.unsubscribe();
         resolve(uid != null && uid != "" ? uid : null);
@@ -298,7 +299,7 @@ export class LineCardMappingComponent {
     this.markersDataCache = null; // write ke baad cache stale
 
     // Move history: marker kahan se kahan gaya, iska permanent record.
-    this.writeMoveHistory(uid, zoneFrom, lineFrom, markerNoFrom, zoneTo, lineTo, newMarkerNo);
+    this.markerMapping.recordMove(this.db, uid, zoneFrom, lineFrom, markerNoFrom, zoneTo, lineTo, newMarkerNo);
 
     // lineTo textbox se string ("7") ban kar aata hai, jabki marker-data-move ne
     // migration me line NUMBER (7) likhi thi — Number me convert kar ke likhte hain.
@@ -323,9 +324,9 @@ export class LineCardMappingComponent {
     for (let k = 0; k < pKeys.length; k++) { data[pKeys[k]] = patch[pKeys[k]]; }
     this.db.object("EntityMarkingData/MarkersData/" + uid).update(patch);
 
-    // OldMarkerToNewUid: nayi jagah add, purani jagah se hata do
-    this.db.object("EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + zoneTo + "/" + lineTo + "/" + newMarkerNo).set(uid);
-    this.db.database.ref("EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + zoneFrom + "/" + lineFrom + "/" + markerNoFrom).set(null);
+    // LineWise: nayi jagah add, purani jagah se hata do
+    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo + "/" + newMarkerNo).set(uid);
+    this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + markerNoFrom).set(null);
 
     // MarkerWise mapping
     this.db.object("EntityMarkingData/MarkersMapping/MarkerWise/" + uid).update({ line: lineVal, ward: zoneTo });
@@ -347,7 +348,7 @@ export class LineCardMappingComponent {
           return; // ward par new path par kuch nahi — kuch mat likho
         }
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts", markerData);
-        // Jis line ke saare markers hat gaye uska OldMarkerToNewUid node hi khatam
+        // Jis line ke saare markers hat gaye uska LineWise node hi khatam
         // ho jaata hai, isliye wo neeche wale loop me aati hi nahi — uske counts
         // alag se zero karne padte hain.
         this.resetEmptyLineSummaries(zoneNo, markerData);
@@ -396,48 +397,10 @@ export class LineCardMappingComponent {
       });
   }
 
-  // Jin lines par ab ek bhi marker nahi bacha unke counts zero. lastMarkerKey nahi chhedte, warna markerNo dobara use ho jaayenge.
+  // Jin lines par ab ek bhi marker nahi bacha unke counts zero.
+  // Logic MarkerMappingService me hai (line-marker-mapping bhi wahi use karta hai).
   resetEmptyLineSummaries(zoneNo: any, markerData: any) {
-    let summaryPath = "EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo;
-    let summaryInstance = this.db.object(summaryPath).valueChanges().subscribe(
-      (summary: any) => {
-        summaryInstance.unsubscribe();
-        if (summary == null) {
-          return;
-        }
-        let lineArray = Object.keys(summary);
-        for (let i = 0; i < lineArray.length; i++) {
-          let lineNo = lineArray[i];
-          if (summary[lineNo] == null || typeof summary[lineNo] != "object") {
-            continue; // ward-level scalars skip
-          }
-          if (markerData != null && markerData[lineNo] != null) {
-            continue; // is line par markers hain -> upar wala loop count karega
-          }
-          this.db.object(summaryPath + "/" + lineNo).update({
-            marksCount: 0,
-            surveyedCount: 0,
-            lineRevisitCount: 0,
-            lineRfidNotFoundCount: 0,
-            alreadyInstalledCount: 0
-          });
-        }
-      });
-  }
-
-  // Har move ka permanent record: MoveHistory/{uid}.
-  writeMoveHistory(uid: any, zoneFrom: any, lineFrom: any, markerNoFrom: any, zoneTo: any, lineTo: any, newMarkerNo: any) {
-    let entry = {
-      fromWard: zoneFrom,
-      fromLine: lineFrom,
-      fromMarkerNo: markerNoFrom,
-      toWard: zoneTo,
-      toLine: lineTo,
-      toMarkerNo: newMarkerNo,
-      movedBy: localStorage.getItem("userID"),
-      movedOn: this.commonService.getTodayDateTime()
-    };
-    this.db.list("EntityMarkingData/MarkerMovementData/MoveHistory/" + uid).push(entry);
+    this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData);
   }
 
   moveToNewLine() {
@@ -475,7 +438,7 @@ export class LineCardMappingComponent {
       (safeLastKey: any) => {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", safeLastKey);
         lastMarkerKey = Number(safeLastKey) + 1;
-        // NEW PATH: MarkersData + OldMarkerToNewUid (same {markerNo: record} shape)
+        // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
         this.getNewPathLineData(this.selectedZone, lineFrom).then(
           (markerData: any) => {
             // OLD PATH (reference ke liye rakha hai):

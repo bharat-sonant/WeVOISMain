@@ -4,6 +4,7 @@ import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 
 @Component({
   selector: "app-ward-marking-summary",
@@ -11,7 +12,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
   styleUrls: ["./ward-marking-summary.component.scss"],
 })
 export class WardMarkingSummaryComponent implements OnInit {
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
   selectedCircle: any;
   selectedZone: any;
   wardList: any[] = [];
@@ -795,7 +796,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   // Old markerNo -> MarkersData/{uid} ka path. Migrate na hua ho to null.
   getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + ward + "/" + line + "/" + markerNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo;
       let inst = this.db.object(linkPath).valueChanges().subscribe((uid: any) => {
         inst.unsubscribe();
         if (uid == null || uid == "") {
@@ -823,7 +824,7 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo + "/" + lineNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
         linkInstance.unsubscribe();
         if (links == null) {
@@ -855,7 +856,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   // Poore ward ka data old path jaisa shape ({line: {markerNo: record}}) me.
   getNewPathWardData(wardNo: any): Promise<any> {
     return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/OldMarkerToNewUid/" + wardNo;
+      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
       let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
         linkInstance.unsubscribe();
         if (wardLinks == null) {
@@ -1726,13 +1727,20 @@ export class WardMarkingSummaryComponent implements OnInit {
       // OLD PATH (reference ke liye rakha hai):
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      // NEW PATH: MarkersData + OldMarkerToNewUid
+      // NEW PATH: MarkersData + LineWise
       this.getNewPathWardData(zoneNo).then(
           // OLD PATH (reference ke liye rakha hai):
           // markerInstance.unsubscribe();
         (markerData: any) => {
           if (markerData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts", markerData);
+
+            // Neeche wala loop sirf un lines par ghumta hai jo LineWise me
+            // hain. Jis line ka aakhri marker nikal gaya uska LineWise node hi
+            // khatam ho jaata hai, isliye wo line yahan aati hi nahi aur uske
+            // purane counts LineSummary par pade rah jaate hain - table me
+            // Markers 0 dikhta hai par Houses purana number. Unhe zero karte hain.
+            this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData);
 
             let keyArray = Object.keys(markerData);
 
