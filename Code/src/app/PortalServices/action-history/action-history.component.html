@@ -1,0 +1,97 @@
+<div class="action-history" *ngIf="canView">
+
+    <div class="ah-toolbar">
+        <label class="ah-label">Date</label>
+        <input type="date" class="ah-date" [(ngModel)]="selectedDate" title="History date" />
+        <button type="button" class="btn btn-success btn-xs" [disabled]="loading" (click)="load()">
+            {{ loading ? 'Loading...' : 'Show History' }}
+        </button>
+        <span class="ah-count" *ngIf="loaded && !loading">{{ records.length }} actions</span>
+    </div>
+
+    <div class="ah-error" *ngIf="errorText">{{ errorText }}</div>
+
+    <div class="table-scroll ah-table-wrap" *ngIf="loaded && records.length > 0">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Action</th>
+                    <th>Moved By</th>
+                    <th>Status</th>
+                    <th>From &rarr; To</th>
+                    <th>Total</th>
+                    <th>Moved</th>
+                    <th>Failed</th>
+                    <th>No Image</th>
+                    <th>Duration</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let r of records">
+                    <tr [ngClass]="'ah-' + r.status">
+                        <td>{{ timeText(r) }}</td>
+                        <td>{{ r.action }}</td>
+                        <td class="ah-user">{{ userText(r) }}</td>
+                        <td><span class="badge" [ngClass]="'badge-' + r.status">{{ r.status }}</span></td>
+                        <td>{{ routeText(r) }}</td>
+                        <td>{{ r.total == null ? '-' : r.total }}</td>
+                        <td>{{ r.moved == null ? '-' : r.moved }}</td>
+                        <td>{{ r.failed == null ? '-' : r.failed }}</td>
+                        <td>{{ r.imageMissing == null ? '-' : r.imageMissing }}</td>
+                        <td>{{ r.durationSec == null ? '-' : r.durationSec + 's' }}</td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-xs ah-detail-btn" (click)="toggleDetail(r)">
+                                {{ expandedKey == r.key ? 'Hide' : 'Detail' }}
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="expandedKey == r.key" class="ah-detail-row">
+                        <td colspan="11">
+                            <div class="ah-detail">
+                                <div class="ah-kv"><b>Start</b> {{ r.startTime || '-' }}</div>
+                                <div class="ah-kv"><b>End</b> {{ r.endTime || '-' }}</div>
+                                <div class="ah-kv"><b>City</b> {{ r.city || '-' }}</div>
+                                <div class="ah-kv"><b>Moved By</b> {{ userText(r) }}</div>
+                                <div class="ah-kv" *ngIf="r.destinationStartKey != null">
+                                    <b>Dest keys</b> {{ r.destinationStartKey }} &ndash; {{ r.destinationEndKey }}
+                                </div>
+                                <div class="ah-kv"><b>Cancelled</b> {{ r.cancelled ? 'yes' : 'no' }}</div>
+                                <div class="ah-kv"><b>Network interrupted</b> {{ r.networkInterrupted ? 'yes' : 'no' }}</div>
+                                <div class="ah-kv ah-full" *ngIf="r.note"><b>Note</b> {{ r.note }}</div>
+
+                                <div class="ah-full" *ngIf="failedCount(r) > 0">
+                                    <b>Failed items ({{ failedCount(r) }})</b>
+                                    <table class="table ah-failed-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Marker No</th>
+                                                <th>Card No</th>
+                                                <th>Step</th>
+                                                <th>Error</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let f of r.failedItems">
+                                                <td>{{ f.markerNo || '-' }}</td>
+                                                <td>{{ f.cardNo || '-' }}</td>
+                                                <td>{{ f.step || '-' }}</td>
+                                                <td class="ah-err">{{ f.error || '-' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="ah-empty" *ngIf="loaded && records.length == 0 && !errorText">
+        इस date पर कोई action record नहीं है।
+    </div>
+
+</div>

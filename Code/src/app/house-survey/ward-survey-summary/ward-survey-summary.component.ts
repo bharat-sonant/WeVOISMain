@@ -33,6 +33,7 @@ export class WardSurveySummaryComponent implements OnInit {
   employeeSurvey: any[] = [];
   rfidMarkerList: any = [];
   rfidMarkerMap: any = {};
+  rfidCardPropMap: any = {};
   rfidList: any[];
   db: any;
   selectedWard: any;
@@ -294,6 +295,7 @@ export class WardSurveySummaryComponent implements OnInit {
     $(this.divLoaderMain).show();
     this.rfidMarkerList = [];
     this.rfidMarkerMap = {};
+    this.rfidCardPropMap = {};
     this.rfidList = [];
     this.getMarkerData(0);
 
@@ -578,9 +580,10 @@ export class WardSurveySummaryComponent implements OnInit {
 
   getMarkerData(index: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
+    // Primary PID source: CardPropertyMapping (cardNumber -> propId) ek hi baar poora node.
     // Fallback PID source: MarkedHouses (cardNumber -> propId) rfidMarkerMap me bharo.
-    // Primary PID source per-card direct CardPropertyMapping/<cardNumber> hit (readCardWard me).
-    let promises = [];
+    let promises: any[] = [];
+    promises.push(this.readCardPropertyMapping());
     for (let w = 0; w < this.wardList.length; w++) {
       promises.push(this.readMarkerWard(this.wardList[w]["zoneNo"]));
     }
@@ -589,15 +592,18 @@ export class WardSurveySummaryComponent implements OnInit {
     });
   }
 
-  // Direct hit: CardPropertyMapping/<cardNumber> ki value (na mile to null)
-  getCardPropertyId(cardNumber: any): Promise<any> {
+  // Poora CardPropertyMapping node ek baar padho -> rfidCardPropMap (cardNumber -> propId)
+  readCardPropertyMapping() {
     return new Promise((resolve) => {
-      let inst = this.db.object("CardPropertyMapping/" + cardNumber).valueChanges().subscribe(
-        (val: any) => {
+      let inst = this.db.object("CardPropertyMapping").valueChanges().subscribe(
+        (data: any) => {
           inst.unsubscribe();
-          resolve(val);
+          if (data != null) {
+            this.rfidCardPropMap = data;
+          }
+          resolve(true);
         },
-        () => resolve(null)
+        () => resolve(true)
       );
     });
   }
@@ -691,7 +697,12 @@ export class WardSurveySummaryComponent implements OnInit {
                   cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardDetail["cardImage"] + "?alt=media";
                 }
                 let date = cardDetail["createdDate"] != null ? cardDetail["createdDate"] : "";
-                if (this.rfidMarkerMap[cardNumber] != null) {
+                // PID: pehle CardPropertyMapping, na mile to MarkedHouses ka propId
+                let mappedPid = this.rfidCardPropMap[cardNumber];
+                if (mappedPid != null && mappedPid.toString().trim() !== "" && mappedPid.toString().trim() !== "00") {
+                  PID = mappedPid;
+                }
+                else if (this.rfidMarkerMap[cardNumber] != null) {
                   PID = this.rfidMarkerMap[cardNumber];
                 }
                 let ward = cardDetail["ward"] != null ? cardDetail["ward"] : zoneNo;
@@ -729,19 +740,7 @@ export class WardSurveySummaryComponent implements OnInit {
               }
             }
           }
-          // Primary PID: MarkedHouses (loop me already set).
-          // Fallback: jinka MarkedHouses se PID nahi mila, sirf un cards par
-          // direct CardPropertyMapping/<cardNumber> hit.
-          let pidPromises = rows
-            .filter((row: any) => row.PID == null || row.PID.toString().trim() === "" || row.PID.toString().trim() === "00")
-            .map((row: any) =>
-              this.getCardPropertyId(row.cardNumber).then((pid: any) => {
-                if (pid != null && pid.toString().trim() !== "") {
-                  row.PID = pid;
-                }
-              })
-            );
-          Promise.all(pidPromises).then(() => resolve(rows));
+          resolve(rows);
         },
         () => resolve([])
       );
@@ -1230,40 +1229,46 @@ export class WardSurveySummaryComponent implements OnInit {
         let htmlString = "";
         htmlString = "<table>";
         htmlString += "<tr>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "Zone No";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "Line No";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "Card No";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Surveyor Id";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Surveyor Name";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
         htmlString += "No of Houses";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "Name";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "Geo Address";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "Address";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "Card Type";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "LatLng";
         htmlString += "</td>";
         if (this.cityName != 'hisar') {
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += "Mobile";
           htmlString += "</td>";
         }
         if (localStorage.getItem("userType") == "Internal User") {
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += "Date";
           htmlString += "</td>";
         }
@@ -1273,37 +1278,43 @@ export class WardSurveySummaryComponent implements OnInit {
           htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["zoneNo"];
           htmlString += "</td>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["lineNo"];
           htmlString += "</td>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["cardNo"];
           htmlString += "</td>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["surveyorId"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["surveyorName"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["houseCount"];
           htmlString += "</td>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["name"];
           htmlString += "</td>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["imageCaptureLocation"];
           htmlString += "</td>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["address"];
           htmlString += "</td>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["cardType"];
           htmlString += "</td>";
-          htmlString += "<td>";
+          htmlString += "<td t='s'>";
           htmlString += this.cardHousesList[i]["latLng"];
           htmlString += "</td>";
           if (this.cityName != 'hisar') {
-            htmlString += "<td>";
+            htmlString += "<td t='s'>";
             htmlString += this.cardHousesList[i]["mobile"];
             htmlString += "</td>";
           }
           if (localStorage.getItem("userType") == "Internal User") {
-            htmlString += "<td>";
+            htmlString += "<td t='s'>";
             htmlString += this.cardHousesList[i]["date"];
             htmlString += "</td>";
           }
@@ -1312,27 +1323,35 @@ export class WardSurveySummaryComponent implements OnInit {
         }
 
         htmlString += "<tr>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "Total";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
         htmlString += totalHouses;
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
         htmlString += "</td>";
-        htmlString += "<td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
         htmlString += "</td>";
         htmlString += "</tr>";
         htmlString += "<table>";
@@ -1408,6 +1427,18 @@ export class WardSurveySummaryComponent implements OnInit {
                   if (detail != undefined) {
                     cardType = detail.houseType;
                   }
+                  let surveyorId = cardObj[cardNo]["surveyorId"] != null ? cardObj[cardNo]["surveyorId"] : "";
+                  let surveyorName = "";
+                  if (surveyorId != "" && this.surveyorList != null) {
+                    let surveyorDetail = this.surveyorList.find(item => item.surveyorId == surveyorId);
+                    if (surveyorDetail != undefined) {
+                      surveyorName = surveyorDetail.name;
+                    }
+                  }
+                  // id maujood ho to hi SUR prefix lagao, warna cell blank hi rahe
+                  if (surveyorId != "") {
+                    surveyorId = "SUR" + surveyorId;
+                  }
                   totalCardsToProcess++;
                   pendingCalls++;
                   this.getOrCreateImageCaptureLocation(
@@ -1428,7 +1459,9 @@ export class WardSurveySummaryComponent implements OnInit {
                         imageCaptureLocation: imageCaptureLocation,
                         mobile: mobile,
                         date: date,
-                        houseCount: houseCount
+                        houseCount: houseCount,
+                        surveyorId: surveyorId,
+                        surveyorName: surveyorName
                       });
                       pendingCalls--;
                       tryProcessNextZone();

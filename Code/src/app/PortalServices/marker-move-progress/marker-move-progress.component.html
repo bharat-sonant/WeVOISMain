@@ -1,0 +1,124 @@
+<div class="card move-progress-card" *ngIf="summary && (summary.total > 0 || summary.running)">
+
+    <div class="card-header custom-header" *ngIf="showHeader">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h5><b>Marker Move Progress</b></h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body move-progress-body">
+
+        <!-- network disconnected banner -->
+        <div class="net-banner" *ngIf="summary.waitingForNetwork">
+            <i class="fa fa-exclamation-circle"></i>
+            <span class="net-text">
+                Network disconnected &mdash; कनेक्शन वापस आते ही अपने आप जारी हो जाएगा।
+            </span>
+            <button type="button" class="btn btn-danger btn-xs cancel-btn" (click)="onCancelMove()">Cancel Move</button>
+        </div>
+
+        <!-- status line -->
+        <div class="status-line" *ngIf="summary.statusText">
+            <i class="fa fa-info-circle"></i> {{ summary.statusText }}
+        </div>
+
+        <!-- route info (backup file ka path UI me nahi dikhana hai) -->
+        <div class="route-line">
+            <b>Zone {{ summary.fromZone }} / Line {{ summary.fromLine }}</b>
+            <i class="fa fa-long-arrow-right route-arrow"></i>
+            <b>Zone {{ summary.toZone }} / Line {{ summary.toLine }}</b>
+        </div>
+
+        <!-- counters -->
+        <div class="row counter-row">
+            <div class="col counter" [class.counter-active]="currentFilter == 'all'" (click)="setFilter('all')">
+                <div class="counter-value">{{ summary.total }}</div>
+                <div class="counter-label">Total</div>
+            </div>
+            <div class="col counter counter-moved" [class.counter-active]="currentFilter == 'moved'" (click)="setFilter('moved')">
+                <div class="counter-value">{{ summary.moved }}</div>
+                <div class="counter-label">Moved</div>
+            </div>
+            <div class="col counter counter-failed" [class.counter-active]="currentFilter == 'failed'" (click)="setFilter('failed')">
+                <div class="counter-value">{{ summary.failed }}</div>
+                <div class="counter-label">Failed</div>
+            </div>
+            <div class="col counter counter-pending" [class.counter-active]="currentFilter == 'pending'" (click)="setFilter('pending')">
+                <div class="counter-value">{{ summary.pending }}</div>
+                <div class="counter-label">Pending</div>
+            </div>
+            <div class="col counter counter-noimage" [class.counter-active]="currentFilter == 'imageMissing'" (click)="setFilter('imageMissing')">
+                <div class="counter-value">{{ summary.imageMissing }}</div>
+                <div class="counter-label">No Image</div>
+            </div>
+        </div>
+
+        <!-- progress bar -->
+        <div class="progress-outer">
+            <div class="progress-inner" [style.width.%]="progressPercent"></div>
+            <span class="progress-text">{{ progressPercent }}%</span>
+        </div>
+
+        <!-- actions -->
+        <div class="action-row">
+            <button type="button" class="btn btn-success btn-xs" (click)="onRetryFailed()" [disabled]="summary.running || summary.failed == 0">
+                Retry Failed ({{ summary.failed }})
+            </button>
+            <button type="button" class="btn btn-default btn-xs" (click)="exportFailed()" [disabled]="visibleRows.length == 0">
+                Export CSV ({{ currentFilter }})
+            </button>
+            <button type="button" class="btn btn-danger btn-xs" (click)="onCancelMove()" *ngIf="summary.running">
+                Cancel Move
+            </button>
+        </div>
+
+        <!-- rows table -->
+        <div class="table-scroll table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Marker No</th>
+                        <th>New No</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Card No</th>
+                        <th>Image</th>
+                        <th>Status</th>
+                        <th>Failed Step</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let r of visibleRows; trackBy: trackByRow" [ngClass]="'row-' + r.status">
+                        <td>{{ r.srNo }}</td>
+                        <td>{{ r.markerNo || '-' }}</td>
+                        <td>{{ r.newMarkerNo || '-' }}</td>
+                        <td>{{ r.fromZone }} / {{ r.fromLine }}</td>
+                        <td>{{ r.toZone }} / {{ r.toLine }}</td>
+                        <td>{{ r.cardNo || '-' }}</td>
+                        <td>
+                            {{ r.oldImage || '-' }}
+                            <span *ngIf="r.newImage && !r.imageMissing"> &rarr; {{ r.newImage }}</span>
+                            <span class="no-image-tag" *ngIf="r.imageMissing && r.status == 'moved'">no image</span>
+                        </td>
+                        <td>
+                            <span class="badge" [ngClass]="'badge-' + r.status">{{ statusLabel(r.status) }}</span>
+                        </td>
+                        <td>{{ r.failedStep || '-' }}</td>
+                        <td class="error-cell" [title]="r.error">
+                            {{ r.error || '-' }}
+                            <span *ngIf="r.attempts > 1" class="attempts">({{ r.attempts }} attempts)</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="visibleRows.length == 0">
+                        <td colspan="10" class="text-center empty-row">इस filter के लिए कोई record नहीं है।</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

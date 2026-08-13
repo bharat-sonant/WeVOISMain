@@ -151,6 +151,12 @@
                                                         class="edit-icon cursor-pointer" alt="edit"
                                                         (click)="openModel(contentEmployee,data.empId,'update');"
                                                         title="Edit Entry">
+                                                    <img src="../../assets/icons/right-from-bracket-solid.svg"
+                                                        class="logout-icon cursor-pointer"
+                                                        [ngClass]="data.isLoggedIn ? 'logout-icon-active' : 'logout-icon-inactive'"
+                                                        alt="logout"
+                                                        (click)="openModel(contentLogoutConfirmation,data.empId,'clearLogin');"
+                                                        [title]="data.isLoggedIn ? 'Logged in — click to logout from device' : 'Not logged in'">
                                                 </span>
                                             </td>
                                         </tr>
@@ -256,6 +262,41 @@
     </ng-template>
     <!--Delete Confirmation End-->
 
+    <!--Logout From Device Confirmation Start-->
+    <ng-template #contentLogoutConfirmation>
+        <div class="modal-dialog modal-dialog-centered modal-dialog-width" role="document">
+            <div class="modal-content modal-content-width">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Logout From Device</h5>
+                    <img class="close" src="../../assets/icons/iconClose.png" alt="file" (click)="closeModel();">
+                </div>
+                <div class="modal-body">
+
+                    <div class="Delete-device">
+                        <img class="deleteImg" src="../../assets/img/deleteImg.png" alt="logout" title="Logout">
+                        <p class="title-assignment">
+                            Are you sure you want to logout this collector from the current device ?
+                        </p>
+                    </div>
+
+                    <input type="hidden" id="logoutId" value="0" />
+                    <div class="buttonAss">
+                        <div class="Confirm">
+                            <button type="button" class="btn  w-100 submit-btn assignment-btn"
+                                (click)="clearCollectorLogin()">
+                                Confirm</button>
+                        </div>
+                        <div class="cancel-btn-popup">
+                            <button type="button" class="btn  w-100 cancel-btn ass-cancel-btn" (click)="closeModel()">
+                                Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <!--Logout From Device Confirmation End-->
+
     <!--ward assign  Start-->
     <ng-template #contentWard>
         <!-- <div class="modal "> -->
@@ -280,6 +321,28 @@
                             <!-- <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> -->
                             <img src="../../assets/icons/file-invoice-dollar-solid.svg" alt="file" aria-hidden="true">
                         </span>
+                    </div>
+
+                    <label class="label-title" [hidden]="isEntityTypeAllowedCity==false">Entity Type</label>
+                    <div id="divEntityType" class="wrap-input-effects entity-type-wrap" required
+                        [hidden]="isEntityTypeAllowedCity==false">
+                        <div class="entity-type-selected" (click)="toggleEntityTypeList();">
+                            <span class="entity-type-text">{{getEntityTypeText()}}</span>
+                            <span class="entity-type-arrow" [hidden]="showEntityTypeList==true">&#9662;</span>
+                            <span class="entity-type-arrow" [hidden]="showEntityTypeList==false">&#9652;</span>
+                        </div>
+                        <div class="entity-type-list" [hidden]="showEntityTypeList==false">
+                            <label class="entity-type-option">
+                                <input type="checkbox" [checked]="isAllEntityTypeSelected()"
+                                    (change)="setAllEntityType($event.target.checked);" />
+                                <b>All</b>
+                            </label>
+                            <label class="entity-type-option" *ngFor="let entityType of entityTypeList">
+                                <input type="checkbox" [checked]="entityType.isChecked"
+                                    (change)="setEntityType(entityType.id,$event.target.checked);" />
+                                {{entityType.name}}
+                            </label>
+                        </div>
                     </div>
 
                     <div class="label-title">
