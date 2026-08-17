@@ -230,6 +230,11 @@ export class HouseMarkingComponent {
     $('#markerImageBox').hide();
     (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
     this.markersDataCache = null; // new-path cache: ward badla to fresh load
+    // Ward chunte hi set kar dete hain. Pehle ye sirf getMarkedHouses ke marker
+    // loop ke ANDAR set hota tha, isliye line par ek bhi marker na ho (ya
+    // mapping se koi marker na mile) to popup ke heading me ward ki jagah
+    // shuruati "0" hi pada rehta tha - "Modified Entity Types [Ward 0]".
+    this.markerData.wardno = this.selectedZone;
     this.clearAllData();
     this.clearAllOnMap();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 4).then((data: any) => {
@@ -654,6 +659,22 @@ export class HouseMarkingComponent {
 
   // Whole MarkersData cache — ward change par clear hota hai.
   markersDataCache: any = null;
+
+  // MarkersData par kisi bhi write ke baad cache stale ho jaata hai.
+  //
+  // loadMarkersData() poora MarkersData node ek baar padh kar rakh leta hai
+  // aur har line uske andar se banti hai. Write ke baad cache clear na karein
+  // to line badal kar wapas aane par wahi purana snapshot milta hai - approve
+  // kiya hua marker phir se "not approved" dikhne lagta hai aur sirf page
+  // reload par theek hota hai. (Ward badalne par cache waise bhi clear hota
+  // hai - upar ngOnInit/ward change me.)
+  //
+  // Isliye har MarkersData write yahin se guzarti hai, taaki koi jagah cache
+  // clear karna bhool na jaaye.
+  updateMarkerData(markerPath: any, patch: any) {
+    this.db.object(markerPath).update(patch);
+    this.markersDataCache = null;
+  }
 
   loadMarkersData(): Promise<any> {
     return new Promise((resolve) => {
@@ -1132,6 +1153,24 @@ export class HouseMarkingComponent {
 
     });
   }
+  // approveDate DB me "YYYY-MM-DD HH:mm" me jaati hai par table me
+  // "DD Mon YYYY HH:mm" dikhti hai - list `showApproveDate` par bind hai.
+  // Isliye approve karte waqt dono set karne padte hain, warna naam to turant
+  // aa jaata hai (wo getApproveUsername set kar deta hai) par date agli baar
+  // line load hone tak khali rehti hai.
+  formatApproveDate(dateTime: any): string {
+    if (dateTime == null || dateTime == "") {
+      return "---";
+    }
+    let parts = dateTime.toString().split(" ");
+    let datePart = parts[0].split("-");
+    if (datePart.length < 3) {
+      return "---";
+    }
+    let time = parts.length > 1 ? parts[1] : "";
+    return datePart[2] + " " + this.commonService.getCurrentMonthShortName(Number(datePart[1])) + " " + datePart[0] + " " + time;
+  }
+
   getApproveUsername(ApproveId: any, index: any, zoneNo: any, lineNo: any) {
 
     let userDetail = this.userList.find(item => item.userId == ApproveId);
@@ -1422,11 +1461,13 @@ export class HouseMarkingComponent {
     let zoneNo = $(this.buildingWardNo).val();
     let lineNo = $(this.buildingLineNo).val();
     let landType = $(this.ddlLandType).val();
-    let plotLength = $(this.txtPlotLength).val();
-    let plotBreadth = $(this.txtPlotBreadth).val().toString();
-    let groundFloorArea = $(this.txtGroundFloor).val();
-    let underGroundArea = $(this.txtUnderGround).val();
-    let noOfFloors = $(this.txtNoOfFloors).val();
+    // trim ke baad hi check hota hai - sirf space daal kar submit karne par
+    // `plotLength == ""` false rehta tha aur khali value save ho jaati thi.
+    let plotLength = this.trimValue($(this.txtPlotLength).val());
+    let plotBreadth = this.trimValue($(this.txtPlotBreadth).val());
+    let groundFloorArea = this.trimValue($(this.txtGroundFloor).val());
+    let underGroundArea = this.trimValue($(this.txtUnderGround).val());
+    let noOfFloors = this.trimValue($(this.txtNoOfFloors).val());
 
     if (landType == "0") {
       this.commonService.setAlertMessage("error", "Please select Land Type...");
@@ -1549,7 +1590,7 @@ export class HouseMarkingComponent {
           if (detail != undefined) {
             detail.markerBuildingUpdateId = markerBuildingUpdateId;
           }
-          this.db.object(newPath).update({ markerBuildingUpdateId });
+          this.updateMarkerData(newPath, { markerBuildingUpdateId });
         });
       });
     });
@@ -1613,6 +1654,20 @@ export class HouseMarkingComponent {
   }
 
 
+  // Input ki value trim karke lauta deta hai.
+  //
+  // Validation `== ""` ya `!value` se hoti thi, aur " " (sirf space) na khali
+  // string ke barabar hota hai na falsy - isliye space daal kar submit karne
+  // par validation nikal jaati thi aur khali dikhne wala data save ho jaata
+  // tha. Ab check bhi trim par hota hai aur DB me bhi trim kiya hua hi jaata
+  // hai, warna " Ram " jaise value bach jaate.
+  trimValue(value: any): string {
+    if (value == null) {
+      return "";
+    }
+    return value.toString().trim();
+  }
+
   showUpdatePopupMarkerRemark(val: any, zoneNo: any, lineNo: any, index: any, type: any) {
     $(this.divEditMarkerRemark).show();
     $('#txtMarkerRemark').val(val);
@@ -1620,9 +1675,12 @@ export class HouseMarkingComponent {
   }
 
   saveMarkerRemark() {
-    const markerRemark = $('#txtMarkerRemark').val();
+    // trim ke baad check karte hain - sirf space daal kar submit karne par
+    // `!markerRemark` false rehta tha (" " truthy hai) aur khali dikhne wala
+    // remark save ho jaata tha. Save bhi trim kiya hua hi hota hai.
+    const markerRemark = this.trimValue($('#txtMarkerRemark').val());
 
-    if (!markerRemark) {
+    if (markerRemark == "") {
       return this.commonService.setAlertMessage('error', 'Please add remark');
     }
     // OLD PATH (reference ke liye rakha hai):
@@ -1632,7 +1690,7 @@ export class HouseMarkingComponent {
 
     this.getMarkerNewPath(this.toUpdateRemark.zoneNo, this.toUpdateRemark.lineNo, this.toUpdateRemark.index).then((newPath: any) => {
       if (newPath != null) {
-        this.db.object(newPath).update({ markerRemark });
+        this.updateMarkerData(newPath, { markerRemark });
       }
     });
 
@@ -1796,13 +1854,15 @@ export class HouseMarkingComponent {
     let zoneNo = $(this.houseWardNo).val();
     let lineNo = $(this.houseLineNo).val();
     let houseTypeId = $(this.ddlHouseType).val();
-    let ownerName = $(this.txtOwnerName).val();
-    let servingCount = $(this.txtNoOfEntities).val().toString();
-    let totalPerson = $(this.txtNoOfPerson).val();
-    let mobileNo = $(this.txtMarkerMobileNo).val();
-    let houseNo = $(this.txtMarkerHouseNo).val();
-    let address = $(this.txtMarkerAddress).val();
-    let propId = $(this.txtPropertyID).val();
+    // Sab trim karke lete hain, warna " " jaisi value khali dikhti hai par
+    // DB me space ke saath chali jaati hai (aur " Ram " jaise naam bhi).
+    let ownerName = this.trimValue($(this.txtOwnerName).val());
+    let servingCount = this.trimValue($(this.txtNoOfEntities).val());
+    let totalPerson = this.trimValue($(this.txtNoOfPerson).val());
+    let mobileNo = this.trimValue($(this.txtMarkerMobileNo).val());
+    let houseNo = this.trimValue($(this.txtMarkerHouseNo).val());
+    let address = this.trimValue($(this.txtMarkerAddress).val());
+    let propId = this.trimValue($(this.txtPropertyID).val());
 
     let type = $("#type").val();
     let detail;
@@ -1869,7 +1929,7 @@ export class HouseMarkingComponent {
         }
         this.getMarkerNewPath(zoneNo, lineNo, index).then((newPath: any) => {
           if (newPath != null) {
-            this.db.object(newPath).update(objMarker);
+            this.updateMarkerData(newPath, objMarker);
           }
         });
         let obj = {
@@ -1926,7 +1986,7 @@ export class HouseMarkingComponent {
           if (updateId != null) {
             markerUpdateId = updateId + "," + lastKey;
           }
-          this.db.object(newPath).update({ markerUpdateId });
+          this.updateMarkerData(newPath, { markerUpdateId });
         });
       });
 
@@ -1955,7 +2015,7 @@ export class HouseMarkingComponent {
       this.db.list("EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId).push(data);
       this.getMarkerNewPath(zoneNo, lineNo, index).then((newPath: any) => {
         if (newPath != null) {
-          this.db.object(newPath).update({ modifiedHouseTypeHistoryId });
+          this.updateMarkerData(newPath, { modifiedHouseTypeHistoryId });
         }
       });
 
@@ -2272,7 +2332,7 @@ export class HouseMarkingComponent {
           // OLD PATH (reference ke liye rakha hai):
           // OLD PATH (comment kiya — marksCount ab new path LineSummary par):
           // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/marksCount";
-          this.db.object(dbPath).update(data);
+          this.updateMarkerData(dbPath, data);
           dbPath = this.getLineSummaryPath(zoneNo, lineNo) + "/marksCount";
           let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
             markerCountInstance.unsubscribe();
@@ -2586,7 +2646,7 @@ export class HouseMarkingComponent {
       markerDatails.isApprove = "0";
       this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newPath: any) => {
         if (newPath != null) {
-          this.db.object(newPath).update({ status: "Reject", isApprove: "0" });
+          this.updateMarkerData(newPath, { status: "Reject", isApprove: "0" });
         }
       });
       this.updateCount(date, userId, zoneNo, "reject");
@@ -2618,8 +2678,15 @@ export class HouseMarkingComponent {
     }
 
     if (markerDatails != undefined) {
+      // Ek hi timestamp UI aur DB dono ke liye. Pehle getTodayDateTime() do
+      // baar call hota tha (yahan aur neeche write me), to minute badalne ke
+      // waqt screen aur DB par alag-alag time pad sakta tha.
+      let approvedOn = this.commonService.getTodayDateTime();
       markerDatails.isApprove = "1";
-      markerDatails.approveDate = this.commonService.getTodayDateTime();
+      markerDatails.approveDate = approvedOn;
+      // Table `showApproveDate` par bind hai, `approveDate` par nahi - isiliye
+      // pehle approve karte hi naam to aa jaata tha par date khali rehti thi.
+      markerDatails.showApproveDate = this.formatApproveDate(approvedOn);
       if (this.markerData.wardno == zoneNo && this.markerData.lineno == lineNo) {
         this.markerData.isApprovedCount = (Number(this.markerData.isApprovedCount) + 1).toFixed(0);
       // OLD PATH (reference ke liye rakha hai):
@@ -2629,7 +2696,7 @@ export class HouseMarkingComponent {
       }
       this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newPath: any) => {
         if (newPath != null) {
-          this.db.object(newPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
+          this.updateMarkerData(newPath, { isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
         }
       });
       (<HTMLInputElement>document.getElementById(Entity)).checked = false;
