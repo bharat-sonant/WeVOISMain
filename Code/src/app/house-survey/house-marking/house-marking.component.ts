@@ -3196,7 +3196,14 @@ export class HouseMarkingComponent {
             if (this.cityName == "sikar") {
               city = "Sikar-Survey";
             }
-            let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+            // OLD PATH (reference ke liye rakha hai):
+            // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+            // RemovedMarkers archive khud migrate nahi hua, par ab jo records
+            // yahan aate hain unme imgRef hota hai (delete new path se hota hai).
+            // NEW PATH: imgRef ho to flat folder se, warna purana URL fallback.
+            let imageUrl = dataKey["imgRef"] != null
+              ? this.getNewPathImageUrl(dataKey)
+              : this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
 
             let removedById = dataKey["removeBy"];
             let removedByDetail = this.userList.find(item => item.userId == removedById);

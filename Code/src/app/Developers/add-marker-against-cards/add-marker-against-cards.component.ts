@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from "../../firebase.service";
 import { CommonService } from '../../services/common/common.service';
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 
 @Component({
   selector: 'app-add-marker-against-cards',
@@ -9,7 +10,7 @@ import { CommonService } from '../../services/common/common.service';
 })
 export class AddMarkerAgainstCardsComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private markerMapping: MarkerMappingService) { }
   db: any;
   cityName: any;
   selectedZone: any;
@@ -37,29 +38,62 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
     this.markerCardList = [];
     this.markerAddList = [];
     $(this.divLoader).show();
-    let dbPath = "EntityMarkingData/MarkedHouses/";
+    // OLD PATH (reference ke liye rakha hai) - marker ward/line/markerNo ke
+    // teen level me pade the, isliye teen loop lagte the:
+    // let dbPath = "EntityMarkingData/MarkedHouses/";
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerInstance.unsubscribe();
+    //     if (data != null) {
+    //       let keyArray = Object.keys(data);
+    //       if (keyArray.length > 0) {
+    //         for (let i = 0; i < keyArray.length; i++) {
+    //           let zoneNo = keyArray[i];
+    //           let lineData = data[zoneNo];
+    //           let lineKeyArray = Object.keys(lineData);
+    //           for (let j = 0; j < lineKeyArray.length; j++) {
+    //             let lineNo = lineKeyArray[j];
+    //             let markerData = lineData[lineNo];
+    //             let markerKeyArray = Object.keys(markerData);
+    //             for (let k = 0; k < markerKeyArray.length; k++) {
+    //               let markerNo = markerKeyArray[k];
+    //               if (parseInt(markerNo)) {
+    //                 if (markerData[markerNo]["cardNumber"] != null) {
+    //                   this.markerCardList.push({ cardNo: markerData[markerNo]["cardNumber"] });
+    //                 }
+    //               }
+    //             }
+    //           }
+    //         }
+    //         this.getHouseData(1);
+    //       }
+    //     }
+    //     else {
+    //       $(this.divLoader).hide();
+    //     }
+    //   }
+    // );
+
+    // NEW PATH: MarkersData flat hai - saare marker ek hi level par, isliye
+    // ek loop kaafi hai. Yahan sirf ye jaanna hai ki kis card par marker
+    // pehle se hai, to ward/line ki zaroorat hi nahi padti.
+    let dbPath = "EntityMarkingData/MarkersData";
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
+      (data: any) => {
         markerInstance.unsubscribe();
         if (data != null) {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
-              let zoneNo = keyArray[i];
-              let lineData = data[zoneNo];
-              let lineKeyArray = Object.keys(lineData);
-              for (let j = 0; j < lineKeyArray.length; j++) {
-                let lineNo = lineKeyArray[j];
-                let markerData = lineData[lineNo];
-                let markerKeyArray = Object.keys(markerData);
-                for (let k = 0; k < markerKeyArray.length; k++) {
-                  let markerNo = markerKeyArray[k];
-                  if (parseInt(markerNo)) {
-                    if (markerData[markerNo]["cardNumber"] != null) {
-                      this.markerCardList.push({ cardNo: markerData[markerNo]["cardNumber"] });
-                    }
-                  }
-                }
+              let uid = keyArray[i];
+              // MarkersData ke neeche sirf M{n} record hain - koi scalar
+              // (jaise purana counter) aa jaaye to wo marker nahi hai.
+              if (uid.charAt(0) != "M") {
+                continue;
+              }
+              let marker = data[uid];
+              if (marker != null && marker["cardNumber"] != null) {
+                this.markerCardList.push({ cardNo: marker["cardNumber"] });
               }
             }
             this.getHouseData(1);
@@ -129,54 +163,75 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
       let lineNo = this.markerAddList[index]["lineNo"];
       let cardNo = this.markerAddList[index]["cardNo"];
       let cardDetail = this.markerAddList[index]["cardDetail"];
-      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/lastMarkerKey";
-      let lastMarkerInstance = this.db.object(dbPath).valueChanges().subscribe(
-        lastMarkerKey => {
-          lastMarkerInstance.unsubscribe();
-          let lastKey = 1;
-          if (lastMarkerKey != null) {
-            lastKey = Number(lastMarkerKey) + 1;
-          }
 
-          let address = "";
-          let date = "";
-          let houseType = "";
-          let isApprove = "1";
-          let latLng = "";
-          let userId = "-1";
-          if (cardDetail["address"] != null) {
-            address = cardDetail["address"];
-          }
-          if (cardDetail["createdDate"] != null) {
-            date = cardDetail["createdDate"];
-          }
-          if (cardDetail["houseType"] != null) {
-            houseType = cardDetail["houseType"];
-          }
-          if (cardDetail["latLng"] != null) {
-            latLng = cardDetail["latLng"].toString().replace('(', "").replace(')', "");
-          }
-          const data = {
-            address: address,
-            date: date,
-            houseType: houseType,
-            isApprove: isApprove,
-            latLng: latLng,
-            userId: userId,
-            cardNumber: cardNo
-          }
-          dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + lastKey;
-          this.db.object(dbPath).update(data);
-          dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-          this.db.object(dbPath).update({ lastMarkerKey: lastKey });
+      let address = "";
+      let date = "";
+      let houseType = "";
+      let isApprove = "1";
+      let latLng = "";
+      let userId = "-1";
+      if (cardDetail["address"] != null) {
+        address = cardDetail["address"];
+      }
+      if (cardDetail["createdDate"] != null) {
+        date = cardDetail["createdDate"];
+      }
+      if (cardDetail["houseType"] != null) {
+        houseType = cardDetail["houseType"];
+      }
+      if (cardDetail["latLng"] != null) {
+        latLng = cardDetail["latLng"].toString().replace('(', "").replace(')', "");
+      }
+      const data = {
+        address: address,
+        date: date,
+        houseType: houseType,
+        isApprove: isApprove,
+        latLng: latLng,
+        userId: userId,
+        cardNumber: cardNo
+      }
 
-          index++;
-          setTimeout(() => {
-            this.createMarker(index);
-          }, 200);
+      // OLD PATH (reference ke liye rakha hai) - line ka lastMarkerKey padh kar
+      // us par +1 karke marker seedha MarkedHouses par likh diya jaata tha:
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/lastMarkerKey";
+      // let lastMarkerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      //   lastMarkerKey => {
+      //     lastMarkerInstance.unsubscribe();
+      //     let lastKey = 1;
+      //     if (lastMarkerKey != null) {
+      //       lastKey = Number(lastMarkerKey) + 1;
+      //     }
+      //     ...
+      //     dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + lastKey;
+      //     this.db.object(dbPath).update(data);
+      //     dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+      //     this.db.object(dbPath).update({ lastMarkerKey: lastKey });
+      //
+      //     index++;
+      //     setTimeout(() => { this.createMarker(index); }, 200);
+      //   }
+      // );
 
+      // NEW PATH: createMarker() global uid (M{n}) aur line ka agla markerNo
+      // dono transaction se reserve karta hai, phir MarkersData + MarkerWise +
+      // WardWise + LineWise + LineSummary.lastMarkerKey - sab ek jagah se likhta
+      // hai. Pehle wala read-then-write do users ke ek saath chalne par same
+      // number de deta tha; transaction se wo dikkat nahi rehti.
+      //
+      // App (MarkingApp) bhi thik yahi structure likhta hai, isliye yahan se
+      // bana marker aur app se bana marker portal par ek jaise dikhte hain.
+      this.markerMapping.createMarker(this.db, zoneNo, lineNo, data).then((uid: any) => {
+        if (uid == null) {
+          // Counter transaction fail hui - is card ko chhod kar aage badho,
+          // warna poori list yahi ruk jaayegi. Baaki markers ban jaate hain.
+          console.log("[add-marker-against-cards] uid reserve nahi hua, card skip:", cardNo);
         }
-      );
+        index++;
+        setTimeout(() => {
+          this.createMarker(index);
+        }, 200);
+      });
     }
   }
 }
