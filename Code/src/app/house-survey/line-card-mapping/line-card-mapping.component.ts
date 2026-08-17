@@ -1094,18 +1094,33 @@ export class LineCardMappingComponent implements OnDestroy {
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showHouses", data);
         var keyArray = Object.keys(data);
+        // Bina latLng wala card chup-chaap skip ho jata tha - na pin banti thi
+        // na koi message aata tha, aur map khali dikhta tha jabki node me data
+        // pada hota tha. Ab console me saaf dikhta hai ki kitne card mile aur
+        // unme se kitno ke paas latLng tha.
+        let withLatLng = 0;
+        let withoutLatLng = 0;
         for (let index = 0; index < keyArray.length; index++) {
           const cardNo = keyArray[index];
           let cardData = data[cardNo];
           if (cardData["latLng"] != undefined) {
+            withLatLng++;
             let latLng = cardData["latLng"].toString().replace("(", "").replace(")", "").split(",");
             let url = "../assets/img/red-home.png";
             if (cardData["phaseNo"] == "1") {
               url = "../assets/img/blue-home.png";
             }
             this.setMarkers(latLng[0], latLng[1], url, cardData, cardNo, lineNo);
+          } else {
+            withoutLatLng++;
           }
         }
+        console.log("[line-card-mapping]", housePath, "| cards:", keyArray.length,
+          "| latLng hai:", withLatLng, "| latLng nahi:", withoutLatLng,
+          "| pehli key:", keyArray[0]);
+      } else {
+        // Node hi nahi mila - line number ya ward naam match nahi kar raha.
+        console.log("[line-card-mapping]", housePath, "| node khali hai (data null)");
       }
     });
   }

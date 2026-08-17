@@ -3006,18 +3006,27 @@ export class HouseMarkingComponent {
     // OLD PATH (comment kiya — marksCount ab new path LineSummary se):
     // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineApprove");
-    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/marksCount";
-    let countInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      countInstance.unsubscribe();
-      // let element = <HTMLButtonElement>document.getElementById("btnSave");
+    // LineSummary ka marksCount bharosemand nahi hai: line ka aakhri marker move
+    // ya delete hone par LineWise/{ward}/{line} node hi gayab ho jaata hai, par
+    // marksCount purani value par pada reh jaata hai. Isi wajah se khali line par
+    // bhi "Markers Approved" me 1/0 dikhta tha aur kholne par "No Marker Found"
+    // aata tha. Ginti ab line ke asli markers se hoti hai.
+    // let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/marksCount";
+    // let countInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+    //   countInstance.unsubscribe();
+    //   if (data != null) {
+    //     this.markerData.totalLineMarkers = data.toString();
+    //   }
+    this.getNewPathLineData(this.lineNo).then((data: any) => {
+      let total = data != null ? Object.keys(data).length : 0;
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineApprove", data);
-        // $("#btnSave").css("background", "#0ba118");
-        // element.disabled = false;
-        this.markerData.totalLineMarkers = data.toString();
-      } else {
-        // $("#btnSave").css("background", "#626262");
-        // element.disabled = true;
+      }
+      this.markerData.totalLineMarkers = total.toString();
+      // Line khali hai to approved ki ginti bhi zero - pre/next par clearLineData
+      // nahi chalta, isliye warna pichhli line ka count screen par pada reh jaata.
+      if (total == 0) {
+        this.markerData.isApprovedCount = "0";
       }
     // OLD PATH (reference ke liye rakha hai):
     // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
