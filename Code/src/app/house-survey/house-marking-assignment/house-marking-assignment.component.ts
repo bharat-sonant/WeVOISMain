@@ -476,6 +476,99 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     }, 1000);
   }
 
+  // Ward ki wo lines jinpar sach me marker pada hai: { "12": true, ... }.
+  //
+  // Pehle ye guard LineSummary ke marksCount se lagta tha, par wo number kisi
+  // bhi live write se nahi badhta - app se aaya marker (cloud function) ho ya
+  // portal ka naya marker, dono sirf lastMarkerKey maintain karte hain.
+  // marksCount tabhi likhta hai jab koi Ward Marking Summary ka "Update Counts"
+  // dabaye, ya marker move / line change / migration chale. Nayi marking wale
+  // ward me wo kabhi chala hi nahi hota, isliye markers hone ke baad bhi
+  // approved line yahan list me aati hi nahi thi aur surveyor ko assign nahi
+  // kar paate the.
+  //
+  // Ab ye mapping se aata hai, jo har naye marker ke saath likhta hai. Mapping
+  // purane MarkedHouses/{line} jaisa hi behave karta hai - line ka aakhri
+  // marker hatte hi uski entry khatam ho jaati hai. Isliye khali line ab bhi
+  // list me nahi aayegi, guard ka original intent waisa hi bana hua hai.
+  //
+  // Do index padhte hain aur dono ko jodte hain:
+  //   WardWise/{ward} = { uid: line }   -> har writer (app ka cloud function,
+  //                                        migration, portal) ise likhta hai,
+  //                                        isliye yahi bharosemand hai.
+  //   LineWise/{ward}/{line}/{markerNo} -> baaki page isi se list banate hain.
+  // LineWise ADHOORA hai (cloud function ne kaafi samay tak wo node likha hi
+  // nahi tha, purani migration ke markers bhi usme nahi aaye), isliye akele
+  // uspar chalne se purane ward ki lines gayab ho jaatin. Yahi wajah marker
+  // approval test page par bhi likhi hai (loadWardIndex).
+  getLinesWithMarkers(wardNo: any): Promise<any> {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLinesWithMarkers");
+    let lines: any = {};
+
+    let wardWise = new Promise((resolve) => {
+      let dbPath = "EntityMarkingData/MarkersMapping/WardWise/" + wardNo;
+      let indexInstance = this.db.object(dbPath).valueChanges().subscribe((wardIndex: any) => {
+        indexInstance.unsubscribe();
+        if (wardIndex == null || typeof wardIndex != "object") {
+          resolve(null);
+          return;
+        }
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLinesWithMarkers", wardIndex);
+        let uidArray = Object.keys(wardIndex);
+        for (let i = 0; i < uidArray.length; i++) {
+          let uid = uidArray[i];
+          // lastMarkerKey jaisa scalar bhi isi node me padta hai - wo marker
+          // nahi hai, isliye sirf M se shuru hone wale keys lete hain.
+          if (uid.charAt(0) != "M") {
+            continue;
+          }
+          let lineNo = wardIndex[uid];
+          if (lineNo == null || lineNo === "") {
+            continue;
+          }
+          // line kahin number me padi hai kahin string me - dono ek jaisi mile.
+          lines[String(lineNo)] = true;
+        }
+        resolve(null);
+      });
+    });
+
+    let lineWise = new Promise((resolve) => {
+      let dbPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
+      let linkInstance = this.db.object(dbPath).valueChanges().subscribe((wardLinks: any) => {
+        linkInstance.unsubscribe();
+        if (wardLinks == null || typeof wardLinks != "object") {
+          resolve(null);
+          return;
+        }
+        let lineArray = Object.keys(wardLinks);
+        for (let i = 0; i < lineArray.length; i++) {
+          let lineNo = lineArray[i];
+          let links = wardLinks[lineNo];
+          if (links == null || typeof links != "object") {
+            continue;
+          }
+          let markerArray = Object.keys(links);
+          for (let j = 0; j < markerArray.length; j++) {
+            let uid = links[markerArray[j]];
+            // Line ki keys number hoti hain, isliye Firebase kabhi poora node
+            // array bana kar bhejta hai jisme beech ke slot null hote hain -
+            // unhe marker nahi maan sakte.
+            if (uid != null && uid != "") {
+              lines[String(lineNo)] = true;
+              break;
+            }
+          }
+        }
+        resolve(null);
+      });
+    });
+
+    return Promise.all([wardWise, lineWise]).then(() => {
+      return lines;
+    });
+  }
+
   getLines(wardNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLines");
     this.lineList = [];
@@ -487,6 +580,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
     // this.dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "";
     // NEW PATH: line ka ApproveStatus ab LineSummary par hai, shape wahi {line: {ApproveStatus: {status}}} hai.
     this.dbPath = "EntityMarkingData/MarkersMapping/LineSummary/" + wardNo + "";
+    this.getLinesWithMarkers(wardNo).then((linesWithMarkers: any) => {
     let lineInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
       lineInstance.unsubscribe();
       if (data != null) {
@@ -501,8 +595,12 @@ export class HouseMarkingAssignmentComponent implements OnInit {
                 // move ho sakte hain. ApproveStatus LineSummary par pada rehta
                 // hai, isliye aisi khali line bhi list me aa jaati thi aur use
                 // worker ko assign kar dete the - jabki karne ko kuch hai hi
-                // nahi. Marker bache hain ya nahi, ye marksCount batata hai.
-                if (Number(data[index]["marksCount"]) > 0) {
+                // nahi. Marker bache hain ya nahi, ye marker mapping batata hai.
+                //
+                // PURANA GUARD (reference ke liye rakha hai - marksCount live
+                // nahi badhta, upar getLinesWithMarkers ka comment dekho):
+                // if (Number(data[index]["marksCount"]) > 0) {
+                if (linesWithMarkers[String(index)] == true) {
                   this.lineList.push({ lineNo: index, isChecked: 0 });
                 }
               }
@@ -521,6 +619,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
           }
         }
       }
+    });
     });
   }
 

@@ -26,12 +26,15 @@ import { AngularFireStorage } from "angularfire2/storage";
 // Old record par sirf EK naya node add hota hai (baaki kuch na badla jaata hai
 // na delete hota hai):
 //   MarkedHouses/{ward}/{line}/{markerNo}/movedToNewPath = {
-//     newMarkerUid, newImageName, movedOn
+//     newMarkerUid, newImageName, ward, line, markerNo,
+//     movedBy, movedByName, movedOn
 //   }
 // Isse old record ko dekhte hi pata chal jaata hai ki marker new path par ja
-// chuka hai aur wahan uska naam kya hai - mapping node kho jaaye to recovery
-// isi se ho sakti hai. Marker ABHI kahan hai ye MarkerWise/{uid} batata hai,
-// yahan duplicate nahi rakha jaata.
+// chuka hai, wahan uska naam kya hai, aur kisne kab bheja - mapping node kho
+// jaaye to recovery isi se ho sakti hai. Yahan ki ward/line wahi hai jahan se
+// marker migrate hua (record ki apni jagah, kabhi nahi badalti). Marker ABHI
+// kahan hai ye MarkerWise/{uid} batata hai, uska duplicate yahan nahi rakha
+// jaata.
 //
 // Idempotent: once a marker is moved, its old location -> new UID link is
 // recorded in LineWise.
@@ -468,25 +471,39 @@ export class MarkerDataMoveComponent implements OnInit {
   }
 
   // Old record par ek naya node - saaf-saaf batata hai ki ye marker new path
-  // par ja chuka hai aur wahan uski pehchaan kya hai:
+  // par ja chuka hai, wahan uski pehchaan kya hai, aur kisne kab bheja:
   //   MarkedHouses/{ward}/{line}/{markerNo}/movedToNewPath = {
-  //     newMarkerUid, newImageName, movedOn
+  //     newMarkerUid, newImageName, ward, line, movedBy, movedByName, movedOn
   //   }
   // Ye SIRF add hota hai - old record ka baaki data na badla jaata hai na
   // delete hota hai. Ek baar likhne ke baad kabhi nahi badalta.
   //
-  // Marker ABHI kis ward/line par hai, ye yahan jaan-boojh kar NAHI rakha:
-  // uska ek hi maalik hai - MarkerWise/{uid}. Do jagah rakhte to kabhi ek
-  // update hoti, doosri nahi, aur old record jhoot bolne lagta.
+  // Yahan ki `ward`/`line` wo jagah hai jahan se marker MIGRATE hua tha, yaani
+  // isi record ki apni jagah - wo kabhi badalti nahi. Marker ABHI kahan hai ye
+  // yahan jaan-boojh kar NAHI rakha: uska ek hi maalik hai MarkerWise/{uid}.
+  // Do jagah "abhi kahan hai" rakhte to kabhi ek update hoti doosri nahi, aur
+  // old record jhoot bolne lagta.
+  //
+  // Ward/line path me pehle se hain, phir bhi record ke andar isliye rakhte
+  // hain ki record akela padha jaaye (export, debug) tab bhi poori baat pata
+  // rahe.
   //
   // Ye ek aisi jagah hai jahan hum old path par likhte hain, isliye order
   // maayne rakhta hai: pehle OriginalToUid, phir ye. Cloud function is write
   // par dobara trigger hota hai aur OriginalToUid dekh kar ruk jaata hai -
   // ulta karne par wo marker ko "naya" samajh kar duplicate bana deta.
   writeMovedToNewPath(ward: any, line: any, markerNo: any, uid: string) {
+    // line ko wahi type dete hain jo new path par jaati hai - "1" aur 1 alag
+    // pad jaate hain jab dono taraf ka data milaya jaata hai.
+    let lineVal = isNaN(Number(line)) ? line : Number(line);
     this.db.object("EntityMarkingData/MarkedHouses/" + ward + "/" + line + "/" + markerNo + "/movedToNewPath").update({
       newMarkerUid: uid,
       newImageName: uid + ".jpg",
+      ward: ward,
+      line: lineVal,
+      markerNo: isNaN(Number(markerNo)) ? markerNo : Number(markerNo),
+      movedBy: this.userId,
+      movedByName: this.userName,
       movedOn: this.commonService.getTodayDateTime()
     });
   }

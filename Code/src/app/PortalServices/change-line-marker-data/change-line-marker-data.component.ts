@@ -8,6 +8,7 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 import { MoveHelperService } from '../../services/common/move-helper.service';
 import { MarkerMoveRow, MarkerMoveSummary } from '../marker-move-progress/marker-move-progress.component';
 import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-change-line-marker-data',
@@ -16,7 +17,22 @@ import { MarkerMappingService } from '../../services/marker/marker-mapping.servi
 })
 export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal, public moveHelper: MoveHelperService, private markerMapping: MarkerMappingService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal, public moveHelper: MoveHelperService, private markerMapping: MarkerMappingService, private router: Router, private route: ActivatedRoute) { }
+
+  // "MOVE MARKER DATA TO NEW PATH" button ka handler.
+  //
+  // Ye function do baar gum ho chuka hai (28 Jul aur phir 13 Aug ke merge me):
+  // HTML ka button apni jagah bana raha aur TS ka function doosri branch ki
+  // file ke saath chala gaya. Button dabane par kuch hota hi nahi tha, aur
+  // tsc bhi nahi pakadta kyunki wo HTML template check nahi karta.
+  //
+  // Route 3-segment hai - :cityId/:id/marker-data-move - isliye dono param
+  // yahin se aage bheje jaate hain.
+  goToMoveMarkerData() {
+    let cityId = this.route.snapshot.paramMap.get("cityId");
+    let id = this.route.snapshot.paramMap.get("id");
+    this.router.navigate([cityId, id, "marker-data-move"]);
+  }
 
   // NEW PATH helpers - record ab MarkersData/{uid} par hai aur line par uska
   // number LineWise batata hai. Ye purani {markerNo: record} shape lauta dete
