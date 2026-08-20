@@ -330,6 +330,134 @@ export class MarkerMappingService {
     return db.list(this.moveHistoryPath + uid).push(entry);
   }
 
+  // Ek move ki history entry ka path.
+  //
+  // Move beech me fail ho kar rollback hua to ye entry hatani padti hai. Warna
+  // marker to apni purani jagah wapas chala jaata hai par history wo move
+  // dikhati rehti hai jo hua hi nahi, aur retry successful hone par usi ek move
+  // ki do entries chadh jaati hain. Path yahin se milta hai taaki har move page
+  // me ye string dobara na likhni pade.
+  moveRecordPath(uid: any, historyKey: any): string {
+    return this.moveHistoryPath + uid + "/" + historyKey;
+  }
+
+  // ---------------- BACKUP ----------------
+
+  // Ek line ka raw mapping: { markerNo: uid }.
+  //
+  // Backup ke liye ye alag se chahiye. getNewPathLineData() jaise helper line
+  // ka data purani shape ({ markerNo: record }) me dete hain aur uid beech me
+  // hi chhod dete hain - par record ke andar uid hota nahi, aur naye path par
+  // har node ki key uid hi hai. uid ke bina backup file restore layak nahi
+  // rehti.
+  readLineLinks(db: any, ward: any, line: any): Promise<any> {
+    return this.readOnce(db, this.lineWisePath + ward + "/" + line);
+  }
+
+  /**
+   * Move se pehle source line ka backup, bilkul usi shape me jaise DB me pada
+   * hai - taaki file ka har key seedha apne node par import kiya ja sake.
+   *
+   * links    = LineWise/{ward}/{line}   -> { markerNo: uid }
+   * lineData = getNewPathLineData()     -> { markerNo: record }
+   *
+   * Pehle backup me sirf `markedHouses` jaata tha jiski key markerNo thi. Wo
+   * tab sahi tha jab data khud MarkedHouses/{ward}/{line}/{markerNo} par rehta
+   * tha - file ko wapas usi node par daal dete the. Ab record MarkersData/{uid}
+   * par hai, isliye markerNo wali file kahin fit hi nahi hoti: MarkedHouses par
+   * daalo to portal wahan se padhta nahi (aur cloud trigger use naya marker
+   * samajh kar duplicate bana deta hai), MarkersData par daalo to key hi match
+   * nahi karti.
+   *
+   * Isliye ab wahi chaar node banate hain jo move badalta hai. `markerWise` aur
+   * `wardWise` ki value record se hi leti hai (record move se pehle padha gaya
+   * hai, yaani usme purani ward/line hi hai).
+   *
+   * Jis markerNo ka uid na mile use chhodte hain par chupchaap nahi - dono
+   * list (skippedNoUid / orphanLinks) meta me chali jaati hain, warna restore
+   * karne wale ko pata hi nahi chalega ki kuch chhoot gaya.
+   */
+  buildLineBackup(links: any, lineData: any): any {
+    let markersData: any = {};
+    let lineWise: any = {};
+    let markerWise: any = {};
+    let wardWise: any = {};
+    let skippedNoUid: any[] = [];
+    let orphanLinks: any[] = [];
+
+    if (lineData != null && typeof lineData == "object") {
+      let markerArray = Object.keys(lineData);
+      for (let i = 0; i < markerArray.length; i++) {
+        let markerNo = markerArray[i];
+        let record = lineData[markerNo];
+        if (record == null || typeof record != "object") {
+          continue;
+        }
+        let uid = (links != null) ? links[markerNo] : null;
+        if (uid == null || uid == "") {
+          skippedNoUid.push(markerNo);
+          continue;
+        }
+        markersData[uid] = record;
+        lineWise[markerNo] = uid;
+        let ward = (record["ward"] != null) ? record["ward"] : null;
+        let line = (record["line"] != null) ? record["line"] : null;
+        markerWise[uid] = { ward: ward, line: line };
+        wardWise[uid] = line;
+      }
+    }
+
+    // Mapping to hai par record nahi - aisa marker hai hi nahi, isliye move use
+    // chhuta bhi nahi. Restore me bhi nahi jaana chahiye (warna orphan wapas
+    // ban jaayega), bas dikh jaana chahiye.
+    if (links != null && typeof links == "object") {
+      let linkArray = Object.keys(links);
+      for (let i = 0; i < linkArray.length; i++) {
+        let markerNo = linkArray[i];
+        let uid = links[markerNo];
+        if (uid == null || uid == "") {
+          continue;
+        }
+        if (lineData == null || lineData[markerNo] == null) {
+          orphanLinks.push(markerNo + " -> " + uid);
+        }
+      }
+    }
+
+    return {
+      markersData: markersData,
+      lineWise: lineWise,
+      markerWise: markerWise,
+      wardWise: wardWise,
+      skippedNoUid: skippedNoUid,
+      orphanLinks: orphanLinks
+    };
+  }
+
+  // Backup file ke har key ko kis node par wapas daalna hai - restore ka koi
+  // code nahi hai, ye haath se Firebase console par hota hai, isliye ye baat
+  // file ke andar likhi honi chahiye.
+  //
+  // {uid} wali do jagah jaan-boojh kar template hain: MarkersData aur
+  // MarkerWise saare ward ke shared node hain. Unpar poora JSON import karna
+  // matlab baaki poore shehar ka data uda dena - console ka import node ko
+  // REPLACE karta hai, merge nahi. LineWise ka node sirf isi line ka hai
+  // (backup me line ke saare marker hain), isliye wahan poora import chalta hai.
+  buildRestoreNotes(ward: any, line: any): any {
+    return {
+      markersData: this.markersDataPath + "{uid}",
+      lineWise: this.lineWisePath + ward + "/" + line,
+      markerWise: this.markerWisePath + "{uid}",
+      wardWise: this.wardWisePath + ward + "/{uid}",
+      // LineSummary backup me nahi hai - usme sirf ginti (marksCount) aur
+      // lastMarkerKey rehti hai, marker ka data nahi. Restore ke baad ginti
+      // "Update Counts" se dobara ban jaati hai, isliye use file me rakhne ka
+      // matlab nahi - par restore karne wale ko ye pata hona chahiye.
+      lineSummary: this.lineSummaryPath + ward + "/" + line + " - backup me nahi hai. Restore ke baad Ward Marking Summary se Update Counts chala dena.",
+      warning: "Firebase console ka import poore node ko REPLACE karta hai. markersData aur markerWise shared node hain - unhe uid ke hisaab se ek-ek node par import karo, poora JSON kabhi nahi."
+    };
+  }
+
   // Ek marker ki poori move history, purani se nayi order me. Har entry par
   // uski push key bhi rakh dete hain (`historyId`), taaki UI ko alag se
   // Object.keys karne ki zaroorat na pade. Kuch na ho to khaali array.

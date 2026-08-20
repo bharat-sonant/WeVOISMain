@@ -203,6 +203,11 @@ export class CardMarkerMappingComponent implements OnInit {
     let patch: any = {
       line: (isNaN(Number(lineTo)) ? lineTo : Number(lineTo)),
       ward: zoneTo,
+      // markerNo record ke andar bhi jaana chahiye - baaki chaaron move page
+      // ise likhte hain. Abhi koi page record ka markerNo padhta nahi (sab
+      // LineWise ki key se number lete hain), par record aur mapping alag-alag
+      // number dikhayein to baad me dhoka hoga.
+      markerNo: Number(newMarkerNo) || 0,
       movedFromWard: zoneFrom,
       movedFromLine: lineFrom,
       movedFromMarkerNo: markerNoFrom,

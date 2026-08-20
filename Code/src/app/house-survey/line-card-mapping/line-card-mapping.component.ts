@@ -418,6 +418,9 @@ export class LineCardMappingComponent implements OnDestroy {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", markerData);
       }
       let markerByCard = this.buildMarkerIndex(markerData);
+      // markerNo -> uid. Record ke andar uid hota nahi, aur naye path par har
+      // node ki key uid hi hai - backup restore layak tabhi hai jab uid saath ho.
+      let lineLinks = await this.markerMapping.readLineLinks(this.db, zone, lineFrom);
 
       let houseData = await this.moveHelper.readOnceWithRetry(this.db, "Houses/" + zone + "/" + lineFrom, this.run);
 
@@ -426,7 +429,7 @@ export class LineCardMappingComponent implements OnDestroy {
       let now = new Date();
       let filePath = this.moveHelper.buildBackupFilePath(this.pageName, now);
       let fileName = this.moveHelper.buildBackupFileName(zone, lineFrom, zone, lineTo, (onlyCardNos != null ? "_retry" : ""), now);
-      let backupData = this.buildBackupData(houseData, markerData, cardList, startKey, zone, lineFrom, lineTo, now);
+      let backupData = this.buildBackupData(houseData, markerData, lineLinks, cardList, startKey, zone, lineFrom, lineTo, now);
 
       try {
         await this.moveHelper.saveBackupWithRetry(backupData, fileName, filePath, this.run);
@@ -618,11 +621,16 @@ export class LineCardMappingComponent implements OnDestroy {
   }
 
   /**
-   * Move me Houses, CardWardMapping, HouseWardMapping, MarkedHouses aur
-   * MarkerWardMapping badalte hain - source line ka poora purana roop backup
-   * me jata hai, saath me kaunse cards select the wo bhi.
+   * Move me Houses, CardWardMapping, HouseWardMapping, marker ka record +
+   * mapping, aur MarkerWardMapping badalte hain - source line ka poora purana
+   * roop backup me jata hai, saath me kaunse cards select the wo bhi.
+   *
+   * Marker ka hissa ab uid ke hisaab se jaata hai (markersData / lineWise /
+   * markerWise / wardWise). Pehle `markedHouses` jaata tha jiski key markerNo
+   * thi - wo tab tak sahi tha jab tak record MarkedHouses/{ward}/{line} par
+   * rehta tha; naye path par wo file kahin import hi nahi hoti thi.
    */
-  private buildBackupData(houseData: any, markerData: any, cardList: any[], startKey: any, zone: any, lineFrom: any, lineTo: any, now: Date): any {
+  private buildBackupData(houseData: any, markerData: any, lineLinks: any, cardList: any[], startKey: any, zone: any, lineFrom: any, lineTo: any, now: Date): any {
     let selectedCards = [];
     let cardWardMapping = {};
     let houseWardMapping = {};
@@ -635,13 +643,21 @@ export class LineCardMappingComponent implements OnDestroy {
         houseWardMapping[data["mobile"]] = { line: lineFrom, ward: zone };
       }
     }
+    let markerBackup = this.markerMapping.buildLineBackup(lineLinks, markerData);
     let meta = this.moveHelper.buildBackupMeta(this.pageName, this.cityName, zone, lineFrom, zone, lineTo, cardList.length, now);
     meta["destinationStartKey"] = startKey;
     meta["selectedCards"] = selectedCards;
+    meta["restorePaths"] = this.markerMapping.buildRestoreNotes(zone, lineFrom);
+    // jo marker file me nahi gaye - chupchaap chhoot na jaayein
+    meta["skippedNoUid"] = markerBackup.skippedNoUid;
+    meta["orphanLinks"] = markerBackup.orphanLinks;
     return {
       meta: meta,
       houses: houseData,
-      markedHouses: markerData,
+      markersData: markerBackup.markersData,
+      lineWise: markerBackup.lineWise,
+      markerWise: markerBackup.markerWise,
+      wardWise: markerBackup.wardWise,
       cardWardMapping: cardWardMapping,
       houseWardMapping: houseWardMapping
     };
@@ -826,6 +842,15 @@ export class LineCardMappingComponent implements OnDestroy {
       // aur mapping nayi jagah point karne lagti hai.
       row.failedStep = "Marker Write";
       let lineVal = this.markerMapping.lineValue(lineTo);
+      // Rollback ke liye purani move-stamp sambhal lo. Marker pehle bhi move
+      // hua ho sakta hai - is move ke fail hone par uska pichhla record mitna
+      // nahi chahiye, isliye null karne ki jagah purani value wapas likhte hain.
+      state.prevMoved = {
+        movedFromWard: (markerObj["movedFromWard"] != null) ? markerObj["movedFromWard"] : null,
+        movedFromLine: (markerObj["movedFromLine"] != null) ? markerObj["movedFromLine"] : null,
+        movedFromMarkerNo: (markerObj["movedFromMarkerNo"] != null) ? markerObj["movedFromMarkerNo"] : null,
+        movedOn: (markerObj["movedOn"] != null) ? markerObj["movedOn"] : null
+      };
       let patch: any = {
         ward: zone,
         line: lineVal,
@@ -847,7 +872,11 @@ export class LineCardMappingComponent implements OnDestroy {
       await this.markerMapping.writePlace(this.db, uid, zone, lineVal, row.newKey);
 
       // Har move ka permanent record: MoveHistory/{uid}.
-      await this.markerMapping.recordMove(this.db, uid, zone, lineFrom, row.markerNo, zone, lineTo, row.newKey);
+      // Push key turant chahiye (ThenableReference par .key sync milti hai) -
+      // move aage jaakar fail hua to rollback isi key se entry hata sake.
+      let moveRef = this.markerMapping.recordMove(this.db, uid, zone, lineFrom, row.markerNo, zone, lineTo, row.newKey);
+      state.moveHistoryKey = (moveRef != null && moveRef.key != null) ? moveRef.key : "";
+      await moveRef;
 
       // markerID nikalne ka logic bilkul purane code jaisa hi rakha gaya hai
       row.failedStep = "Ward Mapping";
@@ -907,11 +936,31 @@ export class LineCardMappingComponent implements OnDestroy {
           "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + row.newKey);
       }
       if (state.destMarkerWritten && state.uid != null) {
-        await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkersData/" + state.uid, {
+        // move-stamp wapas purani haalat par - is move ki stamp hatani hai par
+        // pichhle successful move ki stamp bachani hai.
+        let undo: any = {
           ward: ctx.zone,
           line: this.markerMapping.lineValue(ctx.lineFrom),
-          markerNo: this.markerMapping.markerNoValue(row.markerNo)
-        });
+          markerNo: this.markerMapping.markerNoValue(row.markerNo),
+          movedFromWard: null,
+          movedFromLine: null,
+          movedFromMarkerNo: null,
+          movedOn: null
+        };
+        if (state.prevMoved != null) {
+          undo["movedFromWard"] = state.prevMoved.movedFromWard;
+          undo["movedFromLine"] = state.prevMoved.movedFromLine;
+          undo["movedFromMarkerNo"] = state.prevMoved.movedFromMarkerNo;
+          undo["movedOn"] = state.prevMoved.movedOn;
+        }
+        await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkersData/" + state.uid, undo);
+      }
+      // MoveHistory ki entry bhi hatani hai. Marker hila hi nahi, phir bhi
+      // history "line X se line Y" dikhati rehti thi, aur retry successful
+      // hone par usi ek move ki do entries chadh jaati thi.
+      if (state.moveHistoryKey != null && state.moveHistoryKey != "" && state.uid != null) {
+        await this.moveHelper.dbRemove(this.db,
+          this.markerMapping.moveRecordPath(state.uid, state.moveHistoryKey));
       }
       if (state.mappingWritten && state.markerID != "") {
         await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + state.markerID, {

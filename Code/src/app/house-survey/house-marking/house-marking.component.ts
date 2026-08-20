@@ -629,18 +629,13 @@ export class HouseMarkingComponent {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineApproveStatus", approveStatus);
       }
 
-      let color = "";
-      if (approveStatus == "Confirm") {
-        color = "#00f645";
-        this.lines.push({ lineNo: lineNo, latlng: latLng, color: color, approveStatus: approveStatus });
-        this.plotLineOnMap(lineNo, latLng, i, this.selectedZone, approveStatus);
-      }
-      else {
-        color = "#fa0000";
-        this.lines.push({ lineNo: lineNo, latlng: latLng, color: color, approveStatus: approveStatus });
-        this.plotLineOnMap(lineNo, latLng, i, this.selectedZone, approveStatus);
-
-      }
+      let color = (approveStatus == "Confirm") ? "#00f645" : "#fa0000";
+      // index (i) bhi entry me rakhte hain. Approve/reject ke baad line ko
+      // dobara plot karna padta hai aur plotLineOnMap ko polylines ka wahi
+      // index chahiye - this.lines ka apna order promise resolve hone ke hisaab
+      // se banta hai, isliye position se index nikalna galat hota.
+      this.setLineDetail(lineNo, latLng, color, approveStatus, i);
+      this.plotLineOnMap(lineNo, latLng, i, this.selectedZone, approveStatus);
 
       // this.lines.push({ lineNo: lineNo, latlng: latLng, color:color, });
       // this.plotLineOnMap(lineNo, latLng, i, this.selectedZone,approveStatus);
@@ -651,6 +646,47 @@ export class HouseMarkingComponent {
   setDefaultImage(event: any) {
     event.target.src = '../../../assets/img/image-not-found.jpg'; // fallback image
   }
+
+  // Ek line ki entry: ho to update, na ho to nayi.
+  //
+  // Pehle yahan sirf push tha aur status ek live listener se aata tha - status
+  // badalte hi usi line ki doosri entry chadh jaati thi. this.lines.find()
+  // pehli (purani) entry deta hai, isliye line switch karne par us line ka
+  // purana rang hi wapas plot ho jaata tha. Isliye ab ek line ki ek hi entry.
+  setLineDetail(lineNo: any, latlng: any, color: any, approveStatus: any, index: any) {
+    let detail = this.lines.find((item) => item.lineNo == lineNo);
+    if (detail == undefined) {
+      this.lines.push({ lineNo: lineNo, latlng: latlng, color: color, approveStatus: approveStatus, index: index });
+      return;
+    }
+    detail.latlng = latlng;
+    detail.color = color;
+    detail.approveStatus = approveStatus;
+    detail.index = index;
+  }
+
+  // Approve / Reject ke baad us line ko map par dobara plot karna.
+  //
+  // Line ka status ab ek baar padha jaata hai (listener unsubscribe ho jaata
+  // hai), isliye approve karne ke baad this.lines me purana status hi pada
+  // rehta tha. Nateeja: line switch karne par getHouseLineData() usi purane
+  // status se rang chunta tha - approve ki hui line patli red hi dikhti thi,
+  // sahi rang sirf ward badalne ya page reload par aata tha.
+  //
+  // Jo line abhi khuli hai wo plotLineOnMap me hamesha "requestedLine"
+  // (moti neeli) hi banti hai - ye purana design hai, chhua nahi. Yahan ka
+  // asli kaam this.lines ka status sahi karna hai, taaki agli baar line badalne
+  // par wo approve ki hui line green plot ho.
+  refreshLineOnMap(lineNo: any, status: any) {
+    let detail = this.lines.find((item) => item.lineNo == Number(lineNo));
+    if (detail == undefined) {
+      return;
+    }
+    detail.approveStatus = status;
+    detail.color = (status == "Confirm") ? "#00f645" : "#fa0000";
+    this.plotLineOnMap(lineNo, detail.latlng, detail.index, this.selectedZone, status);
+  }
+
   // OLD PATH (reference ke liye rakha hai):
   // ================= NEW PATH (MarkersData / MarkersMapping) =================
   // Display ab new path se aata hai; writes (approve/reject/edit/delete) abhi
@@ -1534,7 +1570,10 @@ export class HouseMarkingComponent {
       };
       this.getMarkerNewPath(zoneNo, lineNo, index).then((newPath: any) => {
         if (newPath != null) {
-          this.db.object(newPath + "/BuildingDetails").update(buildingObj);
+          // wrapper se bhejte hain - ye MarkersData ka cache bhi clear kar deta
+          // hai. Seedha db.object().update() karne par cache stale reh jaata
+          // tha aur agla read purana BuildingDetails hi deta.
+          this.updateMarkerData(newPath + "/BuildingDetails", buildingObj);
         }
       });
       let obj = {
@@ -3106,7 +3145,11 @@ export class HouseMarkingComponent {
       approveById: approveById,
       approvedDate: this.commonService.getTodayDateTime()
     };
-    this.db.object(dbPath).update(data);
+    // Write confirm hone ke baad hi map par line ka status sudharte hain -
+    // write fail ho jaaye to screen jhooth na bole.
+    this.db.object(dbPath).update(data).then(() => {
+      this.refreshLineOnMap(this.lineNo, status);
+    });
     dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + this.selectedZone + "/approved";
     let approvedInstance = this.db.object(dbPath).valueChanges().subscribe((dataCount) => {
       approvedInstance.unsubscribe();
