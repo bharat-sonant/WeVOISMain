@@ -1106,9 +1106,10 @@ export class MarkerMappingService {
   // aur move par teeno field badal jaate the. markerkey se ek hop me kaam ho
   // jaata hai aur move-proof bhi hai, kyunki uid kabhi nahi badalta.
   //
-  // image bhi yahin uid ke hisaab se set hoti hai. Image ab flat folder
-  // AllMarkerImages/{uid}.jpg par hai, isliye is node me purana {markerNo}.jpg
-  // rakhna sirf galat URL banata.
+  // `image` yahan JAAN-BOOJH KAR nahi likhi jaati. Image ka naam hamesha
+  // {uid}.jpg hota hai, yaani markerkey se khud ban jaata hai - use dobara
+  // rakhna sirf ek aur field hai jo purani padi reh sakti hai. Portal aur
+  // React dono ab uid se URL banate hain, is field ko koi padhta nahi.
   cardMappingPath = "EntityMarkingData/MarkerWardMapping/";
 
   // Record ka card key - pehle cardNumber, na ho to markerId prefix ke saath
@@ -1134,7 +1135,6 @@ export class MarkerMappingService {
     }
     return db.object(this.cardMappingPath + cardNo).update({
       markerkey: uid,
-      image: uid + ".jpg",
       line: String(line),
       markerNo: String(markerNo),
       ward: ward

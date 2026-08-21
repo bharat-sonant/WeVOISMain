@@ -1047,7 +1047,6 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       if (state.mappingWritten && state.markerID != "") {
         await this.dbUpdate("EntityMarkingData/MarkerWardMapping/" + state.markerID, {
           markerkey: state.uid,
-          image: row.oldImage,
           line: ctx.lineFrom.toString(),
           markerNo: row.markerNo.toString(),
           ward: ctx.zoneFrom
@@ -1209,7 +1208,6 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       state.mappingWritten = true;
       await this.dbUpdate("EntityMarkingData/MarkerWardMapping/" + markerID, {
         markerkey: state.uid,
-        image: row.newImage,
         line: lineTo.toString(),
         markerNo: row.newKey.toString(),
         ward: zoneTo
@@ -1296,7 +1294,6 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
                 let markerNo = markerKeyArray[j];
                 let markerId = "";
                 let latLng = "";
-                let image = "";
                 if (lineData[markerNo]["cardNumber"] != null) {
                   markerId = lineData[markerNo]["cardNumber"];
                 }
@@ -1306,26 +1303,22 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
                 if (lineData[markerNo]["latLng"] != null) {
                   latLng = lineData[markerNo]["latLng"];
                 }
-                if (lineData[markerNo]["image"] != null) {
-                  image = lineData[markerNo]["image"];
-                }
                 if (markerId != "") {
                   let uid = (wardLinks[lineNo] != null) ? wardLinks[lineNo][markerNo] : null;
                   let data: any = {
                     ward: zoneNo,
                     line: lineNo,
                     latLng: latLng,
-                    // Image ab flat folder AllMarkerImages/{uid}.jpg par hai.
-                    // Record ka purana `image` (per-line {markerNo}.jpg) yahan
-                    // likhne se URL galat ban jaata tha.
-                    image: image,
+                    // `image` yahan nahi jaati - image ka naam hamesha
+                    // AllMarkerImages/{uid}.jpg hai, yaani markerkey se khud
+                    // ban jaata hai. Record ka purana per-line naam likhne se
+                    // to URL galat hi banta tha.
                     markerNo: markerNo
                   }
                   if (uid != null && uid != "") {
                     // markerkey = marker ka uid. Move par uid nahi badalta,
                     // isliye card ka link ek baar ban jaaye to move-proof hai.
                     data["markerkey"] = uid;
-                    data["image"] = uid + ".jpg";
                   }
                   let path = "EntityMarkingData/MarkerWardMapping/" + markerId;
                   this.db.object(path).update(data);

@@ -744,7 +744,6 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
         state.mappingWritten = true;
         await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + markerID, {
           markerkey: state.uid,
-          image: row.newImage,
           line: lineTo.toString(),
           markerNo: row.newKey.toString(),
           ward: zoneTo
@@ -826,7 +825,6 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
       if (state.mappingWritten && state.markerID != "") {
         await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + state.markerID, {
           markerkey: state.uid,
-          image: row.oldImage,
           line: ctx.lineFrom.toString(),
           markerNo: row.markerNo.toString(),
           ward: ctx.zoneFrom
