@@ -6,6 +6,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-supervisor-report',
   templateUrl: './supervisor-report.component.html',
@@ -28,7 +29,7 @@ export class SupervisorReportComponent implements OnInit {
   isGridView: boolean = false;
 
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -118,85 +119,68 @@ export class SupervisorReportComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSupervisorReport");
     this.supervisorJsonList = [];
     $(this.divLoaderCounts).show();
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/";
-    // let supervisorInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-    //   supervisorInstance.unsubscribe();
-    //   if (data != undefined) {
-    let mappingPath = "EntityMarkingData/MarkersMapping/LineWise";
-    let mappingInstance = this.db.object(mappingPath).valueChanges().subscribe((data) => {
-      mappingInstance.unsubscribe();
-      // Whole MarkersData ek hi baar — uid se record resolve karne ke liye.
-      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((markersData: any) => {
-        markersInstance.unsubscribe();
-        if (markersData == null) { markersData = {}; }
-        if (data != undefined) {
-        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSupervisorReport", data);
-        let keyArray = Object.keys(data);
-        for (let i = 0; i <= keyArray.length; i++) {
-          let ward = keyArray[i];
-          let wardData = data[ward];
-          if (wardData != null) {
-            let keyArray1 = Object.keys(wardData);
-            for (let j = 0; j <= keyArray1.length; j++) {
-              let line = keyArray1[j];
-              let lineData = wardData[line];
-              if (lineData != null) {
-                let keyArray2 = Object.keys(lineData);
-                for (let k = 0; k <= keyArray2.length; k++) {
-                  let marker = keyArray2[k];
-                  // OLD PATH (reference ke liye rakha hai):
-                  // let markerData = lineData[marker];
-                  // new path: mapping se uid, phir MarkersData se actual record
-                  let uid = lineData[marker];
-                  let markerData = (uid != null && uid != "") ? markersData[uid] : null;
-                  if (markerData != null) {
-                    if (markerData["approveById"] != null && markerData["approveDate"] != null) {
-                      let supervisorId = markerData["approveById"];
-                      let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-                      let supervisorIdDetail = userList.find(item => item.userId == supervisorId);
-                      let supervisorName = supervisorIdDetail.name;
-                      let image = markerData["image"];
-                      let houseType = markerData["houseType"];
-                      let approveDate = markerData["approveDate"];
-                      let detail = this.supervisorJsonList.find(item => item.supervisorId == supervisorId)
-                      if (detail == undefined) {
-                        let detailList = [];
-                        detailList.push({ supervisorId: supervisorId, approveDate: approveDate, image: image, houseType: houseType, ward: ward, line: line })
-                        this.supervisorJsonList.push({ supervisorId: supervisorId, supervisorName: supervisorName, counts: 1, detailList: detailList })
-                      }
-                      else {
-                        detail.counts = detail.counts + 1;
-                        detail.detailList.push({ supervisorId: supervisorId, approveDate: approveDate, image: image, houseType: houseType, ward: ward, line: line });
-                      }
-                    }
-
-                  }
-                }
-              }
-            }
-          }
+    // Ye report POORE shehar ke approve hue markers ki hai, isliye yahan har
+    // marker ka record sach me chahiye - is ek jagah full read jaayaz hai.
+    //
+    // Pehle iske saath mapping (WardWise + LineWise) bhi padhi jaati thi taaki
+    // ward/line pata chale. Ab uski zaroorat nahi: record khud apna ward, line
+    // aur markerNo rakhta hai. Isse do bade index reads bach jaate hain aur
+    // teen nested loop ek loop me aa jaate hain.
+    let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((markersData: any) => {
+      markersInstance.unsubscribe();
+      if (markersData == null) { markersData = {}; }
+      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSupervisorReport", markersData);
+      let uidArray = Object.keys(markersData);
+      for (let i = 0; i < uidArray.length; i++) {
+        let markerData = markersData[uidArray[i]];
+        // MarkersData ke neeche sirf marker record hain - koi scalar aa jaaye
+        // to wo marker nahi hai.
+        if (markerData == null || typeof markerData != "object") {
+          continue;
         }
-        let fileName = "markingSurviorDetail.json";
-        let filePath = "/MarkingSurviorSummary/";
-        this.commonService.saveJsonFile(this.supervisorJsonList, fileName, filePath);
-        let updateDateTime = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
-        const updateData = {
-          updateDateTime: updateDateTime
+        // Report sirf approve ho chuke markers ki hai.
+        if (markerData["approveById"] == null || markerData["approveDate"] == null) {
+          continue;
         }
-        fileName = "lastUpdated.json";
-        filePath = "/MarkingSurviorSummary/";
-        this.commonService.saveJsonFile(updateData, fileName, filePath);
-        this.lastUpdatedTime = updateDateTime;
-        setTimeout(() => {
-          this.getSurviorSummary();
-          this.commonService.setAlertMessage("success", "Supervisor data updated successfully !!!");
-          $(this.divLoaderCounts).hide();
-        }, 300);
-        // OLD PATH (reference ke liye rakha hai):
-        // }
+        // ward/line record ke andar se - pehle ye mapping se aate the.
+        let ward = markerData["ward"];
+        let line = markerData["line"];
+        let supervisorId = markerData["approveById"];
+        let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
+        let supervisorIdDetail = userList.find(item => item.userId == supervisorId);
+        // Supervisor userList me na mile to id hi dikha do - pehle yahan
+        // undefined par crash ho jaata tha.
+        let supervisorName = supervisorIdDetail != undefined ? supervisorIdDetail.name : supervisorId;
+        let image = markerData["image"];
+        let houseType = markerData["houseType"];
+        let approveDate = markerData["approveDate"];
+        let detail = this.supervisorJsonList.find(item => item.supervisorId == supervisorId);
+        if (detail == undefined) {
+          let detailList = [];
+          detailList.push({ supervisorId: supervisorId, approveDate: approveDate, image: image, houseType: houseType, ward: ward, line: line });
+          this.supervisorJsonList.push({ supervisorId: supervisorId, supervisorName: supervisorName, counts: 1, detailList: detailList });
         }
-      });
+        else {
+          detail.counts = detail.counts + 1;
+          detail.detailList.push({ supervisorId: supervisorId, approveDate: approveDate, image: image, houseType: houseType, ward: ward, line: line });
+        }
+      }
+      let fileName = "markingSurviorDetail.json";
+      let filePath = "/MarkingSurviorSummary/";
+      this.commonService.saveJsonFile(this.supervisorJsonList, fileName, filePath);
+      let updateDateTime = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
+      const updateData = {
+        updateDateTime: updateDateTime
+      };
+      fileName = "lastUpdated.json";
+      filePath = "/MarkingSurviorSummary/";
+      this.commonService.saveJsonFile(updateData, fileName, filePath);
+      this.lastUpdatedTime = updateDateTime;
+      setTimeout(() => {
+        this.getSurviorSummary();
+        this.commonService.setAlertMessage("success", "Supervisor data updated successfully !!!");
+        $(this.divLoaderCounts).hide();
+      }, 300);
     });
   }
 }

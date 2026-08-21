@@ -12,6 +12,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 @Component({
   selector: "app-ward-survey-analysis",
   templateUrl: "./ward-survey-analysis.component.html",
@@ -21,7 +22,7 @@ export class WardSurveyAnalysisComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   public mapRevisit: google.maps.Map;
-  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public afd: AngularFireDatabase, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public afd: AngularFireDatabase, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -169,9 +170,23 @@ export class WardSurveyAnalysisComponent {
 
   showAllMarkers() {
     if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == true) {
-      for (let i = 1; i <= this.wardLineCount; i++) {
-        this.getMarkedHouses(i);
-      }
+      // Poore ward ka data PEHLE ek hi query me utaar lete hain.
+      //
+      // Neeche wala loop har line par getMarkedHouses() bulata hai, aur naye
+      // structure me ek line ka data us line ke har marker ke alag read se
+      // ban'ta hai. Bina is prefetch ke 200 line x 40 marker = ~8000 alag read
+      // jaate the (purane MarkedHouses me ye 200 the, kyunki tab poori line ek
+      // node thi).
+      //
+      // getWardRecords jo record laati hai wo service ke marker-cache me bhar
+      // jaate hain, isliye uske baad har getMarkedHouses() bina network ke
+      // chalta hai. Loop jaisa hai waisa hi rehta hai - har line ka apna
+      // rendering/counting logic nahi chhedna pada.
+      this.getNewPathWardData(this.selectedZone).then(() => {
+        for (let i = 1; i <= this.wardLineCount; i++) {
+          this.getMarkedHouses(i);
+        }
+      });
     }
     else {
       this.getMarkedHouses(this.lineNo);
@@ -189,7 +204,7 @@ export class WardSurveyAnalysisComponent {
     }
     this.clearAllOnMap();
     this.selectedZone = filterVal;
-    this.markersDataCache = null; // ward badla to MarkersData fresh load ho
+    this.markerMapping.clearLinkCache();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
@@ -212,100 +227,29 @@ export class WardSurveyAnalysisComponent {
 
 
   // Poora MarkersData ek baar cache hota hai — ward badalne par clear.
-  markersDataCache: any = null;
 
-  loadMarkersData(): Promise<any> {
-    return new Promise((resolve) => {
-      if (this.markersDataCache != null) {
-        resolve(this.markersDataCache);
-        return;
-      }
-      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((data: any) => {
-        markersInstance.unsubscribe();
-        this.markersDataCache = data != null ? data : {};
-        resolve(this.markersDataCache);
-      });
-    });
-  }
 
+
+
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
-      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
-        linkInstance.unsubscribe();
-        if (links == null) {
-          resolve(null);
-          return;
-        }
-        this.loadMarkersData().then((markersData: any) => {
-          let lineData = {};
-          let keyArray = Object.keys(links);
-          let found = 0;
-          for (let i = 0; i < keyArray.length; i++) {
-            let markerNo = keyArray[i];
-            let uid = links[markerNo];
-            if (uid == null || uid == "") {
-              continue; // numeric keys ki wajah se aaye array-nulls skip
-            }
-            if (markersData[uid] == null) {
-              continue;
-            }
-            lineData[markerNo] = markersData[uid];
-            found++;
-          }
-          resolve(found > 0 ? lineData : null);
-        });
-      });
-    });
+    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
   }
 
   getNewPathWardData(wardNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
-      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
-        linkInstance.unsubscribe();
-        if (wardLinks == null) {
-          resolve(null);
-          return;
-        }
-        this.loadMarkersData().then((markersData: any) => {
-          let wardData = {};
-          let found = 0;
-          let lineArray = Object.keys(wardLinks);
-          for (let l = 0; l < lineArray.length; l++) {
-            let lineNo = lineArray[l];
-            let links = wardLinks[lineNo];
-            if (links == null || typeof links != "object") {
-              continue;
-            }
-            let lineData = {};
-            let markerArray = Object.keys(links);
-            for (let m = 0; m < markerArray.length; m++) {
-              let markerNo = markerArray[m];
-              let uid = links[markerNo];
-              if (uid == null || uid == "") {
-                continue; // numeric keys ki wajah se aaye array-nulls skip
-              }
-              if (markersData[uid] == null) {
-                continue;
-              }
-              lineData[markerNo] = markersData[uid];
-              found++;
-            }
-            if (Object.keys(lineData).length > 0) {
-              wardData[lineNo] = lineData;
-            }
-          }
-          resolve(found > 0 ? wardData : null);
-        });
-      });
-    });
+    return this.markerMapping.getWardRecords(this.db, wardNo);
   }
 
   // Marker image ka URL: AllMarkerImages/{imgRef}.
-  getNewPathImageUrl(entry: any): string {
-    let imgRef = entry != null && entry["imgRef"] != null ? entry["imgRef"] : "";
-    return this.commonService.fireStoragePath + "DevTest%2FMarkingSurveyImages%2FAllMarkerImages%2F" + imgRef + "?alt=media";
+  // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
+  // imgRef ho to flat AllMarkerImages folder se, na ho (marker abhi migrate
+  // nahi hua) to purane per-line folder se. Pehle yahan doosri soorat me bhi
+  // flat folder ka URL banta tha - us folder me purane naam ki file hoti hi
+  // nahi, to image tooti hui dikhti thi.
+  getNewPathImageUrl(entry: any, ward: any = null, line: any = null): string {
+    return this.markerMapping.markerImageUrl(entry, ward, line);
   }
 
   // Line-level scalars (counts, lastMarkerKey, ApproveStatus) ka new-path base.
@@ -315,17 +259,7 @@ export class WardSurveyAnalysisComponent {
 
   // Old markerNo -> MarkersData/{uid} ka path. Migrate na hua ho to null.
   getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo;
-      let inst = this.db.object(linkPath).valueChanges().subscribe((uid: any) => {
-        inst.unsubscribe();
-        if (uid == null || uid == "") {
-          resolve(null);
-          return;
-        }
-        resolve("EntityMarkingData/MarkersData/" + uid);
-      });
-    });
+    return this.markerMapping.getMarkerDataPath(this.db, ward, line, markerNo);
   }
 
   getMarkerImages() {
@@ -349,17 +283,28 @@ export class WardSurveyAnalysisComponent {
             let keyArray = Object.keys(markerData);
             if (keyArray.length > 0) {
               for (let j = 0; j < keyArray.length; j++) {
-                let markerNo = parseInt(keyArray[j]);
-                if (!isNaN(markerNo)) {
-                  if (markerData[markerNo]["cardNumber"] != null) {
-                    let image = markerData[markerNo]["image"];
-                    // OLD PATH (reference ke liye rakha hai):
-                    // this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
-                    // NEW PATH: image ab flat AllMarkerImages folder me hai (imgRef se).
-                    let imageUrl = this.getNewPathImageUrl(markerData[markerNo]);
-                    this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image, imageUrl: imageUrl });
-                  }
+                // PURANA GUARD: let markerNo = parseInt(...); if (!isNaN(...))
+                //
+                // Union me jis marker ka markerNo pata na chale uski key uid
+                // ban jaati hai ({M12: rec}) - parseInt us par NaN deta tha aur
+                // wo marker image list se poori tarah gayab ho jaata tha.
+                // Key waise ki waisi lete hain; screen par dikhne wala number
+                // record ke apne markerNo se, aur wo bhi na ho to key se.
+                let markerKey = keyArray[j];
+                let marker = markerData[markerKey];
+                if (marker == null || typeof marker != "object") {
+                  continue;
                 }
+                if (marker["cardNumber"] == null) {
+                  continue;
+                }
+                let markerNo = marker["markerNo"] != null ? marker["markerNo"] : markerKey;
+                let image = marker["image"];
+                // OLD PATH (reference ke liye rakha hai):
+                // this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
+                // NEW PATH: image ab flat AllMarkerImages folder me hai (imgRef se).
+                let imageUrl = this.getNewPathImageUrl(marker, this.selectedZone, i);
+                this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: marker["cardNumber"], image: image, imageUrl: imageUrl });
               }
             }
           }
@@ -702,6 +647,9 @@ export class WardSurveyAnalysisComponent {
       // callback ke andar `this` component nahi hota, isliye storage path
       // yahin local me le liya (pehle `this.commonService` par tha).
       let fireStoragePath = this.commonService.fireStoragePath;
+      // Image URL ka rule service me hai (imgRef -> flat folder, warna purana
+      // per-line folder) - service ka handle bhi isi wajah se yahin le lete hain.
+      let markerMapping = this.markerMapping;
       marker.addListener("click", function () {
         $("#divLoaderRevisit").show();
         setTimeout(() => {
@@ -741,8 +689,11 @@ export class WardSurveyAnalysisComponent {
           $("#virtualAddress").val(address);
           // OLD PATH (reference ke liye rakha hai):
           // let imageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
-          // NEW PATH: image global hai (AllMarkerImages/{imgRef}).
-          let imageURL = fireStoragePath + "DevTest%2FMarkingSurveyImages%2FAllMarkerImages%2F" + imageName + "?alt=media";
+          // NEW PATH: imageName imgRef ("M12.jpg") ho to flat AllMarkerImages
+          // folder se, warna (marker abhi migrate nahi hua) purane per-line
+          // folder se. Pehle yahan dono soorat me flat folder ka URL banta tha
+          // aur migrate na hue marker ki image tooti hui dikhti thi.
+          let imageURL = markerMapping.imageUrlFromName(imageName, wardNo, lineNo);
           let element = <HTMLImageElement>document.getElementById("imgVertual");
           element.src = imageURL;
         });
@@ -957,8 +908,12 @@ export class WardSurveyAnalysisComponent {
                 if (newMarkerPath == null) {
                   return; // marker abhi migrate nahi hua -> write skip
                 }
-                this.markersDataCache = null; // write ke baad cache stale
+                this.markerMapping.clearLinkCache();
                 this.db.object(newMarkerPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
+                // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
+                // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
+                this.markerMapping.writeCardMapping(this.db, cardNumber,
+                  this.markerMapping.uidFromPath(newMarkerPath), wardNo, lineNo, markerNo);
                 let revisitPath = newMarkerPath + "/revisitKey";
                 let revisitInstance = this.db.object(revisitPath).valueChanges().subscribe(
                   revisitKeyData => {
@@ -1451,7 +1406,7 @@ export class WardSurveyAnalysisComponent {
                   // NEW PATH: MarkersData/{uid}
                   this.getMarkerNewPath(wardNo, lineNo, markerNo).then((newMarkerPath: any) => {
                     if (newMarkerPath != null) {
-                      this.markersDataCache = null; // write ke baad cache stale
+                      this.markerMapping.clearLinkCache();
                       this.db.object(newMarkerPath).update({ houseType: houseTypeId });
                     }
                   });
@@ -1823,7 +1778,7 @@ export class WardSurveyAnalysisComponent {
                   // NEW PATH: MarkersData/{uid}
                   this.getMarkerNewPath(this.selectedZone, lineNo, index).then((newMarkerPath: any) => {
                     if (newMarkerPath != null) {
-                      this.markersDataCache = null; // write ke baad cache stale
+                      this.markerMapping.clearLinkCache();
                       this.db.object(newMarkerPath).update({ revisitCardDeleted: revisitKey });
                       this.db.database.ref(newMarkerPath + "/revisitKey").set(null);
                     }
@@ -2195,9 +2150,13 @@ export class WardSurveyAnalysisComponent {
     // NEW PATH: MarkersData/{uid}
     this.getMarkerNewPath(this.selectedZone, lineNo, markerNo).then((newMarkerPath: any) => {
       if (newMarkerPath != null) {
-        this.markersDataCache = null; // write ke baad cache stale
+        this.markerMapping.clearLinkCache();
         this.db.object(newMarkerPath).update({ cardNumber: cardNumber });
         this.db.database.ref(newMarkerPath + "/revisitKey").set(null);
+        // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
+        // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
+        this.markerMapping.writeCardMapping(this.db, cardNumber,
+          this.markerMapping.uidFromPath(newMarkerPath), this.selectedZone, lineNo, markerNo);
       }
     });
 
@@ -2493,9 +2452,13 @@ export class WardSurveyAnalysisComponent {
                         // NEW PATH: MarkersData/{uid}
                         this.getMarkerNewPath(this.selectedZone, this.lineNo, markerNo).then((newMarkerPath: any) => {
                           if (newMarkerPath != null) {
-                            this.markersDataCache = null; // write ke baad cache stale
+                            this.markerMapping.clearLinkCache();
                             this.db.object(newMarkerPath).update({ cardNumber: cardNumber });
                             this.db.database.ref(newMarkerPath + "/rfidNotFoundKey").set(null);
+                            // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
+                            // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
+                            this.markerMapping.writeCardMapping(this.db, cardNumber,
+                              this.markerMapping.uidFromPath(newMarkerPath), this.selectedZone, this.lineNo, markerNo);
                           }
                         });
                       }

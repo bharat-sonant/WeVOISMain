@@ -4,13 +4,14 @@ import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-collected-amount-report',
   templateUrl: './collected-amount-report.component.html',
   styleUrls: ['./collected-amount-report.component.scss']
 })
 export class CollectedAmountReportComponent implements OnInit {
-  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public httpService: HttpClient) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public httpService: HttpClient, private markerMapping: MarkerMappingService) { }
   zoneList: any[];
   yearList: any[];
   wardCardList: any[];
@@ -248,65 +249,16 @@ export class CollectedAmountReportComponent implements OnInit {
     }
   }
 
-  // Poori MarkersData ek baar padh kar cache kar leta hai.
-  markersDataCache: any = null;
 
-  loadMarkersData(): Promise<any> {
-    return new Promise((resolve) => {
-      if (this.markersDataCache != null) {
-        resolve(this.markersDataCache);
-        return;
-      }
-      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((data: any) => {
-        markersInstance.unsubscribe();
-        this.markersDataCache = data != null ? data : {};
-        resolve(this.markersDataCache);
-      });
-    });
-  }
+
+
 
   // Poore ward ka data old path jaisa shape ({line: {markerNo: record}}) me.
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
   getNewPathWardData(wardNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
-      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
-        linkInstance.unsubscribe();
-        if (wardLinks == null) {
-          resolve(null);
-          return;
-        }
-        this.loadMarkersData().then((markersData: any) => {
-          let wardData = {};
-          let found = 0;
-          let lineArray = Object.keys(wardLinks);
-          for (let l = 0; l < lineArray.length; l++) {
-            let lineNo = lineArray[l];
-            let links = wardLinks[lineNo];
-            if (links == null || typeof links != "object") {
-              continue;
-            }
-            let lineData = {};
-            let markerArray = Object.keys(links);
-            for (let m = 0; m < markerArray.length; m++) {
-              let markerNo = markerArray[m];
-              let uid = links[markerNo];
-              if (uid == null || uid == "") {
-                continue; // numeric keys ki wajah se aaye array-nulls skip
-              }
-              if (markersData[uid] == null) {
-                continue;
-              }
-              lineData[markerNo] = markersData[uid];
-              found++;
-            }
-            if (Object.keys(lineData).length > 0) {
-              wardData[lineNo] = lineData;
-            }
-          }
-          resolve(found > 0 ? wardData : null);
-        });
-      });
-    });
+    return this.markerMapping.getWardRecords(this.db, wardNo);
   }
 
   updateCardColectionData() {

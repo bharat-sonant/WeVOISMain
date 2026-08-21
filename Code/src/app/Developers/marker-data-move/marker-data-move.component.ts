@@ -3,6 +3,7 @@ import { CommonService } from "../../services/common/common.service";
 import { FirebaseService } from "../../firebase.service";
 import { AngularFireStorage } from "angularfire2/storage";
 
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 // Moves a whole ward's markers from the old per-line structure
 //   EntityMarkingData/MarkedHouses/{ward}/{line}/{markerNo}
 // into the new global structure:
@@ -52,7 +53,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 })
 export class MarkerDataMoveComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private commonService: CommonService, private storage: AngularFireStorage) { }
+  constructor(public fs: FirebaseService, private commonService: CommonService, private storage: AngularFireStorage, private markerMapping: MarkerMappingService) { }
 
   cityName: any;
   db: any;
@@ -74,6 +75,8 @@ export class MarkerDataMoveComponent implements OnInit {
   skippedCount = 0;
   // Record to tha par LineWise entry missing thi - wo bhar di gayi.
   repairedCount = 0;
+  // Kitne markers ka card link (markerkey) is run me bana/theek hua.
+  cardLinkCount = 0;
   noImageCount = 0;
   invalidSkipCount = 0;
   failCount = 0;
@@ -111,6 +114,7 @@ export class MarkerDataMoveComponent implements OnInit {
     this.updatedCount = 0;
     this.skippedCount = 0;
     this.repairedCount = 0;
+    this.cardLinkCount = 0;
     this.noImageCount = 0;
     this.invalidSkipCount = 0;
     this.failCount = 0;
@@ -143,10 +147,25 @@ export class MarkerDataMoveComponent implements OnInit {
             if (marker == null) {
               continue;
             }
-            // Line-level metadata (scalars like marksCount/lastMarkerKey and
-            // the ApproveStatus node) — not markers, collected into LineSummary
-            // so the new path also carries line approval + counts.
-            if (typeof marker != "object" || markerNo == "ApproveStatus") {
+            // Purane line node par do tarah ka data ek saath padta tha: marker,
+            // aur line ka apna metadata (marksCount, lastMarkerKey, ApproveStatus
+            // waghairah). Dono ko alag karne ka pakka tareeka KEY hai - marker ki
+            // key hamesha number hoti hai (line par uska serial), metadata ki key
+            // hamesha naam.
+            //
+            // Pehle yahan sirf "scalar ya ApproveStatus" wala niyam tha. Uska
+            // matlab tha ki ApproveStatus ke alawa koi bhi naam wala OBJECT node
+            // (jo aage kabhi ban jaaye) chupchaap chhoot jaata. Ab naam wali har
+            // key LineSummary me jaati hai, chahe wo scalar ho ya object.
+            if (isNaN(Number(markerNo))) {
+              lineSummary[markerNo] = marker;
+              hasSummary = true;
+              continue;
+            }
+            // Ab key number hai, yaani ye marker hona chahiye.
+            if (typeof marker != "object") {
+              // Number key par scalar - ye marker nahi ho sakta. LineSummary me
+              // daal dete hain taaki value gum na ho.
               lineSummary[markerNo] = marker;
               hasSummary = true;
               continue;
@@ -249,9 +268,14 @@ export class MarkerDataMoveComponent implements OnInit {
 
   processMarker(index: any, ward: any) {
     if (index >= this.markerList.length) {
+      // Migration ne poore ward ka data aur mapping badla hai. Service root
+      // singleton hai, yaani uski cache doosre page par bhi wahi rehti hai -
+      // isliye yahan saaf karna zaroori hai.
+      this.markerMapping.clearLinkCache();
       $(this.divLoader).hide();
       let msg = "Done. Created: " + this.createdCount + ", Updated: " + this.updatedCount +
         ", Already up-to-date: " + this.skippedCount + ", LineWise repaired: " + this.repairedCount +
+        ", Card links: " + this.cardLinkCount +
         ", No image: " + this.noImageCount +
         ", Invalid skipped: " + this.invalidSkipCount + ", Failed: " + this.failCount +
         ", Line summaries: " + this.lineSummaryCount;
@@ -305,7 +329,7 @@ export class MarkerDataMoveComponent implements OnInit {
       let existingInstance = this.db.object(existingPath).valueChanges().subscribe(
         (existing: any) => {
           existingInstance.unsubscribe();
-          let record = this.buildRecord(old, item["line"], ward, uid);
+          let record = this.buildRecord(old, item["line"], ward, uid, item["oldMarkerNo"]);
 // OLD PATH (reference ke liye rakha hai):
 // if (existing != null && this.isSame(existing, record)) {
   // Nothing changed -> "already updated". Backfill the link map so
@@ -338,6 +362,7 @@ export class MarkerDataMoveComponent implements OnInit {
             if (old["movedToNewPath"] == null) {
               this.writeMovedToNewPath(ward, item["line"], item["oldMarkerNo"], uid);
             }
+            this.backfillCardMapping(uid, existing, ward, item["line"], item["oldMarkerNo"]);
             this.clearMoveFailure(ward, item["line"], item["oldMarkerNo"]);
             this.skippedCount++;
             this.processMarker(index + 1, ward);
@@ -371,7 +396,7 @@ export class MarkerDataMoveComponent implements OnInit {
     // New marker -> allocate the next GLOBAL M number.
     this.lastKey = this.lastKey + 1;
     let uid = "M" + this.lastKey;
-    let record = this.buildRecord(old, item["line"], ward, uid);
+    let record = this.buildRecord(old, item["line"], ward, uid, item["oldMarkerNo"]);
     this.copyImage(old, item["line"], ward, uid, 0,
       (hadImage: boolean) => {
         if (!hadImage) { this.noImageCount++; }
@@ -402,13 +427,20 @@ export class MarkerDataMoveComponent implements OnInit {
 
   // Builds the new global record: all old fields + the current line/ward and
   // the new image reference. Keys match the existing DB (line, ward, imgRef).
-  buildRecord(old: any, line: any, ward: any, uid: string) {
+  buildRecord(old: any, line: any, ward: any, uid: string, markerNo: any = null) {
     let record = Object.assign({}, old);
     delete record["movedMarkerUid"]; // link stays on the old record, not the new one
     delete record["movedToNewPath"]; // ye old record ka apna node hai, naye record par nahi jaata
     record["line"] = isNaN(Number(line)) ? line : Number(line);
     record["ward"] = ward;
     record["imgRef"] = uid + ".jpg";
+    // markerNo = line par marker ka serial (screen par yahi dikhta hai). Pehle
+    // ye sirf LineWise ki key me rehta tha, isliye jis marker ki LineWise entry
+    // nahi banti thi uska number kahin se milta hi nahi tha. Record ke andar
+    // hone se wo marker ke saath khud chalta hai.
+    if (markerNo != null && markerNo !== "") {
+      record["markerNo"] = isNaN(Number(markerNo)) ? markerNo : Number(markerNo);
+    }
     return record;
   }
 
@@ -428,6 +460,33 @@ export class MarkerDataMoveComponent implements OnInit {
     }
     return true;
   }
+
+  // Ek baar padho aur chhod do.
+  readOnce(path: string): Promise<any> {
+    return new Promise((resolve) => {
+      let instance = this.db.object(path).valueChanges().subscribe((data: any) => {
+        instance.unsubscribe();
+        resolve(data);
+      });
+    });
+  }
+
+
+
+
+
+
+
+  // Delete ho chuke marker ka archive. Purani key {line}/{markerNo} thi; nayi
+  // key uid hai, jo OriginalToUid se milta hai.
+  //
+  // Jo marker migration se PEHLE delete hue the unka uid kabhi bana hi nahi -
+  // unke liye key "L{line}_{markerNo}" rakhte hain. Ye jaan-boojh kar aisi
+  // dikhti hai ki dekhte hi pata chale ki ye legacy record hai. line aur
+  // markerNo dono record ke andar bhi likh dete hain, taaki key ka roop kuch
+  // bhi ho, record khud apni jagah bata sake.
+
+
 
   // Pehli baar poora summary copy; re-run par sirf wahi keys jo new path par missing hain (approve/counts overwrite na ho).
   writeLineSummary(ward: any, lineNo: any, lineSummary: any) {
@@ -555,8 +614,47 @@ export class MarkerDataMoveComponent implements OnInit {
 
     this.db.object("EntityMarkingData/MarkersMapping/MarkerWise/" + uid).update({ line: lineVal, ward: ward });
     this.db.object("EntityMarkingData/MarkersMapping/WardWise/" + ward + "/" + uid).set(lineVal);
-    this.db.object("EntityMarkingData/MarkersMapping/WardWise/" + ward + "/lastMarkerKey").set(this.lastKey);
+    // WardWise ke neeche sirf { uid: line } hona chahiye. Pehle yahan
+    // lastMarkerKey ka scalar bhi likha jaata tha - use koi padhta nahi tha, par
+    // uski wajah se HAR reader ko "M" se shuru na hone wali keys chhodni padti
+    // thi. Global counter MarkersMapping/lastMarkerKey par hai.
+
+    // Card se marker dhoondhne ka index (MarkerWardMapping/{cardNo}). Migration
+    // ke waqt hi markerkey bhar dete hain - ye node pehle se maujood tha par
+    // usme sirf ward/line/markerNo tha, jo har move par badalte hain.
+    this.markerMapping.writeCardMapping(this.db, this.markerMapping.cardKeyFor(record),
+      uid, ward, lineVal, record["markerNo"]);
   }
+
+  // Pehle migrate ho chuke marker ka card link. Re-run par yahi backfill chalti
+  // hai - record ko haath lagaye bina sirf MarkerWardMapping me markerkey aa
+  // jaata hai. Pehle se sahi bhara ho to dobara nahi likhte.
+  backfillCardMapping(uid: string, record: any, ward: any, line: any, markerNo: any) {
+    let cardNo = this.markerMapping.cardKeyFor(record);
+    if (cardNo == "") {
+      return;
+    }
+    let lineVal = isNaN(Number(line)) ? line : Number(line);
+    let markerNoVal = (record != null && record["markerNo"] != null) ? record["markerNo"] : markerNo;
+    let cardPath = "EntityMarkingData/MarkerWardMapping/" + cardNo;
+    let cardInstance = this.db.object(cardPath).valueChanges().subscribe(
+      (entry: any) => {
+        cardInstance.unsubscribe();
+        if (entry != null && entry["markerkey"] == uid) {
+          return;
+        }
+        this.markerMapping.writeCardMapping(this.db, cardNo, uid, ward, lineVal, markerNoVal);
+        this.cardLinkCount++;
+      }
+    );
+  }
+
+  // Archive ki purani per-line images ek-ek karke flat AllMarkerImages folder
+  // me. Ek-ek isliye ki delete ho chuke markers bahut ho sakte hain aur ye kaam
+  // migration ke aakhir me chalta hai - jaldi ki koi zaroorat nahi.
+  // Fail hone par bas gin lete hain; wo image nahi dikhegi.
+
+
 
   // Downloads the old per-line image and re-uploads it as M{n}.jpg in the flat
   // AllMarkerImages folder. Retries up to 3 times. onSuccess(hadImage) is called

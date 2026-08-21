@@ -9,6 +9,7 @@ import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
 
+import { MarkerMappingService } from '../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-marker-approval-test',
   templateUrl: './marker-approval-test.component.html',
@@ -17,7 +18,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 export class MarkerApprovalTestComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -162,6 +163,7 @@ export class MarkerApprovalTestComponent {
     (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
     this.clearMarkerCache();   // ward badla to record fresh load ho
     this.wardIndexCache = {};     // ward index bhi fresh
+    this.markerMapping.clearLinkCache();
     this.clearAllData();
     this.clearAllOnMap();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 4).then((data: any) => {
@@ -435,9 +437,13 @@ export class MarkerApprovalTestComponent {
   }
 
   // Marker image ka URL: AllMarkerImages/{imgRef}.
-  getNewPathImageUrl(entry: any): string {
-    let imgRef = entry != null && entry["imgRef"] != null ? entry["imgRef"] : "";
-    return this.commonService.fireStoragePath + "DevTest%2FMarkingSurveyImages%2FAllMarkerImages%2F" + imgRef + "?alt=media";
+  // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
+  // imgRef ho to flat AllMarkerImages folder se, na ho (marker abhi migrate
+  // nahi hua) to purane per-line folder se. Pehle yahan doosri soorat me bhi
+  // flat folder ka URL banta tha - us folder me purane naam ki file hoti hi
+  // nahi, to image tooti hui dikhti thi.
+  getNewPathImageUrl(entry: any, ward: any = null, line: any = null): string {
+    return this.markerMapping.markerImageUrl(entry, ward, line);
   }
 
   // Line-level scalars (counts, lastMarkerKey, ApproveStatus) ka new-path base.
@@ -453,17 +459,9 @@ export class MarkerApprovalTestComponent {
     if (markerNo != null && String(markerNo).charAt(0) == "M") {
       return Promise.resolve("EntityMarkingData/MarkersData/" + markerNo);
     }
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo;
-      let inst = this.db.object(linkPath).valueChanges().subscribe((uid: any) => {
-        inst.unsubscribe();
-        if (uid == null || uid == "") {
-          resolve(null);
-          return;
-        }
-        resolve("EntityMarkingData/MarkersData/" + uid);
-      });
-    });
+    // Purana markerNo (1, 2, 3...) - service se resolve, jo WardWise aur
+    // LineWise dono dekhti hai. Akela LineWise adhoora hai.
+    return this.markerMapping.getMarkerDataPath(this.db, ward, line, markerNo);
   }
 
   showMarkers(lineNo: any) {
@@ -659,7 +657,7 @@ export class MarkerApprovalTestComponent {
               // OLD PATH (reference ke liye rakha hai):
               // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
               // NEW PATH: record ke imgRef se
-              let imageUrl = this.getNewPathImageUrl(data[index]);
+              let imageUrl = this.getNewPathImageUrl(data[index], this.selectedZone, this.lineNo);
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -838,7 +836,7 @@ export class MarkerApprovalTestComponent {
               // OLD PATH (reference ke liye rakha hai):
               // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               // NEW PATH: record ke imgRef se
-              let imageUrl = this.getNewPathImageUrl(data[index]);
+              let imageUrl = this.getNewPathImageUrl(data[index], zoneNo, lineNo);
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -1187,7 +1185,17 @@ export class MarkerApprovalTestComponent {
           data["removeBy"] = localStorage.getItem("userID");
           data["reason"]=reason;
 
-          dbPath = "EntityMarkingData/RemovedMarkers/" + zoneNo + "/" + lineNo + "/" + markerNo;
+          // Archive purani jagah par hi hai - sirf key badli hai. Pehle key
+          // markerNo (1, 2, 3...) hoti thi, jo marker ke move hone par badal
+          // jaati thi aur us number par baad me doosra marker bhi aa sakta tha.
+          // Ab key uid (M23) hai - marker ki ekmatra sthir pehchaan.
+          //
+          // Migration se PEHLE delete hue records apni purani numeric key par
+          // hi pade rehte hain; unhe chhua nahi jaata. Isliye is node me dono
+          // tarah ki keys mil sakti hain aur padhne wala key par bharosa nahi
+          // karta - sirf record ke andar dekhta hai.
+          let removedUid = String(newMarkerPath).substring(String(newMarkerPath).lastIndexOf("/") + 1);
+          dbPath = "EntityMarkingData/RemovedMarkers/" + zoneNo + "/" + lineNo + "/" + removedUid;
           this.db.object(dbPath).update(data);
 
           // OLD PATH (reference ke liye rakha hai):
@@ -1673,6 +1681,9 @@ export class MarkerApprovalTestComponent {
       let markerDetail = this.markerData;
       let city = this.commonService.getFireStoreCity();
       let commonService=this.commonService;
+      // callback ke andar `this` component nahi hota - image URL ka rule
+      // service me hai, isliye uska handle bhi yahin local me le lete hain.
+      let markerMapping = this.markerMapping;
       marker.addListener("click", function () {
         $("#divLoader").show();
         // $("#markerImageBox").show();
@@ -1682,8 +1693,11 @@ export class MarkerApprovalTestComponent {
         }, 2000);
         // OLD PATH (reference ke liye rakha hai):
         // let imageURL = commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
-        // NEW PATH: imageName ab imgRef hai (getMarkedHouses/getOtherMarkerData se)
-        let imageURL = commonService.fireStoragePath + "DevTest%2FMarkingSurveyImages%2FAllMarkerImages%2F" + imageName + "?alt=media";
+        // NEW PATH: imageName imgRef ("M12.jpg") ho to flat AllMarkerImages
+        // folder se, warna (marker abhi migrate nahi hua) purane per-line
+        // folder se. Pehle yahan dono soorat me flat folder ka URL banta tha
+        // aur migrate na hue marker ki image tooti hui dikhti thi.
+        let imageURL = markerMapping.imageUrlFromName(imageName, wardNo, lineNo);
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;
@@ -1962,54 +1976,59 @@ export class MarkerApprovalTestComponent {
     this.markerData.isApprovedCount = "0";
   }
 
-  getDeletedMarkerData(data:any){
-    this.deletedMarkerList=[];
-    if(data!=null){
-      let lineKeysArray=Object.keys(data);
-      for(let i=0;i<lineKeysArray.length;i++){
-        let lineKey=lineKeysArray[i];
-        if(lineKey!="totalRemovedMarkersCount"){
-          let indexKeyArray=Object.keys(data[lineKey]);
-          for(let j=0;j<indexKeyArray.length;j++){
-
-            let indexKey=indexKeyArray[j];
-            let dataKey=data[lineKey][indexKey];
-
-           
-            let removedBy="";
-            let houseType="";
-            let removedDate=dataKey["removeDate"];
-            let removeReason=dataKey["reason"]
-            
-
-            let image=dataKey["image"];
-            let city = this.commonService.getFireStoreCity();
-            // OLD PATH (reference ke liye rakha hai):
-            // let imageUrl= this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
-            // RemovedMarkers archive khud migrate nahi hua, par ab jo records
-            // yahan aate hain unme imgRef hota hai (delete new path se hota hai).
-            // NEW PATH: imgRef ho to flat folder se, warna purana URL fallback.
-            let imageUrl = dataKey["imgRef"] != null
-              ? this.getNewPathImageUrl(dataKey)
-              : this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
-            
-            let removedById=dataKey["removeBy"];
-            let removedByDetail=this.userList.find(item=>item.userId==removedById)
-            if(removedByDetail!=undefined){
-            removedBy=removedByDetail.name;}
-
-            let housetypeId=dataKey["houseType"];
-            let houseTypeDetail = this.houseTypeList.find(item => item.id == housetypeId);
-            if (houseTypeDetail != undefined) {
-              houseType = houseTypeDetail.houseType;
-            }
-
-
-           this.deletedMarkerList.push({lineNo:lineKey,houseType:houseType,removedBy:removedBy,removedDate:removedDate,imageUrl:imageUrl,reason:removeReason});
-           
-           
-          }
+  // Pehle ye {line}/{markerNo} do-level tha, isliye yahan do loop chalte the.
+  // Ab ek hi loop hai aur line record ke andar se aati hai - marker chahe kitni
+  // bhi baar line badal chuka ho, uski pehchaan (uid) wahi rehti hai.
+  // Archive: RemovedMarkers/{ward}/{line}/{key}. Key nayi entries me uid (M23)
+  // hai aur purani entries me markerNo - dono chalte hain, isliye key ko haath
+  // nahi lagate. `totalRemovedMarkersCount` isi node me scalar hai, use chhod
+  // dete hain.
+  getDeletedMarkerData(data: any) {
+    this.deletedMarkerList = [];
+    if (data == null) {
+      return;
+    }
+    let lineKeysArray = Object.keys(data);
+    for (let i = 0; i < lineKeysArray.length; i++) {
+      let lineKey = lineKeysArray[i];
+      let lineObj = data[lineKey];
+      if (lineObj == null || typeof lineObj != "object") {
+        continue; // totalRemovedMarkersCount jaisa scalar
+      }
+      let indexKeyArray = Object.keys(lineObj);
+      for (let j = 0; j < indexKeyArray.length; j++) {
+        let dataKey = lineObj[indexKeyArray[j]];
+        if (dataKey == null || typeof dataKey != "object") {
+          continue;
         }
+        let removedBy = "";
+        let houseType = "";
+        let removedDate = dataKey["removeDate"];
+        let removeReason = dataKey["reason"];
+
+        let image = dataKey["image"];
+        let city = this.commonService.getFireStoreCity();
+        // imgRef wali entry nayi hai - uski image flat AllMarkerImages folder
+        // me hai. Migration se pehle delete hue record me imgRef hota hi nahi
+        // aur uski image aaj bhi purane per-line folder me padi hai - uske liye
+        // purana URL hi ban sakta hai.
+        let imageUrl = dataKey["imgRef"] != null
+          ? this.getNewPathImageUrl(dataKey)
+          : this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+
+        let removedById = dataKey["removeBy"];
+        let removedByDetail = this.userList.find(item => item.userId == removedById);
+        if (removedByDetail != undefined) {
+          removedBy = removedByDetail.name;
+        }
+
+        let housetypeId = dataKey["houseType"];
+        let houseTypeDetail = this.houseTypeList.find(item => item.id == housetypeId);
+        if (houseTypeDetail != undefined) {
+          houseType = houseTypeDetail.houseType;
+        }
+
+        this.deletedMarkerList.push({ lineNo: lineKey, houseType: houseType, removedBy: removedBy, removedDate: removedDate, imageUrl: imageUrl, reason: removeReason });
       }
     }
   }
@@ -2085,7 +2104,7 @@ export class MarkerApprovalTestComponent {
               // OLD PATH (reference ke liye rakha hai):
               // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
               // NEW PATH: record ke imgRef se
-              let imageUrl = this.getNewPathImageUrl(key);
+              let imageUrl = this.getNewPathImageUrl(key, this.selectedZone, lineKey);
 
               // To get Housetype name from housetype id
               let houseType="";

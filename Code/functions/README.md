@@ -85,6 +85,52 @@ me copy kar deta hai.
    firebase deploy --only functions
    ```
 
+## Database index (optional — sirf speed ke liye)
+
+**Ye lagaye bina bhi portal poora sahi chalta hai.** Default me ward ka data
+mapping se aata hai (`WardWise/{ward}` batati hai kaun se uid chahiye, phir
+sirf wahi record padhe jaate hain) — isme koi index nahi chahiye.
+
+Ek tez vikalp bhi hai: ward ka poora data **ek hi query** me —
+
+```js
+MarkersData.orderByChild("ward").equalTo(ward)
+```
+
+Iske liye RTDB rules me index chahiye:
+
+```json
+"EntityMarkingData": { "MarkersData": { ".indexOn": ["ward"] } }
+```
+
+Snippet `functions/database-index.rules.json` me pada hai — use apne maujooda
+rules me **merge** karein (replace nahi), Firebase Console > Realtime Database >
+Rules se. Phir Publish.
+
+### Chalu kaise karein
+
+1. Us city ke project me upar wala index lagaayein.
+2. Portal me ward page kholein, browser console (F12) dekhein.
+   `FIREBASE WARNING: Using an unspecified index...` **nahi** aani chahiye.
+3. Tabhi `marker-mapping.service.ts` me `wardQueryEnabled = true` karein.
+
+**Har city ka apna project hai** (`dtdtonk`, `dtdratangarh`, `dtdnokha`,
+`dtdlosal`...) — ek me index laga hone ka matlab baaki me laga hona nahi.
+
+### Default `false` kyun hai
+
+Index na laga ho to RTDB query se **mana nahi karta** — wo poora `MarkersData`
+node browser ko bhej deta hai aur chhantni wahan hoti hai. Yaani ek ward
+kholne par poore shehar ke marker utar aate hain (2,000 marker wale ward aur
+50,000 wale shehar me ~25 guna kharcha) — theek wahi kharcha jo purane
+`MarkedHouses` wale din tha, jise hatane ke liye ye refactor hua.
+
+Aur ye galti **kahin dikhti nahi**: koi error nahi, page nahi rukta, data bhi
+sahi hi aata hai — sirf console me ek warning jo koi nahi dekhta.
+
+Isliye default surakshit raasta hai. Us par sabse bura case "thodi zyada
+requests" hai, "poora shehar download" nahi.
+
 ## Dhyan rakhein
 
 - **Blaze (pay-as-you-go) plan chahiye** — Cloud Functions free plan par nahi

@@ -19,63 +19,25 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
 
   // NEW PATH helpers - record ab MarkersData/{uid} par hai aur line par uska
   // number LineWise batata hai.
-  markersDataCache: any = null;
 
-  private loadMarkersData(): Promise<any> {
-    if (this.markersDataCache != null) {
-      return Promise.resolve(this.markersDataCache);
-    }
-    return this.moveHelper.readOnce(this.db, "EntityMarkingData/MarkersData").then((data: any) => {
-      this.markersDataCache = data != null ? data : {};
-      return this.markersDataCache;
-    });
-  }
 
+
+
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
-    return this.moveHelper.readOnce(this.db, "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo).then((links: any) => {
-      if (links == null) { return null; }
-      return this.loadMarkersData().then((markersData: any) => {
-        let lineData = {};
-        let keyArray = Object.keys(links);
-        let found = 0;
-        for (let i = 0; i < keyArray.length; i++) {
-          let markerNo = keyArray[i];
-          let uid = links[markerNo];
-          if (uid == null || uid == "") { continue; }
-          if (markersData[uid] == null) { continue; }
-          lineData[markerNo] = markersData[uid];
-          found++;
-        }
-        return found > 0 ? lineData : null;
-      });
-    });
+    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
   }
 
   getMarkerUid(ward: any, line: any, markerNo: any): Promise<any> {
-    return this.moveHelper.readOnce(this.db, "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo).then((uid: any) => {
-      return (uid != null && uid != "") ? uid : null;
-    });
+    return this.markerMapping.getUid(this.db, ward, line, markerNo);
   }
 
   // Target line ka agla safe markerNo: LineSummary ka lastMarkerKey aur line ki
   // asli sabse badi key, dono me se bada.
   getSafeLastKey(ward: any, line: any): Promise<any> {
-    return this.moveHelper.readOnce(this.db, "EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + line + "/lastMarkerKey").then((summaryVal: any) => {
-      let fromSummary = summaryVal != null ? Number(summaryVal) : 0;
-      if (isNaN(fromSummary)) { fromSummary = 0; }
-      return this.moveHelper.readOnce(this.db, "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line).then((links: any) => {
-        let maxKey = 0;
-        if (links != null) {
-          let keyArray = Object.keys(links);
-          for (let i = 0; i < keyArray.length; i++) {
-            if (links[keyArray[i]] == null || links[keyArray[i]] == "") { continue; }
-            let n = Number(keyArray[i]);
-            if (!isNaN(n) && n > maxKey) { maxKey = n; }
-          }
-        }
-        return fromSummary > maxKey ? fromSummary : maxKey;
-      });
-    });
+    return this.markerMapping.getSafeLastKey(this.db, ward, line);
   }
 
   cityName: any;
@@ -781,6 +743,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
       if (markerID != "") {
         state.mappingWritten = true;
         await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + markerID, {
+          markerkey: state.uid,
           image: row.newImage,
           line: lineTo.toString(),
           markerNo: row.newKey.toString(),
@@ -797,7 +760,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
       // NEW PATH: record hataana nahi - sirf purani line ki LineWise entry,
       // warna marker purani aur nayi dono line par dikhta rahega.
       await this.moveHelper.dbRemove(this.db, "EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + row.markerNo);
-      this.markersDataCache = null; // write ke baad cache stale
+      this.markerMapping.clearLinkCache();
     }
 
     row.failedStep = "";
@@ -828,6 +791,10 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
         }
         await this.moveHelper.dbRemove(this.db,
           "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.newKey);
+        // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
+        // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
+        // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.
+        this.markerMapping.clearLinkCache();
       }
       if (state.destMarkerWritten && state.uid != null) {
         // move-stamp wapas purani haalat par - is move ki stamp hatani hai par
@@ -858,6 +825,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
       }
       if (state.mappingWritten && state.markerID != "") {
         await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + state.markerID, {
+          markerkey: state.uid,
           image: row.oldImage,
           line: ctx.lineFrom.toString(),
           markerNo: row.markerNo.toString(),

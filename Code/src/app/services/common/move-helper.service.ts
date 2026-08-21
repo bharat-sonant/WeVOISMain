@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireStorage } from "angularfire2/storage";
 import { CommonService } from './common.service';
+import { MarkerMappingService } from '../marker/marker-mapping.service';
 
 /**
  * Ek chal rahe move ka state. Component ye implement karta hai taaki service
@@ -25,7 +26,7 @@ export interface MoveRun {
 })
 export class MoveHelperService {
 
-  constructor(private storage: AngularFireStorage, private commonService: CommonService) { }
+  constructor(private storage: AngularFireStorage, private commonService: CommonService, private markerMapping: MarkerMappingService) { }
 
   readonly IMAGE_ATTEMPTS = 3;
   readonly MAX_NETWORK_RETRIES = 10;
@@ -192,15 +193,38 @@ export class MoveHelperService {
     throw lastError;
   }
 
+  /**
+   * Marker ka data ya uski mapping badalne par MarkerMappingService ki cache
+   * purani pad jaati hai.
+   *
+   * Pehle har move flow ko khud clearLinkCache() bulana padta tha, aur jahan
+   * bhool hoti thi wahan page purani list dikhata rehta tha - aisi galti dikhti
+   * bhi nahi hai, sirf "kabhi-kabhi data purana aata hai" jaisa lagta hai.
+   * Isliye ab ye faisla yahin hota hai: path marker ka hai to cache apne aap
+   * saaf. MarkerMappingService root-level singleton hai, yaani cache page badal
+   * jaane par bhi zinda rehti hai - is wajah se ye aur zaroori ho jaata hai.
+   */
+  private clearMarkerCache(path: string) {
+    if (path == null) {
+      return;
+    }
+    if (path.indexOf("MarkersData") >= 0 || path.indexOf("MarkersMapping") >= 0) {
+      this.markerMapping.clearLinkCache();
+    }
+  }
+
   dbUpdate(db: any, path: string, data: any): Promise<any> {
+    this.clearMarkerCache(path);
     return this.withTimeout(db.object(path).update(data), this.DB_TIMEOUT_MS);
   }
 
   dbSet(db: any, path: string, data: any): Promise<any> {
+    this.clearMarkerCache(path);
     return this.withTimeout(db.object(path).set(data), this.DB_TIMEOUT_MS);
   }
 
   dbRemove(db: any, path: string): Promise<any> {
+    this.clearMarkerCache(path);
     return this.withTimeout(db.object(path).remove(), this.DB_TIMEOUT_MS);
   }
 

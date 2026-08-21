@@ -1,0 +1,36 @@
+{
+  "_readme": [
+    "OPTIONAL hai - ye lagaye bina bhi portal poora sahi chalta hai.",
+    "",
+    "Default me ward ka data mapping se aata hai: WardWise/{ward} batati hai ki",
+    "kaun se uid chahiye, phir sirf wahi record padhe jaate hain. Isme koi index",
+    "nahi chahiye.",
+    "",
+    "Ye index ek TEZ vikalp chaalu karta hai - ward ka poora data ek hi query me",
+    "(MarkersData.orderByChild('ward').equalTo(ward)).",
+    "",
+    "Lagane ka tareeka:",
+    "  1. Ye poore rules NAHI hain. Niche wala 'rules' hissa apne project ke",
+    "     maujooda database rules me MERGE karein, replace na karein.",
+    "     Firebase Console > Realtime Database > Rules, phir Publish.",
+    "  2. Portal me ward page kholkar browser console dekhein - 'FIREBASE",
+    "     WARNING: Using an unspecified index' nahi aani chahiye.",
+    "  3. Tabhi marker-mapping.service.ts me wardQueryEnabled = true karein.",
+    "",
+    "Har city ka apna project hai (dtdtonk, dtdratangarh, dtdnokha, dtdlosal...),",
+    "isliye ye har project me alag se lagana padta hai. Ek me laga hone ka matlab",
+    "baaki me laga hona nahi hai.",
+    "",
+    "Step 3 se pehle 2 chhodna khatarnaak hai: index bina query se RTDB mana nahi",
+    "karta, wo poora MarkersData node browser ko bhej deta hai. Yaani ek ward",
+    "kholne par poore shehar ke marker download. Data galat nahi hota, error bhi",
+    "nahi aata - bas read bahut mehnga ho jaata hai aur kahin dikhta nahi."
+  ],
+  "rules": {
+    "EntityMarkingData": {
+      "MarkersData": {
+        ".indexOn": ["ward"]
+      }
+    }
+  }
+}

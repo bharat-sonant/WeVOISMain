@@ -15,7 +15,10 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
   cityName: any;
   selectedZone: any;
   zoneList: any[];
-  markerCardList: any[];
+  // Jin cards par marker pehle se hai: { cardNo: true }.
+  // Pehle ye array tha aur neeche har card par .find() chalta tha - hazaaron
+  // cards par wo apne aap me dheema pad jaata tha.
+  markerCardMap: any = {};
   markerAddList: any[];
   divLoader = "#divLoader";
 
@@ -35,7 +38,7 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
   }
 
   getMarkerData() {
-    this.markerCardList = [];
+    this.markerCardMap = {};
     this.markerAddList = [];
     $(this.divLoader).show();
     // OLD PATH (reference ke liye rakha hai) - marker ward/line/markerNo ke
@@ -74,34 +77,28 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
     //   }
     // );
 
-    // NEW PATH: MarkersData flat hai - saare marker ek hi level par, isliye
-    // ek loop kaafi hai. Yahan sirf ye jaanna hai ki kis card par marker
-    // pehle se hai, to ward/line ki zaroorat hi nahi padti.
-    let dbPath = "EntityMarkingData/MarkersData";
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    // Yahan sirf itna jaanna hai ki KIS CARD par marker pehle se hai.
+    //
+    // Pehle iske liye poora MarkersData padha jaata tha (poore shehar ke saare
+    // marker) aur har record ka cardNumber nikala jaata tha - 50,000 record
+    // utha kar sirf card numbers ki list banti thi.
+    //
+    // MarkerWardMapping isi kaam ka index hai: jis card par marker hai uski
+    // entry hai, jispar nahi uski nahi. Iski KEYS hi jawab hain, isliye ek
+    // chhota read kaafi hai.
+    let dbPath = "EntityMarkingData/MarkerWardMapping";
+    let cardInstance = this.db.object(dbPath).valueChanges().subscribe(
       (data: any) => {
-        markerInstance.unsubscribe();
+        cardInstance.unsubscribe();
         if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let i = 0; i < keyArray.length; i++) {
-              let uid = keyArray[i];
-              // MarkersData ke neeche sirf M{n} record hain - koi scalar
-              // (jaise purana counter) aa jaaye to wo marker nahi hai.
-              if (uid.charAt(0) != "M") {
-                continue;
-              }
-              let marker = data[uid];
-              if (marker != null && marker["cardNumber"] != null) {
-                this.markerCardList.push({ cardNo: marker["cardNumber"] });
-              }
-            }
-            this.getHouseData(1);
+          let cardArray = Object.keys(data);
+          for (let i = 0; i < cardArray.length; i++) {
+            this.markerCardMap[cardArray[i]] = true;
           }
         }
-        else {
-          $(this.divLoader).hide();
-        }
+        // data null ho to bhi aage badhna hai - matlab abhi kisi card par
+        // marker nahi hai, yaani SAARE cards par marker banana hai.
+        this.getHouseData(1);
       }
     );
   }
@@ -133,8 +130,7 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
                   let cardKeyArray = Object.keys(cardObj);
                   for (let j = 0; j < cardKeyArray.length; j++) {
                     let cardNo = cardKeyArray[j];
-                    let detail = this.markerCardList.find(item => item.cardNo == cardNo);
-                    if (detail == undefined) {
+                    if (this.markerCardMap[cardNo] == null) {
                       let cardDetail = cardObj[cardNo];
                       this.markerAddList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: cardNo, cardDetail: cardDetail });
                     }

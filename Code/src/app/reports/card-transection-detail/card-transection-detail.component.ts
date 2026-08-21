@@ -7,6 +7,7 @@ import { AngularFireStorage } from "angularfire2/storage";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-card-transection-detail',
   templateUrl: './card-transection-detail.component.html',
@@ -14,7 +15,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class CardTransectionDetailComponent implements OnInit {
 
-  constructor(private commonService: CommonService, private modalService: NgbModal, private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService) { }
+  constructor(private commonService: CommonService, private modalService: NgbModal, private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService, private markerMapping: MarkerMappingService) { }
   cityName: any;
   db: any;
   transactionList: any[];
@@ -168,53 +169,16 @@ export class CardTransectionDetailComponent implements OnInit {
       });
   }
 
-  // Poori MarkersData ek baar padh kar cache kar leta hai.
-  markersDataCache: any = null;
 
-  loadMarkersData(): Promise<any> {
-    return new Promise((resolve) => {
-      if (this.markersDataCache != null) {
-        resolve(this.markersDataCache);
-        return;
-      }
-      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((data: any) => {
-        markersInstance.unsubscribe();
-        this.markersDataCache = data != null ? data : {};
-        resolve(this.markersDataCache);
-      });
-    });
-  }
+
+
 
   // Ek line ka data old path jaisa shape ({markerNo: record}) me.
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
-      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
-        linkInstance.unsubscribe();
-        if (links == null) {
-          resolve(null);
-          return;
-        }
-        this.loadMarkersData().then((markersData: any) => {
-          let lineData = {};
-          let keyArray = Object.keys(links);
-          let found = 0;
-          for (let i = 0; i < keyArray.length; i++) {
-            let markerNo = keyArray[i];
-            let uid = links[markerNo];
-            if (uid == null || uid == "") {
-              continue; // numeric keys ki wajah se aaye array-nulls skip
-            }
-            if (markersData[uid] == null) {
-              continue;
-            }
-            lineData[markerNo] = markersData[uid];
-            found++;
-          }
-          resolve(found > 0 ? lineData : null);
-        });
-      });
-    });
+    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
   }
 
   getMarkerImage(lineNo: any, cardNo: any) {
@@ -229,25 +193,39 @@ export class CardTransectionDetailComponent implements OnInit {
         if (markedHouseData != null) {
           let keyArray = Object.keys(markedHouseData);
           for (let j = 0; j < keyArray.length; j++) {
-            let markerNo = parseInt(keyArray[j]);
-            if (!isNaN(markerNo)) {
-              if (markedHouseData[markerNo]["cardNumber"] != null) {
-                if (markedHouseData[markerNo]["cardNumber"] == cardNo) {
-                  let image = markedHouseData[markerNo]["image"];
-                  let city = this.commonService.getFireStoreCity();
-                  if (this.cityName == "sikar") {
-                    city = "Sikar-Survey";
-                  }
-                  // OLD PATH (reference ke liye rakha hai):
-                  // this.imgMarkerURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
-                  // NEW PATH: image ab flat AllMarkerImages folder me hai (imgRef se).
-                  let imgRef = markedHouseData[markerNo]["imgRef"] != null ? markedHouseData[markerNo]["imgRef"] : image;
-                  this.imgMarkerURL = this.commonService.fireStoragePath + "DevTest%2FMarkingSurveyImages%2FAllMarkerImages%2F" + imgRef + "?alt=media";
-                  let element = <HTMLImageElement>document.getElementById("imgMarker");
-                  element.src = this.imgMarkerURL;
-                }
-              }
+            // PURANA GUARD: let markerNo = parseInt(...); if (!isNaN(markerNo))
+            //
+            // Union me jis marker ka markerNo pata na chale uski key uid ban
+            // jaati hai ({M12: rec}) - parseInt us par NaN deta tha aur wo
+            // marker mil hi nahi paata tha, yaani us card ki image kabhi nahi
+            // dikhti. Key ko waise ka waisa istemaal karte hain.
+            let markerNo = keyArray[j];
+            let marker = markedHouseData[markerNo];
+            if (marker == null || typeof marker != "object") {
+              continue;
             }
+            if (marker["cardNumber"] == null || marker["cardNumber"] != cardNo) {
+              continue;
+            }
+            let image = marker["image"];
+            let city = this.commonService.getFireStoreCity();
+            if (this.cityName == "sikar") {
+              city = "Sikar-Survey";
+            }
+            // OLD PATH (reference ke liye rakha hai):
+            // this.imgMarkerURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
+            //
+            // NEW PATH: image ab flat AllMarkerImages folder me hai (imgRef se).
+            //
+            // imgRef na ho to purana per-line folder wala URL banana hai, flat
+            // folder wala NAHI - us folder me purane naam wali file hai hi
+            // nahi, to woh URL sirf tooti hui image deta. (Yahi tarika
+            // house-marking ke deleted-marker list me pehle se hai.)
+            this.imgMarkerURL = marker["imgRef"] != null
+              ? this.commonService.fireStoragePath + "DevTest%2FMarkingSurveyImages%2FAllMarkerImages%2F" + marker["imgRef"] + "?alt=media"
+              : this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
+            let element = <HTMLImageElement>document.getElementById("imgMarker");
+            element.src = this.imgMarkerURL;
           }
         }
       }

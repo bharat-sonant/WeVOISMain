@@ -37,91 +37,38 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
   // NEW PATH helpers - record ab MarkersData/{uid} par hai aur line par uska
   // number LineWise batata hai. Ye purani {markerNo: record} shape lauta dete
   // hain, isliye baaki page waisa ka waisa chalta hai.
-  markersDataCache: any = null;
 
-  private loadMarkersData(): Promise<any> {
-    if (this.markersDataCache != null) {
-      return Promise.resolve(this.markersDataCache);
+
+
+
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
+  // Marker ka data/mapping badalne par service ki cache purani pad jaati hai.
+  // Ye page apne dbUpdate/dbRemove use karta hai (moveHelper ke nahi), isliye
+  // wahi faisla yahan bhi rakha gaya hai.
+  private clearMarkerCache(path: string) {
+    if (path != null && (path.indexOf("MarkersData") >= 0 || path.indexOf("MarkersMapping") >= 0)) {
+      this.markerMapping.clearLinkCache();
     }
-    return this.readOnce("EntityMarkingData/MarkersData").then((data: any) => {
-      this.markersDataCache = data != null ? data : {};
-      return this.markersDataCache;
-    });
   }
 
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
-    return this.readOnce("EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo).then((links: any) => {
-      if (links == null) { return null; }
-      return this.loadMarkersData().then((markersData: any) => {
-        let lineData = {};
-        let keyArray = Object.keys(links);
-        let found = 0;
-        for (let i = 0; i < keyArray.length; i++) {
-          let markerNo = keyArray[i];
-          let uid = links[markerNo];
-          if (uid == null || uid == "") { continue; }
-          if (markersData[uid] == null) { continue; }
-          lineData[markerNo] = markersData[uid];
-          found++;
-        }
-        return found > 0 ? lineData : null;
-      });
-    });
+    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
   }
 
   getNewPathWardData(wardNo: any): Promise<any> {
-    return this.readOnce("EntityMarkingData/MarkersMapping/LineWise/" + wardNo).then((wardLinks: any) => {
-      if (wardLinks == null) { return null; }
-      return this.loadMarkersData().then((markersData: any) => {
-        let wardData = {};
-        let found = 0;
-        let lineArray = Object.keys(wardLinks);
-        for (let l = 0; l < lineArray.length; l++) {
-          let lineNo = lineArray[l];
-          let links = wardLinks[lineNo];
-          if (links == null || typeof links != "object") { continue; }
-          let lineData = {};
-          let markerArray = Object.keys(links);
-          for (let m = 0; m < markerArray.length; m++) {
-            let markerNo = markerArray[m];
-            let uid = links[markerNo];
-            if (uid == null || uid == "") { continue; }
-            if (markersData[uid] == null) { continue; }
-            lineData[markerNo] = markersData[uid];
-            found++;
-          }
-          if (Object.keys(lineData).length > 0) { wardData[lineNo] = lineData; }
-        }
-        return found > 0 ? wardData : null;
-      });
-    });
+    return this.markerMapping.getWardRecords(this.db, wardNo);
   }
 
   getMarkerUid(ward: any, line: any, markerNo: any): Promise<any> {
-    return this.readOnce("EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo).then((uid: any) => {
-      return (uid != null && uid != "") ? uid : null;
-    });
+    return this.markerMapping.getUid(this.db, ward, line, markerNo);
   }
 
   // Target line ka agla safe markerNo: LineSummary ka lastMarkerKey aur line ki
   // asli sabse badi key, dono me se bada.
   getSafeLastKey(ward: any, line: any): Promise<any> {
-    return this.readOnce("EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + line + "/lastMarkerKey").then((summaryVal: any) => {
-      let fromSummary = summaryVal != null ? Number(summaryVal) : 0;
-      if (isNaN(fromSummary)) { fromSummary = 0; }
-      return this.readOnce("EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line).then((links: any) => {
-        let maxKey = 0;
-        if (links != null) {
-          let keyArray = Object.keys(links);
-          for (let i = 0; i < keyArray.length; i++) {
-            if (links[keyArray[i]] == null || links[keyArray[i]] == "") { continue; }
-            let n = Number(keyArray[i]);
-            if (!isNaN(n) && n > maxKey) { maxKey = n; }
-          }
-        }
-        return fromSummary > maxKey ? fromSummary : maxKey;
-      });
-    });
+    return this.markerMapping.getSafeLastKey(this.db, ward, line);
   }
 
   @ViewChild("moveProgressModal", { static: false }) moveProgressModal: TemplateRef<any>;
@@ -411,14 +358,17 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
   }
 
   private dbUpdate(path: string, data: any): Promise<any> {
+    this.clearMarkerCache(path);
     return this.withTimeout(this.db.object(path).update(data), this.DB_TIMEOUT_MS);
   }
 
   private dbSet(path: string, data: any): Promise<any> {
+    this.clearMarkerCache(path);
     return this.withTimeout(this.db.object(path).set(data), this.DB_TIMEOUT_MS);
   }
 
   private dbRemove(path: string): Promise<any> {
+    this.clearMarkerCache(path);
     return this.withTimeout(this.db.object(path).remove(), this.DB_TIMEOUT_MS);
   }
 
@@ -1073,6 +1023,10 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
           await this.dbUpdate("EntityMarkingData/MarkersData/" + state.uid, undo);
         }
         await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.newKey);
+        // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
+        // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
+        // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.
+        this.markerMapping.clearLinkCache();
       }
       // MoveHistory ki entry bhi hatani hai. Marker hila hi nahi, phir bhi
       // history "line X se line Y" dikhati rehti thi, aur retry successful
@@ -1092,6 +1046,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       }
       if (state.mappingWritten && state.markerID != "") {
         await this.dbUpdate("EntityMarkingData/MarkerWardMapping/" + state.markerID, {
+          markerkey: state.uid,
           image: row.oldImage,
           line: ctx.lineFrom.toString(),
           markerNo: row.markerNo.toString(),
@@ -1253,6 +1208,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     if (markerID != "") {
       state.mappingWritten = true;
       await this.dbUpdate("EntityMarkingData/MarkerWardMapping/" + markerID, {
+        markerkey: state.uid,
         image: row.newImage,
         line: lineTo.toString(),
         markerNo: row.newKey.toString(),
@@ -1269,7 +1225,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     // hai. Sirf purani line ki LineWise entry hatani hai, warna marker purani
     // aur nayi dono line par dikhta rahega.
     await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + row.markerNo);
-    this.markersDataCache = null; // write ke baad cache stale
+    this.markerMapping.clearLinkCache();
     if (cardData != null) {
       await this.dbRemove("Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo);
     }
@@ -1318,9 +1274,16 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     let startTime = new Date();
     let mappingCount = 0;
     $(this.divLoader).show();
-    this.markersDataCache = null;
-    this.getNewPathWardData(zoneNo).then(
-      (markerData: any) => {
+    this.markerMapping.clearLinkCache();
+    // Link index bhi chahiye - MarkerWardMapping me ab markerkey (uid) jaata
+    // hai, aur uid sirf mapping me hota hai, record ke andar nahi.
+    Promise.all([
+      this.getNewPathWardData(zoneNo),
+      this.markerMapping.getWardLinks(this.db, zoneNo)
+    ]).then(
+      (result: any) => {
+        let markerData = result[0];
+        let wardLinks = result[1] != null ? result[1] : {};
         if (markerData != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateWardMarker", markerData);
           let keyArray = Object.keys(markerData);
@@ -1347,12 +1310,22 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
                   image = lineData[markerNo]["image"];
                 }
                 if (markerId != "") {
-                  let data = {
+                  let uid = (wardLinks[lineNo] != null) ? wardLinks[lineNo][markerNo] : null;
+                  let data: any = {
                     ward: zoneNo,
                     line: lineNo,
                     latLng: latLng,
+                    // Image ab flat folder AllMarkerImages/{uid}.jpg par hai.
+                    // Record ka purana `image` (per-line {markerNo}.jpg) yahan
+                    // likhne se URL galat ban jaata tha.
                     image: image,
                     markerNo: markerNo
+                  }
+                  if (uid != null && uid != "") {
+                    // markerkey = marker ka uid. Move par uid nahi badalta,
+                    // isliye card ka link ek baar ban jaaye to move-proof hai.
+                    data["markerkey"] = uid;
+                    data["image"] = uid + ".jpg";
                   }
                   let path = "EntityMarkingData/MarkerWardMapping/" + markerId;
                   this.db.object(path).update(data);
@@ -1395,7 +1368,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
    * Ek zone ke saare lines ke counts dobara ginta hai.
    */
   private async recalcZoneCounts(zoneNo: any): Promise<boolean> {
-    this.markersDataCache = null;
+    this.markerMapping.clearLinkCache();
     let markerData = await this.getNewPathWardData(zoneNo);
     if (markerData == null) {
       return false;
@@ -1457,16 +1430,20 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
           }
         }
       }
-      await this.dbUpdate("EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo + "/" + lineNo, {
+      // Pehle ye do alag dbUpdate() the (counts + lastMarkerKey), dono usi
+      // path par - yaani har line par do await, do write. Ek patch me bhej
+      // rahe hain: 300 line wale ward par 600 ki jagah 300 write.
+      let summaryPatch: any = {
         marksCount: markerCount,
         surveyedCount: surveyedCount,
         lineRevisitCount: revisitCount,
         lineRfidNotFoundCount: rfIdNotFound,
         alreadyInstalledCount: alreadyInstalledCount
-      });
+      };
       if (lastMarkerKey > 0) {
-        await this.dbUpdate("EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo + "/" + lineNo, { lastMarkerKey: lastMarkerKey });
+        summaryPatch["lastMarkerKey"] = lastMarkerKey;
       }
+      await this.dbUpdate("EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo + "/" + lineNo, summaryPatch);
     }
 
     await this.dbUpdate("EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo, {

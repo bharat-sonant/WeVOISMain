@@ -40,36 +40,20 @@ export class CardMarkerMappingComponent implements OnInit {
   }
 
 
-  markersDataCache: any = null;
   markersDataPromise: any = null;
   uidMap: any = {};
   notMigratedCount = 0;
 
   // Cache sirf operation ke shuru me clear hota hai, har write par nahi.
   resetNewPathCache() {
-    this.markersDataCache = null;
+    this.markerMapping.clearLinkCache();
     this.markersDataPromise = null;
     this.uidMap = {};
     this.notMigratedCount = 0;
   }
 
-  loadMarkersData(): Promise<any> {
-    if (this.markersDataCache != null) {
-      return Promise.resolve(this.markersDataCache);
-    }
-    // Ek hi read chale chahe 100 caller ek saath aa jayein.
-    if (this.markersDataPromise != null) {
-      return this.markersDataPromise;
-    }
-    this.markersDataPromise = new Promise((resolve) => {
-      let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((data: any) => {
-        markersInstance.unsubscribe();
-        this.markersDataCache = data != null ? data : {};
-        resolve(this.markersDataCache);
-      });
-    });
-    return this.markersDataPromise;
-  }
+
+
 
   setUid(ward: any, line: any, markerNo: any, uid: any) {
     this.uidMap[ward + "|" + line + "|" + markerNo] = uid;
@@ -80,80 +64,15 @@ export class CardMarkerMappingComponent implements OnInit {
     return uid != null && uid != "" ? uid : null;
   }
 
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo + "/" + lineNo;
-      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
-        linkInstance.unsubscribe();
-        if (links == null) {
-          resolve(null);
-          return;
-        }
-        this.loadMarkersData().then((markersData: any) => {
-          let lineData = {};
-          let keyArray = Object.keys(links);
-          let found = 0;
-          for (let i = 0; i < keyArray.length; i++) {
-            let markerNo = keyArray[i];
-            let uid = links[markerNo];
-            if (uid == null || uid == "") {
-              continue; // numeric keys ki wajah se aaye array-nulls skip
-            }
-            if (markersData[uid] == null) {
-              continue;
-            }
-            lineData[markerNo] = markersData[uid];
-            this.setUid(wardNo, lineNo, markerNo, uid);
-            found++;
-          }
-          resolve(found > 0 ? lineData : null);
-        });
-      });
-    });
+    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
   }
 
   getNewPathWardData(wardNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + wardNo;
-      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((wardLinks: any) => {
-        linkInstance.unsubscribe();
-        if (wardLinks == null) {
-          resolve(null);
-          return;
-        }
-        this.loadMarkersData().then((markersData: any) => {
-          let wardData = {};
-          let found = 0;
-          let lineArray = Object.keys(wardLinks);
-          for (let l = 0; l < lineArray.length; l++) {
-            let lineNo = lineArray[l];
-            let links = wardLinks[lineNo];
-            if (links == null || typeof links != "object") {
-              continue;
-            }
-            let lineData = {};
-            let markerArray = Object.keys(links);
-            for (let m = 0; m < markerArray.length; m++) {
-              let markerNo = markerArray[m];
-              let uid = links[markerNo];
-              if (uid == null || uid == "") {
-                continue; // numeric keys ki wajah se aaye array-nulls skip
-              }
-              if (markersData[uid] == null) {
-                continue;
-              }
-              lineData[markerNo] = markersData[uid];
-              this.setUid(wardNo, lineNo, markerNo, uid);
-              found++;
-            }
-            if (Object.keys(lineData).length > 0) {
-              wardData[lineNo] = lineData;
-            }
-          }
-          resolve(found > 0 ? wardData : null);
-        });
-      });
-    });
+    return this.markerMapping.getWardRecords(this.db, wardNo);
   }
 
   // Line-level scalars (counts, lastMarkerKey, ApproveStatus) ka new-path base.
@@ -163,31 +82,7 @@ export class CardMarkerMappingComponent implements OnInit {
 
   // Agla safe markerNo: LineSummary ka lastMarkerKey aur us line ki asli mapping keys, dono me se bada.
   getSafeLastKey(zoneTo: any, lineTo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let summaryPath = this.getLineSummaryPath(zoneTo, lineTo) + "/lastMarkerKey";
-      let sInst = this.db.object(summaryPath).valueChanges().subscribe((summaryVal: any) => {
-        sInst.unsubscribe();
-        let fromSummary = summaryVal != null ? Number(summaryVal) : 0;
-        if (isNaN(fromSummary)) { fromSummary = 0; }
-
-        let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo;
-        let lInst = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
-          lInst.unsubscribe();
-          let maxKey = 0;
-          if (links != null) {
-            let keyArray = Object.keys(links);
-            for (let i = 0; i < keyArray.length; i++) {
-              if (links[keyArray[i]] == null || links[keyArray[i]] == "") {
-                continue; // numeric keys ki wajah se aaye array-nulls skip
-              }
-              let n = Number(keyArray[i]);
-              if (!isNaN(n) && n > maxKey) { maxKey = n; }
-            }
-          }
-          resolve(fromSummary > maxKey ? fromSummary : maxKey);
-        });
-      });
-    });
+    return this.markerMapping.getSafeLastKey(this.db, zoneTo, lineTo);
   }
 
   // Marker ko nayi line/ward par. Data global rehta hai, sirf mapping re-point hoti hai. OriginalToUid yahan NAHI chhuti, warna migration re-run par duplicate uid ban jaayega.
@@ -235,6 +130,10 @@ export class CardMarkerMappingComponent implements OnInit {
       this.db.database.ref("EntityMarkingData/MarkersMapping/WardWise/" + zoneFrom + "/" + uid).set(null);
     }
     this.db.object("EntityMarkingData/MarkersMapping/WardWise/" + zoneTo + "/" + uid).set(lineVal);
+
+    // Cache saaf SABSE AAKHIR me - pehle karne se beech me aayi koi read
+    // purani list dobara cache kar leti.
+    this.markerMapping.clearLinkCache();
   }
 
   mapHouseMarkerData() {
@@ -338,6 +237,7 @@ export class CardMarkerMappingComponent implements OnInit {
                       // this.db.object(dbPath).update(markerData[markerNo]);
                       // NEW PATH: marker apni hi line par hai. Sirf wahi do fields likhte hain jo upar badle hain, poora record nahi - warna beech me hua koi approve/edit purane snapshot se overwrite ho jaata.
                       this.db.object("EntityMarkingData/MarkersData/" + uid).update({ latLng: latLng, alreadyInstalled: null });
+                      this.markerMapping.clearLinkCache();
                       markerIndex++;
                       this.mapData(zoneNo, data, keyArray, index, lineNo, markerData, markerIndex, markerKeyArray);
                     }
@@ -466,35 +366,59 @@ export class CardMarkerMappingComponent implements OnInit {
   }
 
   setMarkerLocation(zoneNo: any, cardNo: any, latLng: any, totalLines: any) {
-    for (let i = 1; i <= totalLines; i++) {
-      // OLD PATH (reference ke liye rakha hai):
-      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + i;
-      // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
-      //   markerInstance.unsubscribe();
-      // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
-      this.getNewPathLineData(zoneNo, i).then((data: any) => {
-        if (data != null) {
-          let keyArray = Object.keys(data);
-          if (keyArray.length > 0) {
-            for (let j = 0; j < keyArray.length; j++) {
-              let markerNo = keyArray[j];
-              if (data[markerNo]["cardNumber"] != null) {
-                if (data[markerNo]["cardNumber"] == cardNo) {
-                  // OLD PATH (reference ke liye rakha hai):
-                  // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + i + "/" + markerNo;
-                  // this.db.object(dbPath).update({ latLng: latLng, preLatLng: data[markerNo]["latLng"] });
-                  // NEW PATH: MarkersData/{uid}
-                  let uid = this.getUid(zoneNo, i, markerNo);
-                  if (uid == null) {
-                    continue; // marker new path par nahi hai
-                  }
-                  this.db.object("EntityMarkingData/MarkersData/" + uid).update({ latLng: latLng, preLatLng: data[markerNo]["latLng"] });
-                }
-              }
-            }
-          }
+    // OLD PATH (reference ke liye rakha hai) - har line ka node alag padhna
+    // padta tha kyunki marker record wahin line ke neeche rehte the:
+    // for (let i = 1; i <= totalLines; i++) {
+    //   let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + i;
+    //   let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+    //     markerInstance.unsubscribe();
+    //
+    // NEW PATH: poora ward EK query me (getWardRecords -> orderByChild("ward")).
+    //
+    // Line-by-line padhne ka ab koi faayda nahi raha, ulta nuksan tha: naye
+    // structure me ek line ka data mapping ke uid se ban'ta hai, yaani har line
+    // ke liye us line ke har marker ka alag read. 200 line x 40 marker = 8000
+    // reads, jabki wahi 8000 record ek hi ward query me aa jaate hain.
+    //
+    // Yahan card poore ward me kahin bhi ho sakta hai, isliye ward hi sahi
+    // daayra hai. totalLines ab sirf itna batata hai ki kahan tak dekhna hai.
+    this.getNewPathWardData(zoneNo).then((wardData: any) => {
+      if (wardData == null) {
+        return;
+      }
+      let updated = false;
+      for (let i = 1; i <= totalLines; i++) {
+        let data = wardData[i] != null ? wardData[i] : wardData[String(i)];
+        if (data == null) {
+          continue;
         }
-      });
-    }
+        let keyArray = Object.keys(data);
+        for (let j = 0; j < keyArray.length; j++) {
+          let markerNo = keyArray[j];
+          if (data[markerNo] == null || typeof data[markerNo] != "object") {
+            continue;
+          }
+          if (data[markerNo]["cardNumber"] == null || data[markerNo]["cardNumber"] != cardNo) {
+            continue;
+          }
+          // OLD PATH (reference ke liye rakha hai):
+          // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + i + "/" + markerNo;
+          // this.db.object(dbPath).update({ latLng: latLng, preLatLng: data[markerNo]["latLng"] });
+          // NEW PATH: MarkersData/{uid}
+          let uid = this.getUid(zoneNo, i, markerNo);
+          if (uid == null) {
+            continue; // marker new path par nahi hai
+          }
+          this.db.object("EntityMarkingData/MarkersData/" + uid).update({ latLng: latLng, preLatLng: data[markerNo]["latLng"] });
+          updated = true;
+        }
+      }
+      // Cache clear loop ke BAAD, ek baar. Pehle ye har matching marker par
+      // andar chalta tha - usi ward ka data jo abhi utara tha wo turant phenk
+      // deta tha, aur agla card phir se poori query maarta tha.
+      if (updated) {
+        this.markerMapping.clearLinkCache();
+      }
+    });
   }
 }

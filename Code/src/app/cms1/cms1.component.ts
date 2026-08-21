@@ -9,6 +9,7 @@ import * as firebase from 'firebase/app';
 import { keyframes } from '@angular/animations';
 import { Condition } from 'selenium-webdriver';
 
+import { MarkerMappingService } from '../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-cms1',
   templateUrl: './cms1.component.html',
@@ -16,7 +17,7 @@ import { Condition } from 'selenium-webdriver';
 })
 export class Cms1Component implements OnInit {
 
-  constructor(public fs: FirebaseService, public dbFireStore: AngularFirestore, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, public dbFireStore: AngularFirestore, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient, private markerMapping: MarkerMappingService) { }
   db: any;
   cityName: any;
   nameList: any = [];
@@ -1002,6 +1003,9 @@ export class Cms1Component implements OnInit {
   }
 
   deleteHisarMarker() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let count = 0;
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
@@ -1036,6 +1040,9 @@ export class Cms1Component implements OnInit {
   }
 
   hisarMarkerUpload() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -1179,6 +1186,9 @@ export class Cms1Component implements OnInit {
   }
 
   removeLineApprove() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let wardNo = $("#txtwardLineMarker").val();
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1270,6 +1280,9 @@ export class Cms1Component implements OnInit {
   }
 
   updateRevisitMarker() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let wardNo = $("#txtwardLineMarker").val();
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1314,6 +1327,9 @@ export class Cms1Component implements OnInit {
   }
 
   checkMarkerCount() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let wardNo = "129-R1";
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1361,6 +1377,9 @@ export class Cms1Component implements OnInit {
   }
 
   removeMarkerRejectStatus() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
 
     let markerList = [];
     let dbPath = "EntityMarkingData/MarkedHouses/";
@@ -1405,6 +1424,9 @@ export class Cms1Component implements OnInit {
 
 
   exportMarkers() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let houseTypeList = [];
     let dbPath = "Defaults/FinalHousesType/";
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
@@ -1690,6 +1712,9 @@ export class Cms1Component implements OnInit {
   }
 
   getD2DMatkers() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let wardNo = "139-R1";
     let todayDate = "2022-07-12";
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
@@ -1720,6 +1745,9 @@ export class Cms1Component implements OnInit {
   }
 
   updateMalviyaNagarData() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let wardNo = "140-R1";
     let lineNo = "10";
     let dbPath = "EntityMarkingData/MarkedHousesNew/" + wardNo + "/" + lineNo;
@@ -1758,6 +1786,9 @@ export class Cms1Component implements OnInit {
   }
 
   setTotal(wardNo: any, lineNo: any, markerCount: any) {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/marksCount";
     let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -1803,6 +1834,9 @@ export class Cms1Component implements OnInit {
   }
 
   moveMalviyanagarImages() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
 
     let wardNo = "125-R1";
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
@@ -2509,6 +2543,9 @@ export class Cms1Component implements OnInit {
   }
 
   getMistakeMarkerNo(list: any, index: any) {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     if (index == list.length) {
       console.log(list);
       if (list.length > 0) {
@@ -2595,6 +2632,23 @@ export class Cms1Component implements OnInit {
     }
   }
 
+  // Neeche ke saare function purane MarkedHouses structure par likhe gaye the -
+  // ek-baar ke data-fix aur city-specific kaam (Hisar, Malviyanagar, Murlipura,
+  // Dehradun...). Marker ka data ab MarkersData + MarkersMapping par hai, aur
+  // MarkedHouses sirf migration ka source reh gaya hai.
+  //
+  // Inhe chalne dena khatarnaak tha: ye us purane tree par likhte hain jise
+  // portal padhta hi nahi, yaani DB me chupchaap junk banta aur naye path se
+  // farak badhta jaata. Isliye sabko band kar diya gaya hai - bilkul waise hi
+  // jaise 'Manage Marking Data' aur 'Set Marker Images' pages band hue the.
+  //
+  // Kisi ek kaam ki phir se zaroorat pade to use naye path par likhna hoga
+  // (MarkerMappingService), sirf ye guard hata dena kaafi nahi hai.
+  oldPathBlocked(): boolean {
+    this.commonService.setAlertMessage("error", "Ye kaam purane marker structure (MarkedHouses) par chalta tha aur band kar diya gaya hai. Marker ka data ab MarkersData/MarkersMapping par hai.");
+    return true;
+  }
+
   addHouseEcogram() {
     let wardNo = "8";
     let element = <HTMLInputElement>document.getElementById("flpUpload");
@@ -2612,17 +2666,27 @@ export class Cms1Component implements OnInit {
       var worksheet = workbook.Sheets[this.first_sheet_name];
       let fileList = XLSX.utils.sheet_to_json(worksheet, { raw: true });
       if (fileList.length > 0) {
-        let dbPathMarker = "EntityMarkingData/MarkedHouses/" + wardNo + "/1";
-        let markerInstance = this.db.object(dbPathMarker).valueChanges().subscribe(data => {
-          markerInstance.unsubscribe();
-          let lastMarkerKey = 0;
-          let marksCount = 0;
-          let markerKey = 0;
-          if (data != null) {
-            lastMarkerKey = Number(data["lastMarkerKey"]);
-            marksCount = Number(data["marksCount"]);
-            markerKey = Number(data["lastMarkerKey"]);
+        // NAYA PATH. Pehle ye marker seedha MarkedHouses par likhta tha aur
+        // markerKey ko padh-kar-badha-kar-likho se banata tha - na uid banta
+        // tha, na koi mapping, aur do upload ek saath chalte to dono ek hi
+        // number par likh dete. Isliye Excel se aaye marker portal par kahin
+        // dikhte hi nahi the.
+        //
+        // Ab uid ka poora block ek transaction se reserve hota hai aur har
+        // marker service se banta hai (MarkersData + MarkerWise + WardWise +
+        // LineWise + LineSummary + MarkerWardMapping, sab ek jagah).
+        let lineNo = "1";
+        Promise.all([
+          this.markerMapping.reserveUidBlock(this.db, fileList.length),
+          this.markerMapping.getSafeLastKey(this.db, wardNo, lineNo)
+        ]).then((result: any) => {
+          let blockStart = result[0];
+          if (blockStart == null) {
+            this.commonService.setAlertMessage("error", "Marker counter reserve nahi ho paya, dobara try karein.");
+            return;
           }
+          let markerKey = Number(result[1]) || 0;
+          let created = 0;
           for (let i = 0; i < fileList.length; i++) {
             let cardNo = "";
             let cardImage = "";
@@ -2643,8 +2707,6 @@ export class Cms1Component implements OnInit {
                   }
                   latLng = fileList[i]["Lat"] + "," + fileList[i]["Long"];
                   cardImage = fileList[i]["PropertyID"] + ".jpg";
-                  marksCount++;
-                  lastMarkerKey++;
                   markerKey++;
                   let objMarker = {
                     address: "",
@@ -2676,13 +2738,18 @@ export class Cms1Component implements OnInit {
                   }
                   // this.uploadCardImage(imageUrl, cardImage)
                   this.db.object("CardWardMapping/" + cardNo).update(objCardWardMapping);
-                  this.db.object("EntityMarkingData/MarkedHouses/" + wardNo + "/1/" + markerKey).update(objMarker);
+                  // Block me se agla uid. Number use na ho to bas gap reh
+                  // jaata hai, nuksan nahi - uid sirf unique hona chahiye.
+                  created++;
+                  this.markerMapping.writeMarker(this.db, wardNo, lineNo, objMarker, blockStart + created, markerKey);
                   this.db.object("Houses/" + wardNo + "/1/" + cardNo).update(objCard);
                 }
               }
             }
           }
-          this.db.object(dbPathMarker).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
+          // marksCount aur lastMarkerKey dono writeMarker khud LineSummary par
+          // badha deta hai, isliye yahan alag se kuch likhne ki zaroorat nahi.
+          this.commonService.setAlertMessage("success", "Total " + created + " marker naye path par ban gaye.");
         });
       }
     }
@@ -2770,6 +2837,9 @@ export class Cms1Component implements OnInit {
   }
 
   exportNewCardNo() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let ward = "149-R2";
     let markerList = [];
     let houseList = [];
@@ -2931,6 +3001,9 @@ export class Cms1Component implements OnInit {
   }
 
   getOldMarkerDataMalviyaNagar(list: any, index: any) {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     console.log(index);
     if (index == list.length) {
       if (list.length > 0) {
@@ -3048,6 +3121,9 @@ export class Cms1Component implements OnInit {
   }
 
   deleteOldDataMalviyanagar() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let element = <HTMLInputElement>document.getElementById("flpUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -3081,6 +3157,9 @@ export class Cms1Component implements OnInit {
 
 
   addCardsMalviyanagar(list: any, index: any, wardNo: any) {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     if (index == list.length) {
       this.commonService.setAlertMessage("success", "card added successfully!!!");
     }
@@ -3221,6 +3300,9 @@ export class Cms1Component implements OnInit {
   }
 
   updateMarkingData() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let markerList = [];
     let wardNo = "21_28";
     let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
@@ -3272,6 +3354,9 @@ export class Cms1Component implements OnInit {
   }
 
   addHouseToMarker() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let zoneNo = $("#txtZoneNo").val();
     let lineNo = $("#txtLineNo").val();
     let dbPath = "Houses/" + zoneNo + "/" + lineNo;
@@ -3318,6 +3403,9 @@ export class Cms1Component implements OnInit {
 
 
   addHouse() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let zoneNo = $("#txtZoneNo").val();
     let lineNo = $("#txtLineNo").val();
     let cardNoCount = Number(localStorage.getItem("cardNoCount"));
@@ -3378,6 +3466,9 @@ export class Cms1Component implements OnInit {
   }
 
   saveHouse(markerObj: any, zoneNo: any, cardNo: any, lineNo: any, rfId: any, mobileNo: any, markerNo: any, surveyedCount: any) {
+    if (this.oldPathBlocked()) {
+      return;
+    }
 
     let dbPath = "CardWardMapping/" + cardNo;
     this.db.object(dbPath).update({ line: lineNo, ward: zoneNo });
@@ -3552,6 +3643,9 @@ export class Cms1Component implements OnInit {
   }
 
   compairMarkerHouseData() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let houseList = [];
     let duplicateCardList = [];
     let dbPath = "Houses/142-R1";
@@ -3613,6 +3707,9 @@ export class Cms1Component implements OnInit {
   }
 
   updateMalviyaNagarHouseData() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let dbPath = "EntityMarkingData/MarkedHouses/150-R3";
     let instance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -3747,6 +3844,9 @@ export class Cms1Component implements OnInit {
   }
 
   updateMurlipuraHouseData() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
 
 
 
@@ -3863,6 +3963,9 @@ export class Cms1Component implements OnInit {
   }
 
   getHouseData() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let zoneNo = "134-R1";
     let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
 
@@ -4127,6 +4230,9 @@ export class Cms1Component implements OnInit {
 
 
   setMarkerID() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let selectedZone = $("#txtDates").val();
     let lastMarkerID = 0;
     console.log(selectedZone);
@@ -4174,6 +4280,9 @@ export class Cms1Component implements OnInit {
   }
 
   setDehradunWardLineData() {
+    if (this.oldPathBlocked()) {
+      return;
+    }
     let ward = $("#txtDates").val();
     let dbPath = "EntityMarkingData/MarkedHouses/" + ward;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
