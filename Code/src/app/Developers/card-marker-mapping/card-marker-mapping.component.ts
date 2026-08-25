@@ -118,8 +118,11 @@ export class CardMarkerMappingComponent implements OnInit {
     for (let k = 0; k < pKeys.length; k++) { data[pKeys[k]] = patch[pKeys[k]]; }
     this.db.object("EntityMarkingData/MarkersData/" + uid).update(patch);
 
-    // LineWise: nayi jagah add, purani jagah se hata do
-    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo + "/" + newMarkerNo).set(uid);
+    // LineWise: nayi jagah add, purani jagah se hata do.
+    // Key ab uid hai aur value sirf nishaan (true) - markerNo record me rehta hai.
+    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo + "/" + uid).set(true);
+    this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + uid).set(null);
+    // Purane data me key markerNo hoti thi - wo entry bhi hata deni chahiye.
     this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + markerNoFrom).set(null);
 
     // MarkerWise mapping

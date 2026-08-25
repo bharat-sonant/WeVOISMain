@@ -231,9 +231,16 @@ export class MarkerMappingService {
         }
         let markerArray = Object.keys(links);
         for (let j = 0; j < markerArray.length; j++) {
-          let uid = links[markerArray[j]];
-          if (uid == null || uid == "") {
-            continue; // numeric keys ki wajah se aaye array-nulls skip
+          // LineWise ke DO roop pehchante hain:
+          //   NAYA   { uid: true }      - key hi pehchaan hai, value bas nishaan
+          //   PURANA { markerNo: uid }  - key serial thi, uid value me tha
+          // Naye data me value `true` hai, isliye value ko uid maan lena galat
+          // hoga - key dekh kar tay karte hain.
+          let key = String(markerArray[j]);
+          let isUidKey = key.charAt(0) == "M";
+          let uid = isUidKey ? key : links[markerArray[j]];
+          if (uid == null || uid === "" || typeof uid != "string") {
+            continue; // array-nulls aur kharaab entry skip
           }
           // Mapping hai par record nahi - aisa marker hai hi nahi.
           if (markersData != null && markersData[uid] == null) {
@@ -242,7 +249,10 @@ export class MarkerMappingService {
           if (result[lineNo] == null) {
             result[lineNo] = {};
           }
-          result[lineNo][markerArray[j]] = uid;
+          // Andar ka shape wahi rehta hai jo pehle tha ({key: uid}). Naye data
+          // me key uid ban jaati hai - shapeLine() us haalat ko pehle se
+          // sambhalta hai (record ke markerNo se display number nikaal leta hai).
+          result[lineNo][isUidKey ? uid : key] = uid;
           placed[uid] = true;
         }
       }
@@ -724,6 +734,10 @@ export class MarkerMappingService {
   // Isliye pehle line ki asli sabse badi key nikalte hain, phir transaction me
   // dono me se bada leke +1 karte hain. Portal ke move flows ka getSafeLastKey()
   // bhi yahi karta hai.
+  //
+  // NAYE data me LineWise ki key uid hai, usme koi number hota hi nahi - wahan
+  // ye scan 0 deta hai aur number seedha counter se aa jaata hai. Scan sirf
+  // PURANE ({markerNo: uid}) data ke liye bacha hai, isliye hataya nahi.
   nextLineKey(db: any, ward: any, line: any): Promise<any> {
     return this.readOnce(db, this.lineWisePath + ward + "/" + line).then((links: any) => {
       let maxKey = 0;
@@ -842,9 +856,14 @@ export class MarkerMappingService {
       if (String(wardFrom) != String(wardTo)) {
         updates[this.wardWisePath + wardFrom + "/" + uid] = null;
       }
-      // LineWise har move par hatani padti hai - line badle ya markerNo, purani
-      // key apni jagah padi reh jaati hai aur marker do jagah dikhne lagta hai.
-      if (String(wardFrom) != String(wardTo) || String(lineFrom) != String(lineTo) || String(markerNoFrom) != String(markerNoTo)) {
+      // LineWise ki purani entry tabhi hatani hai jab ward ya line badli ho.
+      // Key ab uid hai (markerNo nahi), isliye sirf markerNo badalne par entry
+      // apni jagah wahi ki wahi rehti hai - kuch hataana nahi padta. Pehle key
+      // markerNo thi, tab number badalne par bhi purani key padi reh jaati thi
+      // aur marker do jagah dikhta tha.
+      if (String(wardFrom) != String(wardTo) || String(lineFrom) != String(lineTo)) {
+        updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + uid] = null;
+        // Purane data me key markerNo hoti thi - wo entry bhi saath hi jaani chahiye.
         updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + markerNoFrom] = null;
       }
       if (Object.keys(updates).length == 0) {
@@ -1244,7 +1263,9 @@ export class MarkerMappingService {
     let updates: any = {};
     updates[this.markerWisePath + uid] = { ward: ward, line: lineVal };
     updates[this.wardWisePath + ward + "/" + uid] = lineVal;
-    updates[this.lineWisePath + ward + "/" + lineVal + "/" + markerNo] = uid;
+    // LineWise ki key ab uid hai aur value sirf maujoodgi ka nishaan (true).
+    // markerNo yahan nahi jaata - wo record ke andar rehta hai.
+    updates[this.lineWisePath + ward + "/" + lineVal + "/" + uid] = true;
     return db.database.ref().update(updates);
   }
 
@@ -1265,9 +1286,12 @@ export class MarkerMappingService {
         updates[this.markerWisePath + uid] = null;
         updates[this.wardWisePath + place["ward"] + "/" + uid] = null;
         if (links != null && typeof links == "object") {
+          // Naye data me key hi uid hai; purane me uid value me tha. Dono
+          // haalat dekhte hain, warna marker hatane par LineWise ki entry
+          // padi reh jaati aur wo line par bhoot ban kar dikhta rehta.
           let keyArray = Object.keys(links);
           for (let i = 0; i < keyArray.length; i++) {
-            if (links[keyArray[i]] == uid) {
+            if (keyArray[i] == uid || links[keyArray[i]] == uid) {
               updates[linePath + "/" + keyArray[i]] = null;
             }
           }

@@ -1022,6 +1022,8 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
           }
           await this.dbUpdate("EntityMarkingData/MarkersData/" + state.uid, undo);
         }
+        // Nayi line par writePlace ne uid ki key banayi thi - wahi hatani hai.
+        await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + state.uid);
         await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.newKey);
         // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
         // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
@@ -1222,6 +1224,10 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     // NEW PATH: record hataana nahi - wo MarkersData par apni jagah hi rehta
     // hai. Sirf purani line ki LineWise entry hatani hai, warna marker purani
     // aur nayi dono line par dikhta rahega.
+    // LineWise ki key ab uid hai; purane data me markerNo thi - dono hataate hain.
+    if (state.uid != null) {
+      await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + state.uid);
+    }
     await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + row.markerNo);
     this.markerMapping.clearLinkCache();
     if (cardData != null) {

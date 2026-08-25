@@ -362,10 +362,12 @@ export class MarkerApprovalTestComponent {
         }
         let keyArray = Object.keys(links);
         for (let i = 0; i < keyArray.length; i++) {
-          let uid = links[keyArray[i]];
-          // numeric keys ki wajah se aaye array-nulls skip
-          if (uid == null || uid == "" || uidArray.indexOf(uid) >= 0) {
-            continue;
+          // Naya data { uid: true } - pehchaan KEY me hai. Purana data
+          // { markerNo: uid } - pehchaan value me thi. Dono padhte hain.
+          let key = String(keyArray[i]);
+          let uid = key.charAt(0) == "M" ? key : links[keyArray[i]];
+          if (uid == null || uid === "" || typeof uid != "string" || uidArray.indexOf(uid) >= 0) {
+            continue; // array-nulls aur kharaab entry skip
           }
           uidArray.push(uid);
         }

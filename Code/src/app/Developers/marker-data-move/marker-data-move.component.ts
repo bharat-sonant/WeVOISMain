@@ -12,7 +12,7 @@ import { MarkerMappingService } from '../../services/marker/marker-mapping.servi
 //   - Mapping: EntityMarkingData/MarkersMapping/MarkerWise/M{n} = { line, ward }
 //              EntityMarkingData/MarkersMapping/WardWise/{ward}/M{n} = line
 //              EntityMarkingData/MarkersMapping/WardWise/{ward}/lastMarkerKey = n
-//              EntityMarkingData/MarkersMapping/LineWise/{ward}/{line}/{markerNo} = M{n}
+//              EntityMarkingData/MarkersMapping/LineWise/{ward}/{line}/{uid} = true
 //   - Line:    EntityMarkingData/MarkersMapping/LineSummary/{ward}/{line}
 // OLD PATH (reference ke liye rakha hai):
 //              (ApproveStatus node + all line-level count scalars, copied as-is)
@@ -295,8 +295,15 @@ export class MarkerDataMoveComponent implements OnInit {
     // Already moved once -> reuse the same UID (idempotent re-run).
     // Link ka pehla source LineWise mapping hai; na mile to neeche 4 fallback.
     let lineLinks = this.lineWiseMap != null ? this.lineWiseMap[item["line"]] : null;
-    let linkedUid = lineLinks != null ? lineLinks[item["oldMarkerNo"]] : null;
+    // PURANI shape { markerNo: uid } - value se uid mil jaata tha. NAYI shape
+    // { uid: true } me markerNo hai hi nahi, isliye us par se uid nahi milta;
+    // wahan OriginalToUid (neeche fallback 1) kaam karta hai, jo isi liye
+    // permanent rakha gaya hai.
+    let oldStyleUid = lineLinks != null ? lineLinks[item["oldMarkerNo"]] : null;
+    let linkedUid = (oldStyleUid != null && typeof oldStyleUid == "string") ? oldStyleUid : null;
     // Is marker ka LineWise entry hai ya nahi - neeche repair ke liye chahiye.
+    // Nayi shape me ye uid pata chalne ke BAAD hi tay ho sakta hai, isliye
+    // niche uid milne par dobara check karte hain.
     let hasLineWise = linkedUid != null && linkedUid != "";
     // Fallback 1: OriginalToUid — never re-pointed, so it still resolves even
     // after the marker was moved to another line/ward from the portal.
@@ -350,7 +357,10 @@ export class MarkerDataMoveComponent implements OnInit {
             // bhi isi ward+line par hai. Portal se doosri line par move ho
             // chuka ho to haath nahi lagate - warna wo apni purani line par
             // bhi dikhne lag jaayega (duplicate).
-            if (!hasLineWise
+            // uid ab pata hai - nayi shape ({uid: true}) me entry maujood hai
+            // ya nahi, ye ab check kar sakte hain.
+            let hasNewStyleLink = lineLinks != null && lineLinks[uid] != null && lineLinks[uid] !== false;
+            if (!hasLineWise && !hasNewStyleLink
               && String(existing["ward"]) == String(ward)
               && String(existing["line"]) == String(item["line"])) {
               this.writeLineWiseLink(ward, item["line"], item["oldMarkerNo"], uid);
@@ -515,7 +525,7 @@ export class MarkerDataMoveComponent implements OnInit {
   }
 
   // Records where an old marker went:
-  //   MarkersMapping/LineWise/{ward}/{line}/{markerNo} = M{n}
+  //   MarkersMapping/LineWise/{ward}/{line}/{uid} = true
   // This is the re-run guard — old record par sirf movedToNewPath node add hota hai.
   //
   // NOTE: LineWise doubles as the "which markers are on this line"
@@ -525,7 +535,11 @@ export class MarkerDataMoveComponent implements OnInit {
   // allocated). OriginalToUid below is therefore written ONCE at migration time
   // and never re-pointed — it is the permanent original-location -> UID link.
   writeLineWiseLink(ward: any, line: any, markerNo: any, uid: string) {
-    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo).set(uid);
+    // LineWise ki key ab uid hai aur value sirf maujoodgi ka nishaan (true).
+    // markerNo ab yahan nahi rehta - wo record ke andar hai. Original link
+    // (OriginalToUid) purane {line}/{markerNo} par hi rehta hai, kyunki wahi
+    // permanent "kahan se aaya tha" ka record hai aur re-run uspar tikta hai.
+    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + uid).set(true);
     this.writeOriginalLink(ward, line, markerNo, uid);
   }
 
