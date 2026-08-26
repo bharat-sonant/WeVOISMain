@@ -1,10 +1,23 @@
-// App se naya marker aate hi use new marker structure me daal deta hai.
+// !! YE AB CHALTA NAHI HAI - poori wajah functions/README.md me hai.
 //
-// App abhi bhi purane path par likhti hai:
+// Chhota saar: ye pul us waqt ka hai jab app PURANE path par likhti thi. Ab app
+// khud seedha new structure likhti hai (MarkersData/{uid} + poori
+// MarkersMapping, uid prefix "MK"), isliye MarkedHouses par koi naya marker
+// aata hi nahi aur ye trigger kabhi nahi chalta.
+//
+// Yahan `marksCount` +1 ya MarkerWardMapping MAT jodna - app wo khud karti hai,
+// dono taraf se hone par ginti dugni ho jaayegi.
+//
+// Hataya nahi gaya: marker-data-move abhi purane tree se data la raha hai, aur
+// kal koi purane path par likh de to ye pul phir kaam aa jayega.
+//
+// ---- Neeche wali baat tab ki hai jab ye chalta tha ----
+//
+// App purane path par likhti thi:
 //   EntityMarkingData/MarkedHouses/{ward}/{line}/{markerNo}
 // Ye trigger wahi likhta hai jo portal ka MarkerMappingService likhta hai, to
-// marker turant portal ki har screen par dikhne lagta hai - na app me koi
-// change chahiye, na marker-data-move chalana padta hai.
+// marker turant portal ki har screen par dikhne lagta tha - na app me koi
+// change chahiye tha, na marker-data-move chalana padta tha.
 //
 // Sirf CREATE hota hai, update kabhi nahi: marker ek baar new path par aa gaya
 // to uske baad portal ke edits hi sach hain. Purane record se dobara likhne par

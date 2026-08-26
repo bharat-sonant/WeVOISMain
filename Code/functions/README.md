@@ -1,11 +1,29 @@
 # Marker sync functions
 
-App se naya marker aate hi use new marker structure me daal deti hain, taaki
-`marker-data-move` chalane ki zaroorat na pade.
+> ## ⚠️ Ye ab chalti nahi hain — pul ka kaam khatam ho chuka hai
+>
+> Ye functions us waqt banayi gayi thin jab **app purane path par likhti thi**.
+> Tab ye har naye marker ko turant new structure me copy kar deti thin, taaki
+> portal par wo dikhne lage aur `marker-data-move` chalana na pade.
+>
+> **Ab app khud seedha new structure likhti hai** — `MarkersData/{uid}` aur
+> poori `MarkersMapping` (MarkerWise, WardWise, LineWise, LineSummary), uid
+> prefix `MK` ke saath. Yaani `MarkedHouses` par ab koi naya marker aata hi
+> nahi, aur ye trigger kabhi chalta hi nahi.
+>
+> Isliye:
+> - **Yahan `marksCount` +1 ya `MarkerWardMapping` mat jodna.** Portal ka
+>   `MarkerMappingService.writeMarker()` ye dono karta hai, par app bhi khud
+>   karti hai. Dono taraf se hone par ginti **dugni** ho jaati.
+> - Code hataya nahi gaya: `marker-data-move` abhi purane tree se data la raha
+>   hai, aur kal koi purane path par likh de to ye pul phir kaam aa jayega.
+>   Us soorat ke liye iska format aaj theek kar diya gaya hai (uid `MK{n}`,
+>   LineWise `{uid}: true`) - pehle ye `M{n}` likhta tha, jo app se mel nahi
+>   khaata.
 
-## Kaam kya karti hain
+## Kaam kya karti hain (jab chalti thin)
 
-App purane path par likhti hai:
+App purane path par likhti thi:
 
 ```
 EntityMarkingData/MarkedHouses/{ward}/{line}/{markerNo}
@@ -16,7 +34,7 @@ portal ka `MarkerMappingService` banata hai) — **isi order me**:
 
 | # | Path | Value |
 | --- | --- | --- |
-| 1 | `MarkersMapping/lastMarkerKey` | counter +1 (transaction) → uid `M{n}` |
+| 1 | `MarkersMapping/lastMarkerKey` | counter +1 (transaction) → uid `MK{n}` |
 | 2 | `MarkersData/{uid}` | poora record + `ward`, `line`, `imgRef` |
 | 3 | `MarkersMapping/MarkerWise/{uid}` | `{ward, line}` |
 | 4 | `MarkersMapping/WardWise/{ward}/{uid}` | line |
