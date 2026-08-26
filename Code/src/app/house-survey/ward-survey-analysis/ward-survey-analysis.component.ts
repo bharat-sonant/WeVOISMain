@@ -204,7 +204,17 @@ export class WardSurveyAnalysisComponent {
     }
     this.clearAllOnMap();
     this.selectedZone = filterVal;
-    this.markerMapping.clearLinkCache();
+    // PEHLE YE THA (hataya nahi, comment kiya hai):
+    // this.markerMapping.clearLinkCache();
+    //
+    // clearLinkCache() CHAARON cache wipe karta hai - poore shehar ki mapping,
+    // records, markers aur summaries. Yahan koi write hoti hi nahi, sirf ward
+    // badla hai; aur cache ward ke hisaab se keyed hai, to doosre ward ka data
+    // takrata bhi nahi.
+    //
+    // Isse ward A -> B -> A karne par A ka poora data (2+N read) dobara aata
+    // tha. Cache ka niyam yahi hai ki jo ek baar aa chuka hai wo dobara na aaye;
+    // wo refresh par hi jaana chahiye.
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
@@ -231,9 +241,10 @@ export class WardSurveyAnalysisComponent {
 
 
 
-  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
-  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
-  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
+  // Line/ward ki list ab MarkerMappingService se aati hai. Wo WardWise aur
+  // LineWise ka INTERSECTION leti hai - marker dono mapping me ho aur usi line
+  // par ho, tabhi wo maana jaata hai (S.6, user ka faisla). Sirf ek node me
+  // entry ho to wo adhoora marker hai aur kahin nahi dikhta.
   getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
     return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
   }
@@ -242,12 +253,17 @@ export class WardSurveyAnalysisComponent {
     return this.markerMapping.getWardRecords(this.db, wardNo);
   }
 
-  // Marker image ka URL: AllMarkerImages/{imgRef}.
   // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
-  // imgRef ho to flat AllMarkerImages folder se, na ho (marker abhi migrate
-  // nahi hua) to purane per-line folder se. Pehle yahan doosri soorat me bhi
-  // flat folder ka URL banta tha - us folder me purane naam ki file hoti hi
-  // nahi, to image tooti hui dikhti thi.
+  // imgRef ho to {city}/MarkingSurveyImages/AllMarkerImages/{imgRef}, na ho to
+  // KHAALI string.
+  //
+  // Purane per-line folder wala fallback hata diya gaya hai (S.7, user ka
+  // faisla): "sab new path se hona chaye, old image nhi use hoga". Jis marker
+  // ki migration nahi hui uski image nahi dikhegi, chahe file Storage me padi
+  // ho - migration chalne par apne aap wapas aa jayegi.
+  //
+  // Isliye caller ko khaali string ki soorat sambhalni hai (neeche
+  // exportMarkerImages me default image isi ke liye rakhi hai).
   getNewPathImageUrl(entry: any, ward: any = null, line: any = null): string {
     return this.markerMapping.markerImageUrl(entry, ward, line);
   }
@@ -285,11 +301,11 @@ export class WardSurveyAnalysisComponent {
               for (let j = 0; j < keyArray.length; j++) {
                 // PURANA GUARD: let markerNo = parseInt(...); if (!isNaN(...))
                 //
-                // Union me jis marker ka markerNo pata na chale uski key uid
-                // ban jaati hai ({M12: rec}) - parseInt us par NaN deta tha aur
-                // wo marker image list se poori tarah gayab ho jaata tha.
-                // Key waise ki waisi lete hain; screen par dikhne wala number
-                // record ke apne markerNo se, aur wo bhi na ho to key se.
+                // Jis marker ka markerNo record me na ho uski key uid reh jaati
+                // hai ({MK12: rec}) - parseInt us par NaN deta tha aur wo marker
+                // image list se poori tarah gayab ho jaata tha. Key waise ki
+                // waisi lete hain; screen par dikhne wala number record ke apne
+                // markerNo se, aur wo bhi na ho to key se.
                 let markerKey = keyArray[j];
                 let marker = markerData[markerKey];
                 if (marker == null || typeof marker != "object") {
@@ -299,10 +315,18 @@ export class WardSurveyAnalysisComponent {
                   continue;
                 }
                 let markerNo = marker["markerNo"] != null ? marker["markerNo"] : markerKey;
-                let image = marker["image"];
-                // OLD PATH (reference ke liye rakha hai):
-                // this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
+                // PEHLE YE THA (hataya nahi, comment kiya hai):
+                // let image = marker["image"];
+                // this.wardLineMarkerImageList.push({ ..., image: image });
+                //
+                // Naye record me `image` field hai hi nahi - image ka naam ab
+                // `imgRef` me hai (hamesha "{uid}.jpg"). Purane naam par kuch
+                // bhi tikaana galat hai: wo file flat AllMarkerImages folder me
+                // hoti hi nahi.
+                let image = marker["imgRef"];
                 // NEW PATH: image ab flat AllMarkerImages folder me hai (imgRef se).
+                // URL khaali bhi ho sakta hai (imgRef na ho) - caller ko wo
+                // soorat sambhalni hai.
                 let imageUrl = this.getNewPathImageUrl(marker, this.selectedZone, i);
                 this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: marker["cardNumber"], image: image, imageUrl: imageUrl });
               }
@@ -472,8 +496,20 @@ export class WardSurveyAnalysisComponent {
               let lng = data[markerNo]["latLng"].split(",")[1];
               // OLD PATH (reference ke liye rakha hai):
               // let imageName = data[markerNo]["image"];
-              // NEW PATH: image global hai (AllMarkerImages/{imgRef}) - move par copy/rename ki zaroorat nahi.
-              let imageName = data[markerNo]["imgRef"] != null ? data[markerNo]["imgRef"] : data[markerNo]["image"];
+              //
+              // PEHLE YE BHI THA (hataya nahi, comment kiya hai) - imgRef na ho
+              // to purane naam par gir jaata tha:
+              // let imageName = data[markerNo]["imgRef"] != null ? data[markerNo]["imgRef"] : data[markerNo]["image"];
+              //
+              // Wo galat tha: ye naam aage seedha flat folder me joda jaata hai
+              // (AllMarkerImages/{imageName}), aur us folder me purane naam ki
+              // file hoti hi nahi - image tooti hui dikhti. Naye record me
+              // `image` field hai bhi nahi.
+              //
+              // NEW PATH: image global hai (AllMarkerImages/{imgRef}) - move par
+              // copy/rename ki zaroorat nahi. imgRef na ho to naam khaali rahega
+              // aur image nahi dikhegi (S.7 ka niyam).
+              let imageName = data[markerNo]["imgRef"];
               let entityType = "";
               let detail = this.houseTypeList.find(item => item.id == data[markerNo]["houseType"]);
               if (detail != undefined) {
@@ -1154,9 +1190,20 @@ export class WardSurveyAnalysisComponent {
                 let markerImageURL = "../../../assets/img/system-generated-image.jpg";
                 detail = this.wardLineMarkerImageList.find(item => item.cardNo == data[i]["cardNo"]);
                 if (detail != undefined) {
-                  if (detail.image != "") {
-                    // OLD PATH (reference ke liye rakha hai):
-                    // markerImageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + detail.image + "?alt=media";
+                  // PEHLE YE THA (hataya nahi, comment kiya hai):
+                  // if (detail.image != "") {
+                  //   markerImageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + detail.image + "?alt=media";
+                  // }
+                  //
+                  // Shart ab imageUrl par hai, image par nahi. Do wajah:
+                  //   1. `image` ab imgRef se bharta hai - na ho to undefined
+                  //      aata hai, aur `undefined != ""` HAMESHA sach hota hai.
+                  //      Yaani shart ka koi matlab hi nahi bachta tha.
+                  //   2. imgRef na hone par imageUrl khaali "" hota hai, aur
+                  //      us haal me <img src=""> blank/tooti image dikhati.
+                  //      Upar wali default (system-generated-image.jpg) kabhi
+                  //      lagti hi nahi.
+                  if (detail.imageUrl != null && detail.imageUrl != "") {
                     // NEW PATH: getMarkerImages me imgRef se bana hua URL
                     markerImageURL = detail.imageUrl;
                   }
