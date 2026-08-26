@@ -829,8 +829,10 @@ export class WardSurveyAnalysisComponent {
               }
               // OLD PATH (reference ke liye rakha hai):
               // const pathOld = city + "/MarkingSurveyImages/" + wardNo + "/" + lineNo + "/" + markerImageName;
-              // NEW PATH: markerImageName ab imgRef hai (getMarkedHouses se)
-              const pathOld = "DevTest/MarkingSurveyImages/AllMarkerImages/" + markerImageName;
+              // NEW PATH: markerImageName ab imgRef hai (getMarkedHouses se).
+              // Flat folder usi city ke storage me hai - pehle yahan "DevTest"
+              // hardcode tha, isliye doosri city me image milti hi nahi thi.
+              const pathOld = city + "/MarkingSurveyImages/AllMarkerImages/" + markerImageName;
 
               const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
               ref.getDownloadURL()
@@ -908,7 +910,7 @@ export class WardSurveyAnalysisComponent {
                 if (newMarkerPath == null) {
                   return; // marker abhi migrate nahi hua -> write skip
                 }
-                this.markerMapping.clearLinkCache();
+                this.markerMapping.clearForPath(newMarkerPath, { cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
                 this.db.object(newMarkerPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
                 // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
                 // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
@@ -920,6 +922,9 @@ export class WardSurveyAnalysisComponent {
                     revisitInstance.unsubscribe();
                     if (revisitKeyData != null) {
                       this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "processVirtualSurvey", revisitKeyData);
+                      // Ye write upar wale patch ke baad, shart ke andar hoti hai -
+                      // isliye cache ko yahan alag se batana zaroori hai.
+                      this.markerMapping.clearForPath(newMarkerPath, { revisitKey: null });
                       this.db.object(revisitPath).remove();
                       // NEW PATH: LineSummary
                       let countPath = this.getLineSummaryPath(wardNo, lineNo) + "/lineRevisitCount";
@@ -1406,7 +1411,7 @@ export class WardSurveyAnalysisComponent {
                   // NEW PATH: MarkersData/{uid}
                   this.getMarkerNewPath(wardNo, lineNo, markerNo).then((newMarkerPath: any) => {
                     if (newMarkerPath != null) {
-                      this.markerMapping.clearLinkCache();
+                      this.markerMapping.clearForPath(newMarkerPath, { houseType: houseTypeId });
                       this.db.object(newMarkerPath).update({ houseType: houseTypeId });
                     }
                   });
@@ -1778,7 +1783,9 @@ export class WardSurveyAnalysisComponent {
                   // NEW PATH: MarkersData/{uid}
                   this.getMarkerNewPath(this.selectedZone, lineNo, index).then((newMarkerPath: any) => {
                     if (newMarkerPath != null) {
-                      this.markerMapping.clearLinkCache();
+                      // Cache me dono badlaav ek saath - update wala field aur
+                      // neeche null hone wala revisitKey bhi (null = field hatao).
+                      this.markerMapping.clearForPath(newMarkerPath, { revisitCardDeleted: revisitKey, revisitKey: null });
                       this.db.object(newMarkerPath).update({ revisitCardDeleted: revisitKey });
                       this.db.database.ref(newMarkerPath + "/revisitKey").set(null);
                     }
@@ -2150,7 +2157,9 @@ export class WardSurveyAnalysisComponent {
     // NEW PATH: MarkersData/{uid}
     this.getMarkerNewPath(this.selectedZone, lineNo, markerNo).then((newMarkerPath: any) => {
       if (newMarkerPath != null) {
-        this.markerMapping.clearLinkCache();
+        // Cache me dono badlaav ek saath - cardNumber aur neeche null hone wala
+        // revisitKey bhi (null = field hatao).
+        this.markerMapping.clearForPath(newMarkerPath, { cardNumber: cardNumber, revisitKey: null });
         this.db.object(newMarkerPath).update({ cardNumber: cardNumber });
         this.db.database.ref(newMarkerPath + "/revisitKey").set(null);
         // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
@@ -2452,7 +2461,9 @@ export class WardSurveyAnalysisComponent {
                         // NEW PATH: MarkersData/{uid}
                         this.getMarkerNewPath(this.selectedZone, this.lineNo, markerNo).then((newMarkerPath: any) => {
                           if (newMarkerPath != null) {
-                            this.markerMapping.clearLinkCache();
+                            // Cache me dono badlaav ek saath - cardNumber aur
+                            // neeche null hone wala rfidNotFoundKey bhi.
+                            this.markerMapping.clearForPath(newMarkerPath, { cardNumber: cardNumber, rfidNotFoundKey: null });
                             this.db.object(newMarkerPath).update({ cardNumber: cardNumber });
                             this.db.database.ref(newMarkerPath + "/rfidNotFoundKey").set(null);
                             // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh

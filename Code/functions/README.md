@@ -20,7 +20,7 @@ portal ka `MarkerMappingService` banata hai) — **isi order me**:
 | 2 | `MarkersData/{uid}` | poora record + `ward`, `line`, `imgRef` |
 | 3 | `MarkersMapping/MarkerWise/{uid}` | `{ward, line}` |
 | 4 | `MarkersMapping/WardWise/{ward}/{uid}` | line |
-| 5 | `MarkersMapping/LineWise/{ward}/{line}/{markerNo}` | uid |
+| 5 | `MarkersMapping/LineWise/{ward}/{line}/{uid}` | `true` (uid ka SET, naksha nahi) |
 | 6 | `MarkersMapping/LineSummary/{ward}/{line}/lastMarkerKey` | max(purana, markerNo) |
 | 7 | `MarkedHouses/{ward}/{line}/{markerNo}/uid` | uid (duplicate guard) |
 | 8 | `MarkedHouses/{ward}/{line}/{markerNo}/movedToNewPath` | `{newMarkerUid, newImageName, movedOn}` |
@@ -29,7 +29,7 @@ portal ka `MarkerMappingService` banata hai) — **isi order me**:
 sabse kharab haalat hai.
 
 Image `{oldImageFolder}/MarkingSurveyImages/{ward}/{line}/{image}` se
-`DevTest/MarkingSurveyImages/AllMarkerImages/{uid}.jpg` par copy hoti hai.
+`{oldImageFolder}/MarkingSurveyImages/AllMarkerImages/{uid}.jpg` par copy hoti hai.
 Image DB record ke baad aaye to `syncMarkerImage_*` (Storage trigger) use baad
 me copy kar deta hai.
 

@@ -16,8 +16,16 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
   selectedZone: any;
   zoneList: any[];
   // Jin cards par marker pehle se hai: { cardNo: true }.
-  // Pehle ye array tha aur neeche har card par .find() chalta tha - hazaaron
-  // cards par wo apne aap me dheema pad jaata tha.
+  //
+  // PEHLE YE THA (hataya nahi, comment kiya hai):
+  // markerCardList: any[];
+  //
+  // ...aur neeche har card par is par .find() chalta tha:
+  // let detail = this.markerCardList.find(item => item.cardNo == cardNo);
+  // if (detail == undefined) { ... }
+  //
+  // Hazaaron cards par wo apne aap me dheema pad jaata tha (har card ke liye
+  // poori list scan). Map me lookup seedha hai, nateeja bilkul wahi.
   markerCardMap: any = {};
   markerAddList: any[];
   divLoader = "#divLoader";
@@ -86,6 +94,11 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
     // MarkerWardMapping isi kaam ka index hai: jis card par marker hai uski
     // entry hai, jispar nahi uski nahi. Iski KEYS hi jawab hain, isliye ek
     // chhota read kaafi hai.
+    //
+    // Sirf entry ka HONA dekhte hain, uske andar ka `markerkey` nahi. Purani
+    // (master-era) entries me `markerkey` field nahi hai, par unka matlab bhi
+    // wahi hai - card par marker maujood hai. `markerkey` maangte to wo entries
+    // "marker nahi hai" mani jaati aur unpar duplicate marker ban jaata.
     let dbPath = "EntityMarkingData/MarkerWardMapping";
     let cardInstance = this.db.object(dbPath).valueChanges().subscribe(
       (data: any) => {
@@ -95,10 +108,22 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
           for (let i = 0; i < cardArray.length; i++) {
             this.markerCardMap[cardArray[i]] = true;
           }
+          this.getHouseData(1);
         }
-        // data null ho to bhi aage badhna hai - matlab abhi kisi card par
-        // marker nahi hai, yaani SAARE cards par marker banana hai.
-        this.getHouseData(1);
+        else {
+          // master jaisa - kuch na mile to RUK jao.
+          //
+          // PEHLE YE THA (hataya nahi, comment kiya hai) - null par bhi aage
+          // badh jaata tha:
+          // this.getHouseData(1);
+          //
+          // Wo khatarnak hai: node kisi wajah se na mile (galat city, node abhi
+          // bana hi nahi, read fail) to ye page har card ko "marker nahi hai"
+          // maan kar POORE SHEHER par marker bana dega. Master is soorat me
+          // sirf loader hata kar ruk jaata tha.
+          $(this.divLoader).hide();
+          this.commonService.setAlertMessage("error", "Marker card mapping nahi mili — kuch nahi kiya gaya.");
+        }
       }
     );
   }

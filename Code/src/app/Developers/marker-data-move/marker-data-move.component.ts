@@ -8,7 +8,7 @@ import { MarkerMappingService } from '../../services/marker/marker-mapping.servi
 //   EntityMarkingData/MarkedHouses/{ward}/{line}/{markerNo}
 // into the new global structure:
 //   - Data:    EntityMarkingData/MarkersData/M{n}          (flat, global M-index)
-//   - Image:   DevTest/MarkingSurveyImages/AllMarkerImages/M{n}.jpg
+//   - Image:   {storageCity}/MarkingSurveyImages/AllMarkerImages/M{n}.jpg
 //   - Mapping: EntityMarkingData/MarkersMapping/MarkerWise/M{n} = { line, ward }
 //              EntityMarkingData/MarkersMapping/WardWise/{ward}/M{n} = line
 //              EntityMarkingData/MarkersMapping/WardWise/{ward}/lastMarkerKey = n
@@ -293,13 +293,35 @@ export class MarkerDataMoveComponent implements OnInit {
     let old = item["data"];
 
     // Already moved once -> reuse the same UID (idempotent re-run).
-    // Link ka pehla source LineWise mapping hai; na mile to neeche 4 fallback.
+    //
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ko
+    // { markerNo: uid } maan kar usse uid nikaala jaata tha:
+    //
+    // let lineLinks = this.lineWiseMap != null ? this.lineWiseMap[item["line"]] : null;
+    // let linkedUid = lineLinks != null ? lineLinks[item["oldMarkerNo"]] : null;
+    // let hasLineWise = linkedUid != null && linkedUid != "";
+    //
+    // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - usme markerNo
+    // hai hi nahi, isliye usse uid nikalta hi nahi. Ab pehla source
+    // OriginalToUid hai: wo original-location -> uid ka PERMANENT link hai
+    // (kabhi re-point nahi hota) aur re-run guard ke liye wahi sahi cheez hai.
     let lineLinks = this.lineWiseMap != null ? this.lineWiseMap[item["line"]] : null;
-    let linkedUid = lineLinks != null ? lineLinks[item["oldMarkerNo"]] : null;
+    let linkedUid: any = null;
+    let origLineLinksFirst = this.originalToUidMap != null ? this.originalToUidMap[item["line"]] : null;
+    let origUidFirst = origLineLinksFirst != null ? origLineLinksFirst[item["oldMarkerNo"]] : null;
+    if (origUidFirst != null && origUidFirst != "") {
+      linkedUid = origUidFirst;
+    }
     // Is marker ka LineWise entry hai ya nahi - neeche repair ke liye chahiye.
-    let hasLineWise = linkedUid != null && linkedUid != "";
+    // Ab ye uid se dekhte hain, markerNo se nahi.
+    let hasLineWise = linkedUid != null && linkedUid != ""
+      && lineLinks != null && lineLinks[linkedUid] != null && lineLinks[linkedUid] !== false;
     // Fallback 1: OriginalToUid — never re-pointed, so it still resolves even
     // after the marker was moved to another line/ward from the portal.
+    //
+    // Ye ab upar hi ho chuka hai (LineWise se uid nikalta nahi, isliye wahi
+    // pehla source ban gaya hai). Block waisa hi chhoda hai - guard ki wajah se
+    // ye ab kuch karta nahi, par raasta saamne rehta hai.
     if (linkedUid == null || linkedUid == "") {
       let origLineLinks = this.originalToUidMap != null ? this.originalToUidMap[item["line"]] : null;
       let origUid = origLineLinks != null ? origLineLinks[item["oldMarkerNo"]] : null;
@@ -393,9 +415,14 @@ export class MarkerDataMoveComponent implements OnInit {
       return;
     }
 
-    // New marker -> allocate the next GLOBAL M number.
+    // New marker -> allocate the next GLOBAL uid number.
     this.lastKey = this.lastKey + 1;
-    let uid = "M" + this.lastKey;
+    // PEHLE YE THA (hataya nahi, comment kiya hai):
+    // let uid = "M" + this.lastKey;
+    //
+    // Naye marking structure ka prefix "MK" hai. "M" se banaye gaye uid baaki
+    // system se mel nahi khaate - app aur portal dono "MK" hi likhte-padhte hain.
+    let uid = this.markerMapping.uidPrefix + this.lastKey;
     let record = this.buildRecord(old, item["line"], ward, uid, item["oldMarkerNo"]);
     this.copyImage(old, item["line"], ward, uid, 0,
       (hadImage: boolean) => {
@@ -515,7 +542,7 @@ export class MarkerDataMoveComponent implements OnInit {
   }
 
   // Records where an old marker went:
-  //   MarkersMapping/LineWise/{ward}/{line}/{markerNo} = M{n}
+  //   MarkersMapping/LineWise/{ward}/{line}/{uid} = true
   // This is the re-run guard — old record par sirf movedToNewPath node add hota hai.
   //
   // NOTE: LineWise doubles as the "which markers are on this line"
@@ -525,7 +552,18 @@ export class MarkerDataMoveComponent implements OnInit {
   // allocated). OriginalToUid below is therefore written ONCE at migration time
   // and never re-pointed — it is the permanent original-location -> UID link.
   writeLineWiseLink(ward: any, line: any, markerNo: any, uid: string) {
-    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo).set(uid);
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ko
+    // { markerNo: uid } maana jaata tha:
+    //
+    // this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo).set(uid);
+    //
+    // Naye structure me LineWise uid ka SET hai: { "MK1": true }. markerNo yahan
+    // nahi jaata - wo record ke andar (MarkersData/{uid}.markerNo) rehta hai.
+    //
+    // OriginalToUid neeche jaisa tha waisa hi hai: wo original-location -> uid ka
+    // permanent link hai aur re-run guard usi par tika hai, isliye uski key
+    // markerNo hi rehni chahiye.
+    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + uid).set(true);
     this.writeOriginalLink(ward, line, markerNo, uid);
   }
 
@@ -672,7 +710,10 @@ export class MarkerDataMoveComponent implements OnInit {
       city = "Sikar-Survey";
     }
     let pathOld = city + "/MarkingSurveyImages/" + ward + "/" + line + "/" + oldImageName;
-    let pathNew = "DevTest/MarkingSurveyImages/AllMarkerImages/" + uid + ".jpg";
+    // Flat folder usi city ke storage me. Pehle yahan "DevTest" hardcode tha -
+    // image padhi to logged-in city se jaati thi par likhi hamesha DevTest me,
+    // isliye doosri city se login karne par wo image milti hi nahi thi.
+    let pathNew = city + "/MarkingSurveyImages/AllMarkerImages/" + uid + ".jpg";
 
     let ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
     ref.getDownloadURL()

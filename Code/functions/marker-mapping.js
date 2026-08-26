@@ -6,7 +6,7 @@
 //   MarkersData/{uid}                              = poora record + ward + line + imgRef
 //   MarkersMapping/MarkerWise/{uid}                = { ward, line }
 //   MarkersMapping/WardWise/{ward}/{uid}           = line
-//   MarkersMapping/LineWise/{ward}/{line}/{markerNo} = uid
+//   MarkersMapping/LineWise/{ward}/{line}/{uid}    = true   (uid ka SET, naksha nahi)
 //   MarkersMapping/LineSummary/{ward}/{line}/lastMarkerKey = line ka aakhri markerNo
 //
 // LineWise ke bina marker DB me to ban jaata hai par portal par dikhta nahi -
@@ -18,7 +18,11 @@
 // liye aise uid par point karti hai jiska record hi nahi hota.
 //
 // Image: {oldImageFolder}/MarkingSurveyImages/{ward}/{line}/{image}
-//        -> DevTest/MarkingSurveyImages/AllMarkerImages/{uid}.jpg
+//        -> {oldImageFolder}/MarkingSurveyImages/AllMarkerImages/{uid}.jpg
+//
+// Flat folder usi city ke storage me banta hai jisme purani image thi. Pehle
+// yahan "DevTest" hardcode tha, isliye har city ki image ek hi folder me chali
+// jaati thi aur portal us city ke folder me dhoondhne par use paata hi nahi.
 //
 // Duplicate guard app ke apne record par hai: sync hone ke baad wahan `uid`
 // likh dete hain. Trigger dobara chale to `uid` dekh kar ruk jaata hai - iske
@@ -26,7 +30,17 @@
 
 const admin = require("firebase-admin");
 
-const NEW_IMAGE_FOLDER = "DevTest/MarkingSurveyImages/AllMarkerImages";
+// Marker ka uid: prefix + counter ka number -> "MK1", "MK2"...
+//
+// Ye naye marking structure ka prefix hai. Pehle yahan "M" haath se likha tha,
+// jisse cloud function "M81" banata jabki baaki system me "MK80" tak pade the -
+// dono alag duniya me chale jaate: WardWise/LineWise me portal unhe pehchanta
+// nahi, aur imgRef "M81.jpg" kabhi na milne wali file par point karta.
+//
+// NOTE: iska `markerId` field se koi lena-dena nahi. Wo alag cheez hai - apna
+// counter (EntityMarkingData/lastMarkerId), apna roop ("M41").
+const UID_PREFIX = "MK";
+
 const COUNTER_PATH = "EntityMarkingData/MarkersMapping/lastMarkerKey";
 const MARKERS_DATA = "EntityMarkingData/MarkersData/";
 const MARKER_WISE = "EntityMarkingData/MarkersMapping/MarkerWise/";
@@ -72,7 +86,9 @@ async function allocateUid(db) {
   if (!res.committed) {
     return null;
   }
-  return "M" + Number(res.snapshot.val());
+  // PEHLE YE THA (hataya nahi, comment kiya hai):
+  // return "M" + Number(res.snapshot.val());
+  return UID_PREFIX + Number(res.snapshot.val());
 }
 
 // Record = app ka data + ward/line/imgRef.
@@ -133,7 +149,14 @@ async function writeMarker(db, ward, line, markerNo, uid, record) {
   const mapping = {};
   mapping[MARKER_WISE + uid] = { ward: ward, line: lineVal };
   mapping[WARD_WISE + ward + "/" + uid] = lineVal;
-  mapping[LINE_WISE + ward + "/" + lineVal + "/" + markerNo] = uid;
+  // PEHLE YE THA (hataya nahi, comment kiya hai):
+  // mapping[LINE_WISE + ward + "/" + lineVal + "/" + markerNo] = uid;
+  //
+  // Naye structure me LineWise uid ka SET hai, naksha nahi:
+  //     LineWise/{ward}/{line}  =  { "MK1": true, "MK80": true }
+  // markerNo yahan nahi jaata - wo record ke andar (MarkersData/{uid}.markerNo)
+  // rehta hai, aur wahi portal/app par dikhta hai.
+  mapping[LINE_WISE + ward + "/" + lineVal + "/" + uid] = true;
   await db.ref().update(mapping);
 
   // Line ka lastMarkerKey kabhi peeche nahi jaana chahiye - app ka markerNo
@@ -163,6 +186,11 @@ async function writeMarker(db, ward, line, markerNo, uid, record) {
   await db.ref().update(oldRecordUpdate);
 }
 
+// Flat folder ka path - usi city ke storage me jisme purani image thi.
+function newImageFolder(entry) {
+  return entry.oldImageFolder + "/MarkingSurveyImages/AllMarkerImages";
+}
+
 // Purani per-line image ko flat AllMarkerImages folder me copy karta hai.
 // Image ka naam record ke `image` field me hota hai (markerNo.jpg hi ho, ye
 // zaroori nahi). Image abhi upload na hui ho to false - Storage trigger baad
@@ -181,12 +209,12 @@ async function copyImage(entry, ward, line, imageName, uid) {
   if (!exists[0]) {
     return false;
   }
-  await source.copy(bucket.file(NEW_IMAGE_FOLDER + "/" + uid + ".jpg"));
+  await source.copy(bucket.file(newImageFolder(entry) + "/" + uid + ".jpg"));
   return true;
 }
 
 module.exports = {
-  NEW_IMAGE_FOLDER,
+  newImageFolder,
   getDb,
   lineValue,
   isRealMarker,

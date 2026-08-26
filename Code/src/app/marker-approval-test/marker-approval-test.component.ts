@@ -262,10 +262,125 @@ export class MarkerApprovalTestComponent {
   // { ward: { uid: line } } — line ki list isi se banti hai (LineWise se nahi).
   wardIndexCache: any = {};
 
-  // Write ke baad record dobara padha jaana chahiye.
+  // Poori ward cache bhoolna - sirf ward badalne par.
   clearMarkerCache() {
     this.markerRecordCache = {};
   }
+
+  // Ek marker ka record bhoolna, path se uid nikaal kar.
+  //
+  // Write ke baad sirf WAHI record purana hota hai jise likha - baaki poore
+  // ward ke records theek hain. Pehle yahan clearMarkerCache() chalta tha, jo
+  // saare records phenk deta tha: ek marker approve karte hi poori line/ward
+  // dobara padhni padti thi.
+  dropMarkerRecord(path: any) {
+    if (path == null) {
+      return;
+    }
+    let value = String(path);
+    let at = value.indexOf("MarkersData/");
+    if (at < 0) {
+      return;
+    }
+    delete this.markerRecordCache[value.substring(at + "MarkersData/".length).split("/")[0]];
+  }
+
+  // Isse behtar: record phenkne ke bajaye usme wahi patch laga do jo DB par
+  // gaya. Tab agli read bhi nahi lagti - user ne jo abhi kiya wahi turant
+  // dikhta hai, aur refresh ke baad DB se bhi wahi aata hai.
+  //
+  // patch me null ka matlab "field hatao" - Firebase par bhi wahi hota hai.
+  applyMarkerPatch(path: any, patch: any) {
+    if (path == null || patch == null || typeof patch != "object") {
+      return;
+    }
+    let value = String(path);
+    let at = value.indexOf("MarkersData/");
+    if (at < 0) {
+      return;
+    }
+    let uid = value.substring(at + "MarkersData/".length).split("/")[0];
+    let record = this.markerRecordCache[uid];
+    if (record == null || typeof record != "object") {
+      return; // cache me hai hi nahi - kuch karna nahi
+    }
+    let keyArray = Object.keys(patch);
+    for (let i = 0; i < keyArray.length; i++) {
+      if (patch[keyArray[i]] == null) {
+        delete record[keyArray[i]];
+      } else {
+        record[keyArray[i]] = patch[keyArray[i]];
+      }
+    }
+  }
+
+  // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
+  // Approve par uid mila ya nahi, aur na mila to kyun - poori report ek string
+  // me, taaki copy karke bheji ja sake.
+  debugApprove(ward: any, line: any, markerNo: any) {
+    let out: string[] = [];
+    out.push("========== APPROVE REPORT ==========");
+    out.push("ward=" + ward + "  line=" + line + "  markerNo=" + markerNo + "  (type " + (typeof markerNo) + ")");
+
+    let lineWisePath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line;
+    let wardWisePath = "EntityMarkingData/MarkersMapping/WardWise/" + ward;
+
+    Promise.all([
+      this.markerMapping.readOnce(this.db, lineWisePath),
+      this.markerMapping.readOnce(this.db, wardWisePath),
+      this.markerMapping.getLineRecords(this.db, ward, line),
+      this.markerMapping.getUid(this.db, ward, line, markerNo)
+    ]).then((res: any[]) => {
+      let lineWise = res[0];
+      let wardWise = res[1];
+      let records = res[2];
+      let uid = res[3];
+
+      out.push("--- 1) LineWise/" + ward + "/" + line + " ---");
+      out.push(lineWise == null ? "NULL - is line ki mapping hai hi nahi"
+        : "keys=[" + Object.keys(lineWise).join(",") + "]");
+      // LineWise ab uid ka SET hai ({ "MK1": true }) - usme markerNo hai hi nahi,
+      // isliye "is markerNo par uid" wala sawaal hi bemaani ho gaya.
+      out.push("   (LineWise ki key uid hai, markerNo nahi - markerNo record ke andar hai)");
+
+      out.push("--- 2) WardWise/" + ward + " ---");
+      out.push(wardWise == null ? "NULL - is ward ki mapping hai hi nahi"
+        : "kul entries=" + Object.keys(wardWise).length);
+
+      out.push("--- 3) Line ke records (MarkersData se) ---");
+      if (records == null) {
+        out.push("NULL - is line par ek bhi record nahi mila");
+      } else {
+        let keys = Object.keys(records);
+        out.push("keys=[" + keys.join(",") + "]");
+        for (let i = 0; i < keys.length; i++) {
+          let r = records[keys[i]];
+          out.push("   key=" + keys[i] +
+            " | record ka markerNo=" + (r != null ? r["markerNo"] : "-") +
+            " | ward=" + (r != null ? r["ward"] : "-") +
+            " | line=" + (r != null ? r["line"] : "-") +
+            " | isApprove=" + (r != null ? r["isApprove"] : "-"));
+        }
+      }
+
+      out.push("--- 4) NATEEJA ---");
+      out.push("getUid ne diya: " + uid);
+      if (uid == null) {
+        out.push(">>> uid NAHI MILA - isliye DB me approve NAHI likha jayega.");
+        out.push(">>> Wajah: is line ke kisi bhi record ka markerNo isse match nahi karta.");
+        out.push(">>> Matlab ye marker naye structure me hai hi nahi (migrate nahi hua).");
+      } else {
+        out.push(">>> DB path: EntityMarkingData/MarkersData/" + uid);
+      }
+      out.push("========== APPROVE REPORT END ==========");
+      console.log(out.join("\n"));
+      console.log("[APPROVE] raw:", { lineWise: lineWise, wardWise: wardWise, records: records, uid: uid });
+    }).catch((e: any) => {
+      out.push("!! DEBUG READ FAIL: " + (e && e.message ? e.message : e));
+      console.log(out.join("\n"));
+    });
+  }
+  // ==================== TEMP DEBUG KHATAM ====================
 
   readMarkerRecord(uid: any): Promise<any> {
     return new Promise((resolve) => {
@@ -360,11 +475,18 @@ export class MarkerApprovalTestComponent {
           resolve(uidArray);
           return;
         }
+        // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ko
+        // { markerNo: uid } maana jaata tha aur uid VALUE se aata tha:
+        //
+        // let uid = links[keyArray[i]];
+        //
+        // Naye structure me LineWise uid ka SET hai: { "MK1": true }. Value ab
+        // sirf true hai, isliye purana code uid ki jagah `true` push kar deta.
         let keyArray = Object.keys(links);
         for (let i = 0; i < keyArray.length; i++) {
-          let uid = links[keyArray[i]];
+          let uid = keyArray[i];
           // numeric keys ki wajah se aaye array-nulls skip
-          if (uid == null || uid == "" || uidArray.indexOf(uid) >= 0) {
+          if (links[uid] == null || links[uid] === false || links[uid] === "" || uidArray.indexOf(uid) >= 0) {
             continue;
           }
           uidArray.push(uid);
@@ -452,12 +574,27 @@ export class MarkerApprovalTestComponent {
   }
 
   // Marker ka MarkersData path. List ab uid se banti hai (getNewPathLineData),
-  // isliye markerNo yahan seedha "M12" aata hai - path usi se ban jaata hai.
+  // isliye markerNo yahan seedha "M12" aata hai.
   // Kahin se purana markerNo (1, 2, 3...) aaye to LineWise se resolve karte
   // hain; wahan na mile to null (matlab wo marker migrate hi nahi hua).
+  //
+  // Uid aane par bhi MAPPING dekhna zaroori hai. Pehle yahan sirf "M" dekh kar
+  // seedha path bana diya jaata tha - us soorat me mapping se hataye ja chuke
+  // marker par bhi write chali jaati thi. Check wahi hai jis se list banti hai
+  // (getLineUids / getLineUidsFromLineWise), isliye jo screen par dikh raha hai
+  // wo hamesha paas ho jayega, aur jo mapping me nahi hai use null milega.
   getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
     if (markerNo != null && String(markerNo).charAt(0) == "M") {
-      return Promise.resolve("EntityMarkingData/MarkersData/" + markerNo);
+      let uid = String(markerNo);
+      return this.loadWardIndex(ward).then((wardIndex: any) => {
+        if (wardIndex != null && String(wardIndex[uid]) == String(line)) {
+          return "EntityMarkingData/MarkersData/" + uid;
+        }
+        // WardWise me nahi mila - list LineWise fallback se bhi ban sakti hai.
+        return this.getLineUidsFromLineWise(ward, line).then((oldUids: any) => {
+          return oldUids.indexOf(uid) >= 0 ? "EntityMarkingData/MarkersData/" + uid : null;
+        });
+      });
     }
     // Purana markerNo (1, 2, 3...) - service se resolve, jo WardWise aur
     // LineWise dono dekhti hai. Akela LineWise adhoora hai.
@@ -940,7 +1077,7 @@ export class MarkerApprovalTestComponent {
         // NEW PATH: MarkersData/{uid}
         this.getMarkerNewPath(zoneNo, lineNo, index).then((newMarkerPath: any) => {
           if (newMarkerPath != null) {
-            this.clearMarkerCache(); // write ke baad cache stale
+            this.applyMarkerPatch(newMarkerPath, { houseType: houseTypeId });
             this.db.object(newMarkerPath).update({ houseType: houseTypeId });
           }
         });
@@ -973,7 +1110,7 @@ export class MarkerApprovalTestComponent {
       // NEW PATH: MarkersData/{uid}
       this.getMarkerNewPath(zoneNo, lineNo, index).then((newMarkerPath: any) => {
         if (newMarkerPath != null) {
-          this.clearMarkerCache(); // write ke baad cache stale
+          this.applyMarkerPatch(newMarkerPath, { modifiedHouseTypeHistoryId });
           this.db.object(newMarkerPath).update({ modifiedHouseTypeHistoryId });
         }
       });
@@ -1177,7 +1314,7 @@ export class MarkerApprovalTestComponent {
           $(this.divLoader).hide();
           return; // marker abhi migrate nahi hua -> delete skip
         }
-        this.clearMarkerCache(); // write ke baad cache stale
+        this.dropMarkerRecord(newMarkerPath); // sirf ye ek record purana hua
         let markerInstance = this.db.object(newMarkerPath).valueChanges().subscribe((data) => {
         markerInstance.unsubscribe();
         if (data != null) {
@@ -1520,7 +1657,7 @@ export class MarkerApprovalTestComponent {
       // NEW PATH: MarkersData/{uid}
       this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
         if (newMarkerPath != null) {
-          this.clearMarkerCache(); // write ke baad cache stale
+          this.applyMarkerPatch(newMarkerPath, { status: "Reject", isApprove: "0" });
           this.db.object(newMarkerPath).update({ status: "Reject", isApprove: "0" });
         }
       });
@@ -1562,11 +1699,33 @@ export class MarkerApprovalTestComponent {
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
       // this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
       // NEW PATH: MarkersData/{uid}
+      // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
+      this.debugApprove(zoneNo, lineNo, markerNo);
+      // ==================== TEMP DEBUG KHATAM ====================
       this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
+        // TEMP DEBUG - baad me hatana hai
+        console.log("[APPROVE] getMarkerNewPath ne diya:", newMarkerPath);
         if (newMarkerPath != null) {
-          this.clearMarkerCache(); // write ke baad cache stale
-          this.db.object(newMarkerPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
+          // Ek hi patch object DB aur cache dono ke liye - warna approveDate
+          // do baar banta aur minute badalne par dono jagah alag pad sakta tha.
+          let approvePatch: any = {
+            isApprove: "1",
+            approveById: localStorage.getItem("userID"),
+            approveDate: this.commonService.getTodayDateTime()
+          };
+          this.applyMarkerPatch(newMarkerPath, approvePatch);
+          this.db.object(newMarkerPath).update(approvePatch)
+            // TEMP DEBUG - baad me hatana hai
+            .then(() => console.log("%c[APPROVE] DB me LIKH DIYA: " + newMarkerPath, "color:#0a0;font-weight:bold"))
+            .catch((e: any) => console.log("%c[APPROVE] DB WRITE FAIL: " + (e && e.message ? e.message : e), "color:#c00;font-weight:bold"));
         }
+        else {
+          // TEMP DEBUG - baad me hatana hai
+          console.log("%c[APPROVE] uid NAHI MILA - DB me kuch nahi likha gaya (screen par phir bhi approved dikhega)", "color:#c00;font-weight:bold");
+        }
+      }, (err: any) => {
+        // TEMP DEBUG - baad me hatana hai
+        console.log("%c[APPROVE] getMarkerNewPath FAIL: " + (err && err.message ? err.message : err), "color:#c00;font-weight:bold");
       });
       (<HTMLInputElement>document.getElementById(Entity)).checked = false;
       (<HTMLInputElement>document.getElementById(Markar)).checked = false;
@@ -2006,15 +2165,21 @@ export class MarkerApprovalTestComponent {
         let removedDate = dataKey["removeDate"];
         let removeReason = dataKey["reason"];
 
-        let image = dataKey["image"];
-        let city = this.commonService.getFireStoreCity();
-        // imgRef wali entry nayi hai - uski image flat AllMarkerImages folder
-        // me hai. Migration se pehle delete hue record me imgRef hota hi nahi
-        // aur uski image aaj bhi purane per-line folder me padi hai - uske liye
-        // purana URL hi ban sakta hai.
-        let imageUrl = dataKey["imgRef"] != null
-          ? this.getNewPathImageUrl(dataKey)
-          : this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+        // Image sirf naye path se - AllMarkerImages/{imgRef}. imgRef na ho to
+        // khaali URL (service ka niyam), image nahi dikhegi.
+        //
+        // PEHLE YE THA (hataya nahi, comment kiya hai) - imgRef na hone par
+        // purane per-line folder ka URL banta tha:
+        //
+        // let image = dataKey["image"];
+        // let city = this.commonService.getFireStoreCity();
+        // let imageUrl = dataKey["imgRef"] != null
+        //   ? this.getNewPathImageUrl(dataKey)
+        //   : this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+        //
+        // Migration se pehle delete hue record me imgRef hota hi nahi, to ab un
+        // entries ki image nahi dikhegi.
+        let imageUrl = this.getNewPathImageUrl(dataKey);
 
         let removedById = dataKey["removeBy"];
         let removedByDetail = this.userList.find(item => item.userId == removedById);

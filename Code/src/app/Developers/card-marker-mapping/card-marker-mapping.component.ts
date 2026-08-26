@@ -40,20 +40,54 @@ export class CardMarkerMappingComponent implements OnInit {
   }
 
 
-  markersDataPromise: any = null;
+  // DEAD CODE (hataya nahi, comment kiya hai): declare aur reset hota tha par
+  // use kahin nahi hota tha.
+  // markersDataPromise: any = null;
+
+  // { "ward|line|markerNo": uid } - poore ward ka lookup, operation ke shuru me
+  // ek baar bhar liya jaata hai (loadWardUids).
   uidMap: any = {};
   notMigratedCount = 0;
 
   // Cache sirf operation ke shuru me clear hota hai, har write par nahi.
   resetNewPathCache() {
     this.markerMapping.clearLinkCache();
-    this.markersDataPromise = null;
+    // DEAD CODE (hataya nahi, comment kiya hai):
+    // this.markersDataPromise = null;
     this.uidMap = {};
     this.notMigratedCount = 0;
   }
 
-
-
+  // Ward ki poori mapping se uidMap bhar do.
+  //
+  // Ye pehle likha hi nahi gaya tha: setUid() maujood tha par use koi bulata
+  // nahi tha, isliye uidMap hamesha khaali rehta aur getUid() hamesha null
+  // deta. Nateeja - is page ke DONO operation har marker ko "new path par nahi
+  // mila" maan kar chup-chaap skip kar dete the, aur upar se "Data Update
+  // Successfully" ka message bhi aa jaata tha.
+  //
+  // Extra DB read zero: getWardLinks() wahi cache hai jise getWardRecords()
+  // pehle se use karta hai.
+  loadWardUids(wardNo: any): Promise<any> {
+    return this.markerMapping.getWardLinks(this.db, wardNo).then((wardLinks: any) => {
+      this.uidMap = {};
+      if (wardLinks == null || typeof wardLinks != "object") {
+        return null;
+      }
+      let lineArray = Object.keys(wardLinks);
+      for (let i = 0; i < lineArray.length; i++) {
+        let links = wardLinks[lineArray[i]];
+        if (links == null || typeof links != "object") {
+          continue;
+        }
+        let keyArray = Object.keys(links);
+        for (let j = 0; j < keyArray.length; j++) {
+          this.setUid(wardNo, lineArray[i], keyArray[j], links[keyArray[j]]);
+        }
+      }
+      return null;
+    });
+  }
 
   setUid(ward: any, line: any, markerNo: any, uid: any) {
     this.uidMap[ward + "|" + line + "|" + markerNo] = uid;
@@ -119,8 +153,18 @@ export class CardMarkerMappingComponent implements OnInit {
     this.db.object("EntityMarkingData/MarkersData/" + uid).update(patch);
 
     // LineWise: nayi jagah add, purani jagah se hata do
-    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo + "/" + newMarkerNo).set(uid);
-    this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + markerNoFrom).set(null);
+    //
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ko
+    // { markerNo: uid } maana jaata tha:
+    //
+    // this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo + "/" + newMarkerNo).set(uid);
+    // this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + markerNoFrom).set(null);
+    //
+    // Naye structure me LineWise uid ka SET hai: { "MK1": true }. Key hi uid hai,
+    // isliye add aur remove dono uid se hote hain - markerNo ki zaroorat nahi
+    // (wo record ke andar upar patch me chala hi gaya hai).
+    this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo + "/" + uid).set(true);
+    this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + uid).set(null);
 
     // MarkerWise mapping
     this.db.object("EntityMarkingData/MarkersMapping/MarkerWise/" + uid).update({ line: lineVal, ward: zoneTo });
@@ -133,7 +177,15 @@ export class CardMarkerMappingComponent implements OnInit {
 
     // Cache saaf SABSE AAKHIR me - pehle karne se beech me aayi koi read
     // purani list dobara cache kar leti.
-    this.markerMapping.clearLinkCache();
+    //
+    // Yahan record bhi badla hai aur mapping bhi, isliye dono. Record ka patch
+    // pata hai, to use cache me laga dete hain (phenkte nahi) - ek bhi extra
+    // read nahi. Mapping sach me badli hai, wo clearLinks() se jayegi.
+    //
+    // Pehle clearLinkCache() tha jo poore ward ke saare records bhi phenk deta
+    // tha - ek marker ke move par 2000 record dobara padhne padte the.
+    this.markerMapping.applyPatch(uid, patch);
+    this.markerMapping.clearLinks();
   }
 
   mapHouseMarkerData() {
@@ -150,7 +202,12 @@ export class CardMarkerMappingComponent implements OnInit {
     //   data => {
     //     markerInstance.unsubscribe();
     // NEW PATH: MarkersData + LineWise (same {lineNo: {markerNo: record}} shape)
-    this.getNewPathWardData(zoneNo).then(
+    //
+    // uidMap pehle bhar lete hain - neeche har marker par uski zaroorat padti
+    // hai aur wo mapping se hi milta hai (record ke andar uid hota nahi).
+    this.loadWardUids(zoneNo).then(() => {
+      return this.getNewPathWardData(zoneNo);
+    }).then(
       (data: any) => {
         if (data != null) {
           let keyArray = Object.keys(data);
@@ -237,7 +294,9 @@ export class CardMarkerMappingComponent implements OnInit {
                       // this.db.object(dbPath).update(markerData[markerNo]);
                       // NEW PATH: marker apni hi line par hai. Sirf wahi do fields likhte hain jo upar badle hain, poora record nahi - warna beech me hua koi approve/edit purane snapshot se overwrite ho jaata.
                       this.db.object("EntityMarkingData/MarkersData/" + uid).update({ latLng: latLng, alreadyInstalled: null });
-                      this.markerMapping.clearLinkCache();
+                      // Sirf ye ek record badla - mapping ko haath nahi laga.
+                      // Patch cache me bhi laga do, phenkna nahi.
+                      this.markerMapping.applyPatch(uid, { latLng: latLng, alreadyInstalled: null });
                       markerIndex++;
                       this.mapData(zoneNo, data, keyArray, index, lineNo, markerData, markerIndex, markerKeyArray);
                     }
@@ -305,6 +364,9 @@ export class CardMarkerMappingComponent implements OnInit {
                     // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/cardNumber";
                     // NEW PATH: MarkersData/{uid}/cardNumber
                     dbPath = "EntityMarkingData/MarkersData/" + uid + "/cardNumber";
+                    // cardNumber hat raha hai - cache me bhi hata do, warna
+                    // wahan purana cardNumber baitha reh jaata hai.
+                    this.markerMapping.applyPatch(uid, { cardNumber: null });
                     this.db.object(dbPath).remove();
                     markerIndex++;
                     this.mapData(zoneNo, data, keyArray, index, lineNo, markerData, markerIndex, markerKeyArray);
@@ -317,6 +379,8 @@ export class CardMarkerMappingComponent implements OnInit {
               // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/cardNumber";
               // NEW PATH: MarkersData/{uid}/cardNumber
               dbPath = "EntityMarkingData/MarkersData/" + uid + "/cardNumber";
+              // cardNumber hat raha hai - cache me bhi hata do.
+              this.markerMapping.applyPatch(uid, { cardNumber: null });
               this.db.object(dbPath).remove();
               markerIndex++;
               this.mapData(zoneNo, data, keyArray, index, lineNo, markerData, markerIndex, markerKeyArray);
@@ -337,7 +401,11 @@ export class CardMarkerMappingComponent implements OnInit {
     }
     let zoneNo = $(this.ddlZone).val();
     this.resetNewPathCache();
-    this.commonService.getWardLine(zoneNo, this.todayDate).then((linesData: any) => {
+    // uidMap pehle bhar lete hain - setMarkerLocation() ko har marker ka uid
+    // chahiye hota hai aur wo sirf mapping me hota hai, record ke andar nahi.
+    this.loadWardUids(zoneNo).then(() => {
+      return this.commonService.getWardLine(zoneNo, this.todayDate);
+    }).then((linesData: any) => {
       let totalLines = JSON.parse(linesData)["totalLines"];
       let dbPath = "Houses/" + zoneNo;
       let houseInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
@@ -373,12 +441,18 @@ export class CardMarkerMappingComponent implements OnInit {
     //   let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
     //     markerInstance.unsubscribe();
     //
-    // NEW PATH: poora ward EK query me (getWardRecords -> orderByChild("ward")).
+    // NEW PATH: poora ward ek baar (getWardRecords), line-by-line nahi.
     //
-    // Line-by-line padhne ka ab koi faayda nahi raha, ulta nuksan tha: naye
-    // structure me ek line ka data mapping ke uid se ban'ta hai, yaani har line
-    // ke liye us line ke har marker ka alag read. 200 line x 40 marker = 8000
-    // reads, jabki wahi 8000 record ek hi ward query me aa jaate hain.
+    // Line-by-line padhne ka ab koi faayda nahi raha: naye structure me ek line
+    // ka data mapping ke uid se banta hai, yaani har line ke liye us line ke har
+    // marker ka alag read - aur wahi marker doosri line ke chakkar me dobara
+    // nahi aate, to har line par nayi reads. Ward-wise padhne par wo saare
+    // record ek hi baar aate hain aur cache me baithe rehte hain.
+    //
+    // (Service me ek "poora ward EK query me" wala raasta bhi hai -
+    // orderByChild("ward") - par wo `wardQueryEnabled = false` se OFF hai,
+    // kyunki bina DB index ke wo query chupchaap poora MarkersData utaar leti
+    // hai. Yaani abhi bhi N alag read hi jaati hain, bas ward me ek baar.)
     //
     // Yahan card poore ward me kahin bhi ho sakta hai, isliye ward hi sahi
     // daayra hai. totalLines ab sirf itna batata hai ki kahan tak dekhna hai.
@@ -410,15 +484,20 @@ export class CardMarkerMappingComponent implements OnInit {
             continue; // marker new path par nahi hai
           }
           this.db.object("EntityMarkingData/MarkersData/" + uid).update({ latLng: latLng, preLatLng: data[markerNo]["latLng"] });
+          // Sirf is ek record ki cache, aur wo bhi patch laga kar - phenkna
+          // nahi. Pehle poori cache loop ke baad ek baar udayi jaati thi (aur
+          // usse pehle har marker par - jo aur bura tha), kyunki
+          // clearLinkCache() ward ke saare records bhi phenk deta hai.
+          this.markerMapping.applyPatch(uid, { latLng: latLng, preLatLng: data[markerNo]["latLng"] });
           updated = true;
         }
       }
-      // Cache clear loop ke BAAD, ek baar. Pehle ye har matching marker par
-      // andar chalta tha - usi ward ka data jo abhi utara tha wo turant phenk
-      // deta tha, aur agla card phir se poori query maarta tha.
-      if (updated) {
-        this.markerMapping.clearLinkCache();
-      }
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - cache clear loop ke BAAD,
+      // ek baar. Ab zaroorat nahi: upar har marker par applyPatch() cache ko
+      // wahin theek kar deta hai, isliye kuch phenkna hi nahi padta.
+      // if (updated) {
+      //   this.markerMapping.clearLinkCache();
+      // }
     });
   }
 }

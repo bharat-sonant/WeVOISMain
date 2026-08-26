@@ -6,7 +6,6 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
 
-import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-supervisor-report',
   templateUrl: './supervisor-report.component.html',
@@ -29,7 +28,7 @@ export class SupervisorReportComponent implements OnInit {
   isGridView: boolean = false;
 
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public commonService: CommonService, private httpService: HttpClient, private modalService: NgbModal) { }
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.db = this.fs.getDatabaseByCity(this.cityName);

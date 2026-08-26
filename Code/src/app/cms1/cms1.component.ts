@@ -1003,9 +1003,6 @@ export class Cms1Component implements OnInit {
   }
 
   deleteHisarMarker() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let count = 0;
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
@@ -1029,20 +1026,34 @@ export class Cms1Component implements OnInit {
         let lineNo = fileList[i]["Line"];
         let markerNo = fileList[i]["MarkerKey"];
         let ownerName = fileList[i]["Owner Name"];
-        let dbPath = "EntityMarkingData/MarkedHouses/" + ward + "/" + lineNo + "/" + markerNo;
         //console.log(ownerName);
-        console.log(dbPath);
-        this.db.object(dbPath).remove();
 
+        // PEHLE YE THA (hataya nahi, comment kiya hai) - marker seedha apne
+        // ward/line/markerNo wale node par pada tha, isliye path se hi hat jaata:
+        //
+        // let dbPath = "EntityMarkingData/MarkedHouses/" + ward + "/" + lineNo + "/" + markerNo;
+        // console.log(dbPath);
+        // this.db.object(dbPath).remove();
+        //
+        // NEW PATH: pehle mapping se uid, phir service se delete. removeMarker
+        // record ke saath MarkerWise/WardWise/LineWise teeno mapping bhi hataata
+        // hai aur LineSummary ka marksCount ek ghata deta hai - sirf record
+        // hataane par mapping aise uid par point karti reh jaati jiska record
+        // hai hi nahi, aur line ka count bada dikhta rehta.
+        this.markerMapping.getUid(this.db, ward, lineNo, markerNo).then((uid: any) => {
+          if (uid == null) {
+            console.log("mapping nahi mili: " + ward + "/" + lineNo + "/" + markerNo);
+            return null;
+          }
+          console.log("EntityMarkingData/MarkersData/" + uid);
+          return this.markerMapping.removeMarker(this.db, uid);
+        });
       }
     }
 
   }
 
   hisarMarkerUpload() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let element = <HTMLInputElement>document.getElementById("fileUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -1066,6 +1077,19 @@ export class Cms1Component implements OnInit {
       let hundredCounts = 0;
       let markerKey = 0;
       console.log("arrey length => " + fileList.length);
+
+      // NEW PATH: uid ka poora block ek transaction se pehle reserve karte hain,
+      // phir har marker service se banta hai (MarkersData + MarkerWise +
+      // WardWise + LineWise + LineSummary + MarkerWardMapping, sab ek jagah).
+      //
+      // Line ka hisaab (hundredCounts / lineNo / markerKey) neeche bilkul waisa
+      // hi hai - sirf likhne ki jagah badli hai.
+      this.markerMapping.reserveUidBlock(this.db, fileList.length).then((blockStart: any) => {
+      if (blockStart == null) {
+        this.commonService.setAlertMessage("error", "Marker counter reserve nahi ho paya, dobara try karein.");
+        return;
+      }
+      let created = 0;
       for (let i = 0; i < fileList.length; i++) {
         let pId = fileList[i]["Integrated"] ? fileList[i]["Integrated"] : "";
         let propId = fileList[i]["Field3"];
@@ -1114,20 +1138,32 @@ export class Cms1Component implements OnInit {
           markerKey++;
           hundredCounts++;
         }
-        let dbPath = "EntityMarkingData/MarkedHouses/14-R9/" + lineNo + "/" + markerKey;
-        this.db.object(dbPath).update(obj);
-        console.log(dbPath);
+        // PEHLE YE THA (hataya nahi, comment kiya hai):
+        //
+        // let dbPath = "EntityMarkingData/MarkedHouses/14-R9/" + lineNo + "/" + markerKey;
+        // this.db.object(dbPath).update(obj);
+        // console.log(dbPath);
+        //
+        // ...aur har marker ke baad line ke do counter haath se likhe jaate the:
+        //
+        // dbPath = "EntityMarkingData/MarkedHouses/14-R9/" + lineNo + "/";
+        // this.db.object(dbPath).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
+        //
+        // Ab wo do line ki zaroorat nahi - writeMarker khud LineSummary par
+        // marksCount badhata hai aur lastMarkerKey ko max se aage le jaata hai.
+        // Block me se koi number use na ho to bas gap reh jaata hai, nuksan nahi.
+        created++;
+        this.markerMapping.writeMarker(this.db, "14-R9", lineNo, obj, blockStart + created, markerKey);
         console.log(obj);
         marksCount++;
         key++;
         lastMarkerKey = key;
-        dbPath = "EntityMarkingData/MarkedHouses/14-R9/" + lineNo + "/";
-        this.db.object(dbPath).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
       }
       // let dbPath = "EntityMarkingData/MarkedHouses/16-R1/1/";
       // this.db.object(dbPath).update({ marksCount: marksCount, lastMarkerKey: lastMarkerKey });
       //  console.log(marksCount);
       //  console.log(lastMarkerKey);
+      });
     }
   }
 
@@ -1186,23 +1222,39 @@ export class Cms1Component implements OnInit {
   }
 
   removeLineApprove() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let wardNo = $("#txtwardLineMarker").val();
-    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        markerInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai) - ApproveStatus line ke node par
+    // marker records ke beech me pada tha, isliye poora MarkedHouses/{ward}
+    // padhna padta tha:
+    //
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerInstance.unsubscribe();
+    //
+    // NEW PATH: ApproveStatus ab line-level cheez hai aur LineSummary par rehti
+    // hai (marker-approval, ward-survey-summary, ward-survey-analysis aur
+    // ward-marking-summary - sab wahin se padhte-likhte hain). Isliye source
+    // bhi wahi node hai, aur ye read marker records ke bina hai - bahut halka.
+    let dbPath = "";
+    this.markerMapping.getWardLineSummaries(this.db, wardNo).then(
+      (data: any) => {
         if (data != null) {
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
             let lineNo = Number(keyArray[i]);
-            if (data[lineNo]["ApproveStatus"] != null) {
-              dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/ApproveStatus";
+            if (data[lineNo] != null && data[lineNo]["ApproveStatus"] != null) {
+              // PEHLE YE THA (hataya nahi, comment kiya hai):
+              // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/ApproveStatus";
+              dbPath = this.markerMapping.lineSummaryPath + wardNo + "/" + lineNo + "/ApproveStatus";
               this.db.object(dbPath).remove();
+              // Cache me bhi hata do, warna is ward ka summary dobara padhne par
+              // hataya hua ApproveStatus wapas dikhega (refresh tak).
+              delete data[lineNo]["ApproveStatus"];
             }
           }
+          // Ye marking node nahi hai - jaisa tha waisa hi.
           dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo;
           this.db.object(dbPath).update({ approved: 0, rejected: 0 });
         }
@@ -1280,14 +1332,26 @@ export class Cms1Component implements OnInit {
   }
 
   updateRevisitMarker() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let wardNo = $("#txtwardLineMarker").val();
-    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        markerInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerInstance.unsubscribe();
+    //
+    // NEW PATH: pehle mapping, phir data.
+    //   getWardLinks   -> { line: { markerNo: uid } }      <- yahan se uid milta hai
+    //   getWardRecords -> { line: { markerNo: record } }   <- shape purana hi hai
+    // isliye neeche ka poora loop jaisa tha waisa hi hai.
+    let dbPath = "";
+    Promise.all([
+      this.markerMapping.getWardLinks(this.db, wardNo),
+      this.markerMapping.getWardRecords(this.db, wardNo)
+    ]).then(
+      (res: any) => {
+        let links = res[0] != null ? res[0] : {};
+        let data = res[1];
         if (data != null) {
           let keyArray = Object.keys(data);
           for (let i = 0; i < keyArray.length; i++) {
@@ -1312,8 +1376,23 @@ export class Cms1Component implements OnInit {
                         this.db.object(dbPath).update(revisitOldData);
                       }
                       else {
-                        dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo + "/revisitKey";
-                        this.db.database.ref(dbPath).set(null);
+                        // PEHLE YE THA (hataya nahi, comment kiya hai):
+                        // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo + "/revisitKey";
+                        // this.db.database.ref(dbPath).set(null);
+                        //
+                        // NEW PATH: marker ka data MarkersData/{uid} par hai.
+                        // uid mapping se aata hai - upar wale getWardLinks se.
+                        let uid = links[lineNo] != null ? links[lineNo][markerNo] : null;
+                        if (uid != null) {
+                          dbPath = this.markerMapping.markersDataPath + uid;
+                          // Cache bhi saath me theek - database aur cache dono
+                          // ek jaise rehne chahiye.
+                          this.markerMapping.clearForPath(dbPath, { revisitKey: null });
+                          this.db.database.ref(dbPath + "/revisitKey").set(null);
+                        }
+                        else {
+                          console.log("mapping nahi mili: " + wardNo + "/" + lineNo + "/" + markerNo);
+                        }
                       }
                       console.log(lineNo + " => " + markerData[markerNo]["revisitKey"]);
                     }
@@ -1327,14 +1406,19 @@ export class Cms1Component implements OnInit {
   }
 
   checkMarkerCount() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let wardNo = "129-R1";
-    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        markerInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerInstance.unsubscribe();
+    //
+    // NEW PATH: shape purana hi hai ({ line: { markerNo: record } }), isliye
+    // ginti ka poora loop neeche jaisa tha waisa hi hai.
+    let dbPath = "";
+    this.markerMapping.getWardRecords(this.db, wardNo).then(
+      (data: any) => {
         if (data != null) {
           let totalMarkerCount = 0;
           let totalSurvey = 0
@@ -1360,10 +1444,18 @@ export class Cms1Component implements OnInit {
             }
             console.log(lineNo + " ==> " + markerCount + "  S = " + surveyCount);
             // console.log("last Marker Key : " + lastMarkerKey);
-            dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/";
+            // PEHLE YE THA (hataya nahi, comment kiya hai) - counts line ke node
+            // par marker records ke beech me padte the:
+            // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/";
+            //
+            // NEW PATH: line-level counts ab LineSummary par hain.
+            dbPath = this.markerMapping.lineSummaryPath + wardNo + "/" + lineNo;
             this.db.object(dbPath).update({ marksCount: markerCount });
             this.db.object(dbPath).update({ surveyedCount: surveyCount });
           }
+          // Apne likhe hue counts wapas padhne hain - is ward ka summary cache
+          // bhool jao (records/mapping jaise the waise sahi hain).
+          this.markerMapping.clearWardSummary(wardNo);
           console.log("totalMarkerCount => " + totalMarkerCount);
           console.log("totalSurvey => " + totalSurvey);
           dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "";
@@ -1376,16 +1468,67 @@ export class Cms1Component implements OnInit {
     );
   }
 
+  // Poore shehar ka marker data purane 3-level shape me:
+  //   { ward: { line: { markerNo: record } } }
+  //
+  // Purana MarkedHouses bilkul isi shape me pada tha aur kuch function uspar
+  // teen loop lagate hain (zone -> line -> marker). Naye structure me
+  // MarkersData flat hai ({ uid: record }), par har record me ward/line/markerNo
+  // maujood hain - isliye wahi shape wapas ban jaata hai aur un function ke
+  // loop chhedne nahi padte.
+  //
+  // record ke saath uid bhi rakh dete hain: likhte waqt path MarkersData/{uid}
+  // banana hota hai, aur uid yahin haath me aa jaye to mapping dobara padhne ki
+  // zaroorat nahi.
+  //
+  // Ye ek hi read hai - purana "MarkedHouses/" bhi ek hi read tha.
+  getAllMarkersOldShape(): Promise<any> {
+    return this.markerMapping.readOnce(this.db, this.markerMapping.markersDataPath).then((data: any) => {
+      let result: any = {};
+      if (data == null || typeof data != "object") {
+        return result;
+      }
+      let uidArray = Object.keys(data);
+      for (let i = 0; i < uidArray.length; i++) {
+        let uid = uidArray[i];
+        let record = data[uid];
+        if (record == null || typeof record != "object") {
+          continue;
+        }
+        let ward = record["ward"];
+        let line = record["line"];
+        let markerNo = record["markerNo"];
+        if (ward == null || line == null || markerNo == null) {
+          continue;
+        }
+        if (result[ward] == null) {
+          result[ward] = {};
+        }
+        if (result[ward][line] == null) {
+          result[ward][line] = {};
+        }
+        record["uid"] = uid;
+        result[ward][line][markerNo] = record;
+      }
+      return result;
+    });
+  }
+
   removeMarkerRejectStatus() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
 
     let markerList = [];
-    let dbPath = "EntityMarkingData/MarkedHouses/";
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        markerInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/";
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerInstance.unsubscribe();
+    //
+    // NEW PATH: MarkersData ek read, phir purane shape me badal kar - teeno loop
+    // neeche jaise the waise hi rahen.
+    let dbPath = "";
+    this.getAllMarkersOldShape().then(
+      (data: any) => {
         if (data != null) {
           let zoneKeyArray = Object.keys(data);
           if (zoneKeyArray.length > 0) {
@@ -1403,9 +1546,19 @@ export class Cms1Component implements OnInit {
                       let markerNo = markerKeyArray[k];
                       if (markerData[markerNo]["houseType"] != null) {
                         console.log(zoneNo + " => " + lineNo + " => " + markerNo + " => Status => " + markerData[markerNo]["status"]);
-                        dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/status";
-                        this.db.object(dbPath).remove();
-
+                        // PEHLE YE THA (hataya nahi, comment kiya hai):
+                        // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/status";
+                        // this.db.object(dbPath).remove();
+                        //
+                        // NEW PATH: record MarkersData/{uid} par hai. uid upar
+                        // wale reshape me record ke saath hi aa chuka hai.
+                        let uid = markerData[markerNo]["uid"];
+                        if (uid != null) {
+                          dbPath = this.markerMapping.markersDataPath + uid;
+                          // Database aur cache dono ek jaise rahen.
+                          this.markerMapping.clearForPath(dbPath, { status: null });
+                          this.db.object(dbPath + "/status").remove();
+                        }
 
                       }
                     }
@@ -1424,9 +1577,6 @@ export class Cms1Component implements OnInit {
 
 
   exportMarkers() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let houseTypeList = [];
     let dbPath = "Defaults/FinalHousesType/";
     let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
@@ -1440,10 +1590,17 @@ export class Cms1Component implements OnInit {
         }
 
         let markerList = [];
-        let dbPath = "EntityMarkingData/MarkedHouses/";
-        let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            markerInstance.unsubscribe();
+
+        // OLD PATH (reference ke liye rakha hai):
+        // let dbPath = "EntityMarkingData/MarkedHouses/";
+        // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+        //   data => {
+        //     markerInstance.unsubscribe();
+        //
+        // NEW PATH: MarkersData ek read, phir purane 3-level shape me. Teeno
+        // loop neeche jaise the waise hi hain.
+        this.getAllMarkersOldShape().then(
+          (data: any) => {
             if (data != null) {
               let zoneKeyArray = Object.keys(data);
               if (zoneKeyArray.length > 0) {
@@ -1712,14 +1869,19 @@ export class Cms1Component implements OnInit {
   }
 
   getD2DMatkers() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let wardNo = "139-R1";
     let todayDate = "2022-07-12";
-    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
-      markerInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+    //   markerInstance.unsubscribe();
+    //
+    // NEW PATH: sirf padhna badla hai. Shape purana hi hai isliye neeche ka
+    // poora loop waisa hi hai. Likhne wala node (MarkedHousesNew) waisa hi
+    // rahega - wo naye structure ka hissa nahi hai.
+    let dbPath = "";
+    this.markerMapping.getWardRecords(this.db, wardNo).then((data: any) => {
       if (data != null) {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
@@ -1745,11 +1907,9 @@ export class Cms1Component implements OnInit {
   }
 
   updateMalviyaNagarData() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let wardNo = "140-R1";
     let lineNo = "10";
+    // Source waisa hi - MarkedHousesNew naye structure ka hissa nahi hai.
     let dbPath = "EntityMarkingData/MarkedHousesNew/" + wardNo + "/" + lineNo;
     let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
@@ -1758,25 +1918,54 @@ export class Cms1Component implements OnInit {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             let markerCount = keyArray.length;
-            dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/lastMarkerKey";
-            let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-              lastKeyData => {
-                markerCountInstance.unsubscribe();
+
+            // OLD PATH (reference ke liye rakha hai) - line ka lastMarkerKey
+            // seedha padh liya jaata tha:
+            // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/lastMarkerKey";
+            // let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+            //   lastKeyData => {
+            //     markerCountInstance.unsubscribe();
+            //
+            // NEW PATH: getSafeLastKey LineSummary ka lastMarkerKey aur line ki
+            // asli sabse badi key, dono me se bada leta hai - sirf counter par
+            // bharosa karne se naye marker ko wahi number mil sakta tha jo pehle
+            // se kisi ke paas hai. Saath me uid ka block bhi reserve kar lete hain.
+            Promise.all([
+              this.markerMapping.getSafeLastKey(this.db, wardNo, lineNo),
+              this.markerMapping.reserveUidBlock(this.db, markerCount)
+            ]).then(
+              (res: any) => {
+                let lastKeyData = res[0];
+                let blockStart = res[1];
+                if (blockStart == null) {
+                  this.commonService.setAlertMessage("error", "Marker counter reserve nahi ho paya, dobara try karein.");
+                  return;
+                }
                 let lastMarkerKey = markerCount;
                 let lastKey = 0;
                 if (lastKeyData != null) {
                   lastKey = Number(lastKeyData);
                   lastMarkerKey = Number(lastKeyData) + markerCount;
                 }
+                let created = 0;
                 for (let i = 0; i < keyArray.length; i++) {
                   let markerNo = keyArray[i];
                   let markerData = data[markerNo];
                   lastKey = lastKey + 1;
-                  dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + lastKey;
-                  this.db.object(dbPath).update(markerData);
+                  // PEHLE YE THA (hataya nahi, comment kiya hai):
+                  // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + lastKey;
+                  // this.db.object(dbPath).update(markerData);
+                  created++;
+                  this.markerMapping.writeMarker(this.db, wardNo, lineNo, markerData, blockStart + created, lastKey);
                 }
-                dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
-                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+                // PEHLE YE THA (hataya nahi, comment kiya hai):
+                // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+                // this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+                //
+                // Ab writeMarker khud LineSummary ka lastMarkerKey max se aage le
+                // jaata hai - aakhri marker ka number wahi (lastKeyData + markerCount)
+                // hai jo yahan likha jaata tha.
+                console.log("lastMarkerKey => " + lastMarkerKey);
                 this.setTotal(wardNo, lineNo, markerCount);
               });
           }
@@ -1786,21 +1975,37 @@ export class Cms1Component implements OnInit {
   }
 
   setTotal(wardNo: any, lineNo: any, markerCount: any) {
-    if (this.oldPathBlocked()) {
-      return;
-    }
-    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/marksCount";
-    let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        markerCountInstance.unsubscribe();
-        let count = markerCount;
-        if (data != null) {
-          count = count + Number(data);
-        }
-        dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
-        this.db.object(dbPath).update({ marksCount: count });
-      }
-    );
+    let dbPath = "";
+
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - line ka marksCount padh kar
+    // usme naye marker ki ginti jod di jaati thi:
+    //
+    // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/marksCount";
+    // let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerCountInstance.unsubscribe();
+    //     let count = markerCount;
+    //     if (data != null) {
+    //       count = count + Number(data);
+    //     }
+    //     dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+    //     this.db.object(dbPath).update({ marksCount: count });
+    //   }
+    // );
+    //
+    // AB YE YAHAN NAHI HOTA - aur ye JAAN-BUJH KAR hataya hai:
+    //
+    // Purane path par marker likhna (update) marksCount ko haath nahi lagata tha,
+    // isliye ginti yahan alag se jodni padti thi. writeMarker har marker par
+    // LineSummary ka marksCount transaction se 1 badha deta hai. Dono karte to
+    // ginti DUGNI ho jaati (2 x markerCount).
+    //
+    // Nateeja bilkul wahi hai jo master deta tha: purana marksCount + naye marker.
+    // Bas jodne ka kaam ab writeMarker karta hai.
+    //
+    // Cache me bhi naya count chahiye - writeMarker LineSummary likhta hai par
+    // summaryCache use khud nahi bhoolta.
+    this.markerMapping.clearWardSummary(wardNo);
 
     // datewise total
 
@@ -1834,15 +2039,19 @@ export class Cms1Component implements OnInit {
   }
 
   moveMalviyanagarImages() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
-
     let wardNo = "125-R1";
-    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        markerInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerInstance.unsubscribe();
+    //
+    // NEW PATH: shape purana hi hai, isliye neeche ka poora loop waisa hi hai.
+    // Storage ke dono folder (source aur target) waise hi hain - wo DB structure
+    // ka hissa nahi.
+    this.markerMapping.getWardRecords(this.db, wardNo).then(
+      (data: any) => {
         if (data != null) {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
@@ -1852,8 +2061,16 @@ export class Cms1Component implements OnInit {
               let lineKeyArray = Object.keys(lineObject);
               for (let j = 0; j < lineKeyArray.length; j++) {
                 let markerNo = lineKeyArray[j];
-                if (lineObject[markerNo]["image"] != null) {
-                  let image = lineObject[markerNo]["image"];
+                // PEHLE YE THA (hataya nahi, comment kiya hai) - record me image
+                // ka naam `image` field me padta tha:
+                // if (lineObject[markerNo]["image"] != null) {
+                //   let image = lineObject[markerNo]["image"];
+                //
+                // NEW PATH: naye record me image ka naam `imgRef` me hai
+                // (hamesha "{uid}.jpg"). `image` ab bharta hi nahi, isliye purane
+                // check par ye loop kuch karta hi nahi.
+                if (lineObject[markerNo]["imgRef"] != null) {
+                  let image = lineObject[markerNo]["imgRef"];
                   let imageId = image.split('.')[0];
                   //if (imageId == markerNo) {
                   console.log("lineNo : " + lineNo + " markerNo : " + markerNo + " image : " + imageId);
@@ -2542,10 +2759,10 @@ export class Cms1Component implements OnInit {
 
   }
 
+  // Ye poora function CardDataUpdateTest/MNZ-Test wale test node par chalta hai,
+  // live marker structure se iska koi lena-dena nahi. Upar se iska koi caller
+  // bhi nahi hai (sirf khud ko bulata hai) - isliye kuch badla nahi gaya.
   getMistakeMarkerNo(list: any, index: any) {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     if (index == list.length) {
       console.log(list);
       if (list.length > 0) {
@@ -2632,22 +2849,17 @@ export class Cms1Component implements OnInit {
     }
   }
 
-  // Neeche ke saare function purane MarkedHouses structure par likhe gaye the -
-  // ek-baar ke data-fix aur city-specific kaam (Hisar, Malviyanagar, Murlipura,
-  // Dehradun...). Marker ka data ab MarkersData + MarkersMapping par hai, aur
-  // MarkedHouses sirf migration ka source reh gaya hai.
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
   //
-  // Inhe chalne dena khatarnaak tha: ye us purane tree par likhte hain jise
-  // portal padhta hi nahi, yaani DB me chupchaap junk banta aur naye path se
-  // farak badhta jaata. Isliye sabko band kar diya gaya hai - bilkul waise hi
-  // jaise 'Manage Marking Data' aur 'Set Marker Images' pages band hue the.
+  // Beech me is page ke saare marking function purane MarkedHouses structure par
+  // the aur unhe is guard se band kar diya gaya tha. Ab sabhi 26 function naye
+  // structure par le aaye gaye hain (MarkersData + MarkersMapping), isliye kisi
+  // ko band rakhne ki zaroorat nahi bachi.
   //
-  // Kisi ek kaam ki phir se zaroorat pade to use naye path par likhna hoga
-  // (MarkerMappingService), sirf ye guard hata dena kaafi nahi hai.
-  oldPathBlocked(): boolean {
-    this.commonService.setAlertMessage("error", "Ye kaam purane marker structure (MarkedHouses) par chalta tha aur band kar diya gaya hai. Marker ka data ab MarkersData/MarkersMapping par hai.");
-    return true;
-  }
+  // oldPathBlocked(): boolean {
+  //   this.commonService.setAlertMessage("error", "Ye kaam purane marker structure (MarkedHouses) par chalta tha aur band kar diya gaya hai. Marker ka data ab MarkersData/MarkersMapping par hai.");
+  //   return true;
+  // }
 
   addHouseEcogram() {
     let wardNo = "8";
@@ -2836,10 +3048,9 @@ export class Cms1Component implements OnInit {
     }
   }
 
+  // CardDataUpdateTest/MNZ-Test wale test node se Excel banata hai - live marker
+  // structure se koi lena-dena nahi, isliye kuch badla nahi gaya.
   exportNewCardNo() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let ward = "149-R2";
     let markerList = [];
     let houseList = [];
@@ -3001,9 +3212,6 @@ export class Cms1Component implements OnInit {
   }
 
   getOldMarkerDataMalviyaNagar(list: any, index: any) {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     console.log(index);
     if (index == list.length) {
       if (list.length > 0) {
@@ -3089,10 +3297,21 @@ export class Cms1Component implements OnInit {
       let cardNo = list[index]["Card No"];
       let oldWard = list[index]["OldWard"];
       let oldLine = list[index]["OldLine"];
-      let dbPath = "EntityMarkingData/MarkedHouses/" + oldWard;
-      console.log(dbPath);
-      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
-        instance.unsubscribe();
+      // OLD PATH (reference ke liye rakha hai) - har card par uske purane ward
+      // ka poora data dobara padha jaata tha:
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + oldWard;
+      // console.log(dbPath);
+      // let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      //   instance.unsubscribe();
+      //
+      // NEW PATH: shape purana hi hai, isliye neeche ka poora loop (parseInt
+      // guard samet) waisa hi hai. getWardRecords cached hai, to ek hi ward ke
+      // 500 card hon to wo ward sirf pehli baar network se aayega.
+      //
+      // getUidByCard se ye kaam ek hop me ho sakta tha, par wo flow badal deta -
+      // isliye jaan-bujh kar nahi liya.
+      console.log(this.markerMapping.markersDataPath + " (ward " + oldWard + ")");
+      this.markerMapping.getWardRecords(this.db, oldWard).then((data: any) => {
         if (data != null) {
           console.log(data);
           let keyArray = Object.keys(data);
@@ -3121,9 +3340,6 @@ export class Cms1Component implements OnInit {
   }
 
   deleteOldDataMalviyanagar() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let element = <HTMLInputElement>document.getElementById("flpUpload");
     let file = element.files[0];
     let fileReader = new FileReader();
@@ -3147,8 +3363,23 @@ export class Cms1Component implements OnInit {
         // if(fileList[i]["Old Marker Line No"]!=undefined){
         let markerLine = fileList[i]["Old Marker Line No"];
         let markerNo = fileList[i]["Old Marker No"];
-        dbPath = "EntityMarkingData/MarkedHouses/" + ward + "/" + markerLine + "/" + markerNo;
-        this.db.object(dbPath).remove();
+
+        // PEHLE YE THA (hataya nahi, comment kiya hai) - marker apne
+        // ward/line/markerNo wale node par pada tha, isliye path se hi hat jaata:
+        //
+        // dbPath = "EntityMarkingData/MarkedHouses/" + ward + "/" + markerLine + "/" + markerNo;
+        // this.db.object(dbPath).remove();
+        //
+        // NEW PATH: mapping se uid, phir service se delete. removeMarker record
+        // ke saath teeno mapping bhi hataata hai aur LineSummary ka marksCount
+        // ek ghata deta hai.
+        this.markerMapping.getUid(this.db, ward, markerLine, markerNo).then((uid: any) => {
+          if (uid == null) {
+            console.log("mapping nahi mili: " + ward + "/" + markerLine + "/" + markerNo);
+            return null;
+          }
+          return this.markerMapping.removeMarker(this.db, uid);
+        });
         //}
       }
       this.commonService.setAlertMessage("success", "Data Deleted Successfully !!!");
@@ -3157,9 +3388,6 @@ export class Cms1Component implements OnInit {
 
 
   addCardsMalviyanagar(list: any, index: any, wardNo: any) {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     if (index == list.length) {
       this.commonService.setAlertMessage("success", "card added successfully!!!");
     }
@@ -3184,8 +3412,28 @@ export class Cms1Component implements OnInit {
             instance.unsubscribe();
             if (data != null) {
               console.log(data);
-              dbPathUpdate = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + markerLineNo + "/" + markerNo;
-              this.db.object(dbPathUpdate).set(data);
+              // PEHLE YE THA (hataya nahi, comment kiya hai) - test node ka marker
+              // seedha uske ward/line/markerNo par rakh diya jaata tha:
+              //
+              // dbPathUpdate = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + markerLineNo + "/" + markerNo;
+              // this.db.object(dbPathUpdate).set(data);
+              //
+              // NEW PATH: marker ka apna uid banta hai (transaction se reserve),
+              // aur record ke saath poori mapping bhi bhar jaati hai (MarkerWise +
+              // WardWise + LineWise + LineSummary + MarkerWardMapping). Excel ka
+              // markerNo waisa ka waisa rehta hai - wo screen par dikhta hai.
+              this.markerMapping.reserveUidBlock(this.db, 1).then((blockStart: any) => {
+                if (blockStart == null) {
+                  console.log("uid reserve nahi hua, card skip: " + cardNo);
+                  index++;
+                  this.addCardsMalviyanagar(list, index, wardNo);
+                  return;
+                }
+                this.markerMapping.writeMarker(this.db, wardNo, markerLineNo, data, blockStart + 1, markerNo);
+                index++;
+                this.addCardsMalviyanagar(list, index, wardNo);
+              });
+              return;
             }
             index++;
             this.addCardsMalviyanagar(list, index, wardNo);
@@ -3300,15 +3548,24 @@ export class Cms1Component implements OnInit {
   }
 
   updateMarkingData() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let markerList = [];
     let wardNo = "21_28";
-    let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      markerData => {
-        markerInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   markerData => {
+    //     markerInstance.unsubscribe();
+    //
+    // NEW PATH: shape purana hi hai, isliye neeche ka loop waisa hi hai.
+    // Is function ke dono write master me pehle se comment me hain - sirf
+    // console.log(markerList) hi asli kaam hai.
+    let dbPath = "";
+    this.markerMapping.getWardRecords(this.db, wardNo).then(
+      (markerData: any) => {
+        if (markerData == null) {
+          markerData = {};
+        }
         let keyArray = Object.keys(markerData);
         for (let i = 0; i < keyArray.length; i++) {
           let lineNo = keyArray[i];
@@ -3354,9 +3611,6 @@ export class Cms1Component implements OnInit {
   }
 
   addHouseToMarker() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let zoneNo = $("#txtZoneNo").val();
     let lineNo = $("#txtLineNo").val();
     let dbPath = "Houses/" + zoneNo + "/" + lineNo;
@@ -3368,10 +3622,18 @@ export class Cms1Component implements OnInit {
 
           for (let i = 0; i < keyArray.length; i++) {
 
-            let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-            let markingInstance = this.db.object(dbPath).valueChanges().subscribe(
-              markerData => {
-                markingInstance.unsubscribe();
+            // OLD PATH (reference ke liye rakha hai) - ye read loop ke ANDAR hai,
+            // yaani 200 card wali line par wahi node 200 baar padha jaata tha:
+            // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+            // let markingInstance = this.db.object(dbPath).valueChanges().subscribe(
+            //   markerData => {
+            //     markingInstance.unsubscribe();
+            //
+            // NEW PATH: getLineRecords cached hai, isliye pehli baar ke baad
+            // network par kuch nahi jaata. Loop jahan hai wahin rehne diya -
+            // behaviour bilkul wahi.
+            this.markerMapping.getLineRecords(this.db, zoneNo, lineNo).then(
+              (markerData: any) => {
                 if (markerData != null) {
                   let cardNo = keyArray[i];
                   // console.log(cardNo);
@@ -3403,9 +3665,6 @@ export class Cms1Component implements OnInit {
 
 
   addHouse() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let zoneNo = $("#txtZoneNo").val();
     let lineNo = $("#txtLineNo").val();
     let cardNoCount = Number(localStorage.getItem("cardNoCount"));
@@ -3414,15 +3673,37 @@ export class Cms1Component implements OnInit {
     console.log(rfIdCount);
     let surveyedCount = 0;
     let currentSurveyCount = 0;
-    let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-    console.log(dbPath);
-    let markingInstance = this.db.object(dbPath).valueChanges().subscribe(
-      markerData => {
-        markingInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai) - line ke ek hi node par marker
+    // records aur surveyedCount dono pade the, isliye ek read me dono mil jaate:
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+    // console.log(dbPath);
+    // let markingInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   markerData => {
+    //     markingInstance.unsubscribe();
+    //     if (markerData != null) {
+    //       let keyArray = Object.keys(markerData);
+    //       if (markerData["surveyedCount"] != null) {
+    //         surveyedCount = Number(markerData["surveyedCount"]);
+    //       }
+    //
+    // NEW PATH: ab wo do alag jagah hain - records MarkersData par, surveyedCount
+    // LineSummary par. Isliye teeno saath me padhte hain (mapping bhi, kyunki
+    // aage marker par cardNumber likhna hai). Value aur hisaab wahi hai.
+    let dbPath = "";
+    Promise.all([
+      this.markerMapping.getLineLinks(this.db, zoneNo, lineNo),
+      this.markerMapping.getLineRecords(this.db, zoneNo, lineNo),
+      this.markerMapping.getLineSummary(this.db, zoneNo, lineNo)
+    ]).then(
+      (res: any) => {
+        let links = res[0] != null ? res[0] : {};
+        let markerData = res[1];
+        let summary = res[2] != null ? res[2] : {};
         if (markerData != null) {
           let keyArray = Object.keys(markerData);
-          if (markerData["surveyedCount"] != null) {
-            surveyedCount = Number(markerData["surveyedCount"]);
+          if (summary["surveyedCount"] != null) {
+            surveyedCount = Number(summary["surveyedCount"]);
           }
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -3444,8 +3725,14 @@ export class Cms1Component implements OnInit {
             localStorage.setItem("cardNoCount", cardNoCount.toString());
             localStorage.setItem("rfIdCount", rfIdCount.toString());
 
-            dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/surveyedCount";
+            // PEHLE YE THA (hataya nahi, comment kiya hai):
+            // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/surveyedCount";
+            //
+            // NEW PATH: line-level count LineSummary par.
+            dbPath = this.markerMapping.lineSummaryPath + zoneNo + "/" + lineNo + "/surveyedCount";
             this.db.database.ref(dbPath).set(surveyedCount);
+            // Apna likha hua count wapas padhna hai - is ward ka summary cache bhulo.
+            this.markerMapping.clearWardSummary(zoneNo);
 
             dbPath = "EntitySurveyData/TotalHouseCount/" + zoneNo;
             let totalRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -3466,9 +3753,6 @@ export class Cms1Component implements OnInit {
   }
 
   saveHouse(markerObj: any, zoneNo: any, cardNo: any, lineNo: any, rfId: any, mobileNo: any, markerNo: any, surveyedCount: any) {
-    if (this.oldPathBlocked()) {
-      return;
-    }
 
     let dbPath = "CardWardMapping/" + cardNo;
     this.db.object(dbPath).update({ line: lineNo, ward: zoneNo });
@@ -3512,10 +3796,32 @@ export class Cms1Component implements OnInit {
     dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
     this.db.object(dbPath).update(data);
 
-    dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-    this.db.object(dbPath).update({ cardNumber: cardNo });
-
-
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - marker par sirf cardNumber
+    // likh kar chhod diya jaata tha:
+    //
+    // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+    // this.db.object(dbPath).update({ cardNumber: cardNo });
+    //
+    // NEW PATH: do jagah likhna padta hai, kyunki dono taraf se dhoondha jaata hai -
+    //   marker khula hai -> uska card kaun sa?  -> MarkersData/{uid}.cardNumber
+    //   card khula hai   -> uska marker kaun sa? -> MarkerWardMapping/{cardNo}.markerkey
+    //
+    // Purane structure me doosri wali ki zaroorat nahi thi - MarkedHouses ghoom
+    // kar cardNumber match kar lete the. Ab wo scan hai hi nahi, aur getUidByCard
+    // ka fallback bhi hata diya gaya hai. Isliye markerkey na likha to us card ki
+    // marker image kahin nahi dikhegi.
+    this.markerMapping.getUid(this.db, zoneNo, lineNo, markerNo).then((uid: any) => {
+      if (uid == null) {
+        console.log("mapping nahi mili: " + zoneNo + "/" + lineNo + "/" + markerNo);
+        return null;
+      }
+      let markerPath = this.markerMapping.markersDataPath + uid;
+      // Database aur cache dono ek jaise rahen.
+      this.markerMapping.clearForPath(markerPath, { cardNumber: cardNo });
+      return this.db.object(markerPath).update({ cardNumber: cardNo }).then(() => {
+        return this.markerMapping.writeCardMapping(this.db, cardNo, uid, zoneNo, lineNo, markerNo);
+      });
+    });
 
     console.log(data);
   }
@@ -3642,10 +3948,9 @@ export class Cms1Component implements OnInit {
     });
   }
 
+  // Iska live hissa sirf Houses padhta hai. MarkedHouses wala poora block neeche
+  // pehle se /* */ me hai (master me bhi), isliye kuch badla nahi gaya.
   compairMarkerHouseData() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let houseList = [];
     let duplicateCardList = [];
     let dbPath = "Houses/142-R1";
@@ -3707,13 +4012,23 @@ export class Cms1Component implements OnInit {
   }
 
   updateMalviyaNagarHouseData() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
-    let dbPath = "EntityMarkingData/MarkedHouses/150-R3";
-    let instance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        instance.unsubscribe();
+    let wardNo = "150-R3";
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/150-R3";
+    // let instance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     instance.unsubscribe();
+    //
+    // NEW PATH: pehle mapping, phir data. Shape purana hi hai isliye neeche ka
+    // poora loop (parseInt guard samet) waisa hi hai.
+    Promise.all([
+      this.markerMapping.getWardLinks(this.db, wardNo),
+      this.markerMapping.getWardRecords(this.db, wardNo)
+    ]).then(
+      (res: any) => {
+        let links = res[0] != null ? res[0] : {};
+        let data = res[1];
         if (data != null) {
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
@@ -3727,8 +4042,18 @@ export class Cms1Component implements OnInit {
                 if (parseInt(markerNo)) {
                   if (lineData[markerNo]["cardNumber"] == null) {
                     console.log(lineNo + " >> " + markerNo);
-                    let dbPathRemove = dbPath + "/" + lineNo + "/" + markerNo;
-                    this.db.object(dbPathRemove).remove();
+                    // PEHLE YE THA (hataya nahi, comment kiya hai):
+                    // let dbPathRemove = dbPath + "/" + lineNo + "/" + markerNo;
+                    // this.db.object(dbPathRemove).remove();
+                    //
+                    // NEW PATH: uid mapping se, phir service se delete.
+                    let uid = links[lineNo] != null ? links[lineNo][markerNo] : null;
+                    if (uid != null) {
+                      this.markerMapping.removeMarker(this.db, uid);
+                    }
+                    else {
+                      console.log("mapping nahi mili: " + wardNo + "/" + lineNo + "/" + markerNo);
+                    }
                   }
                 }
               }
@@ -3844,9 +4169,6 @@ export class Cms1Component implements OnInit {
   }
 
   updateMurlipuraHouseData() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
 
 
 
@@ -3884,10 +4206,21 @@ export class Cms1Component implements OnInit {
                       line: lineNo
                     }
                     this.db.object("CardWardMapping/" + newCardNo).update(aa);
-                    let dbMarkerPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-                    let markerInstance = this.db.object(dbMarkerPath).valueChanges().subscribe(
-                      lineData => {
-                        markerInstance.unsubscribe();
+                    // OLD PATH (reference ke liye rakha hai):
+                    // let dbMarkerPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                    // let markerInstance = this.db.object(dbMarkerPath).valueChanges().subscribe(
+                    //   lineData => {
+                    //     markerInstance.unsubscribe();
+                    //
+                    // NEW PATH: pehle mapping, phir data. Shape purana hi hai
+                    // isliye neeche ka poora loop waisa hi hai.
+                    Promise.all([
+                      this.markerMapping.getLineLinks(this.db, zoneNo, lineNo),
+                      this.markerMapping.getLineRecords(this.db, zoneNo, lineNo)
+                    ]).then(
+                      (mres: any) => {
+                        let links = mres[0] != null ? mres[0] : {};
+                        let lineData = mres[1];
                         if (lineData != null) {
                           let keyArray = Object.keys(lineData);
                           if (keyArray.length > 0) {
@@ -3902,7 +4235,22 @@ export class Cms1Component implements OnInit {
                                         console.log(lineData[markerNo]);
                                         lineData[markerNo]["cardNumber"] = newCardNo;
                                         //console.log(lineData[markerNo]);
-                                        this.db.object("EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo).update(lineData[markerNo]);
+                                        // PEHLE YE THA (hataya nahi, comment kiya hai):
+                                        // this.db.object("EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo).update(lineData[markerNo]);
+                                        //
+                                        // NEW PATH: record MarkersData/{uid} par, aur card ka
+                                        // index MarkerWardMapping/{newCardNo} par - warna naye
+                                        // card se ye marker milna band ho jayega.
+                                        let uid = links[markerNo];
+                                        if (uid != null) {
+                                          let markerPath = this.markerMapping.markersDataPath + uid;
+                                          this.markerMapping.clearForPath(markerPath, lineData[markerNo]);
+                                          this.db.object(markerPath).update(lineData[markerNo]);
+                                          this.markerMapping.writeCardMapping(this.db, newCardNo, uid, zoneNo, lineNo, markerNo);
+                                        }
+                                        else {
+                                          console.log("mapping nahi mili: " + zoneNo + "/" + lineNo + "/" + markerNo);
+                                        }
                                       }
                                     }
 
@@ -3963,15 +4311,17 @@ export class Cms1Component implements OnInit {
   }
 
   getHouseData() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let zoneNo = "134-R1";
-    let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
 
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-      markerData => {
-        markerInstance.unsubscribe();
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   markerData => {
+    //     markerInstance.unsubscribe();
+    //
+    // NEW PATH: shape purana hi hai, isliye ginti ka poora loop waisa hi hai.
+    this.markerMapping.getWardRecords(this.db, zoneNo).then(
+      (markerData: any) => {
         if (markerData != null) {
 
           let keyArray = Object.keys(markerData);
@@ -4016,7 +4366,12 @@ export class Cms1Component implements OnInit {
               totalComplexCount = totalComplexCount + complexCount;
               totalHouseInComplexCount = totalHouseInComplexCount + houseInComplexCount;
 
-              let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+              // PEHLE YE THA (hataya nahi, comment kiya hai) - counts line ke node
+              // par marker records ke beech me padte the:
+              // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+              //
+              // NEW PATH: line-level counts LineSummary par. Chaaron field wahi.
+              let dbPath = this.markerMapping.lineSummaryPath + zoneNo + "/" + lineNo;
               this.db.object(dbPath).update({
                 marksCount: markerCount,
                 marksHouse: houseCount,
@@ -4024,6 +4379,8 @@ export class Cms1Component implements OnInit {
                 marksComplex: complexCount
               });
             }
+            // Apne likhe hue counts wapas padhne hain.
+            this.markerMapping.clearWardSummary(zoneNo);
 
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
             this.db.object(dbPath).update({ marked: totalMarkerCount, complexCount: totalComplexCount, houseCount: totalHouseCount, housesInComplex: totalHouseInComplexCount });
@@ -4230,12 +4587,10 @@ export class Cms1Component implements OnInit {
 
 
   setMarkerID() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let selectedZone = $("#txtDates").val();
     let lastMarkerID = 0;
     console.log(selectedZone);
+    // Counter jaisa tha waisa hi - EntityMarkingData/lastMarkerId.
     let dbPath = "EntityMarkingData/lastMarkerId";
     let lastMarkerIdInstance = this.db.object(dbPath).valueChanges().subscribe(
       lastId => {
@@ -4243,10 +4598,22 @@ export class Cms1Component implements OnInit {
         if (lastId != null) {
           lastMarkerID = Number(lastId);
         }
-        dbPath = "EntityMarkingData/MarkedHouses/" + selectedZone;
-        let markerDataInstance = this.db.object(dbPath).valueChanges().subscribe(
-          data => {
-            markerDataInstance.unsubscribe();
+
+        // OLD PATH (reference ke liye rakha hai):
+        // dbPath = "EntityMarkingData/MarkedHouses/" + selectedZone;
+        // let markerDataInstance = this.db.object(dbPath).valueChanges().subscribe(
+        //   data => {
+        //     markerDataInstance.unsubscribe();
+        //
+        // NEW PATH: pehle mapping, phir data. Shape purana hi hai isliye neeche
+        // ka loop (parseInt guard samet) jaisa tha waisa hi hai.
+        Promise.all([
+          this.markerMapping.getWardLinks(this.db, selectedZone),
+          this.markerMapping.getWardRecords(this.db, selectedZone)
+        ]).then(
+          (res: any) => {
+            let links = res[0] != null ? res[0] : {};
+            let data = res[1];
             if (data != null) {
               let keyArray = Object.keys(data);
               if (keyArray.length > 0) {
@@ -4259,13 +4626,28 @@ export class Cms1Component implements OnInit {
                     if (parseInt(markerNo)) {
                       if (markerData[markerNo]["markerId"] == null) {
                         lastMarkerID++;
-                        dbPath = "EntityMarkingData/MarkedHouses/" + selectedZone + "/" + lineNo + "/" + markerNo;
-                        this.db.object(dbPath).update({ markerId: "M" + lastMarkerID });
+                        // PEHLE YE THA (hataya nahi, comment kiya hai):
+                        // dbPath = "EntityMarkingData/MarkedHouses/" + selectedZone + "/" + lineNo + "/" + markerNo;
+                        // this.db.object(dbPath).update({ markerId: "M" + lastMarkerID });
+                        //
+                        // NEW PATH: record MarkersData/{uid} par hai, uid mapping
+                        // se aata hai.
+                        let uid = links[lineNo] != null ? links[lineNo][markerNo] : null;
+                        if (uid != null) {
+                          dbPath = this.markerMapping.markersDataPath + uid;
+                          // Database aur cache dono ek jaise rahen.
+                          this.markerMapping.clearForPath(dbPath, { markerId: "M" + lastMarkerID });
+                          this.db.object(dbPath).update({ markerId: "M" + lastMarkerID });
+                        }
+                        else {
+                          console.log("mapping nahi mili: " + selectedZone + "/" + lineNo + "/" + markerNo);
+                        }
                       }
                     }
                   }
                 }
               }
+              // Counter waisa hi.
               dbPath = "EntityMarkingData/lastMarkerId";
               this.db.object(dbPath).set(lastMarkerID);
               console.log(lastMarkerID);
@@ -4280,20 +4662,24 @@ export class Cms1Component implements OnInit {
   }
 
   setDehradunWardLineData() {
-    if (this.oldPathBlocked()) {
-      return;
-    }
     let ward = $("#txtDates").val();
-    let dbPath = "EntityMarkingData/MarkedHouses/" + ward;
-    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
-      markerInstance.unsubscribe();
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + ward;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+    //   markerInstance.unsubscribe();
+    //
+    // NEW PATH: yahan sirf har line ka marksCount chahiye, marker records nahi.
+    // Wo ab LineSummary par hai - ek halka read, records bilkul nahi aate.
+    let dbPath = "";
+    this.markerMapping.getWardLineSummaries(this.db, ward).then((data: any) => {
       let totalMarkerCount = 0;
       if (data != null) {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
           let lineNo = keyArray[i];
           let markerCount = "0";
-          if (data[lineNo]["marksCount"] != null) {
+          if (data[lineNo] != null && data[lineNo]["marksCount"] != null) {
             markerCount = data[lineNo]["marksCount"];
             totalMarkerCount += Number(markerCount);
           }

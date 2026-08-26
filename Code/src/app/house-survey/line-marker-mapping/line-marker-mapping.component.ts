@@ -293,6 +293,33 @@ export class LineMarkerMappingComponent implements OnDestroy {
     return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
   }
 
+  // Line ka data, MoveHelper.readOnceWithRetry jaisa hi bartaav.
+  //
+  // Old path par ye read seedha readOnceWithRetry se jaata tha. Naye path par
+  // data service se aata hai (cached), isliye wo helper seedha nahi lag sakta -
+  // loop yahan wahi rakha hai jo helper me hai: 3 koshish, har koshish se pehle
+  // cancel check, network error par net wapas aane ka intezaar aur badhta gap
+  // (0.5s, 1s, 2s). Network ke alawa koi error ho to turant bahar - us par
+  // dobara koshish ka matlab nahi.
+  //
+  // Fail hui promise cache se apne aap hat jaati hai (service ka cachePromise),
+  // isliye agli koshish sach me nayi read bhejti hai.
+  private async readLineDataWithRetry(ward: any, line: any): Promise<any> {
+    let lastError: any = null;
+    for (let attempt = 0; attempt < this.moveHelper.IMAGE_ATTEMPTS; attempt++) {
+      if (this.run.isCancelled()) { throw new Error("cancelled"); }
+      try {
+        return await this.getNewPathLineData(ward, line);
+      } catch (e) {
+        lastError = e;
+        if (!this.moveHelper.isNetworkError(e)) { break; }
+        await this.moveHelper.waitForNetwork(this.run);
+        await this.moveHelper.delay(500 * Math.pow(2, attempt));
+      }
+    }
+    throw lastError;
+  }
+
   // Poore ward ka data, {line: {markerNo: record}} shape me.
   getNewPathWardData(wardNo: any): Promise<any> {
     return this.markerMapping.getWardRecords(this.db, wardNo);
@@ -628,17 +655,25 @@ export class LineMarkerMappingComponent implements OnDestroy {
         return;
       }
 
-      // NEW PATH: lastMarkerKey LineSummary par hai. Sirf usi par bharosa nahi
-      // karte - getSafeLastKey line ki asli sabse badi key bhi dekh leta hai,
-      // warna naye marker ko wahi number mil sakta hai jo pehle se kisi ke paas
-      // ho aur LineWise me purana marker dab jaaye.
-      let lastKey = Number(await this.getSafeLastKey(zone, lineTo));
-      if (isNaN(lastKey)) { lastKey = 0; }
-      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", lastKey);
+      // purane code jaisa hi: lastMarkerKey jaisa hai waisa, phir har marker par +1
+      // OLD PATH (reference ke liye rakha hai):
+      // "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo + "/lastMarkerKey"
+      // NEW PATH: lastMarkerKey ab LineSummary par hai - sirf node badla hai.
+      let lastMarkerData = await this.moveHelper.readOnceWithRetry(this.db,
+        "EntityMarkingData/MarkersMapping/LineSummary/" + zone + "/" + lineTo + "/lastMarkerKey", this.run);
+      let lastKey = 0;
+      if (lastMarkerData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", lastMarkerData);
+        lastKey = Number(lastMarkerData);
+      }
       originalLastKey = lastKey;
 
       // Backup ke liye source line ka poora data (new path se, purani shape me).
-      let markerNodeData = await this.getNewPathLineData(zone, lineFrom);
+      // OLD PATH (reference ke liye rakha hai):
+      // let markerNodeData = await this.moveHelper.readOnceWithRetry(this.db,
+      //   "EntityMarkingData/MarkedHouses/" + zone + "/" + lineFrom, this.run);
+      // Retry/cancel/network wait upar wale wrapper me hai.
+      let markerNodeData = await this.readLineDataWithRetry(zone, lineFrom);
       // markerNo -> uid. Record ke andar uid hota nahi, aur naye path par har
       // node ki key uid hi hai - backup restore layak tabhi hai jab uid saath ho.
       let lineLinks = await this.markerMapping.readLineLinks(this.db, zone, lineFrom);
@@ -923,7 +958,7 @@ export class LineMarkerMappingComponent implements OnDestroy {
 
     // ---------- IMAGE ----------
     // NEW PATH me image copy karne ki zaroorat hi nahi. Wo global folder
-    // DevTest/MarkingSurveyImages/AllMarkerImages/{uid}.jpg par padi rehti hai
+    // {city}/MarkingSurveyImages/AllMarkerImages/{uid}.jpg par padi rehti hai
     // aur marker kahin bhi jaaye, uska naam wahi rehta hai. Old path me har
     // line ka apna folder tha, isliye wahan har move par file copy karni padti
     // thi - sabse dheema aur sabse zyada fail hone wala step wahi tha.
@@ -1063,9 +1098,16 @@ export class LineMarkerMappingComponent implements OnDestroy {
     // hai, isliye WardWise se kuch hataana nahi padta).
     row.failedStep = "Source Cleanup";
     state.cleanupStarted = true;
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ki key markerNo
+    // maani jaati thi:
+    // "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + row.markerNo);
+    //
+    // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid
+    // hai. markerNo se hataane par purani entry padi reh jaati aur marker dono
+    // line par dikhta rehta.
     await this.moveHelper.dbRemove(this.db,
-      "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + row.markerNo);
-    this.markerMapping.clearLinkCache();
+      "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + state.uid);
+    this.markerMapping.clearLinks();
     if (cardData != null) {
       await this.moveHelper.dbRemove(this.db, "Houses/" + zone + "/" + lineFrom + "/" + cardNo);
     }
@@ -1090,12 +1132,13 @@ export class LineMarkerMappingComponent implements OnDestroy {
       if (state.destMappingWritten && state.uid != null) {
         await this.markerMapping.writePlace(this.db, state.uid, ctx.zone,
           this.markerMapping.lineValue(ctx.lineFrom), row.markerNo);
+        // PEHLE: ... + "/" + row.newKey  - LineWise ki key ab uid hai, markerNo nahi.
         await this.moveHelper.dbRemove(this.db,
-          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + row.newKey);
+          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + state.uid);
         // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
         // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
         // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.
-        this.markerMapping.clearLinkCache();
+        this.markerMapping.clearLinks();
       }
       if (state.destMarkerWritten && state.uid != null) {
         // move-stamp wapas purani haalat par - is move ki stamp hatani hai par
@@ -1165,7 +1208,11 @@ export class LineMarkerMappingComponent implements OnDestroy {
   updateCounts(zoneNo: any, failureCount: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCounts");
     $(this.divLoaderMarkerMove).show();
-    this.markerMapping.clearLinkCache();
+    // Ye loop LineSummary/{ward} likhta hai, isliye us ward ka summary bhula
+    // dete hain - warna table apne hi likhe naye counts nahi dikhata.
+    // Poori cache (records + mapping) nahi udate: wo waisi ki waisi sahi hai,
+    // aur udane par poore ward ka marker data dobara padhna padta.
+    this.markerMapping.clearWardSummary(zoneNo);
     this.getNewPathWardData(zoneNo).then(
       (markerData: any) => {
         if (markerData != null) {
@@ -1175,7 +1222,14 @@ export class LineMarkerMappingComponent implements OnDestroy {
           // ho jaata hai, isliye wo line yahan aati hi nahi aur uske purane
           // counts LineSummary par pade rah jaate hain - table me Markers 0
           // dikhta hai par Houses purana number. Unhe yahan zero karte hain.
-          this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData);
+          //
+          // Field list wahi jo ye page neeche khud likhta hai. Service ki
+          // default list CHAARON caller ka jod hai - us par chalte to ye page
+          // marksHouse / marksComplex / actualMarks* jaise field bhi zero kar
+          // deta, jo doosre pages ke hain aur dobara ban bhi nahi sakte. Old
+          // path par bhi ye page sirf yahi 5 zero karta tha.
+          this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData,
+            ["marksCount", "surveyedCount", "lineRevisitCount", "lineRfidNotFoundCount", "alreadyInstalledCount"]);
           let keyArray = Object.keys(markerData);
           if (keyArray.length > 0) {
             let zoneMarkerCount = 0;
@@ -1220,21 +1274,15 @@ export class LineMarkerMappingComponent implements OnDestroy {
                   }
                 }
               }
-              // Pehle ye do alag update() the - counts ek me, lastMarkerKey
-              // doosre me, dono usi path par. 300 line wale ward par wo 600
-              // write banta tha. Ek hi patch me bhej rahe hain.
-              let summaryPatch: any = {
-                marksCount: markerCount,
-                surveyedCount: surveyedCount,
-                lineRevisitCount: revisitCount,
-                lineRfidNotFoundCount: rfIdNotFound,
-                alreadyInstalledCount: alreadyInstalledCount
-              };
-              if (lastMarkerKey > 0) {
-                summaryPatch["lastMarkerKey"] = lastMarkerKey;
-              }
+              // OLD PATH (reference ke liye rakha hai):
+              // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+              // NEW PATH: counts ab LineSummary par - sirf node badla hai.
               let dbPath = "EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo + "/" + lineNo;
-              this.db.object(dbPath).update(summaryPatch);
+              this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount })
+              if (lastMarkerKey > 0) {
+                let dbPath = "EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo + "/" + lineNo;
+                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+              }
             }
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
             this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });

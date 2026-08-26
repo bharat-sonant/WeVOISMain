@@ -450,12 +450,6 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
 
-  // Poora MarkersData ek baar cache hota hai. Ye page kai wards par loop karta
-  // hai, isliye cache ek hi read me saare wards serve kar deta hai.
-
-
-
-
   // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
   // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
   // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
@@ -468,17 +462,17 @@ export class WardSurveySummaryComponent implements OnInit {
   }
 
   // Poore ward ka line-level summary (sirf scalars, markers nahi).
+  //
+  // Service ki cached read use karte hain - wahi ward dobara kholne par network
+  // par jaata hi nahi. Service kuch na mile to {} deta hai, par yahan null
+  // chahiye: neeche wala block "ward me kuch hai hi nahi" ko null se pehchanta
+  // hai, aur old path (MarkedHouses/{ward}) bhi khali hone par null hi deta tha.
   getNewPathWardLineSummary(wardNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let summaryPath = "EntityMarkingData/MarkersMapping/LineSummary/" + wardNo;
-      let inst = this.db.object(summaryPath).valueChanges().subscribe((data: any) => {
-        inst.unsubscribe();
-        resolve(data);
-      });
+    return this.markerMapping.getWardLineSummaries(this.db, wardNo).then((data: any) => {
+      return data != null && Object.keys(data).length > 0 ? data : null;
     });
   }
 
-  // Marker image ka URL: AllMarkerImages/{imgRef}.
   // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
   // imgRef ho to flat AllMarkerImages folder se, na ho (marker abhi migrate
   // nahi hua) to purane per-line folder se. Pehle yahan doosri soorat me bhi
@@ -703,12 +697,11 @@ export class WardSurveySummaryComponent implements OnInit {
     }
     else {
       let zoneNo = this.wardList[index]["zoneNo"];
-      // Ye function ek-ek karke SAARE ward par chalta hai (neeche khud ko
-      // index+1 se dobara bulata hai). Service ki cache apne aap khaali nahi
-      // hoti, isliye bina is line ke poore shehar ka marker data browser ki
-      // memory me jamta chala jaata tha. Pichhle ward ka data ab yahan chhod
-      // dete hain - aage uski zaroorat hai bhi nahi.
-      this.markerMapping.clearLinkCache();
+      // Ye loop LineSummary/{ward} likhta hai, isliye us ward ka summary
+      // bhula dete hain - warna table apne hi likhe naye counts nahi dikhata.
+      // Poori cache (records + mapping) nahi udate: wo waisi ki waisi sahi
+      // hai, aur udane par har ward par poora data dobara padhna padta.
+      this.markerMapping.clearWardSummary(zoneNo);
       // OLD PATH (reference ke liye rakha hai):
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
@@ -724,9 +717,14 @@ export class WardSurveySummaryComponent implements OnInit {
           // jaati hai, isliye wo line loop me aati hi nahi aur uske purane
           // counts LineSummary par pade rah jaate hain - table me Markers 0
           // dikhta hai par Houses purana number. Unhe yahan zero karte hain.
-          // (Yahi call line-marker-mapping aur change-line-marker-data ke
-          // recount me pehle se hai; yahan chhoot gayi thi.)
-          this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData);
+          //
+          // Field list wahi jo ye page neeche khud likhta hai. Service ki
+          // default list CHAARON caller ka jod hai - us par chalte to ye page
+          // marksHouse / marksComplex / alreadyInstalledCount jaise field bhi
+          // zero kar deta, jo Ward Marking Summary ke hain aur dobara ban bhi
+          // nahi sakte. Old path par bhi ye page sirf yahi 4 zero karta tha.
+          this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData,
+            ["marksCount", "surveyedCount", "lineRevisitCount", "actualMarksCount"]);
 
           let keyArray = Object.keys(markerData);
 
@@ -798,26 +796,36 @@ export class WardSurveySummaryComponent implements OnInit {
                 }
               }
 
-              // OLD PATH (reference ke liye rakha hai):
-              // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-              // NEW PATH: LineSummary
-              //
-              // Pehle yahan if (isMarker == false) / else the jinke DONO body
-              // bilkul ek jaise the (purane code me ek taraf remove() tha, wo
-              // comment ho chuka), aur uske baad lastMarkerKey ka teesra alag
-              // update. Yaani har line par do write. Ab ek patch, ek write.
-              let summaryPatch: any = {
-                marksCount: markerCount,
-                surveyedCount: cardCount,
-                lineRevisitCount: revisitCount,
-                actualMarksCount: actualMarkerCount,       // to update actual count in marking data
-                //actualSurveyedCount: actualCardCount,      // to update actual count in marking data
-                // actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
-              };
-              if (lastMarkerKey > 0) {
-                summaryPatch["lastMarkerKey"] = lastMarkerKey;
+              console.log(isMarker);
+              if (isMarker == false) {
+                // OLD PATH (reference ke liye rakha hai):
+                // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                // NEW PATH: LineSummary
+                let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
+                //this.db.object(dbPath).remove();
+                this.db.object(dbPath).update({
+                  marksCount: markerCount,
+                  surveyedCount: cardCount,
+                  lineRevisitCount: revisitCount,
+                  actualMarksCount: actualMarkerCount,       // to update actual count in marking data
+                  //actualSurveyedCount: actualCardCount,      // to update actual count in marking data
+                  // actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
+                });
               }
-              this.db.object(this.getLineSummaryPath(zoneNo, lineNo)).update(summaryPatch);
+              else {
+                // OLD PATH (reference ke liye rakha hai):
+                // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                // NEW PATH: LineSummary
+                let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
+                this.db.object(dbPath).update({
+                  marksCount: markerCount,
+                  surveyedCount: cardCount,
+                  lineRevisitCount: revisitCount,
+                  actualMarksCount: actualMarkerCount,       // to update actual count in marking data
+                  //actualSurveyedCount: actualCardCount,      // to update actual count in marking data
+                  // actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
+                });
+              }
 
               totalMarkerCount = totalMarkerCount + markerCount;
               totalCardCount = totalCardCount + cardCount;
@@ -826,6 +834,14 @@ export class WardSurveySummaryComponent implements OnInit {
               actualTotalMarkerCount += actualMarkerCount;// to upate actual count data
               //  actualTotalCardCount += actualCardCount;    // to upate actual count data
               //  actualTotalRevisit += actualRevisitCount;  // to upate actual count data
+
+              if (lastMarkerKey > 0) {
+                // OLD PATH (reference ke liye rakha hai):
+                // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                // NEW PATH: LineSummary
+                let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
+                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+              }
 
             }
 
@@ -884,7 +900,8 @@ export class WardSurveySummaryComponent implements OnInit {
           // OLD PATH (reference ke liye rakha hai):
           // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
           // this.db.object(dbPath).update(markerData);
-          this.markerMapping.clearLinkCache();
+          // Cache clear nahi: ye record ka cardNumber badalta hai, markerNo ->
+          // uid wali mapping waisi ki waisi rehti hai.
           this.db.object(newMarkerPath).update(markerData);
         }
       }
@@ -1609,7 +1626,9 @@ export class WardSurveySummaryComponent implements OnInit {
     this.surveyData.wardNameNotCorrect = 0;
     this.lineSurveyList = [];
     this.wardLineMarkerImageList = [];
-    this.markerMapping.clearLinkCache();
+    // Cache clear nahi: yahan DB me kuch likha hi nahi jaata, sirf screen ke
+    // list reset hote hain. Cache ward-wise alag key par hai, to jo ward pehle
+    // padh liya wo memory se hi khulega.
   }
 
   getSurveyDetail(wardNo: any, listIndex: any) {
@@ -2113,9 +2132,9 @@ export class WardSurveySummaryComponent implements OnInit {
                   // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
                   // this.db.object(dbPath).update({ houseType: houseTypeId });
                   // NEW PATH: MarkersData/{uid}
+                  // Cache clear nahi: sirf record ka houseType badalta hai.
                   this.getMarkerNewPath(wardNo, lineNo, markerNo).then((newMarkerPath: any) => {
                     if (newMarkerPath != null) {
-                      this.markerMapping.clearLinkCache();
                       this.db.object(newMarkerPath).update({ houseType: houseTypeId });
                     }
                   });
@@ -2672,9 +2691,11 @@ export class WardSurveySummaryComponent implements OnInit {
           // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
           // this.db.object(dbPath).update({ houseType: houseType });
           // NEW PATH: MarkersData/{uid}
+          // Cache clear nahi: sirf record ka houseType badalta hai, mapping nahi.
+          // Ye block har marker par chalta hai - clear karte to har marker par
+          // ward ka link index dobara padhna padta.
           this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
             if (newMarkerPath != null) {
-              this.markerMapping.clearLinkCache();
               this.db.object(newMarkerPath).update({ houseType: houseType });
             }
           });

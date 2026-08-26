@@ -45,6 +45,33 @@ export class LineCardMappingComponent implements OnDestroy {
     return this.markerMapping.getUid(this.db, ward, line, markerNo);
   }
 
+  // Line ka data, MoveHelper.readOnceWithRetry jaisa hi bartaav.
+  //
+  // Old path par ye read seedha readOnceWithRetry se jaata tha. Naye path par
+  // data service se aata hai (cached), isliye wo helper seedha nahi lag sakta -
+  // loop yahan wahi rakha hai jo helper me hai: 3 koshish, har koshish se pehle
+  // cancel check, network error par net wapas aane ka intezaar aur badhta gap
+  // (0.5s, 1s, 2s). Network ke alawa koi error ho to turant bahar - us par
+  // dobara koshish ka matlab nahi.
+  //
+  // Fail hui promise cache se apne aap hat jaati hai (service ka cachePromise),
+  // isliye agli koshish sach me nayi read bhejti hai.
+  private async readLineDataWithRetry(ward: any, line: any): Promise<any> {
+    let lastError: any = null;
+    for (let attempt = 0; attempt < this.moveHelper.IMAGE_ATTEMPTS; attempt++) {
+      if (this.run.isCancelled()) { throw new Error("cancelled"); }
+      try {
+        return await this.getNewPathLineData(ward, line);
+      } catch (e) {
+        lastError = e;
+        if (!this.moveHelper.isNetworkError(e)) { break; }
+        await this.moveHelper.waitForNetwork(this.run);
+        await this.moveHelper.delay(500 * Math.pow(2, attempt));
+      }
+    }
+    throw lastError;
+  }
+
   // Target line ka agla safe markerNo: LineSummary ka lastMarkerKey aur line ki
   // asli sabse badi key, dono me se bada. Sirf summary par bharosa karne se
   // naye marker ko wahi number mil sakta hai jo pehle se kisi ke paas ho.
@@ -360,16 +387,25 @@ export class LineCardMappingComponent implements OnDestroy {
         return;
       }
 
-      // NEW PATH: lastMarkerKey LineSummary par. getSafeLastKey line ki asli
-      // sabse badi key bhi dekh leta hai, warna naye marker ko wahi number mil
-      // sakta hai jo pehle se kisi ke paas ho.
-      let safeLastKey = Number(await this.getSafeLastKey(zone, lineTo));
-      if (isNaN(safeLastKey)) { safeLastKey = 0; }
-      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", safeLastKey);
-      let startKey = safeLastKey + 1;
+      // purane code jaisa hi: mila to +1 se shuru, warna 1 se.
+      // OLD PATH (reference ke liye rakha hai):
+      // "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo + "/lastMarkerKey"
+      // NEW PATH: lastMarkerKey ab LineSummary par hai - sirf node badla hai.
+      let lastMarkerKeyData = await this.moveHelper.readOnceWithRetry(this.db,
+        "EntityMarkingData/MarkersMapping/LineSummary/" + zone + "/" + lineTo + "/lastMarkerKey", this.run);
+      let startKey = 1;
+      if (lastMarkerKeyData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", lastMarkerKeyData);
+        startKey = Number(lastMarkerKeyData) + 1;
+      }
       originalStartKey = startKey;
 
-      let markerData = await this.getNewPathLineData(zone, lineFrom);
+      // OLD PATH (reference ke liye rakha hai):
+      // let markerData = await this.moveHelper.readOnceWithRetry(this.db,
+      //   "EntityMarkingData/MarkedHouses/" + zone + "/" + lineFrom, this.run);
+      // NEW PATH: data service se, retry/cancel/network wait wahi upar wale
+      // wrapper me hai.
+      let markerData = await this.readLineDataWithRetry(zone, lineFrom);
       if (markerData != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", markerData);
       }
@@ -860,9 +896,13 @@ export class LineCardMappingComponent implements OnDestroy {
       // NEW PATH: record hataana nahi hai - wo MarkersData par apni jagah hi
       // rehta hai. Sirf purani line ki LineWise entry hatani hai, warna marker
       // purani aur nayi dono line par dikhta rahega.
+      // PEHLE: ... + "/" + row.markerNo
+      // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid
+      // hai. markerNo se hataane par purani entry padi reh jaati aur marker dono
+      // line par dikhta rehta.
       await this.moveHelper.dbRemove(this.db,
-        "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + row.markerNo);
-      this.markerMapping.clearLinkCache();
+        "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + state.uid);
+      this.markerMapping.clearLinks();
     }
 
     row.failedStep = "";
@@ -888,12 +928,13 @@ export class LineCardMappingComponent implements OnDestroy {
       if (state.destMappingWritten && state.uid != null) {
         await this.markerMapping.writePlace(this.db, state.uid, ctx.zone,
           this.markerMapping.lineValue(ctx.lineFrom), row.markerNo);
+        // PEHLE: ... + "/" + row.newKey  - LineWise ki key ab uid hai, markerNo nahi.
         await this.moveHelper.dbRemove(this.db,
-          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + row.newKey);
+          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + state.uid);
         // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
         // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
         // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.
-        this.markerMapping.clearLinkCache();
+        this.markerMapping.clearLinks();
       }
       if (state.destMarkerWritten && state.uid != null) {
         // move-stamp wapas purani haalat par - is move ki stamp hatani hai par
@@ -1103,33 +1144,18 @@ export class LineCardMappingComponent implements OnDestroy {
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "showHouses", data);
         var keyArray = Object.keys(data);
-        // Bina latLng wala card chup-chaap skip ho jata tha - na pin banti thi
-        // na koi message aata tha, aur map khali dikhta tha jabki node me data
-        // pada hota tha. Ab console me saaf dikhta hai ki kitne card mile aur
-        // unme se kitno ke paas latLng tha.
-        let withLatLng = 0;
-        let withoutLatLng = 0;
         for (let index = 0; index < keyArray.length; index++) {
           const cardNo = keyArray[index];
           let cardData = data[cardNo];
           if (cardData["latLng"] != undefined) {
-            withLatLng++;
             let latLng = cardData["latLng"].toString().replace("(", "").replace(")", "").split(",");
             let url = "../assets/img/red-home.png";
             if (cardData["phaseNo"] == "1") {
               url = "../assets/img/blue-home.png";
             }
             this.setMarkers(latLng[0], latLng[1], url, cardData, cardNo, lineNo);
-          } else {
-            withoutLatLng++;
           }
         }
-        console.log("[line-card-mapping]", housePath, "| cards:", keyArray.length,
-          "| latLng hai:", withLatLng, "| latLng nahi:", withoutLatLng,
-          "| pehli key:", keyArray[0]);
-      } else {
-        // Node hi nahi mila - line number ya ward naam match nahi kar raha.
-        console.log("[line-card-mapping]", housePath, "| node khali hai (data null)");
       }
     });
   }

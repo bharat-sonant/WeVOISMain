@@ -505,9 +505,14 @@ export class WardMarkingSummaryComponent implements OnInit {
                           // const path = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                           // this.db.object(path).update({ imageCaptureLocation: geoAddress });
                           // NEW PATH: MarkersData/{uid}
+                          // Cache yahan clear NAHI karni. Ye update sirf record ka
+                          // ek field badalta hai - markerNo -> uid wali mapping
+                          // waisi ki waisi rehti hai, to cache basi hoti hi nahi.
+                          // Aur ye block har marker ke geocode response par alag
+                          // se chalta hai; clear karte to har response par ward ka
+                          // link index dobara padhna padta (500 marker = 1000 read).
                           this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
                             if (newMarkerPath != null) {
-                              this.markerMapping.clearLinkCache();
                               this.db.object(newMarkerPath).update({ imageCaptureLocation: geoAddress });
                             }
                           });
@@ -596,9 +601,11 @@ export class WardMarkingSummaryComponent implements OnInit {
                               // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                               // this.db.object(dbPath).update({ address: address });
                               // NEW PATH: MarkersData/{uid}
+                              // Cache clear nahi (wajah upar imageCaptureLocation
+                              // wale block me likhi hai) - ye bhi per-marker
+                              // callback hai.
                               this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
                                 if (newMarkerPath != null) {
-                                  this.markerMapping.clearLinkCache();
                                   this.db.object(newMarkerPath).update({ address: address });
                                 }
                               });
@@ -613,9 +620,9 @@ export class WardMarkingSummaryComponent implements OnInit {
                         // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                         // this.db.object(dbPath).update({ address: address });
                         // NEW PATH: MarkersData/{uid}
+                        // Cache clear nahi - wajah upar wale block me likhi hai.
                         this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
                           if (newMarkerPath != null) {
-                            this.markerMapping.clearLinkCache();
                             this.db.object(newMarkerPath).update({ address: address });
                           }
                         });
@@ -785,8 +792,6 @@ export class WardMarkingSummaryComponent implements OnInit {
   }
 
 
-  // Whole MarkersData cache — heavy read ek hi baar. getMarkingDetail par clear hota hai.
-
   // Line-level scalars (counts, lastMarkerKey, ApproveStatus) ka new-path base.
   getLineSummaryPath(ward: any, line: any): string {
     return "EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + line;
@@ -812,7 +817,6 @@ export class WardMarkingSummaryComponent implements OnInit {
     return this.markerMapping.getWardRecords(this.db, wardNo);
   }
 
-  // Marker image ka URL: AllMarkerImages/{imgRef}.
   // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
   // imgRef ho to flat AllMarkerImages folder se, na ho (marker abhi migrate
   // nahi hua) to purane per-line folder se. Pehle yahan doosri soorat me bhi
@@ -843,15 +847,20 @@ export class WardMarkingSummaryComponent implements OnInit {
 
   getMarkingDetail(wardNo: any, listIndex: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkingDetail");
-    this.markerMapping.clearLinkCache();
+    // Yahan cache clear NAHI karni. Ward badalne se DB me kuch badalta nahi -
+    // ye sirf doosra ward kholna hai. Cache ward-wise alag key par hai, to
+    // jo ward pehle padh liya wo memory se hi khulega. Naya data chahiye to
+    // page refresh - tab cache waise bhi khatam ho jaati hai.
     this.markerData.lastScan = "";
     let dbPath = "EntityMarkingData/LastScanTime/Ward/" + wardNo;
     let totalmarkingInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       totalmarkingInstance.unsubscribe();
-      let lastscandata = data.split(":");
-      let scandata = lastscandata[0] + ":" + lastscandata[1];
+      // split() null check se PEHLE chal raha tha - jis ward ka LastScanTime
+      // node nahi hai, wahan null.split() par page crash ho jaata tha.
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkingDetail", data);
+        let lastscandata = String(data).split(":");
+        let scandata = lastscandata[0] + ":" + lastscandata[1];
         this.markerData.lastScan = scandata;
       }
     });
@@ -881,6 +890,11 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.markerData.wardMarkers = wardDetail.markers;
       this.markerData.wardHouses = wardDetail.houses;
       this.markerData.wardNo = wardDetail.wardNo;
+
+      // TEMP DEBUG - baad me hatana hai
+      console.log("[WMS] getMarkingDetail | ward:", wardNo, "| wardLines:", wardDetail.wardLines,
+        "| wardProgressList se markers:", wardDetail.markers, "| houses:", wardDetail.houses);
+      this.debugWardData(wardNo);
 
       for (let i = 1; i <= wardDetail.wardLines; i++) {
         this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, diff: 0, actualMarker: 0, markers: 0, houses: 0, complex: 0, houseInComplex: 0, isApproved: false, alreadyCard: 0 });
@@ -915,6 +929,92 @@ export class WardMarkingSummaryComponent implements OnInit {
   getLineSummaryData(wardNo: any, lineNo: any): Promise<any> {
     return this.markerMapping.getLineSummary(this.db, wardNo, lineNo);
   }
+
+  // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
+  // Ye function do cheezein saath rakh kar dikhata hai:
+  //   A) LineSummary/{ward} par kya likha hai (table ISI se bharta hai)
+  //   B) MarkersData + mapping par sach me kitne marker hain
+  // Dono alag hue to table galat dikhega - counts stale hain.
+  debugWardData(wardNo: any) {
+    console.log("%c[WMS] ===== WARD " + wardNo + " =====", "color:#0a0;font-weight:bold");
+    console.log("[WMS] userIsExternal:", this.userIsExternal, "| hideComplex:", this.hideComplex, "| city:", this.cityName);
+
+    Promise.all([
+      this.markerMapping.getWardLineSummaries(this.db, wardNo),
+      this.markerMapping.getWardRecords(this.db, wardNo)
+    ]).then((res: any[]) => {
+      let summary = res[0];
+      let records = res[1];
+
+      console.log("[WMS] 1) LineSummary/" + wardNo + " ka poora node:", summary);
+      console.log("[WMS] 2) Asli marker records (MarkersData se):", records);
+
+      if (records == null) {
+        console.log("%c[WMS] 2a) MAPPING PAR IS WARD KA EK BHI MARKER NAHI MILA", "color:#c00;font-weight:bold");
+        console.log("[WMS] 2b) Matlab WardWise/" + wardNo + " aur LineWise/" + wardNo + " dono khali hain.");
+      }
+
+      // Line-wise milaan
+      let lineSet: any = {};
+      if (summary != null) { Object.keys(summary).forEach(k => lineSet[k] = true); }
+      if (records != null) { Object.keys(records).forEach(k => lineSet[k] = true); }
+      let lines = Object.keys(lineSet).sort((a, b) => Number(a) - Number(b));
+
+      // Ek hi string me poori report - copy karke bhejne ke liye.
+      let out: string[] = [];
+      out.push("========== WMS REPORT | ward " + wardNo + " ==========");
+      out.push("userIsExternal=" + this.userIsExternal + " hideComplex=" + this.hideComplex + " city=" + this.cityName);
+      out.push("wardLines(list se)=" + this.lineMarkerList.length);
+      out.push("LineSummary node: " + (summary == null ? "NULL" : "lines=[" + Object.keys(summary).join(",") + "]"));
+      out.push("MarkersData records: " + (records == null ? "NULL (mapping par ek bhi marker nahi)" : "lines=[" + Object.keys(records).join(",") + "]"));
+      out.push("--- line | dikhega | asli | marksCount | actualMarksCount | marksHouse | marksComplex | alreadyInstalled | approve ---");
+
+      let mismatch = 0;
+      for (let i = 0; i < lines.length; i++) {
+        let ln = lines[i];
+        let s = (summary != null && summary[ln] != null && typeof summary[ln] == "object") ? summary[ln] : null;
+        let asli = (records != null && records[ln] != null) ? Object.keys(records[ln]).length : 0;
+        let dikhega = s == null ? null : this.summaryValue(s, "actualMarksCount", "marksCount");
+        let ok = (Number(dikhega || 0) == asli);
+        if (!ok) { mismatch++; }
+        out.push(
+          (ok ? "OK   " : "BAD  ") + ln +
+          " | " + dikhega +
+          " | " + asli +
+          " | " + (s == null ? "-" : s["marksCount"]) +
+          " | " + (s == null ? "-" : s["actualMarksCount"]) +
+          " | " + (s == null ? "-" : s["marksHouse"]) +
+          " | " + (s == null ? "-" : s["marksComplex"]) +
+          " | " + (s == null ? "-" : s["alreadyInstalledCount"]) +
+          " | " + (s == null || s["ApproveStatus"] == null ? "-" : s["ApproveStatus"]["status"])
+        );
+      }
+
+      // Jo line marker wali hai par LineSummary par hai hi nahi
+      if (records != null) {
+        let missing = Object.keys(records).filter(ln => summary == null || summary[ln] == null);
+        if (missing.length > 0) {
+          out.push("!! MARKER hai par LineSummary node NAHI: line " + missing.join(", "));
+        }
+      }
+      // Jis line ka LineSummary hai par marker koi nahi
+      if (summary != null) {
+        let empty = Object.keys(summary).filter(ln =>
+          summary[ln] != null && typeof summary[ln] == "object" && (records == null || records[ln] == null));
+        if (empty.length > 0) {
+          out.push("!! LineSummary hai par MARKER koi nahi: line " + empty.join(", "));
+        }
+      }
+      out.push("TOTAL lines=" + lines.length + " mismatch=" + mismatch);
+      out.push("========== WMS REPORT END ==========");
+
+      // Object form (expand karke dekhne ke liye)
+      console.log("%c[WMS] 3) LINE-WISE MILAAN", "color:#00a;font-weight:bold", { summary: summary, records: records });
+      // String form (copy karke bhejne ke liye)
+      console.log(out.join("\n"));
+    });
+  }
+  // ================== TEMP DEBUG KHATAM ==================
 
   // External user ke liye pehle actualX, na mile to X. Pehle ye do alag read
   // the, ab ek hi object me se dono dekh lete hain.
@@ -951,6 +1051,10 @@ export class WardMarkingSummaryComponent implements OnInit {
     // hain, isliye ek in-memory check kaafi hai.
     this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
       let markedData = this.summaryValue(summary, "actualMarksCount", "marksCount");
+      // TEMP DEBUG - baad me hatana hai
+      console.log("[WMS] getLineMarkers | line:", lineNo, "| summary keys:", Object.keys(summary),
+        "| marksCount:", summary["marksCount"], "| actualMarksCount:", summary["actualMarksCount"],
+        "| liya gaya:", markedData);
       let markers = 0;
       if (markedData != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineMarkers", markedData);
@@ -971,7 +1075,11 @@ export class WardMarkingSummaryComponent implements OnInit {
     // NEW PATH: LineSummary/{ward} ka ek read (actualMarksHouse / marksHouse).
     this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
       let houseData = this.summaryValue(summary, "actualMarksHouse", "marksHouse");
+      // TEMP DEBUG - baad me hatana hai
+      console.log("[WMS] getLineHouses | line:", lineNo, "| marksHouse:", summary["marksHouse"],
+        "| actualMarksHouse:", summary["actualMarksHouse"], "| liya gaya:", houseData, "| markers param:", markers);
       if (houseData == null) {
+        console.log("[WMS]   -> line " + lineNo + ": houseData null, Houses column set hi nahi hoga");
         return;
       }
       this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineHouses", houseData);
@@ -1046,6 +1154,8 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
       let approve = summary["ApproveStatus"];
       let approveData = approve != null ? approve["status"] : null;
+      // TEMP DEBUG - baad me hatana hai
+      console.log("[WMS] getLineStatus | line:", lineNo, "| ApproveStatus:", approve, "| status:", approveData);
       if (approveData != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineStatus", approveData);
         if (approveData == "Confirm") {
@@ -1584,13 +1694,13 @@ export class WardMarkingSummaryComponent implements OnInit {
     else {
       this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCounts");
       let zoneNo = this.wardList[index]["zoneNo"];
-      // Ye function ek-ek karke SAARE ward par chalta hai (neeche khud ko
-      // index+1 se dobara bulata hai). Do wajah se yahan cache clear karni hai:
-      //   1) Service ki cache apne aap khaali nahi hoti - bina iske poore
-      //      shehar ka marker data browser ki memory me jamta chala jaata.
-      //   2) Ye loop LineSummary likhta hai. Uske baad table wahi counts
-      //      cache se padhta, yaani abhi likhe hue naye number dikhte hi nahi.
-      this.markerMapping.clearLinkCache();
+      // Ye loop LineSummary/{ward} likhta hai. Uske baad table wahi counts
+      // cache se padhta, to abhi likhe hue naye number dikhte hi nahi -
+      // isliye sirf is ward ka summary bhula dete hain.
+      //
+      // Poori cache (records + mapping) yahan nahi udate: wo waisi ki waisi
+      // sahi hai, aur udane par har ward par poora data dobara padhna padta.
+      this.markerMapping.clearWardSummary(zoneNo);
       // OLD PATH (reference ke liye rakha hai):
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
       // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1607,7 +1717,12 @@ export class WardMarkingSummaryComponent implements OnInit {
             // khatam ho jaata hai, isliye wo line yahan aati hi nahi aur uske
             // purane counts LineSummary par pade rah jaate hain - table me
             // Markers 0 dikhta hai par Houses purana number. Unhe zero karte hain.
-            this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData);
+            //
+            // Sirf markerCountFields (wahi 8) - neeche wala loop bhi bilkul
+            // yahi 8 likhta hai. surveyedCount / lineRevisitCount /
+            // lineRfidNotFoundCount / alreadyInstalledCount doosre page likhte
+            // hain; ye page unhe old path par bhi kabhi zero nahi karta tha.
+            this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData, this.markerMapping.markerCountFields);
 
             let keyArray = Object.keys(markerData);
 
@@ -1754,7 +1869,6 @@ export class WardMarkingSummaryComponent implements OnInit {
     }
   }
 
-  // Ward me kitne marker delete ho chuke hain. Archive ab uid par flat hai
   // Ward me kitne marker delete ho chuke hain.
   //
   // Archive purani jagah par hi hai (RemovedMarkers/{ward}/{line}/{key}); sirf

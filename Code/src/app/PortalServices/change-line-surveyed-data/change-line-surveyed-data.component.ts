@@ -263,12 +263,18 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
       // NEW PATH: lastMarkerKey LineSummary par. getSafeLastKey line ki asli
       // sabse badi key bhi dekh leta hai, warna naye marker ko wahi number mil
       // sakta hai jo pehle se kisi ke paas ho.
-      let safeLastKey = Number(await this.getSafeLastKey(zoneTo, lineTo));
+      // Retry ke saath - master me ye read readOnceWithRetry se hoti thi. Bina
+      // uske network ka ek chhota jhatka bhi move shuru hote hi abort kar deta
+      // hai (upar wali houseData read par retry pehle se hai).
+      let safeLastKey = Number(await this.moveHelper.readWithRetry(
+        () => this.getSafeLastKey(zoneTo, lineTo), this.run));
       if (isNaN(safeLastKey)) { safeLastKey = 0; }
       let startKey = safeLastKey + 1;
       originalStartKey = startKey;
 
-      let markerData = await this.getNewPathLineData(zoneFrom, lineFrom);
+      // Retry ke saath - master me ye read bhi readOnceWithRetry se hoti thi.
+      let markerData = await this.moveHelper.readWithRetry(
+        () => this.getNewPathLineData(zoneFrom, lineFrom), this.run);
       let markerByCard = this.buildMarkerIndex(markerData);
       // markerNo -> uid. Record ke andar uid hota nahi, aur naye path par har
       // node ki key uid hi hai - backup restore layak tabhi hai jab uid saath ho.
@@ -557,13 +563,20 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
       row.attempts = row.attempts + 1;
       this.refreshMoveStatusText();
 
-      let state = {
+      let state: any = {
         destHouseWritten: false,
         destMarkerWritten: false,
         mappingWritten: false,
         cleanupStarted: false,
         markerID: "",
-        mobile: ""
+        mobile: "",
+        // new path ke liye - upar wale 6 master se hain, ye 4 nayi hain.
+        // Pehle ye declare kiye bina hi set/padhi ja rahi thi, isliye `state`
+        // dekh kar pata hi nahi chalta tha ki wo asal me kya rakhta hai.
+        uid: null,                  // marker ki asli pehchaan - rollback isi se chalta hai
+        destMappingWritten: false,  // teeno mapping nayi jagah likh di
+        prevMoved: null,            // pichhle move ki stamp, rollback me wapas likhni hai
+        moveHistoryKey: ""          // is move ki MoveHistory entry ki push key
       };
 
       try {
@@ -758,8 +771,10 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
     if (markerObj != null) {
       // NEW PATH: record hataana nahi - sirf purani line ki LineWise entry,
       // warna marker purani aur nayi dono line par dikhta rahega.
-      await this.moveHelper.dbRemove(this.db, "EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + row.markerNo);
-      this.markerMapping.clearLinkCache();
+      // PEHLE: ... + "/" + row.markerNo
+      // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid hai.
+      await this.moveHelper.dbRemove(this.db, "EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + state.uid);
+      this.markerMapping.clearLinks();
     }
 
     row.failedStep = "";
@@ -788,12 +803,13 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
         if (String(ctx.zoneFrom) != String(ctx.zoneTo)) {
           await this.moveHelper.dbRemove(this.db, "EntityMarkingData/MarkersMapping/WardWise/" + ctx.zoneTo + "/" + state.uid);
         }
+        // PEHLE: ... + "/" + row.newKey  - LineWise ki key ab uid hai, markerNo nahi.
         await this.moveHelper.dbRemove(this.db,
-          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.newKey);
+          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + state.uid);
         // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
         // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
         // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.
-        this.markerMapping.clearLinkCache();
+        this.markerMapping.clearLinks();
       }
       if (state.destMarkerWritten && state.uid != null) {
         // move-stamp wapas purani haalat par - is move ki stamp hatani hai par
