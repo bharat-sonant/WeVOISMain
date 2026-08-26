@@ -730,6 +730,9 @@ export class HouseMarkingComponent {
       let lwKeys = Object.keys(lineWise);
       for (let i = 0; i < lwKeys.length; i++) {
         let uid = lwKeys[i];
+        if (isNaN(Number(uid)) == false) {
+          continue; // number wali key = purana roop; DB me ab aata hi nahi
+        }
         if (lineWise[uid] != null && lineWise[uid] !== false && lineWise[uid] !== "" && lwUids.indexOf(uid) < 0) {
           lwUids.push(uid);
         }

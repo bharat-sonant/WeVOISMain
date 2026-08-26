@@ -163,11 +163,10 @@ export class CardMarkerMappingComponent implements OnInit {
     // aur value sirf maujoodgi ka nishaan - markerNo record ke andar upar patch
     // me chala hi gaya hai.
     this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + zoneTo + "/" + lineTo + "/" + uid).set(true);
+    // BEECH ME purane roop wali entry bhi hatayi jaati thi:
+    //   ... + "/" + markerNoFrom).set(null);
+    // DB me ab koi number wali key hai hi nahi, isliye wo hata diya gaya.
     this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + uid).set(null);
-    // Purane data me key markerNo hoti thi - wo entry bhi hata deni chahiye,
-    // warna aadhi-migrate DB me marker purani line par bhi dikhta rahega.
-    // Aisi entry na ho to ye set(null) kuch karta hi nahi.
-    this.db.database.ref("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + markerNoFrom).set(null);
 
     // MarkerWise mapping
     this.db.object("EntityMarkingData/MarkersMapping/MarkerWise/" + uid).update({ line: lineVal, ward: zoneTo });

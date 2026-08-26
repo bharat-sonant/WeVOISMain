@@ -321,21 +321,23 @@ export class MarkerMappingService {
       // shapeLine() usi se key banata hai (uska `key == uid` wala raasta pehle
       // se isi ke liye likha hai).
       //
-      // LineWise ke DO roop pehchante hain, taaki aadhi-migrate DB bhi chale:
-      //   NAYA   { uid: true }      - key hi pehchaan, value bas nishaan
-      //   PURANA { markerNo: uid }  - key serial thi, uid value me tha
-      // Farak key se tay hota hai: markerNo hamesha number hota hai, uid nahi.
-      // (Prefix se nahi dekhte - wo "M" bhi ho sakta hai aur "MK" bhi.)
+      // BEECH ME yahan LineWise ke DONO roop padhe jaate the (naya {uid: true}
+      // aur purana {markerNo: uid}). DB me ab sirf naya roop hai - koi number
+      // wali key bachi hi nahi - isliye purane roop ka raasta hata diya gaya
+      // (user ka faisla: "purana nahi hoga, naya hi hoga").
+      //
+      //   let isUidKey = isNaN(Number(key));
+      //   let uid = isUidKey ? key : links[markerArray[j]];
+      //
+      // NAYA roop: key hi uid hai, value sirf maujoodgi ka nishaan.
       let markerArray = Object.keys(links);
       for (let j = 0; j < markerArray.length; j++) {
-        let key = String(markerArray[j]);
-        let isUidKey = isNaN(Number(key));
-        let uid = isUidKey ? key : links[markerArray[j]];
-        if (uid == null || uid === "" || typeof uid != "string") {
-          continue; // array-nulls aur kharaab entry skip
+        let uid = String(markerArray[j]);
+        if (isNaN(Number(uid)) == false) {
+          continue; // number wali key = purana roop; ab aata hi nahi
         }
-        // Naye roop me value maujoodgi ka nishaan hai - hataayi hui entry skip.
-        if (isUidKey && (links[key] == null || links[key] === false || links[key] === "")) {
+        // Value maujoodgi ka nishaan hai - hataayi hui entry skip.
+        if (links[uid] == null || links[uid] === false || links[uid] === "") {
           continue;
         }
         // WardWise me bhi hona chahiye, aur usi line par.
@@ -350,9 +352,11 @@ export class MarkerMappingService {
         if (result[lineNo] == null) {
           result[lineNo] = {};
         }
-        // Purane roop me key markerNo hi rehne dete hain - wahan number pata
-        // hai, aur record me markerNo na ho to bhi display sahi rahega.
-        result[lineNo][isUidKey ? uid : key] = uid;
+        // PEHLE: result[lineNo][isUidKey ? uid : key] = uid;
+        // Purane roop me key markerNo rakhi jaati thi. Ab sirf naya roop hai,
+        // yaani key hamesha uid. shapeLine() us haalat ko pehle se sambhalta
+        // hai - record ke markerNo se display number nikaal leta hai.
+        result[lineNo][uid] = uid;
       }
     }
     return result;
@@ -1122,12 +1126,11 @@ export class MarkerMappingService {
       //   - sirf markerNo badla (ward/line wahi) -> key wahi rehti hai, upar
       //     writePlace me overwrite ho chuki hai. Kuch hataana nahi.
       //   - ward ya line badli -> purani jagah ki entry hatani hai.
+      // BEECH ME yahan purane roop wali entry bhi hatayi jaati thi:
+      //   updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + markerNoFrom] = null;
+      // DB me ab koi number wali key hai hi nahi, isliye wo hata diya gaya.
       if (String(wardFrom) != String(wardTo) || String(lineFrom) != String(lineTo)) {
         updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + uid] = null;
-        // Purane data me key markerNo hoti thi - wo entry bhi saath hi jaani
-        // chahiye, warna aadhi-migrate DB me marker purani line par bhi dikhta
-        // rahega. Aisi entry na ho to ye null kuch karta hi nahi.
-        updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + markerNoFrom] = null;
       }
       if (Object.keys(updates).length == 0) {
         return null;
@@ -1658,25 +1661,20 @@ export class MarkerMappingService {
       //
       // if (links[keyArray[i]] == uid) { ... }
       //
-      // Ab dono roop dekhte hain - naye me key hi uid hai, purane me uid value
-      // me tha. Isliye poori line ek baar padhni padti hai; iske bina
-      // aadhi-migrate DB me marker hatane ke baad bhi apni line par bhoot ban
-      // kar dikhta rehta.
-      return this.readOnce(db, linePath).then((links: any) => {
-        let updates: any = {};
-        updates[this.markersDataPath + uid] = null;
-        updates[this.markerWisePath + uid] = null;
-        updates[this.wardWisePath + place["ward"] + "/" + uid] = null;
-        if (links != null && typeof links == "object") {
-          let keyArray = Object.keys(links);
-          for (let i = 0; i < keyArray.length; i++) {
-            if (keyArray[i] == uid || links[keyArray[i]] == uid) {
-              updates[linePath + "/" + keyArray[i]] = null;
-            }
-          }
-        }
-        return db.database.ref().update(updates);
-      }).then(() => {
+      // BEECH ME dono roop dekhe jaate the, isliye poori line ek baar padhni
+      // padti thi:
+      //
+      // return this.readOnce(db, linePath).then((links: any) => {
+      //   ... if (keyArray[i] == uid || links[keyArray[i]] == uid) { ... }
+      //
+      // DB me ab sirf naya roop hai - key hi uid hai - isliye seedha us key ko
+      // null kar dete hain. Na read chahiye, na loop.
+      let updates: any = {};
+      updates[this.markersDataPath + uid] = null;
+      updates[this.markerWisePath + uid] = null;
+      updates[this.wardWisePath + place["ward"] + "/" + uid] = null;
+      updates[linePath + "/" + uid] = null;
+      return db.database.ref().update(updates).then(() => {
         // Ginti bhi ghata do - warna delete ke baad line ka count bada dikhta
         // rehta hai. Zero se neeche kabhi nahi jaana chahiye.
         return db.database.ref(this.lineSummaryPath + place["ward"] + "/" + place["line"] + "/marksCount").transaction(

@@ -490,17 +490,19 @@ export class MarkerApprovalTestComponent {
         // sirf true hai, isliye purana code uid ki jagah `true` push kar deta.
         let keyArray = Object.keys(links);
         for (let i = 0; i < keyArray.length; i++) {
-          // Naya data { uid: true } - pehchaan KEY me hai. Purana data
-          // { markerNo: uid } - pehchaan value me thi. Dono padhte hain.
-          // Farak key se tay hota hai: markerNo hamesha number, uid nahi.
-          let key = String(keyArray[i]);
-          let isUidKey = isNaN(Number(key));
-          let uid = isUidKey ? key : links[keyArray[i]];
-          if (uid == null || uid === "" || typeof uid != "string" || uidArray.indexOf(uid) >= 0) {
-            continue; // array-nulls aur kharaab entry skip
+          // Naya data { uid: true } - pehchaan KEY me hai (value sirf nishaan).
+          //
+          // BEECH ME purana roop ({ markerNo: uid }, uid value me) bhi padha
+          // jaata tha. DB me ab koi number wali key hai hi nahi, isliye wo
+          // raasta hata diya gaya:
+          //   let isUidKey = isNaN(Number(key));
+          //   let uid = isUidKey ? key : links[keyArray[i]];
+          let uid = String(keyArray[i]);
+          if (isNaN(Number(uid)) == false || uidArray.indexOf(uid) >= 0) {
+            continue; // number wali key = purana roop; ab aata hi nahi
           }
-          // Naye roop me value maujoodgi ka nishaan hai - hataayi hui entry skip.
-          if (isUidKey && (links[key] == null || links[key] === false || links[key] === "")) {
+          // Value maujoodgi ka nishaan hai - hataayi hui entry skip.
+          if (links[uid] == null || links[uid] === false || links[uid] === "") {
             continue;
           }
           uidArray.push(uid);

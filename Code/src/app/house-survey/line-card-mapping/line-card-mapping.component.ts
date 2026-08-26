@@ -901,16 +901,15 @@ export class LineCardMappingComponent implements OnDestroy {
       // NEW PATH: record hataana nahi hai - wo MarkersData par apni jagah hi
       // rehta hai. Sirf purani line ki LineWise entry hatani hai, warna marker
       // purani aur nayi dono line par dikhta rahega.
-      // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid
-      // hai. Purane data me wo key markerNo thi, isliye DONO hataate hain, warna
-      // aadhi-migrate DB me marker purani line par bhi dikhta rahega. Jo entry
-      // maujood na ho, uspar ye remove kuch karta hi nahi.
+      // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid hai.
+      //
+      // BEECH ME purane roop wali entry bhi hatayi jaati thi:
+      //   ... + "/" + row.markerNo);
+      // DB me ab koi number wali key hai hi nahi, isliye wo hata diya gaya.
       if (state.uid != null) {
         await this.moveHelper.dbRemove(this.db,
           "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + state.uid);
       }
-      await this.moveHelper.dbRemove(this.db,
-        "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + row.markerNo);
       this.markerMapping.clearLinks();
     }
 
@@ -938,11 +937,10 @@ export class LineCardMappingComponent implements OnDestroy {
         await this.markerMapping.writePlace(this.db, state.uid, ctx.zone,
           this.markerMapping.lineValue(ctx.lineFrom), row.markerNo);
         // Nayi line par writePlace ne uid ki key banayi thi - wahi hatani hai.
+        // (Purane roop wali `row.newKey` line hata di gayi - DB me ab koi
+        // number wali key hai hi nahi.)
         await this.moveHelper.dbRemove(this.db,
           "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + state.uid);
-        // Purane data me key markerNo (yahan newKey) hoti thi - wo bhi hata do.
-        await this.moveHelper.dbRemove(this.db,
-          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + row.newKey);
         // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
         // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
         // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.
