@@ -7,22 +7,26 @@ import { MarkerMappingService } from '../../services/marker/marker-mapping.servi
 // Moves a whole ward's markers from the old per-line structure
 //   EntityMarkingData/MarkedHouses/{ward}/{line}/{markerNo}
 // into the new global structure:
-//   - Data:    EntityMarkingData/MarkersData/M{n}          (flat, global M-index)
-//   - Image:   {storageCity}/MarkingSurveyImages/AllMarkerImages/M{n}.jpg
-//   - Mapping: EntityMarkingData/MarkersMapping/MarkerWise/M{n} = { line, ward }
-//              EntityMarkingData/MarkersMapping/WardWise/{ward}/M{n} = line
-//              EntityMarkingData/MarkersMapping/WardWise/{ward}/lastMarkerKey = n
+//   - Data:    EntityMarkingData/MarkersData/{uid}         (flat, global index)
+//   - Image:   {storageCity}/MarkingSurveyImages/AllMarkerImages/{uid}.jpg
+//   - Mapping: EntityMarkingData/MarkersMapping/MarkerWise/{uid} = { line, ward }
+//              EntityMarkingData/MarkersMapping/WardWise/{ward}/{uid} = line
 //              EntityMarkingData/MarkersMapping/LineWise/{ward}/{line}/{uid} = true
 //   - Line:    EntityMarkingData/MarkersMapping/LineSummary/{ward}/{line}
 // OLD PATH (reference ke liye rakha hai):
 //              (ApproveStatus node + all line-level count scalars, copied as-is)
 //
-// The M-index is GLOBAL, so the allocation counter lives at
+// uid = prefix + number, yaani "MK1", "MK2"... Prefix ek hi jagah likha hai
+// (MarkerMappingService.uidPrefix) - pehle yahan "M" haath se juda tha aur usse
+// bane marker baaki system se mel nahi khaate the.
+//
+// Index GLOBAL hai, isliye allocation counter yahan rehta hai:
 //   EntityMarkingData/MarkersMapping/lastMarkerKey
-// (MarkersMapping ke andar, taaki MarkersData me sirf M{n} records rahen).
+// (MarkersMapping ke andar, taaki MarkersData me sirf marker records rahen).
 // Ye counter ek atomic transaction se badhta hai, isliye portal aur marking app
-// ek saath chalein tab bhi dono ko alag M number milta hai.
-// This prevents two wards from both producing "M1" and overwriting each other.
+// ek saath chalein tab bhi dono ko alag number milta hai.
+// This prevents two wards from both producing the same uid and overwriting
+// each other.
 //
 // Old record par sirf EK naya node add hota hai (baaki kuch na badla jaata hai
 // na delete hota hai):
@@ -475,32 +479,42 @@ export class MarkerDataMoveComponent implements OnInit {
     return record;
   }
 
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
+  //
   // Field-by-field compare so a re-run knows whether anything actually changed.
-  isSame(a: any, b: any) {
-    let keys: any = {};
-    Object.keys(a || {}).forEach(k => keys[k] = true);
-    Object.keys(b || {}).forEach(k => keys[k] = true);
-    for (let k in keys) {
-      if (k == "movedMarkerUid") { continue; }
-      let av = a ? a[k] : undefined;
-      let bv = b ? b[k] : undefined;
-      if (typeof av == "object" || typeof bv == "object") {
-        if (JSON.stringify(av) != JSON.stringify(bv)) { return false; }
-      }
-      else if (String(av) != String(bv)) { return false; }
-    }
-    return true;
-  }
+  // Iska ekmatra caller upar comment me chala gaya tha jab re-run ko create-only
+  // banaya gaya (maujooda record ko purane tree se kabhi refresh nahi karna).
+  // Us faisle ke baad "kya badla hai" poochhne ki zaroorat hi nahi bachi.
+  //
+  // isSame(a: any, b: any) {
+  //   let keys: any = {};
+  //   Object.keys(a || {}).forEach(k => keys[k] = true);
+  //   Object.keys(b || {}).forEach(k => keys[k] = true);
+  //   for (let k in keys) {
+  //     if (k == "movedMarkerUid") { continue; }
+  //     let av = a ? a[k] : undefined;
+  //     let bv = b ? b[k] : undefined;
+  //     if (typeof av == "object" || typeof bv == "object") {
+  //       if (JSON.stringify(av) != JSON.stringify(bv)) { return false; }
+  //     }
+  //     else if (String(av) != String(bv)) { return false; }
+  //   }
+  //   return true;
+  // }
 
-  // Ek baar padho aur chhod do.
-  readOnce(path: string): Promise<any> {
-    return new Promise((resolve) => {
-      let instance = this.db.object(path).valueChanges().subscribe((data: any) => {
-        instance.unsubscribe();
-        resolve(data);
-      });
-    });
-  }
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
+  //
+  // Ek baar padho aur chhod do. Is page ke saare read apni jagah seedha
+  // subscribe/unsubscribe karte hain, isliye ye helper kabhi laga hi nahi.
+  //
+  // readOnce(path: string): Promise<any> {
+  //   return new Promise((resolve) => {
+  //     let instance = this.db.object(path).valueChanges().subscribe((data: any) => {
+  //       instance.unsubscribe();
+  //       resolve(data);
+  //     });
+  //   });
+  // }
 
 
 
@@ -699,9 +713,13 @@ export class MarkerDataMoveComponent implements OnInit {
 
 
 
-  // Downloads the old per-line image and re-uploads it as M{n}.jpg in the flat
-  // AllMarkerImages folder. Retries up to 3 times. onSuccess(hadImage) is called
-  // when done (hadImage=false when the marker had no source image).
+  // Downloads the old per-line image and re-uploads it as {uid}.jpg in the flat
+  // AllMarkerImages folder. Retries up to 3 times.
+  //
+  // onSuccess(hadImage) tab bulta hai jab marker ka DATA likha ja sakta hai -
+  // chahe image mili ho (hadImage=true) ya na mili ho (false). onFail() sirf
+  // upload/network ki wo naakami hai jo teen koshish ke baad bhi na sudhre;
+  // usme marker chhoot jaata hai aur MoveFailures me darj ho jaata hai.
   copyImage(old: any, line: any, ward: any, uid: string, attempt: number, onSuccess: any, onFail: any) {
     let oldImageName = old["image"];
     if (oldImageName == null || oldImageName == "") {
@@ -741,8 +759,24 @@ export class MarkerDataMoveComponent implements OnInit {
         xhr.send();
       })
       .catch(() => {
-        // Source image missing in storage -> no point retrying the download.
-        onFail();
+        // PEHLE YE THA (hataya nahi, comment kiya hai):
+        // onFail();
+        //
+        // Source image Storage me nahi hai (delete ho gayi, kabhi upload hi nahi
+        // hui, ya naam galat pada hai). Download dobara karne ka matlab nahi -
+        // par onFail() bulane ka matlab ye tha ki writeRecordAndMapping() chalta
+        // hi nahi, yaani MARKER KA DATA BHI MIGRATE NAHI HOTA. Re-run par bhi
+        // wahi fail hota, hamesha - wo marker naye structure me kabhi aata hi
+        // nahi.
+        //
+        // Ye khud se ulta bhi tha: upar wali soorat me (image ka naam hi nahi
+        // hai) onSuccess(false) hota hai aur data migrate ho jaata hai. Dono me
+        // nateeja ek hi hai - image nahi hai - to bartaav bhi ek hona chahiye.
+        //
+        // Ab wo marker noImageCount me ginega, migrate ho jaayega, aur uski
+        // imgRef set rahegi - image baad me us naam se upload ho jaaye to apne
+        // aap dikhne lagegi.
+        onSuccess(false);
       });
   }
 
