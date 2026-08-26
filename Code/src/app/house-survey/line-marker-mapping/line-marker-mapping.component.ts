@@ -676,7 +676,15 @@ export class LineMarkerMappingComponent implements OnDestroy {
       let markerNodeData = await this.readLineDataWithRetry(zone, lineFrom);
       // markerNo -> uid. Record ke andar uid hota nahi, aur naye path par har
       // node ki key uid hi hai - backup restore layak tabhi hai jab uid saath ho.
-      let lineLinks = await this.markerMapping.readLineLinks(this.db, zone, lineFrom);
+      // PEHLE YE THA (hataya nahi, comment kiya hai):
+      // let lineLinks = await this.markerMapping.readLineLinks(this.db, zone, lineFrom);
+      // ...aur neeche buildLineBackup(lineLinks, markerNodeData).
+      //
+      // Wo raw LineWise deta tha aur backup usme markerNo par uid dhoondhta tha.
+      // Naye structure me LineWise { uid: true } hai - markerNo hai hi nahi, to
+      // har marker chhoot jaata aur backup KHAALI ban jaata (chup-chaap).
+      // Ab service khud mapping aur records dono padh kar backup bana deti hai.
+      let markerBackup = await this.markerMapping.buildLineBackupFor(this.db, zone, lineFrom);
       let houseData = await this.moveHelper.readOnceWithRetry(this.db, "Houses/" + zone + "/" + lineFrom, this.run);
 
       // ---------- backup pehle, uske baad hi move ----------
@@ -684,7 +692,7 @@ export class LineMarkerMappingComponent implements OnDestroy {
       let now = new Date();
       let filePath = this.moveHelper.buildBackupFilePath(this.pageName, now);
       let fileName = this.moveHelper.buildBackupFileName(zone, lineFrom, zone, lineTo, (onlyMarkerNos != null ? "_retry" : ""), now);
-      let backupData = this.buildBackupData(markerNodeData, lineLinks, houseData, markerList, lastKey, zone, lineFrom, lineTo, now);
+      let backupData = this.buildBackupData(markerNodeData, markerBackup, houseData, markerList, lastKey, zone, lineFrom, lineTo, now);
 
       try {
         await this.moveHelper.saveBackupWithRetry(backupData, fileName, filePath, this.run);
@@ -827,12 +835,14 @@ export class LineMarkerMappingComponent implements OnDestroy {
    * hi nahi hoti thi aur backup restore layak nahi tha. buildLineBackup() usi
    * data ko uid ke hisaab se chaar node me baant deta hai.
    */
-  private buildBackupData(markerNodeData: any, lineLinks: any, houseData: any, markerList: any[], lastKey: any, zone: any, lineFrom: any, lineTo: any, now: Date): any {
+  private buildBackupData(markerNodeData: any, markerBackup: any, houseData: any, markerList: any[], lastKey: any, zone: any, lineFrom: any, lineTo: any, now: Date): any {
     let selectedMarkers = [];
     for (let i = 0; i < markerList.length; i++) {
       selectedMarkers.push("" + markerList[i]["markerNo"]);
     }
-    let markerBackup = this.markerMapping.buildLineBackup(lineLinks, markerNodeData);
+    // PEHLE YE THA (hataya nahi, comment kiya hai):
+    // let markerBackup = this.markerMapping.buildLineBackup(lineLinks, markerNodeData);
+    // Ab bana-banaya backup upar se aata hai (buildLineBackupFor).
     let meta = this.moveHelper.buildBackupMeta(this.pageName, this.cityName, zone, lineFrom, zone, lineTo, markerList.length, now);
     meta["destinationLastMarkerKey"] = lastKey;
     meta["selectedMarkers"] = selectedMarkers;

@@ -278,14 +278,18 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
       let markerByCard = this.buildMarkerIndex(markerData);
       // markerNo -> uid. Record ke andar uid hota nahi, aur naye path par har
       // node ki key uid hi hai - backup restore layak tabhi hai jab uid saath ho.
-      let lineLinks = await this.markerMapping.readLineLinks(this.db, zoneFrom, lineFrom);
+      // PEHLE: readLineLinks() + buildLineBackup(lineLinks, markerData).
+      // Wo raw LineWise deta tha aur backup usme markerNo par uid dhoondhta tha;
+      // naye { uid: true } format me markerNo hai hi nahi, to backup KHAALI ban
+      // jaata tha. Ab service khud mapping + records padh kar backup banati hai.
+      let markerBackup = await this.markerMapping.buildLineBackupFor(this.db, zoneFrom, lineFrom);
 
       // ---------- 2. backup pehle, uske baad hi move ----------
       this.moveSummary.statusText = "Backup सेव हो रहा है...";
       let now = new Date();
       let filePath = this.moveHelper.buildBackupFilePath(this.pageName, now);
       let fileName = this.moveHelper.buildBackupFileName(zoneFrom, lineFrom, zoneTo, lineTo, (onlyCardNos != null ? "_retry" : ""), now);
-      let backupData = this.buildBackupData(houseData, markerData, lineLinks, startKey, zoneFrom, lineFrom, zoneTo, lineTo, cardNoList.length, now);
+      let backupData = this.buildBackupData(houseData, markerData, markerBackup, startKey, zoneFrom, lineFrom, zoneTo, lineTo, cardNoList.length, now);
 
       try {
         await this.moveHelper.saveBackupWithRetry(backupData, fileName, filePath, this.run);
@@ -487,7 +491,7 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
    * thi - wo tab tak sahi tha jab tak record MarkedHouses/{ward}/{line} par
    * rehta tha; naye path par wo file kahin import hi nahi hoti thi.
    */
-  private buildBackupData(houseData: any, markerData: any, lineLinks: any, startKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, itemCount: number, now: Date): any {
+  private buildBackupData(houseData: any, markerData: any, markerBackup: any, startKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, itemCount: number, now: Date): any {
     let cardWardMapping = {};
     let houseWardMapping = {};
     let cardKeys = Object.keys(houseData);
@@ -502,7 +506,8 @@ export class ChangeLineSurveyedDataComponent implements OnInit, OnDestroy {
         houseWardMapping[mobile] = { line: lineFrom, ward: zoneFrom };
       }
     }
-    let markerBackup = this.markerMapping.buildLineBackup(lineLinks, markerData);
+    // PEHLE: let markerBackup = this.markerMapping.buildLineBackup(lineLinks, markerData);
+    // Ab bana-banaya backup upar se aata hai (buildLineBackupFor).
     let meta = this.moveHelper.buildBackupMeta(this.pageName, this.cityName, zoneFrom, lineFrom, zoneTo, lineTo, itemCount, now);
     meta["destinationStartKey"] = startKey;
     meta["restorePaths"] = this.markerMapping.buildRestoreNotes(zoneFrom, lineFrom);

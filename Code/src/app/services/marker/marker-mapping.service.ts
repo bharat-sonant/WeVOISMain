@@ -131,6 +131,12 @@ export class MarkerMappingService {
 
   // ---------------- READ ----------------
 
+  // AB KOI NAHI BULATA - sirf getLineMarkerUids() ise bulata hai, aur wo bhi
+  // sirf getLineMarkers() se, jise koi nahi bulata. Teeno ki poori chain dead
+  // hai. Hatai nahi hai: mapping-only list ka ye sabse seedha raasta hai, kabhi
+  // zaroorat pade to tayyar rahe. Records chahiye hon to getLineRecords()
+  // istemaal karein (wo cached hai aur intersection ka niyam maanta hai).
+  //
   // Poore ward ke markers ka index: { uid: line }. Kuch na ho to null.
   getWardMarkers(db: any, ward: any): Promise<any> {
     return this.readOnce(db, this.wardWisePath + ward).then((data: any) => {
@@ -239,8 +245,11 @@ export class MarkerMappingService {
     });
   }
 
-  // Ek line ke poore records: { uid: record }. Display pages isi se list
-  // banate hain.
+  // AB KOI NAHI BULATA - display pages getLineRecords() istemaal karte hain
+  // (purani {markerNo: record} shape, cached, aur intersection ka niyam maanta
+  // hai). Hataya nahi.
+  //
+  // Ek line ke poore records: { uid: record }.
   getLineMarkers(db: any, ward: any, line: any): Promise<any> {
     return this.getLineMarkerUids(db, ward, line).then((uidArray: any) => {
       let readArray = uidArray.map((uid: any) => this.getMarker(db, uid));
@@ -610,6 +619,8 @@ export class MarkerMappingService {
 
   // shapeLine() ki key ya to markerNo hoti hai ya uid. uid ho to wahi lauta do,
   // warna link index se uid nikaalo.
+  // AB KOI NAHI BULATA - iska ekmatra istemaal getUid() ke us purane raaste me
+  // tha jo ab comment me pada hai. Hataya nahi.
   uidFromRecordKey(key: any, links: any): any {
     // PEHLE: String(key).charAt(0) == "M"
     if (String(key).substring(0, this.uidPrefix.length) == this.uidPrefix) {
@@ -1069,6 +1080,19 @@ export class MarkerMappingService {
   // Purani jagah ki entry hatana zaroori hai, warna marker dono jagah dikhta
   // rahega. LineWise ke liye purana markerNo chahiye, isliye wo caller deta hai
   // (usi ke paas hota hai ki marker kis number par pada tha).
+  // !! AB KOI NAHI BULATA - par ye jaan lena zaroori hai.
+  //
+  // Paanch page (line-marker-mapping, line-card-mapping, change-line-marker-data,
+  // change-line-surveyed-data, card-marker-mapping) apna move HAATH SE likhte
+  // hain: writePlace() + khud LineWise/WardWise ki purani entry hataana. Yahi
+  // wajah thi ki LineWise ka format badalne par wo bug paanchon file me alag-alag
+  // theek karna pada - agar sab ye function bulate to ek jagah theek karna kaafi
+  // hota.
+  //
+  // Ye function poora move ek jagah karta hai: record ka ward/line, teeno
+  // mapping, purani jagah ki entry hataana, aur card index. Hataya nahi hai -
+  // aage kabhi un pages ko ispar laana ho to tayyar hai. (Abhi laana matlab
+  // paanch move flow ka bartaav badalna, isliye chheda nahi.)
   moveMarker(db: any, uid: any, wardFrom: any, lineFrom: any, markerNoFrom: any, wardTo: any, lineTo: any, markerNoTo: any): Promise<any> {
     let lineVal = this.lineValue(lineTo);
     // History yahi likhi jaati hai, alag se nahi - jagah badalna aur uska
@@ -1198,61 +1222,97 @@ export class MarkerMappingService {
    * list (skippedNoUid / orphanLinks) meta me chali jaati hain, warna restore
    * karne wale ko pata hi nahi chalega ki kuch chhoot gaya.
    */
-  buildLineBackup(links: any, lineData: any): any {
-    let markersData: any = {};
-    let lineWise: any = {};
-    let markerWise: any = {};
-    let wardWise: any = {};
-    let skippedNoUid: any[] = [];
-    let orphanLinks: any[] = [];
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai) - iski jagah neeche
+  // buildLineBackupFor() hai.
+  //
+  // Ye `links` ko { markerNo: uid } maanta tha aur usme se markerNo par uid
+  // dhoondhta tha. Naye structure me LineWise { uid: true } hai - `links["7"]`
+  // hamesha undefined milta, yaani HAR marker skippedNoUid me chala jaata aur
+  // backup POORI TARAH KHAALI banta. Aur ye chup-chaap hota tha: koi error
+  // nahi, file ban jaati thi, bas usme kuch hota nahi tha. Move bigadne par
+  // restore ke liye kuch bachta hi nahi.
+  //
+  // Ab records seedha uid ke hisaab se aate hain, isliye markerNo se jodne ki
+  // zaroorat hi nahi rahi.
+  //
+  // buildLineBackup(links: any, lineData: any): any {
+  //   ...
+  //   let uid = (links != null) ? links[markerNo] : null;
+  //   if (uid == null || uid == "") { skippedNoUid.push(markerNo); continue; }
+  //   markersData[uid] = record;
+  //   lineWise[markerNo] = uid;
+  //   ...
+  // }
 
-    if (lineData != null && typeof lineData == "object") {
-      let markerArray = Object.keys(lineData);
-      for (let i = 0; i < markerArray.length; i++) {
-        let markerNo = markerArray[i];
-        let record = lineData[markerNo];
-        if (record == null || typeof record != "object") {
-          continue;
+  /**
+   * Move se pehle source line ka backup - seedha DB se, usi shape me jaise DB
+   * me pada hai, taaki file ka har key apne node par import kiya ja sake.
+   *
+   * Ye khud dono cheezein padhta hai (mapping + records), isliye caller ko
+   * markerNo aur uid jodne ki zaroorat nahi - naye structure me LineWise me
+   * markerNo hota hi nahi aur record ke andar uid hota nahi, to wo jod caller
+   * ke paas ban hi nahi sakta tha.
+   *
+   * Chaar node banate hain, wahi jo move badalta hai:
+   *   markersData = { uid: record }
+   *   lineWise    = { uid: true }        <- naya format, jaisa DB me hai
+   *   markerWise  = { uid: {ward, line} }
+   *   wardWise    = { uid: line }
+   *
+   * `markerWise`/`wardWise` ki value record se hi leti hai - record move se
+   * pehle padha gaya hai, yaani usme purani ward/line hi hai.
+   *
+   * Mapping hai par record nahi (orphan) - wo marker hai hi nahi, isliye move
+   * use chhuta bhi nahi aur restore me bhi nahi jaana chahiye. Par chupchaap
+   * chhodte bhi nahi: `orphanLinks` me chala jaata hai, taaki restore karne
+   * wale ko dikh jaaye.
+   */
+  buildLineBackupFor(db: any, ward: any, line: any): Promise<any> {
+    return this.getLineLinks(db, ward, line).then((links: any) => {
+      let keyArray = Object.keys(links);
+      let uidArray: any[] = [];
+      for (let i = 0; i < keyArray.length; i++) {
+        let uid = links[keyArray[i]];
+        if (uid != null && uid !== "" && uidArray.indexOf(uid) < 0) {
+          uidArray.push(uid);
         }
-        let uid = (links != null) ? links[markerNo] : null;
-        if (uid == null || uid == "") {
-          skippedNoUid.push(markerNo);
-          continue;
-        }
-        markersData[uid] = record;
-        lineWise[markerNo] = uid;
-        let ward = (record["ward"] != null) ? record["ward"] : null;
-        let line = (record["line"] != null) ? record["line"] : null;
-        markerWise[uid] = { ward: ward, line: line };
-        wardWise[uid] = line;
       }
-    }
+      return this.getMarkerRecords(db, uidArray).then((records: any) => {
+        let markersData: any = {};
+        let lineWise: any = {};
+        let markerWise: any = {};
+        let wardWise: any = {};
+        let orphanLinks: any[] = [];
 
-    // Mapping to hai par record nahi - aisa marker hai hi nahi, isliye move use
-    // chhuta bhi nahi. Restore me bhi nahi jaana chahiye (warna orphan wapas
-    // ban jaayega), bas dikh jaana chahiye.
-    if (links != null && typeof links == "object") {
-      let linkArray = Object.keys(links);
-      for (let i = 0; i < linkArray.length; i++) {
-        let markerNo = linkArray[i];
-        let uid = links[markerNo];
-        if (uid == null || uid == "") {
-          continue;
+        for (let i = 0; i < uidArray.length; i++) {
+          let uid = uidArray[i];
+          let record = records[uid];
+          if (record == null || typeof record != "object") {
+            // getMarkerRecords aise uid chhod deta hai jinka record nahi hai.
+            orphanLinks.push(String(uid));
+            continue;
+          }
+          markersData[uid] = record;
+          lineWise[uid] = true;
+          let recWard = (record["ward"] != null) ? record["ward"] : null;
+          let recLine = (record["line"] != null) ? record["line"] : null;
+          markerWise[uid] = { ward: recWard, line: recLine };
+          wardWise[uid] = recLine;
         }
-        if (lineData == null || lineData[markerNo] == null) {
-          orphanLinks.push(markerNo + " -> " + uid);
-        }
-      }
-    }
 
-    return {
-      markersData: markersData,
-      lineWise: lineWise,
-      markerWise: markerWise,
-      wardWise: wardWise,
-      skippedNoUid: skippedNoUid,
-      orphanLinks: orphanLinks
-    };
+        return {
+          markersData: markersData,
+          lineWise: lineWise,
+          markerWise: markerWise,
+          wardWise: wardWise,
+          // Ab har marker uid se hi aata hai, isliye "uid nahi mila" wali soorat
+          // bachti hi nahi. Key meta me rehne di hai taaki purani backup file
+          // aur nayi ek jaisi padhi ja sakein.
+          skippedNoUid: [],
+          orphanLinks: orphanLinks
+        };
+      });
+    });
   }
 
   // Backup file ke har key ko kis node par wapas daalna hai - restore ka koi
@@ -1282,6 +1342,9 @@ export class MarkerMappingService {
   // Ek marker ki poori move history, purani se nayi order me. Har entry par
   // uski push key bhi rakh dete hain (`historyId`), taaki UI ko alag se
   // Object.keys karne ki zaroorat na pade. Kuch na ho to khaali array.
+  // AB KOI NAHI BULATA - MoveHistory abhi sirf likhi jaati hai (recordMove),
+  // padhi kahin nahi. Hatai nahi: history dikhane wala page banega to yahi
+  // lagega.
   getMoveHistory(db: any, uid: any): Promise<any> {
     return this.readOnce(db, this.moveHistoryPath + uid).then((data: any) => {
       if (data == null || typeof data != "object") {
@@ -1464,6 +1527,9 @@ export class MarkerMappingService {
     });
   }
 
+  // AB KOI NAHI BULATA - Card Transection Detail getUidByCard() + getMarker()
+  // seedha istemaal karta hai. Hataya nahi.
+  //
   // Card se seedha MarkersData ka path. Na mile to null.
   getMarkerDataPathByCard(db: any, cardNo: any, markersData: any = null): Promise<any> {
     return this.getUidByCard(db, cardNo, markersData).then((uid: any) => {

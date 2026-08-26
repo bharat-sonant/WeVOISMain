@@ -522,7 +522,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
    * thi - wo tab tak sahi tha jab tak record MarkedHouses/{ward}/{line} par
    * rehta tha; naye path par wo file kahin import hi nahi hoti thi.
    */
-  private buildBackupData(markerData: any, lineLinks: any, houseData: any, revisitData: any, lastMarkerKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, markerCount: number, now: Date): any {
+  private buildBackupData(markerData: any, markerBackup: any, houseData: any, revisitData: any, lastMarkerKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, markerCount: number, now: Date): any {
     let cardWardMapping = {};
     let houseWardMapping = {};
     if (houseData != null) {
@@ -536,7 +536,8 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
         }
       }
     }
-    let markerBackup = this.markerMapping.buildLineBackup(lineLinks, markerData);
+    // PEHLE: let markerBackup = this.markerMapping.buildLineBackup(lineLinks, markerData);
+    // Ab bana-banaya backup upar se aata hai (buildLineBackupFor).
     return {
       meta: {
         page: this.pageName,
@@ -665,7 +666,11 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       let revisitData = await this.readOnceWithRetry("EntitySurveyData/RevisitRequest/" + zoneFrom + "/" + lineFrom);
       // markerNo -> uid. Record ke andar uid hota nahi, aur naye path par har
       // node ki key uid hi hai - backup restore layak tabhi hai jab uid saath ho.
-      let lineLinks = await this.markerMapping.readLineLinks(this.db, zoneFrom, lineFrom);
+      // PEHLE: readLineLinks() + buildLineBackup(lineLinks, markerData).
+      // Wo raw LineWise deta tha aur backup usme markerNo par uid dhoondhta tha;
+      // naye { uid: true } format me markerNo hai hi nahi, to backup KHAALI ban
+      // jaata tha. Ab service khud mapping + records padh kar backup banati hai.
+      let markerBackup = await this.markerMapping.buildLineBackupFor(this.db, zoneFrom, lineFrom);
 
       // ---------- 2. backup pehle, uske baad hi move ----------
       this.moveSummary.statusText = "Backup सेव हो रहा है...";
@@ -674,7 +679,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       let now = new Date();
       let filePath = this.buildBackupFilePath(now);
       let fileName = this.buildBackupFileName(zoneFrom, lineFrom, zoneTo, lineTo, (onlyMarkerNos != null ? "_retry" : ""), now);
-      let backupData = this.buildBackupData(markerData, lineLinks, houseData, revisitData, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, markerNoList.length, now);
+      let backupData = this.buildBackupData(markerData, markerBackup, houseData, revisitData, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, markerNoList.length, now);
 
       try {
         await this.saveBackupWithRetry(backupData, fileName, filePath);
