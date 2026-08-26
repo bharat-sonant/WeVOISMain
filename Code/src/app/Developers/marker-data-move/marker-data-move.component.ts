@@ -12,7 +12,7 @@ import { MarkerMappingService } from '../../services/marker/marker-mapping.servi
 //   - Mapping: EntityMarkingData/MarkersMapping/MarkerWise/M{n} = { line, ward }
 //              EntityMarkingData/MarkersMapping/WardWise/{ward}/M{n} = line
 //              EntityMarkingData/MarkersMapping/WardWise/{ward}/lastMarkerKey = n
-//              EntityMarkingData/MarkersMapping/LineWise/{ward}/{line}/{markerNo} = M{n}
+//              EntityMarkingData/MarkersMapping/LineWise/{ward}/{line}/{uid} = true
 //   - Line:    EntityMarkingData/MarkersMapping/LineSummary/{ward}/{line}
 // OLD PATH (reference ke liye rakha hai):
 //              (ApproveStatus node + all line-level count scalars, copied as-is)
@@ -306,16 +306,17 @@ export class MarkerDataMoveComponent implements OnInit {
     // OriginalToUid hai: wo original-location -> uid ka PERMANENT link hai
     // (kabhi re-point nahi hota) aur re-run guard ke liye wahi sahi cheez hai.
     let lineLinks = this.lineWiseMap != null ? this.lineWiseMap[item["line"]] : null;
-    let linkedUid: any = null;
-    let origLineLinksFirst = this.originalToUidMap != null ? this.originalToUidMap[item["line"]] : null;
-    let origUidFirst = origLineLinksFirst != null ? origLineLinksFirst[item["oldMarkerNo"]] : null;
-    if (origUidFirst != null && origUidFirst != "") {
-      linkedUid = origUidFirst;
-    }
+    // PURANI shape { markerNo: uid } - value se uid mil jaata tha. NAYI shape
+    // { uid: true } me markerNo hai hi nahi, isliye us par se uid nahi milta;
+    // wahan OriginalToUid (neeche fallback 1) kaam karta hai, jo isi liye
+    // permanent rakha gaya hai. `typeof == "string"` isliye ki nayi shape me
+    // value `true` aati hai - use uid maan lena galat hoga.
+    let oldStyleUid = lineLinks != null ? lineLinks[item["oldMarkerNo"]] : null;
+    let linkedUid = (oldStyleUid != null && typeof oldStyleUid == "string") ? oldStyleUid : null;
     // Is marker ka LineWise entry hai ya nahi - neeche repair ke liye chahiye.
-    // Ab ye uid se dekhte hain, markerNo se nahi.
-    let hasLineWise = linkedUid != null && linkedUid != ""
-      && lineLinks != null && lineLinks[linkedUid] != null && lineLinks[linkedUid] !== false;
+    // Nayi shape me ye uid pata chalne ke BAAD hi tay ho sakta hai, isliye
+    // niche uid milne par dobara check karte hain.
+    let hasLineWise = linkedUid != null && linkedUid != "";
     // Fallback 1: OriginalToUid — never re-pointed, so it still resolves even
     // after the marker was moved to another line/ward from the portal.
     //
@@ -372,7 +373,10 @@ export class MarkerDataMoveComponent implements OnInit {
             // bhi isi ward+line par hai. Portal se doosri line par move ho
             // chuka ho to haath nahi lagate - warna wo apni purani line par
             // bhi dikhne lag jaayega (duplicate).
-            if (!hasLineWise
+            // uid ab pata hai - nayi shape ({uid: true}) me entry maujood hai
+            // ya nahi, ye ab check kar sakte hain.
+            let hasNewStyleLink = lineLinks != null && lineLinks[uid] != null && lineLinks[uid] !== false;
+            if (!hasLineWise && !hasNewStyleLink
               && String(existing["ward"]) == String(ward)
               && String(existing["line"]) == String(item["line"])) {
               this.writeLineWiseLink(ward, item["line"], item["oldMarkerNo"], uid);
@@ -557,8 +561,9 @@ export class MarkerDataMoveComponent implements OnInit {
     //
     // this.db.object("EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line + "/" + markerNo).set(uid);
     //
-    // Naye structure me LineWise uid ka SET hai: { "MK1": true }. markerNo yahan
-    // nahi jaata - wo record ke andar (MarkersData/{uid}.markerNo) rehta hai.
+    // Naye structure me LineWise uid ka SET hai: { "MK1": true } - value sirf
+    // maujoodgi ka nishaan. markerNo yahan nahi jaata, wo record ke andar
+    // (MarkersData/{uid}.markerNo) rehta hai.
     //
     // OriginalToUid neeche jaisa tha waisa hi hai: wo original-location -> uid ka
     // permanent link hai aur re-run guard usi par tika hai, isliye uski key

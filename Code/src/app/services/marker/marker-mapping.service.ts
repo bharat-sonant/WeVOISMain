@@ -311,11 +311,23 @@ export class MarkerMappingService {
       // markerNo yahan hai hi nahi - wo MarkersData/{uid}.markerNo me hai, aur
       // shapeLine() usi se key banata hai (uska `key == uid` wala raasta pehle
       // se isi ke liye likha hai).
+      //
+      // LineWise ke DO roop pehchante hain, taaki aadhi-migrate DB bhi chale:
+      //   NAYA   { uid: true }      - key hi pehchaan, value bas nishaan
+      //   PURANA { markerNo: uid }  - key serial thi, uid value me tha
+      // Farak key se tay hota hai: markerNo hamesha number hota hai, uid nahi.
+      // (Prefix se nahi dekhte - wo "M" bhi ho sakta hai aur "MK" bhi.)
       let markerArray = Object.keys(links);
       for (let j = 0; j < markerArray.length; j++) {
-        let uid = markerArray[j];
-        if (links[uid] == null || links[uid] === false || links[uid] === "") {
-          continue; // numeric keys ki wajah se aaye array-nulls skip
+        let key = String(markerArray[j]);
+        let isUidKey = isNaN(Number(key));
+        let uid = isUidKey ? key : links[markerArray[j]];
+        if (uid == null || uid === "" || typeof uid != "string") {
+          continue; // array-nulls aur kharaab entry skip
+        }
+        // Naye roop me value maujoodgi ka nishaan hai - hataayi hui entry skip.
+        if (isUidKey && (links[key] == null || links[key] === false || links[key] === "")) {
+          continue;
         }
         // WardWise me bhi hona chahiye, aur usi line par.
         // line kahin number me padi hai kahin string me - dono ek jaisi mile.
@@ -329,7 +341,9 @@ export class MarkerMappingService {
         if (result[lineNo] == null) {
           result[lineNo] = {};
         }
-        result[lineNo][uid] = uid;
+        // Purane roop me key markerNo hi rehne dete hain - wahan number pata
+        // hai, aur record me markerNo na ho to bhi display sahi rahega.
+        result[lineNo][isUidKey ? uid : key] = uid;
       }
     }
     return result;
@@ -924,6 +938,10 @@ export class MarkerMappingService {
   // Isliye pehle line ki asli sabse badi key nikalte hain, phir transaction me
   // dono me se bada leke +1 karte hain. Portal ke move flows ka getSafeLastKey()
   // bhi yahi karta hai.
+  //
+  // NAYE data me LineWise ki key uid hai, usme koi number hota hi nahi - wahan
+  // ye scan 0 deta hai aur number seedha counter se aa jaata hai. Scan sirf
+  // PURANE ({markerNo: uid}) data ke liye bacha hai, isliye hataya nahi.
   nextLineKey(db: any, ward: any, line: any): Promise<any> {
     // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ki key ko markerNo
     // maan kar usme se sabse bada number nikala jaata tha:
@@ -1082,6 +1100,10 @@ export class MarkerMappingService {
       //   - ward ya line badli -> purani jagah ki entry hatani hai.
       if (String(wardFrom) != String(wardTo) || String(lineFrom) != String(lineTo)) {
         updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + uid] = null;
+        // Purane data me key markerNo hoti thi - wo entry bhi saath hi jaani
+        // chahiye, warna aadhi-migrate DB me marker purani line par bhi dikhta
+        // rahega. Aisi entry na ho to ye null kuch karta hi nahi.
+        updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + markerNoFrom] = null;
       }
       if (Object.keys(updates).length == 0) {
         return null;
@@ -1540,9 +1562,10 @@ export class MarkerMappingService {
     // PEHLE YE THA (hataya nahi, comment kiya hai):
     // updates[this.lineWisePath + ward + "/" + lineVal + "/" + markerNo] = uid;
     //
-    // DB me LineWise uid ka SET hai - { "MK1": true }, naksha nahi.
-    // App bhi yahi likhta hai. Portal alag format likhta to ek hi node par do
-    // tarah ki entries baith jaati aur dono taraf sab tootta.
+    // DB me LineWise uid ka SET hai - { "MK1": true }, naksha nahi. Value sirf
+    // maujoodgi ka nishaan hai. App bhi yahi likhta hai; portal alag format
+    // likhta to ek hi node par do tarah ki entries baith jaati aur dono taraf
+    // sab tootta.
     //
     // markerNo yahan nahi jaata - wo record ke andar (MarkersData/{uid}.markerNo)
     // rehta hai, aur wahi screen par dikhta hai.
@@ -1563,28 +1586,31 @@ export class MarkerMappingService {
         return db.database.ref(this.markersDataPath + uid).set(null);
       }
       let linePath = this.lineWisePath + place["ward"] + "/" + place["line"];
-      // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ko
-      // { markerNo: uid } maan kar poori line padhni padti thi aur value se uid
-      // dhoondhna padta tha:
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - sirf value se uid
+      // dhoondha jaata tha, yaani naye ({uid: true}) format par kabhi match hi
+      // nahi karta: record hat jaata aur LineWise ki entry padi reh jaati.
       //
-      // return this.readOnce(db, linePath).then((links: any) => {
-      //   ...
-      //   let keyArray = Object.keys(links);
-      //   for (let i = 0; i < keyArray.length; i++) {
-      //     if (links[keyArray[i]] == uid) {
-      //       updates[linePath + "/" + keyArray[i]] = null;
-      //     }
-      //   }
+      // if (links[keyArray[i]] == uid) { ... }
       //
-      // DB me key hi uid hai, isliye seedha us key ko null kar dete hain - na
-      // read chahiye, na loop. Purana code is format par kabhi match hi nahi
-      // karta tha, yaani record hat jaata aur LineWise ki entry padi reh jaati.
-      let updates: any = {};
-      updates[this.markersDataPath + uid] = null;
-      updates[this.markerWisePath + uid] = null;
-      updates[this.wardWisePath + place["ward"] + "/" + uid] = null;
-      updates[linePath + "/" + uid] = null;
-      return db.database.ref().update(updates).then(() => {
+      // Ab dono roop dekhte hain - naye me key hi uid hai, purane me uid value
+      // me tha. Isliye poori line ek baar padhni padti hai; iske bina
+      // aadhi-migrate DB me marker hatane ke baad bhi apni line par bhoot ban
+      // kar dikhta rehta.
+      return this.readOnce(db, linePath).then((links: any) => {
+        let updates: any = {};
+        updates[this.markersDataPath + uid] = null;
+        updates[this.markerWisePath + uid] = null;
+        updates[this.wardWisePath + place["ward"] + "/" + uid] = null;
+        if (links != null && typeof links == "object") {
+          let keyArray = Object.keys(links);
+          for (let i = 0; i < keyArray.length; i++) {
+            if (keyArray[i] == uid || links[keyArray[i]] == uid) {
+              updates[linePath + "/" + keyArray[i]] = null;
+            }
+          }
+        }
+        return db.database.ref().update(updates);
+      }).then(() => {
         // Ginti bhi ghata do - warna delete ke baad line ka count bada dikhta
         // rehta hai. Zero se neeche kabhi nahi jaana chahiye.
         return db.database.ref(this.lineSummaryPath + place["ward"] + "/" + place["line"] + "/marksCount").transaction(

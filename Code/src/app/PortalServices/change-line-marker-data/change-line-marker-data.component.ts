@@ -1072,8 +1072,10 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
           }
           await this.dbUpdate("EntityMarkingData/MarkersData/" + state.uid, undo);
         }
-        // PEHLE: ... + "/" + row.newKey  - LineWise ki key ab uid hai, markerNo nahi.
+        // Nayi line par writePlace ne uid ki key banayi thi - wahi hatani hai.
         await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + state.uid);
+        // Purane data me key markerNo (yahan newKey) hoti thi - wo bhi hata do.
+        await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.newKey);
         // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
         // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
         // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.
@@ -1273,9 +1275,13 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     // NEW PATH: record hataana nahi - wo MarkersData par apni jagah hi rehta
     // hai. Sirf purani line ki LineWise entry hatani hai, warna marker purani
     // aur nayi dono line par dikhta rahega.
-    // PEHLE: ... + "/" + row.markerNo
-    // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid hai.
-    await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + state.uid);
+    // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid
+    // hai. Purane data me wo key markerNo thi, isliye DONO hataate hain.
+    if (state.uid != null) {
+      await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + state.uid);
+    }
+    await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + row.markerNo);
+    // clearLinks() - poori cache nahi udti, sirf mapping wali (S.8).
     this.markerMapping.clearLinks();
     if (cardData != null) {
       await this.dbRemove("Houses/" + zoneFrom + "/" + lineFrom + "/" + cardNo);

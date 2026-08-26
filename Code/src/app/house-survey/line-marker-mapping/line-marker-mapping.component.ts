@@ -1098,15 +1098,16 @@ export class LineMarkerMappingComponent implements OnDestroy {
     // hai, isliye WardWise se kuch hataana nahi padta).
     row.failedStep = "Source Cleanup";
     state.cleanupStarted = true;
-    // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ki key markerNo
-    // maani jaati thi:
-    // "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + row.markerNo);
-    //
     // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid
-    // hai. markerNo se hataane par purani entry padi reh jaati aur marker dono
-    // line par dikhta rehta.
+    // hai. Purane data me wo key markerNo thi, isliye DONO hataate hain, warna
+    // aadhi-migrate DB me marker purani line par bhi dikhta rahega. Jo entry
+    // maujood na ho, uspar ye remove kuch karta hi nahi.
+    if (state.uid != null) {
+      await this.moveHelper.dbRemove(this.db,
+        "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + state.uid);
+    }
     await this.moveHelper.dbRemove(this.db,
-      "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + state.uid);
+      "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + row.markerNo);
     this.markerMapping.clearLinks();
     if (cardData != null) {
       await this.moveHelper.dbRemove(this.db, "Houses/" + zone + "/" + lineFrom + "/" + cardNo);
@@ -1132,9 +1133,12 @@ export class LineMarkerMappingComponent implements OnDestroy {
       if (state.destMappingWritten && state.uid != null) {
         await this.markerMapping.writePlace(this.db, state.uid, ctx.zone,
           this.markerMapping.lineValue(ctx.lineFrom), row.markerNo);
-        // PEHLE: ... + "/" + row.newKey  - LineWise ki key ab uid hai, markerNo nahi.
+        // Nayi line par writePlace ne uid ki key banayi thi - wahi hatani hai.
         await this.moveHelper.dbRemove(this.db,
           "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + state.uid);
+        // Purane data me key markerNo (yahan newKey) hoti thi - wo bhi hata do.
+        await this.moveHelper.dbRemove(this.db,
+          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + row.newKey);
         // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
         // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
         // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.

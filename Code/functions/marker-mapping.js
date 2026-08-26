@@ -91,14 +91,24 @@ async function allocateUid(db) {
   return UID_PREFIX + Number(res.snapshot.val());
 }
 
-// Record = app ka data + ward/line/imgRef.
-function buildRecord(old, ward, line, uid) {
+// Record = app ka data + ward/line/markerNo/imgRef.
+function buildRecord(old, ward, line, uid, markerNo) {
   const record = Object.assign({}, old);
   delete record.uid; // guard field record par nahi jaata
   delete record.movedToNewPath; // ye old record ka apna node hai
   record.ward = ward;
   record.line = lineValue(line);
   record.imgRef = uid + ".jpg";
+  // markerNo = line par marker ka serial (screen par yahi dikhta hai).
+  // Purane path me ye MarkedHouses ki KEY thi, record ke andar nahi - isliye
+  // `old` me ye field hota hi nahi. Pehle LineWise ki key markerNo hoti thi,
+  // to number wahan se mil jaata tha; ab wo key uid hai aur number kahin nahi
+  // bachta. Bina iske portal ka ward-coverage map aur app ka line view in
+  // markers ko chhod dete hain (dono `Number(key)` par filter karte hain).
+  // marker-data-move ka buildRecord() bhi bilkul yahi karta hai.
+  if (markerNo !== null && markerNo !== undefined && markerNo !== "") {
+    record.markerNo = isNaN(Number(markerNo)) ? markerNo : Number(markerNo);
+  }
   return record;
 }
 
@@ -154,8 +164,9 @@ async function writeMarker(db, ward, line, markerNo, uid, record) {
   //
   // Naye structure me LineWise uid ka SET hai, naksha nahi:
   //     LineWise/{ward}/{line}  =  { "MK1": true, "MK80": true }
-  // markerNo yahan nahi jaata - wo record ke andar (MarkersData/{uid}.markerNo)
-  // rehta hai, aur wahi portal/app par dikhta hai.
+  // Value sirf maujoodgi ka nishaan (true) hai. markerNo yahan nahi jaata -
+  // wo record ke andar (MarkersData/{uid}.markerNo) rehta hai, aur wahi
+  // portal/app par dikhta hai.
   mapping[LINE_WISE + ward + "/" + lineVal + "/" + uid] = true;
   await db.ref().update(mapping);
 

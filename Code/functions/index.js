@@ -46,7 +46,7 @@ async function syncMarker(entry, ward, line, markerNo, data) {
     return;
   }
 
-  const record = mm.buildRecord(data, ward, line, uid);
+  const record = mm.buildRecord(data, ward, line, uid, markerNo);
   await mm.writeMarker(db, ward, line, markerNo, uid, record);
 
   // Image aksar DB record ke baad upload hoti hai. Na mile to Storage trigger
