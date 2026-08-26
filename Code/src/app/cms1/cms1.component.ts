@@ -1086,7 +1086,7 @@ export class Cms1Component implements OnInit {
       // hi hai - sirf likhne ki jagah badli hai.
       this.markerMapping.reserveUidBlock(this.db, fileList.length).then((blockStart: any) => {
       if (blockStart == null) {
-        this.commonService.setAlertMessage("error", "Marker counter reserve nahi ho paya, dobara try karein.");
+        this.commonService.setAlertMessage("error", "Could not reserve marker counter. Please try again.");
         return;
       }
       let created = 0;
@@ -1938,7 +1938,7 @@ export class Cms1Component implements OnInit {
                 let lastKeyData = res[0];
                 let blockStart = res[1];
                 if (blockStart == null) {
-                  this.commonService.setAlertMessage("error", "Marker counter reserve nahi ho paya, dobara try karein.");
+                  this.commonService.setAlertMessage("error", "Could not reserve marker counter. Please try again.");
                   return;
                 }
                 let lastMarkerKey = markerCount;
@@ -2894,7 +2894,7 @@ export class Cms1Component implements OnInit {
         ]).then((result: any) => {
           let blockStart = result[0];
           if (blockStart == null) {
-            this.commonService.setAlertMessage("error", "Marker counter reserve nahi ho paya, dobara try karein.");
+            this.commonService.setAlertMessage("error", "Could not reserve marker counter. Please try again.");
             return;
           }
           let markerKey = Number(result[1]) || 0;

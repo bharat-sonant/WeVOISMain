@@ -1276,7 +1276,7 @@ export class MarkerApprovalTestComponent {
     // waise hi reh jaati hain — yaani orphan mapping bachti hai. Cleanup
     // banne tak delete rok diya gaya hai.
     // Chalu karne ke liye: neeche wale 2 line hata dein.
-    this.commonService.setAlertMessage("error", "Marker delete abhi band hai. (New path migration chal rahi hai)");
+    this.commonService.setAlertMessage("error", "Marker delete is currently disabled (new-path migration in progress).");
     return;
     this.deleteReason=$("#reasonSelect").val();
     if(this.deleteReason=="0"){

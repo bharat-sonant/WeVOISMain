@@ -127,8 +127,35 @@ export class SupervisorReportComponent implements OnInit {
     // teen nested loop ek loop me aa jaate hain.
     let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((markersData: any) => {
       markersInstance.unsubscribe();
-      if (markersData == null) { markersData = {}; }
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - null par khaali object
+      // le kar aage badh jaata tha:
+      // if (markersData == null) { markersData = {}; }
+      //
+      // Wo khatarnaak hai: node kisi wajah se na mile (galat city, node abhi
+      // bana hi nahi, read fail) to loop khaali chalta aur neeche
+      // markingSurviorDetail.json KHAALI list se overwrite ho jaati - poori
+      // supervisor report chali jaati. Upar se lastUpdated.json naya time likh
+      // deta, to pata bhi na chalta.
+      //
+      // Master is soorat me chup-chaap ruk jaata tha (`if (data != undefined)`),
+      // wahi wapas laaye hain.
+      if (markersData == null) {
+        $(this.divLoaderCounts).hide();
+        this.commonService.setAlertMessage("error", "Marker data not found. Report was not updated.");
+        return;
+      }
       this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSupervisorReport", markersData);
+      // Portal ke saare users - loop ke BAAHAR ek baar.
+      //
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - ye line loop ke ANDAR
+      // thi, yaani har approve hue marker par dobara:
+      // let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
+      //
+      // List poore loop me badalti nahi, isliye ek baar parse karna kaafi hai.
+      // 50,000 marker par wo 50,000 baar localStorage padhna aur JSON.parse
+      // karna tha - button dabane ke baad page ke atak jaane ki ek badi wajah
+      // yahi thi. Nateeja bilkul wahi rehta hai: wahi list, wahi find.
+      let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
       let uidArray = Object.keys(markersData);
       for (let i = 0; i < uidArray.length; i++) {
         let markerData = markersData[uidArray[i]];
@@ -145,12 +172,17 @@ export class SupervisorReportComponent implements OnInit {
         let ward = markerData["ward"];
         let line = markerData["line"];
         let supervisorId = markerData["approveById"];
-        let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
         let supervisorIdDetail = userList.find(item => item.userId == supervisorId);
         // Supervisor userList me na mile to id hi dikha do - pehle yahan
         // undefined par crash ho jaata tha.
         let supervisorName = supervisorIdDetail != undefined ? supervisorIdDetail.name : supervisorId;
-        let image = markerData["image"];
+        // PEHLE YE THA (hataya nahi, comment kiya hai):
+        // let image = markerData["image"];
+        //
+        // Naye record me `image` field hai hi nahi - image ka naam ab `imgRef`
+        // me hai (hamesha "{uid}.jpg"). Purane naam par tikne se yahan hamesha
+        // undefined jaata aur JSON file me khaali value likhi jaati.
+        let image = markerData["imgRef"];
         let houseType = markerData["houseType"];
         let approveDate = markerData["approveDate"];
         let detail = this.supervisorJsonList.find(item => item.supervisorId == supervisorId);

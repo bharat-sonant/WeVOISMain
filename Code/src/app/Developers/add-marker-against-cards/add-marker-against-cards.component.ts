@@ -122,7 +122,7 @@ export class AddMarkerAgainstCardsComponent implements OnInit {
           // maan kar POORE SHEHER par marker bana dega. Master is soorat me
           // sirf loader hata kar ruk jaata tha.
           $(this.divLoader).hide();
-          this.commonService.setAlertMessage("error", "Marker card mapping nahi mili — kuch nahi kiya gaya.");
+          this.commonService.setAlertMessage("error", "Marker card mapping not found. Nothing was changed.");
         }
       }
     );

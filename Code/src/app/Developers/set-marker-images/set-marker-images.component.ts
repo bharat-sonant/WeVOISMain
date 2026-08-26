@@ -46,7 +46,7 @@ export class SetMarkerImagesComponent implements OnInit {
     // "MarkingSurveyImages/AllMarkerImages/{uid}.jpg" par rehti hai. Isliye
     // is page ka ab koi kaam nahi bacha.
     // Chalu karne ke liye: neeche wale 2 line hata dein.
-    this.commonService.setAlertMessage("error", "Ye page purani marker scheme ka hai aur band kar diya gaya hai. Naye structure me marker ki ID uid (M1, M2...) hai aur image AllMarkerImages folder me hai.");
+    this.commonService.setAlertMessage("error", "This page uses the old marker scheme and has been disabled. In the new structure the marker ID is the uid (MK1, MK2...) and the image lives in the AllMarkerImages folder.");
     return;
 
     if ($(this.ddlZone).val() == "0") {

@@ -248,7 +248,7 @@ export class MarkerDataMoveComponent implements OnInit {
                 ).then((res: any) => {
                   if (res == null || !res.committed) {
                     $(this.divLoader).hide();
-                    this.commonService.setAlertMessage("error", "Marker counter reserve nahi ho paya, dobara try karein.");
+                    this.commonService.setAlertMessage("error", "Could not reserve marker counter. Please try again.");
                     return;
                   }
                   // Transaction ne jo value lautayi wahi block ka END hai.
