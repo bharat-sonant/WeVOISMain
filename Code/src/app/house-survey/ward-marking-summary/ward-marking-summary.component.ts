@@ -891,10 +891,10 @@ export class WardMarkingSummaryComponent implements OnInit {
       this.markerData.wardHouses = wardDetail.houses;
       this.markerData.wardNo = wardDetail.wardNo;
 
-      // TEMP DEBUG - baad me hatana hai
-      console.log("[WMS] getMarkingDetail | ward:", wardNo, "| wardLines:", wardDetail.wardLines,
-        "| wardProgressList se markers:", wardDetail.markers, "| houses:", wardDetail.houses);
-      this.debugWardData(wardNo);
+      // TEMP DEBUG - ab band hai (debugWardData neeche /* */ me hai):
+      // console.log("[WMS] getMarkingDetail | ward:", wardNo, "| wardLines:", wardDetail.wardLines,
+      //   "| wardProgressList se markers:", wardDetail.markers, "| houses:", wardDetail.houses);
+      // this.debugWardData(wardNo);
 
       for (let i = 1; i <= wardDetail.wardLines; i++) {
         this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, diff: 0, actualMarker: 0, markers: 0, houses: 0, complex: 0, houseInComplex: 0, isApproved: false, alreadyCard: 0 });
@@ -930,11 +930,15 @@ export class WardMarkingSummaryComponent implements OnInit {
     return this.markerMapping.getLineSummary(this.db, wardNo, lineNo);
   }
 
-  // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
-  // Ye function do cheezein saath rakh kar dikhata hai:
+  // ==================== TEMP DEBUG - AB BAND HAI ====================
+  // Ye function do cheezein saath rakh kar dikhata tha:
   //   A) LineSummary/{ward} par kya likha hai (table ISI se bharta hai)
   //   B) MarkersData + mapping par sach me kitne marker hain
   // Dono alag hue to table galat dikhega - counts stale hain.
+  //
+  // Hataya nahi: counts par shak ho to /* */ hata kar chalu ho jaata hai.
+  // Ise bulane wali line bhi upar comment me hai.
+  /*
   debugWardData(wardNo: any) {
     console.log("%c[WMS] ===== WARD " + wardNo + " =====", "color:#0a0;font-weight:bold");
     console.log("[WMS] userIsExternal:", this.userIsExternal, "| hideComplex:", this.hideComplex, "| city:", this.cityName);
@@ -1014,6 +1018,7 @@ export class WardMarkingSummaryComponent implements OnInit {
       console.log(out.join("\n"));
     });
   }
+  */
   // ================== TEMP DEBUG KHATAM ==================
 
   // External user ke liye pehle actualX, na mile to X. Pehle ye do alag read
@@ -1051,10 +1056,10 @@ export class WardMarkingSummaryComponent implements OnInit {
     // hain, isliye ek in-memory check kaafi hai.
     this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
       let markedData = this.summaryValue(summary, "actualMarksCount", "marksCount");
-      // TEMP DEBUG - baad me hatana hai
-      console.log("[WMS] getLineMarkers | line:", lineNo, "| summary keys:", Object.keys(summary),
-        "| marksCount:", summary["marksCount"], "| actualMarksCount:", summary["actualMarksCount"],
-        "| liya gaya:", markedData);
+      // TEMP DEBUG - ab band hai:
+      // console.log("[WMS] getLineMarkers | line:", lineNo, "| summary keys:", Object.keys(summary),
+      //   "| marksCount:", summary["marksCount"], "| actualMarksCount:", summary["actualMarksCount"],
+      //   "| liya gaya:", markedData);
       let markers = 0;
       if (markedData != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineMarkers", markedData);
@@ -1075,11 +1080,12 @@ export class WardMarkingSummaryComponent implements OnInit {
     // NEW PATH: LineSummary/{ward} ka ek read (actualMarksHouse / marksHouse).
     this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
       let houseData = this.summaryValue(summary, "actualMarksHouse", "marksHouse");
-      // TEMP DEBUG - baad me hatana hai
-      console.log("[WMS] getLineHouses | line:", lineNo, "| marksHouse:", summary["marksHouse"],
-        "| actualMarksHouse:", summary["actualMarksHouse"], "| liya gaya:", houseData, "| markers param:", markers);
+      // TEMP DEBUG - ab band hai:
+      // console.log("[WMS] getLineHouses | line:", lineNo, "| marksHouse:", summary["marksHouse"],
+      //   "| actualMarksHouse:", summary["actualMarksHouse"], "| liya gaya:", houseData, "| markers param:", markers);
       if (houseData == null) {
-        console.log("[WMS]   -> line " + lineNo + ": houseData null, Houses column set hi nahi hoga");
+        // TEMP DEBUG - ab band hai:
+        // console.log("[WMS]   -> line " + lineNo + ": houseData null, Houses column set hi nahi hoga");
         return;
       }
       this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineHouses", houseData);
@@ -1154,8 +1160,8 @@ export class WardMarkingSummaryComponent implements OnInit {
     this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
       let approve = summary["ApproveStatus"];
       let approveData = approve != null ? approve["status"] : null;
-      // TEMP DEBUG - baad me hatana hai
-      console.log("[WMS] getLineStatus | line:", lineNo, "| ApproveStatus:", approve, "| status:", approveData);
+      // TEMP DEBUG - ab band hai:
+      // console.log("[WMS] getLineStatus | line:", lineNo, "| ApproveStatus:", approve, "| status:", approveData);
       if (approveData != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineStatus", approveData);
         if (approveData == "Confirm") {

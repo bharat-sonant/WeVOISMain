@@ -314,9 +314,14 @@ export class MarkerApprovalTestComponent {
     }
   }
 
-  // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
+  // ==================== TEMP DEBUG - AB BAND HAI ====================
+  //
   // Approve par uid mila ya nahi, aur na mila to kyun - poori report ek string
-  // me, taaki copy karke bheji ja sake.
+  // me. Dikkat pakdi ja chuki hai, isliye ab BAND hai.
+  //
+  // Hataya nahi: approve se juda koi naya sawaal aaye to /* */ hata kar chalu
+  // ho jaata hai. Ise bulane wali line bhi neeche comment me hai.
+  /*
   debugApprove(ward: any, line: any, markerNo: any) {
     let out: string[] = [];
     out.push("========== APPROVE REPORT ==========");
@@ -380,6 +385,7 @@ export class MarkerApprovalTestComponent {
       console.log(out.join("\n"));
     });
   }
+  */
   // ==================== TEMP DEBUG KHATAM ====================
 
   readMarkerRecord(uid: any): Promise<any> {
@@ -1707,12 +1713,11 @@ export class MarkerApprovalTestComponent {
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
       // this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
       // NEW PATH: MarkersData/{uid}
-      // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
-      this.debugApprove(zoneNo, lineNo, markerNo);
-      // ==================== TEMP DEBUG KHATAM ====================
+      // TEMP DEBUG - ab band hai (function upar /* */ me hai):
+      // this.debugApprove(zoneNo, lineNo, markerNo);
       this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
-        // TEMP DEBUG - baad me hatana hai
-        console.log("[APPROVE] getMarkerNewPath ne diya:", newMarkerPath);
+        // TEMP DEBUG - ab band hai:
+        // console.log("[APPROVE] getMarkerNewPath ne diya:", newMarkerPath);
         if (newMarkerPath != null) {
           // Ek hi patch object DB aur cache dono ke liye - warna approveDate
           // do baar banta aur minute badalne par dono jagah alag pad sakta tha.
@@ -1722,18 +1727,18 @@ export class MarkerApprovalTestComponent {
             approveDate: this.commonService.getTodayDateTime()
           };
           this.applyMarkerPatch(newMarkerPath, approvePatch);
-          this.db.object(newMarkerPath).update(approvePatch)
-            // TEMP DEBUG - baad me hatana hai
-            .then(() => console.log("%c[APPROVE] DB me LIKH DIYA: " + newMarkerPath, "color:#0a0;font-weight:bold"))
-            .catch((e: any) => console.log("%c[APPROVE] DB WRITE FAIL: " + (e && e.message ? e.message : e), "color:#c00;font-weight:bold"));
+          this.db.object(newMarkerPath).update(approvePatch);
+          // TEMP DEBUG - ab band hai:
+          //   .then(() => console.log("%c[APPROVE] DB me LIKH DIYA: " + newMarkerPath, "color:#0a0;font-weight:bold"))
+          //   .catch((e: any) => console.log("%c[APPROVE] DB WRITE FAIL: " + (e && e.message ? e.message : e), "color:#c00;font-weight:bold"));
         }
         else {
-          // TEMP DEBUG - baad me hatana hai
-          console.log("%c[APPROVE] uid NAHI MILA - DB me kuch nahi likha gaya (screen par phir bhi approved dikhega)", "color:#c00;font-weight:bold");
+          // TEMP DEBUG - ab band hai:
+          // console.log("%c[APPROVE] uid NAHI MILA - DB me kuch nahi likha gaya (screen par phir bhi approved dikhega)", "color:#c00;font-weight:bold");
         }
       }, (err: any) => {
-        // TEMP DEBUG - baad me hatana hai
-        console.log("%c[APPROVE] getMarkerNewPath FAIL: " + (err && err.message ? err.message : err), "color:#c00;font-weight:bold");
+        // TEMP DEBUG - ab band hai:
+        // console.log("%c[APPROVE] getMarkerNewPath FAIL: " + (err && err.message ? err.message : err), "color:#c00;font-weight:bold");
       });
       (<HTMLInputElement>document.getElementById(Entity)).checked = false;
       (<HTMLInputElement>document.getElementById(Markar)).checked = false;

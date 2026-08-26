@@ -685,9 +685,16 @@ export class HouseMarkingComponent {
     return p;
   }
 
-  // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
-  // Line kholte hi: har dikhne wale marker ka uid, aur wo uid WardWise me hai
-  // ya LineWise me ya dono me - poora hisaab ek string me.
+  // ==================== TEMP DEBUG - AB BAND HAI ====================
+  //
+  // Ye do function mapping ki dikkat pakadne ke liye banaye the (kaun sa marker
+  // kis mapping me hai, aur approve par uid mila ya nahi). Dikkat pakdi ja chuki
+  // hai, isliye ab BAND hain - console me kuch nahi jaata.
+  //
+  // Hataya nahi hai: mapping se juda koi naya sawaal aaye to /* */ hata kar ye
+  // seedha chalu ho jaate hain. Inhe bulane wali do line bhi neeche comment me
+  // hain (getMarkedHouses aur approve/reject wale flow me).
+  /*
   debugMapping(ward: any, line: any) {
     let wardWisePath = "EntityMarkingData/MarkersMapping/WardWise/" + ward;
     let lineWisePath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line;
@@ -811,6 +818,7 @@ export class HouseMarkingComponent {
       console.log(out);
     });
   }
+  */
   // ==================== TEMP DEBUG KHATAM ====================
 
 
@@ -876,9 +884,8 @@ export class HouseMarkingComponent {
     // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
     //   houseInstance.unsubscribe();
     $(this.divLoader).show();
-    // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
-    this.debugMapping(this.selectedZone, lineNo);
-    // ==================== TEMP DEBUG KHATAM ====================
+    // TEMP DEBUG - ab band hai (function upar /* */ me hai):
+    // this.debugMapping(this.selectedZone, lineNo);
     // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
     this.getNewPathLineData(lineNo).then((data: any) => {
       this.markerList = [];
@@ -2660,25 +2667,24 @@ export class HouseMarkingComponent {
       // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
       // this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
       }
-      // ==================== TEMP DEBUG - BAAD ME HATANA HAI ====================
-      this.debugApprove(zoneNo, lineNo, markerNo, type, markerDatails);
-      // ==================== TEMP DEBUG KHATAM ====================
+      // TEMP DEBUG - ab band hai (function upar /* */ me hai):
+      // this.debugApprove(zoneNo, lineNo, markerNo, type, markerDatails);
       this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newPath: any) => {
-        // TEMP DEBUG - baad me hatana hai
-        console.log("[APPROVE] path =", newPath);
+        // TEMP DEBUG - ab band hai:
+        // console.log("[APPROVE] path =", newPath);
         if (newPath != null) {
-          this.updateMarkerData(newPath, { isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: approvedOn })
-            // TEMP DEBUG - baad me hatana hai
-            .then(() => console.log("%c[APPROVE] DB me LIKH DIYA -> " + newPath, "color:#0a0;font-weight:bold"))
-            .catch((e: any) => console.log("%c[APPROVE] DB WRITE FAIL: " + (e && e.message ? e.message : e), "color:#c00;font-weight:bold"));
+          this.updateMarkerData(newPath, { isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: approvedOn });
+          // TEMP DEBUG - ab band hai:
+          //   .then(() => console.log("%c[APPROVE] DB me LIKH DIYA -> " + newPath, "color:#0a0;font-weight:bold"))
+          //   .catch((e: any) => console.log("%c[APPROVE] DB WRITE FAIL: " + (e && e.message ? e.message : e), "color:#c00;font-weight:bold"));
         }
         else {
-          // TEMP DEBUG - baad me hatana hai
-          console.log("%c[APPROVE] uid NAHI MILA - DB me kuch nahi likha gaya", "color:#c00;font-weight:bold");
+          // TEMP DEBUG - ab band hai:
+          // console.log("%c[APPROVE] uid NAHI MILA - DB me kuch nahi likha gaya", "color:#c00;font-weight:bold");
         }
       }, (err: any) => {
-        // TEMP DEBUG - baad me hatana hai
-        console.log("%c[APPROVE] getMarkerNewPath FAIL: " + (err && err.message ? err.message : err), "color:#c00;font-weight:bold");
+        // TEMP DEBUG - ab band hai:
+        // console.log("%c[APPROVE] getMarkerNewPath FAIL: " + (err && err.message ? err.message : err), "color:#c00;font-weight:bold");
       });
       (<HTMLInputElement>document.getElementById(Entity)).checked = false;
       (<HTMLInputElement>document.getElementById(Markar)).checked = false;
