@@ -2124,3 +2124,391 @@ hai), par ab kahin use nahi hota.
 
 `tsc --noEmit` saaf — sirf purana `e2e/app.e2e-spec.ts(12,45)` wala error, jo
 pehle se hai.
+
+---
+
+# PAGE 21 — cms1 (`cms1.component.ts`) — poore 26 function
+
+Beech me is page ke saare marking function `oldPathBlocked()` se band kar diye
+gaye the. Ab **26 ke 26** naye structure par hain aur `oldPathBlocked()` khud
+comment me chala gaya hai.
+
+**User ka niyam yahan:** *"flow change nhi karna hein, naye structure mein sirf
+data update and read and add hoga"* — isliye har function ka loop, shart,
+`parseInt` guard, recursion, alert sab jyon ka tyon hai. Sirf DB ka path badla.
+
+## Raasta ek hi rakha
+
+```
+1. mapping     getWardLinks(db, ward)   ya   getUid(db, ward, line, markerNo)
+2. uid         links[line][markerNo]  ->  "MK12"
+3. data        getMarker / getWardRecords / getLineRecords
+4. update      MarkersData/{uid}  +  clearForPath(path, patch)
+   ya          removeMarker / writeMarker / writeCardMapping
+```
+
+`getWardRecords()` aur `getLineRecords()` **purana hi shape** dete hain
+(`{line: {markerNo: record}}`), isliye page ke loop chhedne nahi pade.
+
+## Function-wise
+
+| Batch | Function | Kya badla |
+|---|---|---|
+| 1 | `deleteHisarMarker` | `getUid` → `removeMarker` |
+| 1 | `hisarMarkerUpload` | `reserveUidBlock` + `writeMarker` |
+| 1 | `removeLineApprove` | `ApproveStatus` → `LineSummary` |
+| 1 | `updateRevisitMarker` | `revisitKey` → `MarkersData/{uid}` |
+| 1 | `checkMarkerCount` | counts → `LineSummary` |
+| 1 | `removeMarkerRejectStatus` | naya `getAllMarkersOldShape()` |
+| 1 | `setMarkerID` | `markerId` → `MarkersData/{uid}` |
+| 2 | `exportMarkers` | `getAllMarkersOldShape()` |
+| 2 | `updateMarkingData` | `getWardRecords` |
+| 2 | `addHouseToMarker` | `getLineRecords` (cached — 200 read se 2+N) |
+| 2 | `getOldMarkerDataMalviyaNagar` | `getWardRecords` (cached) |
+| 3 | `deleteOldDataMalviyanagar` | `getUid` → `removeMarker` |
+| 3 | `updateMalviyaNagarHouseData` | `removeMarker` |
+| 4 | `addHouse` | `surveyedCount` → `LineSummary` |
+| 4 | `saveHouse` | `cardNumber` → `MarkersData/{uid}` + `writeCardMapping` |
+| 4 | `updateMurlipuraHouseData` | record + `writeCardMapping` |
+| 5 | `getHouseData` | counts → `LineSummary` |
+| 5 | `setDehradunWardLineData` | `getWardLineSummaries` |
+| 5 | `addCardsMalviyanagar` | `writeMarker` |
+| 5 | `getD2DMatkers` | `getWardRecords` |
+| 5 | `updateMalviyaNagarData` | `getSafeLastKey` + `writeMarker` |
+| 5 | `setTotal` | `marksCount` ka jod **hataya** — neeche dekho |
+| 6 | `moveMalviyanagarImages` | record ka `image` → `imgRef` |
+| 6 | `getMistakeMarkerNo` · `exportNewCardNo` · `compairMarkerHouseData` | sirf guard hataya (test node / dead) |
+
+## Naya helper — `getAllMarkersOldShape()`
+
+`MarkersData` ek read, phir purane 3-level shape
+(`{ward: {line: {markerNo: record}}}`) me. Record me `ward`/`line`/`markerNo`
+maujood hain, isliye shape wapas ban jaata hai — aur `removeMarkerRejectStatus`
+aur `exportMarkers` ke teeno loop chhedne nahi pade. Record ke saath `uid` bhi
+rakh dete hain taaki likhte waqt mapping dobara na padhni pade.
+
+## `setTotal` me `marksCount` ka jod hataya — JAAN-BUJH KAR
+
+Purane path par marker likhna (`update`) `marksCount` ko haath nahi lagata tha,
+isliye ginti `setTotal` me alag se jodni padti thi. `writeMarker` har marker par
+`LineSummary.marksCount` transaction se 1 badha deta hai. **Dono karte to ginti
+DUGNI ho jaati.** Nateeja wahi hai jo master deta tha; bas jodne ka kaam ab
+`writeMarker` karta hai.
+
+## Jo waise ka waisa chhoda (user ka faisla)
+
+| Node | Kyun |
+|---|---|
+| `EntityMarkingData/lastMarkerId` + `markerId` field | alag cheez hai, `uid` se koi taalluk nahi. Ek hi marker par `uid: "MK81"` aur `markerId: "M41"` baith sakte hain |
+| `EntityMarkingData/MarkedHousesNew` | naye structure ka hissa nahi |
+| `CardDataUpdateTest/MNZ-Test/...` | test node |
+| `Houses` · `CardWardMapping` · `HouseWardMapping` · `EntitySurveyData` · `WardSurveyData` · `localStorage` | marking node nahi |
+
+## `removeMarker` ab count ghataata hai
+
+Master ka `.remove()` `marksCount` peeche nahi karta tha, isliye delete ke baad
+line ka count bada dikhta rehta tha. Naye structure me count `LineSummary` par
+hai aur wahi sach maana jaata hai, isliye ghatana hi sahi hai.
+
+---
+
+# S.10 — Mapping structure DB se mel khaya (sabse bada fix)
+
+`devtest-62768-default-rtdb-MarkersMapping-export.json` dekhne par pata chala ki
+**DB ka structure code se alag hai**:
+
+| | Code kya maanta tha | DB me asli me kya hai |
+|---|---|---|
+| uid | `M1` | **`MK1`** |
+| `LineWise/{ward}/{line}` | `{ markerNo: uid }` | **`{ uid: true }`** |
+| `WardWise/{ward}` | `{ uid: line }` | wahi ✅ |
+| `MarkerWise/{uid}` | `{ ward, line }` | wahi ✅ |
+
+## Data kyun nahi dikh raha tha
+
+`buildWardLinks()` me:
+
+```
+let uid = links[markerArray[j]];       // DB: true
+if (String(index[uid]) != String(lineNo)) { continue; }   // index[true] = undefined
+```
+
+`uid` me `true` aa jaata tha, `WardWise` me `true` naam ki koi entry hoti nahi,
+isliye **har marker `continue` par nikal jaata tha** aur ward khaali lautta tha —
+list bhi khaali, map bhi khaali.
+
+## 8 jagah tooti thi — sab theek
+
+| # | Kahan | Kya |
+|---|---|---|
+| 1 | `buildWardLinks` | key hi uid hai; dono roop (naya + purana) padhta hai |
+| 2 | `writePlace` | `LineWise/{w}/{l}/{uid} = true` |
+| 3 | `writeMarker` | `uid = uidPrefix + n` |
+| 4 | `removeMarker` | dono roop se entry hatati hai |
+| 5 | `imageUrlFromName` | regex prefix se banti hai (`MK21.jpg` reject ho raha tha) |
+| 6 | `getLineMarkerUids` | sort `substring(prefix.length)` se |
+| 7 | `nextLineKey` | records ke `markerNo` se max (`Number("MK21")` NaN deta tha) |
+| 8 | `moveMarker` | purani entry uid se; sirf markerNo badle to ab kuch hataata hi nahi |
+
+## `uidPrefix = "MK"` — ek hi jagah
+
+Prefix chhe jagah pehchana jaata hai (banane me, "ye key uid hai ya markerNo"
+wale check me, sort me, image ke naam me). Ab ek constant se aata hai
+(`marker-mapping.service.ts`), aur cloud function me bhi wahi (`UID_PREFIX`).
+
+> **NOTE:** iska `markerId` field se koi lena-dena nahi. Wo alag cheez hai — apna
+> counter (`EntityMarkingData/lastMarkerId`), apna roop (`"M41"`), aur wo cms1 ka
+> `setMarkerID()` banata hai.
+
+## Kahan-kahan laga — 10 file
+
+`marker-mapping.service.ts` · `functions/marker-mapping.js` + `README.md` ·
+`card-marker-mapping` · `marker-data-move` · `line-marker-mapping` ·
+`line-card-mapping` · `change-line-marker-data` · `change-line-surveyed-data` ·
+`house-marking` · `marker-approval-test`
+
+## Dono roop padhna — kyun
+
+`buildWardLinks`, `removeMarker`, `getLineUidsFromLineWise` naya `{uid: true}`
+aur purana `{markerNo: uid}` **dono** samajhte hain. Farak key se tay hota hai:
+markerNo hamesha number hota hai, uid nahi (`isNaN(Number(key))`). Ye prefix se
+nahi dekhte — wo `"M"` bhi ho sakta hai aur `"MK"` bhi.
+
+Move flows me purane roop ki entry bhi hatati hai — aisi entry na ho to wo
+remove kuch karta hi nahi.
+
+---
+
+# Merge — `origin/dev/marking-management` (commit 57375cc)
+
+Ansh ne bhi thik yahi fix kiya tha (LineWise uid-keyed). 9 file me conflict aaya;
+har jagah **dono taraf ka faayda** rakha.
+
+## Unse liya
+
+| Kya | Kyun zaroori tha |
+|---|---|
+| cloud function ke record me `markerNo` | LineWise uid-keyed hone ke baad `markerNo` sirf record me bachta hai. Iske bina ward-map aur line view un markers ko chhod dete (dono `Number(key)` par filter karte hain) |
+| LineWise ke DONO roop padhna | aadhi-migrate DB bhi chalti rahe |
+| move flows me purane roop ki entry bhi hatana | marker purani line par bhoot ban kar na dikhe |
+
+## Apna rakha
+
+`uidPrefix = "MK"` (unka abhi bhi `"M"` tha) · WardWise+LineWise ka
+**intersection** (S.6 — unka commit purane union wale version par bana tha) ·
+`imageUrlFromName` ka regex · `nextLineKey` records se · `clearLinks()` (targeted
+cache, S.8) · aaj ka baaki sab kaam.
+
+---
+
+# Temp debug band (3 page)
+
+`house-marking` (`debugMapping` + `debugApprove`), `marker-approval-test`
+(`debugApprove`), `ward-marking-summary` (`debugWardData`) — teeno `/* */` me,
+saare `[APPROVE]` / `[WMS]` console.log comment me. **Hataye nahi** — koi naya
+sawaal aaye to `/* */` hata do.
+
+---
+
+# PAGE 22 — Ward Survey Analysis
+
+| # | Kya | Asar |
+|---|---|---|
+| P1 | `changeZoneSelection()` par `clearLinkCache()` hataya | wo chaaron cache wipe karta tha jabki yahan koi write hi nahi hoti. Ward A→B→A par poora data dobara aata tha |
+| P2 | `detail.image != ""` → `detail.imageUrl != ""` | `image` ab `imgRef` se bharta hai; `undefined != ""` hamesha sach tha, aur khaali URL `<img src="">` bana deta — default `system-generated-image.jpg` kabhi lagti hi nahi |
+| P3 | `imageName` ab sirf `imgRef` | purana naam aage flat `AllMarkerImages` folder me joda jaata tha jahan wo file hoti hi nahi (S.7 ka niyam) |
+| P4/P5 | "union" aur "purane folder ka fallback" wale comment | S.6/S.7 ke baad purane pad chuke the |
+
+**P6 galat tha** — `dbPath` dead nahi, `Houses/...latLng` ke liye chalta hai.
+
+---
+
+# PAGE 23 — Supervisor Report
+
+| # | Kya | Asar |
+|---|---|---|
+| P1 🔴 | `markersData` null par ab **ruk jaata hai** | pehle khaali object le kar aage badhta aur `markingSurviorDetail.json` ko KHAALI list se overwrite kar deta — poori report chali jaati, aur `lastUpdated.json` naya time likh deta to pata bhi na chalta. Master chup-chaap rukta tha |
+| P2 | `image` → `imgRef` | naye record me `image` field hai hi nahi |
+| P3 | `webPortalUserList` ka `JSON.parse` loop ke **baahar** | har approve hue marker par dobara parse hota tha (50,000 marker = 50,000 parse). List badalti nahi |
+
+Migration khud theek tha: `MarkedHouses/` (1 read) → `MarkersData` (1 read), aur
+teen nested loop ek me — kyunki record khud `ward`/`line` rakhta hai.
+
+## Alert message — sab English
+
+Master ke saare message English me hain (`"Please enter ward No."`,
+`"Marker added Successfully !!!"`). Is branch me jo Hinglish aa gaye the, wo 9
+jagah English kar diye — cms1 (3), `marker-data-move`, `add-marker-against-cards`,
+`manage-marking-data` (2), `set-marker-images`, `marker-approval-test`,
+`supervisor-report`.
+
+*(Code ke comment Hinglish me hi hain — wo user ko dikhte nahi.)*
+
+---
+
+# PAGE 24 — Marker Data Move
+
+## 🔴 F1 — Image na mile to marker ka DATA bhi migrate nahi hota tha
+
+`copyImage()` ke `.catch()` me `onFail()` tha. Source image Storage me na ho
+(delete ho gayi, kabhi upload hi nahi hui, naam galat pada hai) to
+`writeRecordAndMapping()` chalta hi nahi tha — **record `MarkersData` me likha hi
+nahi jaata**. Re-run par bhi wahi fail hota, hamesha.
+
+**Khud se ulta bhi tha:** image ka NAAM hi na ho to `onSuccess(false)` hota hai
+aur data migrate ho jaata hai. Dono me nateeja ek hi hai — image nahi hai.
+
+**Fix:** dono soorat me `onSuccess(false)`. Ab wo marker `noImageCount` me
+ginega, migrate ho jaayega, aur `imgRef` set rahegi — image baad me us naam se
+upload ho jaaye to apne aap dikhne lagegi.
+
+`onFail()` ab sirf upload/network ki us naakami par hai jo teen koshish ke baad
+bhi na sudhre.
+
+> **Karne wala kaam:** `MarkerMovementData/MoveFailures` me jinme
+> `reason: "image copy failed"` hai, wo marker abhi tak migrate nahi hue. Us ward
+> par migration dobara chalane se aa jayenge.
+
+## F2 / F3
+
+`isSame()` aur `readOnce()` dead the — comment me. Header ka structure-doc
+`M{n}` keh raha tha, ab `{uid}` / `MK{n}`.
+
+---
+
+# PAGE 25 — `Code/functions/` (cloud function)
+
+## Sabse zaroori baat: **ye ab chalta hi nahi**
+
+Ye pul us waqt ka hai jab **app purane path par likhti thi**. **Ab app khud
+seedha new structure likhti hai** — `MarkersData/{uid}` + poori `MarkersMapping`,
+prefix `MK`. Yaani `MarkedHouses` par koi naya marker aata hi nahi aur
+`syncMarker_*` trigger kabhi chalta nahi.
+
+> ### ⚠️ Yahan `marksCount` +1 ya `MarkerWardMapping` MAT jodna
+>
+> Portal ka `MarkerMappingService.writeMarker()` ye dono karta hai, par **app bhi
+> khud karti hai**. Cloud function bhi kare to line ki ginti **DUGNI** ho jaayegi,
+> aur galat ginti wapas theek karna bahut mushkil hai.
+>
+> Pehle ye jodne ka plan bana tha — tab pata chala ki app khud naya structure
+> likhti hai, isliye rok diya.
+
+Code hataya nahi: `marker-data-move` abhi purane tree se data la raha hai, aur kal
+koi purane path par likh de to ye pul phir kaam aayega. Us soorat ke liye iska
+format aaj theek ho chuka hai (`MK{n}`, `{uid}: true`).
+
+Ye baat `functions/README.md` aur `functions/index.js` dono ke sar par likh di
+gayi hai.
+
+## `MK` kahan se aaya — ye sawaal kaise hal hua
+
+DB me `MK1`…`MK80` aur `LineWise = {uid: true}` tha. Portal aur cloud function
+**dono** us waqt `M{n}` aur `{markerNo: uid}` likh rahe the. Yaani dono me se
+kisi ne wo nahi likha — **app ne likha tha**. Isi se pata chala ki app khud naya
+structure likhti hai.
+
+---
+
+# S.11 — Service ka poora review
+
+## 🔴 S1 — Move ka BACKUP khaali ban raha tha
+
+`buildLineBackup()` `links` ko `{markerNo: uid}` maanta tha. Naye `{uid: true}`
+format me `links["7"]` hamesha `undefined` milta — yaani **HAR marker
+`skippedNoUid` me chala jaata aur backup POORI TARAH KHAALI banta**:
+`markersData` / `lineWise` / `markerWise` / `wardWise` sab khaali, aur har link
+`orphanLinks` me.
+
+Aur ye **chup-chaap** hota tha: file ban jaati thi (Storage par
+`{city}/MovingBackUp/{page}/{year}/{month}/{date}/...json`), move usko `await`
+bhi karta tha (3 retry + timeout), bas usme kuch hota nahi tha. **Move bigadne
+par restore ke liye kuch bachta hi nahi.**
+
+**Fix:** naya `buildLineBackupFor(db, ward, line)` — service khud mapping aur
+records dono padh kar backup banati hai, isliye `markerNo` ↔ `uid` jodne ki
+zaroorat hi nahi (naye structure me wo jod caller ke paas ban hi nahi sakta tha:
+LineWise me markerNo hai hi nahi aur record me uid nahi hota).
+
+Backup ab:
+
+```
+markersData = { uid: record }
+lineWise    = { uid: true }          <- naye format me
+markerWise  = { uid: {ward, line} }
+wardWise    = { uid: line }
+orphanLinks = jinki mapping hai par record nahi
+```
+
+4 call site badle. Purana `buildLineBackup()` comment me.
+
+> **Jaan lena:** jo move LineWise format badalne ke baad hue, unki backup file
+> khaali hai (`markersData: {}`). Un par restore nahi ho sakta.
+
+## ⚪ S2 — 7 function dead, sab par nishaan laga diya
+
+`getWardMarkers` → `getLineMarkerUids` → `getLineMarkers` (poori chain),
+`uidFromRecordKey`, `getMoveHistory`, `getMarkerDataPathByCard`, `oldImageUrl`,
+`getAllLinks`. Koi hataya nahi — har ek par "AB KOI NAHI BULATA" likh diya.
+
+## 🟡 S3 — `moveMarker()` bana hua hai par koi use nahi karta
+
+Service me poora move likha hai (record ka ward/line, teeno mapping, purani entry
+hatana, card index). Par **paanch page apna move HAATH SE likhte hain** —
+`writePlace()` + khud LineWise hataana.
+
+**Isi wajah se LineWise wala bug paanchon file me alag-alag theek karna pada.**
+Sab `moveMarker()` bulate to ek jagah theek karna kaafi hota.
+
+Flow badalna user ka niyam nahi tha, isliye chheda nahi — bas function ke sar par
+likh diya.
+
+## ✅ Baaki sab theek
+
+Cache (4 store, `clearForPath` / `applyPatch` / `dropMarker`), `readOnce` ka 30s
+timeout, `cachePromise` ka fail-par-hatao, `reserveUidBlock`, `getSafeLastKey`,
+`resetEmptyLineSummaries` ki field list, `writeCardMapping`, `getUidByCard`,
+image URL — sab sahi.
+
+---
+
+# `actualMarks*` — ye chaar field kya hain
+
+`actualMarksCount` · `actualMarksHouse` · `actualMarksComplex` ·
+`actualMarksHouseInComplex`
+
+Ye **master se hi hain** aur **portal hi banata hai** (app nahi).
+
+| | Kisko dikhta hai |
+|---|---|
+| `marksCount`, `marksHouse`, `marksComplex`, `marksHouseInComplex` | andar wale users |
+| `actualMarks*` | **External User** |
+
+```
+let dataKey = this.userIsExternal ? 'actualMarksCount' : 'marksCount';
+```
+
+**Likhta kaun hai:** portal ka "Update Counts" flow — `ward-marking-summary` aur
+`ward-survey-summary`.
+
+**Migration me theek hai:** likhna `MarkedHouses/{w}/{l}` se
+`LineSummary/{w}/{l}` par chala gaya (chaaron ek hi `update()` me), padhna
+`summaryValue(summary, "actualMarksCount", "marksCount")` se (ek read me dono),
+aur service ke `lineCountFields` / `markerCountFields` me chaaron maujood hain to
+`resetEmptyLineSummaries` inhe bhi zero karta hai.
+
+---
+
+# Ab bacha hua
+
+| | |
+|---|---|
+| ⚪ | `cms1.component.ts` ~3583 — `updateMarkingData` me ek dead variable me purana path ka naam pada hai (DB call koi nahi; master me bhi wo write comment me tha) |
+| ⚠️ | `marker-approval-test` ~1279 — **marker delete band hai**. User ka faisla: band hi rehne dena |
+
+## Test karne ki cheezein
+
+1. Ward kholo — marker dikhne chahiye (S.10 ke baad)
+2. Marker approve karo — `MarkersData/{uid}` par jaana chahiye
+3. Ek move karo, backup file khol kar dekho — `markersData` bharа hona chahiye (S1)
+4. `MoveFailures` me `"image copy failed"` wale ward par migration dobara chalao (F1)
