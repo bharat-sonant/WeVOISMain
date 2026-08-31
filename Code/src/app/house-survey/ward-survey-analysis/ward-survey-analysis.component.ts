@@ -859,12 +859,18 @@ export class WardSurveyAnalysisComponent {
               let mobile = "";
               let ward = this.selectedZone;
               let houseImage = cardNumber + "House.jpg";
+              // Do folder, do niyam - isliye do variable:
+              //   city    = naya AllMarkerImages folder (seedha city ke naam se)
+              //   oldCity = purane folders (Sikar par "Sikar-Survey" override)
+              // Poori wajah marker-mapping.service.ts ke imageBasePath() par
+              // likhi hai.
               let city = this.commonService.getFireStoreCity();
+              let oldCity = city;
               if (this.cityName == "sikar") {
-                city = "Sikar-Survey";
+                oldCity = "Sikar-Survey";
               }
               // OLD PATH (reference ke liye rakha hai):
-              // const pathOld = city + "/MarkingSurveyImages/" + wardNo + "/" + lineNo + "/" + markerImageName;
+              // const pathOld = oldCity + "/MarkingSurveyImages/" + wardNo + "/" + lineNo + "/" + markerImageName;
               // NEW PATH: markerImageName ab imgRef hai (getMarkedHouses se).
               // Flat folder usi city ke storage me hai - pehle yahan "DevTest"
               // hardcode tha, isliye doosri city me image milti hi nahi thi.
@@ -877,7 +883,9 @@ export class WardSurveyAnalysisComponent {
                   xhr.responseType = 'blob';
                   xhr.onload = (event) => {
                     var blob = xhr.response;
-                    const pathNew = city + "/SurveyHouseImage/" + houseImage;
+                    // SurveyHouseImage PURANA folder hai - yahan Sikar wala
+                    // override lagta hai, isliye oldCity (city nahi).
+                    const pathNew = oldCity + "/SurveyHouseImage/" + houseImage;
                     const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
                     ref1.put(blob).then((promise) => {
                       // ref.delete();

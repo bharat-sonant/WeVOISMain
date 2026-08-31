@@ -1566,10 +1566,22 @@ export class MarkerMappingService {
   // jis city se login kiya hai wahi. Pehle yahan "DevTest" hardcode tha,
   // isliye har city ki image ek hi folder me chali jaati thi aur doosri city se
   // login karne par wo milti hi nahi.
+  // PEHLE YE THA (hataya nahi, comment kiya hai):
+  //   return this.storageCity() + "%2FMarkingSurveyImages%2FAllMarkerImages%2F";
+  //
+  // storageCity() Sikar par "Sikar-Survey" laut'ta hai. Wo override PURANE
+  // folders ka niyam hai - unme Sikar ki images saalon se wahin padi hain.
+  // Naya AllMarkerImages folder isi migration me bana hai aur wo seedhe city ke
+  // naam se banega (user ka faisla). React ka markerMappingService bhi wahi
+  // karta hai - uska imageRootFolder() seedha getStorageCity() leta hai, bina
+  // kisi override ke. Dono jagah ek hi folder banna zaroori hai.
   imageBasePath(): string {
-    return this.storageCity() + "%2FMarkingSurveyImages%2FAllMarkerImages%2F";
+    return this.commonService.getFireStoreCity() + "%2FMarkingSurveyImages%2FAllMarkerImages%2F";
   }
 
+  // NOTE: ye ab sirf PURANE folders ke liye hai (per-line images waghairah).
+  // Naye AllMarkerImages folder me ise mat lagana - upar imageBasePath() ka
+  // note dekho.
   storageCity(): string {
     let city = this.commonService.getFireStoreCity();
     // Sikar ka storage folder city list se match nahi karta - poore portal me

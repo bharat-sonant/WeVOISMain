@@ -739,11 +739,28 @@ export class MarkerDataMoveComponent implements OnInit {
       return;
     }
 
+    // PEHLE EK HI `city` DONO PATH BANATA THA (hataya nahi, comment kiya hai):
+    //   let city = this.commonService.getFireStoreCity();
+    //   if (this.cityName == "sikar") { city = "Sikar-Survey"; }
+    //   let pathOld = city + "/MarkingSurveyImages/" + ward + "/" + line + "/" + oldImageName;
+    //   let pathNew = city + "/MarkingSurveyImages/AllMarkerImages/" + uid + ".jpg";
+    //
+    // Dono folder ka niyam alag hai, isliye ek variable se dono nahi ban sakte:
+    //
+    //   PURANA folder - Sikar ki per-line images saalon se "Sikar-Survey" me hi
+    //   padi hain, isliye wahan override lagega. Bina uske migration source
+    //   image DHOONDH hi nahi payegi.
+    //
+    //   NAYA folder - AllMarkerImages isi migration me bana hai aur wo seedhe
+    //   city ke naam se banta hai (user ka faisla). React ka
+    //   markerMappingService bhi bina override ke seedha city leta hai - dono
+    //   jagah ek hi folder banna zaroori hai.
     let city = this.commonService.getFireStoreCity();
+    let oldCity = city;
     if (this.cityName == "sikar") {
-      city = "Sikar-Survey";
+      oldCity = "Sikar-Survey";
     }
-    let pathOld = city + "/MarkingSurveyImages/" + ward + "/" + line + "/" + oldImageName;
+    let pathOld = oldCity + "/MarkingSurveyImages/" + ward + "/" + line + "/" + oldImageName;
     // Flat folder usi city ke storage me. Pehle yahan "DevTest" hardcode tha -
     // image padhi to logged-in city se jaati thi par likhi hamesha DevTest me,
     // isliye doosri city se login karne par wo image milti hi nahi thi.
