@@ -56,7 +56,8 @@ export class WardScancardReportComponent implements OnInit {
 
   ngOnInit() {
     this.isImage="0";
-    this.cityName = localStorage.getItem("cityName");
+    // Case ya extra space ki wajah se city match fail na ho, isliye normalize kar rahe hain.
+    this.cityName = (localStorage.getItem("cityName") || "").trim().toLowerCase();
     if (this.cityName == "devtest" || this.cityName == "ecogram" || this.cityName == "jaipur-civil-line" || this.cityName == "jaipur-kishanpole" || this.cityName == "chennai" || this.cityName == "bharatpur" || this.cityName == "itarsi" || this.cityName == "vidisha") {
       this.isEcogram = "1";
       $("#divEcogram").show();
