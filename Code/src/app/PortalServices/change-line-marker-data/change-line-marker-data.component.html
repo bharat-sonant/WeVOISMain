@@ -82,9 +82,10 @@
                                             {{ moveRunning ? 'MOVING...' : 'SAVE' }}
                                         </button>
                                     </div>
-                                    <div class="form-group">
-                                        <button id="btnMoveMarkerData" type="button" class="btn btn-primary btn-xs" (click)="goToMoveMarkerData();">MOVE MARKER DATA TO NEW PATH</button>
-                                    </div>
+                                    <!-- "MOVE MARKER DATA TO NEW PATH" button hata diya gaya -
+                                         migration ab sirf React portal ke Marker Migration page se
+                                         hoti hai. Wajah TS file me likhi hai. -->
+
                                 </div>
                             </div>
                         </div>

@@ -19,20 +19,18 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
 
   constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal, public moveHelper: MoveHelperService, private markerMapping: MarkerMappingService, private router: Router, private route: ActivatedRoute) { }
 
-  // "MOVE MARKER DATA TO NEW PATH" button ka handler.
+  // "MOVE MARKER DATA TO NEW PATH" button aur uska handler goToMoveMarkerData()
+  // hata diye gaye hain (button HTML se bhi gaya).
   //
-  // Ye function do baar gum ho chuka hai (28 Jul aur phir 13 Aug ke merge me):
-  // HTML ka button apni jagah bana raha aur TS ka function doosri branch ki
-  // file ke saath chala gaya. Button dabane par kuch hota hi nahi tha, aur
-  // tsc bhi nahi pakadta kyunki wo HTML template check nahi karta.
+  // Wajah: Angular ka marker-data-move page PURANE migration plan par tha -
+  // guard ke liye OriginalToUid + movedToNewPath likhta tha. React ka naya
+  // Marker Migration page newMarkerKey + legacyDataReference likhta hai. Dono
+  // ek doosre ka guard padhte hi nahi, isliye ek hi ward par dono chal jaayein
+  // to har marker DO baar migrate hokar duplicate ban jaata. Ab migration sirf
+  // React portal se hoti hai.
   //
-  // Route 3-segment hai - :cityId/:id/marker-data-move - isliye dono param
-  // yahin se aage bheje jaate hain.
-  goToMoveMarkerData() {
-    let cityId = this.route.snapshot.paramMap.get("cityId");
-    let id = this.route.snapshot.paramMap.get("id");
-    this.router.navigate([cityId, id, "marker-data-move"]);
-  }
+  // constructor me router/route abhi injected hain - sirf yahi function unhe
+  // istemaal karta tha.
 
   // NEW PATH helpers - record ab MarkersData/{uid} par hai aur line par uska
   // number LineWise batata hai. Ye purani {markerNo: record} shape lauta dete
@@ -69,9 +67,11 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
 
   // Target line ka agla safe markerNo: LineSummary ka lastMarkerKey aur line ki
   // asli sabse badi key, dono me se bada.
-  getSafeLastKey(ward: any, line: any): Promise<any> {
-    return this.markerMapping.getSafeLastKey(this.db, ward, line);
-  }
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai) - service ka
+  // getSafeLastKey() bhi retire ho chuka hai.
+  // getSafeLastKey(ward: any, line: any): Promise<any> {
+  //   return this.markerMapping.getSafeLastKey(this.db, ward, line);
+  // }
 
   @ViewChild("moveProgressModal", { static: false }) moveProgressModal: TemplateRef<any>;
   private moveModalRef: NgbModalRef = null;
@@ -360,7 +360,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
   }
 
   /** Wahi retry, par un reads ke liye jo ab path se nahi balki service se aate
-   *  hain (getNewPathLineData / getSafeLastKey). Loop, attempts, backoff aur
+   *  hain (getNewPathLineData). Loop, attempts, backoff aur
    *  cancel - sab upar wale readOnceWithRetry jaisa hi hai. */
   private async readWithRetry(read: () => Promise<any>): Promise<any> {
     let lastError: any = null;
@@ -522,7 +522,8 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
    * thi - wo tab tak sahi tha jab tak record MarkedHouses/{ward}/{line} par
    * rehta tha; naye path par wo file kahin import hi nahi hoti thi.
    */
-  private buildBackupData(markerData: any, markerBackup: any, houseData: any, revisitData: any, lastMarkerKey: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, markerCount: number, now: Date): any {
+  // PEHLE ek `lastMarkerKey` param bhi tha - meta me destinationLastMarkerKey ban kar jaata tha.
+  private buildBackupData(markerData: any, markerBackup: any, houseData: any, revisitData: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, markerCount: number, now: Date): any {
     let cardWardMapping = {};
     let houseWardMapping = {};
     if (houseData != null) {
@@ -548,7 +549,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
         from: { zone: zoneFrom, line: lineFrom },
         to: { zone: zoneTo, line: lineTo },
         totalMarkers: markerCount,
-        destinationLastMarkerKey: lastMarkerKey,
+        // PEHLE: destinationLastMarkerKey: lastMarkerKey,
         restorePaths: this.markerMapping.buildRestoreNotes(zoneFrom, lineFrom),
         // jo marker file me nahi gaye - chupchaap chhoot na jaayein
         skippedNoUid: markerBackup.skippedNoUid,
@@ -605,10 +606,10 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * onlyMarkerNos = null  -> poori line ka move
-   * onlyMarkerNos = [...] -> sirf pehle fail hue markers ka retry
+   * onlyMarkerUids = null  -> poori line ka move
+   * onlyMarkerUids = [...] -> sirf pehle fail hue markers ka retry
    */
-  private async startMove(zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, onlyMarkerNos: string[]) {
+  private async startMove(zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, onlyMarkerUids: string[]) {
     if (this.moveRunning) {
       this.commonService.setAlertMessage("error", "एक move पहले से चल रहा है !!!");
       return;
@@ -625,9 +626,8 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     this.moveSummary.toLine = lineTo;
     this.openMoveModal();
 
-    let action = (onlyMarkerNos != null) ? "RetryFailed" : "MoveMarkerLine";
+    let action = (onlyMarkerUids != null) ? "RetryFailed" : "MoveMarkerLine";
     let startTime = new Date();
-    let originalLastKey: any = null;
     this.networkInterrupted = false;
 
     try {
@@ -640,27 +640,28 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       let markerData = await this.readWithRetry(() => this.getNewPathLineData(zoneFrom, lineFrom));
       if (markerData == null) {
         this.commonService.setAlertMessage("error", "चुनी गई line में कोई marker नहीं मिला।");
-        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, null, "source line par koi marker nahi mila");
+        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, "source line par koi marker nahi mila");
         this.finishRun();
         return;
       }
       this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveData", markerData);
 
-      let markerNoList = this.buildMarkerList(markerData, onlyMarkerNos);
-      if (markerNoList.length == 0) {
+      let markerUidList = this.buildMarkerList(markerData, onlyMarkerUids);
+      if (markerUidList.length == 0) {
         this.commonService.setAlertMessage("error", "move करने लायक कोई marker नहीं मिला।");
-        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, null, "move karne layak koi marker nahi mila");
+        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, "move karne layak koi marker nahi mila");
         this.finishRun();
         return;
       }
 
-      // NEW PATH: lastMarkerKey LineSummary par. getSafeLastKey line ki asli
-      // sabse badi key bhi dekh leta hai, warna naye marker ko wahi number mil
-      // sakta hai jo pehle se kisi ke paas ho aur purana marker dab jaaye.
-      // Retry ke saath - master me ye read bhi readOnceWithRetry se hoti thi.
-      let lastKey = Number(await this.readWithRetry(() => this.getSafeLastKey(zoneTo, lineTo)));
-      if (isNaN(lastKey)) { lastKey = 0; }
-      originalLastKey = lastKey;
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - destination line ka
+      // agla safe number nikala jaata tha:
+      //
+      // let lastKey = Number(await this.readWithRetry(() => this.getSafeLastKey(zoneTo, lineTo)));
+      // if (isNaN(lastKey)) { lastKey = 0; }
+      // originalLastKey = lastKey;
+      //
+      // Move ab renumber karta hi nahi - marker apne uid ke saath jaata hai.
 
       let houseData = await this.readOnceWithRetry("Houses/" + zoneFrom + "/" + lineFrom);
       let revisitData = await this.readOnceWithRetry("EntitySurveyData/RevisitRequest/" + zoneFrom + "/" + lineFrom);
@@ -678,8 +679,9 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       // folder aur file alag-alag din ke ban sakte hain
       let now = new Date();
       let filePath = this.buildBackupFilePath(now);
-      let fileName = this.buildBackupFileName(zoneFrom, lineFrom, zoneTo, lineTo, (onlyMarkerNos != null ? "_retry" : ""), now);
-      let backupData = this.buildBackupData(markerData, markerBackup, houseData, revisitData, lastKey, zoneFrom, lineFrom, zoneTo, lineTo, markerNoList.length, now);
+      let fileName = this.buildBackupFileName(zoneFrom, lineFrom, zoneTo, lineTo, (onlyMarkerUids != null ? "_retry" : ""), now);
+      // PEHLE yahan lastKey bhi jaata tha (destination line ka counter).
+      let backupData = this.buildBackupData(markerData, markerBackup, houseData, revisitData, zoneFrom, lineFrom, zoneTo, lineTo, markerUidList.length, now);
 
       try {
         await this.saveBackupWithRetry(backupData, fileName, filePath);
@@ -687,20 +689,20 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
         let reason = (e && e.message) ? e.message : e;
         this.commonService.setAlertMessage("error", "Backup सेव नहीं हो पाया, move रद्द कर दिया गया। (" + reason + ")");
         this.moveSummary.statusText = "Backup फेल हुआ - move शुरू ही नहीं हुआ। डेटाबेस में कुछ नहीं बदला।";
-        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, originalLastKey, "backup fail: " + reason);
+        await this.saveMoveHistory(action, "aborted", startTime, zoneFrom, lineFrom, zoneTo, lineTo, "backup fail: " + reason);
         this.finishRun();
         return;
       }
       this.moveSummary.backupFile = filePath + fileName;
 
       // ---------- 3. progress rows banao ----------
-      this.moveRows = this.buildRows(markerData, markerNoList, zoneFrom, lineFrom, zoneTo, lineTo);
+      this.moveRows = this.buildRows(markerData, markerUidList, zoneFrom, lineFrom, zoneTo, lineTo);
       this.moveSummary.total = this.moveRows.length;
       this.moveSummary.pending = this.moveRows.length;
 
       this.moveContext = {
         zoneFrom: zoneFrom, lineFrom: lineFrom, zoneTo: zoneTo, lineTo: lineTo,
-        markerData: markerData, lastKey: lastKey
+        markerData: markerData
       };
 
       // ---------- 4. move loop ----------
@@ -708,13 +710,15 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
 
       // ---------- 5. counts + final message ----------
       this.moveSummary.statusText = "Counts अपडेट हो रहे हैं...";
-      await this.dbUpdate("EntityMarkingData/MarkersMapping/LineSummary/" + zoneTo + "/" + lineTo, { lastMarkerKey: this.moveContext.lastKey });
+      // PEHLE YE THA (hataya nahi, comment kiya hai):
+      // await this.dbUpdate("EntityMarkingData/MarkersMapping/LineSummary/" + zoneTo + "/" + lineTo, { lastMarkerKey: this.moveContext.lastKey });
+      // Counter retire ho chuka hai.
       await this.updateCounts(zoneFrom, zoneTo, "markerMove", this.moveSummary.failed);
 
       let status = "success";
       if (this.cancelRequested) { status = "cancelled"; }
       else if (this.moveSummary.failed > 0) { status = "partial"; }
-      await this.saveMoveHistory(action, status, startTime, zoneFrom, lineFrom, zoneTo, lineTo, originalLastKey, "");
+      await this.saveMoveHistory(action, status, startTime, zoneFrom, lineFrom, zoneTo, lineTo, "");
 
       if (this.cancelRequested) {
         this.moveSummary.statusText = "Move रद्द कर दिया गया। जो move हो चुके वे सुरक्षित हैं, बाकी source पर ही हैं।";
@@ -733,7 +737,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       let reason = (e && e.message) ? e.message : e;
       this.moveSummary.statusText = "Move रोक दिया गया: " + reason;
       this.commonService.setAlertMessage("error", "Move में समस्या आ गई: " + reason);
-      await this.saveMoveHistory(action, "error", startTime, zoneFrom, lineFrom, zoneTo, lineTo, originalLastKey, "" + reason);
+      await this.saveMoveHistory(action, "error", startTime, zoneFrom, lineFrom, zoneTo, lineTo, "" + reason);
     }
 
     this.finishRun();
@@ -743,7 +747,8 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
    * ActionHistory/PortalServices/ChangeLineMarkerData/{date} me ek record.
    * Fail / cancel / abort sab log hote hain - warna audit adhoora reh jayega.
    */
-  private async saveMoveHistory(action: string, status: string, startTime: Date, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, originalLastKey: any, note: string) {
+  // PEHLE ek `originalLastKey` param bhi tha (destination line ka purana counter).
+  private async saveMoveHistory(action: string, status: string, startTime: Date, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, note: string) {
     let now = new Date();
     let record: any = {
       action: action,
@@ -766,10 +771,11 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     if (note != "") {
       record["note"] = note;
     }
-    if (originalLastKey != null && this.moveRows.length > 0) {
-      record["destinationStartKey"] = Number(originalLastKey) + 1;
-      record["destinationEndKey"] = Number(originalLastKey) + this.moveRows.length;
-    }
+    // PEHLE YE THA (hataya nahi, comment kiya hai):
+    // if (originalLastKey != null && this.moveRows.length > 0) {
+    //   record["destinationStartKey"] = Number(originalLastKey) + 1;
+    //   record["destinationEndKey"] = Number(originalLastKey) + this.moveRows.length;
+    // }
     await this.moveHelper.saveActionHistory(this.db, this.historySection, this.historyPageKey, record);
   }
 
@@ -820,7 +826,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     };
   }
 
-  private buildMarkerList(markerData: any, onlyMarkerNos: string[]): string[] {
+  private buildMarkerList(markerData: any, onlyMarkerUids: string[]): string[] {
     let list: string[] = [];
     let keyArray = Object.keys(markerData);
     for (let i = 0; i < keyArray.length; i++) {
@@ -832,7 +838,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       if (markerData[markerNo]["houseType"] == null) {
         continue;                                   // marksCount / lastMarkerKey jaise metadata keys
       }
-      if (onlyMarkerNos != null && onlyMarkerNos.indexOf(markerNo) < 0) {
+      if (onlyMarkerUids != null && onlyMarkerUids.indexOf(markerNo) < 0) {
         continue;
       }
       list.push(markerNo);
@@ -840,16 +846,16 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     return list;
   }
 
-  private buildRows(markerData: any, markerNoList: string[], zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any): MarkerMoveRow[] {
+  // PEHLE list markerNo ki hoti thi (markerNoList); shaped data ki key ab uid hai.
+  private buildRows(markerData: any, markerUidList: string[], zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any): MarkerMoveRow[] {
     let rows: MarkerMoveRow[] = [];
-    for (let i = 0; i < markerNoList.length; i++) {
-      let markerNo = markerNoList[i];
-      let data = markerData[markerNo];
+    for (let i = 0; i < markerUidList.length; i++) {
+      let markerUid = markerUidList[i];
+      let data = markerData[markerUid];
       rows.push({
         srNo: i + 1,
-        markerNo: markerNo,
-        newKey: 0,
-        newMarkerNo: "",
+        // PEHLE: markerNo / newKey / newMarkerNo - dekho MarkerMoveRow.
+        markerUid: markerUid,
         fromZone: zoneFrom,
         fromLine: lineFrom,
         toZone: zoneTo,
@@ -874,7 +880,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
   /**
    * Markers ek doosre se poori tarah independent hain - har marker apne alag
    * DB paths par likhta hai (apna markerNo, apna cardNo, apna revisitKey,
-   * apni image). Sirf EK cheez shared thi: lastKey counter. Use loop se pehle
+   * apni image). PEHLE ek cheez shared thi: lastKey counter - ab wo bhi nahi.
    * hi allocate kar dete hain, uske baad N markers bilkul safely saath-saath
    * chal sakte hain - koi race, koi overwrite, koi data loss nahi.
    *
@@ -882,12 +888,16 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
    * rukta hai aur connection aate hi wahin se continue hota hai.
    */
   private async runMoveLoop(ctx: any) {
-    // ---- 1. saari keys pehle se allocate ----
+    // ---- 1. PEHLE YAHAN SAARI KEYS ALLOCATE HOTI THI ----
+    // (hataya nahi, comment kiya hai)
+    //
+    //   let key = ctx.lastKey + 1 + i;
+    //   row.newKey = key;
+    //   row.newMarkerNo = "" + key;
+    //
+    // Number allot hote hi nahi ab - marker apna uid le kar jaata hai.
     for (let i = 0; i < this.moveRows.length; i++) {
       let row = this.moveRows[i];
-      let key = ctx.lastKey + 1 + i;
-      row.newKey = key;
-      row.newMarkerNo = "" + key;
       // Image ka naam move par badalta HI NAHI. Wo global folder
       // AllMarkerImages/{uid}.jpg par padi rehti hai aur marker kahin bhi jaaye
       // (doosri line, doosra ward) uska naam wahi rehta hai.
@@ -901,7 +911,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       // badalna peeche reh gaya tha: record me aisa naam likh diya jaata tha
       // jiski file kahin banayi hi nahi gayi. Migrate na hue marker (jinke paas
       // imgRef nahi hai) ki image isse hamesha ke liye toot jaati thi.
-      let data = ctx.markerData[row.markerNo];
+      let data = ctx.markerData[row.markerUid];
       row.newImage = (data != null && data["imgRef"] != null) ? data["imgRef"] : row.oldImage;
     }
 
@@ -923,16 +933,15 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     }
     await Promise.all(workers);
 
-    // ---- 3. destination ka lastMarkerKey = jo markers sach me move hue ----
-    // (fail hue markers ki keys gap chhod jati hain, wo harmless hai)
-    let maxKey = ctx.lastKey;
-    for (let i = 0; i < this.moveRows.length; i++) {
-      let row = this.moveRows[i];
-      if (row.status == "moved" && row.newKey > maxKey) {
-        maxKey = row.newKey;
-      }
-    }
-    ctx.lastKey = maxKey;
+    // ---- 3. PEHLE YAHAN destination ka lastMarkerKey nikala jaata tha ----
+    // (hataya nahi, comment kiya hai)
+    //
+    // let maxKey = ctx.lastKey;
+    // for (let i = 0; i < this.moveRows.length; i++) {
+    //   let row = this.moveRows[i];
+    //   if (row.status == "moved" && row.newKey > maxKey) { maxKey = row.newKey; }
+    // }
+    // ctx.lastKey = maxKey;
   }
 
   private async moveWorker(ctx: any, takeNext: any): Promise<void> {
@@ -954,7 +963,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
    * banta. Asli error par destination ki aadhi entries rollback ho jati hain.
    */
   private async processRowWithRetry(row: MarkerMoveRow, ctx: any) {
-    let data = ctx.markerData[row.markerNo];
+    let data = ctx.markerData[row.markerUid];
     let networkRetries = 0;
 
     while (true) {
@@ -1014,7 +1023,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
         // updateCounts lastMarkerKey dobara sahi kar deta hai.
         if (!state.cleanupStarted) {
           await this.rollbackDestination(row, ctx, state);
-          row.newMarkerNo = "";
+          // PEHLE: row.newMarkerNo = \"\";
           row.newImage = "";
         }
 
@@ -1054,7 +1063,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
         // nayi line ki LineWise entry hata dete hain.
         if (state.uid != null) {
           await this.markerMapping.writePlace(this.db, state.uid, ctx.zoneFrom,
-            this.markerMapping.lineValue(ctx.lineFrom), row.markerNo);
+            this.markerMapping.lineValue(ctx.lineFrom));
           if (String(ctx.zoneFrom) != String(ctx.zoneTo)) {
             await this.dbRemove("EntityMarkingData/MarkersMapping/WardWise/" + ctx.zoneTo + "/" + state.uid);
           }
@@ -1063,7 +1072,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
           let undo: any = {
             ward: ctx.zoneFrom,
             line: this.markerMapping.lineValue(ctx.lineFrom),
-            markerNo: this.markerMapping.markerNoValue(row.markerNo),
+            // PEHLE: markerNo: this.markerMapping.markerNoValue(row.markerNo),
             movedFromWard: null,
             movedFromLine: null,
             movedFromMarkerNo: null,
@@ -1106,7 +1115,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
         await this.dbUpdate("EntityMarkingData/MarkerWardMapping/" + state.markerID, {
           markerkey: state.uid,
           line: ctx.lineFrom.toString(),
-          markerNo: row.markerNo.toString(),
+          // PEHLE: markerNo: row.markerNo.toString(),
           ward: ctx.zoneFrom
         });
       }
@@ -1144,7 +1153,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     // ---------- UID ----------
     // Marker ki asli pehchaan uid hai; markerNo sirf line par uska serial hai.
     row.failedStep = "Marker UID";
-    let uid = await this.getMarkerUid(zoneFrom, lineFrom, row.markerNo);
+    let uid = await this.getMarkerUid(zoneFrom, lineFrom, row.markerUid);
     if (uid == null) {
       throw new Error("marker naye path par nahi mila (LineWise me uid nahi hai)");
     }
@@ -1200,11 +1209,11 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     let patch: any = {
       ward: zoneTo,
       line: lineVal,
-      markerNo: Number(row.newKey) || 0,
+      // PEHLE: markerNo: Number(row.newKey) || 0,  (move ab renumber nahi karta)
       image: data["image"],
       movedFromWard: zoneFrom,
       movedFromLine: this.markerMapping.lineValue(lineFrom),
-      movedFromMarkerNo: this.markerMapping.markerNoValue(row.markerNo),
+      // PEHLE: movedFromMarkerNo: this.markerMapping.markerNoValue(row.markerNo),
       movedOn: this.commonService.getTodayDateTime()
     };
     // latLng har marker par nahi hota. undefined bhejne par Firebase update()
@@ -1222,7 +1231,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     // bhi hatani padti hai, warna marker dono wards me dikhega - writePlace ke
     // baad wo alag se hataate hain.
     state.destMappingWritten = true;
-    await this.markerMapping.writePlace(this.db, uid, zoneTo, lineVal, row.newKey);
+    await this.markerMapping.writePlace(this.db, uid, zoneTo, lineVal);
     if (String(zoneFrom) != String(zoneTo)) {
       await this.dbRemove("EntityMarkingData/MarkersMapping/WardWise/" + zoneFrom + "/" + uid);
     }
@@ -1230,7 +1239,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     // Har move ka permanent record: MoveHistory/{uid}.
     // Push key turant chahiye (ThenableReference par .key sync milti hai) -
     // move aage jaakar fail hua to rollback isi key se entry hata sake.
-    let moveRef = this.markerMapping.recordMove(this.db, uid, zoneFrom, lineFrom, row.markerNo, zoneTo, lineTo, row.newKey);
+    let moveRef = this.markerMapping.recordMove(this.db, uid, zoneFrom, lineFrom, zoneTo, lineTo);
     state.moveHistoryKey = (moveRef != null && moveRef.key != null) ? moveRef.key : "";
     await moveRef;
 
@@ -1267,7 +1276,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       await this.dbUpdate("EntityMarkingData/MarkerWardMapping/" + markerID, {
         markerkey: state.uid,
         line: lineTo.toString(),
-        markerNo: row.newKey.toString(),
+        // PEHLE: markerNo: row.newKey.toString(),
         ward: zoneTo
       });
     }
@@ -1283,7 +1292,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid hai.
     //
     // BEECH ME purane roop wali entry bhi hatayi jaati thi:
-    //   ... + "/" + row.markerNo);
+    //   ... + "/" + row.markerUid);
     // DB me ab koi number wali key hai hi nahi, isliye wo hata diya gaya.
     if (state.uid != null) {
       await this.dbRemove("EntityMarkingData/MarkersMapping/LineWise/" + zoneFrom + "/" + lineFrom + "/" + state.uid);
@@ -1308,11 +1317,11 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     if (this.moveRunning || this.moveContext == null) {
       return;
     }
-    let failedMarkerNos = this.moveRows.filter(r => r.status == "failed").map(r => r.markerNo);
-    if (failedMarkerNos.length == 0) {
+    let failedMarkerUids = this.moveRows.filter(r => r.status == "failed").map(r => r.markerUid);
+    if (failedMarkerUids.length == 0) {
       return;
     }
-    await this.startMove(this.moveContext.zoneFrom, this.moveContext.lineFrom, this.moveContext.zoneTo, this.moveContext.lineTo, failedMarkerNos);
+    await this.startMove(this.moveContext.zoneFrom, this.moveContext.lineFrom, this.moveContext.zoneTo, this.moveContext.lineTo, failedMarkerUids);
   }
 
   onCancelMove() {
@@ -1478,7 +1487,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       if (lineData == null || typeof lineData != "object") {
         continue;
       }
-      let lastMarkerKey = 0;
+      // PEHLE yahan `let lastMarkerKey = 0;` tha - dekho neeche wala comment.
       let markerKeyArray = Object.keys(lineData);
       for (let j = 0; j < markerKeyArray.length; j++) {
         let markerNo = markerKeyArray[j];
@@ -1486,9 +1495,11 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
           continue;
         }
         if (lineData[markerNo]["houseType"] != null) {
-          if (Number(markerNo) > lastMarkerKey) {
-            lastMarkerKey = Number(markerNo);
-          }
+          // PEHLE YE THA (hataya nahi, comment kiya hai):
+          // if (Number(markerNo) > lastMarkerKey) {
+          //   lastMarkerKey = Number(markerNo);
+          // }
+          // Key ab hamesha uid hai aur per-line counter retire ho chuka hai.
           markerCount = markerCount + 1;
           zoneMarkerCount = zoneMarkerCount + 1;
           if (lineData[markerNo]["cardNumber"] != null) {
@@ -1511,6 +1522,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       // Pehle ye do alag dbUpdate() the (counts + lastMarkerKey), dono usi
       // path par - yaani har line par do await, do write. Ek patch me bhej
       // rahe hain: 300 line wale ward par 600 ki jagah 300 write.
+      // (lastMarkerKey ab patch me jaata hi nahi - counter retire ho chuka hai.)
       let summaryPatch: any = {
         marksCount: markerCount,
         surveyedCount: surveyedCount,
@@ -1518,9 +1530,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
         lineRfidNotFoundCount: rfIdNotFound,
         alreadyInstalledCount: alreadyInstalledCount
       };
-      if (lastMarkerKey > 0) {
-        summaryPatch["lastMarkerKey"] = lastMarkerKey;
-      }
+      // PEHLE: if (lastMarkerKey > 0) { summaryPatch["lastMarkerKey"] = lastMarkerKey; }
       await this.dbUpdate("EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo + "/" + lineNo, summaryPatch);
     }
 
