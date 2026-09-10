@@ -121,13 +121,19 @@ export class MarkerMappingService {
     return isNaN(Number(line)) ? line : Number(line);
   }
 
-  // markerNo hamesha number hai (line par serial). Kahin textbox se "4" aata
-  // hai kahin mapping se 4 - history me dono ek jaise hone chahiye, warna
-  // entries ko chain karke padhna (pichhli ka toMarkerNo = agli ka
-  // fromMarkerNo) fail ho jaata hai.
-  markerNoValue(markerNo: any): number {
-    return Number(markerNo) || 0;
-  }
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
+  //
+  // markerNo hamesha number hota tha (line par serial). Kahin textbox se "4"
+  // aata tha kahin mapping se 4 - history me dono ek jaise hone chahiye the,
+  // warna entries ko chain karke padhna (pichhli ka toMarkerNo = agli ka
+  // fromMarkerNo) fail ho jaata tha.
+  //
+  // markerNo ab likha hi nahi jaata - marker ki pehchaan uid hai - isliye ye
+  // normalize karne ko kuch bacha hi nahi.
+  //
+  // markerNoValue(markerNo: any): number {
+  //   return Number(markerNo) || 0;
+  // }
 
   // ---------------- READ ----------------
 
@@ -829,9 +835,28 @@ export class MarkerMappingService {
     });
   }
 
-  // links ({ key: uid }) + records ({ uid: record })  ->  { markerNo: record }.
-  // Jis entry ki key uid hai (matlab LineWise me uska markerNo tha hi nahi)
-  // uska number record se le lete hain.
+  // links ({ key: uid }) + records ({ uid: record })  ->  { uid: record }.
+  //
+  // PEHLE YE THA (hataya nahi, comment kiya hai) - key ko markerNo me badla
+  // jaata tha, taaki purane page (jo MarkedHouses/{ward}/{line} ki
+  // { markerNo: record } shape par bane the) bina badle chalte rahein:
+  //
+  //   let key = keyArray[i];
+  //   if (key == uid && Number(record["markerNo"]) > 0) {
+  //     let numberKey = String(Number(record["markerNo"]));
+  //     // Us number par pehle se koi doosra marker na ho - warna ek doosre ko
+  //     // dhak dega. Aisi soorat me key uid hi rehne dete hain.
+  //     if (lineData[numberKey] == null) { key = numberKey; }
+  //   }
+  //   lineData[key] = record;
+  //
+  // markerNo ab likha hi nahi jaata (uid global counter se aata hai aur wahi
+  // marker ki ekmatra pehchaan hai), isliye badalne ko kuch bacha nahi - key
+  // seedha uid rehti hai.
+  //
+  // Ye raasta caller ke liye naya nahi hai: markerNo 0 ya gayab hone par pehle
+  // bhi key uid hi rehti thi, isliye "key uid ho sakti hai" wala case har
+  // consumer me pehle se likha hua hai (isNaN(Number(key)) wale check).
   shapeLine(links: any, records: any): any {
     let lineData: any = {};
     let keyArray = Object.keys(links);
@@ -841,16 +866,7 @@ export class MarkerMappingService {
       if (record == null) {
         continue; // mapping hai par record nahi
       }
-      let key = keyArray[i];
-      if (key == uid && Number(record["markerNo"]) > 0) {
-        let numberKey = String(Number(record["markerNo"]));
-        // Us number par pehle se koi doosra marker na ho - warna ek doosre ko
-        // dhak dega. Aisi soorat me key uid hi rehne dete hain.
-        if (lineData[numberKey] == null) {
-          key = numberKey;
-        }
-      }
-      lineData[key] = record;
+      lineData[uid] = record;
     }
     return Object.keys(lineData).length > 0 ? lineData : null;
   }
@@ -889,41 +905,41 @@ export class MarkerMappingService {
     });
   }
 
-  // Target line ka agla safe markerNo: LineSummary ka lastMarkerKey aur line ki
-  // asli sabse badi key, dono me se bada.
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
   //
-  // Sirf lastMarkerKey par bharosa karna kaafi nahi - wo peeche reh sakta hai
-  // (jaise koi marker move hokar is line par aa gaya ho), aur tab naye marker ko
-  // wahi number mil jaata hai jo pehle se kisi ke paas hai.
+  // Ye target line ka agla safe markerNo deta tha: LineSummary ka lastMarkerKey
+  // aur line ki asli sabse badi key, dono me se bada. Sirf counter par bharosa
+  // kaafi nahi tha - wo peeche reh sakta tha (jaise koi marker move hokar is
+  // line par aa gaya ho) aur tab naye marker ko wahi number mil jaata jo pehle
+  // se kisi ke paas hai.
   //
-  // Key uid wali entries (jinka markerNo pata nahi chala) Number() par NaN deti
-  // hain aur apne aap chhant jaati hain.
-  getSafeLastKey(db: any, ward: any, line: any, markersData: any = null): Promise<any> {
-    return Promise.all([
-      this.readOnce(db, this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey"),
-      this.getLineRecords(db, ward, line)
-    ]).then((res: any) => {
-      let fromSummary = res[0] != null ? Number(res[0]) : 0;
-      if (isNaN(fromSummary)) {
-        fromSummary = 0;
-      }
-      let maxKey = 0;
-      let lineData = res[1] != null ? res[1] : {};
-      let keyArray = Object.keys(lineData);
-      for (let i = 0; i < keyArray.length; i++) {
-        // Key numeric ho to wahi markerNo hai; uid wali key par record ka
-        // apna markerNo dekhte hain.
-        let n = Number(keyArray[i]);
-        if (isNaN(n)) {
-          n = Number(lineData[keyArray[i]]["markerNo"]);
-        }
-        if (!isNaN(n) && n > maxKey) {
-          maxKey = n;
-        }
-      }
-      return fromSummary > maxKey ? fromSummary : maxKey;
-    });
-  }
+  // markerNo ab kisi ko nahi chahiye - marker ki pehchaan uid hai, jo global
+  // counter (MarkersMapping/lastMarkerKey) se aata hai aur poore DB me unique
+  // hota hai. Line-wise number ki zaroorat hi is wajah se thi ki purane
+  // structure me marker line ke andar number se pehchana jaata tha ("ward 14 ki
+  // line 3 ka marker 7"), yaani wahi number har line par dobara aata tha. uid
+  // ke saath wo dikkat hai hi nahi, isliye per-line counter poora retire.
+  //
+  // getSafeLastKey(db: any, ward: any, line: any, markersData: any = null): Promise<any> {
+  //   return Promise.all([
+  //     this.readOnce(db, this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey"),
+  //     this.getLineRecords(db, ward, line)
+  //   ]).then((res: any) => {
+  //     let fromSummary = res[0] != null ? Number(res[0]) : 0;
+  //     if (isNaN(fromSummary)) { fromSummary = 0; }
+  //     let maxKey = 0;
+  //     let lineData = res[1] != null ? res[1] : {};
+  //     let keyArray = Object.keys(lineData);
+  //     for (let i = 0; i < keyArray.length; i++) {
+  //       // Key numeric ho to wahi markerNo hai; uid wali key par record ka
+  //       // apna markerNo dekhte hain.
+  //       let n = Number(keyArray[i]);
+  //       if (isNaN(n)) { n = Number(lineData[keyArray[i]]["markerNo"]); }
+  //       if (!isNaN(n) && n > maxKey) { maxKey = n; }
+  //     }
+  //     return fromSummary > maxKey ? fromSummary : maxKey;
+  //   });
+  // }
 
   // ---------------- WRITE ----------------
 
@@ -942,94 +958,81 @@ export class MarkerMappingService {
     });
   }
 
-  // Line ka agla markerNo.
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
   //
-  // Sirf lastMarkerKey par +1 karna KAAFI NAHI hai - wo counter peeche reh
-  // sakta hai (jaise koi marker move hokar is line par aa gaya ho). Aise me
-  // naye marker ko wahi number mil jaata jo pehle se kisi marker ke paas hai,
-  // aur LineWise me ek key par doosra uid chadh kar purana marker portal se
-  // gaayab kar deta.
+  // Ye line ka agla markerNo deta tha. Sirf lastMarkerKey par +1 karna KAAFI
+  // NAHI tha - counter peeche reh sakta tha (jaise koi marker move hokar is
+  // line par aa gaya ho) aur tab naye marker ko wahi number mil jaata jo pehle
+  // se kisi ke paas hai. Isliye pehle line ki asli sabse badi key nikalte the,
+  // phir transaction me dono me se bada leke +1.
   //
-  // Isliye pehle line ki asli sabse badi key nikalte hain, phir transaction me
-  // dono me se bada leke +1 karte hain. Portal ke move flows ka getSafeLastKey()
-  // bhi yahi karta hai.
+  // Ab marker ka number hi nahi hota - uid (global counter se) hi uski pehchaan
+  // hai, isliye per-line counter ki koi bhoomika nahi bachi. Dekho
+  // getSafeLastKey() ke upar likhi wajah.
   //
-  // NAYE data me LineWise ki key uid hai, usme koi number hota hi nahi - wahan
-  // ye scan 0 deta hai aur number seedha counter se aa jaata hai. Scan sirf
-  // PURANE ({markerNo: uid}) data ke liye bacha hai, isliye hataya nahi.
-  nextLineKey(db: any, ward: any, line: any): Promise<any> {
-    // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ki key ko markerNo
-    // maan kar usme se sabse bada number nikala jaata tha:
-    //
-    // return this.readOnce(db, this.lineWisePath + ward + "/" + line).then((links: any) => {
-    //   let maxKey = 0;
-    //   if (links != null && typeof links == "object") {
-    //     let keyArray = Object.keys(links);
-    //     for (let i = 0; i < keyArray.length; i++) {
-    //       if (links[keyArray[i]] == null || links[keyArray[i]] == "") { continue; }
-    //       let n = Number(keyArray[i]);
-    //       if (!isNaN(n) && n > maxKey) { maxKey = n; }
-    //     }
-    //   }
-    //
-    // DB me LineWise ki key uid hai ("MK21"), markerNo nahi - Number("MK21") NaN
-    // deta hai, yaani maxKey hamesha 0 rehta aur ye poora bachaav bekaar ho
-    // jaata. markerNo record ke andar hai, isliye ab records se max lete hain -
-    // getSafeLastKey bhi thik yahi karta hai.
-    return this.getLineRecords(db, ward, line).then((lineData: any) => {
-      let maxKey = 0;
-      if (lineData != null && typeof lineData == "object") {
-        let keyArray = Object.keys(lineData);
-        for (let i = 0; i < keyArray.length; i++) {
-          // Key markerNo hoti hai; na ho to record ka apna markerNo dekh lo.
-          let n = Number(keyArray[i]);
-          if (isNaN(n) && lineData[keyArray[i]] != null) {
-            n = Number(lineData[keyArray[i]]["markerNo"]);
-          }
-          if (!isNaN(n) && n > maxKey) {
-            maxKey = n;
-          }
-        }
-      }
-      return db.database.ref(this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey").transaction(
-        (current: any) => {
-          let currentKey = Number(current) || 0;
-          return (currentKey > maxKey ? currentKey : maxKey) + 1;
-        }
-      );
-    }).then((res: any) => {
-      if (res == null || !res.committed) {
-        return null;
-      }
-      return Number(res.snapshot.val());
-    });
-  }
+  // nextLineKey(db: any, ward: any, line: any): Promise<any> {
+  //   return this.getLineRecords(db, ward, line).then((lineData: any) => {
+  //     let maxKey = 0;
+  //     if (lineData != null && typeof lineData == "object") {
+  //       let keyArray = Object.keys(lineData);
+  //       for (let i = 0; i < keyArray.length; i++) {
+  //         // Key markerNo hoti hai; na ho to record ka apna markerNo dekh lo.
+  //         let n = Number(keyArray[i]);
+  //         if (isNaN(n) && lineData[keyArray[i]] != null) {
+  //           n = Number(lineData[keyArray[i]]["markerNo"]);
+  //         }
+  //         if (!isNaN(n) && n > maxKey) { maxKey = n; }
+  //       }
+  //     }
+  //     return db.database.ref(this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey").transaction(
+  //       (current: any) => {
+  //         let currentKey = Number(current) || 0;
+  //         return (currentKey > maxKey ? currentKey : maxKey) + 1;
+  //       }
+  //     );
+  //   }).then((res: any) => {
+  //     if (res == null || !res.committed) { return null; }
+  //     return Number(res.snapshot.val());
+  //   });
+  // }
 
-  // Ek naya marker: uid + markerNo dono reserve, phir data + poora mapping.
-  // Return = uid ("M12"), counter fail hone par null.
-  // Loop me bulane par har marker ke apne transaction chalte hain; bahut saare
+  // Ek naya marker: uid reserve, phir data + poora mapping.
+  // Return = uid ("MK12"), counter fail hone par null.
+  // Loop me bulane par har marker ka apna transaction chalta hai; bahut saare
   // markers ek saath bana rahe ho to reserveUidBlock + writeMarker use karo.
+  //
+  // PEHLE YE THA (hataya nahi, comment kiya hai) - do counter saath chalte the,
+  // ek uid ke liye aur ek line ke markerNo ke liye:
+  //
+  // return Promise.all([
+  //   this.reserveUidBlock(db, 1),
+  //   this.nextLineKey(db, ward, line)
+  // ]).then((result: any) => {
+  //   let blockStart = result[0];
+  //   let markerNo = result[1];
+  //   if (blockStart == null || markerNo == null) { return null; }
+  //   return this.writeMarker(db, ward, line, data, blockStart + 1, markerNo);
+  // });
+  //
+  // Ab sirf uid wala counter bacha hai, isliye ek hi reserve.
   createMarker(db: any, ward: any, line: any, data: any): Promise<any> {
-    return Promise.all([
-      this.reserveUidBlock(db, 1),
-      this.nextLineKey(db, ward, line)
-    ]).then((result: any) => {
-      let blockStart = result[0];
-      let markerNo = result[1];
-      if (blockStart == null || markerNo == null) {
+    return this.reserveUidBlock(db, 1).then((blockStart: any) => {
+      if (blockStart == null) {
         return null;
       }
-      return this.writeMarker(db, ward, line, data, blockStart + 1, markerNo);
+      return this.writeMarker(db, ward, line, data, blockStart + 1);
     });
   }
 
   // Pehle se reserve kiye hue number par marker likhta hai. Return = uid.
   // Pehle data, uske confirm hone ke baad mapping.
   //
-  // markerNo line par marker ka serial number hai - LineWise ki key wahi banti
-  // hai, aur portal/app screen par wahi dikhta hai. Migration jaisa flow jo
-  // purana number bachana chahta hai wo apna markerNo yahan bhej deta hai.
-  writeMarker(db: any, ward: any, line: any, data: any, keyNumber: number, markerNo: any): Promise<any> {
+  // PEHLE ek `markerNo` param bhi aata tha - line par marker ka serial number,
+  // jo LineWise ki key banta tha aur screen par dikhta tha. Ab marker ki
+  // pehchaan sirf uid hai, isliye wo param hata diya gaya. Purana signature:
+  //
+  // writeMarker(db, ward, line, data, keyNumber, markerNo)
+  writeMarker(db: any, ward: any, line: any, data: any, keyNumber: number): Promise<any> {
     // PEHLE YE THA (hataya nahi, comment kiya hai):
     // let uid = "M" + keyNumber;
     let uid = this.uidPrefix + keyNumber;
@@ -1038,11 +1041,13 @@ export class MarkerMappingService {
     let record = Object.assign({}, data);
     record["ward"] = ward;
     record["line"] = lineVal;
-    // markerNo = line par marker ka serial number (screen par yahi dikhta hai).
-    // Pehle ye sirf LineWise ki key me rehta tha, isliye number jaanne ke liye
-    // ek alag index rakhna padta tha. Record ke andar hone se ye marker ke saath
-    // khud chalta hai - move par alag se sync karne ki zaroorat nahi.
-    record["markerNo"] = Number(markerNo) || 0;
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - record ke andar line ka
+    // serial number bhi likha jaata tha:
+    //
+    // record["markerNo"] = Number(markerNo) || 0;
+    //
+    // Ab ye field likhi hi nahi jaati. Wo sirf display aur purani
+    // { markerNo: record } shape ke liye thi, aur dono jagah ab uid chalta hai.
     // imgRef hamesha set hota hai - image baad me is naam se upload ho sakti hai.
     record["imgRef"] = uid + ".jpg";
 
@@ -1050,20 +1055,23 @@ export class MarkerMappingService {
     // writePlace mapping wali cache khud saaf karta hai.
     this.dropMarker(uid);
     return db.object(this.markersDataPath + uid).update(record).then(() => {
-      return this.writePlace(db, uid, ward, lineVal, markerNo);
+      return this.writePlace(db, uid, ward, lineVal);
     }).then(() => {
-      // Line ka lastMarkerKey kabhi peeche nahi jaana chahiye - migration
-      // purana (bada) markerNo bhej sakti hai, isliye max lete hain.
-      return db.database.ref(this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey").transaction(
-        (current: any) => {
-          let currentKey = Number(current) || 0;
-          let newKey = Number(markerNo) || 0;
-          return newKey > currentKey ? newKey : currentKey;
-        }
-      );
-    }).then(() => {
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - line ka lastMarkerKey
+      // kabhi peeche na jaaye, isliye max wala transaction chalta tha:
+      //
+      // return db.database.ref(this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey").transaction(
+      //   (current: any) => {
+      //     let currentKey = Number(current) || 0;
+      //     let newKey = Number(markerNo) || 0;
+      //     return newKey > currentKey ? newKey : currentKey;
+      //   }
+      // );
+      //
+      // Per-line counter retire ho gaya (dekho getSafeLastKey ke upar wajah),
+      // isliye ab yahan kuch likhna nahi hai.
       // Card se marker dhoondhne ka index. Card na ho to ye chup-chaap skip.
-      return this.writeCardMapping(db, this.cardKeyFor(record), uid, ward, lineVal, markerNo);
+      return this.writeCardMapping(db, this.cardKeyFor(record), uid, ward, lineVal);
     }).then(() => {
       // Line ki ginti bhi yahin badh jaati hai.
       //
@@ -1097,17 +1105,20 @@ export class MarkerMappingService {
   // mapping, purani jagah ki entry hataana, aur card index. Hataya nahi hai -
   // aage kabhi un pages ko ispar laana ho to tayyar hai. (Abhi laana matlab
   // paanch move flow ka bartaav badalna, isliye chheda nahi.)
-  moveMarker(db: any, uid: any, wardFrom: any, lineFrom: any, markerNoFrom: any, wardTo: any, lineTo: any, markerNoTo: any): Promise<any> {
+  // Purana signature markerNo bhi leta tha:
+  //   moveMarker(db, uid, wardFrom, lineFrom, markerNoFrom, wardTo, lineTo, markerNoTo)
+  // Move ab renumber karta hi nahi, isliye wo do param hat gaye.
+  moveMarker(db: any, uid: any, wardFrom: any, lineFrom: any, wardTo: any, lineTo: any): Promise<any> {
     let lineVal = this.lineValue(lineTo);
     // History yahi likhi jaati hai, alag se nahi - jagah badalna aur uska
     // record rakhna ek hi kaam hai. Har move page ise apne paas likhta tha, to
     // koi naya page ise likhna bhool bhi sakta tha.
-    this.recordMove(db, uid, wardFrom, lineFrom, markerNoFrom, wardTo, lineTo, markerNoTo);
+    this.recordMove(db, uid, wardFrom, lineFrom, wardTo, lineTo);
     // Record ka ward/line badal raha hai - uski cache purani ho gayi.
     // writePlace mapping wali cache khud saaf karta hai.
     this.dropMarker(uid);
     return db.object(this.markersDataPath + uid).update({ ward: wardTo, line: lineVal }).then(() => {
-      return this.writePlace(db, uid, wardTo, lineVal, markerNoTo);
+      return this.writePlace(db, uid, wardTo, lineVal);
     }).then(() => {
       let updates: any = {};
       // Ward badla ho tabhi WardWise ki purani entry hatani hai. Same ward me
@@ -1138,10 +1149,10 @@ export class MarkerMappingService {
       return db.database.ref().update(updates);
     }).then(() => {
       // Card mapping me marker ki nayi jagah. markerkey nahi badalta (uid wahi
-      // hai), par ward/line/markerNo purane pade reh jaate to card se banne
-      // wale purane raaste galat jagah point karte.
+      // hai), par ward/line purane pade reh jaate to card se banne wale purane
+      // raaste galat jagah point karte.
       return this.getMarker(db, uid).then((record: any) => {
-        return this.writeCardMapping(db, this.cardKeyFor(record), uid, wardTo, lineVal, markerNoTo);
+        return this.writeCardMapping(db, this.cardKeyFor(record), uid, wardTo, lineVal);
       });
     }).then(() => {
       return uid;
@@ -1163,14 +1174,24 @@ export class MarkerMappingService {
   // Naam (movedByName) id ke saath yahin likh dete hain. History permanent
   // record hai - employee baad me hat jaaye ya userList me na mile, to sirf id
   // se history hamesha "4" hi dikhati rehti.
-  recordMove(db: any, uid: any, wardFrom: any, lineFrom: any, markerNoFrom: any, wardTo: any, lineTo: any, markerNoTo: any): any {
+  // PEHLE do markerNo param bhi the aur entry me fromMarkerNo/toMarkerNo bhi
+  // likhe jaate the (purana signature: recordMove(db, uid, wardFrom, lineFrom,
+  // markerNoFrom, wardTo, lineTo, markerNoTo)):
+  //
+  //   fromMarkerNo: this.markerNoValue(markerNoFrom),
+  //   toMarkerNo: this.markerNoValue(markerNoTo),
+  //
+  // Marker ab move par renumber hota hi nahi - uid wahi rehta hai - isliye ye
+  // do field har entry me ek jaise pad jaate. History me jo sach me badalta hai
+  // wo ward/line hai, aur marker ki pehchaan entry ke path (MoveHistory/{uid})
+  // me pehle se hai. Purani entries ke fromMarkerNo/toMarkerNo jaise hain waise
+  // hi pade rehte hain - unhe koi padhta nahi.
+  recordMove(db: any, uid: any, wardFrom: any, lineFrom: any, wardTo: any, lineTo: any): any {
     let entry = {
       fromWard: wardFrom,
       fromLine: this.lineValue(lineFrom),
-      fromMarkerNo: this.markerNoValue(markerNoFrom),
       toWard: wardTo,
       toLine: this.lineValue(lineTo),
-      toMarkerNo: this.markerNoValue(markerNoTo),
       movedBy: localStorage.getItem("userID"),
       movedByName: localStorage.getItem("userName"),
       movedOn: this.commonService.getTodayDateTime()
@@ -1472,14 +1493,22 @@ export class MarkerMappingService {
 
   // MarkerWardMapping/{cardNo} - markerkey ke saath marker ki current jagah.
   // Card na ho to kuch nahi karta (bina card wale marker is node me aate hi nahi).
-  writeCardMapping(db: any, cardNo: any, uid: any, ward: any, line: any, markerNo: any): Promise<any> {
+  //
+  // PEHLE ek `markerNo` param bhi tha aur wo entry me bhi likha jaata tha
+  // (purana signature: writeCardMapping(db, cardNo, uid, ward, line, markerNo)):
+  //
+  //   markerNo: String(markerNo),
+  //
+  // getUidByCard() pehle hi sirf `markerkey` (uid) par chalta hai - ward/line/
+  // markerNo wala fallback upar comment me pada hai - isliye ye field kisi ke
+  // kaam ki nahi thi. markerNo retire hone ke saath dono hata diye gaye.
+  writeCardMapping(db: any, cardNo: any, uid: any, ward: any, line: any): Promise<any> {
     if (cardNo == null || cardNo === "" || uid == null || uid === "") {
       return Promise.resolve(null);
     }
     return db.object(this.cardMappingPath + cardNo).update({
       markerkey: uid,
       line: String(line),
-      markerNo: String(markerNo),
       ward: ward
     });
   }
@@ -1634,7 +1663,12 @@ export class MarkerMappingService {
   }
 
   // Teeno mapping ek saath - aadha likha rehna sabse kharab haalat hai.
-  writePlace(db: any, uid: any, ward: any, lineVal: any, markerNo: any): Promise<any> {
+  //
+  // PEHLE ek `markerNo` param bhi tha (purana signature: writePlace(db, uid,
+  // ward, lineVal, markerNo)). Wo LineWise ki key banane ke liye tha; naye
+  // format me key uid hai, isliye param pehle se bekaar pada tha aur ab
+  // markerNo khatam hone ke saath hata diya gaya.
+  writePlace(db: any, uid: any, ward: any, lineVal: any): Promise<any> {
     // Sirf mapping badli - records waise ke waise sahi hain.
     this.clearLinks();
     let updates: any = {};

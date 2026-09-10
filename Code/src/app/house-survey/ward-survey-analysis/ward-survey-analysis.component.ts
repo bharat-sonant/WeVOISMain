@@ -959,7 +959,7 @@ export class WardSurveyAnalysisComponent {
                 // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
                 // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
                 this.markerMapping.writeCardMapping(this.db, cardNumber,
-                  this.markerMapping.uidFromPath(newMarkerPath), wardNo, lineNo, markerNo);
+                  this.markerMapping.uidFromPath(newMarkerPath), wardNo, lineNo);   // PEHLE aakhri arg markerNo tha
                 let revisitPath = newMarkerPath + "/revisitKey";
                 let revisitInstance = this.db.object(revisitPath).valueChanges().subscribe(
                   revisitKeyData => {
@@ -2220,7 +2220,7 @@ export class WardSurveyAnalysisComponent {
         // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
         // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
         this.markerMapping.writeCardMapping(this.db, cardNumber,
-          this.markerMapping.uidFromPath(newMarkerPath), this.selectedZone, lineNo, markerNo);
+          this.markerMapping.uidFromPath(newMarkerPath), this.selectedZone, lineNo);   // PEHLE aakhri arg markerNo tha
       }
     });
 
@@ -2524,7 +2524,7 @@ export class WardSurveyAnalysisComponent {
                             // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
                             // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
                             this.markerMapping.writeCardMapping(this.db, cardNumber,
-                              this.markerMapping.uidFromPath(newMarkerPath), this.selectedZone, this.lineNo, markerNo);
+                              this.markerMapping.uidFromPath(newMarkerPath), this.selectedZone, this.lineNo);   // PEHLE aakhri arg markerNo tha
                           }
                         });
                       }

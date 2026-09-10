@@ -80,8 +80,12 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Marker No</th>
-                        <th>New No</th>
+                        <!-- PEHLE YE DO THE (hataye nahi, comment kiye hain):
+                             <th>Marker No</th>
+                             <th>New No</th>
+                             Move ab renumber nahi karta, isliye "New No" jaisa
+                             kuch hota hi nahi - ek hi column bachta hai: uid. -->
+                        <th>Marker</th>
                         <th>From</th>
                         <th>To</th>
                         <th>Card No</th>
@@ -94,8 +98,9 @@
                 <tbody>
                     <tr *ngFor="let r of visibleRows; trackBy: trackByRow" [ngClass]="'row-' + r.status">
                         <td>{{ r.srNo }}</td>
-                        <td>{{ r.markerNo || '-' }}</td>
-                        <td>{{ r.newMarkerNo || '-' }}</td>
+                        <!-- PEHLE: <td>{{ r.markerNo || '-' }}</td>
+                                    <td>{{ r.newMarkerNo || '-' }}</td> -->
+                        <td>{{ r.markerUid || '-' }}</td>
                         <td>{{ r.fromZone }} / {{ r.fromLine }}</td>
                         <td>{{ r.toZone }} / {{ r.toLine }}</td>
                         <td>{{ r.cardNo || '-' }}</td>
@@ -114,7 +119,8 @@
                         </td>
                     </tr>
                     <tr *ngIf="visibleRows.length == 0">
-                        <td colspan="10" class="text-center empty-row">इस filter के लिए कोई record नहीं है।</td>
+                        <!-- PEHLE colspan="10" tha - "New No" column hatne ke baad 9. -->
+                        <td colspan="9" class="text-center empty-row">इस filter के लिए कोई record नहीं है।</td>
                     </tr>
                 </tbody>
             </table>

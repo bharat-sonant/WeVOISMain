@@ -750,7 +750,7 @@ export class WardSurveySummaryComponent implements OnInit {
 
               let lineNo = keyArray[i];
               let lineData = markerData[lineNo];
-              let lastMarkerKey = 0;
+              // PEHLE yahan `let lastMarkerKey = 0;` tha - dekho neeche wale comment.
               let markerKeyArray = Object.keys(lineData);
               let isMarker = false;
 
@@ -777,9 +777,11 @@ export class WardSurveySummaryComponent implements OnInit {
                     // tha aur neeche wala `lastMarkerKey > 0` chal hi nahi
                     // paata - us line ka lastMarkerKey kabhi refresh nahi hota.
                     // Max lene se NaN apne aap chhant jaata hai.
-                    if (Number(markerNo) > lastMarkerKey) {
-                      lastMarkerKey = Number(markerNo);
-                    }
+                    // PEHLE YE THA (hataya nahi, comment kiya hai):
+                    // if (Number(markerNo) > lastMarkerKey) {
+                    //   lastMarkerKey = Number(markerNo);
+                    // }
+                    // Key ab hamesha uid hai aur per-line counter retire ho chuka hai.
                     if (lineData[markerNo]["cardNumber"] != null) {
                       if (lineData[markerNo]["houseType"] == null) {
                       }
@@ -835,13 +837,17 @@ export class WardSurveySummaryComponent implements OnInit {
               //  actualTotalCardCount += actualCardCount;    // to upate actual count data
               //  actualTotalRevisit += actualRevisitCount;  // to upate actual count data
 
-              if (lastMarkerKey > 0) {
-                // OLD PATH (reference ke liye rakha hai):
-                // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-                // NEW PATH: LineSummary
-                let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
-                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
-              }
+              // PEHLE YE THA (hataya nahi, comment kiya hai) - line ka counter
+              // yahan se dobara likha jaata tha:
+              //
+              // if (lastMarkerKey > 0) {
+              //   // OLD PATH: "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo
+              //   let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
+              //   this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+              // }
+              //
+              // Ye plain update tha, max nahi - marker delete hone par counter
+              // PEECHE chala jaata tha. Ab counter hai hi nahi.
 
             }
 

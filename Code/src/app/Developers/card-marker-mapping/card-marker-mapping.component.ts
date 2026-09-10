@@ -115,14 +115,20 @@ export class CardMarkerMappingComponent implements OnInit {
   }
 
   // Agla safe markerNo: LineSummary ka lastMarkerKey aur us line ki asli mapping keys, dono me se bada.
-  getSafeLastKey(zoneTo: any, lineTo: any): Promise<any> {
-    return this.markerMapping.getSafeLastKey(this.db, zoneTo, lineTo);
-  }
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai) - service ka
+  // getSafeLastKey() bhi retire ho chuka hai (per-line counter khatam).
+  // getSafeLastKey(zoneTo: any, lineTo: any): Promise<any> {
+  //   return this.markerMapping.getSafeLastKey(this.db, zoneTo, lineTo);
+  // }
 
   // Marker ko nayi line/ward par. Data global rehta hai, sirf mapping re-point hoti hai. OriginalToUid yahan NAHI chhuti, warna migration re-run par duplicate uid ban jaayega.
-  moveMarkerOnNewPath(uid: any, zoneFrom: any, lineFrom: any, markerNoFrom: any, zoneTo: any, lineTo: any, newMarkerNo: any, data: any, extra: any = null) {
+  //
+  // PEHLE do param aur the (purana signature):
+  //   moveMarkerOnNewPath(uid, zoneFrom, lineFrom, markerNoFrom, zoneTo, lineTo, newMarkerNo, data, extra)
+  // Move ab renumber karta hi nahi, isliye markerNoFrom/newMarkerNo dono hat gaye.
+  moveMarkerOnNewPath(uid: any, zoneFrom: any, lineFrom: any, zoneTo: any, lineTo: any, data: any, extra: any = null) {
     // Move history: marker kahan se kahan gaya, iska permanent record.
-    this.markerMapping.recordMove(this.db, uid, zoneFrom, lineFrom, markerNoFrom, zoneTo, lineTo, newMarkerNo);
+    this.markerMapping.recordMove(this.db, uid, zoneFrom, lineFrom, zoneTo, lineTo);
 
     // line kabhi string ("7") ban kar aa sakti hai, jabki marker-data-move ne
     // migration me line NUMBER (7) likhi thi — Number me convert kar ke likhte hain.
@@ -132,14 +138,12 @@ export class CardMarkerMappingComponent implements OnInit {
     let patch: any = {
       line: (isNaN(Number(lineTo)) ? lineTo : Number(lineTo)),
       ward: zoneTo,
-      // markerNo record ke andar bhi jaana chahiye - baaki chaaron move page
-      // ise likhte hain. Abhi koi page record ka markerNo padhta nahi (sab
-      // LineWise ki key se number lete hain), par record aur mapping alag-alag
-      // number dikhayein to baad me dhoka hoga.
-      markerNo: Number(newMarkerNo) || 0,
+      // PEHLE ye do field bhi jaate the (hataye nahi, comment kiye hain):
+      //   markerNo: Number(newMarkerNo) || 0,
+      //   movedFromMarkerNo: markerNoFrom,
+      // Marker ab renumber hota hi nahi.
       movedFromWard: zoneFrom,
       movedFromLine: lineFrom,
-      movedFromMarkerNo: markerNoFrom,
       movedOn: this.commonService.getTodayDateTime()
     };
     if (data["latLng"] != null) { patch["latLng"] = data["latLng"]; }
@@ -342,22 +346,26 @@ export class CardMarkerMappingComponent implements OnInit {
                       //     dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
                       //     this.db.object(dbPath).remove();
                       //     dbPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo;
-                      // NEW PATH: agla markerNo = LineSummary ka lastMarkerKey aur line ki asli mapping keys, dono me se bada.
-                      this.getSafeLastKey(zoneTo, lineTo).then(
-                        (safeLastKey: any) => {
-                          lastMarkerKey = Number(safeLastKey) + 1;
-                          // NEW PATH: image global hai (AllMarkerImages/{imgRef}) - move par copy/rename ki zaroorat nahi.
+                      // PEHLE YE THA (hataya nahi, comment kiya hai) - destination
+                      // line ka agla markerNo nikaal kar marker ko wo number diya
+                      // jaata tha aur LineSummary ka counter aage badhaya jaata tha:
+                      //
+                      // this.getSafeLastKey(zoneTo, lineTo).then((safeLastKey: any) => {
+                      //   lastMarkerKey = Number(safeLastKey) + 1;
+                      //   this.moveMarkerOnNewPath(uid, zoneNo, lineNo, markerNo, zoneTo, lineTo, lastMarkerKey, markerData[markerNo], { alreadyInstalled: null });
+                      //   let dbPath = this.getLineSummaryPath(zoneTo, lineTo);
+                      //   this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+                      //   ...
+                      // });
+                      //
+                      // Number allot hote hi nahi ab - marker apne uid ke saath
+                      // jaata hai - isliye wo poora read+write hat gaya.
+                      // NEW PATH: image global hai (AllMarkerImages/{imgRef}) - move par copy/rename ki zaroorat nahi.
 
-                          // NEW PATH: mapping re-point karo (data global hi rehta hai).
-                          this.moveMarkerOnNewPath(uid, zoneNo, lineNo, markerNo, zoneTo, lineTo, lastMarkerKey, markerData[markerNo], { alreadyInstalled: null });
-
-                          // NEW PATH: LineSummary
-                          let dbPath = this.getLineSummaryPath(zoneTo, lineTo);
-                          this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
-                          markerIndex++;
-                          this.mapData(zoneNo, data, keyArray, index, lineNo, markerData, markerIndex, markerKeyArray);
-
-                        });
+                      // NEW PATH: mapping re-point karo (data global hi rehta hai).
+                      this.moveMarkerOnNewPath(uid, zoneNo, lineNo, zoneTo, lineTo, markerData[markerNo], { alreadyInstalled: null });
+                      markerIndex++;
+                      this.mapData(zoneNo, data, keyArray, index, lineNo, markerData, markerIndex, markerKeyArray);
                     }
                   }
                   else {

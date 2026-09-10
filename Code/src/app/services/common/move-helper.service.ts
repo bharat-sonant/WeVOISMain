@@ -447,8 +447,10 @@ export class MoveHelperService {
     let list = [];
     for (let i = 0; i < rows.length; i++) {
       if (rows[i].status != "failed") { continue; }
+      // PEHLE: markerNo: rows[i].markerNo,
+      // Row par ab line ka serial nahi, marker ka uid hota hai.
       list.push({
-        markerNo: rows[i].markerNo,
+        markerUid: rows[i].markerUid,
         cardNo: rows[i].cardNo,
         step: rows[i].failedStep,
         error: rows[i].error

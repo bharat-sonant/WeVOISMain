@@ -1153,7 +1153,7 @@ export class Cms1Component implements OnInit {
         // marksCount badhata hai aur lastMarkerKey ko max se aage le jaata hai.
         // Block me se koi number use na ho to bas gap reh jaata hai, nuksan nahi.
         created++;
-        this.markerMapping.writeMarker(this.db, "14-R9", lineNo, obj, blockStart + created, markerKey);
+        this.markerMapping.writeMarker(this.db, "14-R9", lineNo, obj, blockStart + created);   // PEHLE aakhri arg markerKey tha
         console.log(obj);
         marksCount++;
         key++;
@@ -1926,46 +1926,37 @@ export class Cms1Component implements OnInit {
             //   lastKeyData => {
             //     markerCountInstance.unsubscribe();
             //
-            // NEW PATH: getSafeLastKey LineSummary ka lastMarkerKey aur line ki
-            // asli sabse badi key, dono me se bada leta hai - sirf counter par
-            // bharosa karne se naye marker ko wahi number mil sakta tha jo pehle
-            // se kisi ke paas hai. Saath me uid ka block bhi reserve kar lete hain.
-            Promise.all([
-              this.markerMapping.getSafeLastKey(this.db, wardNo, lineNo),
-              this.markerMapping.reserveUidBlock(this.db, markerCount)
-            ]).then(
-              (res: any) => {
-                let lastKeyData = res[0];
-                let blockStart = res[1];
+            // PEHLE YE THA (hataya nahi, comment kiya hai) - getSafeLastKey se
+            // line ka agla safe number bhi liya jaata tha:
+            //
+            // Promise.all([
+            //   this.markerMapping.getSafeLastKey(this.db, wardNo, lineNo),
+            //   this.markerMapping.reserveUidBlock(this.db, markerCount)
+            // ]).then((res: any) => { let lastKeyData = res[0]; let blockStart = res[1]; ... });
+            //
+            // Ab sirf uid ka block reserve hota hai - line-wise number hai hi nahi.
+            this.markerMapping.reserveUidBlock(this.db, markerCount).then(
+              (blockStart: any) => {
                 if (blockStart == null) {
                   this.commonService.setAlertMessage("error", "Could not reserve marker counter. Please try again.");
                   return;
-                }
-                let lastMarkerKey = markerCount;
-                let lastKey = 0;
-                if (lastKeyData != null) {
-                  lastKey = Number(lastKeyData);
-                  lastMarkerKey = Number(lastKeyData) + markerCount;
                 }
                 let created = 0;
                 for (let i = 0; i < keyArray.length; i++) {
                   let markerNo = keyArray[i];
                   let markerData = data[markerNo];
-                  lastKey = lastKey + 1;
                   // PEHLE YE THA (hataya nahi, comment kiya hai):
                   // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + lastKey;
                   // this.db.object(dbPath).update(markerData);
                   created++;
-                  this.markerMapping.writeMarker(this.db, wardNo, lineNo, markerData, blockStart + created, lastKey);
+                  this.markerMapping.writeMarker(this.db, wardNo, lineNo, markerData, blockStart + created);   // PEHLE aakhri arg lastKey tha
                 }
                 // PEHLE YE THA (hataya nahi, comment kiya hai):
                 // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
                 // this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+                // console.log("lastMarkerKey => " + lastMarkerKey);
                 //
-                // Ab writeMarker khud LineSummary ka lastMarkerKey max se aage le
-                // jaata hai - aakhri marker ka number wahi (lastKeyData + markerCount)
-                // hai jo yahan likha jaata tha.
-                console.log("lastMarkerKey => " + lastMarkerKey);
+                // Per-line counter retire ho chuka hai.
                 this.setTotal(wardNo, lineNo, markerCount);
               });
           }
@@ -2888,16 +2879,13 @@ export class Cms1Component implements OnInit {
         // marker service se banta hai (MarkersData + MarkerWise + WardWise +
         // LineWise + LineSummary + MarkerWardMapping, sab ek jagah).
         let lineNo = "1";
-        Promise.all([
-          this.markerMapping.reserveUidBlock(this.db, fileList.length),
-          this.markerMapping.getSafeLastKey(this.db, wardNo, lineNo)
-        ]).then((result: any) => {
-          let blockStart = result[0];
+        // PEHLE yahan getSafeLastKey bhi saath me chalti thi (line ka agla
+        // number) - ab sirf uid ka block chahiye.
+        this.markerMapping.reserveUidBlock(this.db, fileList.length).then((blockStart: any) => {
           if (blockStart == null) {
             this.commonService.setAlertMessage("error", "Could not reserve marker counter. Please try again.");
             return;
           }
-          let markerKey = Number(result[1]) || 0;
           let created = 0;
           for (let i = 0; i < fileList.length; i++) {
             let cardNo = "";
@@ -2919,7 +2907,7 @@ export class Cms1Component implements OnInit {
                   }
                   latLng = fileList[i]["Lat"] + "," + fileList[i]["Long"];
                   cardImage = fileList[i]["PropertyID"] + ".jpg";
-                  markerKey++;
+                  // PEHLE: markerKey++;  (line ka serial - ab hota hi nahi)
                   let objMarker = {
                     address: "",
                     cardNumber: cardNo,
@@ -2953,7 +2941,7 @@ export class Cms1Component implements OnInit {
                   // Block me se agla uid. Number use na ho to bas gap reh
                   // jaata hai, nuksan nahi - uid sirf unique hona chahiye.
                   created++;
-                  this.markerMapping.writeMarker(this.db, wardNo, lineNo, objMarker, blockStart + created, markerKey);
+                  this.markerMapping.writeMarker(this.db, wardNo, lineNo, objMarker, blockStart + created);   // PEHLE aakhri arg markerKey tha
                   this.db.object("Houses/" + wardNo + "/1/" + cardNo).update(objCard);
                 }
               }
@@ -3429,7 +3417,7 @@ export class Cms1Component implements OnInit {
                   this.addCardsMalviyanagar(list, index, wardNo);
                   return;
                 }
-                this.markerMapping.writeMarker(this.db, wardNo, markerLineNo, data, blockStart + 1, markerNo);
+                this.markerMapping.writeMarker(this.db, wardNo, markerLineNo, data, blockStart + 1);   // PEHLE aakhri arg markerNo tha
                 index++;
                 this.addCardsMalviyanagar(list, index, wardNo);
               });
@@ -3819,7 +3807,7 @@ export class Cms1Component implements OnInit {
       // Database aur cache dono ek jaise rahen.
       this.markerMapping.clearForPath(markerPath, { cardNumber: cardNo });
       return this.db.object(markerPath).update({ cardNumber: cardNo }).then(() => {
-        return this.markerMapping.writeCardMapping(this.db, cardNo, uid, zoneNo, lineNo, markerNo);
+        return this.markerMapping.writeCardMapping(this.db, cardNo, uid, zoneNo, lineNo);   // PEHLE aakhri arg markerNo tha
       });
     });
 
@@ -4246,7 +4234,7 @@ export class Cms1Component implements OnInit {
                                           let markerPath = this.markerMapping.markersDataPath + uid;
                                           this.markerMapping.clearForPath(markerPath, lineData[markerNo]);
                                           this.db.object(markerPath).update(lineData[markerNo]);
-                                          this.markerMapping.writeCardMapping(this.db, newCardNo, uid, zoneNo, lineNo, markerNo);
+                                          this.markerMapping.writeCardMapping(this.db, newCardNo, uid, zoneNo, lineNo);   // PEHLE aakhri arg markerNo tha
                                         }
                                         else {
                                           console.log("mapping nahi mili: " + zoneNo + "/" + lineNo + "/" + markerNo);
