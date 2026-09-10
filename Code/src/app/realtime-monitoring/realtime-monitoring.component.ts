@@ -39,6 +39,7 @@ export class RealtimeMonitoringComponent implements OnInit {
   unAssignedVehicle: any[] = [];
   firstData = false;
   previousWardDetailsSnapshot: any = null;
+  pendingDutyOffZones: any = {};
   wardLineStatusData: any[] = [];
   vehicleStstusList: any[];
   wardForWeightageList: any[] = [];
@@ -658,6 +659,7 @@ export class RealtimeMonitoringComponent implements OnInit {
             this.workerDetails.activeWard = activeWard.toString();
             this.workerDetails.completedWard = completedWard.toString();
             this.workerDetails.totalWard = totalWard.toString();
+            this.applyWardStatusFromDutyCheck(zoneNo, wardData);
             let wardDetail = this.wardForWeightageList.find(item => item.zoneNo == zoneNo);
             if (wardDetail != undefined) {
               this.commonService.getWardLineWeightage(zoneNo, this.toDayDate).then((lineList: any) => {
@@ -706,6 +708,15 @@ export class RealtimeMonitoringComponent implements OnInit {
           let wardData = (data != null && data[zoneNo] != null) ? data[zoneNo] : {};
           this.applyWardStatusFromDutyCheck(zoneNo, wardData);
         }
+        let pendingZoneNos = Object.keys(this.pendingDutyOffZones);
+        for (let i = 0; i < pendingZoneNos.length; i++) {
+          let zoneNo = pendingZoneNos[i];
+          if (changedZoneNos.indexOf(zoneNo) != -1) {
+            continue;
+          }
+          let wardData = (data != null && data[zoneNo] != null) ? data[zoneNo] : {};
+          this.applyWardStatusFromDutyCheck(zoneNo, wardData);
+        }
         this.previousWardDetailsSnapshot = data;
       }
     });
@@ -731,9 +742,11 @@ export class RealtimeMonitoringComponent implements OnInit {
   }
 
   applyWardStatusFromDutyCheck(zoneNo: any, wardData: any) {
-    let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/Summary/dutyInTime";
-    let dutyInTimeInstance = this.db.object(dbPath).valueChanges().subscribe((dutyInTime: any) => {
-      dutyInTimeInstance.unsubscribe();
+    let dbPath = "WasteCollectionInfo/" + zoneNo + "/" + this.currentYear + "/" + this.currentMonthName + "/" + this.toDayDate + "/Summary";
+    let summaryInstance = this.db.object(dbPath).valueChanges().subscribe((summaryData: any) => {
+      summaryInstance.unsubscribe();
+      let dutyInTime = summaryData != null ? summaryData["dutyInTime"] : null;
+      let dutyOffTime = summaryData != null ? summaryData["dutyOutTime"] : null;
       let zoneDetails = this.zoneList.find((item) => item.zoneNo == zoneNo);
       if (zoneDetails == undefined) {
         return;
@@ -743,11 +756,12 @@ export class RealtimeMonitoringComponent implements OnInit {
         isMic = "disabled";
       }
       let status = dutyInTime == null ? "workNotStarted" : wardData["activityStatus"];
+      let dutyConfirmedOff = dutyOffTime != null;
 
       zoneDetails.isMic = isMic;
 
       if (status == "active") {
-        if (wardData["isOnDuty"] == "no") {
+        if (wardData["isOnDuty"] == "no" && dutyConfirmedOff) {
           zoneDetails.status = "completed";
           zoneDetails.displayOrder = 3;
           zoneDetails.bgColor = "#95e495";
@@ -764,7 +778,7 @@ export class RealtimeMonitoringComponent implements OnInit {
           zoneDetails.progressClass = "progress progress-float";
         }
       } else if (status == "stopped") {
-        if (wardData["isOnDuty"] == "no") {
+        if (wardData["isOnDuty"] == "no" && dutyConfirmedOff) {
           zoneDetails.status = "completed";
           zoneDetails.displayOrder = 3;
           zoneDetails.bgColor = "#95e495";
@@ -781,12 +795,22 @@ export class RealtimeMonitoringComponent implements OnInit {
           zoneDetails.progressClass = "progress progress-float";
         }
       } else if (status == "completed") {
-        zoneDetails.status = "completed";
-        zoneDetails.displayOrder = 3;
-        zoneDetails.bgColor = "#95e495";
-        zoneDetails.iconName = "fas fa-caret-right active-ward";
-        zoneDetails.borderClass = "completed-ward";
-        zoneDetails.progressClass = "progress progress-float-completed";
+        if (dutyConfirmedOff) {
+          zoneDetails.status = "completed";
+          zoneDetails.displayOrder = 3;
+          zoneDetails.bgColor = "#95e495";
+          zoneDetails.iconName = "fas fa-caret-right active-ward";
+          zoneDetails.borderClass = "completed-ward";
+          zoneDetails.progressClass = "progress progress-float-completed";
+        }
+        else {
+          zoneDetails.status = "active";
+          zoneDetails.displayOrder = 2;
+          zoneDetails.bgColor = "white";
+          zoneDetails.iconName = "fas fa-caret-right active-ward";
+          zoneDetails.borderClass = "progress-bar  progress-success";
+          zoneDetails.progressClass = "progress progress-float";
+        }
       } else {
         zoneDetails.status = "notStarted";
         zoneDetails.displayOrder = 4;
@@ -794,6 +818,19 @@ export class RealtimeMonitoringComponent implements OnInit {
         zoneDetails.iconName = "fas fa-caret-right inactive-ward";
         zoneDetails.borderClass = "progress-bar  progress-success";
         zoneDetails.progressClass = "progress progress-float";
+      }
+
+      let isPendingDutyOff = false;
+      if ((status == "active" || status == "stopped") && wardData["isOnDuty"] == "no" && !dutyConfirmedOff) {
+        isPendingDutyOff = true;
+      }
+      if (status == "completed" && !dutyConfirmedOff) {
+        isPendingDutyOff = true;
+      }
+      if (isPendingDutyOff) {
+        this.pendingDutyOffZones[zoneNo] = true;
+      } else {
+        delete this.pendingDutyOffZones[zoneNo];
       }
 
       if (this.selectedZone == zoneNo) {
