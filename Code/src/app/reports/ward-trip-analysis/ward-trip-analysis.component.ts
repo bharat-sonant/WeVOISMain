@@ -49,6 +49,8 @@ export class WardTripAnalysisComponent implements OnInit {
     overLoad: "",
     analysisStatus: 'Ok',
     yardTime: "00:00:00",
+    latLng: "",
+    yardLatLng: "",
   };
   cityName: any;
   db: any;
@@ -174,6 +176,13 @@ export class WardTripAnalysisComponent implements OnInit {
     }
   }
 
+  openLocationOnMap(latLng: any) {
+    if (latLng == null || latLng.toString().trim() == "") {
+      return;
+    }
+    window.open("https://www.google.com/maps?q=" + latLng, "_blank");
+  }
+
   setDefaultValues() {
     this.isFirstClick1 = "yes";
     this.isFirstClick2 = "yes";
@@ -252,6 +261,8 @@ export class WardTripAnalysisComponent implements OnInit {
                 let manualRemarks = "";
                 let overLoad = "";
                 let analysisStatus = "Ok";
+                let latLng = "";
+                let yardLatLng = "";
                 let vehicleType = data[tripID]["vehicle"].split('-')[0];
                 if (data[tripID]["filledStatus"] != null) {
                   filledStatus = data[tripID]["filledStatus"];
@@ -290,6 +301,12 @@ export class WardTripAnalysisComponent implements OnInit {
                 if (data[tripID]["yardImageName2"] != null) {
                   yardImageName2 = data[tripID]["yardImageName2"];
                 }
+                if (data[tripID]["latLng"] != null) {
+                  latLng = data[tripID]["latLng"];
+                }
+                if (data[tripID]["yardLatLng"] != null) {
+                  yardLatLng = data[tripID]["yardLatLng"];
+                }
                 this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
                   driverName =
                     employee["name"] != null
@@ -316,7 +333,9 @@ export class WardTripAnalysisComponent implements OnInit {
                     manualRemarks: manualRemarks,
                     overLoad: overLoad,
                     analysisStatus: analysisStatus,
-                    yardTime: yardTime
+                    yardTime: yardTime,
+                    latLng: latLng,
+                    yardLatLng: yardLatLng
                   });
                 });
               }
@@ -462,6 +481,8 @@ export class WardTripAnalysisComponent implements OnInit {
             let overLoad = "";
             let analysisStatus = "Ok";
             let yardTime = "00:00:00";
+            let latLng = "";
+            let yardLatLng = "";
             let vehicleType = data[tripID]["vehicle"]?data[tripID]["vehicle"]:"";
             if (data[tripID]["filledStatus"] != null) {
               filledStatus = data[tripID]["filledStatus"];
@@ -500,6 +521,12 @@ export class WardTripAnalysisComponent implements OnInit {
             if (data[tripID]["yardImageName2"] != null) {
               yardImageName2 = data[tripID]["yardImageName2"];
             }
+            if (data[tripID]["latLng"] != null) {
+              latLng = data[tripID]["latLng"];
+            }
+            if (data[tripID]["yardLatLng"] != null) {
+              yardLatLng = data[tripID]["yardLatLng"];
+            }
             this.commonService.getEmplyeeDetailByEmployeeId(driverId).then((employee) => {
               driverName =
                 employee["name"] != null
@@ -526,7 +553,9 @@ export class WardTripAnalysisComponent implements OnInit {
                 manualRemarks: manualRemarks,
                 overLoad: overLoad,
                 analysisStatus: analysisStatus,
-                yardTime: yardTime
+                yardTime: yardTime,
+                latLng: latLng,
+                yardLatLng: yardLatLng
               });
             });
           }
@@ -668,6 +697,8 @@ export class WardTripAnalysisComponent implements OnInit {
       this.tripData.remark = tripDetails.remark;
       this.tripData.manualRemarks = tripDetails.manualRemarks;
       this.tripData.overLoad = tripDetails.overLoad;
+      this.tripData.latLng = tripDetails.latLng != null ? tripDetails.latLng : "";
+      this.tripData.yardLatLng = tripDetails.yardLatLng != null ? tripDetails.yardLatLng : "";
       this.filledStatus = tripDetails.filledStatus;
       this.remarkStatus = tripDetails.remark;
       this.overLoad = tripDetails.overLoad;
@@ -932,6 +963,8 @@ export class WardTripAnalysisComponent implements OnInit {
     this.tripData.wasteCollection = 0;
     this.tripData.tripCount = 0;
     this.tripData.overLoad = "";
+    this.tripData.latLng = "";
+    this.tripData.yardLatLng = "";
     this.imageCurrentRotation1 = "rotate0";
     this.imageCurrentRotation2 = "rotate0";
     this.isFirstClick1 = "yes";
@@ -994,4 +1027,6 @@ export class tripDetail {
   penaltyAmount: number;
   penaltyReason: string;
   analysisStatus: string;
+  latLng: string;
+  yardLatLng: string;
 }
