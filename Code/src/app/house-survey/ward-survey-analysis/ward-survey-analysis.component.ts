@@ -946,12 +946,12 @@ export class WardSurveyAnalysisComponent {
                 let className = "house-list";
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
-
-                  if (data[i]["surveyorId"] == "-1") {
-                    imageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                  let cardImageFolder = data[i]["surveyorId"] == "-1" ? "SurveyRfidNotFoundCardImage" : "SurveyCardImage";
+                  if (city == "Sikar-Survey") {
+                    this.getSikarCardImages(data[i]["cardNo"], data[i]["cardImage"], cardImageFolder);
                   }
                   else {
-                    imageURL = this.commonService.fireStoragePath + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                    imageURL = this.commonService.fireStoragePath + city + "%2F" + cardImageFolder + "%2F" + data[i]["cardImage"] + "?alt=media";
                   }
                 }
 
@@ -1095,6 +1095,24 @@ export class WardSurveyAnalysisComponent {
       });
   }
 
+
+  getSikarCardImages(cardNo: any, cardImage: any, folder: any) {
+    let urlSikarSurvey = "Sikar-Survey/" + folder + "/" + cardImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.imageURL = this.commonService.fireStoragePath + "Sikar-Survey%2F" + folder + "%2F" + cardImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.imageURL = this.commonService.fireStoragePath + "Sikar%2F" + folder + "%2F" + cardImage + "?alt=media";
+        }
+      });
+  }
 
   getSikarHouseImages(cardNo: any, houseImage: any) {
     let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + houseImage;

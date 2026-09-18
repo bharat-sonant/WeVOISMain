@@ -1874,12 +1874,14 @@ export class WardSurveySummaryComponent implements OnInit {
       .then((url) => {
         let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
         if (detail != undefined) {
-          detail.imageUrl = this.commonService.fireStoragePath + "Sikar-Survey%2F" + folder + "%2F" + cardImage + "?alt=media";        }
+          detail.imageUrl = this.commonService.fireStoragePath + "Sikar-Survey%2F" + folder + "%2F" + cardImage + "?alt=media";
+        }
       })
       .catch((error) => {
         let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
         if (detail != undefined) {
-          detail.imageUrl = this.commonService.fireStoragePath + "Sikar%2F" + folder + "%2F" + cardImage + "?alt=media";        }
+          detail.imageUrl = this.commonService.fireStoragePath + "Sikar%2F" + folder + "%2F" + cardImage + "?alt=media";
+        }
       });
   }
 
