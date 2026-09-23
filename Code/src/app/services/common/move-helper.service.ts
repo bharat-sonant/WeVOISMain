@@ -205,6 +205,64 @@ export class MoveHelperService {
   }
 
   // =====================================================================
+  // MARKER KEYS
+  // =====================================================================
+
+  /** Line node me sabse badi marker key (lastMarkerKey / marksCount jaise fields chhod kar) */
+  getMaxMarkerKey(lineData: any): number {
+    let maxKey = 0;
+    if (lineData == null || typeof lineData != "object") {
+      return maxKey;
+    }
+    let keys = Object.keys(lineData);
+    for (let i = 0; i < keys.length; i++) {
+      let key = Number(keys[i]);
+      if (isNaN(key) || lineData[keys[i]] == null || typeof lineData[keys[i]] != "object") {
+        continue;
+      }
+      if (key > maxKey) {
+        maxKey = key;
+      }
+    }
+    return maxKey;
+  }
+
+  /**
+   * Destination line par `count` nayi keys transaction se reserve karta hai.
+   * Markers ko base+1 ... base+count milengi.
+   *
+   * lastMarkerKey peeche reh gaya ho to bhi line ki asli max key se aage hi
+   * shuru hota hai, aur transaction ki wajah se survey app / doosra user saath
+   * me likhe to bhi keys nahi takraati. Isse koi key kabhi dobara use nahi hoti,
+   * isliye purani padi images kisi naye marker se nahi judti.
+   */
+  async reserveMarkerKeys(db: any, zone: any, line: any, count: number): Promise<number> {
+    let linePath = "EntityMarkingData/MarkedHouses/" + zone + "/" + line;
+    let lineData = await this.readOnce(db, linePath);
+    let maxExisting = this.getMaxMarkerKey(lineData);
+    let result: any = await this.withTimeout(
+      db.database.ref(linePath + "/lastMarkerKey").transaction((current: any) => {
+        let saved = Number(current);
+        if (current == null || isNaN(saved)) { saved = 0; }
+        return Math.max(saved, maxExisting) + count;
+      }), this.DB_TIMEOUT_MS);
+    if (result == null || !result.committed || result.snapshot == null) {
+      throw new Error("destination keys reserve nahi ho paayi");
+    }
+    return Number(result.snapshot.val()) - count;
+  }
+
+  /** lastMarkerKey ko sirf badhata hai, kabhi kam nahi karta (warna purani keys dobara use hongi) */
+  raiseLastMarkerKey(db: any, linePath: string, value: number): Promise<any> {
+    return this.withTimeout(
+      db.database.ref(linePath + "/lastMarkerKey").transaction((current: any) => {
+        let saved = Number(current);
+        if (current == null || isNaN(saved)) { saved = 0; }
+        return Math.max(saved, value);
+      }), this.DB_TIMEOUT_MS);
+  }
+
+  // =====================================================================
   // IMAGE COPY
   // =====================================================================
 

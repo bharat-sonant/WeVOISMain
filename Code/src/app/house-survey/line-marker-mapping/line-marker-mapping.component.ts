@@ -592,6 +592,21 @@ export class LineMarkerMappingComponent implements OnDestroy {
         "EntityMarkingData/MarkedHouses/" + zone + "/" + lineFrom, this.run);
       let houseData = await this.moveHelper.readOnceWithRetry(this.db, "Houses/" + zone + "/" + lineFrom, this.run);
 
+      // Map par dikh raha data page load ke waqt ka hai - wo purana ho sakta hai,
+      // aur pichhle run me move ke dauraan badla bhi ja chuka hota tha (image
+      // naam naya ho jata tha, isliye Retry galat source image copy karta tha).
+      // Isliye move hamesha DB ke abhi wale data ki copy se hota hai.
+      let freshList: any[] = [];
+      for (let i = 0; i < markerList.length; i++) {
+        let markerNo = "" + markerList[i]["markerNo"];
+        let fresh = (markerNodeData != null) ? markerNodeData[markerNo] : null;
+        freshList.push({
+          markerNo: markerNo,
+          data: (fresh != null && typeof fresh == "object") ? Object.assign({}, fresh) : null
+        });
+      }
+      markerList = freshList;
+
       // ---------- backup pehle, uske baad hi move ----------
       this.moveSummary.statusText = "Backup सेव हो रहा है...";
       let now = new Date();
@@ -611,6 +626,11 @@ export class LineMarkerMappingComponent implements OnDestroy {
       }
       this.moveSummary.backupFile = filePath + fileName;
 
+      // ---------- keys reserve (backup ke baad, taaki backup fail ho to keys waste na hon) ----------
+      this.moveSummary.statusText = "Destination keys reserve हो रही हैं...";
+      lastKey = await this.reserveKeysWithRetry(zone, lineTo, markerList.length);
+      originalLastKey = lastKey;
+
       this.moveRows = this.buildRows(markerList, zone, lineFrom, lineTo);
       this.moveSummary.total = this.moveRows.length;
       this.moveSummary.pending = this.moveRows.length;
@@ -629,10 +649,7 @@ export class LineMarkerMappingComponent implements OnDestroy {
 
       await this.runMoveLoop(this.moveContext);
 
-      // purane code jaisa hi: destination ka lastMarkerKey
-      this.moveSummary.statusText = "Last marker key अपडेट हो रही है...";
-      await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo,
-        { lastMarkerKey: lastKey + this.moveRows.length });
+      // destination ka lastMarkerKey reserve karte waqt hi badh chuka hai
 
       let status = "success";
       if (this.cancelRequested) { status = "cancelled"; }
@@ -662,6 +679,24 @@ export class LineMarkerMappingComponent implements OnDestroy {
     }
 
     this.finishRun();
+  }
+
+  /** Destination keys reserve - network girne par dobara try. Timeout ke baad
+   *  pichhla transaction baad me commit ho jaye to bas keys ka gap banega. */
+  private async reserveKeysWithRetry(zone: any, line: any, count: number): Promise<number> {
+    let lastError: any = null;
+    for (let attempt = 0; attempt < this.moveHelper.IMAGE_ATTEMPTS; attempt++) {
+      if (this.cancelRequested) { throw new Error("cancelled"); }
+      try {
+        return await this.moveHelper.reserveMarkerKeys(this.db, zone, line, count);
+      } catch (e) {
+        lastError = e;
+        if (!this.moveHelper.isNetworkError(e)) { break; }
+        await this.moveHelper.waitForNetwork(this.run);
+        await this.moveHelper.delay(500 * Math.pow(2, attempt));
+      }
+    }
+    throw lastError;
   }
 
   private finishRun() {
@@ -770,6 +805,17 @@ export class LineMarkerMappingComponent implements OnDestroy {
   private async processRowWithRetry(row: MarkerMoveRow, ctx: any) {
     let networkRetries = 0;
 
+    // Loop ke BAHAR taaki network retry ke baad bhi yaad rahe ki kya likha ja
+    // chuka hai - warna pichhle attempt me source cleanup shuru ho chuka ho aur
+    // is attempt me error aaye to rollback destination hata deta aur marker
+    // dono jagah se gayab ho jata.
+    let state = {
+      destKeyChecked: false, destMarkerWritten: false,
+      destCardChecked: false, destCardPrev: null as any, destCardWritten: false,
+      destRevisitChecked: false, destRevisitPrev: null as any, destRevisitWritten: false,
+      mappingWritten: false, cleanupStarted: false, revisitKey: "", markerID: "", mobile: ""
+    };
+
     while (true) {
       if (this.cancelRequested) { row.status = "pending"; return; }
       await this.moveHelper.waitForNetwork(this.run);
@@ -778,11 +824,6 @@ export class LineMarkerMappingComponent implements OnDestroy {
       row.status = "moving";
       row.attempts = row.attempts + 1;
       this.refreshMoveStatusText();
-
-      let state = {
-        destMarkerWritten: false, destCardWritten: false, destRevisitWritten: false,
-        mappingWritten: false, cleanupStarted: false, revisitKey: "", markerID: "", mobile: ""
-      };
 
       try {
         await this.processMarker(row, ctx, state);
@@ -889,16 +930,33 @@ export class LineMarkerMappingComponent implements OnDestroy {
     if (cardData != null && cardData["latLng"] != null) {
       data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
     }
-    data["image"] = row.newImage;                    // purane code jaisa - hamesha set
+    // Image sach me copy hui tabhi naya naam lagao. Image na ho to {newKey}.jpg
+    // lagane se marker destination folder me padi kisi purani file ko dikhane
+    // lagta tha (galat photo). Original naam backup JSON me hai.
+    let hasImage = !row.imageMissing;
+    data["image"] = hasImage ? row.newImage : null;
 
     // ---------- DESTINATION WRITES ----------
     row.failedStep = "Marker Write";
+    let destMarkerPath = "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo + "/" + row.newKey;
+    if (!state.destKeyChecked) {
+      // key pehle se kisi marker ki ho to us par likhne se uska data/photo mix ho
+      // jata - aur rollback use delete kar deta. Aisa ho to kuch mat chhuo.
+      let existing = await this.moveHelper.readOnce(this.db, destMarkerPath);
+      if (existing != null) {
+        throw new Error("destination key " + row.newKey + " पहले से किसी marker की है - कुछ नहीं बदला, Retry करें");
+      }
+      state.destKeyChecked = true;
+    }
     state.destMarkerWritten = true;
-    await this.moveHelper.dbUpdate(this.db,
-      "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo + "/" + row.newKey, data);
+    await this.moveHelper.dbUpdate(this.db, destMarkerPath, data);
 
     if (cardData != null) {
       row.failedStep = "Card Write";
+      if (!state.destCardChecked) {
+        state.destCardPrev = await this.moveHelper.readOnce(this.db, "Houses/" + zone + "/" + lineTo + "/" + cardNo);
+        state.destCardChecked = true;
+      }
       cardData["line"] = lineTo;
       cardData["ward"] = zone;
       state.destCardWritten = true;
@@ -911,6 +969,11 @@ export class LineMarkerMappingComponent implements OnDestroy {
 
     if (revisitData != null) {
       row.failedStep = "Revisit Write";
+      if (!state.destRevisitChecked) {
+        state.destRevisitPrev = await this.moveHelper.readOnce(this.db,
+          "EntitySurveyData/RevisitRequest/" + zone + "/" + lineTo + "/" + revisitKey);
+        state.destRevisitChecked = true;
+      }
       state.destRevisitWritten = true;
       await this.moveHelper.dbUpdate(this.db,
         "EntitySurveyData/RevisitRequest/" + zone + "/" + lineTo + "/" + revisitKey, revisitData);
@@ -927,7 +990,7 @@ export class LineMarkerMappingComponent implements OnDestroy {
     if (markerID != "") {
       state.mappingWritten = true;
       await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + markerID, {
-        image: row.newImage,
+        image: hasImage ? row.newImage : "",
         line: lineTo.toString(),
         markerNo: row.newKey.toString(),
         ward: zone
@@ -961,16 +1024,26 @@ export class LineMarkerMappingComponent implements OnDestroy {
         await this.moveHelper.dbRemove(this.db,
           "EntityMarkingData/MarkedHouses/" + ctx.zone + "/" + ctx.lineTo + "/" + row.newKey);
       }
+      // destination par pehle se kuch tha to use wapas rakho, hatao nahi
       if (state.destCardWritten && row.cardNo != "") {
-        await this.moveHelper.dbRemove(this.db, "Houses/" + ctx.zone + "/" + ctx.lineTo + "/" + row.cardNo);
+        let cardPath = "Houses/" + ctx.zone + "/" + ctx.lineTo + "/" + row.cardNo;
+        if (state.destCardPrev != null) {
+          await this.moveHelper.dbSet(this.db, cardPath, state.destCardPrev);
+        } else {
+          await this.moveHelper.dbRemove(this.db, cardPath);
+        }
         await this.moveHelper.dbSet(this.db, "CardWardMapping/" + row.cardNo, { line: ctx.lineFrom, ward: ctx.zone });
         if (state.mobile != "") {
           await this.moveHelper.dbSet(this.db, "HouseWardMapping/" + state.mobile, { line: ctx.lineFrom, ward: ctx.zone });
         }
       }
       if (state.destRevisitWritten && state.revisitKey != "") {
-        await this.moveHelper.dbRemove(this.db,
-          "EntitySurveyData/RevisitRequest/" + ctx.zone + "/" + ctx.lineTo + "/" + state.revisitKey);
+        let revisitPath = "EntitySurveyData/RevisitRequest/" + ctx.zone + "/" + ctx.lineTo + "/" + state.revisitKey;
+        if (state.destRevisitPrev != null) {
+          await this.moveHelper.dbSet(this.db, revisitPath, state.destRevisitPrev);
+        } else {
+          await this.moveHelper.dbRemove(this.db, revisitPath);
+        }
       }
       if (state.mappingWritten && state.markerID != "") {
         await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + state.markerID, {
@@ -1045,9 +1118,13 @@ export class LineMarkerMappingComponent implements OnDestroy {
               }
               let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
               this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount })
-              if (lastMarkerKey > 0) {
+              // lastMarkerKey sirf badhega, kabhi kam nahi hoga - kam hone par hati hui
+              // keys dobara allocate hoti thin aur unki purani images naye marker par dikhti thin
+              let savedLastKey = Number(lineData["lastMarkerKey"]);
+              if (isNaN(savedLastKey)) { savedLastKey = 0; }
+              if (lastMarkerKey > savedLastKey) {
                 let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-                this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+                this.moveHelper.raiseLastMarkerKey(this.db, dbPath, lastMarkerKey).catch(() => { });
               }
             }
             let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;

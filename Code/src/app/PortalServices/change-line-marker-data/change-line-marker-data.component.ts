@@ -303,6 +303,26 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     throw lastError;
   }
 
+  /** Destination keys reserve - network girne par dobara try. Timeout ke baad
+   *  pichhla transaction baad me commit ho jaye to bas keys ka gap banega. */
+  private async reserveKeysWithRetry(zone: any, line: any, count: number): Promise<number> {
+    let lastError: any = null;
+    for (let attempt = 0; attempt < this.IMAGE_ATTEMPTS; attempt++) {
+      if (this.cancelRequested) { throw new Error("cancelled"); }
+      try {
+        return await this.moveHelper.reserveMarkerKeys(this.db, zone, line, count);
+      } catch (e) {
+        lastError = e;
+        if (!this.isNetworkError(e)) {
+          break;
+        }
+        await this.waitForNetwork();
+        await this.delay(500 * Math.pow(2, attempt));
+      }
+    }
+    throw lastError;
+  }
+
   private dbUpdate(path: string, data: any): Promise<any> {
     return this.withTimeout(this.db.object(path).update(data), this.DB_TIMEOUT_MS);
   }
@@ -583,6 +603,11 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       }
       this.moveSummary.backupFile = filePath + fileName;
 
+      // ---------- keys reserve (backup ke baad, taaki backup fail ho to keys waste na hon) ----------
+      this.moveSummary.statusText = "Destination keys reserve हो रही हैं...";
+      lastKey = await this.reserveKeysWithRetry(zoneTo, lineTo, markerNoList.length);
+      originalLastKey = lastKey;
+
       // ---------- 3. progress rows banao ----------
       this.moveRows = this.buildRows(markerData, markerNoList, zoneFrom, lineFrom, zoneTo, lineTo);
       this.moveSummary.total = this.moveRows.length;
@@ -597,8 +622,9 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       await this.runMoveLoop(this.moveContext);
 
       // ---------- 5. counts + final message ----------
+      // lastMarkerKey reserve karte waqt hi badh chuka hai - yahan dobara likhne
+      // se wo kam ho sakta tha aur purani keys dobara use ho jaatin
       this.moveSummary.statusText = "Counts अपडेट हो रहे हैं...";
-      await this.dbUpdate("EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo, { lastMarkerKey: this.moveContext.lastKey });
       await this.updateCounts(zoneFrom, zoneTo, "markerMove", this.moveSummary.failed);
 
       let status = "success";
@@ -798,17 +824,8 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       workers.push(this.moveWorker(ctx, takeNext));
     }
     await Promise.all(workers);
-
-    // ---- 3. destination ka lastMarkerKey = jo markers sach me move hue ----
-    // (fail hue markers ki keys gap chhod jati hain, wo harmless hai)
-    let maxKey = ctx.lastKey;
-    for (let i = 0; i < this.moveRows.length; i++) {
-      let row = this.moveRows[i];
-      if (row.status == "moved" && row.newKey > maxKey) {
-        maxKey = row.newKey;
-      }
-    }
-    ctx.lastKey = maxKey;
+    // fail hue markers ki keys gap chhod jati hain, wo harmless hai - un keys
+    // ko dobara use nahi karna, isliye lastMarkerKey yahan kam nahi kiya jata
   }
 
   private async moveWorker(ctx: any, takeNext: any): Promise<void> {
@@ -833,6 +850,27 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     let data = ctx.markerData[row.markerNo];
     let networkRetries = 0;
 
+    // is marker ke dauraan kya-kya destination par likha ja chuka hai.
+    // Loop ke BAHAR hai taaki network retry ke baad bhi yaad rahe - warna
+    // pichhle attempt me source cleanup shuru ho chuka ho aur is attempt me
+    // error aaye to rollback destination hata deta aur marker dono jagah se
+    // gayab ho jata.
+    let state = {
+      destKeyChecked: false,
+      destMarkerWritten: false,
+      destCardChecked: false,
+      destCardPrev: null as any,
+      destCardWritten: false,
+      destRevisitChecked: false,
+      destRevisitPrev: null as any,
+      destRevisitWritten: false,
+      mappingWritten: false,
+      cleanupStarted: false,
+      revisitKey: "",
+      markerID: "",
+      mobile: ""
+    };
+
     while (true) {
       if (this.cancelRequested) { row.status = "pending"; return; }
       await this.waitForNetwork();
@@ -841,18 +879,6 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       row.status = "moving";
       row.attempts = row.attempts + 1;
       this.refreshMoveStatusText();
-
-      // is marker ke dauraan kya-kya destination par likha ja chuka hai
-      let state = {
-        destMarkerWritten: false,
-        destCardWritten: false,
-        destRevisitWritten: false,
-        mappingWritten: false,
-        cleanupStarted: false,
-        revisitKey: "",
-        markerID: "",
-        mobile: ""
-      };
 
       try {
         await this.processMarker(row, data, ctx, state);
@@ -920,15 +946,26 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
       if (state.destMarkerWritten) {
         await this.dbRemove("EntityMarkingData/MarkedHouses/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.newKey);
       }
+      // destination par pehle se kuch tha to use wapas rakho, hatao nahi
       if (state.destCardWritten && row.cardNo != "") {
-        await this.dbRemove("Houses/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.cardNo);
+        let cardPath = "Houses/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + row.cardNo;
+        if (state.destCardPrev != null) {
+          await this.dbSet(cardPath, state.destCardPrev);
+        } else {
+          await this.dbRemove(cardPath);
+        }
         await this.dbSet("CardWardMapping/" + row.cardNo, { line: ctx.lineFrom, ward: ctx.zoneFrom });
         if (state.mobile != "") {
           await this.dbSet("HouseWardMapping/" + state.mobile, { line: ctx.lineFrom, ward: ctx.zoneFrom });
         }
       }
       if (state.destRevisitWritten && state.revisitKey != "") {
-        await this.dbRemove("EntitySurveyData/RevisitRequest/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + state.revisitKey);
+        let revisitPath = "EntitySurveyData/RevisitRequest/" + ctx.zoneTo + "/" + ctx.lineTo + "/" + state.revisitKey;
+        if (state.destRevisitPrev != null) {
+          await this.dbSet(revisitPath, state.destRevisitPrev);
+        } else {
+          await this.dbRemove(revisitPath);
+        }
       }
       if (state.mappingWritten && state.markerID != "") {
         await this.dbUpdate("EntityMarkingData/MarkerWardMapping/" + state.markerID, {
@@ -1016,15 +1053,33 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     if (cardData != null && cardData["latLng"] != null) {
       data["latLng"] = cardData["latLng"].toString().replace("(", "").replace(")", "");
     }
-    data["image"] = row.newImage;                  // purane code jaisa - hamesha set hota hai
+    // Image sach me copy hui tabhi naya naam lagao. Image na ho to {newKey}.jpg
+    // lagane se marker destination folder me padi kisi purani file ko dikhane
+    // lagta tha (galat photo). Original naam backup JSON me hai.
+    let hasImage = !row.imageMissing;
+    data["image"] = hasImage ? row.newImage : null;
 
     // ---------- DESTINATION WRITES ----------
     row.failedStep = "Marker Write";
+    let destMarkerPath = "EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + row.newKey;
+    if (!state.destKeyChecked) {
+      // key pehle se kisi marker ki ho to us par likhne se uska data/photo mix ho
+      // jata - aur rollback use delete kar deta. Aisa ho to kuch mat chhuo.
+      let existing = await this.readOnce(destMarkerPath);
+      if (existing != null) {
+        throw new Error("destination key " + row.newKey + " पहले से किसी marker की है - कुछ नहीं बदला, Retry करें");
+      }
+      state.destKeyChecked = true;
+    }
     state.destMarkerWritten = true;
-    await this.dbUpdate("EntityMarkingData/MarkedHouses/" + zoneTo + "/" + lineTo + "/" + row.newKey, data);
+    await this.dbUpdate(destMarkerPath, data);
 
     if (cardData != null) {
       row.failedStep = "Card Write";
+      if (!state.destCardChecked) {
+        state.destCardPrev = await this.readOnce("Houses/" + zoneTo + "/" + lineTo + "/" + cardNo);
+        state.destCardChecked = true;
+      }
       cardData["line"] = lineTo;
       cardData["ward"] = zoneTo;
       state.destCardWritten = true;
@@ -1037,6 +1092,10 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
 
     if (revisitData != null) {
       row.failedStep = "Revisit Write";
+      if (!state.destRevisitChecked) {
+        state.destRevisitPrev = await this.readOnce("EntitySurveyData/RevisitRequest/" + zoneTo + "/" + lineTo + "/" + revisitKey);
+        state.destRevisitChecked = true;
+      }
       state.destRevisitWritten = true;
       await this.dbUpdate("EntitySurveyData/RevisitRequest/" + zoneTo + "/" + lineTo + "/" + revisitKey, revisitData);
     }
@@ -1054,7 +1113,7 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
     if (markerID != "") {
       state.mappingWritten = true;
       await this.dbUpdate("EntityMarkingData/MarkerWardMapping/" + markerID, {
-        image: row.newImage,
+        image: hasImage ? row.newImage : "",
         line: lineTo.toString(),
         markerNo: row.newKey.toString(),
         ward: zoneTo
@@ -1256,8 +1315,12 @@ export class ChangeLineMarkerDataComponent implements OnInit, OnDestroy {
         lineRfidNotFoundCount: rfIdNotFound,
         alreadyInstalledCount: alreadyInstalledCount
       });
-      if (lastMarkerKey > 0) {
-        await this.dbUpdate("EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo, { lastMarkerKey: lastMarkerKey });
+      // lastMarkerKey sirf badhega, kabhi kam nahi hoga - kam hone par hati hui
+      // keys dobara allocate hoti thin aur unki purani images naye marker par dikhti thin
+      let savedLastKey = Number(lineData["lastMarkerKey"]);
+      if (isNaN(savedLastKey)) { savedLastKey = 0; }
+      if (lastMarkerKey > savedLastKey) {
+        await this.moveHelper.raiseLastMarkerKey(this.db, "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo, lastMarkerKey);
       }
     }
 
