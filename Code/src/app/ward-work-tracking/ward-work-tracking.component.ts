@@ -776,7 +776,12 @@ export class WardWorkTrackingComponent {
   getRoute() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRoute");
     let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-    this.commonService.getStorageLocationHistory(dbPath).then((response) => {
+    let archivePath = "LocationHistoryArchive/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+    let archiveInstance = this.db.object(archivePath).valueChanges().subscribe(archiveData => {
+      archiveInstance.unsubscribe();
+      // date archived → read from storage, otherwise read from realtime database
+      let archivePromise = archiveData != null ? this.commonService.getStorageDailyWorkDetail(dbPath) : Promise.resolve({ status: "Fail", data: {} });
+      archivePromise.then((response) => {
       if (response["status"] == "Fail") {
         let routeInstance = this.db.object(dbPath).valueChanges().subscribe(
           routeData => {
@@ -846,7 +851,8 @@ export class WardWorkTrackingComponent {
           }
         }
       }
-    })
+      })
+    });
   }
 
   setDate(filterVal: any, type: string) {
