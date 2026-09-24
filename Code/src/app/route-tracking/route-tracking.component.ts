@@ -812,12 +812,10 @@ export class RouteTrackingComponent {
     this.getDutyInOutTime(this.selectedZone, year, monthName, this.selectedDate).then((response) => {
       let dutyOnOffList = JSON.parse(JSON.stringify(response));
       if (dutyOnOffList.length > 0) {
-        let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
         this.routePathStore = [];
         let routePathList = [];
-        let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-          routePath => {
-            vehicleTracking.unsubscribe();
+        this.getLocationHistory(year, monthName, this.selectedDate).then(
+          (routePath: any) => {
             if (routePath != null) {
               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getVehicleRoute", routePath);
               let routeKeyArray = Object.keys(routePath);
@@ -905,6 +903,102 @@ export class RouteTrackingComponent {
           });
 
       }
+    });
+  }
+
+  getLocationHistory(year: any, monthName: any, date: any) {
+    return new Promise((resolve) => {
+      this.getLocationHistoryArchiveStatus(year, monthName, date).then((archiveData: any) => {
+        if (archiveData == null) {
+          //data is not archived, read it from realtime database
+          // console.log("[Location] Zone:", this.selectedZoneNo, "Date:", date, "=> NOT ARCHIVED, loading from REALTIME DATABASE");
+          this.getLocationHistoryFromDatabase(year, monthName, date).then((routePath: any) => {
+            resolve(routePath);
+          });
+          return;
+        }
+        //data is archived, read it from storage
+        // console.log("[Location] Zone:", this.selectedZoneNo, "Date:", date, "=> ARCHIVED, loading from STORAGE");
+        this.getLocationHistoryFromStorage(year, monthName, date).then((routePath: any) => {
+          if (routePath == null) {
+            // console.log("[Location] Zone:", this.selectedZoneNo, "Date:", date, "=> STORAGE me data nahi mila, falling back to REALTIME DATABASE");
+            this.getLocationHistoryFromDatabase(year, monthName, date).then((data: any) => {
+              resolve(data);
+            });
+            return;
+          }
+          resolve(routePath);
+        });
+      });
+    });
+  }
+
+  getLocationHistoryArchiveStatus(year: any, monthName: any, date: any) {
+    return new Promise((resolve) => {
+      let dbPath = "LocationHistoryArchive/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + date;
+      let archiveInstance = this.db.object(dbPath).valueChanges().subscribe(
+        (archiveData: any) => {
+          archiveInstance.unsubscribe();
+          // console.log("[Archive] Zone:", this.selectedZoneNo, "Date:", date, "Path:", dbPath, "Found:", archiveData != null);
+          resolve(archiveData);
+        });
+    });
+  }
+
+  getLocationHistoryFromStorage(year: any, monthName: any, date: any) {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FLocationHistory%2F" + this.selectedZoneNo + "%2F" + year + "%2F" + monthName + "%2F" + date + ".json?alt=media";
+      // console.log("[Storage] Date:", date, "URL:", path);
+      let storageInstance = this.httpService.get(path).subscribe(
+        (storageData: any) => {
+          storageInstance.unsubscribe();
+          // console.log("[Storage] Date:", date, "=> DATA LOADED FROM STORAGE", path);
+          resolve(this.getStorageRoutePath(storageData));
+        }, error => {
+          //old archived files are saved as route.json, read them from there
+          let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + date;
+          // console.log("[Storage] Date:", date, "=> FILE NOT FOUND, trying old route.json path", dbPath, error.status);
+          this.commonService.getStorageLocationHistory(dbPath).then((response: any) => {
+            if (response["status"] == "Fail") {
+              // console.log("[Storage] Date:", date, "=> route.json bhi nahi mila");
+              resolve(null);
+              return;
+            }
+            // console.log("[Storage] Date:", date, "=> DATA LOADED FROM STORAGE (route.json)", dbPath);
+            resolve(this.getStorageRoutePath(response["data"]));
+          });
+        });
+    });
+  }
+
+  getStorageRoutePath(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    let routePath = storageData;
+    if (storageData["routePath"] != undefined && storageData["routePath"] != null) {
+      routePath = storageData["routePath"];
+    }
+    if (routePath == null) {
+      return null;
+    }
+    //keep key order same as realtime database (sorted keys)
+    let sortedRoutePath: any = {};
+    Object.keys(routePath).sort().forEach(key => {
+      sortedRoutePath[key] = routePath[key];
+    });
+    return sortedRoutePath;
+  }
+
+  getLocationHistoryFromDatabase(year: any, monthName: any, date: any) {
+    return new Promise((resolve) => {
+      let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + date;
+      let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
+        (routePath: any) => {
+          vehicleTracking.unsubscribe();
+          // console.log("[RTDB] Date:", date, "Path:", dbPath, "=> DATA LOADED FROM REALTIME DATABASE, Found:", routePath != null);
+          resolve(routePath);
+        });
     });
   }
 
@@ -1239,93 +1333,82 @@ export class RouteTrackingComponent {
       let dutyOnOffList = JSON.parse(JSON.stringify(response));
       if (dutyOnOffList.length > 0) {
         let monthList = [];
-        let dbPath = "LocationHistory/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate;
-        this.commonService.getStorageLocationHistory(dbPath).then(response => {
-          let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
-          let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
-          let day = monthDate.split("-")[2] + " " + monthShortName;
-          if (response["status"] == "Fail") {
-            let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-              routePath => {
-                vehicleTracking.unsubscribe();
-                if (routePath != null) {
-                  this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthDetailData", routePath);
-                  if (monthDate != this.toDayDate) {
-                    //this.commonService.saveJsonFile(routePath, "route.json", "/" + dbPath + "/");
+        this.getLocationHistory(year, monthName, monthDate).then(
+          (routePath: any) => {
+            let monthDate = year + '-' + month + '-' + (days < 10 ? '0' : '') + days;
+            let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
+            let day = monthDate.split("-")[2] + " " + monthShortName;
+            if (routePath != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthDetailData", routePath);
+              let routeKeyArray = Object.keys(routePath);
+              let keyArray = [];
+              if (routeKeyArray.length > 0) {
+                if (this.isActualData == 0) {
+                  keyArray = routeKeyArray;
+                }
+                else {
+                  for (let i = 0; i < routeKeyArray.length; i++) {
+                    if (!routeKeyArray[i].toString().includes('-')) {
+                      keyArray.push(routeKeyArray[i]);
+                    }
                   }
-                  let routeKeyArray = Object.keys(routePath);
-                  let keyArray = [];
-                  if (routeKeyArray.length > 0) {
-                    if (this.isActualData == 0) {
-                      keyArray = routeKeyArray;
+                }
+              }
+
+              let dutyInTime = dutyOnOffList[0]["inTime"];
+              let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
+              let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
+              let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
+
+              if (this.userType == "External User") {
+                let newArray = keyArray.reverse();
+                let keyArrayNew = [];
+                for (let i = 0; i < newArray.length; i++) {
+                  let index = newArray[i];
+                  if (newArray[i + 1] != undefined) {
+                    let nextIndex = newArray[i + 1];
+                    let time = index.toString().split('-')[0];
+                    let nextTime = nextIndex.toString().split('-')[0];
+                    if (time == nextTime) {
+                      keyArrayNew.push(index);
+                      i++;
                     }
                     else {
-                      for (let i = 0; i < routeKeyArray.length; i++) {
-                        if (!routeKeyArray[i].toString().includes('-')) {
-                          keyArray.push(routeKeyArray[i]);
-                        }
-                      }
-                    }
-                  }
-
-                  let dutyInTime = dutyOnOffList[0]["inTime"];
-                  let dutyOutTime = dutyOnOffList[dutyOnOffList.length - 1]["outTime"];
-                  let dutyInDateTime = new Date(this.selectedDate + " " + dutyInTime);
-                  let dutyOutDateTime = new Date(this.selectedDate + " " + dutyOutTime);
-
-                  if (this.userType == "External User") {
-                    let newArray = keyArray.reverse();
-                    let keyArrayNew = [];
-                    for (let i = 0; i < newArray.length; i++) {
-                      let index = newArray[i];
-                      if (newArray[i + 1] != undefined) {
-                        let nextIndex = newArray[i + 1];
-                        let time = index.toString().split('-')[0];
-                        let nextTime = nextIndex.toString().split('-')[0];
-                        if (time == nextTime) {
-                          keyArrayNew.push(index);
-                          i++;
-                        }
-                        else {
-                          keyArrayNew.push(index);
-                        }
-                      }
-                      else {
-                        keyArrayNew.push(index);
-                      }
-                    }
-                    keyArray = keyArrayNew.reverse();
-                    for (let i = 0; i < keyArray.length; i++) {
-                      let index = keyArray[i];
-                      let time = index.toString().split('-')[0];
-                      if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
-                        let routeDateTime = new Date(this.selectedDate + " " + time);
-                        if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                          monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
-                        }
-                      }
+                      keyArrayNew.push(index);
                     }
                   }
                   else {
-                    for (let i = 0; i < keyArray.length; i++) {
-                      let index = keyArray[i];
-                      let time = index.toString().split('-')[0];
-                      if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
-                        let routeDateTime = new Date(this.selectedDate + " " + time);
-                        if (!index.includes("-")) {
-                          if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                            monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
-                          }
-                        }
+                    keyArrayNew.push(index);
+                  }
+                }
+                keyArray = keyArrayNew.reverse();
+                for (let i = 0; i < keyArray.length; i++) {
+                  let index = keyArray[i];
+                  let time = index.toString().split('-')[0];
+                  if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
+                    let routeDateTime = new Date(this.selectedDate + " " + time);
+                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                      monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
+                    }
+                  }
+                }
+              }
+              else {
+                for (let i = 0; i < keyArray.length; i++) {
+                  let index = keyArray[i];
+                  let time = index.toString().split('-')[0];
+                  if (routePath[index]["distance-in-meter"] != null || routePath[index]["distance-in-meter"] != undefined) {
+                    let routeDateTime = new Date(this.selectedDate + " " + time);
+                    if (!index.includes("-")) {
+                      if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                        monthList.push({ distanceinmeter: routePath[index]["distance-in-meter"], latlng: routePath[index]["lat-lng"], time: time });
                       }
                     }
                   }
-                  this.getMonthDetailList(monthList, year, monthName, monthDate);
                 }
               }
-            );
-          }
-          else {
+              this.getMonthDetailList(monthList, year, monthName, monthDate);
+            }
             /*
             let routePath = response["data"];
             let routeKeyArray = Object.keys(routePath);
@@ -1363,8 +1446,7 @@ export class RouteTrackingComponent {
             }
             this.getMonthDetailList(monthList, year, monthName, monthDate);
 */
-          }
-        })
+          })
       }
     });
   }

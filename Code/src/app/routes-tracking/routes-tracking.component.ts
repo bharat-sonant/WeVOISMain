@@ -457,22 +457,45 @@ export class RoutesTrackingComponent implements OnInit {
     this.getMonthDetail(monthDetails, routePath, monthDate);
   }
 
-  getLocationHistoryFromStorage(monthDate: any, type: any) {
-    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FLocationHistory%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + monthDate + ".json?alt=media";
-    let locationHistoryInstance = this.httpService.get(path).subscribe(data => {
-      locationHistoryInstance.unsubscribe();
-      if (data != null) {
-        let routePath = data["routePath"];
-        let monthDetails = this.monthDetailList.find(item => item.monthDate == monthDate);
-        if (monthDetails != undefined) {
-          monthDetails.driver = data["driver"];
-          monthDetails.percentage = data["percentage"];
-          monthDetails.routePath = routePath;
-          this.getMonthListData(monthDate, routePath, type);
+  getLocationHistoryArchiveStatus(monthDate: any) {
+    return new Promise((resolve) => {
+      let dbPath = "LocationHistoryArchive/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + monthDate;
+      let archiveInstance = this.db.object(dbPath).valueChanges().subscribe(
+        (archiveData: any) => {
+          archiveInstance.unsubscribe();
+          // console.log("[Archive] Zone:", this.selectedZone, "Date:", monthDate, "Path:", dbPath, "Found:", archiveData != null);
+          resolve(archiveData);
         }
+      );
+    });
+  }
+
+  getLocationHistoryFromStorage(monthDate: any, type: any) {
+    this.getLocationHistoryArchiveStatus(monthDate).then((archiveData: any) => {
+      if (archiveData == null) {
+        // console.log("[Location] Zone:", this.selectedZone, "Date:", monthDate, "Type:", type, "=> NOT ARCHIVED, loading from REALTIME DATABASE");
+        this.getLocationHistoryFromDatabase(monthDate, type);
+        return;
       }
-    }, error => {
-      this.getLocationHistoryFromDatabase(monthDate, type);
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FLocationHistory%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + monthDate + ".json?alt=media";
+      // console.log("[Location] Zone:", this.selectedZone, "Date:", monthDate, "Type:", type, "=> ARCHIVED, loading from STORAGE", path);
+      let locationHistoryInstance = this.httpService.get(path).subscribe(data => {
+        locationHistoryInstance.unsubscribe();
+        // console.log("[Storage] Date:", monthDate, "Data received:", data != null);
+        if (data != null) {
+          let routePath = data["routePath"];
+          let monthDetails = this.monthDetailList.find(item => item.monthDate == monthDate);
+          if (monthDetails != undefined) {
+            monthDetails.driver = data["driver"];
+            monthDetails.percentage = data["percentage"];
+            monthDetails.routePath = routePath;
+            this.getMonthListData(monthDate, routePath, type);
+          }
+        }
+      }, error => {
+        // console.log("[Storage] Date:", monthDate, "DOWNLOAD FAILED => falling back to REALTIME DATABASE", error);
+        this.getLocationHistoryFromDatabase(monthDate, type);
+      });
     });
   }
 
@@ -481,6 +504,7 @@ export class RoutesTrackingComponent implements OnInit {
     let locationHistoryInstance = this.db.object(dbPath).valueChanges().subscribe(
       routePath => {
         locationHistoryInstance.unsubscribe();
+        // console.log("[RTDB] Date:", monthDate, "Path:", dbPath, "Data received:", routePath != null);
         if (routePath != null) {
           this.getMonthListData(monthDate, routePath, type);
         }
