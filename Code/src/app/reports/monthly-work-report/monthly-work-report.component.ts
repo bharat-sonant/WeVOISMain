@@ -284,11 +284,9 @@ export class MonthlyWorkReportComponent {
   }
 
   getTotalRunKM(date: any, startTime: any, endTime: any) {
-    let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date;
     let distance = 0;
-    let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-      routePath => {
-        vehicleTracking.unsubscribe();
+    this.getLocationHistory(date).then(
+      (routePath: any) => {
         if (routePath != null) {
           if (endTime == "") {
             if (date == this.toDayDate) {
@@ -347,6 +345,93 @@ export class MonthlyWorkReportComponent {
           }
         }
       });
+  }
+
+  getLocationHistory(date: any) {
+    return new Promise((resolve) => {
+      this.getLocationHistoryArchiveStatus(date).then((archiveData: any) => {
+        if (archiveData == null) {
+          //data is not archived, read it from realtime database
+          this.getLocationHistoryFromDatabase(date).then((routePath: any) => {
+            resolve(routePath);
+          });
+          return;
+        }
+        //data is archived, read it from storage
+        this.getLocationHistoryFromStorage(date).then((routePath: any) => {
+          if (routePath == null) {
+            //data not found in storage, read it from realtime database
+            this.getLocationHistoryFromDatabase(date).then((data: any) => {
+              resolve(data);
+            });
+            return;
+          }
+          resolve(routePath);
+        });
+      });
+    });
+  }
+
+  getLocationHistoryArchiveStatus(date: any) {
+    return new Promise((resolve) => {
+      let dbPath = "LocationHistoryArchive/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date;
+      let archiveInstance = this.db.object(dbPath).valueChanges().subscribe(
+        (archiveData: any) => {
+          archiveInstance.unsubscribe();
+          resolve(archiveData);
+        });
+    });
+  }
+
+  getLocationHistoryFromStorage(date: any) {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FLocationHistory%2F" + this.selectedZone + "%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2F" + date + ".json?alt=media";
+      let storageInstance = this.httpService.get(path).subscribe(
+        (storageData: any) => {
+          storageInstance.unsubscribe();
+          resolve(this.getStorageRoutePath(storageData));
+        }, error => {
+          //old archived files are saved as route.json, read them from there
+          let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date;
+          this.commonService.getStorageLocationHistory(dbPath).then((response: any) => {
+            if (response["status"] == "Fail") {
+              resolve(null);
+              return;
+            }
+            resolve(this.getStorageRoutePath(response["data"]));
+          });
+        });
+    });
+  }
+
+  getStorageRoutePath(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    let routePath = storageData;
+    if (storageData["routePath"] != undefined && storageData["routePath"] != null) {
+      routePath = storageData["routePath"];
+    }
+    if (routePath == null) {
+      return null;
+    }
+    //keep key order same as realtime database (sorted keys)
+    let sortedRoutePath: any = {};
+    Object.keys(routePath).sort().forEach(key => {
+      sortedRoutePath[key] = routePath[key];
+    });
+    return sortedRoutePath;
+  }
+
+  getLocationHistoryFromDatabase(date: any) {
+    return new Promise((resolve) => {
+      let dbPath = "LocationHistory/" + this.selectedZone + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + date;
+      let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
+        (routePath: any) => {
+          vehicleTracking.unsubscribe();
+          resolve(routePath);
+        });
+    });
   }
 
   exportToExcel() {
