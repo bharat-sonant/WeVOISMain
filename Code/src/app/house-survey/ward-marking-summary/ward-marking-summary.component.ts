@@ -73,6 +73,7 @@ export class WardMarkingSummaryComponent implements OnInit {
   inProgressWards: any[] = [];
   serviceName = "marking-summary";
   isShowEntityExport: any;
+  isShowEntityTypes = true;
   pendingGeoRequestsForExport = 0;
   public hideComplex: any;
 
@@ -86,10 +87,14 @@ export class WardMarkingSummaryComponent implements OnInit {
     if (localStorage.getItem("userType") == "External User" && this.cityName == "jodhpur") {
       this.isShowEntityExport = false;
     }
+    // Ajmer external user: hide entity types popup and both exports, they show real counts
+    if (this.userIsExternal == true && this.cityName == "ajmer") {
+      this.isShowEntityExport = false;
+      this.isShowEntityTypes = false;
+    }
     if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
       //this.isActionShow = false;
-    }
-    if (this.userIsExternal == true && this.cityName == "ajmer") {
+    }    if (this.userIsExternal == true && this.cityName == "ajmer") {
       this.hideComplex = 1;
     }
     else {
@@ -678,14 +683,23 @@ export class WardMarkingSummaryComponent implements OnInit {
           const { marked = 0, actualMarked = 0, houseCount = 0, actualHouseCount = 0, complexCount = 0, actualComplexCount = 0, housesInComplex = 0, actualHousesInComplex = 0, alreadyInstalled = 0, approved = 0 } = data || {};
           this.markerData.totalAlreadyCard += Number(alreadyInstalled);
           if (this.userIsExternal == true && this.cityName == "ajmer") {
-            let markers = this.userIsExternal ? parseInt(actualMarked != 0 ? actualMarked : marked) : parseInt(marked);
-            let house = this.userIsExternal ? parseInt(actualHouseCount != 0 ? actualHouseCount : houseCount) : parseInt(houseCount);
-            if ((house - markers) > 0) {
-              markers = house;// (house - houseComplex) + complex;
-            }
-            this.wardProgressList[index]["markers"] = markers;
+            // OLD CODE (kept for reference, replaced by tempMarkers / tempHouses below):
+            // let markers = this.userIsExternal ? parseInt(actualMarked != 0 ? actualMarked : marked) : parseInt(marked);
+            // let house = this.userIsExternal ? parseInt(actualHouseCount != 0 ? actualHouseCount : houseCount) : parseInt(houseCount);
+            // if ((house - markers) > 0) {
+            //   markers = house;// (house - houseComplex) + complex;
+            // }
+            // this.wardProgressList[index]["markers"] = markers;
+            // this.wardProgressList[index]["alreadyInstalled"] = Number(alreadyInstalled);
+            // this.wardProgressList[index]["houses"] = this.userIsExternal ? parseInt(actualHouseCount != 0 ? actualHouseCount : houseCount) : parseInt(houseCount);
+
+            // Ajmer external user: counts come only from tempMarkers / tempHouses, which are set manually
+            // and are not written by any sync. Missing or invalid values show as 0, never the real counts.
+            let markers = parseInt(data["tempMarkers"]);
+            let house = parseInt(data["tempHouses"]);
+            this.wardProgressList[index]["markers"] = isNaN(markers) ? 0 : markers;
             this.wardProgressList[index]["alreadyInstalled"] = Number(alreadyInstalled);
-            this.wardProgressList[index]["houses"] = this.userIsExternal ? parseInt(actualHouseCount != 0 ? actualHouseCount : houseCount) : parseInt(houseCount);
+            this.wardProgressList[index]["houses"] = isNaN(house) ? 0 : house;
             this.wardProgressList[index]["complex"] = this.userIsExternal ? parseInt(actualComplexCount != 0 ? actualComplexCount : complexCount) : parseInt(complexCount);
             this.wardProgressList[index]["houseInComplex"] = this.userIsExternal ? parseInt(actualHousesInComplex != 0 ? actualHousesInComplex : housesInComplex) : parseInt(housesInComplex);
             this.wardProgressList[index]["approvedLines"] = Number(approved);
