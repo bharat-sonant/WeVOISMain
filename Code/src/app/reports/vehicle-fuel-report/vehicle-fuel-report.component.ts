@@ -524,9 +524,8 @@ export class VehicleFuelReportComponent implements OnInit {
       if (track.ward.includes('BinLifting')) {
         // get data according to BinLifting
         const path = `LocationHistory/BinLifting/${vehicle}/${this.selectedYear}/${this.selectedMonthName}/${date}`
-        let distanceInstance = this.db.object(path).valueChanges().subscribe(
-          data => {
-            distanceInstance.unsubscribe()
+        this.getLocationHistory(path).then(
+          (data: any) => {
             if (data) {
               const [dutyInHr, dutyInMin] = track.dutyInTime.split(':')
               const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":")
@@ -550,9 +549,8 @@ export class VehicleFuelReportComponent implements OnInit {
       else {
         // get data according to ward
         const path = `LocationHistory/${track.ward}/${this.selectedYear}/${this.selectedMonthName}/${date}`
-        let distanceInstance = this.db.object(path).valueChanges().subscribe(
-          data => {
-            distanceInstance.unsubscribe()
+        this.getLocationHistory(path).then(
+          (data: any) => {
             if (data) {
               const [dutyInHr, dutyInMin] = track.dutyInTime.split(':')
               const [dutyOutHr, dutyOutMin] = track.dutyOutTime.split(":")
@@ -748,9 +746,8 @@ export class VehicleFuelReportComponent implements OnInit {
       else {
         dbLocationPath = "LocationHistory/" + zone + "/" + year + "/" + monthName + "/" + date;
       }
-      let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
-        locationData => {
-          locationInstance.unsubscribe();
+      this.getLocationHistory(dbLocationPath).then(
+        (locationData: any) => {
           let distance = "0";
           if (locationData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRunningDistance", locationData);
@@ -786,6 +783,169 @@ export class VehicleFuelReportComponent implements OnInit {
           this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
       });
     }
+  }
+
+  getLocationHistory(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      this.getLocationHistoryArchiveStatus(dbLocationPath).then(
+        (archiveData: any) => {
+          if (archiveData == null) {
+            //data is not archived, read it from realtime database
+            // console.log(
+            //   "[Location] Path:",
+            //   dbLocationPath,
+            //   "=> NOT ARCHIVED, loading from REALTIME DATABASE"
+            // );
+            this.getLocationHistoryFromDatabase(dbLocationPath).then(
+              (locationData: any) => {
+                resolve(locationData);
+              }
+            );
+            return;
+          }
+          //data is archived, read it from storage
+          // console.log(
+          //   "[Location] Path:",
+          //   dbLocationPath,
+          //   "=> ARCHIVED, loading from STORAGE"
+          // );
+          this.getLocationHistoryFromStorage(dbLocationPath).then(
+            (locationData: any) => {
+              if (locationData == null) {
+                //storage me data nahi mila, fallback to realtime database
+                // console.log(
+                //   "[Location] Path:",
+                //   dbLocationPath,
+                //   "=> STORAGE me data nahi mila, falling back to REALTIME DATABASE"
+                // );
+                this.getLocationHistoryFromDatabase(dbLocationPath).then(
+                  (data: any) => {
+                    resolve(data);
+                  }
+                );
+                return;
+              }
+              resolve(locationData);
+            }
+          );
+        }
+      );
+    });
+  }
+
+  getLocationHistoryArchiveStatus(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let archivePath = dbLocationPath
+        .toString()
+        .replace("LocationHistory/", "LocationHistoryArchive/");
+      let archiveInstance = this.db
+        .object(archivePath)
+        .valueChanges()
+        .subscribe((archiveData: any) => {
+          archiveInstance.unsubscribe();
+          // console.log(
+          //   "[Archive] Path:",
+          //   archivePath,
+          //   "Found:",
+          //   archiveData != null
+          // );
+          resolve(archiveData);
+        });
+    });
+  }
+
+  getLocationHistoryFromStorage(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      const path =
+        this.commonService.fireStoragePath +
+        this.commonService.getFireStoreCity() +
+        "%2F" +
+        dbLocationPath.toString().replaceAll("/", "%2F") +
+        ".json?alt=media";
+      // console.log("[Storage] Path:", dbLocationPath, "URL:", path);
+      let storageInstance = this.httpService.get(path).subscribe(
+        (storageData: any) => {
+          storageInstance.unsubscribe();
+          // console.log(
+          //   "[Storage] Path:",
+          //   dbLocationPath,
+          //   "=> DATA LOADED FROM STORAGE",
+          //   path
+          // );
+          resolve(this.getStorageLocationData(storageData));
+        },
+        (error) => {
+          //old archived files are saved as route.json, read them from there
+          // console.log(
+          //   "[Storage] Path:",
+          //   dbLocationPath,
+          //   "=> FILE NOT FOUND, trying old route.json path",
+          //   error.status
+          // );
+          this.commonService
+            .getStorageLocationHistory(dbLocationPath)
+            .then((response: any) => {
+              if (response["status"] == "Fail") {
+                // console.log(
+                //   "[Storage] Path:",
+                //   dbLocationPath,
+                //   "=> route.json bhi nahi mila"
+                // );
+                resolve(null);
+                return;
+              }
+              // console.log(
+              //   "[Storage] Path:",
+              //   dbLocationPath,
+              //   "=> DATA LOADED FROM STORAGE (route.json)"
+              // );
+              resolve(this.getStorageLocationData(response["data"]));
+            });
+        }
+      );
+    });
+  }
+
+  getStorageLocationData(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    let locationData = storageData;
+    if (
+      storageData["routePath"] != undefined &&
+      storageData["routePath"] != null
+    ) {
+      locationData = storageData["routePath"];
+    }
+    if (locationData == null) {
+      return null;
+    }
+    //keep key order same as realtime database (sorted keys)
+    let sortedLocationData: any = {};
+    Object.keys(locationData)
+      .sort()
+      .forEach((key) => {
+        sortedLocationData[key] = locationData[key];
+      });
+    return sortedLocationData;
+  }
+
+  getLocationHistoryFromDatabase(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let locationInstance = this.db
+        .object(dbLocationPath)
+        .valueChanges()
+        .subscribe((locationData: any) => {
+          locationInstance.unsubscribe();
+          // console.log(
+          //   "[RTDB] Path:",
+          //   dbLocationPath,
+          //   "=> DATA LOADED FROM REALTIME DATABASE, Found:",
+          //   locationData != null
+          // );
+          resolve(locationData);
+        });
+    });
   }
 
   updateJSONData() {
