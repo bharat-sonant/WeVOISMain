@@ -390,6 +390,9 @@ export class PaymentViaNeftComponent implements OnInit {
         neftNo:detail.neftNo?detail.neftNo:'',
         bankName:detail.bankName?detail.bankName:'',
         payDate:date,
+        // Date the NEFT was collected on. The house image is stored under this date, while the
+        // transaction is filed under the transaction date entered above, so the reports need both.
+        collectedDate: date,
         houseHolds:detail.houseHolds
       }
 
@@ -504,6 +507,9 @@ export class PaymentViaNeftComponent implements OnInit {
       neftNo:detail.neftNo?detail.neftNo:'',
       bankName:detail.bankName?detail.bankName:'',
       payDate:date,
+      // Date the NEFT was collected on. The house image is stored under this date, while the
+      // transaction is filed under the transaction date entered above, so the reports need both.
+      collectedDate: date,
       houseHolds:detail.houseHolds
     }
 

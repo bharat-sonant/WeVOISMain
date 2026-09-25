@@ -12,7 +12,6 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
-import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 @Component({
   selector: "app-ward-survey-analysis",
   templateUrl: "./ward-survey-analysis.component.html",
@@ -22,7 +21,7 @@ export class WardSurveyAnalysisComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
   public mapRevisit: google.maps.Map;
-  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public afd: AngularFireDatabase, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
+  constructor(private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public afd: AngularFireDatabase, public af: AngularFireModule, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal) { }
 
   public selectedZone: any;
   zoneList: any[];
@@ -170,23 +169,9 @@ export class WardSurveyAnalysisComponent {
 
   showAllMarkers() {
     if ((<HTMLInputElement>document.getElementById(this.chkShowAll)).checked == true) {
-      // Poore ward ka data PEHLE ek hi query me utaar lete hain.
-      //
-      // Neeche wala loop har line par getMarkedHouses() bulata hai, aur naye
-      // structure me ek line ka data us line ke har marker ke alag read se
-      // ban'ta hai. Bina is prefetch ke 200 line x 40 marker = ~8000 alag read
-      // jaate the (purane MarkedHouses me ye 200 the, kyunki tab poori line ek
-      // node thi).
-      //
-      // getWardRecords jo record laati hai wo service ke marker-cache me bhar
-      // jaate hain, isliye uske baad har getMarkedHouses() bina network ke
-      // chalta hai. Loop jaisa hai waisa hi rehta hai - har line ka apna
-      // rendering/counting logic nahi chhedna pada.
-      this.getNewPathWardData(this.selectedZone).then(() => {
-        for (let i = 1; i <= this.wardLineCount; i++) {
-          this.getMarkedHouses(i);
-        }
-      });
+      for (let i = 1; i <= this.wardLineCount; i++) {
+        this.getMarkedHouses(i);
+      }
     }
     else {
       this.getMarkedHouses(this.lineNo);
@@ -204,17 +189,6 @@ export class WardSurveyAnalysisComponent {
     }
     this.clearAllOnMap();
     this.selectedZone = filterVal;
-    // PEHLE YE THA (hataya nahi, comment kiya hai):
-    // this.markerMapping.clearLinkCache();
-    //
-    // clearLinkCache() CHAARON cache wipe karta hai - poore shehar ki mapping,
-    // records, markers aur summaries. Yahan koi write hoti hi nahi, sirf ward
-    // badla hai; aur cache ward ke hisaab se keyed hai, to doosre ward ka data
-    // takrata bhi nahi.
-    //
-    // Isse ward A -> B -> A karne par A ka poora data (2+N read) dobara aata
-    // tha. Cache ka niyam yahi hai ki jo ek baar aa chuka hai wo dobara na aaye;
-    // wo refresh par hi jaana chahiye.
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 2).then((data: any) => {
       if (this.zoneKML != undefined) {
         this.zoneKML[0]["line"].setMap(null);
@@ -235,100 +209,27 @@ export class WardSurveyAnalysisComponent {
     this.getTotalMarkers();
   }
 
-
-  // Poora MarkersData ek baar cache hota hai — ward badalne par clear.
-
-
-
-
-  // Line/ward ki list ab MarkerMappingService se aati hai. Wo WardWise aur
-  // LineWise ka INTERSECTION leti hai - marker dono mapping me ho aur usi line
-  // par ho, tabhi wo maana jaata hai (S.6, user ka faisla). Sirf ek node me
-  // entry ho to wo adhoora marker hai aur kahin nahi dikhta.
-  getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
-    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
-  }
-
-  getNewPathWardData(wardNo: any): Promise<any> {
-    return this.markerMapping.getWardRecords(this.db, wardNo);
-  }
-
-  // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
-  // imgRef ho to {city}/MarkingSurveyImages/AllMarkerImages/{imgRef}, na ho to
-  // KHAALI string.
-  //
-  // Purane per-line folder wala fallback hata diya gaya hai (S.7, user ka
-  // faisla): "sab new path se hona chaye, old image nhi use hoga". Jis marker
-  // ki migration nahi hui uski image nahi dikhegi, chahe file Storage me padi
-  // ho - migration chalne par apne aap wapas aa jayegi.
-  //
-  // Isliye caller ko khaali string ki soorat sambhalni hai (neeche
-  // exportMarkerImages me default image isi ke liye rakhi hai).
-  getNewPathImageUrl(entry: any, ward: any = null, line: any = null): string {
-    return this.markerMapping.markerImageUrl(entry, ward, line);
-  }
-
-  // Line-level scalars (counts, lastMarkerKey, ApproveStatus) ka new-path base.
-  getLineSummaryPath(ward: any, line: any): string {
-    return "EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + line;
-  }
-
-  // Old markerNo -> MarkersData/{uid} ka path. Migrate na hua ho to null.
-  getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
-    return this.markerMapping.getMarkerDataPath(this.db, ward, line, markerNo);
-  }
-
   getMarkerImages() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkerImages");
     this.wardLineMarkerImageList = [];
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
-    // let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
-    //   markedHouseData => {
-    //     markedHouseInstance.unsubscribe();
-    // NEW PATH: MarkersData + LineWise (same {lineNo: {markerNo: record}} shape)
-    this.getNewPathWardData(this.selectedZone).then(
-      (markedHouseData: any) => {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markedHouseData => {
+        markedHouseInstance.unsubscribe();
         if (markedHouseData != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkerImages", markedHouseData);
           for (let i = 1; i <= this.wardLineCount; i++) {
             let markerData = markedHouseData[i];
-            if (markerData == null) {
-              continue; // is line ke markers abhi migrate nahi hue
-            }
             let keyArray = Object.keys(markerData);
             if (keyArray.length > 0) {
               for (let j = 0; j < keyArray.length; j++) {
-                // PURANA GUARD: let markerNo = parseInt(...); if (!isNaN(...))
-                //
-                // Jis marker ka markerNo record me na ho uski key uid reh jaati
-                // hai ({MK12: rec}) - parseInt us par NaN deta tha aur wo marker
-                // image list se poori tarah gayab ho jaata tha. Key waise ki
-                // waisi lete hain; screen par dikhne wala number record ke apne
-                // markerNo se, aur wo bhi na ho to key se.
-                let markerKey = keyArray[j];
-                let marker = markerData[markerKey];
-                if (marker == null || typeof marker != "object") {
-                  continue;
+                let markerNo = parseInt(keyArray[j]);
+                if (!isNaN(markerNo)) {
+                  if (markerData[markerNo]["cardNumber"] != null) {
+                    let image = markerData[markerNo]["image"];
+                    this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
+                  }
                 }
-                if (marker["cardNumber"] == null) {
-                  continue;
-                }
-                let markerNo = marker["markerNo"] != null ? marker["markerNo"] : markerKey;
-                // PEHLE YE THA (hataya nahi, comment kiya hai):
-                // let image = marker["image"];
-                // this.wardLineMarkerImageList.push({ ..., image: image });
-                //
-                // Naye record me `image` field hai hi nahi - image ka naam ab
-                // `imgRef` me hai (hamesha "{uid}.jpg"). Purane naam par kuch
-                // bhi tikaana galat hai: wo file flat AllMarkerImages folder me
-                // hoti hi nahi.
-                let image = marker["imgRef"];
-                // NEW PATH: image ab flat AllMarkerImages folder me hai (imgRef se).
-                // URL khaali bhi ho sakta hai (imgRef na ho) - caller ko wo
-                // soorat sambhalni hai.
-                let imageUrl = this.getNewPathImageUrl(marker, this.selectedZone, i);
-                this.wardLineMarkerImageList.push({ wardNo: this.selectedZone, lineNo: i, markerNo: markerNo, cardNo: marker["cardNumber"], image: image, imageUrl: imageUrl });
               }
             }
           }
@@ -474,13 +375,9 @@ export class WardSurveyAnalysisComponent {
       this.getOldCards();
       this.getLineSurveyed();
     }
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-    //   houseInstance.unsubscribe();
-    // NEW PATH: MarkersData + LineWise (same {markerNo: record} shape)
-    let dbPath = "";
-    this.getNewPathLineData(this.selectedZone, lineNo).then((data: any) => {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
       if (data != null) {
         this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkedHouses", data);
         let keyArray = Object.keys(data);
@@ -494,22 +391,7 @@ export class WardSurveyAnalysisComponent {
               let markerURL = "../assets/img/red-home.png";
               let lat = data[markerNo]["latLng"].split(",")[0];
               let lng = data[markerNo]["latLng"].split(",")[1];
-              // OLD PATH (reference ke liye rakha hai):
-              // let imageName = data[markerNo]["image"];
-              //
-              // PEHLE YE BHI THA (hataya nahi, comment kiya hai) - imgRef na ho
-              // to purane naam par gir jaata tha:
-              // let imageName = data[markerNo]["imgRef"] != null ? data[markerNo]["imgRef"] : data[markerNo]["image"];
-              //
-              // Wo galat tha: ye naam aage seedha flat folder me joda jaata hai
-              // (AllMarkerImages/{imageName}), aur us folder me purane naam ki
-              // file hoti hi nahi - image tooti hui dikhti. Naye record me
-              // `image` field hai bhi nahi.
-              //
-              // NEW PATH: image global hai (AllMarkerImages/{imgRef}) - move par
-              // copy/rename ki zaroorat nahi. imgRef na ho to naam khaali rahega
-              // aur image nahi dikhegi (S.7 ka niyam).
-              let imageName = data[markerNo]["imgRef"];
+              let imageName = data[markerNo]["image"];
               let entityType = "";
               let detail = this.houseTypeList.find(item => item.id == data[markerNo]["houseType"]);
               if (detail != undefined) {
@@ -561,10 +443,7 @@ export class WardSurveyAnalysisComponent {
 
   getLineSurveyed() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineSurveyed");
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/surveyedCount";
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/surveyedCount";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/surveyedCount";
     let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         revisitInstance.unsubscribe();
@@ -579,10 +458,7 @@ export class WardSurveyAnalysisComponent {
 
   getRevisitRequest() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRevisitRequest");
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRevisitCount";
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/lineRevisitCount";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRevisitCount";
     let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         revisitInstance.unsubscribe();
@@ -597,10 +473,7 @@ export class WardSurveyAnalysisComponent {
 
   getOldCards() {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getOldCards");
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRfidNotFoundCount";
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/lineRfidNotFoundCount";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/lineRfidNotFoundCount";
     let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe(
       data => {
         oldCardInstance.unsubscribe();
@@ -680,12 +553,6 @@ export class WardSurveyAnalysisComponent {
       let progressData = this.progressData;
       let houseTypeList = this.houseTypeList;
       let db = this.db;
-      // callback ke andar `this` component nahi hota, isliye storage path
-      // yahin local me le liya (pehle `this.commonService` par tha).
-      let fireStoragePath = this.commonService.fireStoragePath;
-      // Image URL ka rule service me hai (imgRef -> flat folder, warna purana
-      // per-line folder) - service ka handle bhi isi wajah se yahin le lete hain.
-      let markerMapping = this.markerMapping;
       marker.addListener("click", function () {
         $("#divLoaderRevisit").show();
         setTimeout(() => {
@@ -723,13 +590,7 @@ export class WardSurveyAnalysisComponent {
           $("#lblEntityTypeVirtual").html(entityType);
           $("#virtualImageName").val(imageName);
           $("#virtualAddress").val(address);
-          // OLD PATH (reference ke liye rakha hai):
-          // let imageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
-          // NEW PATH: imageName imgRef ("M12.jpg") ho to flat AllMarkerImages
-          // folder se, warna (marker abhi migrate nahi hua) purane per-line
-          // folder se. Pehle yahan dono soorat me flat folder ka URL banta tha
-          // aur migrate na hue marker ki image tooti hui dikhti thi.
-          let imageURL = markerMapping.imageUrlFromName(imageName, wardNo, lineNo);
+          let imageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
           let element = <HTMLImageElement>document.getElementById("imgVertual");
           element.src = imageURL;
         });
@@ -859,22 +720,11 @@ export class WardSurveyAnalysisComponent {
               let mobile = "";
               let ward = this.selectedZone;
               let houseImage = cardNumber + "House.jpg";
-              // Do folder, do niyam - isliye do variable:
-              //   city    = naya AllMarkerImages folder (seedha city ke naam se)
-              //   oldCity = purane folders (Sikar par "Sikar-Survey" override)
-              // Poori wajah marker-mapping.service.ts ke imageBasePath() par
-              // likhi hai.
               let city = this.commonService.getFireStoreCity();
-              let oldCity = city;
               if (this.cityName == "sikar") {
-                oldCity = "Sikar-Survey";
+                city = "Sikar-Survey";
               }
-              // OLD PATH (reference ke liye rakha hai):
-              // const pathOld = oldCity + "/MarkingSurveyImages/" + wardNo + "/" + lineNo + "/" + markerImageName;
-              // NEW PATH: markerImageName ab imgRef hai (getMarkedHouses se).
-              // Flat folder usi city ke storage me hai - pehle yahan "DevTest"
-              // hardcode tha, isliye doosri city me image milti hi nahi thi.
-              const pathOld = city + "/MarkingSurveyImages/AllMarkerImages/" + markerImageName;
+              const pathOld = city + "/MarkingSurveyImages/" + wardNo + "/" + lineNo + "/" + markerImageName;
 
               const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathOld);
               ref.getDownloadURL()
@@ -883,9 +733,7 @@ export class WardSurveyAnalysisComponent {
                   xhr.responseType = 'blob';
                   xhr.onload = (event) => {
                     var blob = xhr.response;
-                    // SurveyHouseImage PURANA folder hai - yahan Sikar wala
-                    // override lagta hai, isliye oldCity (city nahi).
-                    const pathNew = oldCity + "/SurveyHouseImage/" + houseImage;
+                    const pathNew = city + "/SurveyHouseImage/" + houseImage;
                     const ref1 = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(pathNew);
                     ref1.put(blob).then((promise) => {
                       // ref.delete();
@@ -931,59 +779,26 @@ export class WardSurveyAnalysisComponent {
               dbPath = "EntitySurveyData/VirtualCardHistory/" + cardNumber;
               this.db.object(dbPath).update({ by: userName, date: date });
 
-              // OLD PATH (reference ke liye rakha hai):
-              // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
-              // this.db.object(dbPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
-              // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo + "/revisitKey";
-              // let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
-              //   revisitKeyData => {
-              //     revisitInstance.unsubscribe();
-              //     if (revisitKeyData != null) {
-              //       this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "processVirtualSurvey", revisitKeyData);
-              //       this.db.object(dbPath).remove();
-              //       dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/lineRevisitCount"
-              //       let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
-              //         count => {
-              //           lineRevisitCountInstance.unsubscribe();
-              //           if (count != null) {
-              //             let revisitCount = Number(count) - 1;
-              //             dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
-              //             this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
-              // NEW PATH: MarkersData/{uid}
-              this.getMarkerNewPath(wardNo, lineNo, markerNo).then((newMarkerPath: any) => {
-                if (newMarkerPath == null) {
-                  return; // marker abhi migrate nahi hua -> write skip
-                }
-                this.markerMapping.clearForPath(newMarkerPath, { cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
-                this.db.object(newMarkerPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
-                // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
-                // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
-                this.markerMapping.writeCardMapping(this.db, cardNumber,
-                  this.markerMapping.uidFromPath(newMarkerPath), wardNo, lineNo);   // PEHLE aakhri arg markerNo tha
-                let revisitPath = newMarkerPath + "/revisitKey";
-                let revisitInstance = this.db.object(revisitPath).valueChanges().subscribe(
-                  revisitKeyData => {
-                    revisitInstance.unsubscribe();
-                    if (revisitKeyData != null) {
-                      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "processVirtualSurvey", revisitKeyData);
-                      // Ye write upar wale patch ke baad, shart ke andar hoti hai -
-                      // isliye cache ko yahan alag se batana zaroori hai.
-                      this.markerMapping.clearForPath(newMarkerPath, { revisitKey: null });
-                      this.db.object(revisitPath).remove();
-                      // NEW PATH: LineSummary
-                      let countPath = this.getLineSummaryPath(wardNo, lineNo) + "/lineRevisitCount";
-                      let lineRevisitCountInstance = this.db.object(countPath).valueChanges().subscribe(
-                        count => {
-                          lineRevisitCountInstance.unsubscribe();
-                          if (count != null) {
-                            let revisitCount = Number(count) - 1;
-                            this.db.object(this.getLineSummaryPath(wardNo, lineNo)).update({ lineRevisitCount: revisitCount });
-                          }
+              dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
+              this.db.object(dbPath).update({ cardNumber: cardNumber, isVirtualAssign: 'yes', isApprove: "1" });
+              dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo + "/revisitKey";
+              let revisitInstance = this.db.object(dbPath).valueChanges().subscribe(
+                revisitKeyData => {
+                  revisitInstance.unsubscribe();
+                  if (revisitKeyData != null) {
+                    this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "processVirtualSurvey", revisitKeyData);
+                    this.db.object(dbPath).remove();
+                    dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/lineRevisitCount"
+                    let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
+                      count => {
+                        lineRevisitCountInstance.unsubscribe();
+                        if (count != null) {
+                          let revisitCount = Number(count) - 1;
+                          dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+                          this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
                         }
-                      // OLD PATH (reference ke liye rakha hai):
-                      //   }
-                      // );
-                      );
+                      }
+                    );
 
                     dbPath = "EntitySurveyData/TotalRevisitRequest/" + wardNo;
                     let totalRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1000,10 +815,7 @@ export class WardSurveyAnalysisComponent {
                   }
 
                 }
-                // OLD PATH (reference ke liye rakha hai):
-                // );
-                );
-              }); // getMarkerNewPath().then wrapper close (new-path marker write)
+              );
               this.progressData.totalSurveyed = Number(this.progressData.totalSurveyed) + 1;
               this.progressData.totalLineSurveyed = Number(this.progressData.totalLineSurveyed) + 1;
               this.updateSurveyedCounts(lineNo);
@@ -1134,12 +946,12 @@ export class WardSurveyAnalysisComponent {
                 let className = "house-list";
                 let imageURL = "../../../assets/img/system-generated-image.jpg";
                 if (data[i]["cardImage"] != null) {
-
-                  if (data[i]["surveyorId"] == "-1") {
-                    imageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                  let cardImageFolder = data[i]["surveyorId"] == "-1" ? "SurveyRfidNotFoundCardImage" : "SurveyCardImage";
+                  if (city == "Sikar-Survey") {
+                    this.getSikarCardImages(data[i]["cardNo"], data[i]["cardImage"], cardImageFolder);
                   }
                   else {
-                    imageURL = this.commonService.fireStoragePath + city + "%2FSurveyCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                    imageURL = this.commonService.fireStoragePath + city + "%2F" + cardImageFolder + "%2F" + data[i]["cardImage"] + "?alt=media";
                   }
                 }
 
@@ -1198,22 +1010,8 @@ export class WardSurveyAnalysisComponent {
                 let markerImageURL = "../../../assets/img/system-generated-image.jpg";
                 detail = this.wardLineMarkerImageList.find(item => item.cardNo == data[i]["cardNo"]);
                 if (detail != undefined) {
-                  // PEHLE YE THA (hataya nahi, comment kiya hai):
-                  // if (detail.image != "") {
-                  //   markerImageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + detail.image + "?alt=media";
-                  // }
-                  //
-                  // Shart ab imageUrl par hai, image par nahi. Do wajah:
-                  //   1. `image` ab imgRef se bharta hai - na ho to undefined
-                  //      aata hai, aur `undefined != ""` HAMESHA sach hota hai.
-                  //      Yaani shart ka koi matlab hi nahi bachta tha.
-                  //   2. imgRef na hone par imageUrl khaali "" hota hai, aur
-                  //      us haal me <img src=""> blank/tooti image dikhati.
-                  //      Upar wali default (system-generated-image.jpg) kabhi
-                  //      lagti hi nahi.
-                  if (detail.imageUrl != null && detail.imageUrl != "") {
-                    // NEW PATH: getMarkerImages me imgRef se bana hua URL
-                    markerImageURL = detail.imageUrl;
+                  if (detail.image != "") {
+                    markerImageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + detail.image + "?alt=media";
                   }
                 }
                 const approvedBy = data[i].approvedBy || '';
@@ -1244,12 +1042,9 @@ export class WardSurveyAnalysisComponent {
   }
 
   getBuildingDetail() {
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
-    // let insetance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-    //   insetance.unsubscribe();
-    // NEW PATH: MarkersData + LineWise
-    this.getNewPathLineData(this.selectedZone, this.lineNo).then((data: any) => {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
+    let insetance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      insetance.unsubscribe();
       if (data != null) {
         let keyArray = Object.keys(data);
         for (let i = 0; i < keyArray.length; i++) {
@@ -1300,6 +1095,24 @@ export class WardSurveyAnalysisComponent {
       });
   }
 
+
+  getSikarCardImages(cardNo: any, cardImage: any, folder: any) {
+    let urlSikarSurvey = "Sikar-Survey/" + folder + "/" + cardImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.imageURL = this.commonService.fireStoragePath + "Sikar-Survey%2F" + folder + "%2F" + cardImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.scannedCardList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.imageURL = this.commonService.fireStoragePath + "Sikar%2F" + folder + "%2F" + cardImage + "?alt=media";
+        }
+      });
+  }
 
   getSikarHouseImages(cardNo: any, houseImage: any) {
     let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + houseImage;
@@ -1444,14 +1257,10 @@ export class WardSurveyAnalysisComponent {
     }
     let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNumber;
     this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, servingCount: servingCount });
-    // OLD PATH (reference ke liye rakha hai):
-    // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
-    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-    //   data => {
-    //     markerInstance.unsubscribe();
-    // NEW PATH: MarkersData + LineWise
-    this.getNewPathLineData(wardNo, lineNo).then(
-      (data: any) => {
+    dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        markerInstance.unsubscribe();
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHouseType", data);
           let keyArray = Object.keys(data);
@@ -1460,16 +1269,8 @@ export class WardSurveyAnalysisComponent {
               let markerNo = keyArray[i];
               if (data[markerNo]["cardNumber"] != null) {
                 if (cardNumber == data[markerNo]["cardNumber"]) {
-                  // OLD PATH (reference ke liye rakha hai):
-                  // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
-                  // this.db.object(dbPath).update({ houseType: houseTypeId });
-                  // NEW PATH: MarkersData/{uid}
-                  this.getMarkerNewPath(wardNo, lineNo, markerNo).then((newMarkerPath: any) => {
-                    if (newMarkerPath != null) {
-                      this.markerMapping.clearForPath(newMarkerPath, { houseType: houseTypeId });
-                      this.db.object(newMarkerPath).update({ houseType: houseTypeId });
-                    }
-                  });
+                  let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
+                  this.db.object(dbPath).update({ houseType: houseTypeId });
                   i = keyArray.length;
                 }
               }
@@ -1811,14 +1612,10 @@ export class WardSurveyAnalysisComponent {
     let surveyorId = this.revisitSurveyList[index]["surveyorId"];
     let date = this.revisitSurveyList[index]["date"];
     let revisitKey = this.revisitSurveyList[index]["revisitKey"];
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    // let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
-    //   data => {
-    //     checkInstance.unsubscribe();
-    // NEW PATH: MarkersData + LineWise
-    this.getNewPathLineData(this.selectedZone, lineNo).then(
-      (data: any) => {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        checkInstance.unsubscribe();
         if (data != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkRevisit", data);
           let canDelete = true;
@@ -1830,21 +1627,10 @@ export class WardSurveyAnalysisComponent {
                 if (data[index]["revisitKey"] == revisitKey) {
                   i = keyArray.length;
                   canDelete = false;
-                  // OLD PATH (reference ke liye rakha hai):
-                  // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + index;
-                  // this.db.object(dbPath).update({ revisitCardDeleted: revisitKey });
-                  // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + index + "/revisitKey";
-                  // this.db.database.ref(dbPath).set(null);
-                  // NEW PATH: MarkersData/{uid}
-                  this.getMarkerNewPath(this.selectedZone, lineNo, index).then((newMarkerPath: any) => {
-                    if (newMarkerPath != null) {
-                      // Cache me dono badlaav ek saath - update wala field aur
-                      // neeche null hone wala revisitKey bhi (null = field hatao).
-                      this.markerMapping.clearForPath(newMarkerPath, { revisitCardDeleted: revisitKey, revisitKey: null });
-                      this.db.object(newMarkerPath).update({ revisitCardDeleted: revisitKey });
-                      this.db.database.ref(newMarkerPath + "/revisitKey").set(null);
-                    }
-                  });
+                  dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + index;
+                  this.db.object(dbPath).update({ revisitCardDeleted: revisitKey });
+                  dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + index + "/revisitKey";
+                  this.db.database.ref(dbPath).set(null);
                 }
               }
             }
@@ -1854,20 +1640,15 @@ export class WardSurveyAnalysisComponent {
           }
           else {
             this.deleteRevisit(lineNo, revisitKey, date, surveyorId, index);
-            // OLD PATH (reference ke liye rakha hai):
-            // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRevisitCount"
-            // NEW PATH: LineSummary
-            let dbPath = this.getLineSummaryPath(this.selectedZone, lineNo) + "/lineRevisitCount";
+            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRevisitCount"
             let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
               count => {
                 lineRevisitCountInstance.unsubscribe();
                 if (count != null) {
                   this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkRevisit", count);
                   let revisitCount = Number(count) - 1;
-                  // OLD PATH (reference ke liye rakha hai):
-                  // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-                  // this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
-                  this.db.object(this.getLineSummaryPath(this.selectedZone, lineNo)).update({ lineRevisitCount: revisitCount });
+                  dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+                  this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
                 }
               }
             );
@@ -1996,14 +1777,10 @@ export class WardSurveyAnalysisComponent {
     $('#divLoaderUpdate').show();
     let lineNo = this.revisitSurveyList[index]["lineNo"];
     let revisitKey = this.revisitSurveyList[index]["revisitKey"];
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    // let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
-    //   data => {
-    //     checkInstance.unsubscribe();
-    // NEW PATH: MarkersData + LineWise
-    this.getNewPathLineData(this.selectedZone, lineNo).then(
-      (data: any) => {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    let checkInstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        checkInstance.unsubscribe();
         if (data != null) {
           let canProcess = true;
           let markerNo = "0";
@@ -2204,25 +1981,11 @@ export class WardSurveyAnalysisComponent {
     dbPath = "Houses/" + this.selectedZone + "/" + lineNo + "/" + cardNumber;
     this.db.object(dbPath).update(data);
 
-    // OLD PATH (reference ke liye rakha hai):
-    // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + markerNo;
-    // this.db.object(dbPath).update({ cardNumber: cardNumber });
-    // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + markerNo + "/revisitKey";
-    // this.db.database.ref(dbPath).set(null);
-    // NEW PATH: MarkersData/{uid}
-    this.getMarkerNewPath(this.selectedZone, lineNo, markerNo).then((newMarkerPath: any) => {
-      if (newMarkerPath != null) {
-        // Cache me dono badlaav ek saath - cardNumber aur neeche null hone wala
-        // revisitKey bhi (null = field hatao).
-        this.markerMapping.clearForPath(newMarkerPath, { cardNumber: cardNumber, revisitKey: null });
-        this.db.object(newMarkerPath).update({ cardNumber: cardNumber });
-        this.db.database.ref(newMarkerPath + "/revisitKey").set(null);
-        // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
-        // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
-        this.markerMapping.writeCardMapping(this.db, cardNumber,
-          this.markerMapping.uidFromPath(newMarkerPath), this.selectedZone, lineNo);   // PEHLE aakhri arg markerNo tha
-      }
-    });
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + markerNo;
+    this.db.object(dbPath).update({ cardNumber: cardNumber });
+
+    dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/" + markerNo + "/revisitKey";
+    this.db.database.ref(dbPath).set(null);
 
     this.moveToRevisitSurveyData(lineNo, revisitKey, cardNumber, index);
     this.resetSurveyed();
@@ -2260,20 +2023,15 @@ export class WardSurveyAnalysisComponent {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateRevisitCounts");
     let dbPath = "";
     if (type != "delete") {
-      // OLD PATH (reference ke liye rakha hai):
-      // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRevisitCount"
-      // NEW PATH: LineSummary
-      dbPath = this.getLineSummaryPath(this.selectedZone, lineNo) + "/lineRevisitCount";
+      dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRevisitCount"
       let lineRevisitCountInstance = this.db.object(dbPath).valueChanges().subscribe(
         count => {
           lineRevisitCountInstance.unsubscribe();
           if (count != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateRevisitCounts", count);
             let revisitCount = Number(count) - 1;
-            // OLD PATH (reference ke liye rakha hai):
-            // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-            // this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
-            this.db.object(this.getLineSummaryPath(this.selectedZone, lineNo)).update({ lineRevisitCount: revisitCount });
+            dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+            this.db.object(dbPath).update({ lineRevisitCount: revisitCount });
           }
         }
       );
@@ -2309,10 +2067,7 @@ export class WardSurveyAnalysisComponent {
 
   updateSurveyedCounts(lineNo: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSurveyedCounts");
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/surveyedCount";
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, lineNo) + "/surveyedCount";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/surveyedCount";
     let lineSurvedCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       count => {
         lineSurvedCountInstance.unsubscribe();
@@ -2321,10 +2076,8 @@ export class WardSurveyAnalysisComponent {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyedCounts", count);
           surveyedCount = Number(count) + 1;
         }
-        // OLD PATH (reference ke liye rakha hai):
-        // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/surveyedCount";
-        // this.db.database.ref(dbPath).set(surveyedCount);
-        this.db.database.ref(this.getLineSummaryPath(this.selectedZone, lineNo) + "/surveyedCount").set(surveyedCount);
+        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/surveyedCount";
+        this.db.database.ref(dbPath).set(surveyedCount);
       }
     );
 
@@ -2397,20 +2150,15 @@ export class WardSurveyAnalysisComponent {
 
   updateRFIDNotCounts(lineNo: any, date: any, surveyorId: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateRFIDNotCounts");
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRfidNotFoundCount"
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, lineNo) + "/lineRfidNotFoundCount";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo + "/lineRfidNotFoundCount"
     let lineRFIDCountInstance = this.db.object(dbPath).valueChanges().subscribe(
       count => {
         lineRFIDCountInstance.unsubscribe();
         if (count != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateRFIDNotCounts", count);
           let rfidCount = Number(count) - 1;
-          // OLD PATH (reference ke liye rakha hai):
-          // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-          // this.db.object(dbPath).update({ lineRfidNotFoundCount: rfidCount });
-          this.db.object(this.getLineSummaryPath(this.selectedZone, lineNo)).update({ lineRfidNotFoundCount: rfidCount });
+          dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+          this.db.object(dbPath).update({ lineRfidNotFoundCount: rfidCount });
         }
       }
     );
@@ -2490,14 +2238,10 @@ export class WardSurveyAnalysisComponent {
           dbPath = "EntitySurveyData/RFIDNotFoundSurvey/" + this.selectedZone + "/" + this.lineNo + "/" + rfidCardNo;
           this.db.object(dbPath).remove();
 
-          // OLD PATH (reference ke liye rakha hai):
-          // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
-          // let rfidHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
-          //   data => {
-          //     rfidHouseInstance.unsubscribe();
-          // NEW PATH: MarkersData + LineWise
-          this.getNewPathLineData(this.selectedZone, this.lineNo).then(
-            (data: any) => {
+          dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo;
+          let rfidHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
+            data => {
+              rfidHouseInstance.unsubscribe();
               if (data != null) {
                 this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "saveRFIDSurveyData", data);
                 let keyArray = Object.keys(data);
@@ -2508,25 +2252,10 @@ export class WardSurveyAnalysisComponent {
                     if (data[markerIndex]["rfidNotFoundKey"] != null) {
                       if (data[markerIndex]["rfidNotFoundKey"] == rfid) {
                         markerNo = markerIndex;
-                        // OLD PATH (reference ke liye rakha hai):
-                        // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
-                        // this.db.object(dbPath).update({ cardNumber: cardNumber });
-                        // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo + "/rfidNotFoundKey";
-                        // this.db.database.ref(dbPath).set(null);
-                        // NEW PATH: MarkersData/{uid}
-                        this.getMarkerNewPath(this.selectedZone, this.lineNo, markerNo).then((newMarkerPath: any) => {
-                          if (newMarkerPath != null) {
-                            // Cache me dono badlaav ek saath - cardNumber aur
-                            // neeche null hone wala rfidNotFoundKey bhi.
-                            this.markerMapping.clearForPath(newMarkerPath, { cardNumber: cardNumber, rfidNotFoundKey: null });
-                            this.db.object(newMarkerPath).update({ cardNumber: cardNumber });
-                            this.db.database.ref(newMarkerPath + "/rfidNotFoundKey").set(null);
-                            // Card ab is marker par hai - MarkerWardMapping me markerkey bhi likh
-                            // do, taaki card se marker seedha mile (aur move ke baad bhi mile).
-                            this.markerMapping.writeCardMapping(this.db, cardNumber,
-                              this.markerMapping.uidFromPath(newMarkerPath), this.selectedZone, this.lineNo);   // PEHLE aakhri arg markerNo tha
-                          }
-                        });
+                        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo;
+                        this.db.object(dbPath).update({ cardNumber: cardNumber });
+                        dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/" + markerNo + "/rfidNotFoundKey";
+                        this.db.database.ref(dbPath).set(null);
                       }
                     }
                   }

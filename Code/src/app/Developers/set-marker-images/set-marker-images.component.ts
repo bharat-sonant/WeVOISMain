@@ -36,19 +36,6 @@ export class SetMarkerImagesComponent implements OnInit {
   }
 
   setMarkerID() {
-    // YE PAGE ABHI BAND HAI (purani scheme).
-    // Ye har marker ko "markerId" deta tha aur uski image
-    // "{city}/MarkingSurveyImagesWithMarkerID/{markerId}.jpg" par copy karta
-    // tha. Padhta bhi ye purane root structure "EntityMarkingData/{ward}/
-    // {line}/{markerNo}" se hai, jo ab hai hi nahi.
-    // Naye structure me yahi kaam pehle se ho chuka hai: marker ki pehchaan
-    // uid (M1, M2...) hai aur image hamesha
-    // "MarkingSurveyImages/AllMarkerImages/{uid}.jpg" par rehti hai. Isliye
-    // is page ka ab koi kaam nahi bacha.
-    // Chalu karne ke liye: neeche wale 2 line hata dein.
-    this.commonService.setAlertMessage("error", "This page uses the old marker scheme and has been disabled. In the new structure the marker ID is the uid (MK1, MK2...) and the image lives in the AllMarkerImages folder.");
-    return;
-
     if ($(this.ddlZone).val() == "0") {
       this.commonService.setAlertMessage("error", "Please select Ward");
       return;

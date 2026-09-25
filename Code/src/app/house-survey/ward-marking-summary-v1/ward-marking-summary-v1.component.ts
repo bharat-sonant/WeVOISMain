@@ -1,0 +1,1947 @@
+import { Component, OnInit } from "@angular/core";
+import { CommonService } from "../../services/common/common.service";
+import { FirebaseService } from "../../firebase.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
+
+@Component({
+  selector: "app-ward-marking-summary-v1",
+  templateUrl: "./ward-marking-summary-v1.component.html",
+  styleUrls: ["./ward-marking-summary-v1.component.scss"],
+})
+export class WardMarkingSummaryV1Component implements OnInit {
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
+  selectedCircle: any;
+  selectedZone: any;
+  wardList: any[] = [];
+  wardProgressList: any[] = [];
+  wardProgressListShow: any[] = [];
+  houseTypeList: any[] = [];
+  zoneHouseTypeList: any[];
+  public cityName: any;
+  cityList: any[] = [];
+  markerCityName: any;
+  Approvemarker: any;
+  Username: any;
+  db: any;
+  isFirst = true;
+  public isAlreadyShow = false;
+  lineMarkerList: any[];
+  wardLines: any;
+  markerList: any[];
+  userList: any[] = [];
+  markerDetailList: any[];
+  markerExportList: any[] = [];
+  markerData: markerDatail = {
+    totalLines: "0",
+    totalMarkers: 0,
+    totalAlreadyCard: 0,
+    totalHouses: 0,
+    wardMarkers: 0,
+    wardHouses: 0,
+    wardInstalled: 0,
+    wardApprovedLines: 0,
+    lastUpdate: "---",
+    wardNo: "---",
+    lineNo: "0",
+    lastScan: ""
+
+  };
+  divHouseType = "#divHouseType";
+  ddlHouseType = "#ddlHouseType";
+  houseWardNo = "#houseWardNo";
+  houseLineNo = "#houseLineNo";
+  houseIndex = "#houseIndex";
+  divConfirm = "#divConfirm";
+  deleteMarkerId = "#deleteMarkerId";
+  deleteAlreadyCard = "#deleteAlreadyCard";
+  deleteWardNo = "#deleteWardNo";
+  deleteLineNo = "#deleteLineNo";
+  ddlZone = "#ddlZone";
+  divLoaderMain = "#divLoaderMain";
+  divLoaderCounts = "#divLoaderCounts";
+  totalMarkersCount: any;
+  totalHousesCount: any;
+  totalMarkersCountActual: any; //for actual couts
+  totalHousesCountActual: any; //for actual couts
+  userIsExternal: boolean;
+
+  public totalTypeCount: any;
+  isActionShow: any;
+  userId: any;
+  inProgressWards: any[] = [];
+  serviceName = "marking-summary";
+  isShowEntityExport: any;
+  pendingGeoRequestsForExport = 0;
+  public hideComplex: any;
+
+  ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management", "Marking-Summary", localStorage.getItem("userID"));
+    this.isActionShow = true;
+    this.isShowEntityExport = true;
+    this.userIsExternal = localStorage.getItem("userType") == "External User" ? true : false;
+    if (localStorage.getItem("userType") == "External User" && this.cityName == "jodhpur") {
+      this.isShowEntityExport = false;
+    }
+    if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
+      //this.isActionShow = false;
+    }
+    if (this.userIsExternal == true && this.cityName == "ajmer") {
+      this.hideComplex = 1;
+    }
+    else {
+      this.hideComplex = 0;
+    }
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.getMarkerSummary();
+    this.getMarkerCityName();
+    this.showHideAlreadyCardInstalled();
+    this.getHouseType();
+    this.getAssignedWard();
+  }
+
+  getMarkerSummary() {
+    let dbPath = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyManagement%2FMarkingManagement%2FMarkingSummary.json?alt=media";
+    let markerSummaryInstance = this.httpService.get(dbPath).subscribe(
+      data => {
+        markerSummaryInstance.unsubscribe();
+        if (data != null) {
+          this.markerData.lastUpdate = data["markerSummarylastUpdate"];
+        }
+      }
+    );
+  }
+
+  getMarkerCityName() {
+    this.cityList = JSON.parse(localStorage.getItem("cityList"));
+    let detail = this.cityList.find(item => item.city == this.cityName);
+    if (detail != undefined) {
+      this.markerCityName = detail.name;
+    }
+  }
+
+  showHideAlreadyCardInstalled() {
+    if (this.cityName == "sikar" || this.cityName == "reengus") {
+      this.isAlreadyShow = true;
+    }
+  }
+
+  getHouseType() {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let houseTypeInstance = this.httpService.get(path).subscribe(data => {
+      houseTypeInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 1; i < keyArray.length; i++) {
+          let id = keyArray[i];
+          let houseType = data[id]["name"].toString().split("(")[0];
+          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"] });
+        }
+      }
+    });
+  }
+
+  getWards() {
+
+    this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
+    // For Sikar, also show the Market/Commercial marking routes. These are hidden
+    // from the shared allZoneList (setAllZones) and actually live in the marking
+    // defaults (markingWards), so re-add them here only for this screen.
+    if (this.cityName == "sikar") {
+      this.addSikarSpecialZones();
+    }
+    this.buildWardProgress();
+  }
+
+  addSikarSpecialZones() {
+    let showList = ["Market", "mkt", "Commercial"];
+    let markingWardsData = localStorage.getItem("markingWards");
+    let markingWards = markingWardsData ? JSON.parse(markingWardsData) : [];
+    for (let i = 0; i < markingWards.length; i++) {
+      let zoneNo = markingWards[i]["zoneNo"];
+      if (zoneNo == null) {
+        continue;
+      }
+      let match = showList.find(name => zoneNo.toString().includes(name));
+      let already = this.wardList.find(item => item["zoneNo"] == zoneNo);
+      if (match != undefined && already == undefined) {
+        this.wardList.push({ zoneNo: zoneNo, zoneName: markingWards[i]["zoneName"] });
+      }
+    }
+  }
+
+  buildWardProgress() {
+    this.wardProgressList = [];
+    if (this.wardList.length > 0) {
+      for (let i = 0; i < this.wardList.length; i++) {
+        let wardNo = this.wardList[i]["zoneNo"];
+        let url = this.cityName + "/13A3/house-marking/" + wardNo;
+        let preCssClass = "";
+        let newDetail = this.inProgressWards.find(item => item.ward == wardNo);
+        if (newDetail != undefined) {
+          preCssClass = "inProgress";
+        }
+        this.wardProgressList.push({ wardNo: wardNo, diff: 0, markers: 0, url: url, alreadyInstalled: 0, wardLines: 0, approvedLines: 0, houses: 0, complex: 0, houseInComplex: 0, status: "", cssClass: "not-start", preCssClass: preCssClass });
+
+        if (i == 1) {
+          setTimeout(() => {
+            $("#tr1").addClass("active");
+            this.getMarkingDetail(wardNo, 1);
+          }, 3000);
+
+        }
+        if (wardNo != "0") {
+          this.getWardSummary(i, wardNo);
+        }
+
+      }
+    }
+    this.wardList[0]["zoneNo"] = "--All--";
+  }
+
+  exportMarkers() {
+    this.markerExportList = [];
+    this.pendingGeoRequestsForExport = 0;
+    $(this.divLoaderMain).show();
+    let zoneNo = $(this.ddlZone).val();
+    if (zoneNo == "--All--") {
+      this.getExportMarkerData(1, 'All');
+    }
+    else {
+      for (let i = 0; i < this.wardList.length; i++) {
+        if (this.wardList[i]["zoneNo"] == zoneNo) {
+          this.getExportMarkerData(i, zoneNo);
+          i = this.wardList.length;
+        }
+      }
+    }
+  }
+
+
+
+  getExportMarkerData(index: any, type: any) {
+    if (index == this.wardList.length) {
+      if (this.pendingGeoRequestsForExport > 0) {
+        setTimeout(() => {
+          this.getExportMarkerData(index, type);
+        }, 300);
+        return;
+      }
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Zone";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Line";
+      htmlString += "</td>";
+      // htmlString += "<td>";
+      //  htmlString += "MarkerKey";
+      //  htmlString += "</td>";
+      if (this.cityName != 'hisar') {
+        htmlString += "<td>";
+        htmlString += "Marking Date";
+        htmlString += "</td>";
+      }
+      htmlString += "<td>";
+      htmlString += "Marker ID";
+      htmlString += "</td>";
+      if (this.cityName == 'hisar') {
+        htmlString += "<td>";
+        htmlString += "Property ID";
+        htmlString += "</td>";
+      }
+      htmlString += "<td>";
+      htmlString += "Longitue";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Latitude";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Geo Address";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Address";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Entity Counts";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Owner Name";
+      htmlString += "</td>";
+      if (this.cityName != 'hisar') {
+        htmlString += "<td>";
+        htmlString += "Mobile No.";
+        htmlString += "</td>";
+      }
+      htmlString += "<td>";
+      htmlString += "House No.";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Building Name";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Street/Colony";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "No. of Person";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Ward";
+      htmlString += "</td>";
+      if (this.cityName == "ajmer") {
+        htmlString += "<td>";
+        htmlString += "Land Type";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Plot Length";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Plot Breadth";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Total Area of the plot";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Vacant Area";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Plinth Area";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Total Build-Up Area";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Under Ground (In Square Feet)";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Ground Floor (In Square Feet)";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "No of Floors/Stories";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Total Area";
+        htmlString += "</td>";
+      }
+
+      if (this.cityName == 'hisar') {
+        if (this.userIsExternal == false) {
+          htmlString += "<td>";
+          htmlString += "Marking Date";
+          htmlString += "</td>";
+        }
+      }
+      htmlString += "<td>";
+      htmlString += "Remark";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.markerExportList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.markerExportList[i]["Zone"];
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += this.markerExportList[i]["Line"];
+        htmlString += "</td>";
+        //  htmlString += "<td t='s'>";
+        //  htmlString += this.markerExportList[i]["MarkerNo"];
+        //  htmlString += "</td>";
+        if (this.cityName != 'hisar') {
+          htmlString += "<td t='s'>";
+          htmlString += this.markerExportList[i]["markingDate"];
+          htmlString += "</td>";
+        }
+        htmlString += "<td>";
+        if (!this.markerExportList[i]["markerId"].includes("HISARM")) {
+          htmlString += this.markerExportList[i]["markerId"];
+        }
+        htmlString += "</td>";
+        if (this.cityName == 'hisar') {
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["propId"];
+          htmlString += "</td>";
+        }
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["Longitue"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["Latitude"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["imageCaptureLocation"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["address"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["Type"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["entityCounts"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["ownerName"];
+        htmlString += "</td>";
+        if (this.cityName != 'hisar') {
+          htmlString += "<td t='s'>";
+          htmlString += this.markerExportList[i]["mobileNo"];
+          htmlString += "</td>";
+        }
+
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["houseNo"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["buildingName"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["streetColony"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["persons"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["wardNumber"];
+        htmlString += "</td>";
+        if (this.cityName == "ajmer") {
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["landType"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["plotLength"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["plotDepth"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["totalAreaOfPlot"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["vacantArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["plinthArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["totalBuildupArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["underGroundArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["groundFloorArea"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["totalFloor"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += this.markerExportList[i]["totalArea"];
+          htmlString += "</td>";
+        }
+        if (this.cityName == 'hisar') {
+          if (this.userIsExternal == false) {
+            htmlString += "<td t='s'>";
+            htmlString += this.markerExportList[i]["markingDate"];
+            htmlString += "</td>";
+          }
+          ;
+        }
+        htmlString += "<td>";
+        htmlString += this.markerExportList[i]["markerRemark"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName = this.commonService.getFireStoreCity() + "-" + type + "-MarkersData.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+      $(this.divLoaderMain).hide();
+    }
+    else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
+      let zoneNo = this.wardList[index]["zoneNo"];
+      // OLD PATH (reference ke liye rakha hai):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      //   markerData => {
+      //     markerInstance.unsubscribe();
+      this.getNewPathWardData(zoneNo).then(
+        (markerData: any) => {
+          if (markerData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getExportMarkerData", markerData);
+            let keyArray = Object.keys(markerData);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let lineData = markerData[lineNo];
+                let markerKeyArray = Object.keys(lineData);
+                for (let j = 0; j < markerKeyArray.length; j++) {
+                  let markerNo = markerKeyArray[j];
+                  const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;//condition for excluding data if external user
+                  if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
+                    let houseType = "";
+                    let detail = this.houseTypeList.find(item => item.id == lineData[markerNo]["houseType"]);
+                    if (detail != undefined) {
+                      houseType = detail.houseType;
+                    }
+                    let lat = "";
+                    let lng = "";
+                    if (lineData[markerNo]["latLng"] != null) {
+                      lat = lineData[markerNo]["latLng"].split(',')[0];
+                      lng = lineData[markerNo]["latLng"].split(',')[1];
+                    }
+                    let address = lineData[markerNo]['address'] || `${lineData[markerNo]['address1']} ${lineData[markerNo]['address2']}` || '';
+                    const mobileNo = lineData[markerNo]['mobileNumber'] || '';
+                    const houseNo = lineData[markerNo]['houseNumber'] || '';
+                    const streetColony = lineData[markerNo]['streetColony'] || '';
+                    const imageCaptureLocation = lineData[markerNo]['imageCaptureLocation'] || '';
+                    if (!imageCaptureLocation && lat !== "" && lng !== "") {
+                      this.pendingGeoRequestsForExport++;
+                      this.getAddressFromCoords(Number(lat), Number(lng)).then((geoAddress: string) => {
+                        if (geoAddress) {
+                          // OLD PATH (reference ke liye rakha hai):
+                          // const path = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+                          // this.db.object(path).update({ imageCaptureLocation: geoAddress });
+                          // NEW PATH: MarkersData/{uid}
+                          // Cache yahan clear NAHI karni. Ye update sirf record ka
+                          // ek field badalta hai - markerNo -> uid wali mapping
+                          // waisi ki waisi rehti hai, to cache basi hoti hi nahi.
+                          // Aur ye block har marker ke geocode response par alag
+                          // se chalta hai; clear karte to har response par ward ka
+                          // link index dobara padhna padta (500 marker = 1000 read).
+                          this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
+                            if (newMarkerPath != null) {
+                              this.db.object(newMarkerPath).update({ imageCaptureLocation: geoAddress });
+                            }
+                          });
+                          this.updateExportRowImageCaptureLocation(zoneNo, lineNo, markerNo, geoAddress);
+                        }
+                      }).catch(() => { }).finally(() => {
+                        this.pendingGeoRequestsForExport = Math.max(0, this.pendingGeoRequestsForExport - 1);
+                      });
+                    }
+                    const buildingName = lineData[markerNo]['buildingName'] || '';
+                    const totalHouses = lineData[markerNo]['totalHouses'] || '';
+                    const wardNumber = lineData[markerNo]['wardNumber'] || '';
+                    let totalAreaOfPlot = lineData[markerNo]['totalAreaOfPlot'] || '';
+                    let vacantArea = lineData[markerNo]['vacantArea'] || '';
+                    let plinthArea = lineData[markerNo]['plinthArea'] || '';
+                    let totalBuildupArea = lineData[markerNo]['totalBuildupArea'] || '';
+                    let totalFloor = lineData[markerNo]['totalFloor'] || '';
+                    let landType = lineData[markerNo]['landType'] || '';
+                    let underGroundArea = lineData[markerNo]['underGroundArea'] || '';
+                    let groundFloorArea = lineData[markerNo]['groundFloorArea'] || '';
+                    let plotLength = lineData[markerNo]["plotLength"] || '';
+                    let plotDepth = lineData[markerNo]["plotDepth"] || '';
+                    let propId = lineData[markerNo]['propId'] || '';
+                    const markerRemark = lineData[markerNo]['markerRemark'] || '';
+                    let markingDate = "";
+                    if (lineData[markerNo]["date"] != null) {
+                      markingDate = lineData[markerNo]["date"].split(" ")[0];
+                      markingDate = markingDate.split("-")[2] + " " + this.commonService.getCurrentMonthShortName(Number(markingDate.split("-")[1])) + " " + markingDate.split("-")[0];
+                    }
+
+                    let totalArea = lineData[markerNo]['totalArea'] || '';
+                    if (lineData[markerNo]["BuildingDetails"] != null) {
+                      totalAreaOfPlot = lineData[markerNo]["BuildingDetails"]["totalAreaOfPlot"] ? lineData[markerNo]["BuildingDetails"]["totalAreaOfPlot"] : "";
+                      landType = lineData[markerNo]["BuildingDetails"]["landType"] ? lineData[markerNo]["BuildingDetails"]["landType"] : "";
+                      totalFloor = lineData[markerNo]["BuildingDetails"]["noOfFloors"] ? lineData[markerNo]["BuildingDetails"]["noOfFloors"] : "";
+                      plinthArea = lineData[markerNo]["BuildingDetails"]["plinthArea"] ? lineData[markerNo]["BuildingDetails"]["plinthArea"] : "";
+                      totalBuildupArea = lineData[markerNo]["BuildingDetails"]["totalBuildUpArea"] ? lineData[markerNo]["BuildingDetails"]["totalBuildUpArea"] : "";
+                      vacantArea = lineData[markerNo]["BuildingDetails"]["vacantArea"] ? lineData[markerNo]["BuildingDetails"]["vacantArea"] : "";
+                      underGroundArea = lineData[markerNo]["BuildingDetails"]["underGroundArea"] ? lineData[markerNo]["BuildingDetails"]["underGroundArea"] : "";
+                      groundFloorArea = lineData[markerNo]["BuildingDetails"]["groundFloorArea"] ? lineData[markerNo]["BuildingDetails"]["groundFloorArea"] : "";
+                      totalArea = lineData[markerNo]["BuildingDetails"]["totalArea"] ? lineData[markerNo]["BuildingDetails"]["totalArea"] : "";
+                      plotLength = lineData[markerNo]["BuildingDetails"]["plotLength"] ? lineData[markerNo]["BuildingDetails"]["plotLength"] : "";
+                      plotDepth = lineData[markerNo]["BuildingDetails"]["plotDepth"] ? lineData[markerNo]["BuildingDetails"]["plotDepth"] : "";
+                    }
+
+
+
+                    let cardNumber = "";
+                    let vertualMarkerID = "";
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      cardNumber = lineData[markerNo]["cardNumber"];
+                      vertualMarkerID = lineData[markerNo]["cardNumber"];
+                    }
+                    else {
+                      if (lineData[markerNo]["markerId"] != null) {
+                        vertualMarkerID = this.commonService.getDefaultCardPrefix() + lineData[markerNo]["markerId"];
+                      }
+                    }
+                    let ownerName = "";
+                    let persons = "";
+                    if (lineData[markerNo]["ownerName"] != null) {
+                      ownerName = lineData[markerNo]["ownerName"].toUpperCase();
+                    }
+                    if (lineData[markerNo]["totalPerson"] != null) {
+                      persons = lineData[markerNo]["totalPerson"];
+                    }
+                    let entityCounts = 1;
+                    if (lineData[markerNo]["houseType"] == "19" || lineData[markerNo]["houseType"] == "20") {
+                      if (lineData[markerNo]["totalHouses"] != null) {
+                        let servingCount = parseInt(lineData[markerNo]["totalHouses"]);
+                        if (isNaN(servingCount)) {
+                          servingCount = 1;
+                        }
+                        entityCounts = servingCount;
+                      }
+                    }
+                    if (address == "") {
+                      if (cardNumber != "") {
+                        let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNumber + "/address";
+                        let addressInstance = this.db.object(dbPath).valueChanges().subscribe(
+                          addressData => {
+                            addressInstance.unsubscribe();
+                            if (addressData != null) {
+                              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getExportMarkerData", addressData);
+                              address = addressData.toString();
+                              // OLD PATH (reference ke liye rakha hai):
+                              // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+                              // this.db.object(dbPath).update({ address: address });
+                              // NEW PATH: MarkersData/{uid}
+                              // Cache clear nahi (wajah upar imageCaptureLocation
+                              // wale block me likhi hai) - ye bhi per-marker
+                              // callback hai.
+                              this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
+                                if (newMarkerPath != null) {
+                                  this.db.object(newMarkerPath).update({ address: address });
+                                }
+                              });
+                            }
+                            this.markerExportList.push({ Zone: zoneNo, Line: lineNo, imageCaptureLocation, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate, markerRemark });
+                          }
+                        );
+                      }
+                      else {
+                        address = this.markerCityName;
+                        // OLD PATH (reference ke liye rakha hai):
+                        // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+                        // this.db.object(dbPath).update({ address: address });
+                        // NEW PATH: MarkersData/{uid}
+                        // Cache clear nahi - wajah upar wale block me likhi hai.
+                        this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
+                          if (newMarkerPath != null) {
+                            this.db.object(newMarkerPath).update({ address: address });
+                          }
+                        });
+                        this.markerExportList.push({ Zone: zoneNo, Line: lineNo, imageCaptureLocation, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate, markerRemark });
+                      }
+                    }
+                    else {
+                      this.markerExportList.push({ Zone: zoneNo, Line: lineNo, imageCaptureLocation, propId, Longitue: lng, Latitude: lat, Type: houseType, address: address, MarkerNo: markerNo, cardNumber: cardNumber, entityCounts: entityCounts, ownerName: ownerName, persons: persons, markerId: vertualMarkerID, mobileNo, houseNo, streetColony, buildingName, totalHouses, wardNumber, landType, plotDepth, plotLength, totalArea, totalAreaOfPlot, totalBuildupArea, underGroundArea, groundFloorArea, totalFloor, plinthArea, vacantArea, markingDate, markerRemark });
+                    }
+                  }
+                }
+              }
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportMarkerData(index, type);
+            }
+            else {
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportMarkerData(index, type);
+            }
+          }
+          else {
+            index++;
+            if (type != "All") {
+              index = this.wardList.length;
+            }
+            this.getExportMarkerData(index, type);
+          }
+        });
+    }
+  }
+  getAddressFromCoords(lat: number, lng: number): Promise<string> {
+    return new Promise((resolve) => {
+      const API_KEY = "AIzaSyAEQ6Y1RVEcJrUNzdf2UzNyCARoyPwRzw8";
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`;
+
+      this.httpService.get(url).subscribe(
+        (response: any) => {
+          if (response.status === 'OK' && response.results.length > 0) {
+            resolve(response.results[0].formatted_address);
+          } else {
+            resolve('');
+          }
+        },
+        (error) => {
+          console.error('Geocoding Error:', error);
+          resolve('');
+        }
+      );
+    });
+  }
+
+  private updateExportRowImageCaptureLocation(zoneNo: any, lineNo: any, markerNo: any, geoAddress: string, attempt: number = 0) {
+    const row = this.markerExportList.find(item => item["Zone"] == zoneNo && item["Line"] == lineNo && item["MarkerNo"] == markerNo);
+    if (row) {
+      row["imageCaptureLocation"] = geoAddress;
+      return;
+    }
+    if (attempt < 10) {
+      setTimeout(() => {
+        this.updateExportRowImageCaptureLocation(zoneNo, lineNo, markerNo, geoAddress, attempt + 1);
+      }, 150);
+    }
+  }
+  getWardSummary(index: any, wardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardSummary");
+    this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
+      let wardLines = JSON.parse(data);
+      this.wardLines = wardLines["totalLines"];
+      this.wardProgressList[index]["wardLines"] = this.wardLines;
+      let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo;
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+        markerInstance.unsubscribe();
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+          const { marked = 0, actualMarked = 0, houseCount = 0, actualHouseCount = 0, complexCount = 0, actualComplexCount = 0, housesInComplex = 0, actualHousesInComplex = 0, alreadyInstalled = 0, approved = 0 } = data || {};
+          this.markerData.totalAlreadyCard += Number(alreadyInstalled);
+          if (this.userIsExternal == true && this.cityName == "ajmer") {
+            let markers = this.userIsExternal ? parseInt(actualMarked != 0 ? actualMarked : marked) : parseInt(marked);
+            let house = this.userIsExternal ? parseInt(actualHouseCount != 0 ? actualHouseCount : houseCount) : parseInt(houseCount);
+            if ((house - markers) > 0) {
+              markers = house;// (house - houseComplex) + complex;
+            }
+            this.wardProgressList[index]["markers"] = markers;
+            this.wardProgressList[index]["alreadyInstalled"] = Number(alreadyInstalled);
+            this.wardProgressList[index]["houses"] = this.userIsExternal ? parseInt(actualHouseCount != 0 ? actualHouseCount : houseCount) : parseInt(houseCount);
+            this.wardProgressList[index]["complex"] = this.userIsExternal ? parseInt(actualComplexCount != 0 ? actualComplexCount : complexCount) : parseInt(complexCount);
+            this.wardProgressList[index]["houseInComplex"] = this.userIsExternal ? parseInt(actualHousesInComplex != 0 ? actualHousesInComplex : housesInComplex) : parseInt(housesInComplex);
+            this.wardProgressList[index]["approvedLines"] = Number(approved);
+            this.wardProgressList[index]["status"] = this.wardProgressList[index]["markers"] > 0 ? "In progress" : this.wardProgressList[index]["status"];
+            if (approved && Number(approved) == Number(this.wardProgressList[index]["wardLines"])) {
+              this.wardProgressList[index]["status"] = "Marking done";
+              this.wardProgressList[index]["cssClass"] = "marking-done";
+            }
+
+          }
+          else {
+            this.wardProgressList[index]["markers"] = this.userIsExternal ? parseInt(actualMarked != 0 ? actualMarked : marked) : parseInt(marked);
+            this.wardProgressList[index]["alreadyInstalled"] = Number(alreadyInstalled);
+            this.wardProgressList[index]["houses"] = this.userIsExternal ? parseInt(actualHouseCount != 0 ? actualHouseCount : houseCount) : parseInt(houseCount);
+            this.wardProgressList[index]["complex"] = this.userIsExternal ? parseInt(actualComplexCount != 0 ? actualComplexCount : complexCount) : parseInt(complexCount);
+            this.wardProgressList[index]["houseInComplex"] = this.userIsExternal ? parseInt(actualHousesInComplex != 0 ? actualHousesInComplex : housesInComplex) : parseInt(housesInComplex);
+            this.wardProgressList[index]["approvedLines"] = Number(approved);
+            this.wardProgressList[index]["status"] = this.wardProgressList[index]["markers"] > 0 ? "In progress" : this.wardProgressList[index]["status"];
+            if (approved && Number(approved) == Number(this.wardProgressList[index]["wardLines"])) {
+              this.wardProgressList[index]["status"] = "Marking done";
+              this.wardProgressList[index]["cssClass"] = "marking-done";
+            }
+
+          }
+
+
+          // if (this.cityName == "jaipur-malviyanagar") {
+          this.markerData.totalMarkers = Number(this.markerData.totalMarkers) + Number(this.wardProgressList[index]["markers"]);
+          this.markerData.totalHouses = Number(this.markerData.totalHouses) + Number(this.wardProgressList[index]["houses"]);
+          // }
+
+
+
+          // if (data["marked"] != null) {
+          //   markers = Number(data["marked"]);
+          // }
+          // let alreadyInstalled = 0;
+          // if (data["alreadyInstalled"] != null) {
+          //   alreadyInstalled = Number(data["alreadyInstalled"]);
+          //   this.markerData.totalAlreadyCard = this.markerData.totalAlreadyCard + alreadyInstalled;
+          // }
+          // this.wardProgressList[index]["markers"] = markers;
+          // if (markers > 0) {
+          //   this.wardProgressList[index]["status"] = "In progress";
+          //   // this.wardProgressList[index]["cssClass"] = "in-progress";
+          // }
+          // this.wardProgressList[index]["alreadyInstalled"] = alreadyInstalled;
+
+          // let houseCount = 0;
+          // if (data["houseCount"] != null) {
+          //   houseCount = Number(data["houseCount"]);
+          // }
+          // this.wardProgressList[index]["houses"] = houseCount;
+          // let complex = 0;
+          // if (data["complexCount"] != null) {
+          //   complex = Number(data["complexCount"]);
+          // }
+          // this.wardProgressList[index]["complex"] = complex;
+          // let houseInComplex = 0;
+          // if (data["housesInComplex"] != null) {
+          //   houseInComplex = Number(data["housesInComplex"]);
+          // }
+          // this.wardProgressList[index]["houseInComplex"] = houseInComplex;
+          // let approved = 0;
+          // if (data["approved"] != null) {
+          //   approved = Number(data["approved"]);
+          //   this.wardProgressList[index]["approvedLines"] = approved;
+          //   if (approved == Number(this.wardProgressList[index]["wardLines"])) {
+          //     this.wardProgressList[index]["status"] = "Marking done";
+          //     this.wardProgressList[index]["cssClass"] = "marking-done";
+          //   }
+          // }
+        }
+      });
+    });
+  }
+
+
+  // Line-level scalars (counts, lastMarkerKey, ApproveStatus) ka new-path base.
+  getLineSummaryPath(ward: any, line: any): string {
+    return "EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + line;
+  }
+
+  // Old markerNo -> MarkersData/{uid} ka path. Migrate na hua ho to null.
+  getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
+    return this.markerMapping.getMarkerDataPath(this.db, ward, line, markerNo);
+  }
+
+
+
+
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
+  getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
+    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
+  }
+
+  // Poore ward ka data old path jaisa shape ({line: {markerNo: record}}) me.
+  getNewPathWardData(wardNo: any): Promise<any> {
+    return this.markerMapping.getWardRecords(this.db, wardNo);
+  }
+
+  // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
+  // imgRef ho to flat AllMarkerImages folder se, na ho (marker abhi migrate
+  // nahi hua) to purane per-line folder se. Pehle yahan doosri soorat me bhi
+  // flat folder ka URL banta tha - us folder me purane naam ki file hoti hi
+  // nahi, to image tooti hui dikhti thi.
+  getNewPathImageUrl(entry: any, ward: any = null, line: any = null): string {
+    return this.markerMapping.markerImageUrl(entry, ward, line);
+  }
+
+  //#region serveyor detail
+
+  setActiveClass(index: any) {
+    for (let i = 0; i < this.wardProgressList.length; i++) {
+      let id = "tr" + i;
+      let element = <HTMLElement>document.getElementById(id);
+      let className = element.className;
+      if (className != null) {
+        $("#tr" + i).removeClass("active");
+        $("#tr" + i).addClass(this.wardProgressList[i]["preCssClass"]);
+      }
+      if (i == index) {
+        $("#tr" + i).removeClass(this.wardProgressList[i]["preCssClass"]);
+        $("#tr" + i).addClass("active");
+      }
+    }
+
+  }
+
+  getMarkingDetail(wardNo: any, listIndex: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkingDetail");
+    // Yahan cache clear NAHI karni. Ward badalne se DB me kuch badalta nahi -
+    // ye sirf doosra ward kholna hai. Cache ward-wise alag key par hai, to
+    // jo ward pehle padh liya wo memory se hi khulega. Naya data chahiye to
+    // page refresh - tab cache waise bhi khatam ho jaati hai.
+    this.markerData.lastScan = "";
+    let dbPath = "EntityMarkingData/LastScanTime/Ward/" + wardNo;
+    let totalmarkingInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      totalmarkingInstance.unsubscribe();
+      // split() null check se PEHLE chal raha tha - jis ward ka LastScanTime
+      // node nahi hai, wahan null.split() par page crash ho jaata tha.
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkingDetail", data);
+        let lastscandata = String(data).split(":");
+        let scandata = lastscandata[0] + ":" + lastscandata[1];
+        this.markerData.lastScan = scandata;
+      }
+    });
+    this.selectedZone = wardNo;
+    $('#divLoader').show();
+    setTimeout(() => {
+      $('#divLoader').hide();
+    }, 1000);
+
+    if (this.isFirst == false) {
+      this.setActiveClass(listIndex);
+    } else {
+      this.isFirst = false;
+    }
+    this.lineMarkerList = [];
+    this.markerList = [];
+    this.markerData.totalLines = "0";
+    this.markerData.wardApprovedLines = 0;
+    this.markerData.wardInstalled = 0;
+    this.markerData.wardMarkers = 0;
+    this.markerData.wardHouses = 0;
+    let wardDetail = this.wardProgressList.find(item => item.wardNo == wardNo);
+    if (wardDetail != undefined) {
+      this.markerData.totalLines = wardDetail.wardLines;
+      this.markerData.wardApprovedLines = wardDetail.approvedLines;
+      this.markerData.wardInstalled = wardDetail.alreadyInstalled;
+      this.markerData.wardMarkers = wardDetail.markers;
+      this.markerData.wardHouses = wardDetail.houses;
+      this.markerData.wardNo = wardDetail.wardNo;
+
+      // TEMP DEBUG - ab band hai (debugWardData neeche /* */ me hai):
+      // console.log("[WMS] getMarkingDetail | ward:", wardNo, "| wardLines:", wardDetail.wardLines,
+      //   "| wardProgressList se markers:", wardDetail.markers, "| houses:", wardDetail.houses);
+      // this.debugWardData(wardNo);
+
+      for (let i = 1; i <= wardDetail.wardLines; i++) {
+        this.lineMarkerList.push({ wardNo: wardNo, lineNo: i, diff: 0, actualMarker: 0, markers: 0, houses: 0, complex: 0, houseInComplex: 0, isApproved: false, alreadyCard: 0 });
+        this.getLineStatus(wardNo, i);
+        this.getLineMarkers(wardNo, i);
+        //this.getLineHouses(wardNo, i);
+        this.getLineComplex(wardNo, i);
+        this.getLineHousesInComplex(wardNo, i);
+        this.getLineAlreadyCard(wardNo, i);
+      }
+
+    }
+  }
+
+  // ---------------- LINE KE COUNTS (poora ward EK read me) ----------------
+  //
+  // Neeche ke paanch function har line par alag-alag field padhte the:
+  // ApproveStatus/status, marksCount, marksHouse, marksComplex,
+  // marksHouseInComplex, alreadyInstalledCount - aur external user par to har
+  // ek ka fallback bhi (pehle actualX, na mile to X), yaani ek line par 5 se 10
+  // reads. 300 line wale ward par ~1500-3000 reads sirf table bharne ke liye.
+  //
+  // Purane path par ye majboori thi: ye sab MarkedHouses/{ward}/{line} par
+  // rehta tha aur poora line node maangne par us line ke saare marker record
+  // bhi utar aate the - isliye page jaan-boojh kar field-by-field padhta tha.
+  //
+  // Ab ye sab LineSummary/{ward}/{line} par hai aur us node me marker record
+  // hain hi nahi. To poore ward ka summary ek chhote se read me aa jaata hai
+  // (getWardLineSummaries), aur ye paanchon function usi ek read me se apni
+  // line ka hissa uthate hain. Fallback ab in-memory check hai, doosra read
+  // nahi. 300 line wale ward par: ~1500 reads -> 1.
+  getLineSummaryData(wardNo: any, lineNo: any): Promise<any> {
+    return this.markerMapping.getLineSummary(this.db, wardNo, lineNo);
+  }
+
+  // ==================== TEMP DEBUG - AB BAND HAI ====================
+  // Ye function do cheezein saath rakh kar dikhata tha:
+  //   A) LineSummary/{ward} par kya likha hai (table ISI se bharta hai)
+  //   B) MarkersData + mapping par sach me kitne marker hain
+  // Dono alag hue to table galat dikhega - counts stale hain.
+  //
+  // Hataya nahi: counts par shak ho to /* */ hata kar chalu ho jaata hai.
+  // Ise bulane wali line bhi upar comment me hai.
+  /*
+  debugWardData(wardNo: any) {
+    console.log("%c[WMS] ===== WARD " + wardNo + " =====", "color:#0a0;font-weight:bold");
+    console.log("[WMS] userIsExternal:", this.userIsExternal, "| hideComplex:", this.hideComplex, "| city:", this.cityName);
+
+    Promise.all([
+      this.markerMapping.getWardLineSummaries(this.db, wardNo),
+      this.markerMapping.getWardRecords(this.db, wardNo)
+    ]).then((res: any[]) => {
+      let summary = res[0];
+      let records = res[1];
+
+      console.log("[WMS] 1) LineSummary/" + wardNo + " ka poora node:", summary);
+      console.log("[WMS] 2) Asli marker records (MarkersData se):", records);
+
+      if (records == null) {
+        console.log("%c[WMS] 2a) MAPPING PAR IS WARD KA EK BHI MARKER NAHI MILA", "color:#c00;font-weight:bold");
+        console.log("[WMS] 2b) Matlab WardWise/" + wardNo + " aur LineWise/" + wardNo + " dono khali hain.");
+      }
+
+      // Line-wise milaan
+      let lineSet: any = {};
+      if (summary != null) { Object.keys(summary).forEach(k => lineSet[k] = true); }
+      if (records != null) { Object.keys(records).forEach(k => lineSet[k] = true); }
+      let lines = Object.keys(lineSet).sort((a, b) => Number(a) - Number(b));
+
+      // Ek hi string me poori report - copy karke bhejne ke liye.
+      let out: string[] = [];
+      out.push("========== WMS REPORT | ward " + wardNo + " ==========");
+      out.push("userIsExternal=" + this.userIsExternal + " hideComplex=" + this.hideComplex + " city=" + this.cityName);
+      out.push("wardLines(list se)=" + this.lineMarkerList.length);
+      out.push("LineSummary node: " + (summary == null ? "NULL" : "lines=[" + Object.keys(summary).join(",") + "]"));
+      out.push("MarkersData records: " + (records == null ? "NULL (mapping par ek bhi marker nahi)" : "lines=[" + Object.keys(records).join(",") + "]"));
+      out.push("--- line | dikhega | asli | marksCount | actualMarksCount | marksHouse | marksComplex | alreadyInstalled | approve ---");
+
+      let mismatch = 0;
+      for (let i = 0; i < lines.length; i++) {
+        let ln = lines[i];
+        let s = (summary != null && summary[ln] != null && typeof summary[ln] == "object") ? summary[ln] : null;
+        let asli = (records != null && records[ln] != null) ? Object.keys(records[ln]).length : 0;
+        let dikhega = s == null ? null : this.summaryValue(s, "actualMarksCount", "marksCount");
+        let ok = (Number(dikhega || 0) == asli);
+        if (!ok) { mismatch++; }
+        out.push(
+          (ok ? "OK   " : "BAD  ") + ln +
+          " | " + dikhega +
+          " | " + asli +
+          " | " + (s == null ? "-" : s["marksCount"]) +
+          " | " + (s == null ? "-" : s["actualMarksCount"]) +
+          " | " + (s == null ? "-" : s["marksHouse"]) +
+          " | " + (s == null ? "-" : s["marksComplex"]) +
+          " | " + (s == null ? "-" : s["alreadyInstalledCount"]) +
+          " | " + (s == null || s["ApproveStatus"] == null ? "-" : s["ApproveStatus"]["status"])
+        );
+      }
+
+      // Jo line marker wali hai par LineSummary par hai hi nahi
+      if (records != null) {
+        let missing = Object.keys(records).filter(ln => summary == null || summary[ln] == null);
+        if (missing.length > 0) {
+          out.push("!! MARKER hai par LineSummary node NAHI: line " + missing.join(", "));
+        }
+      }
+      // Jis line ka LineSummary hai par marker koi nahi
+      if (summary != null) {
+        let empty = Object.keys(summary).filter(ln =>
+          summary[ln] != null && typeof summary[ln] == "object" && (records == null || records[ln] == null));
+        if (empty.length > 0) {
+          out.push("!! LineSummary hai par MARKER koi nahi: line " + empty.join(", "));
+        }
+      }
+      out.push("TOTAL lines=" + lines.length + " mismatch=" + mismatch);
+      out.push("========== WMS REPORT END ==========");
+
+      // Object form (expand karke dekhne ke liye)
+      console.log("%c[WMS] 3) LINE-WISE MILAAN", "color:#00a;font-weight:bold", { summary: summary, records: records });
+      // String form (copy karke bhejne ke liye)
+      console.log(out.join("\n"));
+    });
+  }
+  */
+  // ================== TEMP DEBUG KHATAM ==================
+
+  // External user ke liye pehle actualX, na mile to X. Pehle ye do alag read
+  // the, ab ek hi object me se dono dekh lete hain.
+  summaryValue(summary: any, actualKey: string, plainKey: string): any {
+    if (this.userIsExternal && summary[actualKey] != null) {
+      return summary[actualKey];
+    }
+    return summary[plainKey] != null ? summary[plainKey] : null;
+  }
+
+  getLineAlreadyCard(wardNo: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineAlreadyCard");
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/alreadyInstalledCount";
+    // NEW PATH: LineSummary/{ward} ka ek read (upar dekho).
+    this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
+      let alreadyData = summary["alreadyInstalledCount"];
+      if (alreadyData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineAlreadyCard", alreadyData);
+        let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+        if (lineDetail != undefined) {
+          lineDetail.alreadyCard = Number(alreadyData);
+        }
+      }
+    });
+  }
+
+  getLineMarkers(wardNo: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineMarkers");
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + dataKey;
+    // NEW PATH: LineSummary/{ward} ka ek read. Pehle yahan do reads the -
+    // pehle actualMarksCount, na mile to marksCount. Ab dono ek hi object me
+    // hain, isliye ek in-memory check kaafi hai.
+    this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
+      let markedData = this.summaryValue(summary, "actualMarksCount", "marksCount");
+      // TEMP DEBUG - ab band hai:
+      // console.log("[WMS] getLineMarkers | line:", lineNo, "| summary keys:", Object.keys(summary),
+      //   "| marksCount:", summary["marksCount"], "| actualMarksCount:", summary["actualMarksCount"],
+      //   "| liya gaya:", markedData);
+      let markers = 0;
+      if (markedData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineMarkers", markedData);
+        let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+        if (lineDetail != undefined) {
+          lineDetail.actualMarker = Number(markedData);
+          markers = Number(markedData);
+        }
+      }
+      this.getLineHouses(wardNo, lineNo, markers);
+    });
+  }
+
+  getLineHouses(wardNo: any, lineNo: any, markers: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineHouses");
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + dataKey;
+    // NEW PATH: LineSummary/{ward} ka ek read (actualMarksHouse / marksHouse).
+    this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
+      let houseData = this.summaryValue(summary, "actualMarksHouse", "marksHouse");
+      // TEMP DEBUG - ab band hai:
+      // console.log("[WMS] getLineHouses | line:", lineNo, "| marksHouse:", summary["marksHouse"],
+      //   "| actualMarksHouse:", summary["actualMarksHouse"], "| liya gaya:", houseData, "| markers param:", markers);
+      if (houseData == null) {
+        // TEMP DEBUG - ab band hai:
+        // console.log("[WMS]   -> line " + lineNo + ": houseData null, Houses column set hi nahi hoga");
+        return;
+      }
+      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineHouses", houseData);
+      let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+      // Pehle lineDetail ka guard sirf houses set karne par tha aur uske neeche
+      // wali lines (markers/diff) guard ke BAHAR thi - lineDetail undefined
+      // hone par wahin crash hota tha. Ab poora block guard ke andar hai.
+      if (lineDetail == undefined) {
+        return;
+      }
+      let houses = Number(houseData);
+      lineDetail.houses = houses;
+      let diff = 0;
+      if (this.hideComplex == 1) {
+        if ((houses - markers) > 0) {
+          diff = houses - markers;
+          lineDetail.markers = houses;
+        }
+        else {
+          lineDetail.markers = markers;
+        }
+      }
+      else {
+        lineDetail.markers = markers;
+      }
+      lineDetail.diff = diff;
+    });
+  }
+
+
+  getLineComplex(wardNo: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineComplex");
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + dataKey;
+    // NEW PATH: LineSummary/{ward} ka ek read (actualMarksComplex / marksComplex).
+    this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
+      let complexData = this.summaryValue(summary, "actualMarksComplex", "marksComplex");
+      if (complexData == null) {
+        return;
+      }
+      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineComplex", complexData);
+      let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+      if (lineDetail != undefined) {
+        lineDetail.complex = Number(complexData);
+      }
+    });
+  }
+
+  getLineHousesInComplex(wardNo: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineHousesInComplex");
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + dataKey;
+    // NEW PATH: LineSummary/{ward} ka ek read.
+    this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
+      let houseComplexData = this.summaryValue(summary, "actualMarksHouseInComplex", "marksHouseInComplex");
+      if (houseComplexData == null) {
+        return;
+      }
+      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineHousesInComplex", houseComplexData);
+      let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+      if (lineDetail != undefined) {
+        lineDetail.houseInComplex = Number(houseComplexData);
+      }
+    });
+  }
+
+  getLineStatus(wardNo: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineStatus");
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/ApproveStatus/status";
+    // NEW PATH: LineSummary/{ward} ka ek read.
+    this.getLineSummaryData(wardNo, lineNo).then((summary: any) => {
+      let approve = summary["ApproveStatus"];
+      let approveData = approve != null ? approve["status"] : null;
+      // TEMP DEBUG - ab band hai:
+      // console.log("[WMS] getLineStatus | line:", lineNo, "| ApproveStatus:", approve, "| status:", approveData);
+      if (approveData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineStatus", approveData);
+        if (approveData == "Confirm") {
+          let lineDetail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+          if (lineDetail != undefined) {
+            lineDetail.isApproved = true;
+          }
+        }
+      }
+    });
+  }
+
+
+  //#endregion
+
+  getLineDetail(wardNo: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineDetail");
+    this.markerDetailList = [];
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+    // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+    //   houseInstance.unsubscribe();
+    this.getNewPathLineData(wardNo, lineNo).then((data: any) => {
+      if (data) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineDetail", data);
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            const latLngExists = data[index]["latLng"] != null;
+            const isUserAllowed = this.userIsExternal ? parseInt(data[index]["userId"]) !== -4 : true; //condition for excluding data if external user
+            if (latLngExists && isUserAllowed) {
+              let alreadyInstalled = "नहीं";
+              if (data[index]["alreadyInstalled"] == true) {
+                alreadyInstalled = "हाँ";
+              }
+              let imageName = data[index]["image"];
+              let userId = data[index]["userId"];
+              let date = data[index]["date"].split(" ")[0];
+              let approveDate = data[index]["approveDate"];
+              let status = "";
+              let isApprove = "0";
+              let cardNumber = "";
+              let servingCount = 0;
+              let ApproveId = 0;
+              let className = "house-list";
+              if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
+                className = "commercial-list";
+                servingCount = parseInt(data[index]["totalHouses"]);
+                if (isNaN(servingCount)) {
+                  servingCount = 0;
+                }
+              }
+              if (data[index]["cardNumber"] != null) {
+                status = "Surveyed";
+                cardNumber = data[index]["cardNumber"];
+              }
+              if (data[index]["revisitKey"] != null) {
+                status = "Revisit";
+              }
+
+              if (data[index]["status"] != null) {
+                //status = data[index]["status"];
+              }
+              if (data[index]["isApprove"] != null) {
+
+                isApprove = data[index]["isApprove"];
+              }
+              if (data[index]["approveDate"] != null) {
+
+                approveDate = data[index]["approveDate"];
+              }
+              if (data[index]["approveById"] != null) {
+
+                ApproveId = data[index]["approveById"];
+
+              }
+
+
+
+              // OLD PATH (reference ke liye rakha hai):
+              // let city = this.commonService.getFireStoreCity();
+              // if (this.cityName == "sikar") {
+              //   city = "Sikar-Survey";
+              // }
+              // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.getNewPathImageUrl(data[index], wardNo, lineNo);
+              let type = data[index]["houseType"];
+              let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
+              if (houseTypeDetail != undefined) {
+                let houseType = houseTypeDetail.houseType;
+                this.markerDetailList.push({
+                  wardNo: wardNo,
+                  lineNo: lineNo,
+                  index: index,
+                  alreadyInstalled: alreadyInstalled,
+                  imageName: imageName,
+                  type: houseType,
+                  imageUrl: imageUrl,
+                  status: status,
+                  userId: userId,
+                  date: date,
+                  houseTypeId: type,
+                  isApprove: isApprove,
+                  cardNumber: cardNumber,
+                  servingCount: servingCount,
+                  approveDate: approveDate,
+                  ApproveId: ApproveId,
+                  class: className
+
+                });
+              }
+            }
+          }
+        }
+      }
+      if (this.hideComplex == 1) {
+        let detail = this.lineMarkerList.find(item => item.lineNo == lineNo);
+        if (detail != undefined) {
+          let diff = detail.diff;
+          if (diff > 0) {
+            let list = this.lineMarkerList.filter(item => item.lineNo != lineNo && item.actualMarker > diff);
+            const randomItem = list[Math.floor(Math.random() * list.length)];
+            if (randomItem != null) {
+              this.getAjmerLineDetail(randomItem.wardNo, randomItem.lineNo, diff);
+            }
+            else {
+              let diffcount = diff / 2;
+              list = this.lineMarkerList.filter(item => item.lineNo != lineNo && item.actualMarker > diffcount);
+              let randomItem = list[Math.floor(Math.random() * list.length)];
+              this.getAjmerLineDetail(randomItem.wardNo, randomItem.lineNo, diffcount);
+              randomItem = list[Math.floor(Math.random() * list.length)];
+              this.getAjmerLineDetail(randomItem.wardNo, randomItem.lineNo, diffcount);
+            }
+          }
+        }
+      }
+    });
+  }
+
+
+  getAjmerLineDetail(wardNo: any, lineNo: any, diff: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineDetail");
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+    // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+    //   houseInstance.unsubscribe();
+    this.getNewPathLineData(wardNo, lineNo).then((data: any) => {
+      if (data) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineDetail", data);
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          let list = [];
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            const latLngExists = data[index]["latLng"] != null;
+            const isUserAllowed = this.userIsExternal ? parseInt(data[index]["userId"]) !== -4 : true; //condition for excluding data if external user
+            if (latLngExists && isUserAllowed) {
+              let alreadyInstalled = "नहीं";
+              if (data[index]["alreadyInstalled"] == true) {
+                alreadyInstalled = "हाँ";
+              }
+              let imageName = data[index]["image"];
+              let userId = data[index]["userId"];
+              let date = data[index]["date"].split(" ")[0];
+              let approveDate = data[index]["approveDate"];
+              let status = "";
+              let isApprove = "0";
+              let cardNumber = "";
+              let servingCount = 0;
+              let ApproveId = 0;
+              let className = "house-list";
+              if (data[index]["houseType"] == "19" || data[index]["houseType"] == "20") {
+                className = "commercial-list";
+                servingCount = parseInt(data[index]["totalHouses"]);
+                if (isNaN(servingCount)) {
+                  servingCount = 0;
+                }
+              }
+              if (data[index]["cardNumber"] != null) {
+                status = "Surveyed";
+                cardNumber = data[index]["cardNumber"];
+              }
+              if (data[index]["revisitKey"] != null) {
+                status = "Revisit";
+              }
+
+              if (data[index]["status"] != null) {
+                //status = data[index]["status"];
+              }
+              if (data[index]["isApprove"] != null) {
+
+                isApprove = data[index]["isApprove"];
+              }
+              if (data[index]["approveDate"] != null) {
+
+                approveDate = data[index]["approveDate"];
+              }
+              if (data[index]["approveById"] != null) {
+
+                ApproveId = data[index]["approveById"];
+
+              }
+
+              // OLD PATH (reference ke liye rakha hai):
+              // let city = this.commonService.getFireStoreCity();
+              // if (this.cityName == "sikar") {
+              //   city = "Sikar-Survey";
+              // }
+              // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
+              let imageUrl = this.getNewPathImageUrl(data[index], wardNo, lineNo);
+              let type = data[index]["houseType"];
+              let houseTypeDetail = this.houseTypeList.find(item => item.id == type);
+              if (houseTypeDetail != undefined) {
+                let houseType = houseTypeDetail.houseType;
+                list.push({
+                  wardNo: wardNo,
+                  lineNo: lineNo,
+                  index: index,
+                  alreadyInstalled: alreadyInstalled,
+                  imageName: imageName,
+                  type: houseType,
+                  imageUrl: imageUrl,
+                  status: status,
+                  userId: userId,
+                  date: date,
+                  houseTypeId: type,
+                  isApprove: isApprove,
+                  cardNumber: cardNumber,
+                  servingCount: servingCount,
+                  approveDate: approveDate,
+                  ApproveId: ApproveId,
+                  class: className
+                });
+              }
+            }
+          }
+          const randomEight = list.sort(() => 0.5 - Math.random()).slice(0, diff);
+          this.markerDetailList = this.markerDetailList.concat(randomEight);
+        }
+      }
+    });
+  }
+
+  openExportMarkerData() {
+    // this.modalService.open(content, { size: "lg" });
+    // let windowHeight = $(window).height();
+    // let height = 200;
+    // let width = 400;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divHouseStatus").css("height", divHeight);
+
+  }
+
+
+  getZoneHouseTypeList() {
+    // this.modalService.open(content, { size: "lg" });
+    // let windowHeight = $(window).height();
+    // let height = 870;
+    // let width = 400;
+    // height = (windowHeight * 70) / 100;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height - 75 + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divHouseStatus").css("height", divHeight);
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   markerData => {
+    //     markerInstance.unsubscribe();
+    this.getNewPathWardData(this.selectedZone).then(
+      (markerData: any) => {
+        if (markerData == null) {
+          this.closeModel();
+        }
+        else {
+          this.totalTypeCount = 0;
+          this.zoneHouseTypeList = [];
+          let keyArray = Object.keys(markerData);
+          for (let i = 0; i < keyArray.length; i++) {
+            let houseTypeCount = 0;
+            let lineNo = keyArray[i];
+            let lineData = markerData[lineNo];
+
+            let markerKeyArray = Object.keys(lineData);
+            for (let j = 0; j < markerKeyArray.length; j++) {
+              let markerNo = markerKeyArray[j];
+              const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;//condition for excluding data if external user
+              if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
+                houseTypeCount++;
+                let houseTypeId = lineData[markerNo]["houseType"];
+                let servingCount = 1;
+                if (houseTypeId == "19" || houseTypeId == "20") {
+                  let totalHouses = parseInt(lineData[markerNo]["totalHouses"]);
+                  if (isNaN(totalHouses) || totalHouses == 0) {
+                    totalHouses = 1;
+                  }
+                  servingCount = totalHouses;
+                }
+                this.totalTypeCount++;
+                let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+                if (detail != undefined) {
+                  let houseType = detail.houseType;
+                  if (this.zoneHouseTypeList.length == 0) {
+                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
+                  }
+                  else {
+                    let listDetail = this.zoneHouseTypeList.find(item => Number(item.houseTypeId) == Number(houseTypeId));
+                    if (listDetail != undefined) {
+                      listDetail.counts = listDetail.counts + 1;
+                      listDetail.servingCounts = listDetail.servingCounts + servingCount;
+                    }
+                    else {
+                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    );
+  }
+
+  // showLineDetail(content: any, wardNo: any, lineNo: any, index: any, userId: any) {
+  //   this.markerDetailList = [];
+  //   this.markerData.lineNo = lineNo;
+  //   this.getLineDetail(wardNo, lineNo);
+  //   this.modalService.open(content, { size: "lg" });
+  //   let windowHeight = $(window).height();
+  //   let windowWidth = $(window).width();
+  //   let height = 870;
+  //   let width = windowWidth - 300;
+  //   height = (windowHeight * 90) / 100;
+  //   let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  //   let divHeight = height - 130 + "px";
+  //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+  //   $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+  //   $("div .modal-dialog-centered").css("margin-top", marginTop);
+  //   $("#divStatus").css("height", divHeight);
+  // }
+  showLineDetail(wardNo: any, lineNo: any) {
+    this.markerDetailList = [];
+    this.markerData.wardNo = wardNo;
+    this.markerData.lineNo = lineNo;
+
+    this.getLineDetail(wardNo, lineNo);
+
+
+  }
+
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  exportHouseTypeList(type: any) {
+    if (this.zoneHouseTypeList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Entity Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Counts";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Serving Counts";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.zoneHouseTypeList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.zoneHouseTypeList[i]["houseType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.zoneHouseTypeList[i]["counts"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.zoneHouseTypeList[i]["servingCounts"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName = "Ward-" + this.selectedZone + "-EntityTypes.xlsx";
+      if (type == "1") {
+        fileName = "All-Ward-EntityTypes.xlsx";
+      }
+      this.commonService.exportExcel(htmlString, fileName);
+      $('#divLoaderMain').hide();
+    }
+  }
+
+  getAllZoneHouseTypeList() {
+    this.zoneHouseTypeList = [];
+    if (this.wardProgressList.length > 0) {
+      $('#divLoaderMain').show();
+      let zoneNo = this.wardProgressList[1]["wardNo"];
+      this.getZoneHouseType(zoneNo, 1);
+    }
+  }
+
+  getZoneHouseType(zoneNo: any, index: any) {
+    index = index + 1;
+    if (index == this.wardProgressList.length + 1) {
+      this.exportHouseTypeList("1");
+    }
+    else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseType");
+      // OLD PATH (reference ke liye rakha hai):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      //   markerData => {
+      //     markerInstance.unsubscribe();
+      this.getNewPathWardData(zoneNo).then(
+        (markerData: any) => {
+          if (markerData == null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseType", markerData);
+            if (this.wardProgressList[index] != null) {
+              let zoneNoNew = this.wardProgressList[index]["wardNo"];
+              this.getZoneHouseType(zoneNoNew, index);
+            }
+            else {
+              this.exportHouseTypeList("1");
+            }
+          }
+          else {
+            let keyArray = Object.keys(markerData);
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true; //condition for excluding data if external user
+                if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
+                  let houseTypeId = lineData[markerNo]["houseType"];
+                  let servingCount = 1;
+                  if (houseTypeId == "19" || houseTypeId == "20") {
+                    let totalHouses = parseInt(lineData[markerNo]["totalHouses"]);
+                    if (isNaN(totalHouses) || totalHouses == 0) {
+                      totalHouses = 1;
+                    }
+                    servingCount = totalHouses;
+                  }
+                  let detail = this.houseTypeList.find(item => Number(item.id) == Number(houseTypeId));
+                  if (detail != undefined) {
+                    let houseType = detail.houseType;
+                    if (this.zoneHouseTypeList.length == 0) {
+                      this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
+                    }
+                    else {
+                      let listDetail = this.zoneHouseTypeList.find(item => Number(item.houseTypeId) == Number(houseTypeId));
+                      if (listDetail != undefined) {
+                        listDetail.counts = listDetail.counts + 1;
+                        listDetail.servingCounts = listDetail.servingCounts + servingCount;
+                      }
+                      else {
+                        this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: 1, servingCounts: servingCount });
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            if (this.wardProgressList[index] != null) {
+              let zoneNoNew = this.wardProgressList[index]["wardNo"];
+              this.getZoneHouseType(zoneNoNew, index);
+            }
+            else {
+              this.getZoneHouseType(zoneNo, index);
+            }
+
+          }
+        }
+      );
+    }
+  }
+
+
+  updateMarkerCounts() {
+    $(this.divLoaderCounts).show();
+    this.totalHousesCount = 0;
+    this.totalMarkersCount = 0;
+    this.totalHousesCountActual = 0;
+    this.totalMarkersCountActual = 0;
+    this.markerData.totalMarkers = 0;
+    this.markerData.totalHouses = 0;
+
+    this.wardList = JSON.parse(localStorage.getItem("markingWards"));
+    this.updateCounts(1);
+  }
+
+
+  updateCounts(index: any) {
+    if (index == this.wardList.length) {
+      let date = this.commonService.setTodayDate();
+      let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
+      let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
+      let dbPath = "EntityMarkingData/MarkingSurveyData";
+      this.db.object(dbPath).update({ markerSummarylastUpdate: lastUpdate });
+      dbPath = "EntityMarkingData/MarkingSurveyData/MarkerSummary";
+      this.db.object(dbPath).update({
+        totalHouses: this.totalHousesCount,
+        totalMarkers: this.totalMarkersCount,
+        actualTotalHouses: this.totalHousesCountActual,
+        actualTotalMarkers: this.totalMarkersCountActual,
+      });
+      const markingSummary = {
+        markerSummarylastUpdate: lastUpdate,
+        totalHouses: this.totalHousesCount,
+        totalMarkers: this.totalMarkersCount,
+        actualTotalHouses: this.totalHousesCountActual,
+        actualTotalMarkers: this.totalMarkersCountActual
+      };
+      this.commonService.saveJsonFile(markingSummary, "MarkingSummary.json", "/SurveyManagement/MarkingManagement/");
+      setTimeout(() => {
+        this.commonService.setAlertMessage("success", "Data updated successfully !!!");
+        $(this.divLoaderCounts).hide();
+        this.markerData.lastUpdate = lastUpdate;
+        this.markerData.totalAlreadyCard = 0;
+        //this.markerData.totalHouses = this.userIsExternal ? this.totalHousesCountActual : this.totalHousesCount;
+        // this.markerData.totalMarkers = this.userIsExternal ? this.totalMarkersCountActual : this.totalMarkersCount;
+        this.getWards();
+      }, 5000);
+
+    }
+    else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCounts");
+      let zoneNo = this.wardList[index]["zoneNo"];
+      // Ye loop LineSummary/{ward} likhta hai. Uske baad table wahi counts
+      // cache se padhta, to abhi likhe hue naye number dikhte hi nahi -
+      // isliye sirf is ward ka summary bhula dete hain.
+      //
+      // Poori cache (records + mapping) yahan nahi udate: wo waisi ki waisi
+      // sahi hai, aur udane par har ward par poora data dobara padhna padta.
+      this.markerMapping.clearWardSummary(zoneNo);
+      // OLD PATH (reference ke liye rakha hai):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      // NEW PATH: MarkersData + LineWise
+      this.getNewPathWardData(zoneNo).then(
+          // OLD PATH (reference ke liye rakha hai):
+          // markerInstance.unsubscribe();
+        (markerData: any) => {
+          if (markerData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts", markerData);
+
+            // Neeche wala loop sirf un lines par ghumta hai jo LineWise me
+            // hain. Jis line ka aakhri marker nikal gaya uska LineWise node hi
+            // khatam ho jaata hai, isliye wo line yahan aati hi nahi aur uske
+            // purane counts LineSummary par pade rah jaate hain - table me
+            // Markers 0 dikhta hai par Houses purana number. Unhe zero karte hain.
+            //
+            // Sirf markerCountFields (wahi 8) - neeche wala loop bhi bilkul
+            // yahi 8 likhta hai. surveyedCount / lineRevisitCount /
+            // lineRfidNotFoundCount / alreadyInstalledCount doosre page likhte
+            // hain; ye page unhe old path par bhi kabhi zero nahi karta tha.
+            this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData, this.markerMapping.markerCountFields);
+
+            let keyArray = Object.keys(markerData);
+
+            if (keyArray.length > 0) {
+
+              let totalMarkerCount = 0;
+              let totalHouseCount = 0;
+              let totalComplexCount = 0;
+              let totalHouseInComplexCount = 0;
+              let totalModifiedHouseTypeCount = 0;
+              let actualTotalMarkerCount = 0;
+              let actualTotalHouseCount = 0;
+              let actualTotalComplexCount = 0;
+              let actualTotalHouseInComplexCount = 0;
+              let actualTotalModifiedHouseTypeCount = 0;
+
+              for (let i = 0; i < keyArray.length; i++) {
+                let markerCount = 0;
+                let houseCount = 0;
+                let complexCount = 0;
+                let houseInComplexCount = 0;
+                let actualMarkerCount = 0;
+                let actualHouseCount = 0;
+                let actualComplexCount = 0;
+                let actualHouseInComplexCount = 0;
+                let lineNo = keyArray[i];
+                let lineData = markerData[lineNo];
+                let markerKeyArray = Object.keys(lineData);
+
+                for (let j = 0; j < markerKeyArray.length; j++) {
+                  let markerNo = markerKeyArray[j];
+                  // PURANA GUARD: if (parseInt(markerNo))
+                  //
+                  // Wo tab sahi tha jab key hamesha number hoti thi aur guard ka
+                  // kaam sirf marksCount jaise scalars ko chhodna tha. Ab union
+                  // me jis marker ka markerNo pata na chale uski key uid ban
+                  // jaati hai ({M12: rec}) - parseInt("M12") = NaN = falsy, aur
+                  // wo marker ginti se hi bahar ho jaata tha. Yaani theek wahi
+                  // purane marker chhoot rahe the jinke liye union banaya tha.
+                  //
+                  // "Marker hai ya nahi" ka asli jawab houseType hai - wo check
+                  // pehle se saath me tha, isliye ab wahi kaafi hai. Scalar par
+                  // typeof guard laga diya hai.
+                  if (lineData[markerNo] != null && typeof lineData[markerNo] == "object") {
+                    if (lineData[markerNo]["houseType"] != null) {
+                      let userId = lineData[markerNo]["userId"] ? parseInt(lineData[markerNo]["userId"]) : null;
+                      let internalUser = userId != -4 ? true : false;
+
+
+                      markerCount = markerCount + 1;
+                      actualMarkerCount += internalUser ? 1 : 0;// TO update actual marker count when userId is not -4
+
+                      if (lineData[markerNo]["houseType"] == "19" || lineData[markerNo]["houseType"] == "20") {
+                        complexCount = complexCount + 1;
+                        actualComplexCount += internalUser ? 1 : 0;// TO update actual complex count when userId is not -4
+                        let totalHouses = parseInt(lineData[markerNo]["totalHouses"]);
+                        if (isNaN(totalHouses)) {
+                          totalHouses = 1;
+                        }
+                        houseInComplexCount = houseInComplexCount + totalHouses;
+                        houseCount = houseCount + totalHouses;
+
+                        actualHouseInComplexCount += internalUser ? totalHouses : 0;// TO update actual count when userId is not -4
+                        actualHouseCount += internalUser ? totalHouses : 0;// TO update actual count  when userId is not -4
+                      }
+                      else {
+                        houseCount = houseCount + 1;
+                        actualHouseCount += internalUser ? 1 : 0;// TO update actual count  when userId is not -4
+                      }
+                      if (lineData[markerNo]["modifiedHouseTypeHistoryId"] != null) {
+                        totalModifiedHouseTypeCount = totalModifiedHouseTypeCount + 1;
+                        actualTotalModifiedHouseTypeCount = internalUser ? 1 : 0;// TO update actual count  when userId is not -4
+                      }
+                    }
+                  }
+                }
+
+                totalMarkerCount = totalMarkerCount + markerCount;
+                totalHouseCount = totalHouseCount + houseCount;
+                totalComplexCount = totalComplexCount + complexCount;
+                totalHouseInComplexCount = totalHouseInComplexCount + houseInComplexCount;
+
+                actualTotalMarkerCount += actualMarkerCount;// TO update actual count  when userId is not -4
+                actualTotalHouseCount += actualHouseCount;// TO update actual count  when userId is not -4
+                actualTotalComplexCount += actualComplexCount;// TO update actual count  when userId is not -4
+                actualTotalHouseInComplexCount += actualHouseInComplexCount;// TO update actual count  when userId is not -4
+
+
+
+                this.totalHousesCount = this.totalHousesCount + houseCount;
+                this.totalMarkersCount = this.totalMarkersCount + markerCount;
+
+                this.totalHousesCountActual += actualHouseCount;
+                this.totalMarkersCountActual += actualMarkerCount;
+
+                // OLD PATH (reference ke liye rakha hai):
+                // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                // NEW PATH: LineSummary
+                let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
+                this.db.object(dbPath).update({
+                  marksCount: markerCount,
+                  marksHouse: houseCount,
+                  marksHouseInComplex: houseInComplexCount,
+                  marksComplex: complexCount,
+
+                  actualMarksCount: actualMarkerCount,
+                  actualMarksHouse: actualHouseCount,
+                  actualMarksHouseInComplex: actualHouseInComplexCount,
+                  actualMarksComplex: actualComplexCount
+                });
+              }
+
+              let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
+              this.db.object(dbPath).update({
+                marked: totalMarkerCount,
+                complexCount: totalComplexCount,
+                houseCount: totalHouseCount,
+                housesInComplex: totalHouseInComplexCount,
+                totalHouseTypeModifiedCount: totalModifiedHouseTypeCount,
+
+                actualMarked: actualTotalMarkerCount,
+                actualComplexCount: actualTotalComplexCount,
+                actualHouseCount: actualTotalHouseCount,
+                actualHousesInComplex: actualTotalHouseInComplexCount,
+                actualTotalHouseTypeModifiedCount: actualTotalModifiedHouseTypeCount
+
+              });
+              this.updateDeleteCounts(zoneNo);
+              index++;
+              this.updateCounts(index);
+            }
+            else {
+              this.updateDeleteCounts(zoneNo);
+              index++;
+              this.updateCounts(index);
+            }
+          }
+          else {
+            this.updateDeleteCounts(zoneNo);
+            index++;
+            this.updateCounts(index);
+          }
+        });
+    }
+  }
+
+  // Ward me kitne marker delete ho chuke hain.
+  //
+  // Archive purani jagah par hi hai (RemovedMarkers/{ward}/{line}/{key}); sirf
+  // nayi entries ki key ab uid hai. Isliye ginti pehle jaisi hi - line ke andar
+  // jitni keys, utne marker.
+  updateDeleteCounts(ward: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateDeleteCounts");
+    let dbPath = "EntityMarkingData/RemovedMarkers/" + ward;
+    let deleteInstance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      deleteInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateDeleteCounts", data);
+        let counts = 0;
+        let lineArray = Object.keys(data);
+        for (let i = 0; i < lineArray.length; i++) {
+          let lineObj = data[lineArray[i]];
+          if (lineObj == null || typeof lineObj != "object") {
+            continue; // totalRemovedMarkersCount jaisa scalar
+          }
+          counts = counts + Object.keys(lineObj).length;
+        }
+        this.db.object(dbPath).update({ totalRemovedMarkersCount: counts });
+      }
+    });
+  }
+
+  getAssignedWard() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getAssignedWard");
+    let path = "EntityMarkingData/MarkerAppAccess";
+    let assignWardInstance = this.db.object(path).valueChanges().subscribe(
+      data => {
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAssignedWard", data);
+          assignWardInstance.unsubscribe();
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let key = keyArray[i];
+            if (data[key]["assignedWard"] != undefined) {
+              this.inProgressWards.push({ ward: data[key]["assignedWard"] });
+            }
+          }
+        }
+
+        this.getWards();
+      });
+  }
+}
+
+export class markerDatail {
+  totalLines: string;
+  totalMarkers: number;
+  totalAlreadyCard: number;
+  totalHouses: number;
+  wardMarkers: number;
+  wardHouses: number;
+  wardInstalled: number;
+  wardApprovedLines: number;
+  lastUpdate: string;
+  wardNo: string;
+  lastScan: string;
+  lineNo: string;
+
+}

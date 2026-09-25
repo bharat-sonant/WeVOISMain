@@ -421,8 +421,20 @@ export class PaymentCollectorTrackingComponent {
 
   async getPaymentCollectorRouteStatus(empId: any) {
     return new Promise((resolve) => {
-      let routeInstance = this.db.object("PaymentCollectionInfo/PaymentCollectorLocationHistory/" + empId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate + "/last-update-time").valueChanges().subscribe(data => {
+      let routeInstance = this.db.object("PaymentCollectionInfo/PaymentCollectorLocationHistory/" + empId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate + "/last-update-time").valueChanges().subscribe(async (data: any) => {
         routeInstance.unsubscribe();
+        if (data == null) {
+          // older data is moved to storage, check archived path for this date
+          let checkedDate = this.selectedDate;
+          data = await this.getArchivedLocationHistoryStatus(empId);
+          if (data != null && checkedDate == this.selectedDate) {
+            // remember archived status so route click can load directly from storage
+            let collector = this.paymentCollectorAllList.find(item => item.paymentCollectorId == empId);
+            if (collector != undefined) {
+              collector.isArchived = true;
+            }
+          }
+        }
         let status = 0;
         let cssClass = "not-active";
         if (data != null) {
@@ -432,6 +444,7 @@ export class PaymentCollectorTrackingComponent {
             this.getPaymentCollectorRoute(empId);
           }
         }
+        // console.log("[Status] Emp:", empId, "Date:", this.selectedDate, "Status:", status, "Archived:", this.paymentCollectorAllList.some(item => item.paymentCollectorId == empId && item.isArchived == true));
         resolve({ empId: empId, status: status, cssClass: cssClass });
       });
     });
@@ -458,9 +471,69 @@ export class PaymentCollectorTrackingComponent {
     this.getPaymentCollector();
   }
 
+  getArchivedLocationHistoryStatus(empId: any) {
+    return new Promise((resolve) => {
+      let archivedInstance = this.db.object("PaymentCollectionInfo/PaymentCollectorLocationHistoryArchieved/" + empId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate).valueChanges().subscribe((data: any) => {
+        archivedInstance.unsubscribe();
+        resolve(data);
+      });
+    });
+  }
+
+  getArchivedLocationHistoryData(empId: any) {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectorLocationHistory%2F" + empId + "%2F" + this.selectedYear + "%2F" + this.selectMonthName + "%2F" + this.selectedDate + ".json?alt=media";
+      // console.log("[Storage] URL:", path);
+      let storageInstance = this.httpService.get(path).subscribe((storageData: any) => {
+        storageInstance.unsubscribe();
+        // console.log("[Storage] Data received:", storageData);
+        if (storageData == null) {
+          resolve(null);
+          return;
+        }
+        // keep key order same as realtime database (sorted keys)
+        let data: any = {};
+        Object.keys(storageData).sort().forEach(key => {
+          data[key] = storageData[key];
+        });
+        resolve(data);
+      }, error => {
+        // console.log("[Storage] Download FAILED:", path, error);
+        resolve(null);
+      });
+    });
+  }
+
+  getLocationHistoryData(paymentCollectorId: any) {
+    return new Promise((resolve) => {
+      // archived status already checked in route status, load directly from storage
+      let collector = this.paymentCollectorAllList.find(item => item.paymentCollectorId == paymentCollectorId);
+      if (collector != undefined && collector.isArchived == true) {
+        // console.log("[Location] Emp:", paymentCollectorId, "Date:", this.selectedDate, "→ loading from STORAGE (archived flag)");
+        this.getArchivedLocationHistoryData(paymentCollectorId).then(data => resolve(data));
+        return;
+      }
+      let routeInstance = this.db.object("PaymentCollectionInfo/PaymentCollectorLocationHistory/" + paymentCollectorId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate).valueChanges().subscribe(async (data: any) => {
+        routeInstance.unsubscribe();
+        if (data != null) {
+          // console.log("[Location] Emp:", paymentCollectorId, "Date:", this.selectedDate, "→ loaded from RTDB", data);
+          resolve(data);
+          return;
+        }
+        let archivedData = await this.getArchivedLocationHistoryStatus(paymentCollectorId);
+        if (archivedData == null) {
+          // console.log("[Location] Emp:", paymentCollectorId, "Date:", this.selectedDate, "→ NO DATA (not in RTDB, not archived)");
+          resolve(null);
+          return;
+        }
+        // console.log("[Location] Emp:", paymentCollectorId, "Date:", this.selectedDate, "→ loading from STORAGE (archive index)");
+        resolve(await this.getArchivedLocationHistoryData(paymentCollectorId));
+      });
+    });
+  }
+
   getRouteDetail(paymentCollectorId: any) {
-    let routeInstance = this.db.object("PaymentCollectionInfo/PaymentCollectorLocationHistory/" + paymentCollectorId + "/" + this.selectedYear + "/" + this.selectMonthName + "/" + this.selectedDate).valueChanges().subscribe(data => {
-      routeInstance.unsubscribe();
+    this.getLocationHistoryData(paymentCollectorId).then((data: any) => {
       if (data != null) {
         let totalKM = 0;
         let latLng = [];
@@ -526,6 +599,8 @@ export class PaymentCollectorTrackingComponent {
             detail.isChecked = 1;
           }
         }
+        let dt = this.paymentCollectorList.find(item => item.paymentCollectorId == paymentCollectorId);
+        // console.log("[Route] Emp:", paymentCollectorId, "Date:", this.selectedDate, "Start:", dt && dt.startTime, "End:", dt && dt.endTime, "KM:", dt && dt.km, "Points:", dt && dt.latLng.length);
         this.getPaymentCardDetail(paymentCollectorId);
       }
       else {

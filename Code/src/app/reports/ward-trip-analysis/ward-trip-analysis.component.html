@@ -303,20 +303,43 @@
                             font-weight: bold;
                           "
                         >
-                          <div style="text-align: center">
+                          <div
+                            style="
+                              position: relative;
+                              text-align: center;
+                              padding: 0 56px;
+                            "
+                          >
                             बिना तिरपाल / ढक्कन के ऊपर से
                             <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(1)"></i> -->
-                            <img
-                              src="../../../assets/icons/camera-rotate-solid.svg"
-                              alt="camera-rotate-1"
-                              width="22"
+                            <span
                               style="
-                                float: right;
-                                cursor: pointer;
-                                font-size: 18px;
+                                position: absolute;
+                                right: 0;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
                               "
-                              (click)="rotateImage(1)"
-                            />
+                            >
+                              <img
+                                *ngIf="tripData.latLng != ''"
+                                src="../../../assets/icons/map-location-dot-solid.svg"
+                                alt="trip-location-1"
+                                title="लोकेशन देखें"
+                                width="22"
+                                style="cursor: pointer"
+                                (click)="openLocationOnMap(tripData.latLng)"
+                              />
+                              <img
+                                src="../../../assets/icons/camera-rotate-solid.svg"
+                                alt="camera-rotate-1"
+                                width="22"
+                                style="cursor: pointer"
+                                (click)="rotateImage(1)"
+                              />
+                            </span>
                           </div>
                           <a href="{{ tripData.imageUrl }}" target="_blank">
                             <img
@@ -334,20 +357,43 @@
                             font-weight: bold;
                           "
                         >
-                          <div style="text-align: center">
+                          <div
+                            style="
+                              position: relative;
+                              text-align: center;
+                              padding: 0 56px;
+                            "
+                          >
                             तिरपाल / ढक्कन के साथ
                             <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;"  (click)="rotateImage(2)"></i> -->
-                            <img
-                              src="../../../assets/icons/camera-rotate-solid.svg"
-                              alt="camera-rotate-2"
-                              width="22"
+                            <span
                               style="
-                                float: right;
-                                cursor: pointer;
-                                font-size: 18px;
+                                position: absolute;
+                                right: 0;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
                               "
-                              (click)="rotateImage(2)"
-                            />
+                            >
+                              <img
+                                *ngIf="tripData.latLng != ''"
+                                src="../../../assets/icons/map-location-dot-solid.svg"
+                                alt="trip-location-2"
+                                title="लोकेशन देखें"
+                                width="22"
+                                style="cursor: pointer"
+                                (click)="openLocationOnMap(tripData.latLng)"
+                              />
+                              <img
+                                src="../../../assets/icons/camera-rotate-solid.svg"
+                                alt="camera-rotate-2"
+                                width="22"
+                                style="cursor: pointer"
+                                (click)="rotateImage(2)"
+                              />
+                            </span>
                           </div>
                           <a href="{{ tripData.imageUrl1 }}" target="_blank">
                             <img
@@ -365,16 +411,43 @@
                             font-weight: bold;
                           "
                         >
-                          <div style="text-align: center">
+                          <div
+                            style="
+                              position: relative;
+                              text-align: center;
+                              padding: 0 56px;
+                            "
+                          >
                             डंपिंग यार्ड मे भरा हुआ
                             <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;" (click)="rotateImage(3)"></i> -->
-                            <img
-                              src="../../../assets/icons/camera-rotate-solid.svg"
-                              alt="camera-rotate-3"
-                              width="22"
-                              style="float: right; cursor: pointer"
-                              (click)="rotateImage(3)"
-                            />
+                            <span
+                              style="
+                                position: absolute;
+                                right: 0;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                              "
+                            >
+                              <img
+                                *ngIf="tripData.yardLatLng != ''"
+                                src="../../../assets/icons/map-location-dot-solid.svg"
+                                alt="yard-location-1"
+                                title="लोकेशन देखें"
+                                width="22"
+                                style="cursor: pointer"
+                                (click)="openLocationOnMap(tripData.yardLatLng)"
+                              />
+                              <img
+                                src="../../../assets/icons/camera-rotate-solid.svg"
+                                alt="camera-rotate-3"
+                                width="22"
+                                style="cursor: pointer"
+                                (click)="rotateImage(3)"
+                              />
+                            </span>
                           </div>
                           <a href="{{ tripData.imageUrl2 }}" target="_blank">
                             <img
@@ -392,16 +465,43 @@
                             font-weight: bold;
                           "
                         >
-                          <div style="text-align: center">
+                          <div
+                            style="
+                              position: relative;
+                              text-align: center;
+                              padding: 0 56px;
+                            "
+                          >
                             डंपिंग यार्ड मे खाली हुआ
                             <!-- <i class="fa-solid fa-camera-rotate" style="float:right; cursor: pointer; font-size: 18px;"  (click)="rotateImage(4)"></i> -->
-                            <img
-                              src="../../../assets/icons/camera-rotate-solid.svg"
-                              alt="camera-rotate-4"
-                              width="22"
-                              style="float: right; cursor: pointer"
-                              (click)="rotateImage(4)"
-                            />
+                            <span
+                              style="
+                                position: absolute;
+                                right: 0;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                              "
+                            >
+                              <img
+                                *ngIf="tripData.yardLatLng != ''"
+                                src="../../../assets/icons/map-location-dot-solid.svg"
+                                alt="yard-location-2"
+                                title="लोकेशन देखें"
+                                width="22"
+                                style="cursor: pointer"
+                                (click)="openLocationOnMap(tripData.yardLatLng)"
+                              />
+                              <img
+                                src="../../../assets/icons/camera-rotate-solid.svg"
+                                alt="camera-rotate-4"
+                                width="22"
+                                style="cursor: pointer"
+                                (click)="rotateImage(4)"
+                              />
+                            </span>
                           </div>
                           <a href="{{ tripData.imageUrl3 }}" target="_blank">
                             <img

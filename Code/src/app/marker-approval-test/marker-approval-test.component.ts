@@ -9,7 +9,6 @@ import { FirebaseService } from "../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AngularFireStorage } from "angularfire2/storage";
 
-import { MarkerMappingService } from '../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-marker-approval-test',
   templateUrl: './marker-approval-test.component.html',
@@ -18,7 +17,7 @@ import { MarkerMappingService } from '../services/marker/marker-mapping.service'
 export class MarkerApprovalTestComponent {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
-  constructor(public fs: FirebaseService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
+  constructor(public fs: FirebaseService, private storage: AngularFireStorage, public af: AngularFireModule, public httpService: HttpClient, private router: Router, private commonService: CommonService, private modalService: NgbModal) { }
   db: any;
   public selectedZone: any;
   zoneList: any[];
@@ -161,9 +160,6 @@ export class MarkerApprovalTestComponent {
     }
     $(this.divLoader).show();
     (<HTMLInputElement>document.getElementById("chkAll")).checked = false;
-    this.clearMarkerCache();   // ward badla to record fresh load ho
-    this.wardIndexCache = {};     // ward index bhi fresh
-    this.markerMapping.clearLinkCache();
     this.clearAllData();
     this.clearAllOnMap();
     this.commonService.getWardBoundary(this.selectedZone, this.zoneKML, 4).then((data: any) => {
@@ -252,378 +248,10 @@ export class MarkerApprovalTestComponent {
     }
   }
 
-
-  // { uid: record } — sirf wahi markers jo is ward/line par chahiye the.
-  // Pehle poora EntityMarkingData/MarkersData ek saath padha jaata tha (saare
-  // ward ke saare markers). Wo read city ke saath badhta jaata hai aur dheere
-  // ya fail hone par page chup-chaap khaali reh jaata tha. Ab ward index se
-  // uid nikaal kar sirf utne hi record padhte hain.
-  markerRecordCache: any = {};
-  // { ward: { uid: line } } — line ki list isi se banti hai (LineWise se nahi).
-  wardIndexCache: any = {};
-
-  // Poori ward cache bhoolna - sirf ward badalne par.
-  clearMarkerCache() {
-    this.markerRecordCache = {};
-  }
-
-  // Ek marker ka record bhoolna, path se uid nikaal kar.
-  //
-  // Write ke baad sirf WAHI record purana hota hai jise likha - baaki poore
-  // ward ke records theek hain. Pehle yahan clearMarkerCache() chalta tha, jo
-  // saare records phenk deta tha: ek marker approve karte hi poori line/ward
-  // dobara padhni padti thi.
-  dropMarkerRecord(path: any) {
-    if (path == null) {
-      return;
-    }
-    let value = String(path);
-    let at = value.indexOf("MarkersData/");
-    if (at < 0) {
-      return;
-    }
-    delete this.markerRecordCache[value.substring(at + "MarkersData/".length).split("/")[0]];
-  }
-
-  // Isse behtar: record phenkne ke bajaye usme wahi patch laga do jo DB par
-  // gaya. Tab agli read bhi nahi lagti - user ne jo abhi kiya wahi turant
-  // dikhta hai, aur refresh ke baad DB se bhi wahi aata hai.
-  //
-  // patch me null ka matlab "field hatao" - Firebase par bhi wahi hota hai.
-  applyMarkerPatch(path: any, patch: any) {
-    if (path == null || patch == null || typeof patch != "object") {
-      return;
-    }
-    let value = String(path);
-    let at = value.indexOf("MarkersData/");
-    if (at < 0) {
-      return;
-    }
-    let uid = value.substring(at + "MarkersData/".length).split("/")[0];
-    let record = this.markerRecordCache[uid];
-    if (record == null || typeof record != "object") {
-      return; // cache me hai hi nahi - kuch karna nahi
-    }
-    let keyArray = Object.keys(patch);
-    for (let i = 0; i < keyArray.length; i++) {
-      if (patch[keyArray[i]] == null) {
-        delete record[keyArray[i]];
-      } else {
-        record[keyArray[i]] = patch[keyArray[i]];
-      }
-    }
-  }
-
-  // ==================== TEMP DEBUG - AB BAND HAI ====================
-  //
-  // Approve par uid mila ya nahi, aur na mila to kyun - poori report ek string
-  // me. Dikkat pakdi ja chuki hai, isliye ab BAND hai.
-  //
-  // Hataya nahi: approve se juda koi naya sawaal aaye to /* */ hata kar chalu
-  // ho jaata hai. Ise bulane wali line bhi neeche comment me hai.
-  /*
-  debugApprove(ward: any, line: any, markerNo: any) {
-    let out: string[] = [];
-    out.push("========== APPROVE REPORT ==========");
-    out.push("ward=" + ward + "  line=" + line + "  markerNo=" + markerNo + "  (type " + (typeof markerNo) + ")");
-
-    let lineWisePath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + line;
-    let wardWisePath = "EntityMarkingData/MarkersMapping/WardWise/" + ward;
-
-    Promise.all([
-      this.markerMapping.readOnce(this.db, lineWisePath),
-      this.markerMapping.readOnce(this.db, wardWisePath),
-      this.markerMapping.getLineRecords(this.db, ward, line),
-      this.markerMapping.getUid(this.db, ward, line, markerNo)
-    ]).then((res: any[]) => {
-      let lineWise = res[0];
-      let wardWise = res[1];
-      let records = res[2];
-      let uid = res[3];
-
-      out.push("--- 1) LineWise/" + ward + "/" + line + " ---");
-      out.push(lineWise == null ? "NULL - is line ki mapping hai hi nahi"
-        : "keys=[" + Object.keys(lineWise).join(",") + "]");
-      // LineWise ab uid ka SET hai ({ "MK1": true }) - usme markerNo hai hi nahi,
-      // isliye "is markerNo par uid" wala sawaal hi bemaani ho gaya.
-      out.push("   (LineWise ki key uid hai, markerNo nahi - markerNo record ke andar hai)");
-
-      out.push("--- 2) WardWise/" + ward + " ---");
-      out.push(wardWise == null ? "NULL - is ward ki mapping hai hi nahi"
-        : "kul entries=" + Object.keys(wardWise).length);
-
-      out.push("--- 3) Line ke records (MarkersData se) ---");
-      if (records == null) {
-        out.push("NULL - is line par ek bhi record nahi mila");
-      } else {
-        let keys = Object.keys(records);
-        out.push("keys=[" + keys.join(",") + "]");
-        for (let i = 0; i < keys.length; i++) {
-          let r = records[keys[i]];
-          out.push("   key=" + keys[i] +
-            " | record ka markerNo=" + (r != null ? r["markerNo"] : "-") +
-            " | ward=" + (r != null ? r["ward"] : "-") +
-            " | line=" + (r != null ? r["line"] : "-") +
-            " | isApprove=" + (r != null ? r["isApprove"] : "-"));
-        }
-      }
-
-      out.push("--- 4) NATEEJA ---");
-      out.push("getUid ne diya: " + uid);
-      if (uid == null) {
-        out.push(">>> uid NAHI MILA - isliye DB me approve NAHI likha jayega.");
-        out.push(">>> Wajah: is line ke kisi bhi record ka markerNo isse match nahi karta.");
-        out.push(">>> Matlab ye marker naye structure me hai hi nahi (migrate nahi hua).");
-      } else {
-        out.push(">>> DB path: EntityMarkingData/MarkersData/" + uid);
-      }
-      out.push("========== APPROVE REPORT END ==========");
-      console.log(out.join("\n"));
-      console.log("[APPROVE] raw:", { lineWise: lineWise, wardWise: wardWise, records: records, uid: uid });
-    }).catch((e: any) => {
-      out.push("!! DEBUG READ FAIL: " + (e && e.message ? e.message : e));
-      console.log(out.join("\n"));
-    });
-  }
-  */
-  // ==================== TEMP DEBUG KHATAM ====================
-
-  readMarkerRecord(uid: any): Promise<any> {
-    return new Promise((resolve) => {
-      if (this.markerRecordCache[uid] !== undefined) {
-        resolve(this.markerRecordCache[uid]);
-        return;
-      }
-      let recordInstance = this.db.object("EntityMarkingData/MarkersData/" + uid).valueChanges().subscribe((data: any) => {
-        recordInstance.unsubscribe();
-        this.markerRecordCache[uid] = data != null ? data : null;
-        resolve(this.markerRecordCache[uid]);
-      });
-    });
-  }
-
-  // uid ki list -> { uid: record }. Jis uid ka record na ho wo chhod diya
-  // jaata hai (mapping hai par data nahi - adhoora write).
-  readMarkerRecords(uidArray: any[]): Promise<any> {
-    let readArray = uidArray.map((uid: any) => this.readMarkerRecord(uid));
-    return Promise.all(readArray).then((recordArray: any) => {
-      let records = {};
-      for (let i = 0; i < uidArray.length; i++) {
-        if (recordArray[i] != null) {
-          records[uidArray[i]] = recordArray[i];
-        }
-      }
-      return records;
-    });
-  }
-
-  // Ward ka marker index: { uid: line }. Ward-wise cache (ward badalne par
-  // changeZoneSelection ise khaali kar deta hai).
-  //
-  // Pehle line ki list LineWise/{ward}/{line} se banti thi, par LineWise
-  // ADHOORA hai: app ke cloud function ne kaafi samay tak wo node likha hi
-  // nahi, aur purani migration ke markers bhi usme nahi aaye. Un markers ka
-  // record MarkersData me hai aur WardWise/MarkerWise me bhi hai - sirf
-  // LineWise me nahi. Isliye page par counts (LineSummary se) to dikhte the
-  // par marker list aur map dono khaali rehte the.
-  // WardWise har writer (app function, migration, portal) likhta hai, isliye
-  // line ki list ab isi se banti hai.
-  loadWardIndex(ward: any): Promise<any> {
-    return new Promise((resolve) => {
-      if (this.wardIndexCache != null && this.wardIndexCache[ward] != null) {
-        resolve(this.wardIndexCache[ward]);
-        return;
-      }
-      let indexPath = "EntityMarkingData/MarkersMapping/WardWise/" + ward;
-      let indexInstance = this.db.object(indexPath).valueChanges().subscribe((data: any) => {
-        indexInstance.unsubscribe();
-        if (this.wardIndexCache == null) {
-          this.wardIndexCache = {};
-        }
-        this.wardIndexCache[ward] = data != null ? data : {};
-        resolve(this.wardIndexCache[ward]);
-      });
-    });
-  }
-
-  // Ward index me se ek line ke uid. lastMarkerKey jaisa scalar marker nahi
-  // hai, isliye sirf M se shuru hone wale keys lete hain.
-  getLineUids(wardIndex: any, lineNo: any): any[] {
-    let uidArray: any[] = [];
-    if (wardIndex == null) {
-      return uidArray;
-    }
-    let keyArray = Object.keys(wardIndex);
-    for (let i = 0; i < keyArray.length; i++) {
-      let uid = keyArray[i];
-      if (uid.charAt(0) != "M") {
-        continue;
-      }
-      // line kahin number me padi hai kahin string me - dono ek jaisi mile.
-      if (String(wardIndex[uid]) == String(lineNo)) {
-        uidArray.push(uid);
-      }
-    }
-    // M2 M10 se pehle aaye - warna list ulti-pulti dikhti hai.
-    uidArray.sort((a: any, b: any) => Number(a.substring(1)) - Number(b.substring(1)));
-    return uidArray;
-  }
-
-  // Purana index: LineWise/{ward}/{line} -> uid ki list. Sirf fallback ke liye
-  // (WardWise me line khaali nikle tab).
-  getLineUidsFromLineWise(ward: any, lineNo: any): Promise<any> {
-    return new Promise((resolve) => {
-      let linkPath = "EntityMarkingData/MarkersMapping/LineWise/" + ward + "/" + lineNo;
-      let linkInstance = this.db.object(linkPath).valueChanges().subscribe((links: any) => {
-        linkInstance.unsubscribe();
-        let uidArray: any[] = [];
-        if (links == null || typeof links != "object") {
-          resolve(uidArray);
-          return;
-        }
-        // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ko
-        // { markerNo: uid } maana jaata tha aur uid VALUE se aata tha:
-        //
-        // let uid = links[keyArray[i]];
-        //
-        // Naye structure me LineWise uid ka SET hai: { "MK1": true }. Value ab
-        // sirf true hai, isliye purana code uid ki jagah `true` push kar deta.
-        let keyArray = Object.keys(links);
-        for (let i = 0; i < keyArray.length; i++) {
-          // Naya data { uid: true } - pehchaan KEY me hai (value sirf nishaan).
-          //
-          // BEECH ME purana roop ({ markerNo: uid }, uid value me) bhi padha
-          // jaata tha. DB me ab koi number wali key hai hi nahi, isliye wo
-          // raasta hata diya gaya:
-          //   let isUidKey = isNaN(Number(key));
-          //   let uid = isUidKey ? key : links[keyArray[i]];
-          let uid = String(keyArray[i]);
-          if (isNaN(Number(uid)) == false || uidArray.indexOf(uid) >= 0) {
-            continue; // number wali key = purana roop; ab aata hi nahi
-          }
-          // Value maujoodgi ka nishaan hai - hataayi hui entry skip.
-          if (links[uid] == null || links[uid] === false || links[uid] === "") {
-            continue;
-          }
-          uidArray.push(uid);
-        }
-        resolve(uidArray);
-      });
-    });
-  }
-
-  // Line ka data usi shape me ({ key: record }) jo poora page pehle se use
-  // karta hai. Key ab uid (M12) hai - screen par ye kahin dikhta nahi, sirf
-  // update/approve ke waqt record dhoondhne ke liye chalta hai, aur uid se
-  // MarkersData ka path seedha ban jaata hai.
-  getNewPathLineData(lineNo: any, zone: any = null): Promise<any> {
-    let ward = zone != null ? zone : this.selectedZone;
-    return this.loadWardIndex(ward).then((wardIndex: any) => {
-      let uidArray = this.getLineUids(wardIndex, lineNo);
-      // Khaali list par page chup-chaap khaali reh jaata tha - ab console me
-      // saaf dikhta hai ki ward index mila ya nahi aur us line par kitne uid
-      // the. WardWise/{ward} khaali = ward ka naam match nahi ho raha.
-      console.log("[marker-approval] ward:", ward, "line:", lineNo,
-        "wardIndex keys:", Object.keys(wardIndex).length, "line uids:", uidArray.length, uidArray);
-      if (uidArray.length == 0) {
-        // WardWise me is line par kuch nahi - purane LineWise se dekh lo, taaki
-        // koi aisa marker na chhoote jiska sirf LineWise entry bani ho.
-        return this.getLineUidsFromLineWise(ward, lineNo).then((oldUids: any) => {
-          console.log("[marker-approval] LineWise fallback uids:", oldUids.length, oldUids);
-          if (oldUids.length == 0) {
-            return null;
-          }
-          return this.readMarkerRecords(oldUids).then((records: any) => {
-            return Object.keys(records).length > 0 ? records : null;
-          });
-        });
-      }
-      return this.readMarkerRecords(uidArray).then((records: any) => {
-        let found = Object.keys(records).length;
-        if (found < uidArray.length) {
-          console.log("[marker-approval] mapping hai par MarkersData record nahi mila:", uidArray.length - found);
-        }
-        return found > 0 ? records : null;
-      });
-    });
-  }
-
-  getNewPathWardData(zone: any = null): Promise<any> {
-    let ward = zone != null ? zone : this.selectedZone;
-    return this.loadWardIndex(ward).then((wardIndex: any) => {
-      let keyArray = Object.keys(wardIndex);
-      if (keyArray.length == 0) {
-        return null;
-      }
-      let uidArray = keyArray.filter((uid: any) => uid.charAt(0) == "M"); // lastMarkerKey jaise scalar chhod do
-      return this.readMarkerRecords(uidArray).then((records: any) => {
-        let wardData = {};
-        let found = 0;
-        let recordKeys = Object.keys(records);
-        for (let i = 0; i < recordKeys.length; i++) {
-          let uid = recordKeys[i];
-          let lineNo = String(wardIndex[uid]);
-          if (wardData[lineNo] == null) {
-            wardData[lineNo] = {};
-          }
-          wardData[lineNo][uid] = records[uid];
-          found++;
-        }
-        return found > 0 ? wardData : null;
-      });
-    });
-  }
-
-  // Marker image ka URL: AllMarkerImages/{imgRef}.
-  // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
-  // imgRef ho to flat AllMarkerImages folder se, na ho (marker abhi migrate
-  // nahi hua) to purane per-line folder se. Pehle yahan doosri soorat me bhi
-  // flat folder ka URL banta tha - us folder me purane naam ki file hoti hi
-  // nahi, to image tooti hui dikhti thi.
-  getNewPathImageUrl(entry: any, ward: any = null, line: any = null): string {
-    return this.markerMapping.markerImageUrl(entry, ward, line);
-  }
-
-  // Line-level scalars (counts, lastMarkerKey, ApproveStatus) ka new-path base.
-  getLineSummaryPath(ward: any, line: any): string {
-    return "EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + line;
-  }
-
-  // Marker ka MarkersData path. List ab uid se banti hai (getNewPathLineData),
-  // isliye markerNo yahan seedha "M12" aata hai.
-  // Kahin se purana markerNo (1, 2, 3...) aaye to LineWise se resolve karte
-  // hain; wahan na mile to null (matlab wo marker migrate hi nahi hua).
-  //
-  // Uid aane par bhi MAPPING dekhna zaroori hai. Pehle yahan sirf "M" dekh kar
-  // seedha path bana diya jaata tha - us soorat me mapping se hataye ja chuke
-  // marker par bhi write chali jaati thi. Check wahi hai jis se list banti hai
-  // (getLineUids / getLineUidsFromLineWise), isliye jo screen par dikh raha hai
-  // wo hamesha paas ho jayega, aur jo mapping me nahi hai use null milega.
-  getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
-    if (markerNo != null && String(markerNo).charAt(0) == "M") {
-      let uid = String(markerNo);
-      return this.loadWardIndex(ward).then((wardIndex: any) => {
-        if (wardIndex != null && String(wardIndex[uid]) == String(line)) {
-          return "EntityMarkingData/MarkersData/" + uid;
-        }
-        // WardWise me nahi mila - list LineWise fallback se bhi ban sakti hai.
-        return this.getLineUidsFromLineWise(ward, line).then((oldUids: any) => {
-          return oldUids.indexOf(uid) >= 0 ? "EntityMarkingData/MarkersData/" + uid : null;
-        });
-      });
-    }
-    // Purana markerNo (1, 2, 3...) - service se resolve, jo WardWise aur
-    // LineWise dono dekhti hai. Akela LineWise adhoora hai.
-    return this.markerMapping.getMarkerDataPath(this.db, ward, line, markerNo);
-  }
-
   showMarkers(lineNo: any) {
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-    //   houseInstance.unsubscribe();
-    // NEW PATH: MarkersData + WardWise index (shape same: { key: record })
-    this.getNewPathLineData(lineNo).then((data: any) => {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
       if (data != null) {
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -697,10 +325,7 @@ export class MarkerApprovalTestComponent {
     });
   }
   getLineApproveStatus(lineNo:any,latLng:any,i:any){
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath="EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo+"/ApproveStatus/status"
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, lineNo) + "/ApproveStatus/status";
+    let dbPath="EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo+"/ApproveStatus/status"
         let approveStatusInstance=this.db.object(dbPath).valueChanges().subscribe(approveStatus=>{
           // approveStatusInstance.unsubscribe();
           
@@ -725,12 +350,9 @@ export class MarkerApprovalTestComponent {
   }
   getMarkedHouses(lineNo: any) {
     $(this.divLoader).show();
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
-    // let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-    //   houseInstance.unsubscribe();
-    // NEW PATH: MarkersData + WardWise index (shape same: { key: record })
-    this.getNewPathLineData(lineNo).then((data: any) => {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + lineNo;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
       this.markerList = [];
       if (data != null) {
         let keyArray = Object.keys(data);
@@ -741,10 +363,7 @@ export class MarkerApprovalTestComponent {
             if (data[index]["latLng"] != undefined) {
               let lat = data[index]["latLng"].split(",")[0];
               let lng = data[index]["latLng"].split(",")[1];
-              // OLD PATH (reference ke liye rakha hai):
-              // let imageName = data[index]["image"];
-              // NEW PATH: image global hai (AllMarkerImages/{imgRef}) - move par copy/rename ki zaroorat nahi.
-              let imageName = data[index]["imgRef"] != null ? data[index]["imgRef"] : data[index]["image"];
+              let imageName = data[index]["image"];
               let userId = data[index]["userId"];
               let date = "";
 
@@ -807,10 +426,7 @@ export class MarkerApprovalTestComponent {
 
 
               let city = this.commonService.getFireStoreCity();
-              // OLD PATH (reference ke liye rakha hai):
-              // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
-              // NEW PATH: record ke imgRef se
-              let imageUrl = this.getNewPathImageUrl(data[index], this.selectedZone, this.lineNo);
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + this.lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -908,12 +524,9 @@ export class MarkerApprovalTestComponent {
 
 
     this.markerList = this.markerList.filter(item => item.lineNo == this.markerData.lineno && item.zoneNo == this.markerData.wardno);
-    // OLD PATH (reference ke liye rakha hai):
-    // let path = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-    // let houseInstance = this.db.object(path).valueChanges().subscribe((data) => {
-    //   houseInstance.unsubscribe();
-    // NEW PATH: MarkersData + WardWise index
-    this.getNewPathLineData(lineNo, zoneNo).then((data: any) => {
+    let path = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+    let houseInstance = this.db.object(path).valueChanges().subscribe((data) => {
+      houseInstance.unsubscribe();
       if (data != null) {
         let keyArray = Object.keys(data);
         if (keyArray.length > 0) {
@@ -924,10 +537,7 @@ export class MarkerApprovalTestComponent {
               count++;
               let lat = data[index]["latLng"].split(",")[0];
               let lng = data[index]["latLng"].split(",")[1];
-              // OLD PATH (reference ke liye rakha hai):
-              // let imageName = data[index]["image"];
-              // NEW PATH: image global hai (AllMarkerImages/{imgRef}) - move par copy/rename ki zaroorat nahi.
-              let imageName = data[index]["imgRef"] != null ? data[index]["imgRef"] : data[index]["image"];
+              let imageName = data[index]["image"];
               let userId = data[index]["userId"];
               let date = "";
 
@@ -986,10 +596,7 @@ export class MarkerApprovalTestComponent {
               }
 
               let city = this.commonService.getFireStoreCity();
-              // OLD PATH (reference ke liye rakha hai):
-              // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
-              // NEW PATH: record ke imgRef se
-              let imageUrl = this.getNewPathImageUrl(data[index], zoneNo, lineNo);
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + zoneNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
               let type = data[index]["houseType"];
               let alreadyInstalled = "नहीं";
               if (data[index]["alreadyInstalled"] == true) {
@@ -1087,16 +694,8 @@ export class MarkerApprovalTestComponent {
           let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + detail.cardNumber;
           this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType });
         }
-        // OLD PATH (reference ke liye rakha hai):
-        // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-        // this.db.object(dbPath).update({ houseType: houseTypeId });
-        // NEW PATH: MarkersData/{uid}
-        this.getMarkerNewPath(zoneNo, lineNo, index).then((newMarkerPath: any) => {
-          if (newMarkerPath != null) {
-            this.applyMarkerPatch(newMarkerPath, { houseType: houseTypeId });
-            this.db.object(newMarkerPath).update({ houseType: houseTypeId });
-          }
-        });
+        let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
+        this.db.object(dbPath).update({ houseType: houseTypeId });
         this.saveModifiedHouseTypeHistory(index, zoneNo, lineNo, modifiedHouseTypeHistoryId, preHouseTypeId, houseTypeId,type);
       }
 
@@ -1120,16 +719,8 @@ export class MarkerApprovalTestComponent {
       let modifiedHouseTypeHistoryId = newRef.key;
       this.db.object("EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId + "/a").remove();
       this.db.list("EntityMarkingData/ModifiedHouseTypeHistory/" + modifiedHouseTypeHistoryId).push(data);
-      // OLD PATH (reference ke liye rakha hai):
-      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
-      // this.db.object(dbPath).update({ modifiedHouseTypeHistoryId });
-      // NEW PATH: MarkersData/{uid}
-      this.getMarkerNewPath(zoneNo, lineNo, index).then((newMarkerPath: any) => {
-        if (newMarkerPath != null) {
-          this.applyMarkerPatch(newMarkerPath, { modifiedHouseTypeHistoryId });
-          this.db.object(newMarkerPath).update({ modifiedHouseTypeHistoryId });
-        }
-      });
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + index;
+      this.db.object(dbPath).update({ modifiedHouseTypeHistoryId });
 
       let detail; 
       if(type=="marker")
@@ -1272,14 +863,6 @@ export class MarkerApprovalTestComponent {
   }
 
   deleteMarker() {
-    // DELETE ABHI BAND HAI (new-path migration ke dauraan).
-    // Wajah: delete MarkersData/{uid} ko khaali kar deta hai par mapping
-    // entries (LineWise / MarkerWise / WardWise / OriginalToUid)
-    // waise hi reh jaati hain — yaani orphan mapping bachti hai. Cleanup
-    // banne tak delete rok diya gaya hai.
-    // Chalu karne ke liye: neeche wale 2 line hata dein.
-    this.commonService.setAlertMessage("error", "Marker delete is currently disabled (new-path migration in progress).");
-    return;
     this.deleteReason=$("#reasonSelect").val();
     if(this.deleteReason=="0"){
       this.commonService.setAlertMessage("error", "Please Select a Delete Reason!!!");
@@ -1320,40 +903,18 @@ export class MarkerApprovalTestComponent {
     if (markerDatails != undefined) {
       let userId = markerDatails.userId;
       let date = markerDatails.date.toString().split(" ")[0];
-      // OLD PATH (reference ke liye rakha hai):
-      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-      // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
-      // NEW PATH: MarkersData/{uid}
-      let dbPath = "";
-      this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
-        if (newMarkerPath == null) {
-          $(this.divLoader).hide();
-          return; // marker abhi migrate nahi hua -> delete skip
-        }
-        this.dropMarkerRecord(newMarkerPath); // sirf ye ek record purana hua
-        let markerInstance = this.db.object(newMarkerPath).valueChanges().subscribe((data) => {
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+      let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
         markerInstance.unsubscribe();
         if (data != null) {
           data["removeDate"] = this.commonService.getTodayDateTime();
           data["removeBy"] = localStorage.getItem("userID");
           data["reason"]=reason;
 
-          // Archive purani jagah par hi hai - sirf key badli hai. Pehle key
-          // markerNo (1, 2, 3...) hoti thi, jo marker ke move hone par badal
-          // jaati thi aur us number par baad me doosra marker bhi aa sakta tha.
-          // Ab key uid (M23) hai - marker ki ekmatra sthir pehchaan.
-          //
-          // Migration se PEHLE delete hue records apni purani numeric key par
-          // hi pade rehte hain; unhe chhua nahi jaata. Isliye is node me dono
-          // tarah ki keys mil sakti hain aur padhne wala key par bharosa nahi
-          // karta - sirf record ke andar dekhta hai.
-          let removedUid = String(newMarkerPath).substring(String(newMarkerPath).lastIndexOf("/") + 1);
-          dbPath = "EntityMarkingData/RemovedMarkers/" + zoneNo + "/" + lineNo + "/" + removedUid;
+          dbPath = "EntityMarkingData/RemovedMarkers/" + zoneNo + "/" + lineNo + "/" + markerNo;
           this.db.object(dbPath).update(data);
 
-          // OLD PATH (reference ke liye rakha hai):
-          // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/";
-          // NEW PATH: MarkersData/{uid} — saare keys null karke khaali karna
+          dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo + "/";
           let keyArray = Object.keys(data);
           if (keyArray.length > 0) {
             for (let i = 0; i < keyArray.length; i++) {
@@ -1361,12 +922,8 @@ export class MarkerApprovalTestComponent {
               data[key] = null;
             }
           }
-          // OLD PATH (reference ke liye rakha hai):
-          // this.db.object(dbPath).update(data);
-          // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/marksCount";
-          this.db.object(newMarkerPath).update(data);
-          // NEW PATH: LineSummary
-          dbPath = this.getLineSummaryPath(zoneNo, lineNo) + "/marksCount";
+          this.db.object(dbPath).update(data);
+          dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/marksCount";
           let markerCountInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
             markerCountInstance.unsubscribe();
             if (data != null) {
@@ -1374,18 +931,15 @@ export class MarkerApprovalTestComponent {
               this.markerData.totalMarkers = (Number(this.markerData.totalMarkers) - 1).toString();
               if(type=="marker")
               {
-
+               
                 this.markerData.totalLineMarkers = (Number(this.markerData.totalLineMarkers) - 1).toString();
               }
-// OLD PATH (reference ke liye rakha hai):
-// dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
-
+              
+              dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
               const data1 = {
                 marksCount: marksCount,
               };
-              // OLD PATH (reference ke liye rakha hai):
-              // this.db.object(dbPath).update(data1);
-              this.db.object(this.getLineSummaryPath(zoneNo, lineNo)).update(data1);
+              this.db.object(dbPath).update(data1);
             }
           });
 
@@ -1456,10 +1010,7 @@ export class MarkerApprovalTestComponent {
               }
             );
 
-            // OLD PATH (reference ke liye rakha hai):
-            // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/alreadyInstalledCount";
-            // NEW PATH: LineSummary
-            dbPath = this.getLineSummaryPath(zoneNo, lineNo) + "/alreadyInstalledCount";
+            dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/alreadyInstalledCount";
             let alreadyLineInstance = this.db.object(dbPath).valueChanges().subscribe(
               alreadyLineData => {
                 alreadyLineInstance.unsubscribe();
@@ -1467,9 +1018,7 @@ export class MarkerApprovalTestComponent {
                 if (alreadyLineData != null) {
                   total = Number(alreadyLineData) - 1;
                 }
-                // OLD PATH (reference ke liye rakha hai):
-                // this.db.object("EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/").update({ alreadyInstalledCount: total });
-                this.db.object(this.getLineSummaryPath(zoneNo, lineNo)).update({ alreadyInstalledCount: total });
+                this.db.object("EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/").update({ alreadyInstalledCount: total });
               }
             );
           }
@@ -1515,7 +1064,6 @@ export class MarkerApprovalTestComponent {
           $(this.divLoader).hide();
         }
       });
-      }); // getMarkerNewPath().then wrapper close (new-path delete flow)
     }
   }
 
@@ -1667,16 +1215,8 @@ export class MarkerApprovalTestComponent {
       let date = markerDatails.date.toString().split(" ")[0];
       markerDatails.status = "Reject";
       markerDatails.isApprove = "0";
-      // OLD PATH (reference ke liye rakha hai):
-      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-      // this.db.object(dbPath).update({ status: "Reject", isApprove: "0" });
-      // NEW PATH: MarkersData/{uid}
-      this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
-        if (newMarkerPath != null) {
-          this.applyMarkerPatch(newMarkerPath, { status: "Reject", isApprove: "0" });
-          this.db.object(newMarkerPath).update({ status: "Reject", isApprove: "0" });
-        }
-      });
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+      this.db.object(dbPath).update({ status: "Reject", isApprove: "0" });
       this.updateCount(date, userId, zoneNo, "reject");
       this.commonService.setAlertMessage("success", "Marker rejected successfully !!!");
     }
@@ -1711,37 +1251,8 @@ export class MarkerApprovalTestComponent {
       if (this.markerData.wardno == zoneNo && this.markerData.lineno == lineNo) {
         this.markerData.isApprovedCount = (Number(this.markerData.isApprovedCount) + 1).toFixed(0);
       }
-      // OLD PATH (reference ke liye rakha hai):
-      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
-      // this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
-      // NEW PATH: MarkersData/{uid}
-      // TEMP DEBUG - ab band hai (function upar /* */ me hai):
-      // this.debugApprove(zoneNo, lineNo, markerNo);
-      this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
-        // TEMP DEBUG - ab band hai:
-        // console.log("[APPROVE] getMarkerNewPath ne diya:", newMarkerPath);
-        if (newMarkerPath != null) {
-          // Ek hi patch object DB aur cache dono ke liye - warna approveDate
-          // do baar banta aur minute badalne par dono jagah alag pad sakta tha.
-          let approvePatch: any = {
-            isApprove: "1",
-            approveById: localStorage.getItem("userID"),
-            approveDate: this.commonService.getTodayDateTime()
-          };
-          this.applyMarkerPatch(newMarkerPath, approvePatch);
-          this.db.object(newMarkerPath).update(approvePatch);
-          // TEMP DEBUG - ab band hai:
-          //   .then(() => console.log("%c[APPROVE] DB me LIKH DIYA: " + newMarkerPath, "color:#0a0;font-weight:bold"))
-          //   .catch((e: any) => console.log("%c[APPROVE] DB WRITE FAIL: " + (e && e.message ? e.message : e), "color:#c00;font-weight:bold"));
-        }
-        else {
-          // TEMP DEBUG - ab band hai:
-          // console.log("%c[APPROVE] uid NAHI MILA - DB me kuch nahi likha gaya (screen par phir bhi approved dikhega)", "color:#c00;font-weight:bold");
-        }
-      }, (err: any) => {
-        // TEMP DEBUG - ab band hai:
-        // console.log("%c[APPROVE] getMarkerNewPath FAIL: " + (err && err.message ? err.message : err), "color:#c00;font-weight:bold");
-      });
+      let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+      this.db.object(dbPath).update({ isApprove: "1", approveById: localStorage.getItem("userID"), approveDate: this.commonService.getTodayDateTime() });
       (<HTMLInputElement>document.getElementById(Entity)).checked = false;
       (<HTMLInputElement>document.getElementById(Markar)).checked = false;
       this.getApproveUsername(localStorage.getItem("userID"), markerNo, zoneNo, lineNo,);
@@ -1855,9 +1366,6 @@ export class MarkerApprovalTestComponent {
       let markerDetail = this.markerData;
       let city = this.commonService.getFireStoreCity();
       let commonService=this.commonService;
-      // callback ke andar `this` component nahi hota - image URL ka rule
-      // service me hai, isliye uska handle bhi yahin local me le lete hain.
-      let markerMapping = this.markerMapping;
       marker.addListener("click", function () {
         $("#divLoader").show();
         // $("#markerImageBox").show();
@@ -1865,13 +1373,7 @@ export class MarkerApprovalTestComponent {
           $("#markerImageBox").show();
           $("#divLoader").hide();
         }, 2000);
-        // OLD PATH (reference ke liye rakha hai):
-        // let imageURL = commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
-        // NEW PATH: imageName imgRef ("M12.jpg") ho to flat AllMarkerImages
-        // folder se, warna (marker abhi migrate nahi hua) purane per-line
-        // folder se. Pehle yahan dono soorat me flat folder ka URL banta tha
-        // aur migrate na hue marker ki image tooti hui dikhti thi.
-        let imageURL = markerMapping.imageUrlFromName(imageName, wardNo, lineNo);
+        let imageURL = commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + imageName + "?alt=media";
         markerDetail.markerImgURL = imageURL;
         markerDetail.houseType = markerLabel;
         markerDetail.alreadyCard = alreadyCard;
@@ -1985,10 +1487,7 @@ export class MarkerApprovalTestComponent {
   }
 
   getLineApprove() {
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/marksCount";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/marksCount";
     let countInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       countInstance.unsubscribe();
       // let element = <HTMLButtonElement>document.getElementById("btnSave");
@@ -2000,7 +1499,7 @@ export class MarkerApprovalTestComponent {
         // $("#btnSave").css("background", "#626262");
         // element.disabled = true;
       }
-    // OLD PATH (reference ke liye rakha hai):
+    });
     // dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
     // let approveInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
     //   approveInstance.unsubscribe();
@@ -2014,7 +1513,6 @@ export class MarkerApprovalTestComponent {
     //     $("#btnSave").html("Approve Line");
     //   }
     // });
-    });
   }
 
   saveData() {
@@ -2066,10 +1564,7 @@ export class MarkerApprovalTestComponent {
       return;
     }
     this.lineNo = lineNo;
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/ApproveStatus";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
     this.markerData.lineApprovedBy=localStorage.getItem("userName");
     this.markerData.lineApprovedDate=this.commonService.getTodayDateTime();
     const data = {
@@ -2150,65 +1645,47 @@ export class MarkerApprovalTestComponent {
     this.markerData.isApprovedCount = "0";
   }
 
-  // Pehle ye {line}/{markerNo} do-level tha, isliye yahan do loop chalte the.
-  // Ab ek hi loop hai aur line record ke andar se aati hai - marker chahe kitni
-  // bhi baar line badal chuka ho, uski pehchaan (uid) wahi rehti hai.
-  // Archive: RemovedMarkers/{ward}/{line}/{key}. Key nayi entries me uid (M23)
-  // hai aur purani entries me markerNo - dono chalte hain, isliye key ko haath
-  // nahi lagate. `totalRemovedMarkersCount` isi node me scalar hai, use chhod
-  // dete hain.
-  getDeletedMarkerData(data: any) {
-    this.deletedMarkerList = [];
-    if (data == null) {
-      return;
-    }
-    let lineKeysArray = Object.keys(data);
-    for (let i = 0; i < lineKeysArray.length; i++) {
-      let lineKey = lineKeysArray[i];
-      let lineObj = data[lineKey];
-      if (lineObj == null || typeof lineObj != "object") {
-        continue; // totalRemovedMarkersCount jaisa scalar
-      }
-      let indexKeyArray = Object.keys(lineObj);
-      for (let j = 0; j < indexKeyArray.length; j++) {
-        let dataKey = lineObj[indexKeyArray[j]];
-        if (dataKey == null || typeof dataKey != "object") {
-          continue;
+  getDeletedMarkerData(data:any){
+    this.deletedMarkerList=[];
+    if(data!=null){
+      let lineKeysArray=Object.keys(data);
+      for(let i=0;i<lineKeysArray.length;i++){
+        let lineKey=lineKeysArray[i];
+        if(lineKey!="totalRemovedMarkersCount"){
+          let indexKeyArray=Object.keys(data[lineKey]);
+          for(let j=0;j<indexKeyArray.length;j++){
+
+            let indexKey=indexKeyArray[j];
+            let dataKey=data[lineKey][indexKey];
+
+           
+            let removedBy="";
+            let houseType="";
+            let removedDate=dataKey["removeDate"];
+            let removeReason=dataKey["reason"]
+            
+
+            let image=dataKey["image"];
+            let city = this.commonService.getFireStoreCity();
+            let imageUrl= this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
+            
+            let removedById=dataKey["removeBy"];
+            let removedByDetail=this.userList.find(item=>item.userId==removedById)
+            if(removedByDetail!=undefined){
+            removedBy=removedByDetail.name;}
+
+            let housetypeId=dataKey["houseType"];
+            let houseTypeDetail = this.houseTypeList.find(item => item.id == housetypeId);
+            if (houseTypeDetail != undefined) {
+              houseType = houseTypeDetail.houseType;
+            }
+
+
+           this.deletedMarkerList.push({lineNo:lineKey,houseType:houseType,removedBy:removedBy,removedDate:removedDate,imageUrl:imageUrl,reason:removeReason});
+           
+           
+          }
         }
-        let removedBy = "";
-        let houseType = "";
-        let removedDate = dataKey["removeDate"];
-        let removeReason = dataKey["reason"];
-
-        // Image sirf naye path se - AllMarkerImages/{imgRef}. imgRef na ho to
-        // khaali URL (service ka niyam), image nahi dikhegi.
-        //
-        // PEHLE YE THA (hataya nahi, comment kiya hai) - imgRef na hone par
-        // purane per-line folder ka URL banta tha:
-        //
-        // let image = dataKey["image"];
-        // let city = this.commonService.getFireStoreCity();
-        // let imageUrl = dataKey["imgRef"] != null
-        //   ? this.getNewPathImageUrl(dataKey)
-        //   : this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + image + "?alt=media";
-        //
-        // Migration se pehle delete hue record me imgRef hota hi nahi, to ab un
-        // entries ki image nahi dikhegi.
-        let imageUrl = this.getNewPathImageUrl(dataKey);
-
-        let removedById = dataKey["removeBy"];
-        let removedByDetail = this.userList.find(item => item.userId == removedById);
-        if (removedByDetail != undefined) {
-          removedBy = removedByDetail.name;
-        }
-
-        let housetypeId = dataKey["houseType"];
-        let houseTypeDetail = this.houseTypeList.find(item => item.id == housetypeId);
-        if (houseTypeDetail != undefined) {
-          houseType = houseTypeDetail.houseType;
-        }
-
-        this.deletedMarkerList.push({ lineNo: lineKey, houseType: houseType, removedBy: removedBy, removedDate: removedDate, imageUrl: imageUrl, reason: removeReason });
       }
     }
   }
@@ -2261,12 +1738,9 @@ export class MarkerApprovalTestComponent {
   }
   getMarkersList(content:any,type:any){
     this.modifiedMarkerList=[];
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbpath="EntityMarkingData/MarkedHouses/"+this.selectedZone;
-    // let dataInstance=this.db.object(dbpath).valueChanges().subscribe((data)=>{
-    //   dataInstance.unsubscribe();
-    // NEW PATH: MarkersData + WardWise index (shape same: {lineNo:{key:record}})
-    this.getNewPathWardData().then((data: any)=>{
+    let dbpath="EntityMarkingData/MarkedHouses/"+this.selectedZone;
+    let dataInstance=this.db.object(dbpath).valueChanges().subscribe((data)=>{
+      dataInstance.unsubscribe();
       if(data!=null){
         let lineKeyArray=Object.keys(data);
         for(let i=0;i<lineKeyArray.length;i++){
@@ -2281,10 +1755,7 @@ export class MarkerApprovalTestComponent {
               // To get image url....
               let imageName=key["image"];
               let city = this.commonService.getFireStoreCity();
-              // OLD PATH (reference ke liye rakha hai):
-              // let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
-              // NEW PATH: record ke imgRef se
-              let imageUrl = this.getNewPathImageUrl(key, this.selectedZone, lineKey);
+              let imageUrl = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.selectedZone + "%2F" + lineKey + "%2F" + imageName + "?alt=media";
 
               // To get Housetype name from housetype id
               let houseType="";
@@ -2379,10 +1850,7 @@ export class MarkerApprovalTestComponent {
       btnElement.disabled = true;
     }
 
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
-    // NEW PATH: LineSummary
-    let dbPath = this.getLineSummaryPath(this.selectedZone, this.lineNo) + "/ApproveStatus";
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone + "/" + this.lineNo + "/ApproveStatus";
     let approveInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
       approveInstance.unsubscribe();
       if (data != null) {

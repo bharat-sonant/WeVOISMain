@@ -2,16 +2,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 export interface MarkerMoveRow {
   srNo: number;
-  // PEHLE YE TEEN THE (hataye nahi, comment kiye hain):
-  //
-  //   markerNo: string;      // line par marker ka serial ("7")
-  //   newKey: number;        // destination line par uska naya number
-  //   newMarkerNo: string;   // wahi, dikhane ke liye string me
-  //
-  // Marker ab move par renumber hota hi nahi - uski pehchaan uid hai jo global
-  // counter se aata hai aur kabhi badalta nahi. Isliye "naya number" jaisi koi
-  // cheez rahi hi nahi, aur dikhane ke liye ek hi column bachta hai: uid.
-  markerUid: string;
+  markerNo: string;
+  newKey: number;
+  newMarkerNo: string;
   fromZone: string;
   fromLine: string;
   toZone: string;
@@ -109,12 +102,11 @@ export class MarkerMoveProgressComponent {
     if (exportRows.length == 0) {
       return;
     }
-    // PEHLE header me "MarkerNo" tha aur row me r.markerNo jaata tha.
-    let lines = ["SrNo,MarkerUid,FromZone,FromLine,ToZone,ToLine,CardNo,Image,ImageMissing,Status,FailedStep,Error,Attempts"];
+    let lines = ["SrNo,MarkerNo,FromZone,FromLine,ToZone,ToLine,CardNo,Image,ImageMissing,Status,FailedStep,Error,Attempts"];
     for (let i = 0; i < exportRows.length; i++) {
       let r = exportRows[i];
       lines.push([
-        r.srNo, r.markerUid, r.fromZone, r.fromLine, r.toZone, r.toLine,
+        r.srNo, r.markerNo, r.fromZone, r.fromLine, r.toZone, r.toLine,
         r.cardNo, r.oldImage, (r.imageMissing ? "yes" : "no"), r.status,
         r.failedStep, ("" + r.error).replace(/,/g, ";"), r.attempts
       ].join(","));

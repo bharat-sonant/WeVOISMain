@@ -1,0 +1,258 @@
+import { Component, OnInit } from '@angular/core';
+import { FirebaseService } from "../../firebase.service";
+import { CommonService } from '../../services/common/common.service';
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
+
+@Component({
+  selector: 'app-add-marker-against-cards-v1',
+  templateUrl: './add-marker-against-cards-v1.component.html',
+  styleUrls: ['./add-marker-against-cards-v1.component.scss']
+})
+export class AddMarkerAgainstCardsV1Component implements OnInit {
+
+  constructor(public fs: FirebaseService, private commonService: CommonService, private markerMapping: MarkerMappingService) { }
+  db: any;
+  cityName: any;
+  selectedZone: any;
+  zoneList: any[];
+  // Jin cards par marker pehle se hai: { cardNo: true }.
+  //
+  // PEHLE YE THA (hataya nahi, comment kiya hai):
+  // markerCardList: any[];
+  //
+  // ...aur neeche har card par is par .find() chalta tha:
+  // let detail = this.markerCardList.find(item => item.cardNo == cardNo);
+  // if (detail == undefined) { ... }
+  //
+  // Hazaaron cards par wo apne aap me dheema pad jaata tha (har card ke liye
+  // poori list scan). Map me lookup seedha hai, nateeja bilkul wahi.
+  markerCardMap: any = {};
+  markerAddList: any[];
+  divLoader = "#divLoader";
+
+  ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.selectedZone = "0";
+    this.zoneList = [];
+    this.getZones();
+
+  }
+
+  getZones() {
+    this.zoneList = JSON.parse(localStorage.getItem("latest-zones"));
+    this.zoneList[0]["zoneName"] = "--Select Zone--";
+  }
+
+  getMarkerData() {
+    this.markerCardMap = {};
+    this.markerAddList = [];
+    $(this.divLoader).show();
+    // OLD PATH (reference ke liye rakha hai) - marker ward/line/markerNo ke
+    // teen level me pade the, isliye teen loop lagte the:
+    // let dbPath = "EntityMarkingData/MarkedHouses/";
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerInstance.unsubscribe();
+    //     if (data != null) {
+    //       let keyArray = Object.keys(data);
+    //       if (keyArray.length > 0) {
+    //         for (let i = 0; i < keyArray.length; i++) {
+    //           let zoneNo = keyArray[i];
+    //           let lineData = data[zoneNo];
+    //           let lineKeyArray = Object.keys(lineData);
+    //           for (let j = 0; j < lineKeyArray.length; j++) {
+    //             let lineNo = lineKeyArray[j];
+    //             let markerData = lineData[lineNo];
+    //             let markerKeyArray = Object.keys(markerData);
+    //             for (let k = 0; k < markerKeyArray.length; k++) {
+    //               let markerNo = markerKeyArray[k];
+    //               if (parseInt(markerNo)) {
+    //                 if (markerData[markerNo]["cardNumber"] != null) {
+    //                   this.markerCardList.push({ cardNo: markerData[markerNo]["cardNumber"] });
+    //                 }
+    //               }
+    //             }
+    //           }
+    //         }
+    //         this.getHouseData(1);
+    //       }
+    //     }
+    //     else {
+    //       $(this.divLoader).hide();
+    //     }
+    //   }
+    // );
+
+    // Yahan sirf itna jaanna hai ki KIS CARD par marker pehle se hai.
+    //
+    // Pehle iske liye poora MarkersData padha jaata tha (poore shehar ke saare
+    // marker) aur har record ka cardNumber nikala jaata tha - 50,000 record
+    // utha kar sirf card numbers ki list banti thi.
+    //
+    // MarkerWardMapping isi kaam ka index hai: jis card par marker hai uski
+    // entry hai, jispar nahi uski nahi. Iski KEYS hi jawab hain, isliye ek
+    // chhota read kaafi hai.
+    //
+    // Sirf entry ka HONA dekhte hain, uske andar ka `markerkey` nahi. Purani
+    // (master-era) entries me `markerkey` field nahi hai, par unka matlab bhi
+    // wahi hai - card par marker maujood hai. `markerkey` maangte to wo entries
+    // "marker nahi hai" mani jaati aur unpar duplicate marker ban jaata.
+    let dbPath = "EntityMarkingData/MarkerWardMapping";
+    let cardInstance = this.db.object(dbPath).valueChanges().subscribe(
+      (data: any) => {
+        cardInstance.unsubscribe();
+        if (data != null) {
+          let cardArray = Object.keys(data);
+          for (let i = 0; i < cardArray.length; i++) {
+            this.markerCardMap[cardArray[i]] = true;
+          }
+          this.getHouseData(1);
+        }
+        else {
+          // master jaisa - kuch na mile to RUK jao.
+          //
+          // PEHLE YE THA (hataya nahi, comment kiya hai) - null par bhi aage
+          // badh jaata tha:
+          // this.getHouseData(1);
+          //
+          // Wo khatarnak hai: node kisi wajah se na mile (galat city, node abhi
+          // bana hi nahi, read fail) to ye page har card ko "marker nahi hai"
+          // maan kar POORE SHEHER par marker bana dega. Master is soorat me
+          // sirf loader hata kar ruk jaata tha.
+          $(this.divLoader).hide();
+          this.commonService.setAlertMessage("error", "Marker card mapping not found. Nothing was changed.");
+        }
+      }
+    );
+  }
+
+  getHouseData(index: any) {
+    if (index == this.zoneList.length) {
+      if (this.markerAddList.length > 0) {
+        this.createMarker(0);
+      }
+      else {
+        $(this.divLoader).hide();
+        this.commonService.setAlertMessage("error", "Sorry no card available !!!");
+      }
+    }
+    else {
+      let zoneNo = this.zoneList[index]["zoneNo"];
+      let dbPath = "Houses/" + zoneNo;
+      let houseInstance = this.db.object(dbPath).valueChanges().subscribe(
+        houseData => {
+          houseInstance.unsubscribe();
+          if (houseData != null) {
+            let keyArray = Object.keys(houseData);
+            if (keyArray.length > 0) {
+              let wardLastLineNo = keyArray[keyArray.length - 1];
+              for (let i = 1; i <= parseInt(wardLastLineNo); i++) {
+                let lineNo = i;
+                let cardObj = houseData[lineNo];
+                if (cardObj != undefined) {
+                  let cardKeyArray = Object.keys(cardObj);
+                  for (let j = 0; j < cardKeyArray.length; j++) {
+                    let cardNo = cardKeyArray[j];
+                    if (this.markerCardMap[cardNo] == null) {
+                      let cardDetail = cardObj[cardNo];
+                      this.markerAddList.push({ zoneNo: zoneNo, lineNo: lineNo, cardNo: cardNo, cardDetail: cardDetail });
+                    }
+                  }
+                }
+              }
+            }
+            index++;
+            this.getHouseData(index);
+          }
+          else {
+            index++;
+            this.getHouseData(index);
+          }
+        });
+    }
+  }
+
+  createMarker(index: any) {
+    if (index == this.markerAddList.length) {
+      $(this.divLoader).hide();
+      this.commonService.setAlertMessage("success", "Marker created successfully !!!");
+    }
+    else {
+      let zoneNo = this.markerAddList[index]["zoneNo"];
+      let lineNo = this.markerAddList[index]["lineNo"];
+      let cardNo = this.markerAddList[index]["cardNo"];
+      let cardDetail = this.markerAddList[index]["cardDetail"];
+
+      let address = "";
+      let date = "";
+      let houseType = "";
+      let isApprove = "1";
+      let latLng = "";
+      let userId = "-1";
+      if (cardDetail["address"] != null) {
+        address = cardDetail["address"];
+      }
+      if (cardDetail["createdDate"] != null) {
+        date = cardDetail["createdDate"];
+      }
+      if (cardDetail["houseType"] != null) {
+        houseType = cardDetail["houseType"];
+      }
+      if (cardDetail["latLng"] != null) {
+        latLng = cardDetail["latLng"].toString().replace('(', "").replace(')', "");
+      }
+      const data = {
+        address: address,
+        date: date,
+        houseType: houseType,
+        isApprove: isApprove,
+        latLng: latLng,
+        userId: userId,
+        cardNumber: cardNo
+      }
+
+      // OLD PATH (reference ke liye rakha hai) - line ka lastMarkerKey padh kar
+      // us par +1 karke marker seedha MarkedHouses par likh diya jaata tha:
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/lastMarkerKey";
+      // let lastMarkerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      //   lastMarkerKey => {
+      //     lastMarkerInstance.unsubscribe();
+      //     let lastKey = 1;
+      //     if (lastMarkerKey != null) {
+      //       lastKey = Number(lastMarkerKey) + 1;
+      //     }
+      //     ...
+      //     dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + lastKey;
+      //     this.db.object(dbPath).update(data);
+      //     dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+      //     this.db.object(dbPath).update({ lastMarkerKey: lastKey });
+      //
+      //     index++;
+      //     setTimeout(() => { this.createMarker(index); }, 200);
+      //   }
+      // );
+
+      // NEW PATH: createMarker() global uid (M{n}) aur line ka agla markerNo
+      // dono transaction se reserve karta hai, phir MarkersData + MarkerWise +
+      // WardWise + LineWise + LineSummary.lastMarkerKey - sab ek jagah se likhta
+      // hai. Pehle wala read-then-write do users ke ek saath chalne par same
+      // number de deta tha; transaction se wo dikkat nahi rehti.
+      //
+      // App (MarkingApp) bhi thik yahi structure likhta hai, isliye yahan se
+      // bana marker aur app se bana marker portal par ek jaise dikhte hain.
+      this.markerMapping.createMarker(this.db, zoneNo, lineNo, data).then((uid: any) => {
+        if (uid == null) {
+          // Counter transaction fail hui - is card ko chhod kar aage badho,
+          // warna poori list yahi ruk jaayegi. Baaki markers ban jaate hain.
+          console.log("[add-marker-against-cards] uid reserve nahi hua, card skip:", cardNo);
+        }
+        index++;
+        setTimeout(() => {
+          this.createMarker(index);
+        }, 200);
+      });
+    }
+  }
+}

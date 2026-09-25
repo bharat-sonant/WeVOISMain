@@ -483,10 +483,7 @@ export class HouseMarkingAssignmentComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Plese select ward !!!");
       return;
     }
-    // OLD PATH (reference ke liye rakha hai):
-    // this.dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "";
-    // NEW PATH: line ka ApproveStatus ab LineSummary par hai, shape wahi {line: {ApproveStatus: {status}}} hai.
-    this.dbPath = "EntityMarkingData/MarkersMapping/LineSummary/" + wardNo + "";
+    this.dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "";
     let lineInstance = this.db.object(this.dbPath).valueChanges().subscribe((data) => {
       lineInstance.unsubscribe();
       if (data != null) {

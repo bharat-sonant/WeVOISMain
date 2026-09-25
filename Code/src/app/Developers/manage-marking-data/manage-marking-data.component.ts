@@ -24,17 +24,6 @@ export class ManageMarkingDataComponent implements OnInit {
   }
 
   setMarkerData() {
-    // YE PAGE ABHI BAND HAI (purani scheme).
-    // Ye function MarkedHouses ko "EntityMarkingData/Markers/M{n}" +
-    // "WardLineMapping" + "MarkingImages/" par le jaata tha - wo teeno node
-    // ab koi page padhta hi nahi. Yahi kaam ab naye structure me
-    // marker-data-move sahi tarah karta hai (MarkersData + MarkersMapping).
-    // Isliye button dabane par ab kuch likhta nahi, warna DB me sirf junk
-    // banta aur WardLineMapping remove() bhi chal jaata.
-    // Chalu karne ke liye: neeche wale 2 line hata dein.
-    this.commonService.setAlertMessage("error", "This page uses the old marker scheme and has been disabled. Use the 'Marker Data Move' page for marker migration.");
-    return;
-
     $(this.divLoader).show();
     this.db.object("EntityMarkingData/WardLineMapping").remove();
     this.allMarkerList = [];
@@ -146,13 +135,6 @@ export class ManageMarkingDataComponent implements OnInit {
   }
 
   setMarkerMapping() {
-    // YE FUNCTION BHI BAND HAI - upar setMarkerData() wali hi wajah.
-    // Ye "EntityMarkingData/Markers" se WardLineMapping banata tha; naye
-    // structure me line ka index MarkersMapping/LineWise + WardWise hai.
-    // Chalu karne ke liye: neeche wale 2 line hata dein.
-    this.commonService.setAlertMessage("error", "This page uses the old marker scheme and has been disabled. Use the 'Marker Data Move' page for marker migration.");
-    return;
-
     $(this.divLoader).hide();
     this.db.object("EntityMarkingData/WardLineMapping").remove();
     let dbPath = "EntityMarkingData/Markers";

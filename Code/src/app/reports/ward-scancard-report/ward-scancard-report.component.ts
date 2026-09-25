@@ -56,14 +56,15 @@ export class WardScancardReportComponent implements OnInit {
 
   ngOnInit() {
     this.isImage="0";
-    this.cityName = localStorage.getItem("cityName");
-    if (this.cityName == "devtest" || this.cityName == "ecogram" || this.cityName == "jaipur-civil-line" || this.cityName == "jaipur-kishanpole" || this.cityName == "chennai" || this.cityName == "bharatpur") {
+    // Case ya extra space ki wajah se city match fail na ho, isliye normalize kar rahe hain.
+    this.cityName = (localStorage.getItem("cityName") || "").trim().toLowerCase();
+    if (this.cityName == "devtest" || this.cityName == "ecogram" || this.cityName == "jaipur-civil-line" || this.cityName == "jaipur-kishanpole" || this.cityName == "chennai" || this.cityName == "bharatpur" || this.cityName == "itarsi" || this.cityName == "vidisha") {
       this.isEcogram = "1";
       $("#divEcogram").show();
       this.totalScanedCards = 0;
       if (this.cityName == "chennai") {
         this.wasteCategoryList = [{ category: "All Segregated" }, { category: "Wet, Dry & Hazardous Segregated" }, { category: "Wet, Dry & Sanitary Segregated" }, { category: "Wet & Dry Segregated" }, { category: "No-Segregated" }, { category: "No Waste" }];
-      } if (this.cityName == "bharatpur" || this.cityName == "devtest") {
+      } if (this.cityName == "bharatpur" || this.cityName == "devtest" || this.cityName == "itarsi" || this.cityName == "vidisha") {
         this.isImage="1";
         this.wasteCategoryList = [{ category: "Segregated" }, { category: "Non-Segregated" }, { category: "No Waste" }];
       }
@@ -568,9 +569,9 @@ export class WardScancardReportComponent implements OnInit {
   }
 
   // Dropdown ko loaded scan data se banate hain: jo wasteCategory values actual
-  // data mein aayi, sirf wahi filter options dikhein (bharatpur/devtest ke liye).
+  // data mein aayi, sirf wahi filter options dikhein (bharatpur/devtest/itarsi/vidisha ke liye).
   buildWasteCategoryList() {
-    if (this.cityName != "bharatpur" && this.cityName != "devtest") {
+    if (this.cityName != "bharatpur" && this.cityName != "devtest" && this.cityName != "itarsi" && this.cityName != "vidisha") {
       return;
     }
     let list = [];

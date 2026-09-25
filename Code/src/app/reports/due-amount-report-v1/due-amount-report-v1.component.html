@@ -1,0 +1,160 @@
+<div id="divLoader" class="loaderClassMain">
+    <span class="spanLoader" id="spLoader">
+        <img src="../../../assets/img/loading.gif" width="50"><br /><span
+            style="color:#fff; font-weight: normal;font-size: 18px;"> We are collecting card due
+            amount<br /></span><span style="color:#0ba118; font-size: 24px;"> Please wait...</span></span>
+</div>
+<div id="divLoaderGet" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<div class="main-page">
+    <header class="header">
+        <div class="header-left">
+            Due Amount Report
+            <!-- Breadcrumb starts 
+            <nav class="breadcrumb">
+                <ul class="ul-breadcrumb">
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']">Home</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Collection Management</a>
+                    </li>
+                    <li class="li-breadcrumb">
+                        <a class="link-breadcrumb" href="#">Due Amount Report</a>
+                    </li>
+                </ul>
+            </nav>-->
+            <!-- Breadcrumb ends -->
+        </div>
+        <div class="header-right">
+            <div class="btn-default2 btn-export2">
+                <h4 class="Total-amount">{{totalDueAmount}}</h4>
+                <p class="total-amount-tatile">Toatl Amount</p>
+            </div>
+            <div class="btn-default btn-export" (click)="exportToExcel();">
+                Export to Excel
+                <img src="../../../assets/img/iconExport.png" class="img-fluid icon-default" alt="File" width="24" />
+            </div>
+            <div class="btn-default btn-export" (click)="updateCardColectionData();">
+                Last Update {{lastUpdateDate}}
+                <img src="../../../assets/img/iconRefresh.png" class="img-fluid icon-default" alt="File" width="24" />
+            </div>
+        </div>
+    </header>
+    <div class="page-content">
+        <div class="table-maine">
+            <div class="header-table">
+                <div>
+                    <select class="select-drop" id="ddlYear" (change)="changeSelection()" 
+                        [(ngModel)]="selectedYear">
+                        <option value="0">Year</option>
+                        <option value={{yer.year}} *ngFor="let yer of yearList"
+                            ngSelected="yer.year == selectedYear?'selected':''">{{yer.year}}</option>
+                    </select>
+                </div>
+                <div>
+                    <select class="select-drop" id="ddlZone" (change)="changeSelection()">
+                        <option *ngFor="let zone of zoneList" value={{zone.zoneNo}}
+                            ngSelected="zone.zoneNo == selectedZone?'selected':''">
+                            {{zone.zoneName}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-body">
+                <div class="table-group">
+                    <div id="divList" class="table-ward" (scroll)="onContainerScroll();">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" > Card Number</th>
+                                    <th scope="col" class="text-right">Amount</th>
+                                    <th scope="col" class="text-center">Jan</th>
+                                    <th scope="col" class="text-center">Feb</th>
+                                    <th scope="col" class="text-center">Mar</th>
+                                    <th scope="col" class="text-center">Apr</th>
+                                    <th scope="col" class="text-center">May</th>
+                                    <th scope="col" class="text-center">Jun</th>
+                                    <th scope="col" class="text-center">Jul</th>
+                                    <th scope="col" class="text-center">Aug</th>
+                                    <th scope="col" class="text-center">Sep</th>
+                                    <th scope="col" class="text-center">Oct</th>
+                                    <th scope="col" class="text-center">Nov</th>
+                                    <th scope="col" class="text-center">Dec</th>
+                                </tr>
+                            </thead>
+                            <tbody style="height: 73vh;">
+                                <tr *ngFor="let dt of wardCardFinalList">
+                                    <td>
+                                        <span>{{dt.cardNo}}<br />
+                                            <span style="font-size: 10px;">({{dt.entityType}})</span>
+                                        </span>
+                                    </td>
+                                    <td class="text-right" >
+                                       <span>{{dt.totalAmount}}</span>
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.Jan}}
+                                    </td>
+                                    <td class=" text-center">
+                                            {{dt.Feb}}
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.Mar}}
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.Apr}}
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.May}}
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.Jun}}
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.Jul}}
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.Aug}}
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.Sep}}
+                                    </td>
+                                    <td class=" text-center" >
+                                            {{dt.Oct}}
+                                    </td>
+                                    <td class=" text-center">
+                                            {{dt.Nov}}
+                                    </td>
+                                    <td class=" text-center">
+                                            {{dt.Dec}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="position: sticky;bottom: 0px; background-color: #fff;">
+                                    <th scope="col" style=" width: 200px!important;"></th>
+                                    <th scope="col"  class=" text-end">Total :</th>
+                                    <th scope="col" class=" text-center">{{Jan}} </th>
+                                    <th scope="col" class=" text-center">{{Feb}}</th>
+                                    <th scope="col" class=" text-center">{{Mar}}</th>
+                                    <th scope="col" class=" text-center">{{Apr}}</th>
+                                    <th scope="col" class=" text-center">{{May}}</th>
+                                    <th scope="col" class=" text-center">{{Jun}}</th>
+                                    <th scope="col" class=" text-center">{{Jul}}</th>
+                                    <th scope="col" class=" text-center">{{Aug}}</th>
+                                    <th scope="col" class=" text-center">{{Sep}}</th>
+                                    <th scope="col" class=" text-center">{{Oct}}</th>
+                                    <th scope="col" class=" text-center">{{Nov}}</th>
+                                    <th scope="col" class=" text-center">{{Dec}}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

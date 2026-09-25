@@ -4,14 +4,13 @@ import { FirebaseService } from "../../firebase.service";
 import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 
-import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-collected-amount-report',
   templateUrl: './collected-amount-report.component.html',
   styleUrls: ['./collected-amount-report.component.scss']
 })
 export class CollectedAmountReportComponent implements OnInit {
-  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public httpService: HttpClient, private markerMapping: MarkerMappingService) { }
+  constructor(private commonService: CommonService, private besuh: BackEndServiceUsesHistoryService, public fs: FirebaseService, public httpService: HttpClient) { }
   zoneList: any[];
   yearList: any[];
   wardCardList: any[];
@@ -249,18 +248,6 @@ export class CollectedAmountReportComponent implements OnInit {
     }
   }
 
-
-
-
-
-  // Poore ward ka data old path jaisa shape ({line: {markerNo: record}}) me.
-  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
-  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
-  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
-  getNewPathWardData(wardNo: any): Promise<any> {
-    return this.markerMapping.getWardRecords(this.db, wardNo);
-  }
-
   updateCardColectionData() {
     $(this.divLoader).show();
     this.setDefaultValues();
@@ -282,14 +269,10 @@ export class CollectedAmountReportComponent implements OnInit {
 
     this.wardCardPaymentList = [];
 
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
-    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
-    //   markerData => {
-    //     markerInstance.unsubscribe();
-    // NEW PATH: MarkersData + LineWise (shape wahi {line: {markerNo: record}})
-    this.getNewPathWardData(this.selectedZone).then(
-      (markerData: any) => {
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedZone;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
         if (markerData != null) {
           let keyArray = Object.keys(markerData);
           if (keyArray.length > 0) {

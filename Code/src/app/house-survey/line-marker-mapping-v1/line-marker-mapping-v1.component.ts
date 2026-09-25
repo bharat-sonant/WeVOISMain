@@ -1,0 +1,1404 @@
+import { AngularFireList } from 'angularfire2/database';
+/// <reference types="@types/googlemaps" />
+
+import { Component, OnDestroy, ViewChild } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { FirebaseService } from "../../firebase.service";
+
+//services
+import { CommonService } from "../../services/common/common.service";
+import { MapService } from "../../services/map/map.service";
+import * as $ from "jquery";
+import { ToastrService } from "ngx-toastr";
+import { AngularFireStorage } from "angularfire2/storage";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { MoveHelperV1Service, MoveRun } from '../../services/common/move-helper-v1.service';
+import { MarkerMoveRow, MarkerMoveSummary } from '../../PortalServices/marker-move-progress-v1/marker-move-progress-v1.component';
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
+
+@Component({
+  selector: 'app-line-marker-mapping-v1',
+  templateUrl: './line-marker-mapping-v1.component.html',
+  styleUrls: ['./line-marker-mapping-v1.component.scss']
+})
+export class LineMarkerMappingV1Component implements OnDestroy {
+
+  @ViewChild("gmap", null) gmap: any;
+  public map: google.maps.Map;
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private storage: AngularFireStorage, public httpService: HttpClient, private mapService: MapService, private commonService: CommonService, private toastr: ToastrService, public moveHelper: MoveHelperV1Service, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
+
+  // ---- move progress state ----
+  pageName = "Line-Marker-Mapping";
+  historySection = "SurveyManagement";
+  historyPageKey = "LineMarkerMapping";
+  @ViewChild("moveProgressModal", { static: false }) moveProgressModal: any;
+  @ViewChild("historyModal", { static: false }) historyModal: any;
+  private moveModalRef: any = null;
+  private historyModalRef: any = null;
+  moveRows: MarkerMoveRow[] = [];
+  moveSummary: MarkerMoveSummary = this.getEmptySummary();
+  moveRunning = false;
+  private cancelRequested = false;
+  private moveContext: any = null;
+  private networkInterrupted = false;
+
+  /** MoveHelperV1Service ko cancel/network state batata hai */
+  private run: MoveRun = {
+    isCancelled: () => this.cancelRequested,
+    setWaitingForNetwork: (waiting: boolean) => {
+      this.moveSummary.waitingForNetwork = waiting;
+      if (waiting) { this.networkInterrupted = true; }
+    }
+  };
+
+  public selectedZone: any;
+  db: any;
+  cityName: any;
+  wardLines: any;
+  activeZone: any;
+  lineNo: any;
+  previousLine: any;
+  centerPoint: any;
+  isFirst = true;
+  invisibleImageUrl = "../assets/img/invisible-location.svg";
+  markerUrl = "../assets/img/red-home.png";
+  cardMarkerUrl = "../assets/img/blue-home.png";
+  selectedMarkerUrl = "../assets/img/green-home.png";
+  zoneList: any[];
+  polylines: any[];
+  houseMarker: any[];
+  lines: any[];
+  markerList: any[];
+  allMarkers: any[];
+  selectedCardDetails: any[];
+  toDayDate: any;
+  wardBoundary: any;
+  public movedMarkerCount: any;
+  public totalMoveMarkerCount: any;
+
+  cardDetails: CardDetails = {
+    selectedMarkerCount: 0,
+    totalMarkerOnLine: 0,
+  };
+
+  oldMarkerList: any[];
+  newMarkerList: any[];
+  plansRef: AngularFireList<any>;
+  divLoader = "#divLoader";
+  divLoaderMarkerMove = "#divLoaderMarkerMove";
+  serviceName = "line-marker-mapping";
+
+  ngOnInit() {
+    this.toDayDate = this.commonService.setTodayDate();
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management", "Line-Marker-Mapping", localStorage.getItem("userID"));
+    this.movedMarkerCount = 0;
+    this.totalMoveMarkerCount = 0;
+    this.lineNo = 1;
+    this.previousLine = 1;
+    this.allMarkers = [];
+    this.houseMarker = [];
+    this.polylines = [];
+    this.selectedCardDetails = [];
+    this.setHeight();
+    this.getZones();
+    this.setMap();
+    this.moveHelper.watchConnection(this.db);
+  }
+
+  ngOnDestroy() {
+    this.cancelRequested = true;
+    this.moveHelper.stopWatchingConnection();
+    if (this.moveModalRef != null) { this.moveModalRef.dismiss(); this.moveModalRef = null; }
+    if (this.historyModalRef != null) { this.historyModalRef.dismiss(); this.historyModalRef = null; }
+  }
+
+  setHeight() {
+    setTimeout(() => {
+      $(".navbar-toggler").show();
+      $("#divMap").css("height", $(window).height() - 80);
+    }, 2000);
+  }
+
+  setMap() {
+    let mapProp = this.commonService.initMapProperties();
+    this.map = new google.maps.Map(this.gmap.nativeElement, mapProp);
+  }
+
+  getZones() {
+    this.zoneList = [];
+    this.zoneList = JSON.parse(localStorage.getItem("allZoneList"));
+  }
+
+  changeZoneSelection(filterVal: any) {
+    this.cardDetails.selectedMarkerCount = 0;
+    this.cardDetails.totalMarkerOnLine = 0;
+    this.activeZone = filterVal;
+    this.lineNo = 1;
+    this.previousLine = 1;
+    $("#txtLineNo").val(this.lineNo);
+    $("#chk_wardLine").prop('checked', false);
+    if (this.wardBoundary) {
+      this.wardBoundary[0]["line"].setMap(null);
+      this.wardBoundary = undefined;
+    }
+    this.loadData();
+  }
+
+  loadData() {
+    $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 2000);
+    this.clearAllOnMap();
+    this.getAllLinesFromJson();
+  }
+
+  clearAllOnMap() {
+    this.selectedZone = this.activeZone;
+    if (this.houseMarker.length > 0) {
+      for (let i = 0; i < this.houseMarker.length; i++) {
+        this.houseMarker[i]["marker"].setMap(null);
+      }
+    }
+    if (this.allMarkers.length > 0) {
+      for (let i = 0; i < this.allMarkers.length; i++) {
+        this.allMarkers[i]["marker"].setMap(null);
+      }
+      this.allMarkers = [];
+    }
+    if (this.polylines.length > 0) {
+      for (let i = 0; i < this.polylines.length; i++) {
+        this.polylines[i].setMap(null);
+      }
+    }
+    if (this.wardBoundary) {
+      this.wardBoundary[0]["line"].setMap(null);
+    }
+    this.polylines = [];
+    this.wardBoundary = undefined;
+  }
+
+  getAllLinesFromJson() {
+    this.lines = [];
+    this.commonService.getWardLine(this.selectedZone, this.toDayDate).then((data: any) => {
+      if (this.polylines.length > 0) {
+        for (let i = 0; i < this.polylines.length; i++) {
+          if (this.polylines[i] != null) {
+            this.polylines[i].setMap(null);
+          }
+        }
+      }
+      this.polylines = [];
+      let wardLines = JSON.parse(data);
+      let keyArray = Object.keys(wardLines);
+      this.wardLines = wardLines["totalLines"];
+      let lineNo = 0;
+      for (let i = 0; i < keyArray.length - 3; i++) {
+        lineNo = Number(keyArray[i]);
+
+        let points = wardLines[lineNo]["points"];
+        var latLng = [];
+        for (let j = 0; j < points.length; j++) {
+          latLng.push({ lat: points[j][0], lng: points[j][1] });
+        }
+        this.lines.push({
+          lineNo: lineNo,
+          latlng: latLng,
+          color: "#87CEFA",
+        });
+        this.plotLineOnMap(lineNo, latLng, i, this.selectedZone);
+      }
+      this.getMarkedHouses(this.lineNo);
+    });
+  }
+
+  plotLineOnMap(lineNo: any, latlng: any, index: any, wardNo: any) {
+    if (wardNo == this.selectedZone) {
+      if (this.polylines[index] != undefined) {
+        this.polylines[index].setMap(null);
+      }
+      let status = "";
+      let strokeWeight = 2;
+      let lineColor = "";
+      if (lineNo == this.lineNo) {
+        strokeWeight = 5;
+        status = "requestedLine";
+      }
+      let line = new google.maps.Polyline({
+        path: latlng,
+        strokeColor: this.commonService.getLineColor(status),
+        strokeWeight: strokeWeight,
+      });
+      this.polylines[index] = line;
+      this.polylines[index].setMap(this.map);
+      let lat = latlng[0]["lat"];
+      let lng = latlng[0]["lng"];
+      let marker = new google.maps.Marker({
+        position: { lat: Number(lat), lng: Number(lng) },
+        map: this.map,
+        icon: {
+          url: this.invisibleImageUrl,
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scaledSize: new google.maps.Size(10, 10),
+          origin: new google.maps.Point(0, 0),
+        },
+        label: {
+          text: lineNo.toString(),
+          color: "#000",
+          fontSize: "12px",
+          fontWeight: "bold",
+        },
+      });
+      this.allMarkers.push({ marker });
+      if (lineNo == this.lineNo) {
+        let firstLine = this.lines.find((item) => item.lineNo == Number(lineNo));
+        this.centerPoint = firstLine.latlng[0];
+        if (this.isFirst == true) {
+          this.map.setZoom(19);
+          this.isFirst = false;
+        }
+        this.map.setCenter(this.centerPoint);
+      }
+    }
+  }
+
+  // =====================================================================
+  // NEW PATH helpers (MarkersData + MarkersMapping)
+  //
+  // Old path me line ka poora data ek node me tha - MarkedHouses/{ward}/{line}.
+  // Ab record MarkersData/{uid} par hai aur "is line par kaun sa marker kis
+  // number par hai" LineWise batata hai. Ye helpers wahi purani
+  // {markerNo: record} shape lauta dete hain, isliye baaki page ka code
+  // waisa ka waisa chalta rehta hai.
+  //
+  // Reads moveHelper.readOnce se hote hain - usme timeout aur cleanup
+  // dono handle hain.
+  // =====================================================================
+
+
+
+
+
+  // Ek line ka data, old path jaisi shape me. Jis uid ka record na mile use
+  // chhod dete hain - mapping bachi ho par record na ho to marker hai hi nahi.
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
+  getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
+    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
+  }
+
+  // Line ka data, MoveHelper.readOnceWithRetry jaisa hi bartaav.
+  //
+  // Old path par ye read seedha readOnceWithRetry se jaata tha. Naye path par
+  // data service se aata hai (cached), isliye wo helper seedha nahi lag sakta -
+  // loop yahan wahi rakha hai jo helper me hai: 3 koshish, har koshish se pehle
+  // cancel check, network error par net wapas aane ka intezaar aur badhta gap
+  // (0.5s, 1s, 2s). Network ke alawa koi error ho to turant bahar - us par
+  // dobara koshish ka matlab nahi.
+  //
+  // Fail hui promise cache se apne aap hat jaati hai (service ka cachePromise),
+  // isliye agli koshish sach me nayi read bhejti hai.
+  private async readLineDataWithRetry(ward: any, line: any): Promise<any> {
+    let lastError: any = null;
+    for (let attempt = 0; attempt < this.moveHelper.IMAGE_ATTEMPTS; attempt++) {
+      if (this.run.isCancelled()) { throw new Error("cancelled"); }
+      try {
+        return await this.getNewPathLineData(ward, line);
+      } catch (e) {
+        lastError = e;
+        if (!this.moveHelper.isNetworkError(e)) { break; }
+        await this.moveHelper.waitForNetwork(this.run);
+        await this.moveHelper.delay(500 * Math.pow(2, attempt));
+      }
+    }
+    throw lastError;
+  }
+
+  // Poore ward ka data, {line: {markerNo: record}} shape me.
+  getNewPathWardData(wardNo: any): Promise<any> {
+    return this.markerMapping.getWardRecords(this.db, wardNo);
+  }
+
+  // Marker ka uid (M{n}) us line par uske number se. Na mile to null.
+  getMarkerUid(ward: any, line: any, markerNo: any): Promise<any> {
+    return this.markerMapping.getUid(this.db, ward, line, markerNo);
+  }
+
+  // Target line ka agla safe markerNo.
+  //
+  // Sirf LineSummary ka lastMarkerKey dekhna kaafi nahi - wo peeche reh sakta
+  // hai (jaise koi marker move hokar is line par aa gaya ho). Aise me naye
+  // marker ko wahi number mil jaata jo pehle se kisi ke paas hai, aur LineWise
+  // me ek key par doosra uid chadh kar purana marker portal se gayab kar deta.
+  // Isliye summary aur line ki asli sabse badi key, dono me se bada lete hain.
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai) - service ka
+  // getSafeLastKey() bhi retire ho chuka hai (per-line counter khatam).
+  // getSafeLastKey(ward: any, line: any): Promise<any> {
+  //   return this.markerMapping.getSafeLastKey(this.db, ward, line);
+  // }
+
+  getMarkedHouses(lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getMarkedHouses");
+    if (this.houseMarker.length > 0) {
+      for (let i = 0; i < this.houseMarker.length; i++) {
+        this.houseMarker[i]["marker"].setMap(null);
+      }
+      this.houseMarker = [];
+    }
+    this.selectedCardDetails = [];
+    // OLD PATH: MarkedHouses/{ward}/{line} - marker aur line ke scalars ek hi
+    // node me the. NEW PATH: record MarkersData/{uid} par hai aur line par kaun
+    // sa marker kis number par hai ye LineWise batata hai. Shape wahi
+    // {markerNo: record} milti hai, isliye neeche ka code jaisa tha waisa hai.
+    this.getNewPathLineData(this.selectedZone, lineNo).then((data: any) => {
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMarkedHouses", data);
+        let keyArray = Object.keys(data);
+        if (keyArray.length > 0) {
+          for (let i = 0; i < keyArray.length; i++) {
+            let index = keyArray[i];
+            if (index != "ApproveStatus" && index != "marksCount") {
+              if (data[index]["latLng"] != undefined) {
+                let lat = data[index]["latLng"].split(",")[0];
+                let lng = data[index]["latLng"].split(",")[1];
+                this.setMarker(lat, lng, index, data[index]);
+                this.cardDetails.totalMarkerOnLine = this.houseMarker.length;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  setMarker(lat: any, lng: any, index: any, cardData: any) {
+    let isSelected = false;
+    let url = this.markerUrl;
+    if (cardData["cardNumber"] != null) {
+      url = this.cardMarkerUrl;
+    }
+    let marker = new google.maps.Marker({
+      position: { lat: Number(lat), lng: Number(lng) },
+      map: this.map,
+      icon: {
+        url: url,
+        fillOpacity: 1,
+        strokeWeight: 0,
+        // scaledSize: new google.maps.Size(27, 27),
+        origin: new google.maps.Point(0, 0),
+      },
+    });
+    // PEHLE in dono me `markerNo: index` jaata tha. `index` shaped line data ki
+    // key hai - wo pehle line ka serial number hoti thi, ab uid hoti hai
+    // (shapeLine ab re-key nahi karta), isliye naam bhi markerUid kar diya.
+    this.houseMarker.push({ markerUid: index, marker: marker });
+    marker.addListener("click", (e) => {
+      let lineData = this.selectedCardDetails.find((item) => item.markerUid == index);
+      if (lineData == undefined) {
+        this.selectedCardDetails.push({
+          lineNo: this.lineNo,
+          markerUid: index,
+          data: cardData
+        });
+        isSelected = true;
+      } else {
+        this.selectedCardDetails = this.selectedCardDetails.filter((item) => item !== lineData);
+        isSelected = false;
+      }
+      this.setMarkerAsSelected(marker, isSelected, lineData);
+      this.cardDetails.selectedMarkerCount = this.selectedCardDetails.length;
+    });
+  }
+
+  setMarkerAsSelected(marker: any, isSelected: boolean, lineData: any) {
+    if (isSelected) {
+      marker.icon.url = "../assets/img/green-home.png";
+    } else {
+      let url = this.markerUrl;
+      if (lineData != undefined) {
+        if (lineData["data"]["cardNumber"] != null) {
+          url = this.cardMarkerUrl;
+        }
+      }
+      marker.icon.url = url;
+    }
+    marker.setMap(null);
+    marker.setMap(this.map);
+  }
+
+  getLineData() {
+    // Pehle check, phir hi kuch badlo. Line data poori load hone se pehle
+    // line change karne par purana code beech me crash ho jata tha - header
+    // ka box nayi line dikhata tha lekin map aur this.lineNo purani line par
+    // hi atke reh jate the. Us stale this.lineNo ki wajah se move par
+    // "cards can't be move on same line" ka galat error aata tha.
+    let requestedLine = $("#txtLineNo").val();
+    let newLine = this.lines.find((item) => item.lineNo == Number(requestedLine));
+    if (newLine == undefined) {
+      // previousLine hamesha wahi line hai jo map par draw ho chuki hai -
+      // box aur lineNo dono ko usi par wapas le aao
+      this.lineNo = this.previousLine;
+      $("#txtLineNo").val(this.previousLine);
+      this.commonService.setAlertMessage("error", "इस line का data अभी नहीं मिला, थोड़ी देर बाद try करें !!!");
+      return;
+    }
+
+    this.cardDetails.selectedMarkerCount = 0;
+    this.cardDetails.totalMarkerOnLine = 0;
+    // previousLine
+    let oldIndex = Number(this.previousLine) - 1;
+    let firstLine = this.lines.find(
+      (item) => item.lineNo == Number(this.previousLine)
+    );
+    if (firstLine != undefined && this.polylines[oldIndex] != undefined) {
+      this.polylines[oldIndex].setMap(null);
+      let oldLine = new google.maps.Polyline({
+        path: firstLine.latlng,
+        strokeColor: this.commonService.getLineColor(""),
+        strokeWeight: 2,
+      });
+      this.polylines[oldIndex] = oldLine;
+      this.polylines[oldIndex].setMap(this.map);
+    }
+
+    // new Line
+    this.lineNo = requestedLine;
+    let newIndex = Number(this.lineNo) - 1;
+    if (this.polylines[newIndex] != undefined) {
+      this.polylines[newIndex].setMap(null);
+    }
+    this.centerPoint = newLine.latlng[0];
+    let line = new google.maps.Polyline({
+      path: newLine.latlng,
+      strokeColor: this.commonService.getLineColor("requestedLine"),
+      strokeWeight: 5,
+    });
+    this.polylines[newIndex] = line;
+    this.polylines[newIndex].setMap(this.map);
+    this.previousLine = this.lineNo;
+    this.map.setCenter(this.centerPoint);
+    this.getMarkedHouses(this.lineNo);
+  }
+
+  getCurrentLineNo(event: any) {
+    if (event.key == "Enter") {
+      if ($('#txtLineNo').val() != "") {
+        if (isNaN(Number($('#txtLineNo').val()))) {
+          this.commonService.setAlertMessage("error", "Please enter numeric value as line no !!!");
+          return;
+        }
+        if (Number($('#txtLineNo').val()) < 1) {
+          this.commonService.setAlertMessage("error", "Please enter line no more than 0 !!!");
+          return;
+        }
+
+        this.lineNo = $('#txtLineNo').val();
+        this.getLineData();
+      }
+    }
+  }
+
+  nextPrevious(type: any) {
+    if (isNaN(Number($('#txtLineNo').val()))) {
+      this.commonService.setAlertMessage("error", "Please enter numeric value as line no !!!");
+      return;
+    }
+    if (Number($('#txtLineNo').val()) < 1) {
+      this.commonService.setAlertMessage("error", "Please enter line no more than 0 !!!");
+      return;
+    }
+    if (this.selectedZone == undefined || this.selectedZone == "0") {
+      this.commonService.setAlertMessage("error", "Please select ward !!!");
+      return;
+    }
+    $(this.divLoader).show();
+    setTimeout(() => {
+      $(this.divLoader).hide();
+    }, 1000);
+    let currentLine = 1;
+    let lineNo = this.previousLine;
+    if (lineNo == "") {
+      $("#txtLineNo").val(currentLine);
+      this.getLineData();
+    } else if (type == "next") {
+      currentLine = Number(lineNo) + 1;
+      $("#txtLineNo").val(currentLine);
+      this.getLineData();
+    } else {
+      if (Number(lineNo) != 1) {
+        currentLine = Number(lineNo) - 1;
+        $("#txtLineNo").val(currentLine);
+        this.getLineData();
+      } else {
+        this.commonService.setAlertMessage(
+          "error",
+          "line number not less than 1 !!!"
+        );
+      }
+    }
+  }
+
+  // =====================================================================
+  // MOVE PROGRESS / HISTORY POPUP
+  // =====================================================================
+
+  private openMoveModal() {
+    if (this.moveModalRef != null) { return; }
+    // move ke dauraan backdrop / ESC se band na ho
+    this.moveModalRef = this.modalService.open(this.moveProgressModal, {
+      size: "lg", backdrop: "static", keyboard: false, windowClass: "marker-move-modal"
+    });
+    this.moveModalRef.result.then(() => { this.moveModalRef = null; }, () => { this.moveModalRef = null; });
+  }
+
+  closeMoveModal() {
+    if (this.moveRunning) { return; }
+    if (this.moveModalRef != null) { this.moveModalRef.close(); this.moveModalRef = null; }
+  }
+
+  openHistoryModal() {
+    if (!this.moveHelper.canViewActionHistory() || this.historyModalRef != null) { return; }
+    this.historyModalRef = this.modalService.open(this.historyModal, { size: "lg", windowClass: "action-history-modal" });
+    this.historyModalRef.result.then(() => { this.historyModalRef = null; }, () => { this.historyModalRef = null; });
+  }
+
+  closeHistoryModal() {
+    if (this.historyModalRef != null) { this.historyModalRef.close(); this.historyModalRef = null; }
+  }
+
+  private getEmptySummary(): MarkerMoveSummary {
+    return {
+      running: false, waitingForNetwork: false, statusText: "",
+      fromZone: "", fromLine: "", toZone: "", toLine: "", backupFile: "",
+      total: 0, moved: 0, failed: 0, pending: 0, imageMissing: 0
+    };
+  }
+
+  // =====================================================================
+  // MOVE SELECTED MARKERS TO NEW LINE
+  // =====================================================================
+
+  async moveToNewLine() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "moveToNewLine");
+    if ($("#txtNewLine").val() == "") {
+      this.commonService.setAlertMessage("error", "Please enter line no.");
+      return;
+    }
+    if (isNaN(Number($('#txtNewLine').val()))) {
+      this.commonService.setAlertMessage("error", "Please enter numeric value as line no !!!");
+      return;
+    }
+    if (Number($('#txtNewLine').val()) < 1) {
+      this.commonService.setAlertMessage("error", "Please enter line no more than 0 !!!");
+      return;
+    }
+    if (this.selectedCardDetails.length == 0) {
+      this.commonService.setAlertMessage("error", "Please select atleast one card to move");
+      return;
+    }
+    if (this.selectedCardDetails[0]["lineNo"] == $("#txtNewLine").val()) {
+      this.commonService.setAlertMessage("error", "Sorry! cards can't be move on same line");
+      return;
+    }
+
+    let lineTo = $("#txtNewLine").val();
+    let lineFrom = this.lineNo;
+    // selection ki copy - move ke dauraan user map par kuch aur select kar de
+    // to chal raha move usse prabhavit na ho
+    let selection = this.selectedCardDetails.slice();
+
+    await this.startMove(lineFrom, lineTo, selection, null);
+  }
+
+  /**
+   * onlyMarkerNos = null  -> selected sabhi markers
+   * onlyMarkerNos = [...] -> sirf pehle fail hue markers ka retry
+   */
+  private async startMove(lineFrom: any, lineTo: any, selection: any[], onlyMarkerUids: string[]) {
+    if (this.moveRunning) {
+      this.commonService.setAlertMessage("error", "एक move पहले से चल रहा है !!!");
+      return;
+    }
+
+    let zone = this.selectedZone;
+    this.cancelRequested = false;
+    this.moveRunning = true;
+    this.moveRows = [];
+    this.moveSummary = this.getEmptySummary();
+    this.moveSummary.running = true;
+    this.moveSummary.fromZone = zone;
+    this.moveSummary.fromLine = lineFrom;
+    this.moveSummary.toZone = zone;
+    this.moveSummary.toLine = lineTo;
+    this.openMoveModal();
+
+    let action = (onlyMarkerUids != null) ? "RetryFailed" : "MoveSelectedMarkers";
+    let startTime = new Date();
+    this.networkInterrupted = false;
+
+    try {
+      this.moveSummary.statusText = "डेटा पढ़ा जा रहा है...";
+      await this.moveHelper.waitForNetwork(this.run);
+
+      let markerList = [];
+      for (let i = 0; i < selection.length; i++) {
+        // PEHLE: let markerNo = "" + selection[i]["markerNo"];
+        let markerUid = "" + selection[i]["markerUid"];
+        if (onlyMarkerUids != null && onlyMarkerUids.indexOf(markerUid) < 0) { continue; }
+        markerList.push(selection[i]);
+      }
+      if (markerList.length == 0) {
+        this.commonService.setAlertMessage("error", "move करने लायक कोई marker नहीं मिला।");
+        await this.saveMoveHistory(action, "aborted", startTime, zone, lineFrom, lineTo, "move karne layak koi marker nahi mila");
+        this.finishRun();
+        return;
+      }
+
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - destination line ka
+      // lastMarkerKey padh kar har move hote marker ko usse aage ka number
+      // diya jaata tha:
+      //
+      // OLD PATH (reference ke liye rakha hai):
+      // "EntityMarkingData/MarkedHouses/" + zone + "/" + lineTo + "/lastMarkerKey"
+      // NEW PATH: lastMarkerKey ab LineSummary par hai - sirf node badla hai.
+      // let lastMarkerData = await this.moveHelper.readOnceWithRetry(this.db,
+      //   "EntityMarkingData/MarkersMapping/LineSummary/" + zone + "/" + lineTo + "/lastMarkerKey", this.run);
+      // let lastKey = 0;
+      // if (lastMarkerData != null) {
+      //   this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveToNewLine", lastMarkerData);
+      //   lastKey = Number(lastMarkerData);
+      // }
+      // originalLastKey = lastKey;
+      //
+      // Move ab renumber karta hi nahi - marker apne uid ke saath nayi line par
+      // chala jaata hai - isliye na counter padhna hai, na aage badhana.
+
+      // Backup ke liye source line ka poora data (new path se, purani shape me).
+      // OLD PATH (reference ke liye rakha hai):
+      // let markerNodeData = await this.moveHelper.readOnceWithRetry(this.db,
+      //   "EntityMarkingData/MarkedHouses/" + zone + "/" + lineFrom, this.run);
+      // Retry/cancel/network wait upar wale wrapper me hai.
+      let markerNodeData = await this.readLineDataWithRetry(zone, lineFrom);
+      // markerNo -> uid. Record ke andar uid hota nahi, aur naye path par har
+      // node ki key uid hi hai - backup restore layak tabhi hai jab uid saath ho.
+      // PEHLE YE THA (hataya nahi, comment kiya hai):
+      // let lineLinks = await this.markerMapping.readLineLinks(this.db, zone, lineFrom);
+      // ...aur neeche buildLineBackup(lineLinks, markerNodeData).
+      //
+      // Wo raw LineWise deta tha aur backup usme markerNo par uid dhoondhta tha.
+      // Naye structure me LineWise { uid: true } hai - markerNo hai hi nahi, to
+      // har marker chhoot jaata aur backup KHAALI ban jaata (chup-chaap).
+      // Ab service khud mapping aur records dono padh kar backup bana deti hai.
+      let markerBackup = await this.markerMapping.buildLineBackupFor(this.db, zone, lineFrom);
+      let houseData = await this.moveHelper.readOnceWithRetry(this.db, "Houses/" + zone + "/" + lineFrom, this.run);
+
+      // ---------- backup pehle, uske baad hi move ----------
+      this.moveSummary.statusText = "Backup सेव हो रहा है...";
+      let now = new Date();
+      let filePath = this.moveHelper.buildBackupFilePath(this.pageName, now);
+      let fileName = this.moveHelper.buildBackupFileName(zone, lineFrom, zone, lineTo, (onlyMarkerUids != null ? "_retry" : ""), now);
+      // PEHLE yahan lastKey bhi jaata tha (destination line ka counter).
+      let backupData = this.buildBackupData(markerNodeData, markerBackup, houseData, markerList, zone, lineFrom, lineTo, now);
+
+      try {
+        await this.moveHelper.saveBackupWithRetry(backupData, fileName, filePath, this.run);
+      } catch (e) {
+        let reason = (e && e.message) ? e.message : e;
+        this.commonService.setAlertMessage("error", "Backup सेव नहीं हो पाया, move रद्द कर दिया गया। (" + reason + ")");
+        this.moveSummary.statusText = "Backup फेल हुआ - move शुरू ही नहीं हुआ। डेटाबेस में कुछ नहीं बदला।";
+        await this.saveMoveHistory(action, "aborted", startTime, zone, lineFrom, lineTo, "backup fail: " + reason);
+        this.finishRun();
+        return;
+      }
+      this.moveSummary.backupFile = filePath + fileName;
+
+      this.moveRows = this.buildRows(markerList, zone, lineFrom, lineTo);
+      this.moveSummary.total = this.moveRows.length;
+      this.moveSummary.pending = this.moveRows.length;
+      this.totalMoveMarkerCount = this.moveRows.length;
+      this.movedMarkerCount = 0;
+
+      // PEHLE ye map markerNo par bharta tha (dataByMarkerNo). Key ab uid hai.
+      let dataByUid = {};
+      for (let i = 0; i < markerList.length; i++) {
+        dataByUid["" + markerList[i]["markerUid"]] = markerList[i]["data"];
+      }
+
+      this.moveContext = {
+        zone: zone, lineFrom: lineFrom, lineTo: lineTo,
+        dataByUid: dataByUid, selection: selection
+      };
+
+      await this.runMoveLoop(this.moveContext);
+
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - move ke baad destination
+      // line ka counter itne aage badha diya jaata tha jitne marker aaye:
+      //
+      // this.moveSummary.statusText = "Last marker key अपडेट हो रही है...";
+      // await this.moveHelper.dbUpdate(this.db,
+      //   "EntityMarkingData/MarkersMapping/LineSummary/" + zone + "/" + lineTo,
+      //   { lastMarkerKey: lastKey + this.moveRows.length });
+      //
+      // Ab move renumber nahi karta, isliye counter chhoona hi nahi hai.
+
+      let status = "success";
+      if (this.cancelRequested) { status = "cancelled"; }
+      else if (this.moveSummary.failed > 0) { status = "partial"; }
+      await this.saveMoveHistory(action, status, startTime, zone, lineFrom, lineTo, "");
+
+      if (this.cancelRequested) {
+        this.moveSummary.statusText = "Move रद्द कर दिया गया। जो move हो चुके वे सुरक्षित हैं, बाकी source पर ही हैं।";
+      } else if (this.moveSummary.failed > 0) {
+        this.moveSummary.statusText = this.moveSummary.failed + " markers फेल हुए। नीचे table में कारण देखें, फिर 'Retry Failed' दबाएँ।";
+      } else {
+        this.moveSummary.statusText = "सभी markers सफलतापूर्वक move हो गए।";
+        if (this.moveSummary.imageMissing > 0) {
+          this.moveSummary.statusText = this.moveSummary.statusText + " (" + this.moveSummary.imageMissing + " markers की image Storage में नहीं मिली - डेटा move हो गया है।)";
+        }
+      }
+
+      this.finishRun();
+      // purane code jaisa hi: counts recalculate + UI reset + alert
+      this.updateCounts(zone, this.moveSummary.failed);
+      return;
+    } catch (e) {
+      let reason = (e && e.message) ? e.message : e;
+      this.moveSummary.statusText = "Move रोक दिया गया: " + reason;
+      this.commonService.setAlertMessage("error", "Move में समस्या आ गई: " + reason);
+      await this.saveMoveHistory(action, "error", startTime, zone, lineFrom, lineTo, "" + reason);
+    }
+
+    this.finishRun();
+  }
+
+  private finishRun() {
+    this.moveRunning = false;
+    this.moveSummary.running = false;
+    this.moveSummary.waitingForNetwork = false;
+    if (this.moveSummary.total == 0) { this.closeMoveModal(); }
+  }
+
+  /**
+   * ActionHistory/SurveyManagement/LineMarkerMapping/{date} me ek record.
+   * Fail / cancel / abort sab log hote hain.
+   */
+  // PEHLE ek `originalLastKey` param bhi tha (destination line ka purana counter).
+  private async saveMoveHistory(action: string, status: string, startTime: Date, zone: any, lineFrom: any, lineTo: any, note: string) {
+    let now = new Date();
+    let record: any = {
+      action: action,
+      status: status,
+      startTime: this.moveHelper.getDateTimeString(startTime),
+      endTime: this.moveHelper.getDateTimeString(now),
+      durationSec: Math.round((now.getTime() - startTime.getTime()) / 1000),
+      from: { ward: zone, line: lineFrom },
+      to: { ward: zone, line: lineTo },
+      total: this.moveSummary.total,
+      moved: this.moveSummary.moved,
+      failed: this.moveSummary.failed,
+      pending: this.moveSummary.pending,
+      imageMissing: this.moveSummary.imageMissing,
+      backupFile: this.moveSummary.backupFile,
+      cancelled: this.cancelRequested,
+      networkInterrupted: this.networkInterrupted,
+      failedItems: this.moveHelper.buildFailedItems(this.moveRows)
+    };
+    if (note != "") { record["note"] = note; }
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - history me likha jaata tha
+    // ki destination line par kaun se number use hue:
+    //
+    // if (originalLastKey != null && this.moveRows.length > 0) {
+    //   record["destinationStartKey"] = Number(originalLastKey) + 1;
+    //   record["destinationEndKey"] = Number(originalLastKey) + this.moveRows.length;
+    // }
+    //
+    // Number allot hote hi nahi ab - marker apne uid ke saath jaata hai.
+    await this.moveHelper.saveActionHistory(this.db, this.historySection, this.historyPageKey, record);
+  }
+
+  private buildRows(markerList: any[], zone: any, lineFrom: any, lineTo: any): MarkerMoveRow[] {
+    let rows: MarkerMoveRow[] = [];
+    for (let i = 0; i < markerList.length; i++) {
+      let data = markerList[i]["data"];
+      rows.push({
+        srNo: i + 1,
+        // PEHLE: markerNo / newKey / newMarkerNo - dekho MarkerMoveRow.
+        markerUid: "" + markerList[i]["markerUid"],
+        fromZone: zone,
+        fromLine: lineFrom,
+        toZone: zone,
+        toLine: lineTo,
+        cardNo: (data != null && data["cardNumber"] != null) ? data["cardNumber"] : "",
+        oldImage: (data != null && data["image"] != null) ? data["image"] : "",
+        newImage: "",
+        imageMissing: false,
+        status: "pending",
+        failedStep: "",
+        error: "",
+        attempts: 0
+      });
+    }
+    return rows;
+  }
+
+  /**
+   * Backup ki shape wahi rakhi jaati hai jo DB me hai, taaki file ka har key
+   * seedha apne node par import ho sake.
+   *
+   * Pehle yahan `markedHouses` jaata tha jiski key markerNo thi - wo tab sahi
+   * tha jab record khud MarkedHouses/{ward}/{line}/{markerNo} par rehta tha.
+   * Ab record MarkersData/{uid} par hai, isliye markerNo wali file kahin fit
+   * hi nahi hoti thi aur backup restore layak nahi tha. buildLineBackup() usi
+   * data ko uid ke hisaab se chaar node me baant deta hai.
+   */
+  // PEHLE ek `lastKey` param bhi tha - destination line ka counter, jo meta me
+  // destinationLastMarkerKey ban kar jaata tha.
+  private buildBackupData(markerNodeData: any, markerBackup: any, houseData: any, markerList: any[], zone: any, lineFrom: any, lineTo: any, now: Date): any {
+    let selectedMarkers = [];
+    for (let i = 0; i < markerList.length; i++) {
+      selectedMarkers.push("" + markerList[i]["markerUid"]);
+    }
+    // PEHLE YE THA (hataya nahi, comment kiya hai):
+    // let markerBackup = this.markerMapping.buildLineBackup(lineLinks, markerNodeData);
+    // Ab bana-banaya backup upar se aata hai (buildLineBackupFor).
+    let meta = this.moveHelper.buildBackupMeta(this.pageName, this.cityName, zone, lineFrom, zone, lineTo, markerList.length, now);
+    // PEHLE: meta["destinationLastMarkerKey"] = lastKey;
+    meta["selectedMarkers"] = selectedMarkers;
+    meta["restorePaths"] = this.markerMapping.buildRestoreNotes(zone, lineFrom);
+    // jo marker file me nahi gaye - chupchaap chhoot na jaayein
+    meta["skippedNoUid"] = markerBackup.skippedNoUid;
+    meta["orphanLinks"] = markerBackup.orphanLinks;
+    return {
+      meta: meta,
+      markersData: markerBackup.markersData,
+      lineWise: markerBackup.lineWise,
+      markerWise: markerBackup.markerWise,
+      wardWise: markerBackup.wardWise,
+      houses: houseData
+    };
+  }
+
+  // =====================================================================
+  // MOVE LOOP
+  // =====================================================================
+
+  /**
+   * Markers ek doosre se independent hain - har marker apne alag paths par
+   * likhta hai. Keys pehle allocate kar dete hain, phir N markers saath-saath
+   * chal sakte hain bina kisi race ke.
+   */
+  private async runMoveLoop(ctx: any) {
+    for (let i = 0; i < this.moveRows.length; i++) {
+      let row = this.moveRows[i];
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - har row ko destination
+      // line ka agla number pehle hi de diya jaata tha:
+      //
+      // let key = ctx.lastKey + 1 + i;
+      // row.newKey = key;
+      // row.newMarkerNo = "" + key;
+      //
+      // Number allot hote hi nahi ab - marker apna uid le kar jaata hai.
+      // NEW PATH: image hamesha AllMarkerImages/{uid}.jpg par rehti hai, move
+      // par uska naam badalta hi nahi. Old path me har line ka apna folder tha
+      // isliye wahan naye markerNo se naya naam banana padta tha.
+      let data = ctx.dataByUid[row.markerUid];
+      let imgRef = (data != null && data["imgRef"] != null) ? data["imgRef"] : row.oldImage;
+      row.newImage = imgRef;
+    }
+
+    await this.moveHelper.runPool(this.moveRows.length, (index: number) => {
+      return this.processRowWithRetry(this.moveRows[index], ctx);
+    }, this.run);
+  }
+
+  private async processRowWithRetry(row: MarkerMoveRow, ctx: any) {
+    let networkRetries = 0;
+
+    while (true) {
+      if (this.cancelRequested) { row.status = "pending"; return; }
+      await this.moveHelper.waitForNetwork(this.run);
+      if (this.cancelRequested) { row.status = "pending"; return; }
+
+      row.status = "moving";
+      row.attempts = row.attempts + 1;
+      this.refreshMoveStatusText();
+
+      let state = {
+        destMarkerWritten: false, destCardWritten: false, destRevisitWritten: false,
+        mappingWritten: false, cleanupStarted: false, revisitKey: "", markerID: "", mobile: ""
+      };
+
+      try {
+        await this.processMarker(row, ctx, state);
+        row.status = "moved";
+        row.failedStep = "";
+        row.error = "";
+        if (row.imageMissing) { this.moveSummary.imageMissing = this.moveSummary.imageMissing + 1; }
+        this.moveSummary.moved = this.moveSummary.moved + 1;
+        this.moveSummary.pending = this.moveSummary.pending - 1;
+        this.movedMarkerCount = this.moveSummary.moved;
+        this.refreshMoveStatusText();
+        return;
+      } catch (e) {
+        if (this.cancelRequested) { row.status = "pending"; return; }
+
+        if (this.moveHelper.isNetworkError(e) && networkRetries < this.moveHelper.MAX_NETWORK_RETRIES) {
+          networkRetries = networkRetries + 1;
+          row.status = "pending";
+          row.imageMissing = false;
+          await this.moveHelper.waitForNetwork(this.run);
+          continue;                                  // wahi marker, wahi key
+        }
+
+        if (!state.cleanupStarted) {
+          await this.rollbackDestination(row, ctx, state);
+          // PEHLE: row.newMarkerNo = "";
+          row.newImage = "";
+        }
+
+        row.status = "failed";
+        row.imageMissing = false;
+        row.error = (e && e.message) ? e.message : ("" + e);
+        if (state.cleanupStarted) {
+          row.error = row.error + " (source cleanup अधूरा - इस marker को manually जाँच लें)";
+        }
+        this.moveSummary.failed = this.moveSummary.failed + 1;
+        this.moveSummary.pending = this.moveSummary.pending - 1;
+        this.refreshMoveStatusText();
+        return;
+      }
+    }
+  }
+
+  private refreshMoveStatusText() {
+    if (this.moveSummary.waitingForNetwork) { return; }
+    let done = this.moveSummary.moved + this.moveSummary.failed;
+    this.moveSummary.statusText = done + " / " + this.moveSummary.total + " markers हो चुके - "
+      + this.moveHelper.CONCURRENCY + " एक साथ चल रहे हैं...";
+  }
+
+  /**
+   * Ek marker ka poora move. Order: image + saare reads -> saare destination
+   * writes -> sabse aakhir me source removes. Isse beech me kuch fail ho to
+   * source poora salamat rehta hai aur retry saaf chalta hai.
+   */
+  private async processMarker(row: MarkerMoveRow, ctx: any, state: any) {
+    let zone = ctx.zone;
+    let lineFrom = ctx.lineFrom;
+    let lineTo = ctx.lineTo;
+    let data = ctx.dataByUid[row.markerUid];
+    if (data == null) { throw new Error("marker data not found"); }
+
+    // ---------- IMAGE ----------
+    // NEW PATH me image copy karne ki zaroorat hi nahi. Wo global folder
+    // {city}/MarkingSurveyImages/AllMarkerImages/{uid}.jpg par padi rehti hai
+    // aur marker kahin bhi jaaye, uska naam wahi rehta hai. Old path me har
+    // line ka apna folder tha, isliye wahan har move par file copy karni padti
+    // thi - sabse dheema aur sabse zyada fail hone wala step wahi tha.
+    row.imageMissing = (row.newImage == "");
+
+    // ---------- UID ----------
+    // Marker ki asli pehchaan uid hai; markerNo sirf line par uska serial hai.
+    // Mapping se uid nahi mila to marker naye path par hai hi nahi - use move
+    // karne ka koi tareeka nahi, isliye yahin ruk jaate hain.
+    row.failedStep = "Marker UID";
+    let uid = await this.getMarkerUid(zone, lineFrom, row.markerUid);
+    if (uid == null) {
+      throw new Error("marker naye path par nahi mila (LineWise me uid nahi hai)");
+    }
+    state.uid = uid;
+
+    // ---------- READS ----------
+    let cardNo = (data["cardNumber"] != null) ? data["cardNumber"] : "";
+    let cardData: any = null;
+    if (cardNo != "") {
+      row.failedStep = "Card Read";
+      cardData = await this.moveHelper.readOnce(this.db, "Houses/" + zone + "/" + lineFrom + "/" + cardNo);
+      if (cardData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "moveData", cardData);
+        if (cardData["mobile"] != null && cardData["mobile"] != "") { state.mobile = cardData["mobile"]; }
+      }
+    }
+
+    let revisitKey = (data["revisitKey"] != null) ? data["revisitKey"] : "";
+    let revisitData: any = null;
+    state.revisitKey = revisitKey;
+    if (revisitKey != "") {
+      row.failedStep = "Revisit Read";
+      revisitData = await this.moveHelper.readOnce(this.db,
+        "EntitySurveyData/RevisitRequest/" + zone + "/" + lineFrom + "/" + revisitKey);
+    }
+
+    // latLng card se - marker write se PEHLE, warna save hi nahi hota tha
+    let latLng = "";
+    if (cardData != null && cardData["latLng"] != null) {
+      latLng = cardData["latLng"].toString().replace("(", "").replace(")", "");
+      data["latLng"] = latLng;
+    }
+    data["image"] = row.newImage;                    // purane code jaisa - hamesha set
+
+    // ---------- DESTINATION WRITES ----------
+    // NEW PATH: record apni hi jagah (MarkersData/{uid}) par rehta hai - sirf
+    // ward/line badalte hain aur mapping nayi jagah point karne lagti hai.
+    // Old path me record nayi key par dobara likhna padta tha.
+    row.failedStep = "Marker Write";
+    let lineVal = this.markerMapping.lineValue(lineTo);
+    // Rollback ke liye purani move-stamp sambhal lo. Marker pehle bhi move
+    // hua ho sakta hai - is move ke fail hone par uska pichhla record mitna
+    // nahi chahiye, isliye null karne ki jagah purani value wapas likhte hain.
+    state.prevMoved = {
+      movedFromWard: (data["movedFromWard"] != null) ? data["movedFromWard"] : null,
+      movedFromLine: (data["movedFromLine"] != null) ? data["movedFromLine"] : null,
+      movedFromMarkerNo: (data["movedFromMarkerNo"] != null) ? data["movedFromMarkerNo"] : null,
+      movedOn: (data["movedOn"] != null) ? data["movedOn"] : null
+    };
+    // PEHLE patch me do aur field jaate the (hataye nahi, comment kiye hain):
+    //   markerNo: Number(row.newKey) || 0,
+    //   movedFromMarkerNo: this.markerMapping.markerNoValue(row.markerNo),
+    // Marker ab renumber hota hi nahi, isliye na naya number hai na purana.
+    let patch: any = {
+      ward: zone,
+      line: lineVal,
+      image: row.newImage,                           // purane code jaisa - hamesha set hota hai
+      movedFromWard: zone,
+      movedFromLine: this.markerMapping.lineValue(lineFrom),
+      movedOn: this.commonService.getTodayDateTime()
+    };
+    // latLng na mile to field bhejte hi nahi - undefined par Firebase update()
+    // throw kar deta hai, aur null bhejne se marker ki purani position mit
+    // jaati. Baaki teeno move page bhi yahi guard lagate hain.
+    if (latLng != "") {
+      patch["latLng"] = latLng;
+    }
+    state.destMarkerWritten = true;
+    await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkersData/" + uid, patch);
+    // in-memory record bhi sync - caller isi object ko aage use karta hai
+    data["ward"] = zone;
+    data["line"] = lineVal;
+
+    // Teeno mapping ek saath - aadhi likhi rehna sabse kharab haalat hai
+    // (marker kisi ek page par dikhta, doosre par nahi).
+    state.destMappingWritten = true;
+    await this.markerMapping.writePlace(this.db, uid, zone, lineVal);
+
+    // Har move ka permanent record: MoveHistory/{uid}.
+    // Push key turant chahiye (ThenableReference par .key sync milti hai) -
+    // move aage jaakar fail hua to rollback isi key se entry hata sake.
+    let moveRef = this.markerMapping.recordMove(this.db, uid, zone, lineFrom, zone, lineTo);
+    state.moveHistoryKey = (moveRef != null && moveRef.key != null) ? moveRef.key : "";
+    await moveRef;
+
+    if (cardData != null) {
+      row.failedStep = "Card Write";
+      cardData["line"] = lineTo;
+      cardData["ward"] = zone;
+      state.destCardWritten = true;
+      await this.moveHelper.dbUpdate(this.db, "Houses/" + zone + "/" + lineTo + "/" + cardNo, cardData);
+      await this.moveHelper.dbSet(this.db, "CardWardMapping/" + cardNo, { line: lineTo, ward: zone });
+      if (state.mobile != "") {
+        await this.moveHelper.dbSet(this.db, "HouseWardMapping/" + state.mobile, { line: lineTo, ward: zone });
+      }
+    }
+
+    if (revisitData != null) {
+      row.failedStep = "Revisit Write";
+      state.destRevisitWritten = true;
+      await this.moveHelper.dbUpdate(this.db,
+        "EntitySurveyData/RevisitRequest/" + zone + "/" + lineTo + "/" + revisitKey, revisitData);
+    }
+
+    // markerID nikalne ka logic bilkul purane code jaisa hi
+    row.failedStep = "Ward Mapping";
+    let markerID = "";
+    if (data["markerId"] != null) {
+      markerID = this.commonService.getDefaultCardPrefix() + data["markerId"];
+    }
+    if (cardNo != "" && markerID != "") { markerID = cardNo; }
+    state.markerID = markerID;
+    if (markerID != "") {
+      state.mappingWritten = true;
+      await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + markerID, {
+        markerkey: state.uid,
+        line: lineTo.toString(),
+        // PEHLE: markerNo: row.newKey.toString(),
+        ward: zone
+      });
+    }
+
+    // ---------- SOURCE REMOVES (sabse aakhir me) ----------
+    // NEW PATH: record kahin nahi hataya jaata - wo MarkersData par apni jagah
+    // hi hai. Sirf purani line ki LineWise entry hatani hai, warna marker
+    // purani aur nayi dono line par dikhta rahega. WardWise/MarkerWise upar
+    // writePlace me hi nayi jagah par point karne lag chuke hain (ward wahi
+    // hai, isliye WardWise se kuch hataana nahi padta).
+    row.failedStep = "Source Cleanup";
+    state.cleanupStarted = true;
+    // Naye structure me LineWise uid ka SET hai ({ "MK1": true }) - key hi uid hai.
+    //
+    // BEECH ME purane roop wali entry bhi hatayi jaati thi:
+    //   ... + "/" + row.markerNo);
+    // DB me ab koi number wali key hai hi nahi, isliye wo hata diya gaya.
+    if (state.uid != null) {
+      await this.moveHelper.dbRemove(this.db,
+        "EntityMarkingData/MarkersMapping/LineWise/" + zone + "/" + lineFrom + "/" + state.uid);
+    }
+    this.markerMapping.clearLinks();
+    if (cardData != null) {
+      await this.moveHelper.dbRemove(this.db, "Houses/" + zone + "/" + lineFrom + "/" + cardNo);
+    }
+    if (revisitData != null) {
+      await this.moveHelper.dbRemove(this.db,
+        "EntitySurveyData/RevisitRequest/" + zone + "/" + lineFrom + "/" + revisitKey);
+    }
+
+    row.failedStep = "";
+  }
+
+  /**
+   * Marker beech me fail hua to destination par likhi gayi aadhi entries hata
+   * kar purani haalat wapas laata hai. Sirf tab jab source se abhi kuch delete
+   * nahi hua - warna data hi chala jayega.
+   */
+  private async rollbackDestination(row: MarkerMoveRow, ctx: any, state: any) {
+    try {
+      // NEW PATH: record delete nahi karna - wo MarkersData par hai aur wahi
+      // asli data hai. Marker ko wapas purani line par point kara dete hain
+      // aur nayi line ki LineWise entry hata dete hain.
+      if (state.destMappingWritten && state.uid != null) {
+        await this.markerMapping.writePlace(this.db, state.uid, ctx.zone,
+          this.markerMapping.lineValue(ctx.lineFrom));
+        // Nayi line par writePlace ne uid ki key banayi thi - wahi hatani hai.
+        // (Purane roop wali `row.newKey` line hata di gayi - DB me ab koi
+        // number wali key hai hi nahi.)
+        await this.moveHelper.dbRemove(this.db,
+          "EntityMarkingData/MarkersMapping/LineWise/" + ctx.zone + "/" + ctx.lineTo + "/" + state.uid);
+        // Cache mapping badalne ke BAAD saaf hoti hai. writePlace() upar ek baar
+        // clear kar chuka hai, par uske baad ye removal hua - to dobara clear
+        // karna zaroori hai, warna beech me aayi koi read purani list rakh leti.
+        this.markerMapping.clearLinks();
+      }
+      if (state.destMarkerWritten && state.uid != null) {
+        // move-stamp wapas purani haalat par - is move ki stamp hatani hai par
+        // pichhle successful move ki stamp bachani hai.
+        // PEHLE undo me `markerNo` bhi wapas likha jaata tha:
+        //   markerNo: this.markerMapping.markerNoValue(row.markerNo),
+        // Ab record par ye field jaati hi nahi, isliye lautane ko kuch nahi.
+        let undo: any = {
+          ward: ctx.zone,
+          line: this.markerMapping.lineValue(ctx.lineFrom),
+          movedFromWard: null,
+          movedFromLine: null,
+          movedFromMarkerNo: null,
+          movedOn: null
+        };
+        if (state.prevMoved != null) {
+          undo["movedFromWard"] = state.prevMoved.movedFromWard;
+          undo["movedFromLine"] = state.prevMoved.movedFromLine;
+          undo["movedFromMarkerNo"] = state.prevMoved.movedFromMarkerNo;
+          undo["movedOn"] = state.prevMoved.movedOn;
+        }
+        await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkersData/" + state.uid, undo);
+      }
+      // MoveHistory ki entry bhi hatani hai. Marker hila hi nahi, phir bhi
+      // history "line X se line Y" dikhati rehti thi, aur retry successful
+      // hone par usi ek move ki do entries chadh jaati thi.
+      if (state.moveHistoryKey != null && state.moveHistoryKey != "" && state.uid != null) {
+        await this.moveHelper.dbRemove(this.db,
+          this.markerMapping.moveRecordPath(state.uid, state.moveHistoryKey));
+      }
+      if (state.destCardWritten && row.cardNo != "") {
+        await this.moveHelper.dbRemove(this.db, "Houses/" + ctx.zone + "/" + ctx.lineTo + "/" + row.cardNo);
+        await this.moveHelper.dbSet(this.db, "CardWardMapping/" + row.cardNo, { line: ctx.lineFrom, ward: ctx.zone });
+        if (state.mobile != "") {
+          await this.moveHelper.dbSet(this.db, "HouseWardMapping/" + state.mobile, { line: ctx.lineFrom, ward: ctx.zone });
+        }
+      }
+      if (state.destRevisitWritten && state.revisitKey != "") {
+        await this.moveHelper.dbRemove(this.db,
+          "EntitySurveyData/RevisitRequest/" + ctx.zone + "/" + ctx.lineTo + "/" + state.revisitKey);
+      }
+      if (state.mappingWritten && state.markerID != "") {
+        await this.moveHelper.dbUpdate(this.db, "EntityMarkingData/MarkerWardMapping/" + state.markerID, {
+          markerkey: state.uid,
+          line: ctx.lineFrom.toString(),
+          // PEHLE: markerNo: row.markerNo.toString(),
+          ward: ctx.zone
+        });
+      }
+    } catch (e) {
+      // best effort - rollback fail hua to bhi source salamat hai
+    }
+  }
+
+  async onRetryFailed() {
+    if (this.moveRunning || this.moveContext == null) { return; }
+    let failedMarkerUids = this.moveRows.filter(r => r.status == "failed").map(r => r.markerUid);
+    if (failedMarkerUids.length == 0) { return; }
+    await this.startMove(this.moveContext.lineFrom, this.moveContext.lineTo, this.moveContext.selection, failedMarkerUids);
+  }
+
+  onCancelMove() {
+    if (!this.moveRunning) { return; }
+    this.cancelRequested = true;
+    this.moveSummary.waitingForNetwork = false;
+    this.moveSummary.statusText = "Cancel request भेज दी गई, चल रहे markers पूरे होते ही रुक जाएगा...";
+  }
+
+  updateCounts(zoneNo: any, failureCount: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCounts");
+    $(this.divLoaderMarkerMove).show();
+    // Ye loop LineSummary/{ward} likhta hai, isliye us ward ka summary bhula
+    // dete hain - warna table apne hi likhe naye counts nahi dikhata.
+    // Poori cache (records + mapping) nahi udate: wo waisi ki waisi sahi hai,
+    // aur udane par poore ward ka marker data dobara padhna padta.
+    this.markerMapping.clearWardSummary(zoneNo);
+    this.getNewPathWardData(zoneNo).then(
+      (markerData: any) => {
+        if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts", markerData);
+          // Neeche wala loop sirf un lines par ghumta hai jo LineWise me hain.
+          // Jis line ka aakhri marker nikal gaya uska LineWise node hi khatam
+          // ho jaata hai, isliye wo line yahan aati hi nahi aur uske purane
+          // counts LineSummary par pade rah jaate hain - table me Markers 0
+          // dikhta hai par Houses purana number. Unhe yahan zero karte hain.
+          //
+          // Field list wahi jo ye page neeche khud likhta hai. Service ki
+          // default list CHAARON caller ka jod hai - us par chalte to ye page
+          // marksHouse / marksComplex / actualMarks* jaise field bhi zero kar
+          // deta, jo doosre pages ke hain aur dobara ban bhi nahi sakte. Old
+          // path par bhi ye page sirf yahi 5 zero karta tha.
+          this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData,
+            ["marksCount", "surveyedCount", "lineRevisitCount", "lineRfidNotFoundCount", "alreadyInstalledCount"]);
+          let keyArray = Object.keys(markerData);
+          if (keyArray.length > 0) {
+            let zoneMarkerCount = 0;
+            let zoneAlreadyInstalledCount = 0;
+            for (let i = 0; i < keyArray.length; i++) {
+              let markerCount = 0;
+              let surveyedCount = 0;
+              let revisitCount = 0;
+              let rfIdNotFound = 0;
+              let alreadyInstalledCount = 0;
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              // PEHLE yahan `let lastMarkerKey = 0;` bhi tha aur har marker par
+              // uska max nikala jaata tha - dekho neeche wala comment.
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                if (lineData[markerNo] != null && typeof lineData[markerNo] == "object" && lineData[markerNo]["houseType"] != null) {
+                  // PEHLE YE THA (hataya nahi, comment kiya hai):
+                  //
+                  // if (Number(markerNo) > lastMarkerKey) {
+                  //   lastMarkerKey = Number(markerNo);
+                  // }
+                  //
+                  // Key ab hamesha uid hai, Number() us par NaN deta hai - aur
+                  // per-line counter waise bhi retire ho chuka hai.
+                  markerCount = markerCount + 1;
+                  zoneMarkerCount = zoneMarkerCount + 1;
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    surveyedCount = surveyedCount + 1;
+                  }
+                  else if (lineData[markerNo]["revisitKey"] != null) {
+                    revisitCount = revisitCount + 1;
+                  }
+                  else if (lineData[markerNo]["rfidNotFoundKey"] != null) {
+                    rfIdNotFound = rfIdNotFound + 1;
+                  }
+                  if (lineData[markerNo]["alreadyInstalled"] == true) {
+                    alreadyInstalledCount = alreadyInstalledCount + 1;
+                    zoneAlreadyInstalledCount = zoneAlreadyInstalledCount + 1;
+                  }
+                }
+              }
+              // OLD PATH (reference ke liye rakha hai):
+              // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+              // NEW PATH: counts ab LineSummary par - sirf node badla hai.
+              let dbPath = "EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo + "/" + lineNo;
+              this.db.object(dbPath).update({ marksCount: markerCount, surveyedCount: surveyedCount, lineRevisitCount: revisitCount, lineRfidNotFoundCount: rfIdNotFound, alreadyInstalledCount: alreadyInstalledCount })
+              // PEHLE YE THA (hataya nahi, comment kiya hai) - line ka counter
+              // yahan se dobara likha jaata tha:
+              //
+              // if (lastMarkerKey > 0) {
+              //   let dbPath = "EntityMarkingData/MarkersMapping/LineSummary/" + zoneNo + "/" + lineNo;
+              //   this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+              // }
+              //
+              // Ye plain update tha, max nahi - marker delete hone par counter
+              // PEECHE chala jaata tha aur agla naya marker kisi mite hue
+              // marker ka number dobara le leta. Ab counter hai hi nahi.
+            }
+            let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
+            this.db.object(dbPath).update({ alreadyInstalled: zoneAlreadyInstalledCount, marked: zoneMarkerCount });
+          }
+          this.selectedCardDetails = [];
+          $("#txtNewLine").val("");
+          this.getLineData();
+          if (failureCount > 0) {
+            let msg = failureCount + " markers have some issue to be processed, Please try again.";
+            this.commonService.setAlertMessage("error", msg);
+          }
+          else {
+            this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
+          }
+          $(this.divLoaderMarkerMove).hide();
+          this.movedMarkerCount = 0;
+          this.totalMoveMarkerCount = 0;
+        }
+        else {
+          this.selectedCardDetails = [];
+          $("#txtNewLine").val("");
+          this.getLineData();
+          if (failureCount > 0) {
+            let msg = failureCount + " markers have some issue to be processed, Please try again.";
+            this.commonService.setAlertMessage("error", msg);
+          }
+          else {
+            this.commonService.setAlertMessage("success", "Marker moved successfully !!!");
+          }
+          $(this.divLoaderMarkerMove).hide();
+          this.movedMarkerCount = 0;
+          this.totalMoveMarkerCount = 0;
+        }
+      });
+  }
+  showWardLine(checkBox: any) {
+    if (checkBox.checked && this.selectedZone && this.selectedZone !== '0') {
+      this.wardBoundary = undefined;
+      this.commonService.getWardBoundary(this.selectedZone, this.wardBoundary, 5).then((boundaryData: any) => {
+        if (this.wardBoundary != undefined) {
+          this.wardBoundary[0]["line"].setMap(null);
+        }
+        this.wardBoundary = boundaryData;
+        this.wardBoundary[0]["line"].setMap(this.map);
+        const bounds = new google.maps.LatLngBounds();
+        for (let i = 0; i < this.wardBoundary[0]["latLng"].length; i = (i + 5)) {
+          bounds.extend({ lat: Number(this.wardBoundary[0]["latLng"][i]["lat"]), lng: Number(this.wardBoundary[0]["latLng"][i]["lng"]) });
+        }
+        this.map.fitBounds(bounds);
+      });
+    }
+    else {
+      checkBox.checked = false;
+      if (!this.selectedZone) {
+        this.commonService.setAlertMessage("error", "Please select ward !!!");
+      }
+      if (this.wardBoundary) {
+        this.wardBoundary[0]["line"].setMap(null);
+      }
+      this.wardBoundary = undefined;
+    }
+  }
+}
+
+export class CardDetails {
+  selectedMarkerCount: number;
+  totalMarkerOnLine: number;
+}

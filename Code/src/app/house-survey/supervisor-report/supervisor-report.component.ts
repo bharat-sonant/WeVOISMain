@@ -118,100 +118,69 @@ export class SupervisorReportComponent implements OnInit {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSupervisorReport");
     this.supervisorJsonList = [];
     $(this.divLoaderCounts).show();
-    // Ye report POORE shehar ke approve hue markers ki hai, isliye yahan har
-    // marker ka record sach me chahiye - is ek jagah full read jaayaz hai.
-    //
-    // Pehle iske saath mapping (WardWise + LineWise) bhi padhi jaati thi taaki
-    // ward/line pata chale. Ab uski zaroorat nahi: record khud apna ward, line
-    // aur markerNo rakhta hai. Isse do bade index reads bach jaate hain aur
-    // teen nested loop ek loop me aa jaate hain.
-    let markersInstance = this.db.object("EntityMarkingData/MarkersData").valueChanges().subscribe((markersData: any) => {
-      markersInstance.unsubscribe();
-      // PEHLE YE THA (hataya nahi, comment kiya hai) - null par khaali object
-      // le kar aage badh jaata tha:
-      // if (markersData == null) { markersData = {}; }
-      //
-      // Wo khatarnaak hai: node kisi wajah se na mile (galat city, node abhi
-      // bana hi nahi, read fail) to loop khaali chalta aur neeche
-      // markingSurviorDetail.json KHAALI list se overwrite ho jaati - poori
-      // supervisor report chali jaati. Upar se lastUpdated.json naya time likh
-      // deta, to pata bhi na chalta.
-      //
-      // Master is soorat me chup-chaap ruk jaata tha (`if (data != undefined)`),
-      // wahi wapas laaye hain.
-      if (markersData == null) {
-        $(this.divLoaderCounts).hide();
-        this.commonService.setAlertMessage("error", "Marker data not found. Report was not updated.");
-        return;
+    let dbPath = "EntityMarkingData/MarkedHouses/";
+    let supervisorInstance = this.db.object(dbPath).valueChanges().subscribe((data) => {
+      supervisorInstance.unsubscribe();
+      if (data != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSupervisorReport", data);
+        let keyArray = Object.keys(data);
+        for (let i = 0; i <= keyArray.length; i++) {
+          let ward = keyArray[i];
+          let wardData = data[ward];
+          if (wardData != null) {
+            let keyArray1 = Object.keys(wardData);
+            for (let j = 0; j <= keyArray1.length; j++) {
+              let line = keyArray1[j];
+              let lineData = wardData[line];
+              if (lineData != null) {
+                let keyArray2 = Object.keys(lineData);
+                for (let k = 0; k <= keyArray2.length; k++) {
+                  let marker = keyArray2[k];
+                  let markerData = lineData[marker];
+                  if (markerData != null) {
+                    if (markerData["approveById"] != null && markerData["approveDate"] != null) {
+                      let supervisorId = markerData["approveById"];
+                      let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
+                      let supervisorIdDetail = userList.find(item => item.userId == supervisorId);
+                      let supervisorName = supervisorIdDetail.name;
+                      let image = markerData["image"];
+                      let houseType = markerData["houseType"];
+                      let approveDate = markerData["approveDate"];
+                      let detail = this.supervisorJsonList.find(item => item.supervisorId == supervisorId)
+                      if (detail == undefined) {
+                        let detailList = [];
+                        detailList.push({ supervisorId: supervisorId, approveDate: approveDate, image: image, houseType: houseType, ward: ward, line: line })
+                        this.supervisorJsonList.push({ supervisorId: supervisorId, supervisorName: supervisorName, counts: 1, detailList: detailList })
+                      }
+                      else {
+                        detail.counts = detail.counts + 1;
+                        detail.detailList.push({ supervisorId: supervisorId, approveDate: approveDate, image: image, houseType: houseType, ward: ward, line: line });
+                      }
+                    }
+
+                  }
+                }
+              }
+            }
+          }
+        }
+        let fileName = "markingSurviorDetail.json";
+        let filePath = "/MarkingSurviorSummary/";
+        this.commonService.saveJsonFile(this.supervisorJsonList, fileName, filePath);
+        let updateDateTime = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
+        const updateData = {
+          updateDateTime: updateDateTime
+        }
+        fileName = "lastUpdated.json";
+        filePath = "/MarkingSurviorSummary/";
+        this.commonService.saveJsonFile(updateData, fileName, filePath);
+        this.lastUpdatedTime = updateDateTime;
+        setTimeout(() => {
+          this.getSurviorSummary();
+          this.commonService.setAlertMessage("success", "Supervisor data updated successfully !!!");
+          $(this.divLoaderCounts).hide();
+        }, 300);
       }
-      this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSupervisorReport", markersData);
-      // Portal ke saare users - loop ke BAAHAR ek baar.
-      //
-      // PEHLE YE THA (hataya nahi, comment kiya hai) - ye line loop ke ANDAR
-      // thi, yaani har approve hue marker par dobara:
-      // let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-      //
-      // List poore loop me badalti nahi, isliye ek baar parse karna kaafi hai.
-      // 50,000 marker par wo 50,000 baar localStorage padhna aur JSON.parse
-      // karna tha - button dabane ke baad page ke atak jaane ki ek badi wajah
-      // yahi thi. Nateeja bilkul wahi rehta hai: wahi list, wahi find.
-      let userList = JSON.parse(localStorage.getItem("webPortalUserList"));
-      let uidArray = Object.keys(markersData);
-      for (let i = 0; i < uidArray.length; i++) {
-        let markerData = markersData[uidArray[i]];
-        // MarkersData ke neeche sirf marker record hain - koi scalar aa jaaye
-        // to wo marker nahi hai.
-        if (markerData == null || typeof markerData != "object") {
-          continue;
-        }
-        // Report sirf approve ho chuke markers ki hai.
-        if (markerData["approveById"] == null || markerData["approveDate"] == null) {
-          continue;
-        }
-        // ward/line record ke andar se - pehle ye mapping se aate the.
-        let ward = markerData["ward"];
-        let line = markerData["line"];
-        let supervisorId = markerData["approveById"];
-        let supervisorIdDetail = userList.find(item => item.userId == supervisorId);
-        // Supervisor userList me na mile to id hi dikha do - pehle yahan
-        // undefined par crash ho jaata tha.
-        let supervisorName = supervisorIdDetail != undefined ? supervisorIdDetail.name : supervisorId;
-        // PEHLE YE THA (hataya nahi, comment kiya hai):
-        // let image = markerData["image"];
-        //
-        // Naye record me `image` field hai hi nahi - image ka naam ab `imgRef`
-        // me hai (hamesha "{uid}.jpg"). Purane naam par tikne se yahan hamesha
-        // undefined jaata aur JSON file me khaali value likhi jaati.
-        let image = markerData["imgRef"];
-        let houseType = markerData["houseType"];
-        let approveDate = markerData["approveDate"];
-        let detail = this.supervisorJsonList.find(item => item.supervisorId == supervisorId);
-        if (detail == undefined) {
-          let detailList = [];
-          detailList.push({ supervisorId: supervisorId, approveDate: approveDate, image: image, houseType: houseType, ward: ward, line: line });
-          this.supervisorJsonList.push({ supervisorId: supervisorId, supervisorName: supervisorName, counts: 1, detailList: detailList });
-        }
-        else {
-          detail.counts = detail.counts + 1;
-          detail.detailList.push({ supervisorId: supervisorId, approveDate: approveDate, image: image, houseType: houseType, ward: ward, line: line });
-        }
-      }
-      let fileName = "markingSurviorDetail.json";
-      let filePath = "/MarkingSurviorSummary/";
-      this.commonService.saveJsonFile(this.supervisorJsonList, fileName, filePath);
-      let updateDateTime = this.commonService.setTodayDate() + " " + this.commonService.getCurrentTime();
-      const updateData = {
-        updateDateTime: updateDateTime
-      };
-      fileName = "lastUpdated.json";
-      filePath = "/MarkingSurviorSummary/";
-      this.commonService.saveJsonFile(updateData, fileName, filePath);
-      this.lastUpdatedTime = updateDateTime;
-      setTimeout(() => {
-        this.getSurviorSummary();
-        this.commonService.setAlertMessage("success", "Supervisor data updated successfully !!!");
-        $(this.divLoaderCounts).hide();
-      }, 300);
     });
   }
 }

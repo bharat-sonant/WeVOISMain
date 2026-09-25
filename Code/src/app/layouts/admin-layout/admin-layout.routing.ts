@@ -14,6 +14,7 @@ import { HouseSearchComponent } from '../../housesearch/housesearch.component';
 import { FleetMonitorComponent } from '../../fleet-monitor/fleet-monitor.component';
 import { LineStatisticsComponent } from '../../line-statistics/line-statistics.component';
 import { LineCardMappingComponent } from '../../house-survey/line-card-mapping/line-card-mapping.component';
+import { LineCardMappingV1Component } from '../../house-survey/line-card-mapping-v1/line-card-mapping-v1.component';
 import { TimeDistanceComponent } from '../../reports/time-distance/time-distance.component';
 import { RealtimeMonitoringComponent } from '../../realtime-monitoring/realtime-monitoring.component';
 import { DustbinMonitoringComponent } from '../../dustbin-monitoring/dustbin-monitoring.component';
@@ -35,16 +36,23 @@ import { WardDutyDataComponent } from '../../PortalServices/ward-duty-data/ward-
 import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin-analysis.component';
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
+import { Cms1V1Component } from '../../cms1-v1/cms1-v1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
+import { HouseMarkingV1Component } from '../../house-survey/house-marking-v1/house-marking-v1.component';
 import { HouseMarkingAssignmentComponent } from '../../house-survey/house-marking-assignment/house-marking-assignment.component';
+import { HouseMarkingAssignmentV1Component } from '../../house-survey/house-marking-assignment-v1/house-marking-assignment-v1.component';
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
+import { WardSurveyAnalysisV1Component } from '../../house-survey/ward-survey-analysis-v1/ward-survey-analysis-v1.component';
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
+import { WardSurveySummaryV1Component } from '../../house-survey/ward-survey-summary-v1/ward-survey-summary-v1.component';
 import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-summary/ward-marking-summary.component';
+import { WardMarkingSummaryV1Component } from '../../house-survey/ward-marking-summary-v1/ward-marking-summary-v1.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
 import { LineMarkerMappingComponent } from '../../house-survey/line-marker-mapping/line-marker-mapping.component';
+import { LineMarkerMappingV1Component } from '../../house-survey/line-marker-mapping-v1/line-marker-mapping-v1.component';
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
@@ -62,6 +70,7 @@ import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tr
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
 import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
+import { ChangeLineSurveyedDataV1Component } from '../../PortalServices/change-line-surveyed-data-v1/change-line-surveyed-data-v1.component';
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
 import { EmployeesComponent } from '../../EmployeeManagement/employees/employees.component';
@@ -80,32 +89,42 @@ import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
 import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-marker-data/change-line-marker-data.component';
+import { ChangeLineMarkerDataV1Component } from '../../PortalServices/change-line-marker-data-v1/change-line-marker-data-v1.component';
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
 import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
+import { CardMarkerMappingV1Component } from '../../Developers/card-marker-mapping-v1/card-marker-mapping-v1.component';
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
 import { ScanCardManipulationComponent } from '../../PortalServices/scan-card-manipulation/scan-card-manipulation.component';
 import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-against-cards/add-marker-against-cards.component';
+import { AddMarkerAgainstCardsV1Component } from '../../Developers/add-marker-against-cards-v1/add-marker-against-cards-v1.component';
 import { CardScanningReportComponent } from '../../reports/card-scanning-report/card-scanning-report.component';
 import { SurveyVerificationComponent } from '../../house-survey/survey-verification/survey-verification.component';
 import { SurveyHousesComponent } from '../../house-survey/survey-houses/survey-houses.component';
 import { MarkerApprovalTestComponent } from '../../marker-approval-test/marker-approval-test.component';
+import { MarkerApprovalTestV1Component } from '../../marker-approval-test-v1/marker-approval-test-v1.component';
 import { SupervisorReportComponent } from '../../house-survey/supervisor-report/supervisor-report.component';
+import { SupervisorReportV1Component } from '../../house-survey/supervisor-report-v1/supervisor-report-v1.component';
 import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set-nearby-ward.component';
 import { WardRouteAutoScanComponent } from '../../PortalServices/ward-route-auto-scan/ward-route-auto-scan.component';
 import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
+import { ManageMarkingDataV1Component } from '../../Developers/manage-marking-data-v1/manage-marking-data-v1.component';
 import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
 import { ReviewTripImagesComponent } from '../../reports/review-trip-images/review-trip-images.component';
 import { PaymentCollectorComponent } from '../../payment-collector/payment-collector.component';
 import { DueAmountReportComponent } from '../../reports/due-amount-report/due-amount-report.component';
+import { DueAmountReportV1Component } from '../../reports/due-amount-report-v1/due-amount-report-v1.component';
 import { CollectedAmountReportComponent } from '../../reports/collected-amount-report/collected-amount-report.component';
+import { CollectedAmountReportV1Component } from '../../reports/collected-amount-report-v1/collected-amount-report-v1.component';
 import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verified-report/survey-verified-report.component';
 import { PaymentViaChequeComponent } from '../../reports/payment-via-cheque/payment-via-cheque.component';
 import { PaymentViaChequeReportComponent } from '../../reports/payment-via-cheque-report/payment-via-cheque-report.component';
 import { CardTransectionDetailComponent } from '../../reports/card-transection-detail/card-transection-detail.component';
+import { CardTransectionDetailV1Component } from '../../reports/card-transection-detail-v1/card-transection-detail-v1.component';
+import { MarkingVersionGuard } from '../../services/marker/marking-version.guard';
 import { CardUpdatedHistoryComponent } from '../../reports/card-updated-history/card-updated-history.component';
 import { DailyPaymentReportComponent } from '../../reports/daily-payment-report/daily-payment-report.component';
 import { MonthlyPaymentReportComponent } from '../../reports/monthly-payment-report/monthly-payment-report.component';
@@ -182,8 +201,10 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
     { path: 'complaint-list', component: ComplaintListComponent },
-    { path: 'marker-approval-test', component: MarkerApprovalTestComponent },
-    { path: 'supervisor-report', component: SupervisorReportComponent },
+    { path: 'marker-approval-test', component: MarkerApprovalTestComponent, canActivate: [MarkingVersionGuard] },
+    { path: 'marker-approval-test-v1', component: MarkerApprovalTestV1Component, canActivate: [MarkingVersionGuard] },
+    { path: 'supervisor-report', component: SupervisorReportComponent, canActivate: [MarkingVersionGuard] },
+    { path: 'supervisor-report-v1', component: SupervisorReportV1Component, canActivate: [MarkingVersionGuard] },
 
 
     { path: 'jaipur-greater/:id/vts-report', component: VtsReportComponent },
@@ -199,7 +220,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'jaipur-greater/:id/field-executive-attendance', component: FieldExecutiveAttendanceComponent },
     { path: 'jaipur-greater/:id/fe-daily-work-report', component: FeDailyWorkReportComponent },
     { path: 'jaipur-greater/:id/garbage-capture-analysis', component: GarbageCaptureAnalysisComponent },
-    { path: 'jaipur-greater/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: 'jaipur-greater/:id/card-transaction-detail', component: CardTransectionDetailComponent, canActivate: [MarkingVersionGuard] },
+    { path: 'jaipur-greater/:id/card-transaction-detail-v1', component: CardTransectionDetailV1Component, canActivate: [MarkingVersionGuard] },
     { path: 'jaipur-greater/:id/monthly-attendance-report', component: MonthlyAttendanceComponent },
         
     { path: ':cityId/home', component: HomeComponent },
@@ -218,8 +240,10 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/housesearch', component: HouseSearchComponent },
     { path: ':cityId/fleet-monitor', component: FleetMonitorComponent },
     { path: ':cityId/line-statistics', component: LineStatisticsComponent },
-    { path: ':cityId/line-card-mapping', component: LineCardMappingComponent },
-    { path: ':cityId/line-card-mapping/:id', component: LineCardMappingComponent },
+    { path: ':cityId/line-card-mapping', component: LineCardMappingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/line-card-mapping-v1', component: LineCardMappingV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/line-card-mapping/:id', component: LineCardMappingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/line-card-mapping-v1/:id', component: LineCardMappingV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/time-distance', component: TimeDistanceComponent },
     { path: ':cityId/realtime-monitoring', component: RealtimeMonitoringComponent },
     { path: ':cityId/dustbin-monitoring', component: DustbinMonitoringComponent },
@@ -241,19 +265,28 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/ward-duty-data', component: WardDutyDataComponent },
     { path: ':cityId/dustbin-analysis', component: DustbinAnalysisComponent },
     { path: ':cityId/cms/:id', component: CmsComponent },
-    { path: ':cityId/cms1', component: Cms1Component },
+    { path: ':cityId/cms1', component: Cms1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/cms1-v1', component: Cms1V1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/vehicle-report', component: VehicleReportComponent },
     { path: ':cityId/ward-trip-analysis', component: WardTripAnalysisComponent },
-    { path: ':cityId/house-marking', component: HouseMarkingComponent },
-    { path: ':cityId/house-marking/:id1', component: HouseMarkingComponent },
-    { path: ':cityId/house-marking-assignment', component: HouseMarkingAssignmentComponent },
+    { path: ':cityId/house-marking', component: HouseMarkingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/house-marking-v1', component: HouseMarkingV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/house-marking/:id1', component: HouseMarkingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/house-marking-v1/:id1', component: HouseMarkingV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/house-marking-assignment', component: HouseMarkingAssignmentComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/house-marking-assignment-v1', component: HouseMarkingAssignmentV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/employee-marking', component: EmployeeMarkingComponent },
-    { path: ':cityId/ward-survey-analysis', component: WardSurveyAnalysisComponent },
-    { path: ':cityId/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
-    { path: ':cityId/ward-survey-summary', component: WardSurveySummaryComponent },
-    { path: ':cityId/ward-marking-summary', component: WardMarkingSummaryComponent },
+    { path: ':cityId/ward-survey-analysis', component: WardSurveyAnalysisComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/ward-survey-analysis-v1', component: WardSurveyAnalysisV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/ward-survey-analysis-v1/:id1', component: WardSurveyAnalysisV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/ward-survey-summary', component: WardSurveySummaryComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/ward-survey-summary-v1', component: WardSurveySummaryV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/ward-marking-summary', component: WardMarkingSummaryComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/ward-marking-summary-v1', component: WardMarkingSummaryV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/ward-scancard-report', component: WardScancardReportComponent },
-    { path: ':cityId/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: ':cityId/line-marker-mapping', component: LineMarkerMappingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/line-marker-mapping-v1', component: LineMarkerMappingV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/vehicle-assigned', component: VehicleAssignedComponent },
     { path: ':cityId/log-book', component: LogBookComponent },
     { path: ':cityId/ward-scancard-summary', component: WardScancardSummaryComponent },
@@ -268,7 +301,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: ':cityId/staff-account-detail', component: StaffAccountDetailComponent },
     { path: ':cityId/ward-work-percentage', component: WardWorkPercentageComponent },
-    { path: ':cityId/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: ':cityId/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/change-line-surveyed-data-v1', component: ChangeLineSurveyedDataV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/ward-work-done', component: WardWorkDoneComponent },
     { path: ':cityId/settings', component: SettingsComponent },
     { path: ':cityId/employees', component: EmployeesComponent },
@@ -313,8 +347,10 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/housesearch', component: HouseSearchComponent },
     { path: ':cityId/:id/fleet-monitor', component: FleetMonitorComponent },
     { path: ':cityId/:id/line-statistics', component: LineStatisticsComponent },
-    { path: ':cityId/:id/line-card-mapping', component: LineCardMappingComponent },
-    { path: ':cityId/:id/line-card-mapping/:id', component: LineCardMappingComponent },
+    { path: ':cityId/:id/line-card-mapping', component: LineCardMappingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/line-card-mapping-v1', component: LineCardMappingV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/line-card-mapping/:id', component: LineCardMappingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/line-card-mapping-v1/:id', component: LineCardMappingV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/time-distance', component: TimeDistanceComponent },
     { path: ':cityId/:id/realtime-monitoring', component: RealtimeMonitoringComponent },
     { path: ':cityId/:id/dustbin-monitoring', component: DustbinMonitoringComponent },
@@ -336,19 +372,28 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/ward-duty-data', component: WardDutyDataComponent },
     { path: ':cityId/:id/dustbin-analysis', component: DustbinAnalysisComponent },
     { path: ':cityId/:id/cms/:id', component: CmsComponent },
-    { path: ':cityId/:id/cms1', component: Cms1Component },
+    { path: ':cityId/:id/cms1', component: Cms1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/cms1-v1', component: Cms1V1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/vehicle-report', component: VehicleReportComponent },
     { path: ':cityId/:id/ward-trip-analysis', component: WardTripAnalysisComponent },
-    { path: ':cityId/:id/house-marking', component: HouseMarkingComponent },
-    { path: ':cityId/:id/house-marking/:id1', component: HouseMarkingComponent },
-    { path: ':cityId/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent },
+    { path: ':cityId/:id/house-marking', component: HouseMarkingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/house-marking-v1', component: HouseMarkingV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/house-marking/:id1', component: HouseMarkingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/house-marking-v1/:id1', component: HouseMarkingV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/house-marking-assignment', component: HouseMarkingAssignmentComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/house-marking-assignment-v1', component: HouseMarkingAssignmentV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/employee-marking', component: EmployeeMarkingComponent },
-    { path: ':cityId/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent },
-    { path: ':cityId/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent },
-    { path: ':cityId/:id/ward-survey-summary', component: WardSurveySummaryComponent },
-    { path: ':cityId/:id/ward-marking-summary', component: WardMarkingSummaryComponent },
+    { path: ':cityId/:id/ward-survey-analysis', component: WardSurveyAnalysisComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/ward-survey-analysis-v1', component: WardSurveyAnalysisV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/ward-survey-analysis/:id1', component: WardSurveyAnalysisComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/ward-survey-analysis-v1/:id1', component: WardSurveyAnalysisV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/ward-survey-summary', component: WardSurveySummaryComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/ward-survey-summary-v1', component: WardSurveySummaryV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/ward-marking-summary', component: WardMarkingSummaryComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/ward-marking-summary-v1', component: WardMarkingSummaryV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/ward-scancard-report', component: WardScancardReportComponent },
-    { path: ':cityId/:id/line-marker-mapping', component: LineMarkerMappingComponent },
+    { path: ':cityId/:id/line-marker-mapping', component: LineMarkerMappingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/line-marker-mapping-v1', component: LineMarkerMappingV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/vehicle-assigned', component: VehicleAssignedComponent },
     { path: ':cityId/:id/log-book', component: LogBookComponent },
     { path: ':cityId/:id/ward-scancard-summary', component: WardScancardSummaryComponent },
@@ -366,7 +411,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id1/ward-work-tracking/:id', component: WardWorkTrackingComponent },
     { path: ':cityId/:id/staff-account-detail', component: StaffAccountDetailComponent },
     { path: ':cityId/:id/ward-work-percentage', component: WardWorkPercentageComponent },
-    { path: ':cityId/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent },
+    { path: ':cityId/:id/change-line-surveyed-data', component: ChangeLineSurveyedDataComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/change-line-surveyed-data-v1', component: ChangeLineSurveyedDataV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/ward-work-done', component: WardWorkDoneComponent },
     { path: ':cityId/:id/settings', component: SettingsComponent },
     { path: ':cityId/:id/employees', component: EmployeesComponent },
@@ -384,32 +430,41 @@ export const AdminLayoutRoutes: Routes = [
     { path: ':cityId/:id/daily-work-detail', component: DailyWorkDetailComponent },
     { path: ':cityId/:id/support-query', component: SupportQueryComponent },
     { path: ':cityId/:id/monthly-fuel-report', component: MonthlyFuelReportComponent },
-    { path: ':cityId/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent },
+    { path: ':cityId/:id/change-line-marker-data', component: ChangeLineMarkerDataComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/change-line-marker-data-v1', component: ChangeLineMarkerDataV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/roles', component: RolesComponent },
     { path: ':cityId/:id/maps', component: MapsComponent },
-    { path: ':cityId/:id/card-marker-mapping', component: CardMarkerMappingComponent },
+    { path: ':cityId/:id/card-marker-mapping', component: CardMarkerMappingComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/card-marker-mapping-v1', component: CardMarkerMappingV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/scan-card-status', component: ScanCardStatusComponent },
     { path: ':cityId/:id/complaint-list', component: ComplaintListComponent },
     { path: ':cityId/:id/scan-card-manipulation', component: ScanCardManipulationComponent },
-    { path: ':cityId/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent },
+    { path: ':cityId/:id/add-marker-against-cards', component: AddMarkerAgainstCardsComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/add-marker-against-cards-v1', component: AddMarkerAgainstCardsV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/card-scanning-report', component: CardScanningReportComponent },
     { path: ':cityId/:id/survey-verification', component: SurveyVerificationComponent },
     { path: ':cityId/:id/survey-houses', component: SurveyHousesComponent },
-    { path: ':cityId/:id/marker-approval-test', component: MarkerApprovalTestComponent },
-    { path: ':cityId/:id/supervisor-report', component: SupervisorReportComponent },
+    { path: ':cityId/:id/marker-approval-test', component: MarkerApprovalTestComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/marker-approval-test-v1', component: MarkerApprovalTestV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/supervisor-report', component: SupervisorReportComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/supervisor-report-v1', component: SupervisorReportV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/set-nearby-ward', component: SetNearbyWardComponent },
     { path: ':cityId/:id/ward-route-auto-scan', component: WardRouteAutoScanComponent },
-    { path: ':cityId/:id/manage-marking-data', component: ManageMarkingDataComponent },
+    { path: ':cityId/:id/manage-marking-data', component: ManageMarkingDataComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/manage-marking-data-v1', component: ManageMarkingDataV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/wardwise-scan-card', component: WardwiseScanCardComponent },
     { path: ':cityId/:id/review-dutyon-images', component: ReviewDutyonImagesComponent },
     { path: ':cityId/:id/review-trip-images', component: ReviewTripImagesComponent },
     { path: ':cityId/:id/payment-collector', component: PaymentCollectorComponent },
-    { path: ':cityId/:id/due-amount-report', component: DueAmountReportComponent },
-    { path: ':cityId/:id/collected-amount-report', component: CollectedAmountReportComponent },
+    { path: ':cityId/:id/due-amount-report', component: DueAmountReportComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/due-amount-report-v1', component: DueAmountReportV1Component, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/collected-amount-report', component: CollectedAmountReportComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/collected-amount-report-v1', component: CollectedAmountReportV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/survey-verified-report', component: SurveyVerifiedReportComponent },
     { path: ':cityId/:id/payment-via-cheque', component: PaymentViaChequeComponent },
     { path: ':cityId/:id/payment-via-cheque-report', component: PaymentViaChequeReportComponent },
-    { path: ':cityId/:id/card-transaction-detail', component: CardTransectionDetailComponent },
+    { path: ':cityId/:id/card-transaction-detail', component: CardTransectionDetailComponent, canActivate: [MarkingVersionGuard] },
+    { path: ':cityId/:id/card-transaction-detail-v1', component: CardTransectionDetailV1Component, canActivate: [MarkingVersionGuard] },
     { path: ':cityId/:id/card-updated-history', component: CardUpdatedHistoryComponent },
     { path: ':cityId/:id/daily-payment-report', component: DailyPaymentReportComponent },
     { path: ':cityId/:id/monthly-payment-report', component: MonthlyPaymentReportComponent },

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireStorage } from "angularfire2/storage";
 import { CommonService } from './common.service';
-import { MarkerMappingService } from '../marker/marker-mapping.service';
 
 /**
  * Ek chal rahe move ka state. Component ye implement karta hai taaki service
@@ -26,7 +25,7 @@ export interface MoveRun {
 })
 export class MoveHelperService {
 
-  constructor(private storage: AngularFireStorage, private commonService: CommonService, private markerMapping: MarkerMappingService) { }
+  constructor(private storage: AngularFireStorage, private commonService: CommonService) { }
 
   readonly IMAGE_ATTEMPTS = 3;
   readonly MAX_NETWORK_RETRIES = 10;
@@ -193,61 +192,15 @@ export class MoveHelperService {
     throw lastError;
   }
 
-  /** Wahi retry, par un reads ke liye jo ab path se nahi balki service se aate
-   *  hain (getLineRecords / getSafeLastKey). Loop, attempts, backoff aur cancel
-   *  - sab upar wale readOnceWithRetry jaisa hi hai. */
-  async readWithRetry(read: () => Promise<any>, run: MoveRun): Promise<any> {
-    let lastError: any = null;
-    for (let attempt = 0; attempt < this.IMAGE_ATTEMPTS; attempt++) {
-      if (run.isCancelled()) { throw new Error("cancelled"); }
-      try {
-        return await read();
-      } catch (e) {
-        lastError = e;
-        if (!this.isNetworkError(e)) { break; }
-        await this.waitForNetwork(run);
-        await this.delay(500 * Math.pow(2, attempt));
-      }
-    }
-    throw lastError;
-  }
-
-  /**
-   * Marker ka data ya uski mapping badalne par MarkerMappingService ki cache
-   * purani pad jaati hai.
-   *
-   * Pehle har move flow ko khud clearLinkCache() bulana padta tha, aur jahan
-   * bhool hoti thi wahan page purani list dikhata rehta tha - aisi galti dikhti
-   * bhi nahi hai, sirf "kabhi-kabhi data purana aata hai" jaisa lagta hai.
-   * Isliye ab ye faisla yahin hota hai: path marker ka hai to cache apne aap
-   * saaf. MarkerMappingService root-level singleton hai, yaani cache page badal
-   * jaane par bhi zinda rehti hai - is wajah se ye aur zaroori ho jaata hai.
-   *
-   * Faisla clearForPath() me hai: MarkersData/{uid} par likha to sirf wo ek
-   * record bhoolta hai, MarkersMapping par likha to sirf mapping. Pehle yahan
-   * clearLinkCache() tha jo poore ward ke records bhi phenk deta tha - us wajah
-   * se har ek marker ke write ke baad ward dobara padhna padta tha.
-   */
-  private clearMarkerCache(path: string, patch: any = null) {
-    this.markerMapping.clearForPath(path, patch);
-  }
-
   dbUpdate(db: any, path: string, data: any): Promise<any> {
-    // patch bhi bhejte hain - cache phenkne ke bajaye usme wahi patch lag
-    // jaata hai, yaani ek bhi extra read nahi.
-    this.clearMarkerCache(path, data);
     return this.withTimeout(db.object(path).update(data), this.DB_TIMEOUT_MS);
   }
 
   dbSet(db: any, path: string, data: any): Promise<any> {
-    // set() poora node replace karta hai, sirf kuch fields nahi - isliye patch
-    // ki tarah nahi lagaya ja sakta. Record bhool jaana hi sahi hai.
-    this.clearMarkerCache(path);
     return this.withTimeout(db.object(path).set(data), this.DB_TIMEOUT_MS);
   }
 
   dbRemove(db: any, path: string): Promise<any> {
-    this.clearMarkerCache(path);
     return this.withTimeout(db.object(path).remove(), this.DB_TIMEOUT_MS);
   }
 
@@ -447,10 +400,8 @@ export class MoveHelperService {
     let list = [];
     for (let i = 0; i < rows.length; i++) {
       if (rows[i].status != "failed") { continue; }
-      // PEHLE: markerNo: rows[i].markerNo,
-      // Row par ab line ka serial nahi, marker ka uid hota hai.
       list.push({
-        markerUid: rows[i].markerUid,
+        markerNo: rows[i].markerNo,
         cardNo: rows[i].cardNo,
         step: rows[i].failedStep,
         error: rows[i].error

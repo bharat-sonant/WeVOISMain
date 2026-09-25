@@ -1,0 +1,459 @@
+<div id="divLoaderCounts" class="loaderClassMain">
+  <span class="spanLoader" id="spLoader">
+    <img src="../../../assets/img/loading.gif" width="50" /><br /><span
+      style="color: #fff; font-weight: normal; font-size: 18px"
+    >
+      We are collecting data<br /></span
+    ><span style="color: #0ba118; font-size: 24px"> Please wait...</span></span
+  >
+</div>
+<div id="divLoaderMain" class="loaderClass">
+  <img src="../../../assets/img/loading.gif" width="50" class="imgLoader" />
+</div>
+<div class="main-page">
+  <header class="header">
+    <div class="header-left">
+      Ward Marking Summary
+      <!-- Breadcrumb starts -->
+      <!-- <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ul class="ul-breadcrumb">
+          <li class="li-breadcrumb">
+            <a class="link-breadcrumb" [routerLink]="['/', cityId, 'home']"
+              >Home</a
+            >
+          </li>
+          <li class="li-breadcrumb">
+            <a class="link-breadcrumb" href="">Survey Managment</a>
+          </li>
+          <li class="li-breadcrumb">
+            <a class="link-breadcrumb" href="">Marking Management</a>
+          </li>
+          <li class="li-breadcrumb">Marking Summary</li>
+        </ul>
+      </nav> -->
+      <!-- Breadcrumb ends -->
+    </div>
+    <div class="header-right">
+      <div
+        class="btn-default btn-export"
+        (click)="getAllZoneHouseTypeList()"
+        [hidden]="isShowEntityExport == false"
+      >
+        Export Entity Types
+        <img
+          src="../../../assets/img/iconExport.png"
+          class="img-fluid icon-default"
+          alt="File"
+          width="24"
+        />
+      </div>
+
+      <div
+        class="btn-default btn-export"
+        data-bs-toggle="modal"
+        data-bs-target="#contentExportMarkers"
+        [hidden]="isShowEntityExport == false"
+      >
+        Export Markers
+        <img
+          src="../../../assets/img/iconExport.png"
+          class="img-fluid icon-default"
+          alt="File"
+          width="24"
+        />
+      </div>
+
+      <div
+        class="btn-default btn-export"
+        [hidden]="isActionShow == false"
+        (click)="updateMarkerCounts()"
+      >
+        {{ markerData.lastUpdate }}
+        <img
+          src="../../../assets/img/iconRefresh.png"
+          class="img-fluid icon-default"
+          alt="File"
+          width="24"
+        />
+      </div>
+    </div>
+    
+  </header>
+  <div class="page-body">
+    <div class="page-body-inner">
+      <div class="card-marking">
+        <div class="marking-box">
+          <div class="marking-count">
+            {{ markerData.totalMarkers }}
+          </div>
+          Total Marker
+        </div>
+        <div class="marking-box">
+          <div class="marking-count">
+            {{ markerData.totalHouses }}
+          </div>
+          Houses
+        </div>
+      </div>
+      <div class="table-ward">
+        <table class="table">
+          <thead>
+            <th>Ward</th>
+            <th class="text-right">Markers</th>
+            <th class="text-right">Houses</th>
+            <th class="text-right" [hidden]="isAlreadyShow == false">
+              Already Installed
+            </th>
+            <th class="text-right" [hidden]="hideComplex==1">Complex(s)</th>
+            <th class="text-right">Approved Lines</th>
+            <th>Status</th>
+          </thead>
+          <tbody>
+            <tr
+              class="table-row {{ data.preCssClass }}"
+              id="tr{{ i }}"
+              *ngFor="let data of wardProgressList; let i = index"
+              (click)="getMarkingDetail(data.wardNo, i)"
+              [hidden]="data.wardNo == 0"
+              style="cursor: pointer"
+            >
+              <td>
+                {{ data.wardNo }}
+              </td>
+              <td class="text-right">
+                {{ data.markers }}
+              </td>
+              <td class="text-right">
+                {{ data.houses }}
+              </td>
+              <td class="text-right" [hidden]="isAlreadyShow == false">
+                {{ data.alreadyInstalled }}
+              </td>
+              <td class="text-right" [hidden]="hideComplex==1">
+                <span [hidden]="data.complex == '0'"
+                  >{{ data.complex }} ({{ data.houseInComplex }})</span
+                >
+              </td>
+              <td class="text-right">
+                {{ data.approvedLines }} / {{ data.wardLines }}
+              </td>
+              <td class="{{ data.cssClass }}">
+                {{ data.status }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="divMessage" class="col-md-12 pr-1 text-center no-available">
+          <div class="form-group">
+            <h5>No data available</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-body-inner">
+      <div class="card-marking">
+        <div class="wardDetails-Box">
+          <div class="marking-count">
+            {{ markerData.totalLines }}
+          </div>
+          Lines
+        </div>
+        <div class="wardDetails-Box">
+          <div class="marking-count">
+            {{ markerData.wardApprovedLines }}
+          </div>
+          Approved Lines
+        </div>
+        <div class="wardDetails-Box">
+          <div class="marking-count">
+            {{ markerData.wardMarkers }}
+          </div>
+          Markers
+        </div>
+        <div class="wardDetails-Box">
+          <div class="marking-count">
+            {{ markerData.wardHouses }}
+          </div>
+          Houses
+        </div>
+      </div>
+      <div class="table-wardDetails-main">
+        <div id="divLoader" class="loaderClass">
+          <img
+            src="../../../assets/img/loading.gif"
+            width="50"
+            class="imgLoader"
+          />
+        </div>
+        <div class="tbl-wardDetailsHeader">
+          <div class="wardName-Main">
+            <div class="wardName">
+             Ward : {{ this.markerData.wardNo }}
+            </div>
+            <span class="ward-label">
+              Last scan time -
+              {{ this.markerData.lastScan }}
+            </span>
+          </div>
+          <div
+            class="enitity-types"
+            data-bs-toggle="modal"
+            data-bs-target="#contentHouseType"
+          >
+            Entity Types
+            <img
+              src="../../../assets/img/iconDown.png"
+              alt="icont"
+              class="icon-down"
+              width="18"
+            />
+          </div>
+        </div>
+        <div class="table-wardDetails-scroll">
+          <table class="table">
+            <thead>
+              <th>Line</th>
+              <th class="text-right">Markers</th>
+              <th class="text-right">Houses</th>
+              <th class="text-right" [hidden]="hideComplex==1">Complex(s)</th>
+              <th class="text-right" [hidden]="isAlreadyShow == false">
+                Already Installed
+              </th>
+              <th class="text-center">Approved</th>
+
+              <th class="text-center">#</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of lineMarkerList; let i = index">
+                <td>
+                  {{ data.lineNo }}
+                </td>
+                <td class="text-right">
+                  {{ data.markers }}
+                </td>
+                <td class="text-right">
+                  {{ data.houses }}
+                </td>
+                <td class="text-right" [hidden]="hideComplex==1">
+                  <span [hidden]="data.complex == '0'"
+                    >{{ data.complex }} ({{ data.houseInComplex }})</span
+                  >
+                </td>
+                <td class="text-right" [hidden]="isAlreadyShow == false">
+                  {{ data.alreadyCard }}
+                </td>
+                <td class="text-center">
+                  <span [hidden]="data.markers == 0">
+                    <img
+                      src="../../../assets/icons/check-solid.svg"
+                      alt="Check"
+                      class="icon-green"
+                      [hidden]="data.isApproved == false"
+                      width="16"
+                      style="margin-right: 4px"
+                    />
+                    <img
+                      src="../../../assets/icons/times-solid.svg"
+                      alt="Times"
+                      class="icon-red"
+                      [hidden]="data.isApproved == true"
+                      width="12"
+                    />
+                  </span>
+                </td>
+                <td class="text-center">
+                  <img
+                    src="../../../assets/img/iconEye.png"
+                    alt="eye"
+                    [hidden]="data.markers == 0"
+                    class="icon-eye"
+                    data-bs-toggle="modal"
+                    data-bs-target="#contentLineMarkers"
+                    (click)="showLineDetail(data.wardNo, data.lineNo)"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- <div
+          class="divmessage"
+          id="divMessage"
+          class="col-md-12 pr-1 text-center"
+        >
+          <div class="form-group">
+            <h5>No data available</h5>
+          </div>
+        </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Line Markers Start-->
+<div
+  class="modal fade"
+  id="contentLineMarkers"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-survey">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Ward {{ markerData?.wardNo }} [Line {{ markerData?.lineNo }}]
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="custom-modal-body" id="divStatus">
+        <div class="survey-box-scroll">
+          <div class="survey-box-outer">
+            <div
+              class="survey-box {{ dt.class }}"
+              *ngFor="let dt of markerDetailList"
+            >
+              <a
+                class="survey-box-header"
+                href="{{ dt.imageUrl }}"
+                target="_blank"
+              >
+                <img class="survey-box-img" [src]="dt.imageUrl" />
+              </a>
+              <div class="survey-box-footer">
+                {{ dt.type }}
+                <span *ngIf="dt.servingCount > 0" style="font-weight: bold">
+                  ({{ dt.servingCount }})
+                </span>
+              </div>
+
+              <div style="width: 100%">&nbsp;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Line Markers End-->
+
+<!--House Type  Start-->
+<div
+  class="modal fade"
+  id="contentHouseType"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="getZoneHouseTypeList()"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Entity Types</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="custom-modal-body" id="divHouseStatus">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-entity-scroll">
+              <table class="table">
+                <thead>
+                  <th style="width: 75%">Entity Type</th>
+                  <th class="text-right" style="width: 25%">Counts</th>
+                </thead>
+                <tbody>
+                  <tr
+                    class="table-row"
+                    id="tr{{ i }}"
+                    *ngFor="let data of zoneHouseTypeList; let i = index"
+                  >
+                    <td>
+                      {{ data.houseType }}
+                    </td>
+                    <td class="text-right">
+                      {{ data.counts }}
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td>Total Entity Type:</td>
+                    <td class="text-right">
+                      <strong>{{ totalTypeCount }}</strong>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <button
+              class="btn-default-success"
+              (click)="exportHouseTypeList('0')"
+            >
+              Export
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--House Type End-->
+
+<!--Export Markers Start-->
+<div
+  class="modal fade"
+  id="contentExportMarkers"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  (shown.bs.modal)="openExportMarkerData()"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Export Markers</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="custom-modal-body" id="divHouseType">
+        <div class="row">
+          <div class="col-md-12">
+            <select id="ddlZone" class="custom-input">
+              <option *ngFor="let dt of wardList" value="{{ dt.zoneNo }}">
+                {{ dt.zoneNo }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-12 mt-3">
+            <div class="btn-footer-group">
+              <button class="btn-success btn-footer" (click)="exportMarkers()">
+                Export
+              </button>
+              <button class="btn-cancel btn-footer" data-bs-dismiss="modal"
+          aria-label="Close" >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Export Markers End-->

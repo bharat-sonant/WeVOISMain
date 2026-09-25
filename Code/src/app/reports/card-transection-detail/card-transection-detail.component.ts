@@ -7,7 +7,6 @@ import { AngularFireStorage } from "angularfire2/storage";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 
-import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
 @Component({
   selector: 'app-card-transection-detail',
   templateUrl: './card-transection-detail.component.html',
@@ -15,7 +14,7 @@ import { MarkerMappingService } from '../../services/marker/marker-mapping.servi
 })
 export class CardTransectionDetailComponent implements OnInit {
 
-  constructor(private commonService: CommonService, private modalService: NgbModal, private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService, private markerMapping: MarkerMappingService) { }
+  constructor(private commonService: CommonService, private modalService: NgbModal, private storage: AngularFireStorage, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, public fs: FirebaseService) { }
   cityName: any;
   db: any;
   transactionList: any[];
@@ -169,93 +168,33 @@ export class CardTransectionDetailComponent implements OnInit {
       });
   }
 
-
-
-
-
-  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
-  //
-  // getMarkerImage() poori line padh kar cardNumber match karta tha, tab is
-  // helper ki zaroorat thi. Ab card se marker seedha `markerkey` se milta hai,
-  // isliye line padhne ki koi wajah nahi bachi.
-  //
-  // getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
-  //   return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
-  // }
-
-  // Card ki marker image.
-  //
-  // NEW PATH: MarkerWardMapping/{cardNo}.markerkey -> MarkersData/{uid} -> imgRef
-  //
-  // Naye structure me card aur marker ka rishta `markerkey` me pehle se likha
-  // hai, isliye markerNo dhoondhne ki zaroorat hi nahi. Ye raasta move-proof
-  // bhi hai - uid kabhi nahi badalta, jabki ward/line/markerNo har move par
-  // badal jaate hain.
-  //
-  // `lineNo` ab use nahi hota, par signature nahi badla - caller (line 115) ise
-  // bhejta hai aur wahan chhedne ki zaroorat nahi.
   getMarkerImage(lineNo: any, cardNo: any) {
-    // OLD PATH (reference ke liye rakha hai):
-    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.ward + "/" + lineNo + "/";
-    // let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
-    //   markedHouseData => {
-    //     markedHouseInstance.unsubscribe();
-    //
-    // PEHLE YE THA (hataya nahi, comment kiya hai) - poori line ka data utha kar
-    // usme cardNumber se marker dhoondha jaata tha (~42 read):
-    //
-    // this.getNewPathLineData(this.ward, lineNo).then(
-    //   (markedHouseData: any) => {
-    //     if (markedHouseData != null) {
-    //       let keyArray = Object.keys(markedHouseData);
-    //       for (let j = 0; j < keyArray.length; j++) {
-    //         // PURANA GUARD: let markerNo = parseInt(...); if (!isNaN(markerNo))
-    //         let markerNo = keyArray[j];
-    //         let marker = markedHouseData[markerNo];
-    //         if (marker == null || typeof marker != "object") { continue; }
-    //         if (marker["cardNumber"] == null || marker["cardNumber"] != cardNo) { continue; }
-    //         this.imgMarkerURL = this.markerMapping.markerImageUrl(marker);
-    //         ...
-    //       }
-    //     }
-    //   }
-    // );
-    this.markerMapping.getUidByCard(this.db, cardNo).then((uid: any) => {
-      if (uid == null) {
-        // Is card ki MarkerWardMapping entry hi nahi - marker hai hi nahi.
-        return null;
+    let dbPath = "EntityMarkingData/MarkedHouses/" + this.ward + "/" + lineNo + "/";
+    let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
+      markedHouseData => {
+        markedHouseInstance.unsubscribe();
+        if (markedHouseData != null) {
+          let keyArray = Object.keys(markedHouseData);
+          for (let j = 0; j < keyArray.length; j++) {
+            let markerNo = parseInt(keyArray[j]);
+            if (!isNaN(markerNo)) {
+              if (markedHouseData[markerNo]["cardNumber"] != null) {
+                if (markedHouseData[markerNo]["cardNumber"] == cardNo) {
+                  let image = markedHouseData[markerNo]["image"];
+                  let city = this.commonService.getFireStoreCity();
+                  if (this.cityName == "sikar") {
+                    city = "Sikar-Survey";
+                  }
+                  this.imgMarkerURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
+                  let element = <HTMLImageElement>document.getElementById("imgMarker");
+                  element.src = this.imgMarkerURL;
+                }
+              }
+            }
+          }
+        }
       }
-      return this.markerMapping.getMarker(this.db, uid);
-    }).then((marker: any) => {
-      if (marker == null) {
-        return;
-      }
-      // OLD PATH (reference ke liye rakha hai):
-      // this.imgMarkerURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
-      //
-      // NEW PATH: image sirf flat AllMarkerImages folder se (imgRef se).
-      //
-      // URL ab service banati hai, yahan haath se nahi. Do faayde: sikar wala
-      // city override aur DevTest wali purani galti dono ek hi jagah rehte
-      // hain, aur imgRef na hone par khaali URL milta hai.
-      //
-      // PEHLE YE THA (hataya nahi, comment kiya hai) - imgRef na hone par
-      // purane per-line folder ka URL banta tha:
-      //
-      // let image = marker["image"];
-      // let city = this.commonService.getFireStoreCity();
-      // if (this.cityName == "sikar") {
-      //   city = "Sikar-Survey";
-      // }
-      // this.imgMarkerURL = marker["imgRef"] != null
-      //   ? this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2FAllMarkerImages%2F" + marker["imgRef"] + "?alt=media"
-      //   : this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + this.ward + "%2F" + lineNo + "%2F" + image + "?alt=media";
-      //
-      // Ab imgRef na ho to image nahi dikhegi.
-      this.imgMarkerURL = this.markerMapping.markerImageUrl(marker);
-      let element = <HTMLImageElement>document.getElementById("imgMarker");
-      element.src = this.imgMarkerURL;
-    });
+    );
   }
 
   getTransaction() {
