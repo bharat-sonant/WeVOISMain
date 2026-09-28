@@ -681,9 +681,8 @@ export class WardRouteTrackingComponent {
       let dutyOnOffList = JSON.parse(JSON.stringify(response));
       if (dutyOnOffList.length > 0) {
         let dbPath = "LocationHistory/" + zoneNo + "/" + year + "/" + monthName + "/" + this.selectedDate;
-        let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-          routePath => {
-            vehicleTracking.unsubscribe();
+        this.getLocationHistory(dbPath).then(
+          (routePath: any) => {
             if (routePath != null) {
               let routeKeyArray = Object.keys(routePath);
               let keyArray = [];
@@ -764,6 +763,89 @@ export class WardRouteTrackingComponent {
           });
       }
     });
+  }
+
+  getLocationHistory(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      this.getLocationHistoryArchiveStatus(dbLocationPath).then((archiveData: any) => {
+        if (archiveData == null) {
+          //data is not archived, read it from realtime database
+          this.getLocationHistoryFromDatabase(dbLocationPath).then((locationData: any) => {
+            resolve(locationData);
+          });
+          return;
+        }
+        //data is archived, read it from storage
+        this.getLocationHistoryFromStorage(dbLocationPath).then((locationData: any) => {
+          if (locationData == null) {
+            //data not found in storage, read it from realtime database
+            this.getLocationHistoryFromDatabase(dbLocationPath).then((data: any) => {
+              resolve(data);
+            });
+            return;
+          }
+          resolve(locationData);
+        });
+      });
+    });
+  }
+
+  getLocationHistoryArchiveStatus(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let archivePath = dbLocationPath.toString().replace("LocationHistory/", "LocationHistoryArchive/");
+      let archiveInstance = this.db.object(archivePath).valueChanges().subscribe((archiveData: any) => {
+        archiveInstance.unsubscribe();
+        resolve(archiveData);
+      });
+    });
+  }
+
+  getLocationHistoryFromStorage(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2F" + dbLocationPath.toString().replaceAll("/", "%2F") + ".json?alt=media";
+      let storageInstance = this.httpService.get(path).subscribe((storageData: any) => {
+        storageInstance.unsubscribe();
+        resolve(this.getStorageLocationData(storageData));
+      }, error => {
+        //old archived files are saved as route.json, read them from there
+        this.commonService.getStorageLocationHistory(dbLocationPath).then((response: any) => {
+          if (response["status"] == "Fail") {
+            resolve(null);
+            return;
+          }
+          resolve(this.getStorageLocationData(response["data"]));
+        });
+      });
+    });
+  }
+
+  getLocationHistoryFromDatabase(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe((locationData: any) => {
+        locationInstance.unsubscribe();
+        resolve(locationData);
+      });
+    });
+  }
+
+  getStorageLocationData(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    //an archived file holds the date node itself, an older file wraps it in routePath
+    let locationData = storageData;
+    if (storageData["routePath"] != undefined && storageData["routePath"] != null) {
+      locationData = storageData["routePath"];
+    }
+    if (locationData == null || Object.keys(locationData).length == 0) {
+      return null;
+    }
+    //keep key order same as realtime database (sorted keys)
+    let sortedLocationData: any = {};
+    Object.keys(locationData).sort().forEach((key) => {
+      sortedLocationData[key] = locationData[key];
+    });
+    return sortedLocationData;
   }
 
   checkDistance(latlng: any, startIndex: any) {

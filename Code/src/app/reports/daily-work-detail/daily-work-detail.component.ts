@@ -88,6 +88,26 @@ export class DailyWorkDetailComponent implements OnInit {
   
   getTotalRunning(zoneNo: any, dbPath: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getTotalRunning");
+    this.getLocationHistoryArchiveStatus(dbPath).then((archiveData: any) => {
+      if (archiveData == null) {
+        //data is not archived, read it from realtime database
+        this.getTotalRunningFromDatabase(zoneNo, dbPath);
+        return;
+      }
+      //data is archived, read it from storage
+      this.getLocationHistoryFromStorage(dbPath).then((locationData: any) => {
+        if (locationData == null) {
+          //data not found in storage, read it from realtime database
+          this.getTotalRunningFromDatabase(zoneNo, dbPath);
+          return;
+        }
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalRunning", locationData);
+        this.setTotalRunning(zoneNo, locationData, dbPath, true);
+      });
+    });
+  }
+
+  getTotalRunningFromDatabase(zoneNo: any, dbPath: any) {
     let distanceInstance = this.db.object(dbPath + "/calculatedDistance").valueChanges().subscribe(calDiatance => {
       distanceInstance.unsubscribe();
       if (calDiatance != null) {
@@ -100,30 +120,94 @@ export class DailyWorkDetailComponent implements OnInit {
         let locationInstance = this.db.object(dbPath).valueChanges().subscribe(
           locationData => {
             locationInstance.unsubscribe();
-            let distance = "0";
             if (locationData != null) {
               this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getTotalRunning", locationData);
-              let keyArray = Object.keys(locationData);
-              if (keyArray.length > 0) {
-                for (let i = 0; i < keyArray.length; i++) {
-                  let time = keyArray[i];
-                  if (locationData[time]["distance-in-meter"] != null) {
-                    let coveredDistance = locationData[time]["distance-in-meter"];
-                    distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
-                  }
-                }
-              }
-              let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
-              if (detail != undefined) {
-                detail.runKm = (Number(distance) / 1000).toFixed(3);
-                if (this.selectedDate != this.commonService.setTodayDate()) {
-                  this.db.object(dbPath).update({ calculatedDistance: (Number(distance) / 1000).toFixed(3) });
-                }
-              }
+              this.setTotalRunning(zoneNo, locationData, dbPath, false);
             }
           });
       }
     });
+  }
+
+  setTotalRunning(zoneNo: any, locationData: any, dbPath: any, isArchived: boolean) {
+    //the distance saved earlier travels with the archived file, so it is used as
+    //it is instead of adding the points up again
+    if (isArchived && locationData["calculatedDistance"] != null) {
+      let savedDetail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
+      if (savedDetail != undefined) {
+        savedDetail.runKm = locationData["calculatedDistance"];
+      }
+      return;
+    }
+    let distance = "0";
+    let keyArray = Object.keys(locationData);
+    if (keyArray.length > 0) {
+      for (let i = 0; i < keyArray.length; i++) {
+        let time = keyArray[i];
+        if (locationData[time]["distance-in-meter"] != null) {
+          let coveredDistance = locationData[time]["distance-in-meter"];
+          distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
+        }
+      }
+    }
+    let detail = this.dailyWorkList.find(item => item.zoneNo == zoneNo);
+    if (detail != undefined) {
+      detail.runKm = (Number(distance) / 1000).toFixed(3);
+      //an archived date no longer sits in the database - writing the distance
+      //back there would create the node again that was moved to storage
+      if (!isArchived && this.selectedDate != this.commonService.setTodayDate()) {
+        this.db.object(dbPath).update({ calculatedDistance: (Number(distance) / 1000).toFixed(3) });
+      }
+    }
+  }
+
+  getLocationHistoryArchiveStatus(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let archivePath = dbLocationPath.toString().replace("LocationHistory/", "LocationHistoryArchive/");
+      let archiveInstance = this.db.object(archivePath).valueChanges().subscribe((archiveData: any) => {
+        archiveInstance.unsubscribe();
+        resolve(archiveData);
+      });
+    });
+  }
+
+  getLocationHistoryFromStorage(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2F" + dbLocationPath.toString().replaceAll("/", "%2F") + ".json?alt=media";
+      let storageInstance = this.httpService.get(path).subscribe((storageData: any) => {
+        storageInstance.unsubscribe();
+        resolve(this.getStorageLocationData(storageData));
+      }, error => {
+        //old archived files are saved as route.json, read them from there
+        this.commonService.getStorageLocationHistory(dbLocationPath).then((response: any) => {
+          if (response["status"] == "Fail") {
+            resolve(null);
+            return;
+          }
+          resolve(this.getStorageLocationData(response["data"]));
+        });
+      });
+    });
+  }
+
+  getStorageLocationData(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    //an archived file holds the date node itself, an older file wraps it in routePath
+    let locationData = storageData;
+    if (storageData["routePath"] != undefined && storageData["routePath"] != null) {
+      locationData = storageData["routePath"];
+    }
+    if (locationData == null || Object.keys(locationData).length == 0) {
+      return null;
+    }
+    //keep key order same as realtime database (sorted keys)
+    let sortedLocationData: any = {};
+    Object.keys(locationData).sort().forEach((key) => {
+      sortedLocationData[key] = locationData[key];
+    });
+    return sortedLocationData;
   }
 
   getPickedDustbin() {

@@ -482,15 +482,25 @@ export class RoutesTrackingComponent implements OnInit {
       let locationHistoryInstance = this.httpService.get(path).subscribe(data => {
         locationHistoryInstance.unsubscribe();
         // console.log("[Storage] Date:", monthDate, "Data received:", data != null);
-        if (data != null) {
-          let routePath = data["routePath"];
-          let monthDetails = this.monthDetailList.find(item => item.monthDate == monthDate);
-          if (monthDetails != undefined) {
+        let routePath = this.getStorageRoutePath(data);
+        if (routePath == null) {
+          //storage file me route nahi mila, fallback to realtime database
+          // console.log("[Storage] Date:", monthDate, "=> FILE me route nahi mila, falling back to REALTIME DATABASE");
+          this.getLocationHistoryFromDatabase(monthDate, type);
+          return;
+        }
+        let monthDetails = this.monthDetailList.find(item => item.monthDate == monthDate);
+        if (monthDetails != undefined) {
+          //an archived file holds only the route, driver and percentage come
+          //from getMonthDetail - they are taken here only when the file has them
+          if (data["driver"] != undefined) {
             monthDetails.driver = data["driver"];
-            monthDetails.percentage = data["percentage"];
-            monthDetails.routePath = routePath;
-            this.getMonthListData(monthDate, routePath, type);
           }
+          if (data["percentage"] != undefined) {
+            monthDetails.percentage = data["percentage"];
+          }
+          monthDetails.routePath = routePath;
+          this.getMonthListData(monthDate, routePath, type);
         }
       }, error => {
         // console.log("[Storage] Date:", monthDate, "DOWNLOAD FAILED => falling back to REALTIME DATABASE", error);
@@ -510,6 +520,26 @@ export class RoutesTrackingComponent implements OnInit {
         }
       }
     );
+  }
+
+  getStorageRoutePath(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    //an archived file holds the date node itself, an older file wraps it in routePath
+    let routePath = storageData;
+    if (storageData["routePath"] != undefined && storageData["routePath"] != null) {
+      routePath = storageData["routePath"];
+    }
+    if (routePath == null || Object.keys(routePath).length == 0) {
+      return null;
+    }
+    //keep key order same as realtime database (sorted keys)
+    let sortedRoutePath: any = {};
+    Object.keys(routePath).sort().forEach(key => {
+      sortedRoutePath[key] = routePath[key];
+    });
+    return sortedRoutePath;
   }
 
   getMonthDetail(monthDetails: any, routePath: any, monthDate: any) {
