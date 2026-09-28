@@ -629,85 +629,127 @@ export class MonthlyFuelReportComponent implements OnInit {
       else {
         dbLocationPath = "LocationHistory/" + zone + "/" + year + "/" + monthName + "/" + date;
       }
-      this.commonService.getStorageLocationHistory(dbLocationPath).then((response) => {
-        if (response["status"] == "Fail") {
-          let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe(
-            locationData => {
-              locationInstance.unsubscribe();
-              let distance = "0";
-              if (locationData != null) {
-                this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRunningDistance", locationData);
-                let keyArray = Object.keys(locationData);
-                if (keyArray.length > 0) {
-                  let startDate = new Date(date + " " + startTime);
-                  let endDate = new Date(date + " " + endTime);
-                  let diffMs = endDate.getTime() - startDate.getTime(); // milliseconds between now & Christmas
-                  if (diffMs < 0) {
-                    endDate = new Date(this.commonService.getNextDate(date, 1) + " " + endTime);
-                    diffMs = endDate.getTime() - startDate.getTime();
-                  }
-                  let diffMins = Math.round(diffMs / 60000); // minutes
-                  for (let i = 0; i <= diffMins; i++) {
-                    let locationList = keyArray.filter(item => item.includes(startTime));
-                    if (locationList.length > 0) {
-                      for (let j = 0; j < locationList.length; j++) {
-                        if (locationData[locationList[j]]["distance-in-meter"] != null) {
-                          let coveredDistance = locationData[locationList[j]]["distance-in-meter"];
-                          distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
-                        }
-                      }
-                    }
-                    startDate = new Date(startDate.setMinutes(startDate.getMinutes() + 1));
-                    startTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
-                  }
-                  if (distance != "0") {
-                    vehicleWorkList[listIndex]["distance"] = (Number(distance) / 1000).toFixed(3);
+      this.getLocationHistory(dbLocationPath).then((locationData: any) => {
+        let distance = "0";
+        if (locationData != null) {
+          let keyArray = Object.keys(locationData);
+          if (keyArray.length > 0) {
+            let startDate = new Date(date + " " + startTime);
+            let endDate = new Date(date + " " + endTime);
+            let diffMs = endDate.getTime() - startDate.getTime(); // milliseconds between now & Christmas
+            if (diffMs < 0) {
+              endDate = new Date(this.commonService.getNextDate(date, 1) + " " + endTime);
+              diffMs = endDate.getTime() - startDate.getTime();
+            }
+            let diffMins = Math.round(diffMs / 60000); // minutes
+            for (let i = 0; i <= diffMins; i++) {
+              let locationList = keyArray.filter(item => item.includes(startTime));
+              if (locationList.length > 0) {
+                for (let j = 0; j < locationList.length; j++) {
+                  if (locationData[locationList[j]]["distance-in-meter"] != null) {
+                    let coveredDistance = locationData[locationList[j]]["distance-in-meter"];
+                    distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
                   }
                 }
               }
-              listIndex++;
-              this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
-            });
-        }
-        else {
-          let distance = "0";
-          let locationData = response["data"];
-          if (locationData != null) {
-            let keyArray = Object.keys(locationData);
-            if (keyArray.length > 0) {
-              let startDate = new Date(date + " " + startTime);
-              let endDate = new Date(date + " " + endTime);
-              let diffMs = endDate.getTime() - startDate.getTime(); // milliseconds between now & Christmas
-              if (diffMs < 0) {
-                endDate = new Date(this.commonService.getNextDate(date, 1) + " " + endTime);
-                diffMs = endDate.getTime() - startDate.getTime();
-              }
-              let diffMins = Math.round(diffMs / 60000); // minutes
-              for (let i = 0; i <= diffMins; i++) {
-                let locationList = keyArray.filter(item => item.includes(startTime));
-                if (locationList.length > 0) {
-                  for (let j = 0; j < locationList.length; j++) {
-                    if (locationData[locationList[j]]["distance-in-meter"] != null) {
-                      let coveredDistance = locationData[locationList[j]]["distance-in-meter"];
-                      distance = (Number(distance) + Number(coveredDistance)).toFixed(0);
-                    }
-                  }
-                }
-                startDate = new Date(startDate.setMinutes(startDate.getMinutes() + 1));
-                startTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
-              }
-              if (distance != "0") {
-                vehicleWorkList[listIndex]["distance"] = (Number(distance) / 1000).toFixed(3);
-              }
+              startDate = new Date(startDate.setMinutes(startDate.getMinutes() + 1));
+              startTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
+            }
+            if (distance != "0") {
+              vehicleWorkList[listIndex]["distance"] = (Number(distance) / 1000).toFixed(3);
             }
           }
-          listIndex++;
-          this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
-
         }
+        listIndex++;
+        this.getWardRunningDistance(listIndex, index, vehicleWorkList, workDetailList, vehicleLengthList);
       });
 
     }
+  }
+
+  getLocationHistory(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      this.getLocationHistoryArchiveStatus(dbLocationPath).then((archiveData: any) => {
+        if (archiveData == null) {
+          //data is not archived, read it from realtime database
+          this.getLocationHistoryFromDatabase(dbLocationPath).then((locationData: any) => {
+            resolve(locationData);
+          });
+          return;
+        }
+        //data is archived, read it from storage
+        this.getLocationHistoryFromStorage(dbLocationPath).then((locationData: any) => {
+          if (locationData == null) {
+            //data not found in storage, read it from realtime database
+            this.getLocationHistoryFromDatabase(dbLocationPath).then((data: any) => {
+              resolve(data);
+            });
+            return;
+          }
+          resolve(locationData);
+        });
+      });
+    });
+  }
+
+  getLocationHistoryArchiveStatus(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let archivePath = dbLocationPath.toString().replace("LocationHistory/", "LocationHistoryArchive/");
+      let archiveInstance = this.db.object(archivePath).valueChanges().subscribe((archiveData: any) => {
+        archiveInstance.unsubscribe();
+        resolve(archiveData);
+      });
+    });
+  }
+
+  getLocationHistoryFromStorage(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2F" + dbLocationPath.toString().replaceAll("/", "%2F") + ".json?alt=media";
+      let storageInstance = this.httpService.get(path).subscribe((storageData: any) => {
+        storageInstance.unsubscribe();
+        resolve(this.getStorageLocationData(storageData));
+      }, error => {
+        //old archived files are saved as route.json, read them from there
+        this.commonService.getStorageLocationHistory(dbLocationPath).then((response: any) => {
+          if (response["status"] == "Fail") {
+            resolve(null);
+            return;
+          }
+          resolve(this.getStorageLocationData(response["data"]));
+        });
+      });
+    });
+  }
+
+  getStorageLocationData(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    let locationData = storageData;
+    if (storageData["routePath"] != undefined && storageData["routePath"] != null) {
+      locationData = storageData["routePath"];
+    }
+    if (locationData == null) {
+      return null;
+    }
+    //keep key order same as realtime database (sorted keys)
+    let sortedLocationData: any = {};
+    Object.keys(locationData).sort().forEach((key) => {
+      sortedLocationData[key] = locationData[key];
+    });
+    return sortedLocationData;
+  }
+
+  getLocationHistoryFromDatabase(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe((locationData: any) => {
+        locationInstance.unsubscribe();
+        if (locationData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardRunningDistance", locationData);
+        }
+        resolve(locationData);
+      });
+    });
   }
 }
 
