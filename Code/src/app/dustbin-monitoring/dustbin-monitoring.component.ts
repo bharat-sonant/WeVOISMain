@@ -99,6 +99,7 @@ export class DustbinMonitoringComponent {
       percentage: "0"
     };
   ngOnInit() {
+    // console.log("[LocationHistory] dustbin-monitoring loaded => archive-first read ACTIVE");
     this.cityName = localStorage.getItem("cityName");
     this.userType = localStorage.getItem("userType");
     this.db = this.fs.getDatabaseByCity(this.cityName);
@@ -430,9 +431,9 @@ export class DustbinMonitoringComponent {
     let monthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
     let year = this.selectedDate.split("-")[0];
     let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + year + "/" + monthName + "/" + this.selectedDate;
-    let vehicleTracking = this.db.object(dbPath).valueChanges().subscribe(
-      routePath => {
-        vehicleTracking.unsubscribe();
+    // console.log("[LocationHistory] getRoute() requesting => " + dbPath);
+    this.getLocationHistory(dbPath).then(
+      (routePath: any) => {
         this.routePathStore = [];
         if (routePath != null) {
           this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRoute", routePath);
@@ -809,15 +810,18 @@ export class DustbinMonitoringComponent {
 
   getDistanceCovered(vehicle: any, planId: any, year: any, monthName: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getDistanceCovered");
-    let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + year + "/" + monthName + "/" + this.selectedDate + "/TotalCoveredDistance";
-    let distanceInstance = this.db.object(dbPath).valueChanges().subscribe(
-      data => {
-        distanceInstance.unsubscribe();
-        if (data != null) {
-          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDistanceCovered", data);
-          let planDetails = this.planDetail.find(item => item.id == planId);
-          if (planDetails != undefined) {
-            planDetails.totDistance = (Number(data) / 1000).toFixed(3);
+    let dbPath = "LocationHistory/BinLifting/" + vehicle + "/" + year + "/" + monthName + "/" + this.selectedDate;
+    // console.log("[LocationHistory] getDistanceCovered() requesting => " + dbPath);
+    this.getLocationHistory(dbPath).then(
+      (locationData: any) => {
+        if (locationData != null) {
+          let data = locationData["TotalCoveredDistance"];
+          if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getDistanceCovered", data);
+            let planDetails = this.planDetail.find(item => item.id == planId);
+            if (planDetails != undefined) {
+              planDetails.totDistance = (Number(data) / 1000).toFixed(3);
+            }
           }
         }
       }
@@ -1155,6 +1159,99 @@ export class DustbinMonitoringComponent {
       infowindow.open(this.map, marker);
     });
     this.routeMarkIcon = marker;
+  }
+
+  getLocationHistory(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      this.getLocationHistoryArchiveStatus(dbLocationPath).then((archiveData: any) => {
+        if (archiveData == null) {
+          //data is not archived, read it from realtime database
+          // console.log("[LocationHistory] " + dbLocationPath + " => NOT ARCHIVED, loading from REALTIME DATABASE");
+          this.getLocationHistoryFromDatabase(dbLocationPath).then((locationData: any) => {
+            resolve(locationData);
+          });
+          return;
+        }
+        //data is archived, read it from storage
+        // console.log("[LocationHistory] " + dbLocationPath + " => ARCHIVED, loading from STORAGE");
+        this.getLocationHistoryFromStorage(dbLocationPath).then((locationData: any) => {
+          if (locationData == null) {
+            //storage me data nahi mila, fallback to realtime database
+            // console.log("[LocationHistory] " + dbLocationPath + " => STORAGE me data nahi mila, falling back to REALTIME DATABASE");
+            this.getLocationHistoryFromDatabase(dbLocationPath).then((data: any) => {
+              resolve(data);
+            });
+            return;
+          }
+          resolve(locationData);
+        });
+      });
+    });
+  }
+
+  getLocationHistoryArchiveStatus(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let archivePath = dbLocationPath.toString().replace("LocationHistory/", "LocationHistoryArchive/");
+      let archiveInstance = this.db.object(archivePath).valueChanges().subscribe((archiveData: any) => {
+        archiveInstance.unsubscribe();
+        // console.log("[LocationHistory][Archive] " + archivePath + " => found:", archiveData != null);
+        resolve(archiveData);
+      });
+    });
+  }
+
+  getLocationHistoryFromStorage(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2F" + dbLocationPath.toString().replaceAll("/", "%2F") + ".json?alt=media";
+      // console.log("[LocationHistory][Storage] url:", path);
+      let storageInstance = this.httpService.get(path).subscribe((storageData: any) => {
+        storageInstance.unsubscribe();
+        // console.log("[LocationHistory][Storage] DATA LOADED FROM STORAGE => " + dbLocationPath);
+        resolve(this.getStorageLocationData(storageData));
+      },
+        (error) => {
+          //old archived files are saved as route.json, read them from there
+          // console.log("[LocationHistory][Storage] file not found (status " + error.status + "), trying old route.json => " + dbLocationPath);
+          this.commonService.getStorageLocationHistory(dbLocationPath).then((response: any) => {
+            if (response["status"] == "Fail") {
+              // console.log("[LocationHistory][Storage] route.json bhi nahi mila => " + dbLocationPath);
+              resolve(null);
+              return;
+            }
+            // console.log("[LocationHistory][Storage] DATA LOADED FROM STORAGE (route.json) => " + dbLocationPath);
+            resolve(this.getStorageLocationData(response["data"]));
+          });
+        });
+    });
+  }
+
+  getStorageLocationData(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    let locationData = storageData;
+    if (storageData["routePath"] != undefined && storageData["routePath"] != null) {
+      locationData = storageData["routePath"];
+    }
+    if (locationData == null) {
+      return null;
+    }
+    //keep key order same as realtime database (sorted keys)
+    let sortedLocationData: any = {};
+    Object.keys(locationData).sort().forEach((key) => {
+      sortedLocationData[key] = locationData[key];
+    });
+    return sortedLocationData;
+  }
+
+  getLocationHistoryFromDatabase(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let locationInstance = this.db.object(dbLocationPath).valueChanges().subscribe((locationData: any) => {
+        locationInstance.unsubscribe();
+        // console.log("[LocationHistory][RTDB] DATA LOADED FROM REALTIME DATABASE => " + dbLocationPath + ", found:", locationData != null);
+        resolve(locationData);
+      });
+    });
   }
 }
 
