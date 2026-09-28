@@ -528,8 +528,8 @@ export class SidebarComponent implements OnInit {
       for (let index = 0; index < data.length; index++) {
         if (data[index]["assigned-task"] != undefined) {
           if (data[index]["assigned-task"] != "") {
-            let dbPath = "LocationHistory/" + data[index]["assigned-task"] + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.toDayDate + "/last-update-time";
-            let locations = this.db.object(dbPath).valueChanges().subscribe((updatedTime) => {
+            let dbLocationPath = "LocationHistory/" + data[index]["assigned-task"] + "/" + this.currentYear + "/" + this.currentMonth + "/" + this.toDayDate;
+            this.getLocationHistoryLastUpdateTime(dbLocationPath).then((updatedTime: any) => {
               if (updatedTime != null) {
                 var lastUpdatedTime = new Date(
                   this.toDayDate + " " + updatedTime
@@ -537,18 +537,113 @@ export class SidebarComponent implements OnInit {
                 var currentTime = new Date(dt.getTime());
                 var difference = currentTime.getTime() - lastUpdatedTime.getTime(); // This will give difference in milliseconds
                 var resultInMinutes = Math.round(difference / 60000);
+                // console.log("[Sidebar-Location] Ward:", data[index]["assigned-task"], "last-update-time:", updatedTime, "Minutes:", resultInMinutes, "Alert:", resultInMinutes >= 7);
                 if (resultInMinutes >= 7) {
                   let message = "Ward " + data[index]["assigned-task"] + " : We are not getting any data from last " + resultInMinutes + " minutes. ";
                   let cssClass = "alert alert-danger alert-with-icon";
                   this.setNotificationAlert(message, cssClass);
                 }
               }
-              locations.unsubscribe();
+              // else {
+              //   console.log("[Sidebar-Location] Ward:", data[index]["assigned-task"], "=> last-update-time NULL, no alert");
+              // }
             });
           }
         }
       }
       Vehicle.unsubscribe();
+    });
+  }
+
+  getLocationHistoryLastUpdateTime(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      this.getLocationHistoryArchiveStatus(dbLocationPath).then((archiveData: any) => {
+        if (archiveData == null) {
+          //data is not archived, read it from realtime database
+          // console.log("[Sidebar-Location] Path:", dbLocationPath, "=> NOT ARCHIVED, loading from REALTIME DATABASE");
+          this.getLastUpdateTimeFromDatabase(dbLocationPath).then((updatedTime: any) => {
+            resolve(updatedTime);
+          });
+          return;
+        }
+        //data is archived, read it from storage
+        // console.log("[Sidebar-Location] Path:", dbLocationPath, "=> ARCHIVED, loading from STORAGE");
+        this.getLastUpdateTimeFromStorage(dbLocationPath).then((updatedTime: any) => {
+          if (updatedTime == null) {
+            //storage me data nahi mila, fallback to realtime database
+            // console.log("[Sidebar-Location] Path:", dbLocationPath, "=> STORAGE me data nahi mila, falling back to REALTIME DATABASE");
+            this.getLastUpdateTimeFromDatabase(dbLocationPath).then((data: any) => {
+              resolve(data);
+            });
+            return;
+          }
+          resolve(updatedTime);
+        });
+      });
+    });
+  }
+
+  getLocationHistoryArchiveStatus(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let archivePath = dbLocationPath.toString().replace("LocationHistory/", "LocationHistoryArchive/");
+      let archiveInstance = this.db.object(archivePath).valueChanges().subscribe((archiveData: any) => {
+        archiveInstance.unsubscribe();
+        // console.log("[Sidebar-Archive] Path:", archivePath, "Found:", archiveData != null);
+        resolve(archiveData);
+      });
+    });
+  }
+
+  getLastUpdateTimeFromStorage(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2F" + dbLocationPath.toString().replaceAll("/", "%2F") + ".json?alt=media";
+      // console.log("[Sidebar-Storage] Path:", dbLocationPath, "URL:", path);
+      let storageInstance = this.httpService.get(path).subscribe((storageData: any) => {
+        storageInstance.unsubscribe();
+        let updatedTime = this.getStorageLastUpdateTime(storageData);
+        // console.log("[Sidebar-Storage] Path:", dbLocationPath, "=> DATA LOADED FROM STORAGE, last-update-time:", updatedTime);
+        resolve(updatedTime);
+      }, (error) => {
+        //old archived files are saved as route.json, read them from there
+        // console.log("[Sidebar-Storage] Path:", dbLocationPath, "=> FILE NOT FOUND, trying old route.json path", error.status);
+        this.commonService.getStorageLocationHistory(dbLocationPath).then((response: any) => {
+          if (response["status"] == "Fail") {
+            // console.log("[Sidebar-Storage] Path:", dbLocationPath, "=> route.json bhi nahi mila");
+            resolve(null);
+            return;
+          }
+          let updatedTime = this.getStorageLastUpdateTime(response["data"]);
+          // console.log("[Sidebar-Storage] Path:", dbLocationPath, "=> DATA LOADED FROM STORAGE (route.json), last-update-time:", updatedTime);
+          resolve(updatedTime);
+        });
+      });
+    });
+  }
+
+  getStorageLastUpdateTime(storageData: any) {
+    if (storageData == null) {
+      return null;
+    }
+    let locationData = storageData;
+    if (storageData["routePath"] != undefined && storageData["routePath"] != null) {
+      locationData = storageData["routePath"];
+    }
+    if (locationData == null) {
+      return null;
+    }
+    if (locationData["last-update-time"] == undefined) {
+      return null;
+    }
+    return locationData["last-update-time"];
+  }
+
+  getLastUpdateTimeFromDatabase(dbLocationPath: any) {
+    return new Promise((resolve) => {
+      let locationInstance = this.db.object(dbLocationPath + "/last-update-time").valueChanges().subscribe((updatedTime: any) => {
+        locationInstance.unsubscribe();
+        // console.log("[Sidebar-RTDB] Path:", dbLocationPath + "/last-update-time", "=> DATA LOADED FROM REALTIME DATABASE, last-update-time:", updatedTime);
+        resolve(updatedTime);
+      });
     });
   }
 
