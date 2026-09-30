@@ -123,9 +123,9 @@ export class PaymentViaChequeComponent implements OnInit {
                       day = checkDate.split("-")[2];
                       monthName = this.commonService.getCurrentMonthShortName(Number(month));
                       let checkDateFormat = day + " " + monthName + " " + year;
-                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2FEntities%2F" + entity + "%2F" + checkDate + "%2F" + dataKey[key]["image"] + "?alt=media";
+                      let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2FEntities%2F" + entity + "%2F" + date + "%2F" + dataKey[key]["image"] + "?alt=media";
                       const paymentImageName = dataKey[key]["houseImage"] || `${dataKey[key]["merchantTransactionId"]}.jpg`;
-                      const houseImgUrl = `${this.commonService.fireStoragePath}${this.commonService.getFireStoreCity()}%2FPaymentCollectionHistory%2FPaymentHouseImage%2F${cardNo}%2FEntities%2F${entity}%2F${checkDate}%2F${paymentImageName}?alt=media`
+                      const houseImgUrl = `${this.commonService.fireStoragePath}${this.commonService.getFireStoreCity()}%2FPaymentCollectionHistory%2FPaymentHouseImage%2F${cardNo}%2FEntities%2F${entity}%2F${date}%2F${paymentImageName}?alt=media`
                       this.chequeList.push({ key: key, cardNo: cardNo, zone: dataKey[key]["ward"], chequeNo: dataKey[key]["chequeNo"], chequeDate: dataKey[key]["chequeDate"], checkDateFormat: checkDateFormat, name: dataKey[key]["name"], bankName: dataKey[key]["bankName"], collectedBy: dataKey[key]["collectedById"], collectedByName: dataKey[key]["collectedByName"], collectedDate: date, collectedDateFormat: collectedDateFormat, amount: dataKey[key]["amount"], monthYear: dataKey[key]["monthYear"], merchantTransactionId: dataKey[key]["merchantTransactionId"], timeStemp: timeStemp, imageUrl: imageUrl, entityType: "subEntity", entityId: entity, houseImgUrl, houseImage: paymentImageName, houseHolds: dataKey[key]["houseHolds"] ? dataKey[key]["houseHolds"] : "1" });
                     }
 
