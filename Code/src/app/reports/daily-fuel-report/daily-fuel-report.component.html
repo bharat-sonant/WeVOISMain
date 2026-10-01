@@ -166,6 +166,7 @@
                                     <th scope="col" class="text-left" [hidden]="isPetrolPumpDetail==true">Fuel Type</th>
                                     <th scope="col" class="text-left" [hidden]="isPetrolPumpDetail==false">Fuel Detail
                                     </th>
+                                    <th scope="col" class="text-right">Fuel Bar Count</th>
                                     <th scope="col" class="text-right">Fuel Qty</th>
                                     <th scope="col" class="text-right">Fuel Meter Reading</th>
                                     <th scope="col" class="text-right">Fuel Amount</th>
@@ -208,6 +209,11 @@
                                                 {{diesel.payMethod}}</div>
                                             <div style="width:100%" [hidden]="diesel.remark==''">-
                                                 {{diesel.remark}}</div>
+                                        </div>
+                                    </td>
+                                    <td class="text-right " style="vertical-align: top;">
+                                        <div style="width:100% " *ngFor="let diesel of data.diesel ">
+                                            {{diesel.fuelBarCount}}
                                         </div>
                                     </td>
                                     <td class="text-right " style="vertical-align: top;">
@@ -420,6 +426,7 @@
                                                     <td class="text-left history-detail-cell">
                                                         <span> <b>Vehicle :</b> {{data.vehicle}}</span><br />
                                                         <span *ngIf="hasDisplayValue(data, 'fuelType')"><b>Fuel Type :</b> {{data.fuelType}}<br /></span>
+                                                        <span *ngIf="data.fuelBarCount !== ''"><b>Fuel Bar Count :</b> {{data.fuelBarCount}}<br /></span>
                                                         <span *ngIf="hasDisplayValue(data, 'fuelVehicle')"><b>Fuel Vehicle :</b> {{data.fuelVehicle}}<br /></span>
                                                         <span *ngIf="hasDisplayValue(data, 'payMethod')"><b>Pay Method :</b> <span class="history-value-small">{{data.payMethod}}</span><br /></span>
                                                         <span *ngIf="hasDisplayValue(data, 'petrolPump')"><b>Petrol Pump :</b> {{data.petrolPump}}<br /></span>

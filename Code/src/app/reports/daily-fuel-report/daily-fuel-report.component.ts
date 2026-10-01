@@ -187,7 +187,8 @@ export class DailyFuelReportComponent implements OnInit {
                 remark: dieselList[j].remark,
                 rmb_no: dieselList[j].rmb_no,
                 rmb_at: dieselList[j].rmb_at,
-                rmb_by: dieselList[j].rmb_by
+                rmb_by: dieselList[j].rmb_by,
+                fuelBarCount: dieselList[j].fuelBarCount
               });
             }
           }
@@ -235,7 +236,8 @@ export class DailyFuelReportComponent implements OnInit {
                 remark: dieselList[j].remark,
                 rmb_no: dieselList[j].rmb_no,
                 rmb_at: dieselList[j].rmb_at,
-                rmb_by: dieselList[j].rmb_by
+                rmb_by: dieselList[j].rmb_by,
+                fuelBarCount: dieselList[j].fuelBarCount
               });
             }
           }
@@ -283,7 +285,8 @@ export class DailyFuelReportComponent implements OnInit {
                 remark: dieselList[j].remark,
                 rmb_no: dieselList[j].rmb_no,
                 rmb_at: dieselList[j].rmb_at,
-                rmb_by: dieselList[j].rmb_by
+                rmb_by: dieselList[j].rmb_by,
+                fuelBarCount: dieselList[j].fuelBarCount
               });
             }
           }
@@ -548,6 +551,7 @@ export class DailyFuelReportComponent implements OnInit {
                 fuelVehicle: data[historyKey]["fuelVehicle"],
                 payMethod: data[historyKey]["payMethod"],
                 petrolPump: data[historyKey]["petrolPump"],
+                fuelBarCount: this.getFuelBarCount(data[historyKey]["fuelBarCount"]),
                 meterImageUrl: meterImageUrl,
                 slipImageUrl: slipImageUrl,
                 vehicleImageUrl: vehicleImageUrl,
@@ -638,6 +642,7 @@ export class DailyFuelReportComponent implements OnInit {
               let rmb_at = "";
               let rmb_by = "";
               let meterReading = "";
+              let fuelBarCount = this.getFuelBarCount(dieselData[key]["fuelBarCount"]);
 
               if (dieselData[key]["isUpdate"] != null) {
                 isUpdate = 1;
@@ -726,7 +731,8 @@ export class DailyFuelReportComponent implements OnInit {
                 payMethod: payMethod,
                 remark: remark,
                 rmb_no: rmb_no, rmb_at, rmb_by,
-                meterReading: meterReading
+                meterReading: meterReading,
+                fuelBarCount: fuelBarCount
               };
               detail.diesel.push(dieselDetail);
               this.checkAndSetVehicleImage(dieselDetail, vehicleImageUrl);
@@ -1556,6 +1562,7 @@ export class DailyFuelReportComponent implements OnInit {
               vehicle: vehicle,
               gpsKM: "",
               fuelType: diesel[j]["fuelType"],
+              fuelBarCount: diesel[j]["fuelBarCount"],
               dieselQty: diesel[j]["qty"],
               amount: diesel[j]["amount"],
               fuelVehicle: diesel[j]["fuelVehicle"],
@@ -1624,6 +1631,7 @@ export class DailyFuelReportComponent implements OnInit {
               vehicle: vehicle,
               gpsKM: list[j]["gpsKM"],
               fuelType: list[j]["fuelType"] ? list[j]["fuelType"] : "",
+              fuelBarCount: this.getFuelBarCount(list[j]["fuelBarCount"]),
               fuelVehicle: list[j]["fuelVehicle"],
               petrolPump: list[j]["petrolPump"],
               payMethod: list[j]["payMethod"],
@@ -1648,6 +1656,9 @@ export class DailyFuelReportComponent implements OnInit {
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Fuel Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Fuel Bar Count";
       htmlString += "</td>";
       htmlString += "<td>";
       htmlString += "Fuel Quantity";
@@ -1696,6 +1707,9 @@ export class DailyFuelReportComponent implements OnInit {
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["fuelType"];
+          htmlString += "</td>";
+          htmlString += "<td>";
+          htmlString += exportList[i]["fuelBarCount"];
           htmlString += "</td>";
           htmlString += "<td>";
           htmlString += exportList[i]["dieselQty"];
@@ -1807,6 +1821,13 @@ export class DailyFuelReportComponent implements OnInit {
   closeModel = () => {
     this.modalService.dismissAll();
   };
+
+  getFuelBarCount(value: any): string {
+    if (value == null || value.toString().trim() == "") {
+      return "";
+    }
+    return value.toString().trim();
+  }
 
   hasDisplayValue(obj: any, key: string): boolean {
     return !!obj && obj[key] !== undefined;
