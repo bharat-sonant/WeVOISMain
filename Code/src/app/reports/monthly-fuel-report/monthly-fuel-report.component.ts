@@ -107,6 +107,8 @@ export class MonthlyFuelReportComponent implements OnInit {
       fuelInstance.unsubscribe();
       if (data != null) {
         let list = JSON.parse(JSON.stringify(data));
+        // console.log("[FuelBarCount] VehicleFuel.json entries:", list);
+        // console.log("[FuelBarCount] Entries having fuelBarCount:", list.filter((item: any) => item.fuelBarCount != undefined && item.fuelBarCount != ""));
         for (let i = 0; i < this.vehicleList.length; i++) {
           let vehicle = this.vehicleList[i]["vehicle"];
           this.getVehicleKM(vehicle);
@@ -118,17 +120,21 @@ export class MonthlyFuelReportComponent implements OnInit {
               let fuelType = "";
               if (vehicleFuelList[i]["fuelType"] != undefined) {
                 fuelType = vehicleFuelList[i]["fuelType"];
+                let fuelBarCount = this.getFuelBarCount(vehicleFuelList[i]["fuelBarCount"]);
                 if (fuelType != "") {
                   if (fuelList.length == 0) {
-                    fuelList.push({ fuelType: fuelType, qty: Number(vehicleFuelList[i]["quantity"]) });
+                    fuelList.push({ fuelType: fuelType, qty: Number(vehicleFuelList[i]["quantity"]), fuelBarCount: fuelBarCount });
                   }
                   else {
                     let detail = fuelList.find(item => item.fuelType == fuelType);
                     if (detail == undefined) {
-                      fuelList.push({ fuelType: fuelType, qty: Number(vehicleFuelList[i]["quantity"]) });
+                      fuelList.push({ fuelType: fuelType, qty: Number(vehicleFuelList[i]["quantity"]), fuelBarCount: fuelBarCount });
                     }
                     else {
                       detail.qty = Number(detail.qty) + Number(vehicleFuelList[i]["quantity"]);
+                      if (fuelBarCount != "") {
+                        detail.fuelBarCount = detail.fuelBarCount == "" ? fuelBarCount : detail.fuelBarCount + ", " + fuelBarCount;
+                      }
                     }
                   }
                 }
@@ -144,6 +150,7 @@ export class MonthlyFuelReportComponent implements OnInit {
             });
             this.vehicleList[i]["amount"] = sumAmount.toFixed(2);
             this.vehicleList[i]["fuelList"] = fuelList;
+            // console.log("[FuelBarCount] Vehicle:", vehicle, "fuelList:", fuelList);
           }
         }
         let totalAmount: number = this.vehicleList.map(a => Number(a.amount)).reduce(function (a, b) {
@@ -219,6 +226,9 @@ export class MonthlyFuelReportComponent implements OnInit {
       htmlString += "Fuel Type";
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "Fuel Bar Count";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "Fuel Quantity";
       htmlString += "</td>";
       htmlString += "<td>";
@@ -256,8 +266,25 @@ export class MonthlyFuelReportComponent implements OnInit {
           }
           htmlString += fuelType;
           htmlString += "</td>";
+          htmlString += "<td>";
+          let fuelBarCount = "";
+          for (let j = 0; j < list.length; j++) {
+            if (list[j]["fuelBarCount"] != undefined && list[j]["fuelBarCount"] != "") {
+              if (fuelBarCount == "") {
+                fuelBarCount = list[j]["fuelBarCount"];
+              }
+              else {
+                fuelBarCount = fuelBarCount + ", " + list[j]["fuelBarCount"];
+              }
+            }
+          }
+          // console.log("[FuelBarCount] Excel row - Vehicle:", this.vehicleList[i]["vehicle"], "Fuel Bar Count:", fuelBarCount);
+          htmlString += fuelBarCount;
+          htmlString += "</td>";
         }
         else {
+          htmlString += "<td>";
+          htmlString += "</td>";
           htmlString += "<td>";
           htmlString += "</td>";
         }
@@ -283,6 +310,13 @@ export class MonthlyFuelReportComponent implements OnInit {
       let fileName = this.commonService.getFireStoreCity() + "-Monthly-Fuel-Report-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + "-" + this.selectedYear + ".xlsx";
       this.commonService.exportExcel(htmlString, fileName);
     }
+  }
+
+  getFuelBarCount(value: any): string {
+    if (value == null || value.toString().trim() == "") {
+      return "";
+    }
+    return value.toString().trim();
   }
 
   changeMonthSelection(filterVal: any) {
@@ -401,6 +435,8 @@ export class MonthlyFuelReportComponent implements OnInit {
               let petrolPump="";
               let payMethod="";
               let remark="";
+              let fuelBarCount = this.getFuelBarCount(obj[index]["fuelBarCount"]);
+              // console.log("[FuelBarCount] DieselEntriesData - Date:", date, "Key:", index, "Vehicle:", obj[index]["vehicle"], "raw fuelBarCount:", obj[index]["fuelBarCount"], "mapped:", fuelBarCount);
 
               let vehicle = obj[index]["vehicle"];
               if (obj[index]["amount"] != null) {
@@ -444,7 +480,7 @@ export class MonthlyFuelReportComponent implements OnInit {
               totalAmount = totalAmount + amount;
               totalQuantity = totalQuantity + quantity;
               let orderBy = new Date(date).getTime();
-              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), fuelType: fuelType, quantity: quantity.toFixed(2), meterReading: meterReading,fuelVehicle:fuelVehicle,petrolPump:petrolPump,payMethod:payMethod,remark:remark });
+              fuelList.push({ vehicle: vehicle, date: date, orderBy: orderBy, amount: amount.toFixed(2), fuelType: fuelType, quantity: quantity.toFixed(2), meterReading: meterReading,fuelVehicle:fuelVehicle,petrolPump:petrolPump,payMethod:payMethod,remark:remark,fuelBarCount:fuelBarCount });
 
             }
             fuelList = fuelList.sort((a, b) => b.orderBy > a.orderBy ? -1 : 1);
@@ -455,6 +491,7 @@ export class MonthlyFuelReportComponent implements OnInit {
           this.totalDieselQtyJSON = totalDieselQuantity;
           this.totalPetrolQtyJSON = totalPetrolQuantity;
           let filePath = "/VehicleFuelJSONData/" + this.selectedYear + "/" + this.selectedMonthName + "/";
+          // console.log("[FuelBarCount] Saving VehicleFuel.json:", fuelList);
           this.commonService.saveJsonFile(fuelList, "VehicleFuel.json", filePath);
         }
       });

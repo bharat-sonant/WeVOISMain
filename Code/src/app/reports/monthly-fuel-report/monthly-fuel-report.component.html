@@ -110,6 +110,9 @@
                                                     Fuel Type - Qty
                                                 </th>
                                                 <th class="text-right br-1 border-none">
+                                                    Fuel Bar Count
+                                                </th>
+                                                <th class="text-right br-1 border-none">
                                                     Fuel Qty
                                                 </th>
                                                 <th class="text-right br-1 border-none">
@@ -139,6 +142,11 @@
                                                     <td class="text-left br-1">
                                                         <div style="width:100% " *ngFor="let dt of data.fuelList ">
                                                             {{dt.fuelType}} - {{dt.qty}}
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right br-1">
+                                                        <div style="width:100% " *ngFor="let dt of data.fuelList ">
+                                                            {{dt.fuelBarCount}}&nbsp;
                                                         </div>
                                                     </td>
                                                     <td class="text-right br-1">
