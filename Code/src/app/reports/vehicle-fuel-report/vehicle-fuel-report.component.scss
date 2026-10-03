@@ -803,6 +803,46 @@ table td {
   color: #000;
 }
 
+.track-table {
+  margin-top: 0px !important;
+}
+
+.track-table thead th {
+  white-space: nowrap;
+  font-size: 12px;
+  padding: 8px 8px;
+}
+
+.track-table td {
+  border-top: 0px;
+  border-right: 0.5px solid #ededed;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: top;
+}
+
+.track-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.track-table .nowrap {
+  white-space: nowrap;
+}
+
+.track-table .sub-line {
+  line-height: 18px;
+}
+
+.track-table .sub-label {
+  display: inline-block;
+  min-width: 34px;
+  color: #888;
+  font-size: 11px;
+}
+
+.track-table .meter-km {
+  font-weight: 600;
+}
+
 .tableFixHead .fa-long-arrow-alt-down {
   color: red;
 }

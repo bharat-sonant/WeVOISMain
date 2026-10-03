@@ -212,86 +212,38 @@
                                             <div class="dth">
                                                 <div class="table-bg">
                                                     <div class="tableFixHead" >
-                                                        <table class="table table-hover"
-                                                            style="margin-top: 0px!important;">
+                                                        <table class="table table-hover track-table">
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="text-left" scope="col">
-                                                                        Date
-                                                                    </th>
-                                                                    <th class="text-left" scope="col">
-                                                                        Driver
-                                                                    </th>
-                                                                    <th class="text-left" scope="col">
-                                                                        Ward
-                                                                    </th>
-                                                                    <th class="text-left" scope="col">
-                                                                        Duty On
-                                                                    </th>
-                                                                    <th class="text-left" scope="col">
-                                                                        Duty Off
-                                                                    </th>
-                                                                    <th class="text-left" scope="col">
-                                                                        Work Percentage
-                                                                    </th>
-                                                                    <th class="text-left" scope="col">
-                                                                        Portal KM
-                                                                    </th>
-                                                                    <th class="text-left" scope="col">
-                                                                        GPS KM
-                                                                    </th>
-                                                                    <th class="text-left" scope="col">
-                                                                        Meter Reading KM
-                                                                    </th>
-                                                                    <th class="text-right" scope="col">
-                                                                        Distance Covered
-                                                                    </th>
+                                                                    <th class="text-left" scope="col">Date</th>
+                                                                    <th class="text-left" scope="col">Driver</th>
+                                                                    <th class="text-left" scope="col">Ward</th>
+                                                                    <th class="text-left" scope="col">Duty Time</th>
+                                                                    <th class="text-right" scope="col">Work %</th>
+                                                                    <th class="text-right" scope="col">Portal KM</th>
+                                                                    <th class="text-right" scope="col">GPS KM</th>
+                                                                    <th class="text-left" scope="col">Meter Reading</th>
+                                                                    <th class="text-right" scope="col">Distance</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <!---->
                                                                 <tr *ngFor="let data of vehicleTrackList, let i=index">
-                                                                    <td class="text-left"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6; width: 100px!important;">
-                                                                        {{data.showDate}}
+                                                                    <td class="text-left nowrap">{{data.showDate}}</td>
+                                                                    <td class="text-left">{{data.name}}</td>
+                                                                    <td class="text-left">{{data.ward}}</td>
+                                                                    <td class="text-left nowrap">
+                                                                        <div class="sub-line"><span class="sub-label">On</span>{{data.dutyInTime || '-'}}</div>
+                                                                        <div class="sub-line"><span class="sub-label">Off</span>{{data.dutyOutTime || '-'}}</div>
                                                                     </td>
-                                                                    <td class="text-left"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.name}}
+                                                                    <td class="text-right">{{data.workPercentage}}</td>
+                                                                    <td class="text-right">{{data.portalKm}}</td>
+                                                                    <td class="text-right">{{data.gps_km}}</td>
+                                                                    <td class="text-left nowrap">
+                                                                        <div class="sub-line"><span class="sub-label">Start</span>{{data.meterStartReading || '-'}}</div>
+                                                                        <div class="sub-line"><span class="sub-label">End</span>{{data.meterEndReading || '-'}}</div>
+                                                                        <div class="sub-line meter-km" [class.text-danger]="data.meterReadingDistance < 0"><span class="sub-label">KM</span>{{data.meterReadingDistance}}</div>
                                                                     </td>
-                                                                    <td class="text-left"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.ward}}
-                                                                    </td>
-                                                                    <td class="text-left"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.dutyInTime}}
-                                                                    </td>
-                                                                    <td class="text-left"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.dutyOutTime}}
-                                                                    </td>
-                                                                    <td class="text-left"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.workPercentage}}
-                                                                    </td>
-                                                                    <td class="text-left"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.portalKm}}
-                                                                    </td>
-                                                                    <td class="text-left"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.gps_km}}
-                                                                    </td>
-                                                                    <td class="text-left"
-                                                                        [style.color]="data.meterReadingDistance < 0 ? 'red' : ''"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.meterReadingDistance}}
-                                                                    </td>
-                                                                    <td class="text-right"
-                                                                        style="border-right: 0.5px solid #ededed;border-top: 0px solid #dee2e6;border-bottom: 1px solid #dee2e6;">
-                                                                        {{data.distance}}
-                                                                    </td>
+                                                                    <td class="text-right nowrap">{{data.distance}}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>

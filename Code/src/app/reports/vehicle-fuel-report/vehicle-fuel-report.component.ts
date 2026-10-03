@@ -281,6 +281,8 @@ export class VehicleFuelReportComponent implements OnInit {
                       portalKm: list[k].portalKm,
                       gps_km: list[k].gps_km,
                       meterReadingDistance: list[k].meterReadingDistance,
+                      meterStartReading: list[k].meterStartReading != null ? list[k].meterStartReading : "",
+                      meterEndReading: list[k].meterEndReading != null ? list[k].meterEndReading : "",
                     });
                   } else {
                     detail.ward = detail.ward + ", " + list[k]["ward"];
@@ -308,6 +310,8 @@ export class VehicleFuelReportComponent implements OnInit {
                     portalKm: list[k].portalKm,
                     gps_km: list[k].gps_km,
                     meterReadingDistance: list[k].meterReadingDistance,
+                    meterStartReading: list[k].meterStartReading != null ? list[k].meterStartReading : "",
+                    meterEndReading: list[k].meterEndReading != null ? list[k].meterEndReading : "",
                   });
                 }
               }
@@ -493,13 +497,13 @@ export class VehicleFuelReportComponent implements OnInit {
     })
   }
 
-  getDustbinMeterReadingMap(date: any): Promise<{ [vehicle: string]: number }> {
+  getDustbinMeterReadingMap(date: any): Promise<{ [vehicle: string]: any }> {
     return new Promise((resolve) => {
       const path = `DustbinData/DustbinAssignment/${this.selectedYear}/${this.selectedMonthName}/${date}`
       let instance = this.db.object(path).valueChanges().subscribe(
         (data: any) => {
           instance.unsubscribe()
-          const vehicleMeterMap: { [vehicle: string]: number } = {}
+          const vehicleMeterMap: { [vehicle: string]: any } = {}
           if (data) {
             Object.values(data).forEach((plan: any) => {
               if (plan.vehicle && plan.dutyOnMeterReading && plan.dutyOutMeterReading) {
@@ -508,7 +512,7 @@ export class VehicleFuelReportComponent implements OnInit {
                 const firstReading = dutyOnReadings.length > 0 ? dutyOnReadings[0] : 0
                 const lastReading = dutyOutReadings.length > 0 ? dutyOutReadings[dutyOutReadings.length - 1] : 0
                 const distance = (firstReading && lastReading) ? lastReading - firstReading : 0
-                vehicleMeterMap[plan.vehicle] = distance
+                vehicleMeterMap[plan.vehicle] = { distance: distance, startReading: firstReading || '', endReading: lastReading || '' }
               }
             })
           }
@@ -645,19 +649,22 @@ export class VehicleFuelReportComponent implements OnInit {
         let list2 = vehicleWorkList.filter(item => item.date == date);
         const bb = [];
         const hasBinLifting = list2.some((item: any) => item.zone.includes('BinLifting'));
-        const dustbinMeterMap: { [vehicle: string]: number } = hasBinLifting ? await this.getDustbinMeterReadingMap(date) : {}
+        const dustbinMeterMap: { [vehicle: string]: any } = hasBinLifting ? await this.getDustbinMeterReadingMap(date) : {}
 
         if (list2.length > 0) {
           await Promise.all(list2.map(async (item) => {
             let distance = Number(item["distance"]);
-            const data: any = { ward: item["zone"], distance: distance.toFixed(3), driver: item["empId"], name: item["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '', portalKm: '', gps_km: '', meterReadingDistance: 0 }
+            const data: any = { ward: item["zone"], distance: distance.toFixed(3), driver: item["empId"], name: item["name"], dutyInTime: '', dutyOutTime: '', workPercentage: '', portalKm: '', gps_km: '', meterReadingDistance: 0, meterStartReading: '', meterEndReading: '' }
 
             const details: any = await this.getTrackAdditionalDetails(data, date)
             data.dutyInTime = details.dutyInTime
             data.dutyOutTime = details.dutyOutTime
             data.workPercentage = details.workPercentage
             if (data.ward.includes('BinLifting')) {
-              data.meterReadingDistance = dustbinMeterMap[vehicle] || 0
+              const dustbinMeter = dustbinMeterMap[vehicle]
+              data.meterReadingDistance = dustbinMeter ? dustbinMeter.distance : 0
+              data.meterStartReading = dustbinMeter ? dustbinMeter.startReading : ''
+              data.meterEndReading = dustbinMeter ? dustbinMeter.endReading : ''
             } else {
               // store raw readings temporarily for aggregation below
               data._dutyOnReadings = details.dutyOnReadings || []
@@ -685,6 +692,8 @@ export class VehicleFuelReportComponent implements OnInit {
           const swipes = wardRows.length || 1
           wardRows.forEach((row: any) => {
             row.meterReadingDistance = Number((totalDistance / swipes).toFixed(3))
+            row.meterStartReading = firstReading || ''
+            row.meterEndReading = lastReading || ''
             delete row._dutyOnReadings
             delete row._dutyOutReadings
           })
@@ -1061,10 +1070,10 @@ export class VehicleFuelReportComponent implements OnInit {
     let fuelList = [];
     let trackList = [];
     for (let i = 0; i < this.vehicleFuelList.length; i++) {
-      fuelList.push({ date: this.vehicleFuelList[i]["date"], showDate: this.vehicleFuelList[i]["showDate"], meterReading: this.vehicleFuelList[i]["meterReading"], fuelBarCount: this.vehicleFuelList[i]["fuelBarCount"],fuelType: this.vehicleFuelList[i]["fuelType"], fuelVehicle: this.vehicleFuelList[i]["fuelVehicle"], petrolPump: this.vehicleFuelList[i]["petrolPump"], payMethod: this.vehicleFuelList[i]["payMethod"], remark: this.vehicleFuelList[i]["remark"], quantity: this.vehicleFuelList[i]["quantity"], amount: this.vehicleFuelList[i]["amount"], name: "", ward: "", dutyInTime: "", dutyOutTime: "", workPercentage: "", portalKm: "", gps_km: "", distance: "" });
+      fuelList.push({ date: this.vehicleFuelList[i]["date"], showDate: this.vehicleFuelList[i]["showDate"], meterReading: this.vehicleFuelList[i]["meterReading"], fuelBarCount: this.vehicleFuelList[i]["fuelBarCount"],fuelType: this.vehicleFuelList[i]["fuelType"], fuelVehicle: this.vehicleFuelList[i]["fuelVehicle"], petrolPump: this.vehicleFuelList[i]["petrolPump"], payMethod: this.vehicleFuelList[i]["payMethod"], remark: this.vehicleFuelList[i]["remark"], quantity: this.vehicleFuelList[i]["quantity"], amount: this.vehicleFuelList[i]["amount"], name: "", ward: "", dutyInTime: "", dutyOutTime: "", workPercentage: "", portalKm: "", gps_km: "", meterStartReading: "", meterEndReading: "", meterReadingDistance: "", distance: "" });
     }
     for (let i = 0; i < this.vehicleTrackList.length; i++) {
-      trackList.push({ date: this.vehicleTrackList[i]["date"], showDate: this.vehicleTrackList[i]["showDate"], meterReading: "", fuelBarCount: "", fuelType: "", fuelVehicle: "", petrolPump: "", payMethod: "", remark: "", quantity: "", amount: "", name: this.vehicleTrackList[i]["name"], ward: this.vehicleTrackList[i]["ward"], dutyInTime: this.vehicleTrackList[i]["dutyInTime"], dutyOutTime: this.vehicleTrackList[i]["dutyOutTime"], workPercentage: this.vehicleTrackList[i]["workPercentage"], portalKm: this.vehicleTrackList[i]["portalKm"], gps_km: this.vehicleTrackList[i]["gps_km"], distance: this.vehicleTrackList[i]["distance"] });
+      trackList.push({ date: this.vehicleTrackList[i]["date"], showDate: this.vehicleTrackList[i]["showDate"], meterReading: "", fuelBarCount: "", fuelType: "", fuelVehicle: "", petrolPump: "", payMethod: "", remark: "", quantity: "", amount: "", name: this.vehicleTrackList[i]["name"], ward: this.vehicleTrackList[i]["ward"], dutyInTime: this.vehicleTrackList[i]["dutyInTime"], dutyOutTime: this.vehicleTrackList[i]["dutyOutTime"], workPercentage: this.vehicleTrackList[i]["workPercentage"], portalKm: this.vehicleTrackList[i]["portalKm"], gps_km: this.vehicleTrackList[i]["gps_km"], meterStartReading: this.vehicleTrackList[i]["meterStartReading"], meterEndReading: this.vehicleTrackList[i]["meterEndReading"], meterReadingDistance: this.vehicleTrackList[i]["meterReadingDistance"], distance: this.vehicleTrackList[i]["distance"] });
     }
 
     for (let i = 0; i < dateArray.length; i++) {
@@ -1073,17 +1082,17 @@ export class VehicleFuelReportComponent implements OnInit {
       let trackDateList = trackList.filter(item => item.date == date);
       if (fuelDateList.length > trackDateList.length) {
         for (let j = 0; j < fuelDateList.length; j++) {
-          exportData.push({ date: fuelDateList[j]["date"], showDate: fuelDateList[j]["showDate"], meterReading: fuelDateList[j]["meterReading"], fuelBarCount: fuelDateList[j]["fuelBarCount"],fuelType: fuelDateList[j]["fuelType"], fuelVehicle: fuelDateList[j]["fuelVehicle"], petrolPump: fuelDateList[j]["petrolPump"], payMethod: fuelDateList[j]["payMethod"], remark: fuelDateList[j]["remark"], quantity: fuelDateList[j]["quantity"], amount: fuelDateList[j]["amount"], name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
+          exportData.push({ date: fuelDateList[j]["date"], showDate: fuelDateList[j]["showDate"], meterReading: fuelDateList[j]["meterReading"], fuelBarCount: fuelDateList[j]["fuelBarCount"],fuelType: fuelDateList[j]["fuelType"], fuelVehicle: fuelDateList[j]["fuelVehicle"], petrolPump: fuelDateList[j]["petrolPump"], payMethod: fuelDateList[j]["payMethod"], remark: fuelDateList[j]["remark"], quantity: fuelDateList[j]["quantity"], amount: fuelDateList[j]["amount"], name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", meterStartReading: trackDateList[j] ? trackDateList[j]["meterStartReading"] : "", meterEndReading: trackDateList[j] ? trackDateList[j]["meterEndReading"] : "", meterReadingDistance: trackDateList[j] ? trackDateList[j]["meterReadingDistance"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
         }
       }
       else if (trackDateList.length > fuelDateList.length) {
         for (let j = 0; j < trackDateList.length; j++) {
-          exportData.push({ date: trackDateList[j]["date"], showDate: trackDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelBarCount: fuelDateList[j] ? fuelDateList[j]["fuelBarCount"] : "",fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", fuelVehicle: fuelDateList[j] ? fuelDateList[j]["fuelVehicle"] : "", petrolPump: fuelDateList[j] ? fuelDateList[j]["petrolPump"] : "", payMethod: fuelDateList[j] ? fuelDateList[j]["payMethod"] : "", remark: fuelDateList[j] ? fuelDateList[j]["remark"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
+          exportData.push({ date: trackDateList[j]["date"], showDate: trackDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelBarCount: fuelDateList[j] ? fuelDateList[j]["fuelBarCount"] : "",fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", fuelVehicle: fuelDateList[j] ? fuelDateList[j]["fuelVehicle"] : "", petrolPump: fuelDateList[j] ? fuelDateList[j]["petrolPump"] : "", payMethod: fuelDateList[j] ? fuelDateList[j]["payMethod"] : "", remark: fuelDateList[j] ? fuelDateList[j]["remark"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", meterStartReading: trackDateList[j] ? trackDateList[j]["meterStartReading"] : "", meterEndReading: trackDateList[j] ? trackDateList[j]["meterEndReading"] : "", meterReadingDistance: trackDateList[j] ? trackDateList[j]["meterReadingDistance"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
         }
       }
       else {
         for (let j = 0; j < fuelDateList.length; j++) {
-          exportData.push({ date: fuelDateList[j]["date"], showDate: fuelDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelBarCount: fuelDateList[j] ? fuelDateList[j]["fuelBarCount"] : "",fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", fuelVehicle: fuelDateList[j] ? fuelDateList[j]["fuelVehicle"] : "", petrolPump: fuelDateList[j] ? fuelDateList[j]["petrolPump"] : "", payMethod: fuelDateList[j] ? fuelDateList[j]["payMethod"] : "", remark: fuelDateList[j] ? fuelDateList[j]["remark"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
+          exportData.push({ date: fuelDateList[j]["date"], showDate: fuelDateList[j]["showDate"], meterReading: fuelDateList[j] ? fuelDateList[j]["meterReading"] : "", fuelBarCount: fuelDateList[j] ? fuelDateList[j]["fuelBarCount"] : "",fuelType: fuelDateList[j] ? fuelDateList[j]["fuelType"] : "", fuelVehicle: fuelDateList[j] ? fuelDateList[j]["fuelVehicle"] : "", petrolPump: fuelDateList[j] ? fuelDateList[j]["petrolPump"] : "", payMethod: fuelDateList[j] ? fuelDateList[j]["payMethod"] : "", remark: fuelDateList[j] ? fuelDateList[j]["remark"] : "", quantity: fuelDateList[j] ? fuelDateList[j]["quantity"] : "", amount: fuelDateList[j] ? fuelDateList[j]["amount"] : "", name: trackDateList[j] ? trackDateList[j]["name"] : "", ward: trackDateList[j] ? trackDateList[j]["ward"] : "", dutyInTime: trackDateList[j] ? trackDateList[j]["dutyInTime"] : "", dutyOutTime: trackDateList[j] ? trackDateList[j]["dutyOutTime"] : "", workPercentage: trackDateList[j] ? trackDateList[j]["workPercentage"] : "", portalKm: trackDateList[j] ? trackDateList[j]["portalKm"] : "", gps_km: trackDateList[j] ? trackDateList[j]["gps_km"] : "", meterStartReading: trackDateList[j] ? trackDateList[j]["meterStartReading"] : "", meterEndReading: trackDateList[j] ? trackDateList[j]["meterEndReading"] : "", meterReadingDistance: trackDateList[j] ? trackDateList[j]["meterReadingDistance"] : "", distance: trackDateList[j] ? trackDateList[j]["distance"] : "" });
         }
       }
     }
@@ -1112,6 +1121,9 @@ export class VehicleFuelReportComponent implements OnInit {
       htmlString += "<td>Work Percentage</td>";
       htmlString += "<td>Portal KM</td>";
       htmlString += "<td>GPS KM</td>";
+      htmlString += "<td>Meter Start Reading</td>";
+      htmlString += "<td>Meter End Reading</td>";
+      htmlString += "<td>Meter Reading KM</td>";
       htmlString += "<td>Distance Covered</td>";
       htmlString += "</tr>";
 
@@ -1138,6 +1150,9 @@ export class VehicleFuelReportComponent implements OnInit {
         htmlString += `<td>${data.workPercentage || ''}</td>`;
         htmlString += `<td>${data.portalKm || ''}</td>`;
         htmlString += `<td>${data.gps_km || ''}</td>`;
+        htmlString += `<td>${data.meterStartReading || ''}</td>`;
+        htmlString += `<td>${data.meterEndReading || ''}</td>`;
+        htmlString += `<td>${data.meterReadingDistance != null && data.meterReadingDistance !== '' ? data.meterReadingDistance : ''}</td>`;
         htmlString += `<td>${data.distance || ''}</td>`;
         htmlString += "</tr>";
       }
