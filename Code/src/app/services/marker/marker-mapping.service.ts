@@ -1,0 +1,1752 @@
+import { Injectable } from "@angular/core";
+import { CommonService } from "../common/common.service";
+
+// Naya marker banate waqt saara mapping ek hi jagah se likha jaata hai, warna
+// har page apna adhoora mapping likhta hai aur marker portal par dikhna band
+// ho jaata hai.
+//
+//   MarkersData/{uid}                              = poora record + ward + line + imgRef
+//   MarkersMapping/MarkerWise/{uid}                = { ward, line }
+//   MarkersMapping/WardWise/{ward}/{uid}           = line
+//   MarkersMapping/LineWise/{ward}/{line}/{markerNo} = uid
+//   MarkersMapping/lastMarkerKey                   = global M counter
+//   MarkersMapping/LineSummary/{ward}/{line}/lastMarkerKey = line ka aakhri markerNo
+//   MarkerMovementData/MoveHistory/{uid}/{pushKey} = har move ka permanent record
+//
+// Marker ki asli pehchaan uid (M1, M2...) hai. markerNo sirf line par uska
+// serial number hai - wahi portal aur app screen par dikhate hain, aur wo
+// LineWise ki key me hi rakha hota hai (record ke andar nahi).
+//
+// LineWise ke bina marker DB me to ban jaata hai par portal par dikhta nahi -
+// portal ke 14 page aur app dono line ki list isi se banate hain. Isliye ise
+// likhna optional nahi hai.
+//
+// Likhne ka order hamesha: pehle DATA, phir MAPPING. Beech me kuch fail ho to
+// data to bach jaata hai; ulta hone par mapping ek aise uid par point karti
+// jiska record hi nahi hota.
+//
+// Image hamesha AllMarkerImages/{uid}.jpg par rehti hai, isliye marker move
+// hone par image ko haath lagane ki zaroorat nahi padti.
+//
+// marksCount / ApproveStatus line-level cheezein hain, marker mapping ka hissa
+// nahi - wo LineSummary par jaise hain waise hi rehti hain.
+@Injectable({
+  providedIn: "root",
+})
+export class MarkerMappingService {
+
+  constructor(public commonService: CommonService) { }
+
+  // Marker ka uid: prefix + counter ka number. DB me ye "MK1", "MK2"... hai.
+  //
+  // Ye ek hi jagah rakha hai kyunki uid ka roop chhe jagah par pehchana jaata
+  // hai (banane me, "ye key uid hai ya markerNo" wale check me, sort me, aur
+  // image ke naam me). Pehle har jagah "M" haath se likha tha - DB me prefix
+  // "MK" nikla to portal se bane marker "M81" ban jaate aur app ke "MK80" se
+  // alag duniya me chale jaate: WardWise/LineWise me app unhe pehchanta nahi,
+  // aur imgRef "M81.jpg" bhi kabhi na milne wali file par point karta.
+  //
+  // NOTE: is prefix ka `markerId` field se koi lena-dena NAHI hai. Wo alag
+  // cheez hai - apna counter (EntityMarkingData/lastMarkerId), apna roop ("M41"),
+  // aur wo cms1 ka setMarkerID() banata hai. Ek hi marker par dono baithte hain:
+  //     MarkersData/MK81  ->  { markerId: "M41", markerNo: 7, ... }
+  uidPrefix = "MK";
+
+  counterPath = "EntityMarkingData/MarkersMapping/lastMarkerKey";
+  markersDataPath = "EntityMarkingData/MarkersData/";
+  markerWisePath = "EntityMarkingData/MarkersMapping/MarkerWise/";
+  wardWisePath = "EntityMarkingData/MarkersMapping/WardWise/";
+  lineWisePath = "EntityMarkingData/MarkersMapping/LineWise/";
+  lineSummaryPath = "EntityMarkingData/MarkersMapping/LineSummary/";
+  moveHistoryPath = "EntityMarkingData/MarkerMovementData/MoveHistory/";
+
+  // Ek baar padho aur chhod do - poore code me yahi pattern hai.
+  // MoveHelper ke READ_TIMEOUT_MS jitna hi - old path par har read wahin se
+  // jaata tha, isliye hadd wahi rakhi hai.
+  readTimeoutMs = 30000;
+
+  // Ek read, 30 second ki hadd ke saath.
+  //
+  // Timeout ke bina ye promise kabhi settle hi nahi hoti jab net na ho aur wo
+  // path Firebase SDK ki local cache me bhi na ho - valueChanges() tab koi
+  // event bhejta hi nahi. Move jaisa lamba kaam wahin latak jaata tha: na
+  // error, na message, aur Cancel bhi kaam nahi karta tha. Old path par ye
+  // saare read MoveHelper.readOnce se jaate the jisme yahi timeout pehle se
+  // hai - to ye naya vyavhaar nahi, wahi purana wapas hai.
+  readOnce(db: any, path: string): Promise<any> {
+    let readPromise = new Promise((resolve) => {
+      let instance = db.object(path).valueChanges().subscribe((data: any) => {
+        instance.unsubscribe();
+        resolve(data);
+      });
+    });
+    return new Promise((resolve, reject) => {
+      // Read pehle aa gaya to timer band kar dete hain - ek page hazaron read
+      // maarta hai, utne 30-second timer latkaye rakhne ka koi matlab nahi.
+      let timer = setTimeout(() => reject(new Error("db-timeout")), this.readTimeoutMs);
+      readPromise.then((data: any) => {
+        clearTimeout(timer);
+        resolve(data);
+      }, (err: any) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+    });
+  }
+
+  // Cache me promise rakhne ka ek hi rasta.
+  //
+  // Nakaam promise cache me pade rehna sabse buri haalat hai: ek read timeout
+  // hua to har agla caller wahi mari hui promise pakad leta hai aur dobara
+  // koshish hoti hi nahi - page refresh tak. Old path par cache thi hi nahi,
+  // wahan har retry sach me nayi read bhejta tha. Wahi behaviour rakhna hai,
+  // isliye fail hone par entry hata dete hain.
+  cachePromise(store: any, key: string, make: () => Promise<any>): Promise<any> {
+    if (store[key] == null) {
+      let p: any = make().catch((e: any) => {
+        // Sirf apni hi entry hatao - beech me cache clear hokar nayi promise
+        // baith gayi ho to use chhedna nahi hai.
+        if (store[key] === p) { delete store[key]; }
+        throw e;
+      });
+      store[key] = p;
+    }
+    return store[key];
+  }
+
+  // Line number ko wahi type banata hai jo DB me jaata hai. "12" aur 12 alag
+  // value hain - compare karte waqt ye mismatch hi sabse zyada pareshan karta
+  // hai, isliye set aur read dono yahi se guzarte hain.
+  lineValue(line: any): any {
+    return isNaN(Number(line)) ? line : Number(line);
+  }
+
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
+  //
+  // markerNo hamesha number hota tha (line par serial). Kahin textbox se "4"
+  // aata tha kahin mapping se 4 - history me dono ek jaise hone chahiye the,
+  // warna entries ko chain karke padhna (pichhli ka toMarkerNo = agli ka
+  // fromMarkerNo) fail ho jaata tha.
+  //
+  // markerNo ab likha hi nahi jaata - marker ki pehchaan uid hai - isliye ye
+  // normalize karne ko kuch bacha hi nahi.
+  //
+  // markerNoValue(markerNo: any): number {
+  //   return Number(markerNo) || 0;
+  // }
+
+  // ---------------- READ ----------------
+
+  // AB KOI NAHI BULATA - sirf getLineMarkerUids() ise bulata hai, aur wo bhi
+  // sirf getLineMarkers() se, jise koi nahi bulata. Teeno ki poori chain dead
+  // hai. Hatai nahi hai: mapping-only list ka ye sabse seedha raasta hai, kabhi
+  // zaroorat pade to tayyar rahe. Records chahiye hon to getLineRecords()
+  // istemaal karein (wo cached hai aur intersection ka niyam maanta hai).
+  //
+  // Poore ward ke markers ka index: { uid: line }. Kuch na ho to null.
+  getWardMarkers(db: any, ward: any): Promise<any> {
+    return this.readOnce(db, this.wardWisePath + ward).then((data: any) => {
+      if (data == null || typeof data != "object") {
+        return null;
+      }
+      let markers: any = {};
+      let uidArray = Object.keys(data);
+      for (let i = 0; i < uidArray.length; i++) {
+        let uid = uidArray[i];
+        // Ward ke neeche sirf marker rehte hain, phir bhi kabhi koi scalar
+        // aa jaaye to wo marker nahi hai.
+        // PEHLE: if (uid.charAt(0) != "M")
+        if (uid.substring(0, this.uidPrefix.length) != this.uidPrefix) {
+          continue;
+        }
+        markers[uid] = data[uid];
+      }
+      return Object.keys(markers).length > 0 ? markers : null;
+    });
+  }
+
+  // Ek line ke marker uid: ["M1", "M7", ...]. Ward index se filter hota hai,
+  // isliye line par alag index rakhne ki zaroorat nahi.
+  getLineMarkerUids(db: any, ward: any, line: any): Promise<any> {
+    let lineVal = this.lineValue(line);
+    return this.getWardMarkers(db, ward).then((markers: any) => {
+      if (markers == null) {
+        return [];
+      }
+      let uidArray = Object.keys(markers);
+      let result: any = [];
+      for (let i = 0; i < uidArray.length; i++) {
+        let uid = uidArray[i];
+        // String/number dono taraf se compare - purana data string me pada ho
+        // sakta hai.
+        if (markers[uid] == lineVal || String(markers[uid]) == String(lineVal)) {
+          result.push(uid);
+        }
+      }
+      // MK2 MK10 se pehle aaye - number se sort, warna list ulti-pulti dikhti hai.
+      // PEHLE: a.substring(1) - "MK21" par wo "K21" deta tha, yaani NaN aur sort
+      // bekaar. Prefix ki lambai se kaatna hi sahi hai.
+      let cut = this.uidPrefix.length;
+      result.sort((a: any, b: any) => Number(a.substring(cut)) - Number(b.substring(cut)));
+      return result;
+    });
+  }
+
+  // Ek-ek marker ke record ki cache: { uid: Promise<record> }.
+  //
+  // Yahi cache poore refactor ka sabse bada bachat point hai. Pehle har raasta
+  // apne aap record padhta tha:
+  //   - ward ka data (getWardRecords) ek query me aa jaata tha, phir usi ward
+  //     ki ek line kholte hi (getLineRecords) wahi record DOBARA network se
+  //     aate the - kyunki dono ki cache alag key par thi.
+  //   - "Show All Markers" jaisa loop har line par alag se 40-50 read maarta
+  //     tha, jabki poore ward ke record ek hi query me aa chuke hote the.
+  //
+  // Ab har record sirf EK BAAR aata hai. Ward wali query jo bhi record laati
+  // hai wo yahin bhar diye jaate hain (seedRecordCache), isliye uske baad us
+  // ward ki koi bhi line kholna zero network hai.
+  //
+  // Result nahi, PROMISE cache hota hai - ek saath chal rahe 50 lookup ek hi
+  // read ka intezaar karte hain, 50 alag read nahi bhejte.
+  markerCache: any = {};
+
+  // Ek marker ka poora record. Na ho to null.
+  getMarker(db: any, uid: any): Promise<any> {
+    if (uid == null || uid == "") {
+      return Promise.resolve(null);
+    }
+    let key = String(uid);
+    return this.cachePromise(this.markerCache, key, () => {
+      return this.readOnce(db, this.markersDataPath + key);
+    });
+  }
+
+  // Ek saath mile hue record cache me daal do, taaki inpar dobara read na jaaye.
+  //
+  // `absent` un uid ki list hai jo query me MILE HI NAHI - unhe null cache
+  // karna zaroori hai, warna har baar "shayad ab mil jaaye" wali ek read
+  // jaati rahegi.
+  seedRecordCache(records: any, absent: any = null) {
+    if (records != null && typeof records == "object") {
+      let uidArray = Object.keys(records);
+      for (let i = 0; i < uidArray.length; i++) {
+        this.markerCache[uidArray[i]] = Promise.resolve(records[uidArray[i]]);
+      }
+    }
+    if (absent != null) {
+      for (let i = 0; i < absent.length; i++) {
+        this.markerCache[String(absent[i])] = Promise.resolve(null);
+      }
+    }
+  }
+
+  // Marker abhi kis ward/line par hai. Move ke waqt "kahan se hataana hai" yahi
+  // batata hai. Na mile to null.
+  getMarkerPlace(db: any, uid: any): Promise<any> {
+    return this.readOnce(db, this.markerWisePath + uid).then((place: any) => {
+      if (place == null || place["ward"] == null) {
+        return null;
+      }
+      return place;
+    });
+  }
+
+  // AB KOI NAHI BULATA - display pages getLineRecords() istemaal karte hain
+  // (purani {markerNo: record} shape, cached, aur intersection ka niyam maanta
+  // hai). Hataya nahi.
+  //
+  // Ek line ke poore records: { uid: record }.
+  getLineMarkers(db: any, ward: any, line: any): Promise<any> {
+    return this.getLineMarkerUids(db, ward, line).then((uidArray: any) => {
+      let readArray = uidArray.map((uid: any) => this.getMarker(db, uid));
+      return Promise.all(readArray).then((recordArray: any) => {
+        let markers: any = {};
+        for (let i = 0; i < uidArray.length; i++) {
+          if (recordArray[i] != null) {
+            markers[uidArray[i]] = recordArray[i];
+          }
+        }
+        return markers;
+      });
+    });
+  }
+
+  // ------------- LINK INDEX (WardWise + LineWise, DONO zaroori) -------------
+  //
+  // Line par kaun se marker hain, ye DB me do jagah likha jaata hai:
+  //   WardWise/{ward}/{uid}             = line
+  //   LineWise/{ward}/{line}/{markerNo} = uid
+  //
+  // NIYAM (user ka faisla): marker DONO mapping me hona chahiye, tabhi wo
+  // maana jayega. Sirf ek node me entry ho to wo adhoora marker hai - na list
+  // me aayega, na map par, aur uspar koi write bhi nahi jayegi (getUid null
+  // dega).
+  //
+  // Line bhi dono jagah ek honi chahiye: LineWise kehta hai marker line X ka
+  // hai, to WardWise/{uid} bhi X hi hona chahiye. Dono alag line batayein to
+  // marker kisi bhi line par bharosemand nahi hai, isliye chhod dete hain.
+  //
+  // >> Pehle yahan DONO ka UNION tha (LineWise ki saari entry + WardWise ke
+  // >> bache hue uid record ke markerNo par). Wo isliye tha ki LineWise
+  // >> ADHOORA hai - app ka cloud function kaafi samay tak wo node likhta hi
+  // >> nahi tha aur purani migration ke marker bhi usme nahi aaye. Union
+  // >> hatane ka matlab hai: jis marker ki LineWise entry nahi bani, wo ab
+  // >> KAHIN NAHI DIKHEGA, chahe uska record aur WardWise entry maujood ho.
+  // >> Ye jaan-bujh kar chuna gaya hai.
+  buildWardLinks(wardIndex: any, wardLinks: any, markersData: any): any {
+    let result: any = {};
+    if (wardLinks == null || typeof wardLinks != "object") {
+      return result; // LineWise hi nahi - to kuch bhi dono me nahi hai
+    }
+    let index = (wardIndex != null && typeof wardIndex == "object") ? wardIndex : {};
+
+    let lineArray = Object.keys(wardLinks);
+    for (let i = 0; i < lineArray.length; i++) {
+      let lineNo = lineArray[i];
+      let links = wardLinks[lineNo];
+      if (links == null || typeof links != "object") {
+        continue;
+      }
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - LineWise ko
+      // { markerNo: uid } maana jaata tha:
+      //
+      // let uid = links[markerArray[j]];
+      // if (uid == null || uid == "") { continue; }
+      // ...
+      // result[lineNo][markerArray[j]] = uid;
+      //
+      // ASLI DB me LineWise uid ka SET hai, naksha nahi:
+      //     LineWise/{ward}/{line}  =  { "MK1": true, "MK80": true }
+      //
+      // Yaani key hi uid hai aur value sirf true. Purane code me `uid` me `true`
+      // aa jaata tha, WardWise me `true` naam ki koi entry hoti nahi, isliye
+      // HAR marker `continue` par nikal jaata tha aur ward khaali lautta tha -
+      // list bhi khaali, map bhi khaali.
+      //
+      // markerNo yahan hai hi nahi - wo MarkersData/{uid}.markerNo me hai, aur
+      // shapeLine() usi se key banata hai (uska `key == uid` wala raasta pehle
+      // se isi ke liye likha hai).
+      //
+      // BEECH ME yahan LineWise ke DONO roop padhe jaate the (naya {uid: true}
+      // aur purana {markerNo: uid}). DB me ab sirf naya roop hai - koi number
+      // wali key bachi hi nahi - isliye purane roop ka raasta hata diya gaya
+      // (user ka faisla: "purana nahi hoga, naya hi hoga").
+      //
+      //   let isUidKey = isNaN(Number(key));
+      //   let uid = isUidKey ? key : links[markerArray[j]];
+      //
+      // NAYA roop: key hi uid hai, value sirf maujoodgi ka nishaan.
+      let markerArray = Object.keys(links);
+      for (let j = 0; j < markerArray.length; j++) {
+        let uid = String(markerArray[j]);
+        if (isNaN(Number(uid)) == false) {
+          continue; // number wali key = purana roop; ab aata hi nahi
+        }
+        // Value maujoodgi ka nishaan hai - hataayi hui entry skip.
+        if (links[uid] == null || links[uid] === false || links[uid] === "") {
+          continue;
+        }
+        // WardWise me bhi hona chahiye, aur usi line par.
+        // line kahin number me padi hai kahin string me - dono ek jaisi mile.
+        if (String(index[uid]) != String(lineNo)) {
+          continue;
+        }
+        // Mapping hai par record nahi - aisa marker hai hi nahi.
+        if (markersData != null && markersData[uid] == null) {
+          continue;
+        }
+        if (result[lineNo] == null) {
+          result[lineNo] = {};
+        }
+        // PEHLE: result[lineNo][isUidKey ? uid : key] = uid;
+        // Purane roop me key markerNo rakhi jaati thi. Ab sirf naya roop hai,
+        // yaani key hamesha uid. shapeLine() us haalat ko pehle se sambhalta
+        // hai - record ke markerNo se display number nikaal leta hai.
+        result[lineNo][uid] = uid;
+      }
+    }
+    return result;
+  }
+
+  // Ward ke do index node ki cache (raw, bina bane).
+  //
+  // Union banane ke liye har lookup par dono node padhne padte hain. Ek line ke
+  // 50 marker par 50 lookup = 100 read - export/backfill jaise loop me ye page
+  // ko ghutno par le aata hai. Dono node sirf index hain (uid aur line), poora
+  // record nahi, isliye ek ward ka index yaad rakh lena sasta hai.
+  //
+  // Result nahi, PROMISE cache hota hai - ek saath aane wali kai calls ek hi
+  // read ka intezaar karti hain.
+  //
+  // Cache sirf write par saaf hoti hai: har wo jagah jahan page apna
+  // markersDataCache null karta hai, wahin clearLinkCache() bhi bulata hai.
+  linkCache: any = {};
+
+  // Sab kuch bhool jao. Ab sirf wahan jahan sach me poora reset chahiye
+  // (jaise ward badalna). Write ke baad ise mat bulao - clearForPath() hai.
+  clearLinkCache() {
+    this.linkCache = {};
+    this.recordCache = {};
+    this.markerCache = {};
+    this.summaryCache = {};
+  }
+
+  // ---------------- WRITE KE BAAD KI CACHE ----------------
+  //
+  // Cache ka sabse mehnga hissa markerCache hai: ward ke har marker ka apna
+  // record, yaani 2000 marker = 2000 read. linkCache sirf 2 read ki hai aur
+  // recordCache to kisi read ki hai hi nahi - wo markerCache se ban jaati hai.
+  //
+  // Pehle har write par clearLinkCache() chalta tha, yaani mapping badalne par
+  // bhi saare 2000 record phenk diye jaate the - jabki mapping badalne se
+  // record badalta hi nahi (record uid se bandha hai aur uid kabhi nahi
+  // badalta). Nateeja: 10 marker approve karne par ward 10 baar dobara padha
+  // jaata tha - ~20,000 read.
+  //
+  // Ab do alag kaam hain:
+  //   mapping badli  -> clearLinks()      -> 2 read me wapas
+  //   ek record badla -> dropMarker(uid)  -> 1 read me wapas
+  //
+  // Poori cache sirf page refresh par jaati hai (service root singleton hai).
+
+  // Mapping badli. Records ko haath nahi.
+  clearLinks() {
+    this.linkCache = {};
+    this.recordCache = {};
+    this.summaryCache = {};
+  }
+
+  // Ek marker ka record badla.
+  //
+  // recordCache bhi jaati hai kyunki uske andar wahi record OBJECT pada hai
+  // (shapeLine reference rakhta hai, copy nahi) - use chhod dein to purana
+  // record shaped list me zinda reh jaata. Wo dobara banne me koi read nahi
+  // lagti, bas is ek uid ki lagti hai.
+  dropMarker(uid: any) {
+    if (uid == null || uid === "") {
+      return;
+    }
+    delete this.markerCache[String(uid)];
+    this.recordCache = {};
+  }
+
+  // Cache ko theek kar dete hain - phenkte nahi.
+  //
+  // Jo patch DB par gaya, wahi cache wale record par bhi laga dete hain. Isse
+  // ek bhi read nahi lagti: user ne jo abhi edit kiya wahi turant screen par,
+  // wahi doosre page par, aur refresh ke baad DB se bhi wahi.
+  //
+  // shapeLine cache wale USI object ka reference rakhta hai (copy nahi), isliye
+  // yahan field badalte hi wo har shaped list, map aur table me apne aap sahi
+  // ho jaata hai - recordCache saaf karne ki bhi zaroorat nahi.
+  //
+  // Sirf wahi ek record chhua jaata hai jiska path diya gaya. Baaki saare
+  // records, linkCache aur summaryCache jaise the waise rehte hain.
+  //
+  // patch me null ka matlab "field hataao" hai - Firebase par bhi wahi hota hai.
+  applyPatch(uid: any, patch: any) {
+    if (uid == null || uid === "" || patch == null || typeof patch != "object") {
+      return;
+    }
+    let cached = this.markerCache[String(uid)];
+    if (cached == null) {
+      return; // cache me hai hi nahi - kuch karna nahi
+    }
+    cached.then((record: any) => {
+      if (record == null || typeof record != "object") {
+        return;
+      }
+      let keyArray = Object.keys(patch);
+      for (let i = 0; i < keyArray.length; i++) {
+        if (patch[keyArray[i]] == null) {
+          delete record[keyArray[i]];
+        } else {
+          record[keyArray[i]] = patch[keyArray[i]];
+        }
+      }
+    }, () => {
+      // read hi fail ho chuki thi - cache me kuch bharosemand nahi hai
+      delete this.markerCache[String(uid)];
+    });
+  }
+
+  // Path dekh kar khud faisla - har page ko sochna na pade.
+  //
+  //   MarkersData/{uid}      + patch  -> cache me wahi patch (0 read)
+  //   MarkersData/{uid}/...  bina patch -> wo ek record bhool jao (1 read)
+  //   MarkersMapping/...              -> mapping (2 read)
+  //
+  // patch tabhi bhejein jab wo POORA ho aur seedha uid wale node par ja raha ho.
+  // remove()/set(null) par patch mat bhejein - wahan dropMarker hi sahi hai.
+  clearForPath(path: any, patch: any = null) {
+    if (path == null) {
+      return;
+    }
+    let value = String(path);
+    let at = value.indexOf("MarkersData/");
+    if (at >= 0) {
+      // uidFromPath() yahan kaam nahi aata - wo aakhri segment leta hai, aur
+      // path ".../M55/cardNumber" bhi ho sakta hai. Uid hamesha MarkersData/
+      // ke turant baad wala segment hai.
+      let rest = value.substring(at + "MarkersData/".length);
+      let uid = rest.split("/")[0];
+      // Uid ke aage aur kuch ho to wo poore record ka patch nahi hai - safe
+      // raasta lete hain.
+      let isRecordNode = rest.indexOf("/") < 0;
+      if (patch != null && isRecordNode) {
+        this.applyPatch(uid, patch);
+      } else {
+        this.dropMarker(uid);
+      }
+      return;
+    }
+    if (value.indexOf("MarkersMapping") >= 0) {
+      this.clearLinks();
+    }
+  }
+
+  // Sirf ek ward ka summary bhulana.
+  //
+  // Poori cache udane ki zaroorat sirf tab hai jab mapping badle. Jo page
+  // khud LineSummary/{ward} likhta hai (jaise Ward Marking Summary ka
+  // "Update Counts") use apne likhe hue naye counts wapas padhne hain - baaki
+  // sab (records, mapping, doosre ward ka summary) jaise the waise sahi hain,
+  // unhe dobara padhwana bekaar hai.
+  clearWardSummary(ward: any) {
+    delete this.summaryCache[String(ward)];
+  }
+
+  // Ek ward ka poora link index: { line: { markerNo: uid } }.
+  // markersData de do to orphan (record-rahit) entries apne aap chhant jaati hain.
+  getWardLinks(db: any, ward: any, markersData: any = null): Promise<any> {
+    let cacheKey = String(ward);
+    return this.cachePromise(this.linkCache, cacheKey, () => {
+      return Promise.all([
+        this.readOnce(db, this.wardWisePath + ward),
+        this.readOnce(db, this.lineWisePath + ward)
+      ]);
+    }).then((res: any) => {
+      return this.buildWardLinks(res[0], res[1], markersData);
+    });
+  }
+
+  // Ek line ka link index: { markerNo: uid }. Kuch na ho to khaali object.
+  //
+  // Poora ward padhna padta hai kyunki WardWise line ke hisaab se saja hua nahi
+  // hai - par dono node sirf index hain (uid aur line), record nahi, isliye ye
+  // read halka rehta hai.
+  getLineLinks(db: any, ward: any, line: any, markersData: any = null): Promise<any> {
+    return this.getWardLinks(db, ward, markersData).then((wardLinks: any) => {
+      let links = wardLinks[String(line)];
+      return links != null ? links : {};
+    });
+  }
+
+  // Saare ward ka link index: { ward: { line: { markerNo: uid } } }.
+  // Poore shehar par chalne wale report page iska istemaal karte hain.
+  //
+  // !! ABHI KOI ISE NAHI BULATA, aur bulane se pehle do baar sochein. Ye poora
+  // WardWise AUR poora LineWise ek saath padhta hai - yaani poore shehar ka
+  // index. Kisi bhi ek page ko itna kabhi nahi chahiye hota: ek ward ke liye
+  // getWardLinks() hai, ek line ke liye getLineLinks(). Ye sirf tab jaayaz hai
+  // jab sach me saare ward ek saath chahiye (jaise koi ek-baar ka audit).
+  getAllLinks(db: any, markersData: any = null): Promise<any> {
+    return Promise.all([
+      this.readOnce(db, "EntityMarkingData/MarkersMapping/WardWise"),
+      this.readOnce(db, "EntityMarkingData/MarkersMapping/LineWise")
+    ]).then((res: any) => {
+      let wardIndexAll = res[0] != null ? res[0] : {};
+      let wardLinksAll = res[1] != null ? res[1] : {};
+      let wardArray = Object.keys(wardIndexAll).concat(Object.keys(wardLinksAll));
+      let result: any = {};
+      for (let i = 0; i < wardArray.length; i++) {
+        let ward = wardArray[i];
+        if (result[ward] != null) {
+          continue; // dono list me aane wala ward do baar na bane
+        }
+        result[ward] = this.buildWardLinks(wardIndexAll[ward], wardLinksAll[ward], markersData);
+      }
+      return result;
+    });
+  }
+
+  // markerNo se uid. Na mile to null.
+  //
+  // Union me jis marker ka markerNo pata nahi chala uski key uid hi hoti hai,
+  // isliye "M" se shuru hone wali key seedha uid maan lete hain.
+  getUid(db: any, ward: any, line: any, markerNo: any, markersData: any = null): Promise<any> {
+    // PEHLE: String(markerNo).charAt(0) == "M"
+    if (markerNo != null && String(markerNo).substring(0, this.uidPrefix.length) == this.uidPrefix) {
+      return Promise.resolve(String(markerNo));
+    }
+    return this.getLineLinks(db, ward, line).then((links: any) => {
+      let uid = links[markerNo];
+      if (uid != null && uid != "") {
+        return uid;
+      }
+      // Link index me is number par kuch nahi mila. Aisa us marker par hota
+      // hai jiski LineWise entry bani hi nahi - wo WardWise se aata hai aur
+      // uski link key uid hoti hai, number nahi. Uska number sirf record ke
+      // andar padta hai.
+      //
+      // Yahan record ko uske uid se hi dekhna zaroori hai. getLineRecords()
+      // display ke liye key badal deta hai (uid -> markerNo), aur us badli hui
+      // key se wapas uid nahi nikalti - isi wajah se aise marker par uid null
+      // aata tha aur unki koi bhi update chup-chaap DB tak pahunchti hi nahi
+      // thi (screen par ho jaati thi, DB me nahi).
+      //
+      // Records ye sab cache me hote hain (line ka data khulte waqt hi aa
+      // chuke hote hain), isliye ye koshish sasti hai.
+      //
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - yahi wo galti thi:
+      //
+      // return this.getLineRecords(db, ward, line).then((lineData: any) => {
+      //   if (lineData == null) { return null; }
+      //   let keyArray = Object.keys(lineData);
+      //   for (let i = 0; i < keyArray.length; i++) {
+      //     if (String(lineData[keyArray[i]]["markerNo"]) == String(markerNo)) {
+      //       return this.uidFromRecordKey(keyArray[i], links);
+      //     }
+      //   }
+      //   return null;
+      // });
+      //
+      // getLineRecords() display ke liye key badal deta hai (uid -> markerNo),
+      // aur uidFromRecordKey() us BADLI HUI key par links me dhoondhta tha -
+      // wahan wo key hoti hi nahi, to hamesha null milta tha.
+      let uidArray = Object.keys(links).map((key: any) => links[key]);
+      return this.getMarkerRecords(db, uidArray).then((records: any) => {
+        for (let i = 0; i < uidArray.length; i++) {
+          let record = records[uidArray[i]];
+          if (record != null && String(record["markerNo"]) == String(markerNo)) {
+            return uidArray[i];
+          }
+        }
+        return null;
+      });
+    });
+  }
+
+  // shapeLine() ki key ya to markerNo hoti hai ya uid. uid ho to wahi lauta do,
+  // warna link index se uid nikaalo.
+  // AB KOI NAHI BULATA - iska ekmatra istemaal getUid() ke us purane raaste me
+  // tha jo ab comment me pada hai. Hataya nahi.
+  uidFromRecordKey(key: any, links: any): any {
+    // PEHLE: String(key).charAt(0) == "M"
+    if (String(key).substring(0, this.uidPrefix.length) == this.uidPrefix) {
+      return String(key);
+    }
+    let uid = links[key];
+    return (uid != null && uid != "") ? uid : null;
+  }
+
+  // markerNo se MarkersData ka object-path. Na mile to null -> caller write skip kare.
+  getMarkerDataPath(db: any, ward: any, line: any, markerNo: any, markersData: any = null): Promise<any> {
+    return this.getUid(db, ward, line, markerNo, markersData).then((uid: any) => {
+      return uid != null ? this.markersDataPath + uid : null;
+    });
+  }
+
+  // Link index ko poore record me badal deta hai: { markerNo: record }.
+  // Purane page isi shape par bane hain (pehle ye MarkedHouses/{ward}/{line} tha).
+
+
+
+  // Poore ward ka data purane shape me: { line: { markerNo: record } }.
+  // Kuch na mile to null - purane page null hi check karte hain.
+
+
+
+  // Ek line ka data purane shape me ({ markerNo: record }). Khaali ho to null.
+
+
+
+  // Poore ward ka data purane shape me. Khaali ho to null.
+
+
+
+  // ---------------- RECORD FETCH ----------------
+  //
+  // Yahan ka poora maksad ek hi hai: POORA MarkersData node kabhi na padhna.
+  //
+  // Pehle har page `MarkersData` (poore shehar ke saare marker) ek baar padh
+  // kar rakh leta tha aur usme se apni line ke 40 record chun leta tha. Mapping
+  // pehle se bata deti hai ki kaunse uid chahiye, isliye wo read shuru se hi
+  // bekaar tha - 50,000 record utha kar 40 istemaal karna.
+  //
+  // Har jagah pehle mapping se poochte hain ki kaun se uid chahiye, phir sirf
+  // wahi record padhte hain - line ke liye bhi, ward ke liye bhi. Isme kisi
+  // DB index ki zaroorat nahi hai.
+  //
+  // Ward ke liye ek tez vikalp bhi hai (ek hi query: orderByChild("ward")),
+  // par wo DEFAULT OFF hai - poori wajah `wardQueryEnabled` par neeche likhi
+  // hai. Chhota sa saar: index na laga ho to wo query chupchaap poore shehar
+  // ka data khinch leti hai aur ye galti kahin dikhti nahi.
+
+  // Diye gaye uid ke record: { uid: record }. Jo na mile wo chhod dete hain
+  // (mapping hai par record nahi = aisa marker hai hi nahi).
+  getMarkerRecords(db: any, uidArray: any): Promise<any> {
+    if (uidArray == null || uidArray.length == 0) {
+      return Promise.resolve({});
+    }
+    return Promise.all(uidArray.map((uid: any) => this.getMarker(db, uid))).then((recordArray: any) => {
+      let records: any = {};
+      for (let i = 0; i < uidArray.length; i++) {
+        if (recordArray[i] != null) {
+          records[uidArray[i]] = recordArray[i];
+        }
+      }
+      return records;
+    });
+  }
+
+  // Ward ka data query se laayein ya mapping se? DEFAULT: mapping (false).
+  //
+  // Ward ke record do tareeke se aa sakte hain, aur dono ka jawab BILKUL EK
+  // JAISA hota hai - farak sirf kharche ka hai:
+  //
+  //   false (mapping) - WardWise/{ward} pehle se bata deta hai ki is ward me
+  //                     kaun se uid hain, to seedha wahi uid padh lo.
+  //                     N chhoti read, par utna hi data jitna chahiye.
+  //                     Index ki zaroorat NAHI.
+  //
+  //   true  (query)   - orderByChild("ward").equalTo(ward), ek hi read.
+  //                     Sabse tez - PAR sirf tab jab us project ke DB rules me
+  //                     "MarkersData": { ".indexOn": ["ward"] } laga ho.
+  //
+  // Default false kyun, jabki query tez hai:
+  //
+  // Index na laga ho to RTDB query se mana nahi karta - wo POORA MarkersData
+  // node browser ko bhej deta hai aur chhantni yahan hoti hai. Yaani ek ward
+  // kholne par poore shehar ke marker utar aate hain. 2,000 marker wale ward
+  // aur 50,000 marker wale shehar me ye 25 guna kharcha hai - aur ye galti
+  // code me kahin dikhti nahi, na error aata hai, na page rukta hai. Sirf
+  // browser console me ek warning aati hai jo koi nahi dekhta.
+  //
+  // Mapping wala raasta us galti ko namumkin bana deta hai: sabse bura case
+  // "thodi zyada requests" hai, "poora shehar download" nahi.
+  //
+  // Isliye: pehle city ke Firebase project me index lagaayein, ward page
+  // kholkar console me warning na aane ki tasdeek karein, TAB ise true karein.
+  // Har city ka apna project hai - ek me laga hone ka matlab baaki me laga
+  // hona nahi hai. Snippet: functions/database-index.rules.json
+  wardQueryEnabled = false;
+
+  // Ek ward ke saare record: { uid: record }.
+  //
+  // Query wale raaste me: query record ke apne `ward` field par chalti hai.
+  // Kisi record me wo field na ho ya type alag ho (12 vs "12") to wo query me
+  // nahi aayega - isliye index me maujood par query se gayab uid alag se padh
+  // lete hain. Us soorat me jawab phir bhi poora rehta hai, bas thodi reads
+  // badh jaati hain.
+  getWardMarkerRecords(db: any, ward: any, uidArray: any): Promise<any> {
+    if (!this.wardQueryEnabled) {
+      // Mapping wala raasta. uidArray already WardWise se aaya hai, yaani is
+      // ward ke theek utne hi marker - kuchh chhanta nahi ja raha. getMarker
+      // markerCache se guzarta hai, isliye ek record dobara kabhi nahi aata.
+      return this.getMarkerRecords(db, uidArray);
+    }
+    return db.database.ref("EntityMarkingData/MarkersData")
+      .orderByChild("ward").equalTo(ward).once("value")
+      .then((snap: any) => {
+        let records = snap.val();
+        if (records == null || typeof records != "object") {
+          records = {};
+        }
+        // Query jo laayi wo seedha cache me. Iske baad isi ward ki koi bhi line
+        // kholna (getLineRecords) zero network hai - pehle wahi record dobara
+        // ek-ek karke padhe jaate the.
+        this.seedRecordCache(records);
+        let missing: any = [];
+        for (let i = 0; i < uidArray.length; i++) {
+          if (records[uidArray[i]] == null) {
+            missing.push(uidArray[i]);
+          }
+        }
+        if (missing.length == 0) {
+          return records;
+        }
+        return this.getMarkerRecords(db, missing).then((extra: any) => {
+          return Object.assign(records, extra);
+        });
+      });
+  }
+
+  // ---------------- LINE SUMMARY (ek ward, ek read) ----------------
+  //
+  // LineSummary/{ward} me ward ki SAARI lines ke counts aur ApproveStatus ek
+  // saath pade hain, aur ye node chhota hai - marker record isme aate hi nahi.
+  //
+  // Isliye "har line par alag field read" ab bekaar hai. Pehle wo majboori thi:
+  // ye sab MarkedHouses/{ward}/{line} par tha aur us node ke saath us line ke
+  // saare marker record bhi utar aate the, isliye page field-by-field padhta
+  // tha. Ab poore ward ka summary ek read me aa jaata hai.
+  //
+  // 300 line wale ward par: pehle ~1500 read (5 field x 300 line), ab 1.
+  summaryCache: any = {};
+
+  getWardLineSummaries(db: any, ward: any): Promise<any> {
+    let cacheKey = String(ward);
+    return this.cachePromise(this.summaryCache, cacheKey, () => {
+      return this.readOnce(db, this.lineSummaryPath + ward).then((data: any) => {
+        return data != null && typeof data == "object" ? data : {};
+      });
+    });
+  }
+
+  // Ek line ka summary ward wale read me se. Na mile to khaali object.
+  getLineSummary(db: any, ward: any, line: any): Promise<any> {
+    return this.getWardLineSummaries(db, ward).then((all: any) => {
+      let summary = all[String(line)];
+      return summary != null && typeof summary == "object" ? summary : {};
+    });
+  }
+
+  // Line/ward ka data thodi der ke liye yaad rakhte hain.
+  //
+  // Ek hi operation me kai baar wahi line chahiye hoti hai (list, phir har
+  // marker par getMarkerDataPath, phir counts). Cache ke bina export jaise loop
+  // me har marker par dobara reads jaati. Cache linkCache ke saath hi saaf hoti
+  // hai - clearLinkCache() dono clear karta hai.
+  recordCache: any = {};
+
+  // Ek line ka data purane shape me ({ markerNo: record }). Khaali ho to null.
+  //
+  // Do chakkar lagte hain kyunki markerNo do jagah se aa sakta hai: LineWise ki
+  // key se, ya record ke apne markerNo field se. Pehle mapping se uid nikaalte
+  // hain, phir record padh kar jinki key uid reh gayi thi unhe theek karte hain.
+  getLineRecords(db: any, ward: any, line: any, markersData: any = null): Promise<any> {
+    let cacheKey = String(ward) + "||" + String(line);
+    return this.cachePromise(this.recordCache, cacheKey, () => {
+      return this.getWardLinks(db, ward).then((wardLinks: any) => {
+        let links = wardLinks[String(line)];
+        if (links == null) {
+          return null;
+        }
+        let keyArray = Object.keys(links);
+        if (keyArray.length == 0) {
+          return null;
+        }
+        let uidArray = keyArray.map((key: any) => links[key]);
+        return this.getMarkerRecords(db, uidArray).then((records: any) => {
+          return this.shapeLine(links, records);
+        });
+      });
+    });
+  }
+
+  // links ({ key: uid }) + records ({ uid: record })  ->  { uid: record }.
+  //
+  // PEHLE YE THA (hataya nahi, comment kiya hai) - key ko markerNo me badla
+  // jaata tha, taaki purane page (jo MarkedHouses/{ward}/{line} ki
+  // { markerNo: record } shape par bane the) bina badle chalte rahein:
+  //
+  //   let key = keyArray[i];
+  //   if (key == uid && Number(record["markerNo"]) > 0) {
+  //     let numberKey = String(Number(record["markerNo"]));
+  //     // Us number par pehle se koi doosra marker na ho - warna ek doosre ko
+  //     // dhak dega. Aisi soorat me key uid hi rehne dete hain.
+  //     if (lineData[numberKey] == null) { key = numberKey; }
+  //   }
+  //   lineData[key] = record;
+  //
+  // markerNo ab likha hi nahi jaata (uid global counter se aata hai aur wahi
+  // marker ki ekmatra pehchaan hai), isliye badalne ko kuch bacha nahi - key
+  // seedha uid rehti hai.
+  //
+  // Ye raasta caller ke liye naya nahi hai: markerNo 0 ya gayab hone par pehle
+  // bhi key uid hi rehti thi, isliye "key uid ho sakti hai" wala case har
+  // consumer me pehle se likha hua hai (isNaN(Number(key)) wale check).
+  shapeLine(links: any, records: any): any {
+    let lineData: any = {};
+    let keyArray = Object.keys(links);
+    for (let i = 0; i < keyArray.length; i++) {
+      let uid = links[keyArray[i]];
+      let record = records[uid];
+      if (record == null) {
+        continue; // mapping hai par record nahi
+      }
+      lineData[uid] = record;
+    }
+    return Object.keys(lineData).length > 0 ? lineData : null;
+  }
+
+  // Poore ward ka data purane shape me ({ line: { markerNo: record } }).
+  // Khaali ho to null. Records ek hi query me aate hain.
+  getWardRecords(db: any, ward: any, markersData: any = null): Promise<any> {
+    let cacheKey = "ward||" + String(ward);
+    return this.cachePromise(this.recordCache, cacheKey, () => {
+      return this.getWardLinks(db, ward).then((wardLinks: any) => {
+        let lineArray = Object.keys(wardLinks);
+        let uidArray: any = [];
+        for (let i = 0; i < lineArray.length; i++) {
+          let links = wardLinks[lineArray[i]];
+          let keyArray = Object.keys(links);
+          for (let j = 0; j < keyArray.length; j++) {
+            uidArray.push(links[keyArray[j]]);
+          }
+        }
+        if (uidArray.length == 0) {
+          return null;
+        }
+        return this.getWardMarkerRecords(db, ward, uidArray).then((records: any) => {
+          let wardData: any = {};
+          let found = 0;
+          for (let i = 0; i < lineArray.length; i++) {
+            let lineData = this.shapeLine(wardLinks[lineArray[i]], records);
+            if (lineData != null) {
+              wardData[lineArray[i]] = lineData;
+              found = found + Object.keys(lineData).length;
+            }
+          }
+          return found > 0 ? wardData : null;
+        });
+      });
+    });
+  }
+
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
+  //
+  // Ye target line ka agla safe markerNo deta tha: LineSummary ka lastMarkerKey
+  // aur line ki asli sabse badi key, dono me se bada. Sirf counter par bharosa
+  // kaafi nahi tha - wo peeche reh sakta tha (jaise koi marker move hokar is
+  // line par aa gaya ho) aur tab naye marker ko wahi number mil jaata jo pehle
+  // se kisi ke paas hai.
+  //
+  // markerNo ab kisi ko nahi chahiye - marker ki pehchaan uid hai, jo global
+  // counter (MarkersMapping/lastMarkerKey) se aata hai aur poore DB me unique
+  // hota hai. Line-wise number ki zaroorat hi is wajah se thi ki purane
+  // structure me marker line ke andar number se pehchana jaata tha ("ward 14 ki
+  // line 3 ka marker 7"), yaani wahi number har line par dobara aata tha. uid
+  // ke saath wo dikkat hai hi nahi, isliye per-line counter poora retire.
+  //
+  // getSafeLastKey(db: any, ward: any, line: any, markersData: any = null): Promise<any> {
+  //   return Promise.all([
+  //     this.readOnce(db, this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey"),
+  //     this.getLineRecords(db, ward, line)
+  //   ]).then((res: any) => {
+  //     let fromSummary = res[0] != null ? Number(res[0]) : 0;
+  //     if (isNaN(fromSummary)) { fromSummary = 0; }
+  //     let maxKey = 0;
+  //     let lineData = res[1] != null ? res[1] : {};
+  //     let keyArray = Object.keys(lineData);
+  //     for (let i = 0; i < keyArray.length; i++) {
+  //       // Key numeric ho to wahi markerNo hai; uid wali key par record ka
+  //       // apna markerNo dekhte hain.
+  //       let n = Number(keyArray[i]);
+  //       if (isNaN(n)) { n = Number(lineData[keyArray[i]]["markerNo"]); }
+  //       if (!isNaN(n) && n > maxKey) { maxKey = n; }
+  //     }
+  //     return fromSummary > maxKey ? fromSummary : maxKey;
+  //   });
+  // }
+
+  // ---------------- WRITE ----------------
+
+  // GLOBAL M counter se ek block reserve karta hai. Transaction server par
+  // atomic hai, isliye ek saath chalne wale app/portal ko same M number nahi
+  // milta. Return = block ka start; pehla uid (start + 1) hota hai.
+  // Block ka koi number use na ho to bas gap reh jaata hai, nuksan nahi.
+  reserveUidBlock(db: any, blockSize: number): Promise<any> {
+    return db.database.ref(this.counterPath).transaction(
+      (current: any) => (Number(current) || 0) + blockSize
+    ).then((res: any) => {
+      if (res == null || !res.committed) {
+        return null;
+      }
+      return Number(res.snapshot.val()) - blockSize;
+    });
+  }
+
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai).
+  //
+  // Ye line ka agla markerNo deta tha. Sirf lastMarkerKey par +1 karna KAAFI
+  // NAHI tha - counter peeche reh sakta tha (jaise koi marker move hokar is
+  // line par aa gaya ho) aur tab naye marker ko wahi number mil jaata jo pehle
+  // se kisi ke paas hai. Isliye pehle line ki asli sabse badi key nikalte the,
+  // phir transaction me dono me se bada leke +1.
+  //
+  // Ab marker ka number hi nahi hota - uid (global counter se) hi uski pehchaan
+  // hai, isliye per-line counter ki koi bhoomika nahi bachi. Dekho
+  // getSafeLastKey() ke upar likhi wajah.
+  //
+  // nextLineKey(db: any, ward: any, line: any): Promise<any> {
+  //   return this.getLineRecords(db, ward, line).then((lineData: any) => {
+  //     let maxKey = 0;
+  //     if (lineData != null && typeof lineData == "object") {
+  //       let keyArray = Object.keys(lineData);
+  //       for (let i = 0; i < keyArray.length; i++) {
+  //         // Key markerNo hoti hai; na ho to record ka apna markerNo dekh lo.
+  //         let n = Number(keyArray[i]);
+  //         if (isNaN(n) && lineData[keyArray[i]] != null) {
+  //           n = Number(lineData[keyArray[i]]["markerNo"]);
+  //         }
+  //         if (!isNaN(n) && n > maxKey) { maxKey = n; }
+  //       }
+  //     }
+  //     return db.database.ref(this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey").transaction(
+  //       (current: any) => {
+  //         let currentKey = Number(current) || 0;
+  //         return (currentKey > maxKey ? currentKey : maxKey) + 1;
+  //       }
+  //     );
+  //   }).then((res: any) => {
+  //     if (res == null || !res.committed) { return null; }
+  //     return Number(res.snapshot.val());
+  //   });
+  // }
+
+  // Ek naya marker: uid reserve, phir data + poora mapping.
+  // Return = uid ("MK12"), counter fail hone par null.
+  // Loop me bulane par har marker ka apna transaction chalta hai; bahut saare
+  // markers ek saath bana rahe ho to reserveUidBlock + writeMarker use karo.
+  //
+  // PEHLE YE THA (hataya nahi, comment kiya hai) - do counter saath chalte the,
+  // ek uid ke liye aur ek line ke markerNo ke liye:
+  //
+  // return Promise.all([
+  //   this.reserveUidBlock(db, 1),
+  //   this.nextLineKey(db, ward, line)
+  // ]).then((result: any) => {
+  //   let blockStart = result[0];
+  //   let markerNo = result[1];
+  //   if (blockStart == null || markerNo == null) { return null; }
+  //   return this.writeMarker(db, ward, line, data, blockStart + 1, markerNo);
+  // });
+  //
+  // Ab sirf uid wala counter bacha hai, isliye ek hi reserve.
+  createMarker(db: any, ward: any, line: any, data: any): Promise<any> {
+    return this.reserveUidBlock(db, 1).then((blockStart: any) => {
+      if (blockStart == null) {
+        return null;
+      }
+      return this.writeMarker(db, ward, line, data, blockStart + 1);
+    });
+  }
+
+  // Pehle se reserve kiye hue number par marker likhta hai. Return = uid.
+  // Pehle data, uske confirm hone ke baad mapping.
+  //
+  // PEHLE ek `markerNo` param bhi aata tha - line par marker ka serial number,
+  // jo LineWise ki key banta tha aur screen par dikhta tha. Ab marker ki
+  // pehchaan sirf uid hai, isliye wo param hata diya gaya. Purana signature:
+  //
+  // writeMarker(db, ward, line, data, keyNumber, markerNo)
+  writeMarker(db: any, ward: any, line: any, data: any, keyNumber: number): Promise<any> {
+    // PEHLE YE THA (hataya nahi, comment kiya hai):
+    // let uid = "M" + keyNumber;
+    let uid = this.uidPrefix + keyNumber;
+    let lineVal = this.lineValue(line);
+
+    let record = Object.assign({}, data);
+    record["ward"] = ward;
+    record["line"] = lineVal;
+    // PEHLE YE THA (hataya nahi, comment kiya hai) - record ke andar line ka
+    // serial number bhi likha jaata tha:
+    //
+    // record["markerNo"] = Number(markerNo) || 0;
+    //
+    // Ab ye field likhi hi nahi jaati. Wo sirf display aur purani
+    // { markerNo: record } shape ke liye thi, aur dono jagah ab uid chalta hai.
+    // imgRef hamesha set hota hai - image baad me is naam se upload ho sakti hai.
+    record["imgRef"] = uid + ".jpg";
+
+    // Record likha ja raha hai - uski cache (agar ho) purani ho gayi.
+    // writePlace mapping wali cache khud saaf karta hai.
+    this.dropMarker(uid);
+    return db.object(this.markersDataPath + uid).update(record).then(() => {
+      return this.writePlace(db, uid, ward, lineVal);
+    }).then(() => {
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - line ka lastMarkerKey
+      // kabhi peeche na jaaye, isliye max wala transaction chalta tha:
+      //
+      // return db.database.ref(this.lineSummaryPath + ward + "/" + line + "/lastMarkerKey").transaction(
+      //   (current: any) => {
+      //     let currentKey = Number(current) || 0;
+      //     let newKey = Number(markerNo) || 0;
+      //     return newKey > currentKey ? newKey : currentKey;
+      //   }
+      // );
+      //
+      // Per-line counter retire ho gaya (dekho getSafeLastKey ke upar wajah),
+      // isliye ab yahan kuch likhna nahi hai.
+      // Card se marker dhoondhne ka index. Card na ho to ye chup-chaap skip.
+      return this.writeCardMapping(db, this.cardKeyFor(record), uid, ward, lineVal);
+    }).then(() => {
+      // Line ki ginti bhi yahin badh jaati hai.
+      //
+      // Pehle marksCount sirf "Update Counts" wale batch flows se banti thi,
+      // isliye naya marker banne par wo peeche reh jaati thi aur count-wale
+      // page purana number dikhate rehte the. Transaction isliye ki do surveyor
+      // ek saath marker banayein to ek ginti gum na ho.
+      return db.database.ref(this.lineSummaryPath + ward + "/" + line + "/marksCount").transaction(
+        (current: any) => (Number(current) || 0) + 1
+      );
+    }).then(() => {
+      return uid;
+    });
+  }
+
+  // Marker ko nayi ward/line par le jaata hai. Data ka uid aur image dono wahi
+  // rehte hain - sirf jagah badalti hai.
+  // Purani jagah ki entry hatana zaroori hai, warna marker dono jagah dikhta
+  // rahega. LineWise ke liye purana markerNo chahiye, isliye wo caller deta hai
+  // (usi ke paas hota hai ki marker kis number par pada tha).
+  // !! AB KOI NAHI BULATA - par ye jaan lena zaroori hai.
+  //
+  // Paanch page (line-marker-mapping, line-card-mapping, change-line-marker-data,
+  // change-line-surveyed-data, card-marker-mapping) apna move HAATH SE likhte
+  // hain: writePlace() + khud LineWise/WardWise ki purani entry hataana. Yahi
+  // wajah thi ki LineWise ka format badalne par wo bug paanchon file me alag-alag
+  // theek karna pada - agar sab ye function bulate to ek jagah theek karna kaafi
+  // hota.
+  //
+  // Ye function poora move ek jagah karta hai: record ka ward/line, teeno
+  // mapping, purani jagah ki entry hataana, aur card index. Hataya nahi hai -
+  // aage kabhi un pages ko ispar laana ho to tayyar hai. (Abhi laana matlab
+  // paanch move flow ka bartaav badalna, isliye chheda nahi.)
+  // Purana signature markerNo bhi leta tha:
+  //   moveMarker(db, uid, wardFrom, lineFrom, markerNoFrom, wardTo, lineTo, markerNoTo)
+  // Move ab renumber karta hi nahi, isliye wo do param hat gaye.
+  moveMarker(db: any, uid: any, wardFrom: any, lineFrom: any, wardTo: any, lineTo: any): Promise<any> {
+    let lineVal = this.lineValue(lineTo);
+    // History yahi likhi jaati hai, alag se nahi - jagah badalna aur uska
+    // record rakhna ek hi kaam hai. Har move page ise apne paas likhta tha, to
+    // koi naya page ise likhna bhool bhi sakta tha.
+    this.recordMove(db, uid, wardFrom, lineFrom, wardTo, lineTo);
+    // Record ka ward/line badal raha hai - uski cache purani ho gayi.
+    // writePlace mapping wali cache khud saaf karta hai.
+    this.dropMarker(uid);
+    return db.object(this.markersDataPath + uid).update({ ward: wardTo, line: lineVal }).then(() => {
+      return this.writePlace(db, uid, wardTo, lineVal);
+    }).then(() => {
+      let updates: any = {};
+      // Ward badla ho tabhi WardWise ki purani entry hatani hai. Same ward me
+      // sirf line badalne par value upar overwrite ho chuki hoti hai.
+      if (String(wardFrom) != String(wardTo)) {
+        updates[this.wardWisePath + wardFrom + "/" + uid] = null;
+      }
+      // LineWise ki purani entry hatani hai, warna marker do jagah dikhta hai.
+      //
+      // PEHLE YE THA (hataya nahi, comment kiya hai):
+      // if (String(wardFrom) != String(wardTo) || String(lineFrom) != String(lineTo) || String(markerNoFrom) != String(markerNoTo)) {
+      //   updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + markerNoFrom] = null;
+      // }
+      //
+      // Ab key uid hai, markerNo nahi. Iska matlab:
+      //   - sirf markerNo badla (ward/line wahi) -> key wahi rehti hai, upar
+      //     writePlace me overwrite ho chuki hai. Kuch hataana nahi.
+      //   - ward ya line badli -> purani jagah ki entry hatani hai.
+      // BEECH ME yahan purane roop wali entry bhi hatayi jaati thi:
+      //   updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + markerNoFrom] = null;
+      // DB me ab koi number wali key hai hi nahi, isliye wo hata diya gaya.
+      if (String(wardFrom) != String(wardTo) || String(lineFrom) != String(lineTo)) {
+        updates[this.lineWisePath + wardFrom + "/" + lineFrom + "/" + uid] = null;
+      }
+      if (Object.keys(updates).length == 0) {
+        return null;
+      }
+      return db.database.ref().update(updates);
+    }).then(() => {
+      // Card mapping me marker ki nayi jagah. markerKey nahi badalta (uid wahi
+      // hai), par ward/line purane pade reh jaate to card se banne wale purane
+      // raaste galat jagah point karte.
+      return this.getMarker(db, uid).then((record: any) => {
+        return this.writeCardMapping(db, this.cardKeyFor(record), uid, wardTo, lineVal);
+      });
+    }).then(() => {
+      return uid;
+    });
+  }
+
+  // Har move ka permanent record: MoveHistory/{uid}/{pushKey}.
+  //
+  // Push key ke shuru me timestamp hota hai, isliye entries apne aap
+  // purani-se-nayi sort ho jaati hain - alag se counter ya sort field ki
+  // zaroorat nahi. Counter rakhte to transaction lagta aur do log ek saath
+  // move karein to clash bhi ho sakta tha.
+  //
+  // line aur markerNo dono taraf normalize karke likhte hain. Bina iske ek
+  // entry me fromLine 1 (number) aur toLine "2" (string) pad jaati thi, aur
+  // history ko chain karke padhna (pichhli ka toLine = agli ka fromLine) match
+  // hi nahi karta tha.
+  //
+  // Naam (movedByName) id ke saath yahin likh dete hain. History permanent
+  // record hai - employee baad me hat jaaye ya userList me na mile, to sirf id
+  // se history hamesha "4" hi dikhati rehti.
+  // PEHLE do markerNo param bhi the aur entry me fromMarkerNo/toMarkerNo bhi
+  // likhe jaate the (purana signature: recordMove(db, uid, wardFrom, lineFrom,
+  // markerNoFrom, wardTo, lineTo, markerNoTo)):
+  //
+  //   fromMarkerNo: this.markerNoValue(markerNoFrom),
+  //   toMarkerNo: this.markerNoValue(markerNoTo),
+  //
+  // Marker ab move par renumber hota hi nahi - uid wahi rehta hai - isliye ye
+  // do field har entry me ek jaise pad jaate. History me jo sach me badalta hai
+  // wo ward/line hai, aur marker ki pehchaan entry ke path (MoveHistory/{uid})
+  // me pehle se hai. Purani entries ke fromMarkerNo/toMarkerNo jaise hain waise
+  // hi pade rehte hain - unhe koi padhta nahi.
+  recordMove(db: any, uid: any, wardFrom: any, lineFrom: any, wardTo: any, lineTo: any): any {
+    let entry = {
+      fromWard: wardFrom,
+      fromLine: this.lineValue(lineFrom),
+      toWard: wardTo,
+      toLine: this.lineValue(lineTo),
+      movedBy: localStorage.getItem("userID"),
+      movedByName: localStorage.getItem("userName"),
+      movedOn: this.commonService.getTodayDateTime()
+    };
+    return db.list(this.moveHistoryPath + uid).push(entry);
+  }
+
+  // Ek move ki history entry ka path.
+  //
+  // Move beech me fail ho kar rollback hua to ye entry hatani padti hai. Warna
+  // marker to apni purani jagah wapas chala jaata hai par history wo move
+  // dikhati rehti hai jo hua hi nahi, aur retry successful hone par usi ek move
+  // ki do entries chadh jaati hain. Path yahin se milta hai taaki har move page
+  // me ye string dobara na likhni pade.
+  moveRecordPath(uid: any, historyKey: any): string {
+    return this.moveHistoryPath + uid + "/" + historyKey;
+  }
+
+  // ---------------- BACKUP ----------------
+
+  // Ek line ka raw mapping: { markerNo: uid }.
+  //
+  // Backup ke liye ye alag se chahiye. getNewPathLineData() jaise helper line
+  // ka data purani shape ({ markerNo: record }) me dete hain aur uid beech me
+  // hi chhod dete hain - par record ke andar uid hota nahi, aur naye path par
+  // har node ki key uid hi hai. uid ke bina backup file restore layak nahi
+  // rehti.
+  readLineLinks(db: any, ward: any, line: any): Promise<any> {
+    return this.readOnce(db, this.lineWisePath + ward + "/" + line);
+  }
+
+  /**
+   * Move se pehle source line ka backup, bilkul usi shape me jaise DB me pada
+   * hai - taaki file ka har key seedha apne node par import kiya ja sake.
+   *
+   * links    = LineWise/{ward}/{line}   -> { markerNo: uid }
+   * lineData = getNewPathLineData()     -> { markerNo: record }
+   *
+   * Pehle backup me sirf `markedHouses` jaata tha jiski key markerNo thi. Wo
+   * tab sahi tha jab data khud MarkedHouses/{ward}/{line}/{markerNo} par rehta
+   * tha - file ko wapas usi node par daal dete the. Ab record MarkersData/{uid}
+   * par hai, isliye markerNo wali file kahin fit hi nahi hoti: MarkedHouses par
+   * daalo to portal wahan se padhta nahi (aur cloud trigger use naya marker
+   * samajh kar duplicate bana deta hai), MarkersData par daalo to key hi match
+   * nahi karti.
+   *
+   * Isliye ab wahi chaar node banate hain jo move badalta hai. `markerWise` aur
+   * `wardWise` ki value record se hi leti hai (record move se pehle padha gaya
+   * hai, yaani usme purani ward/line hi hai).
+   *
+   * Jis markerNo ka uid na mile use chhodte hain par chupchaap nahi - dono
+   * list (skippedNoUid / orphanLinks) meta me chali jaati hain, warna restore
+   * karne wale ko pata hi nahi chalega ki kuch chhoot gaya.
+   */
+  // AB KOI NAHI BULATA (hataya nahi, comment kiya hai) - iski jagah neeche
+  // buildLineBackupFor() hai.
+  //
+  // Ye `links` ko { markerNo: uid } maanta tha aur usme se markerNo par uid
+  // dhoondhta tha. Naye structure me LineWise { uid: true } hai - `links["7"]`
+  // hamesha undefined milta, yaani HAR marker skippedNoUid me chala jaata aur
+  // backup POORI TARAH KHAALI banta. Aur ye chup-chaap hota tha: koi error
+  // nahi, file ban jaati thi, bas usme kuch hota nahi tha. Move bigadne par
+  // restore ke liye kuch bachta hi nahi.
+  //
+  // Ab records seedha uid ke hisaab se aate hain, isliye markerNo se jodne ki
+  // zaroorat hi nahi rahi.
+  //
+  // buildLineBackup(links: any, lineData: any): any {
+  //   ...
+  //   let uid = (links != null) ? links[markerNo] : null;
+  //   if (uid == null || uid == "") { skippedNoUid.push(markerNo); continue; }
+  //   markersData[uid] = record;
+  //   lineWise[markerNo] = uid;
+  //   ...
+  // }
+
+  /**
+   * Move se pehle source line ka backup - seedha DB se, usi shape me jaise DB
+   * me pada hai, taaki file ka har key apne node par import kiya ja sake.
+   *
+   * Ye khud dono cheezein padhta hai (mapping + records), isliye caller ko
+   * markerNo aur uid jodne ki zaroorat nahi - naye structure me LineWise me
+   * markerNo hota hi nahi aur record ke andar uid hota nahi, to wo jod caller
+   * ke paas ban hi nahi sakta tha.
+   *
+   * Chaar node banate hain, wahi jo move badalta hai:
+   *   markersData = { uid: record }
+   *   lineWise    = { uid: true }        <- naya format, jaisa DB me hai
+   *   markerWise  = { uid: {ward, line} }
+   *   wardWise    = { uid: line }
+   *
+   * `markerWise`/`wardWise` ki value record se hi leti hai - record move se
+   * pehle padha gaya hai, yaani usme purani ward/line hi hai.
+   *
+   * Mapping hai par record nahi (orphan) - wo marker hai hi nahi, isliye move
+   * use chhuta bhi nahi aur restore me bhi nahi jaana chahiye. Par chupchaap
+   * chhodte bhi nahi: `orphanLinks` me chala jaata hai, taaki restore karne
+   * wale ko dikh jaaye.
+   */
+  buildLineBackupFor(db: any, ward: any, line: any): Promise<any> {
+    return this.getLineLinks(db, ward, line).then((links: any) => {
+      let keyArray = Object.keys(links);
+      let uidArray: any[] = [];
+      for (let i = 0; i < keyArray.length; i++) {
+        let uid = links[keyArray[i]];
+        if (uid != null && uid !== "" && uidArray.indexOf(uid) < 0) {
+          uidArray.push(uid);
+        }
+      }
+      return this.getMarkerRecords(db, uidArray).then((records: any) => {
+        let markersData: any = {};
+        let lineWise: any = {};
+        let markerWise: any = {};
+        let wardWise: any = {};
+        let orphanLinks: any[] = [];
+
+        for (let i = 0; i < uidArray.length; i++) {
+          let uid = uidArray[i];
+          let record = records[uid];
+          if (record == null || typeof record != "object") {
+            // getMarkerRecords aise uid chhod deta hai jinka record nahi hai.
+            orphanLinks.push(String(uid));
+            continue;
+          }
+          markersData[uid] = record;
+          lineWise[uid] = true;
+          let recWard = (record["ward"] != null) ? record["ward"] : null;
+          let recLine = (record["line"] != null) ? record["line"] : null;
+          markerWise[uid] = { ward: recWard, line: recLine };
+          wardWise[uid] = recLine;
+        }
+
+        return {
+          markersData: markersData,
+          lineWise: lineWise,
+          markerWise: markerWise,
+          wardWise: wardWise,
+          // Ab har marker uid se hi aata hai, isliye "uid nahi mila" wali soorat
+          // bachti hi nahi. Key meta me rehne di hai taaki purani backup file
+          // aur nayi ek jaisi padhi ja sakein.
+          skippedNoUid: [],
+          orphanLinks: orphanLinks
+        };
+      });
+    });
+  }
+
+  // Backup file ke har key ko kis node par wapas daalna hai - restore ka koi
+  // code nahi hai, ye haath se Firebase console par hota hai, isliye ye baat
+  // file ke andar likhi honi chahiye.
+  //
+  // {uid} wali do jagah jaan-boojh kar template hain: MarkersData aur
+  // MarkerWise saare ward ke shared node hain. Unpar poora JSON import karna
+  // matlab baaki poore shehar ka data uda dena - console ka import node ko
+  // REPLACE karta hai, merge nahi. LineWise ka node sirf isi line ka hai
+  // (backup me line ke saare marker hain), isliye wahan poora import chalta hai.
+  buildRestoreNotes(ward: any, line: any): any {
+    return {
+      markersData: this.markersDataPath + "{uid}",
+      lineWise: this.lineWisePath + ward + "/" + line,
+      markerWise: this.markerWisePath + "{uid}",
+      wardWise: this.wardWisePath + ward + "/{uid}",
+      // LineSummary backup me nahi hai - usme sirf ginti (marksCount) aur
+      // lastMarkerKey rehti hai, marker ka data nahi. Restore ke baad ginti
+      // "Update Counts" se dobara ban jaati hai, isliye use file me rakhne ka
+      // matlab nahi - par restore karne wale ko ye pata hona chahiye.
+      lineSummary: this.lineSummaryPath + ward + "/" + line + " - backup me nahi hai. Restore ke baad Ward Marking Summary se Update Counts chala dena.",
+      warning: "Firebase console ka import poore node ko REPLACE karta hai. markersData aur markerWise shared node hain - unhe uid ke hisaab se ek-ek node par import karo, poora JSON kabhi nahi."
+    };
+  }
+
+  // Ek marker ki poori move history, purani se nayi order me. Har entry par
+  // uski push key bhi rakh dete hain (`historyId`), taaki UI ko alag se
+  // Object.keys karne ki zaroorat na pade. Kuch na ho to khaali array.
+  // AB KOI NAHI BULATA - MoveHistory abhi sirf likhi jaati hai (recordMove),
+  // padhi kahin nahi. Hatai nahi: history dikhane wala page banega to yahi
+  // lagega.
+  getMoveHistory(db: any, uid: any): Promise<any> {
+    return this.readOnce(db, this.moveHistoryPath + uid).then((data: any) => {
+      if (data == null || typeof data != "object") {
+        return [];
+      }
+      // Push key khud time se sort hoti hai, isliye keys sort karna hi kaafi hai.
+      let keyArray = Object.keys(data).sort();
+      let list: any = [];
+      for (let i = 0; i < keyArray.length; i++) {
+        let entry = data[keyArray[i]];
+        if (entry == null || typeof entry != "object") {
+          continue;
+        }
+        list.push(Object.assign({ historyId: keyArray[i] }, entry));
+      }
+      return list;
+    });
+  }
+
+  // Line ke saare count fields. Khali line par ye sab zero hone chahiye -
+  // aadhe zero karne se Markers 0 dikhta hai par Houses purana number dikhata
+  // rehta hai, aur external user ko to Markers bhi purana hi dikhta hai
+  // (wo actualMarks* padhta hai).
+  lineCountFields = [
+    "marksCount", "marksHouse", "marksComplex", "marksHouseInComplex",
+    "actualMarksCount", "actualMarksHouse", "actualMarksComplex", "actualMarksHouseInComplex",
+    "surveyedCount", "lineRevisitCount", "lineRfidNotFoundCount", "alreadyInstalledCount"
+  ];
+
+  // Sirf marker ke count.
+  //
+  // Upar wali list CHAARON caller ka JOD hai. Har page khali line par utne hi
+  // field zero karta tha jitne wo khud likhta tha - old path par line ka node
+  // bacha rehta tha, wo loop me aati thi aur wahi update chal jaata tha.
+  // Jo page survey/card wale count likhta hi nahi (jaise Ward Marking Summary,
+  // jo sirf ye 8 likhta hai) usse wo field zero karwana galat hai - wo kisi
+  // aur page ka data hai aur dobara ban bhi nahi sakta.
+  //
+  // Isliye page apni list `fields` me bhej sakta hai; na bheje to purani
+  // poori list hi chalti hai (koi page badla nahi).
+  markerCountFields = [
+    "marksCount", "marksHouse", "marksComplex", "marksHouseInComplex",
+    "actualMarksCount", "actualMarksHouse", "actualMarksComplex", "actualMarksHouseInComplex"
+  ];
+
+  // Jin lines par ab ek bhi marker nahi bacha, unke counts zero.
+  //
+  // Old path me line ka node markers ke SAATH hi rehta tha, isliye khali line
+  // bhi count wale loop me aa jaati thi aur wahan saare counts 0 likh diye
+  // jaate the. New path me line ki list LineWise se banti hai, aur line ka
+  // aakhri marker nikalte hi LineWise/{ward}/{line} node hi gayab ho jaata hai
+  // - line loop me aati hi nahi aur uske purane counts LineSummary par jyon ke
+  // tyon pade rehte hain. Isliye har count-update ke saath ye pass chalana
+  // zaroori hai.
+  //
+  // markerData = wahi {line: {markerNo: record}} jo LineWise se bana hai; jo
+  // line usme nahi hai wahi khali maani jaati hai.
+  //
+  // lastMarkerKey ko haath nahi lagate - wo zero karne par nayi marker ko wahi
+  // number mil jaata jo pehle kisi ke paas tha.
+  resetEmptyLineSummaries(db: any, ward: any, markerData: any, fields: any = null): Promise<any> {
+    // fields na de to purani poori list - jo page pehle se bula rahe hain unka
+    // behaviour bilkul waisa hi rehta hai.
+    let fieldList = fields != null ? fields : this.lineCountFields;
+    let wardSummaryPath = this.lineSummaryPath + ward;
+    return this.readOnce(db, wardSummaryPath).then((summary: any) => {
+      if (summary == null || typeof summary != "object") {
+        return null;
+      }
+      let updates: any = {};
+      let lineArray = Object.keys(summary);
+      for (let i = 0; i < lineArray.length; i++) {
+        let lineNo = lineArray[i];
+        if (summary[lineNo] == null || typeof summary[lineNo] != "object") {
+          continue; // ward-level scalars skip
+        }
+        if (markerData != null && markerData[lineNo] != null) {
+          continue; // is line par markers hain -> caller ka loop count karega
+        }
+        for (let f = 0; f < fieldList.length; f++) {
+          updates[wardSummaryPath + "/" + lineNo + "/" + fieldList[f]] = 0;
+        }
+      }
+      if (Object.keys(updates).length == 0) {
+        return null;
+      }
+      return db.database.ref().update(updates);
+    });
+  }
+
+  // ---------------- CARD <-> MARKER ----------------
+  //
+  // MarkerWardMapping/{cardNo} pehle se maujood hai aur uski key card number hi
+  // hai, isliye card se marker dhoondhne ke liye koi naya node nahi banaya.
+  // Usme ab `markerKey` (marker ka uid) bhi likhte hain.
+  //
+  // Pehle raasta do hop ka tha: card -> {ward, line, markerNo} -> LineWise ->
+  // uid. Uske do nuksan the - LineWise adhoora hai (to link toot jaata tha),
+  // aur move par teeno field badal jaate the. markerKey se ek hop me kaam ho
+  // jaata hai aur move-proof bhi hai, kyunki uid kabhi nahi badalta.
+  //
+  // `image` yahan JAAN-BOOJH KAR nahi likhi jaati. Image ka naam hamesha
+  // {uid}.jpg hota hai, yaani markerKey se khud ban jaata hai - use dobara
+  // rakhna sirf ek aur field hai jo purani padi reh sakti hai. Portal aur
+  // React dono ab uid se URL banate hain, is field ko koi padhta nahi.
+  cardMappingPath = "EntityMarkingData/MarkerWardMapping/";
+
+  // Record ka card key - pehle cardNumber, na ho to markerId prefix ke saath
+  // (yahi jodi poore portal me MarkerWardMapping ki key banti hai).
+  cardKeyFor(data: any): string {
+    if (data == null) {
+      return "";
+    }
+    if (data["cardNumber"] != null && data["cardNumber"] !== "") {
+      return String(data["cardNumber"]);
+    }
+    if (data["markerId"] != null && data["markerId"] !== "") {
+      return this.commonService.getDefaultCardPrefix() + data["markerId"];
+    }
+    return "";
+  }
+
+  // MarkerWardMapping/{cardNo} - markerKey ke saath marker ki current jagah.
+  // Card na ho to kuch nahi karta (bina card wale marker is node me aate hi nahi).
+  //
+  // PEHLE ek `markerNo` param bhi tha aur wo entry me bhi likha jaata tha
+  // (purana signature: writeCardMapping(db, cardNo, uid, ward, line, markerNo)):
+  //
+  //   markerNo: String(markerNo),
+  //
+  // getUidByCard() pehle hi sirf `markerKey` (uid) par chalta hai - ward/line/
+  // markerNo wala fallback upar comment me pada hai - isliye ye field kisi ke
+  // kaam ki nahi thi. markerNo retire hone ke saath dono hata diye gaye.
+  writeCardMapping(db: any, cardNo: any, uid: any, ward: any, line: any): Promise<any> {
+    if (cardNo == null || cardNo === "" || uid == null || uid === "") {
+      return Promise.resolve(null);
+    }
+    return db.object(this.cardMappingPath + cardNo).update({
+      markerKey: uid,
+      line: String(line),
+      ward: ward
+    });
+  }
+
+  // "EntityMarkingData/MarkersData/M12" -> "M12". Kai jagah marker ka path
+  // pehle se haath me hota hai aur uid dobara dhoondhna bekaar ka read hai.
+  uidFromPath(markerPath: any): string {
+    if (markerPath == null || markerPath === "") {
+      return "";
+    }
+    let path = String(markerPath);
+    return path.substring(path.lastIndexOf("/") + 1);
+  }
+
+  // Card se marker ka uid - SIRF `markerKey` se.
+  //
+  // markerKey na ho to null. Entry me markerKey nahi hai matlab wo entry naye
+  // structure me likhi hi nahi gayi - us haal me marker "nahi hai".
+  //
+  // PEHLE YE THA (hataya nahi, comment kiya hai) - purani (master-era) entries
+  // ke liye card ke ward/line/markerNo se link index padh kar uid nikalta tha:
+  //
+  // if (entry["ward"] == null || entry["line"] == null || entry["markerNo"] == null) {
+  //   return null;
+  // }
+  // return this.getUid(db, entry["ward"], entry["line"], entry["markerNo"], markersData);
+  //
+  // Wo fallback thik un_hi teen fields par bharosa karta tha jo marker ke move
+  // hone par badal jaate hain. Agar kisi flow ne move ke waqt writeCardMapping
+  // na bulaya ho to wo teeno purane pade reh jaate hain, aur fallback GALAT
+  // marker de deta - jo null se bhi bura hai. markerKey (uid) kabhi nahi
+  // badalta, isliye ab sirf wahi.
+  //
+  // `markersData` param signature me rehne diya hai (getMarkerDataPathByCard
+  // ise bhejta hai), par ab kahin use nahi hota.
+  getUidByCard(db: any, cardNo: any, markersData: any = null): Promise<any> {
+    if (cardNo == null || cardNo === "") {
+      return Promise.resolve(null);
+    }
+    return this.readOnce(db, this.cardMappingPath + cardNo).then((entry: any) => {
+      if (entry == null) {
+        return null;
+      }
+      if (entry["markerKey"] != null && entry["markerKey"] !== "") {
+        return String(entry["markerKey"]);
+      }
+      return null;
+    });
+  }
+
+  // AB KOI NAHI BULATA - Card Transection Detail getUidByCard() + getMarker()
+  // seedha istemaal karta hai. Hataya nahi.
+  //
+  // Card se seedha MarkersData ka path. Na mile to null.
+  getMarkerDataPathByCard(db: any, cardNo: any, markersData: any = null): Promise<any> {
+    return this.getUidByCard(db, cardNo, markersData).then((uid: any) => {
+      return uid != null ? this.markersDataPath + uid : null;
+    });
+  }
+
+  // ---------------- MARKER IMAGE URL ----------------
+  //
+  // NIYAM (user ka faisla): image SIRF naye path se aayegi.
+  //
+  //   imgRef hai (hamesha "M{n}.jpg")
+  //       -> {city}/MarkingSurveyImages/AllMarkerImages/{imgRef}
+  //   imgRef nahi (marker abhi migrate nahi hua)
+  //       -> khaali URL. Image nahi dikhegi.
+  //
+  // >> Pehle yahan purane path ka fallback tha:
+  // >>     {city}/MarkingSurveyImages/{ward}/{line}/{image}
+  // >> Wo isliye tha ki image copy ke baad bhi purani file apni jagah padi
+  // >> rehti hai, to migrate na hue marker ki image dikhti rehti thi. Ab wo
+  // >> hata diya gaya hai - jis marker ki migration nahi hui uski image nahi
+  // >> dikhegi, chahe file Storage me maujood ho. Migration chalne par apne
+  // >> aap wapas aa jayegi.
+  //
+  // Purane naam ko flat folder me jodna KABHI nahi hai - us folder me us naam
+  // ki file hai hi nahi, aur us URL se sirf tooti hui image milti hai. Isse
+  // behtar khaali URL hai. (Pehle kai pages yahi galti kar rahe the, isliye ye
+  // rule ek hi jagah likha gaya.)
+  //
+  // Flat folder usi city ke storage me hai jisme purani per-line images thi -
+  // jis city se login kiya hai wahi. Pehle yahan "DevTest" hardcode tha,
+  // isliye har city ki image ek hi folder me chali jaati thi aur doosri city se
+  // login karne par wo milti hi nahi.
+  // PEHLE YE THA (hataya nahi, comment kiya hai):
+  //   return this.storageCity() + "%2FMarkingSurveyImages%2FAllMarkerImages%2F";
+  //
+  // storageCity() Sikar par "Sikar-Survey" laut'ta hai. Wo override PURANE
+  // folders ka niyam hai - unme Sikar ki images saalon se wahin padi hain.
+  // Naya AllMarkerImages folder isi migration me bana hai aur wo seedhe city ke
+  // naam se banega (user ka faisla). React ka markerMappingService bhi wahi
+  // karta hai - uska imageRootFolder() seedha getStorageCity() leta hai, bina
+  // kisi override ke. Dono jagah ek hi folder banna zaroori hai.
+  imageBasePath(): string {
+    return this.commonService.getFireStoreCity() + "%2FMarkingSurveyImages%2FAllMarkerImages%2F";
+  }
+
+  // NOTE: ye ab sirf PURANE folders ke liye hai (per-line images waghairah).
+  // Naye AllMarkerImages folder me ise mat lagana - upar imageBasePath() ka
+  // note dekho.
+  storageCity(): string {
+    let city = this.commonService.getFireStoreCity();
+    // Sikar ka storage folder city list se match nahi karta - poore portal me
+    // ye override haath se lagta hai.
+    if (localStorage.getItem("cityName") == "sikar") {
+      city = "Sikar-Survey";
+    }
+    return city;
+  }
+
+  // Record se image ka URL. imgRef na ho to khaali - record ka purana `image`
+  // naam ab dekha hi nahi jaata.
+  //
+  // ward/line ab kahin nahi lagte. Parameter isliye rakhe hain ki 15+ call site
+  // inhe bhejte hain - signature badalne se har page chhedna padta.
+  markerImageUrl(entry: any, ward: any = null, line: any = null): string {
+    if (entry != null && entry["imgRef"] != null && entry["imgRef"] !== "") {
+      return this.commonService.fireStoragePath + this.imageBasePath() + entry["imgRef"] + "?alt=media";
+    }
+    return "";
+  }
+
+  // Jahan record haath me nahi, sirf naam hai. imgRef hamesha "M{n}.jpg" hota
+  // hai, isliye naam ka roop hi bata deta hai ki wo naya hai ya purana. Purana
+  // naam aaye to khaali - use flat folder me jodna galat URL banata hai.
+  imageUrlFromName(name: any, ward: any = null, line: any = null): string {
+    let value = name != null ? String(name) : "";
+    // PEHLE YE THA (hataya nahi, comment kiya hai):
+    // if (/^M[0-9]+\.jpg$/i.test(value)) {
+    //
+    // Wo regex "MK21.jpg" ko reject kar deta tha (M ke baad seedha number
+    // maangta tha), yaani har naye marker par khaali URL milta aur image
+    // kabhi dikhti hi nahi. Prefix ek jagah se aata hai isliye regex bhi
+    // wahin se banate hain.
+    let pattern = new RegExp("^" + this.uidPrefix + "[0-9]+\\.jpg$", "i");
+    if (pattern.test(value)) {
+      return this.commonService.fireStoragePath + this.imageBasePath() + value + "?alt=media";
+    }
+    return "";
+  }
+
+  // AB KOI NAHI BULATA - purane per-line folder ka URL. Upar wale niyam ke baad
+  // ye bekaar hai. Hataya nahi, taaki purana path zaroorat padne par saamne rahe.
+  oldImageUrl(image: any, ward: any, line: any): string {
+    if (image == null || image === "" || ward == null || line == null) {
+      return "";
+    }
+    return this.commonService.fireStoragePath + this.storageCity()
+      + "%2FMarkingSurveyImages%2F" + ward + "%2F" + line + "%2F" + image + "?alt=media";
+  }
+
+  // Teeno mapping ek saath - aadha likha rehna sabse kharab haalat hai.
+  //
+  // PEHLE ek `markerNo` param bhi tha (purana signature: writePlace(db, uid,
+  // ward, lineVal, markerNo)). Wo LineWise ki key banane ke liye tha; naye
+  // format me key uid hai, isliye param pehle se bekaar pada tha aur ab
+  // markerNo khatam hone ke saath hata diya gaya.
+  writePlace(db: any, uid: any, ward: any, lineVal: any): Promise<any> {
+    // Sirf mapping badli - records waise ke waise sahi hain.
+    this.clearLinks();
+    let updates: any = {};
+    updates[this.markerWisePath + uid] = { ward: ward, line: lineVal };
+    updates[this.wardWisePath + ward + "/" + uid] = lineVal;
+    // PEHLE YE THA (hataya nahi, comment kiya hai):
+    // updates[this.lineWisePath + ward + "/" + lineVal + "/" + markerNo] = uid;
+    //
+    // DB me LineWise uid ka SET hai - { "MK1": true }, naksha nahi. Value sirf
+    // maujoodgi ka nishaan hai. App bhi yahi likhta hai; portal alag format
+    // likhta to ek hi node par do tarah ki entries baith jaati aur dono taraf
+    // sab tootta.
+    //
+    // markerNo yahan nahi jaata - wo record ke andar (MarkersData/{uid}.markerNo)
+    // rehta hai, aur wahi screen par dikhta hai.
+    updates[this.lineWisePath + ward + "/" + lineVal + "/" + uid] = true;
+    return db.database.ref().update(updates);
+  }
+
+  // Marker hataate waqt data ke sath teeno mapping bhi jaani chahiye, warna
+  // mapping aise uid par point karti reh jaati hai jiska record nahi hai.
+  // markerNo mapping me hi dhoondh lete hain, taaki caller ko yaad na rakhna pade.
+  //
+  // SAAVDHAAN: React me bhi isi naam ka removeMarker() hai, par wo marksCount
+  // NAHI ghataata. Dono sahi hain - caller ka kaam alag hai:
+  //
+  //   yahan (Angular) -> marker-approval-test-v1 ka DELETE: user marker hataata
+  //                      hai, reason ke saath. Page pehle RemovedMarkers me
+  //                      archive karta hai, phir ye function (record + teeno
+  //                      mapping + marksCount -1), aur uske baad page
+  //                      alreadyInstalled / alreadyInstalledCount /
+  //                      totalHouseTypeModifiedCount / totalRemovedMarkersCount
+  //                      sambhalta hai.
+  //
+  //   React          -> new-marker-request ka REJECT: marker manzoor hi nahi
+  //                      hua tha, isliye na archive na koi count (master ka
+  //                      reject flow bhi sirf node delete karta tha).
+  //
+  // Ek ka code doosre me copy mat karna.
+  removeMarker(db: any, uid: any): Promise<any> {
+    // Record bhi jaa raha hai aur mapping bhi - dono cache theek karni hain.
+    this.dropMarker(uid);
+    this.clearLinks();
+    return this.getMarkerPlace(db, uid).then((place: any) => {
+      if (place == null) {
+        // Mapping hai hi nahi - sirf record hata do.
+        return db.database.ref(this.markersDataPath + uid).set(null);
+      }
+      let linePath = this.lineWisePath + place["ward"] + "/" + place["line"];
+      // PEHLE YE THA (hataya nahi, comment kiya hai) - sirf value se uid
+      // dhoondha jaata tha, yaani naye ({uid: true}) format par kabhi match hi
+      // nahi karta: record hat jaata aur LineWise ki entry padi reh jaati.
+      //
+      // if (links[keyArray[i]] == uid) { ... }
+      //
+      // BEECH ME dono roop dekhe jaate the, isliye poori line ek baar padhni
+      // padti thi:
+      //
+      // return this.readOnce(db, linePath).then((links: any) => {
+      //   ... if (keyArray[i] == uid || links[keyArray[i]] == uid) { ... }
+      //
+      // DB me ab sirf naya roop hai - key hi uid hai - isliye seedha us key ko
+      // null kar dete hain. Na read chahiye, na loop.
+      let updates: any = {};
+      updates[this.markersDataPath + uid] = null;
+      updates[this.markerWisePath + uid] = null;
+      updates[this.wardWisePath + place["ward"] + "/" + uid] = null;
+      updates[linePath + "/" + uid] = null;
+      return db.database.ref().update(updates).then(() => {
+        // Ginti bhi ghata do - warna delete ke baad line ka count bada dikhta
+        // rehta hai. Zero se neeche kabhi nahi jaana chahiye.
+        return db.database.ref(this.lineSummaryPath + place["ward"] + "/" + place["line"] + "/marksCount").transaction(
+          (current: any) => {
+            let count = (Number(current) || 0) - 1;
+            return count > 0 ? count : 0;
+          }
+        );
+      });
+    });
+  }
+}

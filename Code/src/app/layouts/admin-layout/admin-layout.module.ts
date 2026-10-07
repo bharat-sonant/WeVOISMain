@@ -21,6 +21,7 @@ import { HouseSearchComponent } from '../../housesearch/housesearch.component';
 import { FleetMonitorComponent } from '../../fleet-monitor/fleet-monitor.component';
 import { LineStatisticsComponent } from '../../line-statistics/line-statistics.component';
 import { LineCardMappingComponent } from '../../house-survey/line-card-mapping/line-card-mapping.component';
+import { LineCardMappingV1Component } from '../../house-survey/line-card-mapping-v1/line-card-mapping-v1.component';
 import { TimeDistanceComponent } from '../../reports/time-distance/time-distance.component';
 import { RealtimeMonitoringComponent } from '../../realtime-monitoring/realtime-monitoring.component';
 import { DustbinMonitoringComponent } from '../../dustbin-monitoring/dustbin-monitoring.component';
@@ -43,16 +44,23 @@ import { WardDutyDataComponent } from '../../PortalServices/ward-duty-data/ward-
 import { DustbinAnalysisComponent } from '../../reports/dustbin-analysis/dustbin-analysis.component';
 import { CmsComponent } from '../../cms/cms.component';
 import { Cms1Component } from '../../cms1/cms1.component';
+import { Cms1V1Component } from '../../cms1-v1/cms1-v1.component';
 import { VehicleReportComponent } from '../../reports/vehicle-report/vehicle-report.component';
 import { WardTripAnalysisComponent } from '../../reports/ward-trip-analysis/ward-trip-analysis.component';
 import { HouseMarkingComponent } from '../../house-survey/house-marking/house-marking.component';
+import { HouseMarkingV1Component } from '../../house-survey/house-marking-v1/house-marking-v1.component';
 import { HouseMarkingAssignmentComponent } from '../../house-survey/house-marking-assignment/house-marking-assignment.component';
+import { HouseMarkingAssignmentV1Component } from '../../house-survey/house-marking-assignment-v1/house-marking-assignment-v1.component';
 import { EmployeeMarkingComponent } from '../../house-survey/employee-marking/employee-marking.component';
 import { WardSurveyAnalysisComponent } from '../../house-survey/ward-survey-analysis/ward-survey-analysis.component';
+import { WardSurveyAnalysisV1Component } from '../../house-survey/ward-survey-analysis-v1/ward-survey-analysis-v1.component';
 import { WardSurveySummaryComponent } from '../../house-survey/ward-survey-summary/ward-survey-summary.component';
+import { WardSurveySummaryV1Component } from '../../house-survey/ward-survey-summary-v1/ward-survey-summary-v1.component';
 import { WardMarkingSummaryComponent } from '../../house-survey/ward-marking-summary/ward-marking-summary.component';
+import { WardMarkingSummaryV1Component } from '../../house-survey/ward-marking-summary-v1/ward-marking-summary-v1.component';
 import { WardScancardReportComponent } from '../../reports/ward-scancard-report/ward-scancard-report.component';
 import { LineMarkerMappingComponent } from '../../house-survey/line-marker-mapping/line-marker-mapping.component';
+import { LineMarkerMappingV1Component } from '../../house-survey/line-marker-mapping-v1/line-marker-mapping-v1.component';
 import { VehicleAssignedComponent } from '../../reports/vehicle-assigned/vehicle-assigned.component';
 import { LogBookComponent } from '../../reports/log-book/log-book.component';
 import { WardScancardSummaryComponent } from '../../reports/ward-scancard-summary/ward-scancard-summary.component';
@@ -70,6 +78,7 @@ import { WardWorkTrackingComponent } from '../../ward-work-tracking/ward-work-tr
 import { StaffAccountDetailComponent } from '../../salary-management/staff-account-detail/staff-account-detail.component';
 import { WardWorkPercentageComponent } from '../../PortalServices/ward-work-percentage/ward-work-percentage.component';
 import { ChangeLineSurveyedDataComponent } from '../../PortalServices/change-line-surveyed-data/change-line-surveyed-data.component';
+import { ChangeLineSurveyedDataV1Component } from '../../PortalServices/change-line-surveyed-data-v1/change-line-surveyed-data-v1.component';
 import { WardWorkDoneComponent } from '../../reports/ward-work-done/ward-work-done.component';
 import { SettingsComponent } from '../../PortalServices/settings/settings.component';
 import { SurveyAppSettingsComponent } from '../../PortalServices/settings/survey-app-settings/survey-app-settings.component';
@@ -91,33 +100,44 @@ import { DailyWorkDetailComponent } from '../../reports/daily-work-detail/daily-
 import { SupportQueryComponent } from '../../EmployeeManagement/support-query/support-query.component';
 import { MonthlyFuelReportComponent } from '../../reports/monthly-fuel-report/monthly-fuel-report.component';
 import { ChangeLineMarkerDataComponent } from '../../PortalServices/change-line-marker-data/change-line-marker-data.component';
+import { ChangeLineMarkerDataV1Component } from '../../PortalServices/change-line-marker-data-v1/change-line-marker-data-v1.component';
 import { MarkerMoveProgressComponent } from '../../PortalServices/marker-move-progress/marker-move-progress.component';
+import { MarkerMoveProgressV1Component } from '../../PortalServices/marker-move-progress-v1/marker-move-progress-v1.component';
 import { ActionHistoryComponent } from '../../PortalServices/action-history/action-history.component';
+import { ActionHistoryV1Component } from '../../PortalServices/action-history-v1/action-history-v1.component';
 import { RolesComponent } from '../../user-management/roles/roles.component';
 import { RolePageAccessComponent } from '../../user-management/role-page-access/role-page-access.component';
 import { MapsComponent } from '../../maps/maps.component';
 import { CardMarkerMappingComponent } from '../../Developers/card-marker-mapping/card-marker-mapping.component';
+import { CardMarkerMappingV1Component } from '../../Developers/card-marker-mapping-v1/card-marker-mapping-v1.component';
 import { ScanCardStatusComponent } from '../../house-survey/scan-card-status/scan-card-status.component';
 import { ComplaintListComponent } from '../../complaint-list/complaint-list.component';
 import { ScanCardManipulationComponent } from '../../PortalServices/scan-card-manipulation/scan-card-manipulation.component';
 import { AddMarkerAgainstCardsComponent } from '../../Developers/add-marker-against-cards/add-marker-against-cards.component';
+import { AddMarkerAgainstCardsV1Component } from '../../Developers/add-marker-against-cards-v1/add-marker-against-cards-v1.component';
 import { CardScanningReportComponent } from '../../reports/card-scanning-report/card-scanning-report.component';
 import { SurveyVerificationComponent } from '../../house-survey/survey-verification/survey-verification.component';
 import { SurveyHousesComponent } from '../../house-survey/survey-houses/survey-houses.component';
 import {MarkerApprovalTestComponent} from '../../marker-approval-test/marker-approval-test.component';
+import { MarkerApprovalTestV1Component } from '../../marker-approval-test-v1/marker-approval-test-v1.component';
 import { SupervisorReportComponent } from '../../house-survey/supervisor-report/supervisor-report.component';
+import { SupervisorReportV1Component } from '../../house-survey/supervisor-report-v1/supervisor-report-v1.component';
 import { SetNearbyWardComponent } from '../../PortalServices/set-nearby-ward/set-nearby-ward.component';
 import { ManageMarkingDataComponent } from '../../Developers/manage-marking-data/manage-marking-data.component';
+import { ManageMarkingDataV1Component } from '../../Developers/manage-marking-data-v1/manage-marking-data-v1.component';
 import { WardwiseScanCardComponent } from '../../wardwise-scan-card/wardwise-scan-card.component';
 import { ReviewDutyonImagesComponent } from '../../review-dutyon-images/review-dutyon-images.component';
 import { ReviewTripImagesComponent } from '../../reports/review-trip-images/review-trip-images.component';
 import { PaymentCollectorComponent } from '../../payment-collector/payment-collector.component';
 import { DueAmountReportComponent } from '../../reports/due-amount-report/due-amount-report.component';
+import { DueAmountReportV1Component } from '../../reports/due-amount-report-v1/due-amount-report-v1.component';
 import { CollectedAmountReportComponent } from '../../reports/collected-amount-report/collected-amount-report.component';
+import { CollectedAmountReportV1Component } from '../../reports/collected-amount-report-v1/collected-amount-report-v1.component';
 import { SurveyVerifiedReportComponent } from '../../house-survey/survey-verified-report/survey-verified-report.component';
 import { PaymentViaChequeComponent } from '../../reports/payment-via-cheque/payment-via-cheque.component';
 import { PaymentViaChequeReportComponent } from '../../reports/payment-via-cheque-report/payment-via-cheque-report.component';
 import { CardTransectionDetailComponent } from '../../reports/card-transection-detail/card-transection-detail.component';
+import { CardTransectionDetailV1Component } from '../../reports/card-transection-detail-v1/card-transection-detail-v1.component';
 import { CardUpdatedHistoryComponent } from '../../reports/card-updated-history/card-updated-history.component';
 import { DailyPaymentReportComponent } from '../../reports/daily-payment-report/daily-payment-report.component';
 import { MonthlyPaymentReportComponent } from '../../reports/monthly-payment-report/monthly-payment-report.component';
@@ -227,6 +247,7 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     FleetMonitorComponent,
     LineStatisticsComponent,
     LineCardMappingComponent,
+    LineCardMappingV1Component,
     TimeDistanceComponent,
     RealtimeMonitoringComponent,
     DustbinMonitoringComponent,
@@ -249,16 +270,23 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     DustbinAnalysisComponent,
     CmsComponent,
     Cms1Component,
+    Cms1V1Component,
     VehicleReportComponent,
     WardTripAnalysisComponent,
     HouseMarkingComponent,
+    HouseMarkingV1Component,
     HouseMarkingAssignmentComponent,
+    HouseMarkingAssignmentV1Component,
     EmployeeMarkingComponent,
     WardSurveyAnalysisComponent,
+    WardSurveyAnalysisV1Component,
     WardSurveySummaryComponent,
+    WardSurveySummaryV1Component,
     WardMarkingSummaryComponent,
+    WardMarkingSummaryV1Component,
     WardScancardReportComponent,
     LineMarkerMappingComponent,
+    LineMarkerMappingV1Component,
     VehicleAssignedComponent,
     LogBookComponent,
     WardScancardSummaryComponent,
@@ -276,6 +304,7 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     StaffAccountDetailComponent,
     WardWorkPercentageComponent,
     ChangeLineSurveyedDataComponent,
+    ChangeLineSurveyedDataV1Component,
     WardWorkDoneComponent,
     SettingsComponent,
     SurveyAppSettingsComponent,
@@ -295,34 +324,45 @@ import { EmpMonitoringDashboardComponent } from '../../reports/emp-monitoring-da
     SupportQueryComponent,
     MonthlyFuelReportComponent,
     ChangeLineMarkerDataComponent,
+    ChangeLineMarkerDataV1Component,
     MarkerMoveProgressComponent,
+    MarkerMoveProgressV1Component,
     ActionHistoryComponent,
+    ActionHistoryV1Component,
     RolesComponent,
     RolePageAccessComponent,
     MapsComponent,
     CardMarkerMappingComponent,
+    CardMarkerMappingV1Component,
     ScanCardStatusComponent,
     ComplaintListComponent,
     ScanCardManipulationComponent,
     AddMarkerAgainstCardsComponent,
+    AddMarkerAgainstCardsV1Component,
     CardScanningReportComponent,
     SurveyVerificationComponent,
     SurveyHousesComponent,
     MarkerApprovalTestComponent,
+    MarkerApprovalTestV1Component,
     SupervisorReportComponent,
+    SupervisorReportV1Component,
     SetNearbyWardComponent,
     WardRouteAutoScanComponent,
     ManageMarkingDataComponent,
+    ManageMarkingDataV1Component,
     WardwiseScanCardComponent,
     ReviewDutyonImagesComponent,
     ReviewTripImagesComponent,
     PaymentCollectorComponent,
     DueAmountReportComponent,
+    DueAmountReportV1Component,
     CollectedAmountReportComponent,
+    CollectedAmountReportV1Component,
     SurveyVerifiedReportComponent,
     PaymentViaChequeComponent,
     PaymentViaChequeReportComponent,
     CardTransectionDetailComponent,
+    CardTransectionDetailV1Component,
     CardUpdatedHistoryComponent,
     DailyPaymentReportComponent,
     MonthlyPaymentReportComponent,

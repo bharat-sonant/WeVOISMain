@@ -1,0 +1,2803 @@
+import { Component, OnInit } from "@angular/core";
+import { CommonService } from "../../services/common/common.service";
+
+import { FirebaseService } from "../../firebase.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { HttpClient } from "@angular/common/http";
+import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { AngularFireStorage } from "angularfire2/storage";
+
+import { MarkerMappingService } from '../../services/marker/marker-mapping.service';
+@Component({
+  selector: "app-ward-survey-summary-v1",
+  templateUrl: "./ward-survey-summary-v1.component.html",
+  styleUrls: ["./ward-survey-summary-v1.component.scss"],
+})
+export class WardSurveySummaryV1Component implements OnInit {
+  constructor(private storage: AngularFireStorage, public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, public httpService: HttpClient, private commonService: CommonService, private modalService: NgbModal, private markerMapping: MarkerMappingService) { }
+
+  selectedCircle: any;
+  wardList: any[];
+  wardProgressList: any[];
+  lineSurveyList: any[];
+  surveyedDetailList: any[];
+  surveyDateList: any[];
+  dateSummaryList: any[] = [];
+  surveyorList: any[];
+  wardLineCount: any;
+  cityName: any;
+  isFirst = true;
+  wardCheckList: any[] = [];
+  houseTypeList: any[] = [];
+  zoneHouseTypeList: any[];
+  entityList: any[] = [];
+  employeeSurvey: any[] = [];
+  rfidMarkerList: any = [];
+  rfidMarkerMap: any = {};
+  rfidCardPropMap: any = {};
+  rfidList: any[];
+  db: any;
+  selectedWard: any;
+  public isAlreadyShow = false;
+  divEntityList = "#divEntityList";
+  divLoaderMain = "#divLoaderMain";
+  divLoaderCounts = "#divLoaderCounts";
+  ddlZone = "#ddlZone";
+  divHouseType = "#divHouseType";
+  houseWardNo = "#houseWardNo";
+  houseLineNo = "#houseLineNo";
+  houseIndex = "#houseIndex";
+  ddlHouseType = "#ddlHouseType";
+  txtServingCount = "#txtServingCount";
+  divServingCount = "#divServingCount";
+  serviceName = "survey-summary";
+  showScanCardWidget: any;
+  surveyData: surveyDatail = {
+    totalLines: 0,
+    totalMarkers: 0,
+    totalSurveyed: 0,
+    totalRevisit: 0,
+    totalOldCards: 0,
+    totalHouses: 0,
+    totalResidential: 0,
+    totalCommercial: 0,
+    wardMarkers: 0,
+    wardSurveyed: 0,
+    wardRevisit: 0,
+    wardAlreadyCard: 0,
+    wardOldCards: 0,
+    wardNameNotCorrect: 0,
+    lastUpdate: ''
+  };
+  cardHousesList: any[];
+  lineuptoLoop: any;
+  wardLineMarkerImageList: any[] = [];
+  isActionShow: any;
+  userIsExternal: any;
+  cardPrefix: any;
+  public showRfID: any = false;
+  public hideComplex: any;
+
+
+  ngOnInit() {
+    this.cityName = localStorage.getItem("cityName");
+    this.db = this.fs.getDatabaseByCity(this.cityName);
+    this.commonService.savePageLoadHistory("Survey-Management", "Survey-Summary", localStorage.getItem("userID"));
+    this.cardPrefix = this.commonService.getDefaultCardPrefix() + "M";
+    this.isActionShow = true;
+    this.userIsExternal = localStorage.getItem("userType") == "External User" ? true : false;
+    if (this.cityName == "jaipur-malviyanagar" || this.cityName == "jaipur-murlipura") {
+      //this.isActionShow = false;
+    }
+    if (localStorage.getItem("userID") == "4" || localStorage.getItem("userID") == "32") {
+      if (this.cityName == "hisar") {
+        $("#divRFID").show();
+      }
+    }
+    if (this.userIsExternal == true && this.cityName == "ajmer") {
+      this.hideComplex = 1;
+    }
+    else {
+      this.hideComplex = 0;
+    }
+
+    this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
+
+    this.getScanCardSettings();
+    this.showHideAlreadyCardInstalled();
+    this.getLastUpdate();
+    this.getHouseType();
+    this.getSurveyorList();
+    this.getWardProgressList();
+    //this.checkWithCardWardMapping();
+  }
+
+
+  getScanCardSettings() {
+    this.showScanCardWidget = false;
+    let dbPath = "Settings/RealTime";
+    let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+      instance.unsubscribe();
+      if (data != null) {
+        if (data["showScanCardWidget"] != null) {
+          if (data["showScanCardWidget"] == "yes") {
+            this.showScanCardWidget = true;
+          }
+        }
+      }
+    });
+  }
+
+  getLastUpdate() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLastUpdate");
+    let dbPath = "EntitySurveyData/surveySummarylastUpdate";
+    let lastUpdateInstance = this.db.object(dbPath).valueChanges().subscribe(
+      lastUpdateData => {
+        lastUpdateInstance.unsubscribe();
+        if (lastUpdateData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLastUpdate", lastUpdateData);
+          this.surveyData.lastUpdate = lastUpdateData;
+        }
+      }
+    );
+  }
+
+  getSurveyorList() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSurveyorList");
+    this.surveyorList = [];
+    let surveyorInstance = this.db.object("Surveyors/").valueChanges().subscribe(
+      surveyorData => {
+        surveyorInstance.unsubscribe();
+        if (surveyorData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSurveyorList", surveyorData);
+          let keyArray = Object.keys(surveyorData);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let surveyorId = keyArray[i];
+              let name = surveyorData[surveyorId]["name"];
+              this.surveyorList.push({ surveyorId: surveyorId, name: name });
+            }
+          }
+        }
+      }
+    );
+  }
+
+  duplicateHouseCardList: any[] = [];
+
+  updateSurveyCounts() {
+    $(this.divLoaderCounts).show();
+    this.employeeSurvey = [];
+    this.dateSummaryList = [];
+    this.zoneHouseTypeList = [];
+    this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
+    this.lineuptoLoop = this.wardList.length;
+    let zoneNo = this.wardList[1]["zoneNo"];
+    this.getZoneHouseType(zoneNo, 1);
+    this.updateCounts_Bharat(1);
+  }
+
+  showHideAlreadyCardInstalled() {
+    if (this.cityName == "sikar" || this.cityName == "reengus") {
+      this.isAlreadyShow = true;
+    }
+  }
+
+  getHouseType() {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FDefaults%2FFinalHousesType.json?alt=media";
+    let houseTypeInstance = this.httpService.get(path).subscribe(data => {
+      houseTypeInstance.unsubscribe();
+      if (data != null) {
+        let keyArray = Object.keys(data);
+        for (let i = 1; i < keyArray.length; i++) {
+          let id = keyArray[i];
+          let houseType = data[id]["name"].toString().split("(")[0];
+          this.houseTypeList.push({ id: id, houseType: houseType, entityType: data[id]["entity-type"] });
+        }
+      }
+    });
+  }
+
+  clearAll() {
+    this.wardProgressList = [];
+    this.lineSurveyList = [];
+    this.surveyData.totalMarkers = 0;
+    this.surveyData.totalSurveyed = 0;
+    this.surveyData.totalRevisit = 0;
+    this.surveyData.totalHouses = 0;
+    this.surveyData.totalResidential = 0;
+    this.surveyData.totalCommercial = 0;
+  }
+
+  openExportHouseData(content: any) {
+    this.modalService.open(content, { size: "lg" });
+    let windowHeight = $(window).height();
+    let height = 200;
+    let width = 400;
+    let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    let divHeight = height + "px";
+    $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    $("div .modal-dialog-centered").css("margin-top", marginTop);
+    $("#divHouseStatus").css("height", divHeight);
+
+  }
+
+  cardNumberList: any[] = [];
+
+  checkWithCardWardMapping() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "checkWithCardWardMapping");
+    let dbPath = "CardWardMapping";
+    let houseinstance = this.db.object(dbPath).valueChanges().subscribe(
+      data => {
+        houseinstance.unsubscribe();
+        let htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td>";
+        htmlString += "CardNo";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Zone No";
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += "Line No";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "checkWithCardWardMapping", data);
+          let keyArray = Object.keys(data);
+          for (let i = 0; i < keyArray.length; i++) {
+            let cardNo = keyArray[i];
+            // let lineNo=data[cardNo]["line"];
+            //let zoneNo=data[cardNo]["ward"];
+            // let dbPath="Houses/"+zoneNo+"/"+lineNo+"/"+cardNo;
+            //console.log(dbPath);
+            // let instance=this.db.object(dbPath).valueChanges().subscribe(
+            //  houseData=>{
+            //    instance.unsubscribe();
+            //    if(houseData==null){
+            //      dbPath="Houses/"+zoneNo+"/"+lineNo+"/"+cardNo;
+            //      this.db.object(dbPath).remove();
+            //      console.log(cardNo);
+            //    }
+            //  }
+            //)
+
+            //console.log(cardNo);
+            let detail = this.cardNumberList.find(item => item.cardNo == cardNo);
+            if (detail == undefined) {
+              //console.log(cardNo);
+              htmlString += "<tr>";
+              htmlString += "<td>";
+              htmlString += cardNo;
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += data[cardNo]["ward"];
+              htmlString += "</td>";
+              htmlString += "<td>";
+              htmlString += data[cardNo]["line"];
+              htmlString += "</td>";
+              htmlString += "</tr>";
+            }
+          }
+        }
+        htmlString += "</table>";
+        this.commonService.exportExcel(htmlString, "CardWardMappingNotInMArkedHouses.xlsx");
+
+
+
+      }
+    );
+  }
+
+  downloadRFID() {
+    $(this.divLoaderMain).show();
+    this.rfidMarkerList = [];
+    this.rfidMarkerMap = {};
+    this.rfidCardPropMap = {};
+    this.rfidList = [];
+    this.getMarkerData(0);
+
+  }
+
+  getCardData(index: any) {
+    if (index == this.wardList.length) {
+      let htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>"; htmlString += "S.N"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "PID"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "RFID Tag No"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Owner"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Address"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Colony"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Ward"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Property"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Property Type"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "RFIDNo"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "MCCode"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "RFIDTYPE"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "InstallationDateTime"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "PropertyRfidPhoto"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Photo Link"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Latitude"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Longitude"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "Location Link"; htmlString += "</td>";
+      htmlString += "<td>"; htmlString += "AgencyGstNumber"; htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.rfidList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>"; htmlString += (i + 1); htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["PID"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["rfidTagNo"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["owner"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["address"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["colony"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["wardNo"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["property"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["propertyType"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["cardNumber"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["mcCode"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["RFIDTYPE"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["date"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["cardImageURL"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["photoLink"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["lat"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["lng"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["locationLink"]; htmlString += "</td>";
+        htmlString += "<td t='s'>"; htmlString += this.rfidList[i]["agencyGstNumber"]; htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+
+      htmlString += "</table>";
+
+      let fileName = "Hisar-PropertyData.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+      $(this.divLoaderMain).hide();
+    }
+    else {
+      let zoneNo = this.wardList[index]["zoneNo"];
+      let dbPath = "Houses/" + zoneNo;
+      let cardInstance = this.db.object(dbPath).valueChanges().subscribe(
+        cardData => {
+          cardInstance.unsubscribe();
+          if (cardData != null) {
+            let keyArray = Object.keys(cardData);
+            if (keyArray.length > 0) {
+              for (let i = 0; i < keyArray.length; i++) {
+                let lineNo = keyArray[i];
+                let lineData = cardData[lineNo];
+                let cardKeyArray = Object.keys(lineData);
+                let agencyGstNumber = "08AACCW3281C1ZH";
+                let mcCode = "017";
+                let RFIDTYPE = "HardTag";
+                for (let j = 0; j < cardKeyArray.length; j++) {
+                  let cardNumber = cardKeyArray[j];
+                  let cardDetail = lineData[cardNumber];
+                  if (cardDetail == null) {
+                    continue;
+                  }
+                  let PID = "";
+                  let lat = "";
+                  let lng = "";
+                  // latLng kuch cards mein missing ho sakta hai -> guard
+                  if (cardDetail["latLng"] != null && cardDetail["latLng"] != "") {
+                    let latLngParts = cardDetail["latLng"].toString().replace("(", "").replace(")", "").split(",");
+                    lat = latLngParts[0] != null ? latLngParts[0].trim() : "";
+                    lng = latLngParts[1] != null ? latLngParts[1].trim() : "";
+                  }
+                  let cardImageURL = "";
+                  if (cardDetail["cardImage"] != null && cardDetail["cardImage"] != "") {
+                    cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardDetail["cardImage"] + "?alt=media";
+                  }
+
+                  let date = cardDetail["createdDate"] != null ? cardDetail["createdDate"] : "";
+                  if (this.rfidMarkerMap[cardNumber] != null) {
+                    PID = this.rfidMarkerMap[cardNumber];
+                  }
+
+                  // Photo Link (HUFCardData) -> ward/line/card/hufRfidNumber se banta hai
+                  let ward = cardDetail["ward"] != null ? cardDetail["ward"] : zoneNo;
+                  let hufRfidNumber = cardDetail["hufRfidNumber"] != null ? cardDetail["hufRfidNumber"] : "";
+                  let photoLink = "";
+                  if (hufRfidNumber != "") {
+                    photoLink = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Hisar%2FHUFCardData%2F" + ward + "%2F" + lineNo + "%2F" + cardNumber + "%2F" + hufRfidNumber + ".jpg?alt=media&token";
+                  }
+
+                  // Location Link -> latLng se Google Maps link
+                  let locationLink = "";
+                  if (lat != "" && lng != "") {
+                    locationLink = "https://www.google.com/maps?q=" + lat + "," + lng;
+                  }
+
+                  // Performa columns (Property aur Area chhod ke)
+                  let owner = cardDetail["name"] != null ? cardDetail["name"] : "";
+                  let address = cardDetail["address"] != null ? cardDetail["address"] : "";
+                  let colony = cardDetail["streetColony"] != null ? cardDetail["streetColony"] : "";
+                  let propertyType = cardDetail["cardType"] != null ? cardDetail["cardType"] : "";
+                  if (propertyType == "आवासीय") {
+                    propertyType = "Residential";
+                  } else if (propertyType == "व्यावसायिक") {
+                    propertyType = "Commercial";
+                  }
+
+                  // Property -> houseType id ko houseTypeList se match karke naam (jaise "Independent House")
+                  let property = "";
+                  let houseTypeDetail = this.houseTypeList.find((item: any) => item.id == cardDetail["houseType"]);
+                  if (houseTypeDetail != null) {
+                    property = houseTypeDetail.houseType;
+                  }
+
+                  this.rfidList.push({ cardNumber: cardNumber, PID: PID, rfidTagNo: hufRfidNumber, owner: owner, address: address, colony: colony, wardNo: ward, property: property, propertyType: propertyType, mcCode: mcCode, RFIDTYPE: RFIDTYPE, date: date, cardImageURL: cardImageURL, lat: lat, lng: lng, agencyGstNumber: agencyGstNumber, photoLink: photoLink, locationLink: locationLink });
+                }
+              }
+              index++;
+              this.getCardData(index);
+            }
+            else {
+              index++;
+              this.getCardData(index);
+            }
+          }
+          else {
+            index++;
+            this.getCardData(index);
+          }
+        }
+      );
+    }
+  }
+
+
+  // Line/ward ki list ab MarkerMappingService se aati hai, jo WardWise aur
+  // LineWise dono ka union leti hai. Pehle sirf LineWise padha jaata tha aur
+  // wo node adhoora hai - un wards ki lines poori khaali dikhti thi.
+  getNewPathLineData(wardNo: any, lineNo: any): Promise<any> {
+    return this.markerMapping.getLineRecords(this.db, wardNo, lineNo);
+  }
+
+  getNewPathWardData(wardNo: any): Promise<any> {
+    return this.markerMapping.getWardRecords(this.db, wardNo);
+  }
+
+  // Poore ward ka line-level summary (sirf scalars, markers nahi).
+  //
+  // Service ki cached read use karte hain - wahi ward dobara kholne par network
+  // par jaata hi nahi. Service kuch na mile to {} deta hai, par yahan null
+  // chahiye: neeche wala block "ward me kuch hai hi nahi" ko null se pehchanta
+  // hai, aur old path (MarkedHouses/{ward}) bhi khali hone par null hi deta tha.
+  getNewPathWardLineSummary(wardNo: any): Promise<any> {
+    return this.markerMapping.getWardLineSummaries(this.db, wardNo).then((data: any) => {
+      return data != null && Object.keys(data).length > 0 ? data : null;
+    });
+  }
+
+  // Marker image ka URL. Rule ek hi jagah likha hai (MarkerMappingService):
+  // imgRef ho to flat AllMarkerImages folder se, na ho (marker abhi migrate
+  // nahi hua) to purane per-line folder se. Pehle yahan doosri soorat me bhi
+  // flat folder ka URL banta tha - us folder me purane naam ki file hoti hi
+  // nahi, to image tooti hui dikhti thi.
+  getNewPathImageUrl(entry: any, ward: any = null, line: any = null): string {
+    return this.markerMapping.markerImageUrl(entry, ward, line);
+  }
+
+  // Line-level scalars (counts, lastMarkerKey, ApproveStatus) ka new-path base.
+  getLineSummaryPath(ward: any, line: any): string {
+    return "EntityMarkingData/MarkersMapping/LineSummary/" + ward + "/" + line;
+  }
+
+  // Old markerNo -> MarkersData/{uid} ka path. Migrate na hua ho to null.
+  getMarkerNewPath(ward: any, line: any, markerNo: any): Promise<any> {
+    return this.markerMapping.getMarkerDataPath(this.db, ward, line, markerNo);
+  }
+
+  getMarkerData(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportMarkerData");
+    // Primary PID source: CardPropertyMapping (cardNumber -> propId) ek hi baar poora node.
+    // Fallback PID source: MarkedHouses (cardNumber -> propId) rfidMarkerMap me bharo.
+    let promises: any[] = [];
+    promises.push(this.readCardPropertyMapping());
+    for (let w = 0; w < this.wardList.length; w++) {
+      promises.push(this.readMarkerWard(this.wardList[w]["zoneNo"]));
+    }
+    Promise.all(promises).then(() => {
+      this.loadAllCards();
+    });
+  }
+
+  // Poora CardPropertyMapping node ek baar padho -> rfidCardPropMap (cardNumber -> propId)
+  readCardPropertyMapping() {
+    return new Promise((resolve) => {
+      let inst = this.db.object("CardPropertyMapping").valueChanges().subscribe(
+        (data: any) => {
+          inst.unsubscribe();
+          if (data != null) {
+            this.rfidCardPropMap = data;
+          }
+          resolve(true);
+        },
+        () => resolve(true)
+      );
+    });
+  }
+
+  // Ek ward ke markers padho aur rfidMarkerMap (cardNumber -> propId) bharo
+  readMarkerWard(zoneNo: any) {
+    return new Promise((resolve) => {
+      // OLD PATH (reference ke liye rakha hai):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      // NEW PATH: MarkersData + LineWise (same {lineNo:{markerNo:record}} shape)
+      this.getNewPathWardData(zoneNo).then(
+          // OLD PATH (reference ke liye rakha hai):
+          // markerInstance.unsubscribe();
+        (markerData: any) => {
+          if (markerData != null) {
+            let keyArray = Object.keys(markerData);
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineData = markerData[keyArray[i]];
+              let markerKeyArray = Object.keys(lineData);
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                if (lineData[markerNo]["cardNumber"] != null) {
+                  let propId = lineData[markerNo]["propId"] ? lineData[markerNo]["propId"] : "";
+                  let cardNumber = lineData[markerNo]["cardNumber"] ? lineData[markerNo]["cardNumber"] : "";
+                  this.rfidMarkerMap[cardNumber] = propId;
+                }
+              }
+            }
+          }
+          resolve(true);
+        // OLD PATH (reference ke liye rakha hai):
+        //   },
+        //   () => resolve(true)
+        // );
+        }
+      ).catch(() => resolve(true));
+    });
+  }
+
+  // Saari wards ke cards PARALLEL padho, rfidList ward-order mein bharo, fir build+export
+  loadAllCards() {
+    let promises = [];
+    for (let w = 0; w < this.wardList.length; w++) {
+      promises.push(this.readCardWard(this.wardList[w]["zoneNo"]));
+    }
+    Promise.all(promises).then((results: any[]) => {
+      for (let r = 0; r < results.length; r++) {
+        if (results[r] != null) {
+          for (let k = 0; k < results[r].length; k++) {
+            this.rfidList.push(results[r][k]);
+          }
+        }
+      }
+      // build + export (existing build branch)
+      this.getCardData(this.wardList.length);
+    });
+  }
+
+  // Ek ward ke cards padho aur us ward ki rows return karo
+  readCardWard(zoneNo: any) {
+    return new Promise((resolve) => {
+      let dbPath = "Houses/" + zoneNo;
+      let cardInstance = this.db.object(dbPath).valueChanges().subscribe(
+        (cardData: any) => {
+          cardInstance.unsubscribe();
+          let rows: any[] = [];
+          if (cardData != null) {
+            let keyArray = Object.keys(cardData);
+            for (let i = 0; i < keyArray.length; i++) {
+              let lineNo = keyArray[i];
+              let lineData = cardData[lineNo];
+              let cardKeyArray = Object.keys(lineData);
+              let agencyGstNumber = "08AACCW3281C1ZH";
+              let mcCode = "017";
+              let RFIDTYPE = "HardTag";
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNumber = cardKeyArray[j];
+                let cardDetail = lineData[cardNumber];
+                if (cardDetail == null) { continue; }
+                let PID = "";
+                let lat = "";
+                let lng = "";
+                if (cardDetail["latLng"] != null && cardDetail["latLng"] != "") {
+                  let latLngParts = cardDetail["latLng"].toString().replace("(", "").replace(")", "").split(",");
+                  lat = latLngParts[0] != null ? latLngParts[0].trim() : "";
+                  lng = latLngParts[1] != null ? latLngParts[1].trim() : "";
+                }
+                let cardImageURL = "";
+                if (cardDetail["cardImage"] != null && cardDetail["cardImage"] != "") {
+                  cardImageURL = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyCardImage%2F" + cardDetail["cardImage"] + "?alt=media";
+                }
+                let date = cardDetail["createdDate"] != null ? cardDetail["createdDate"] : "";
+                // PID: pehle CardPropertyMapping, na mile to MarkedHouses ka propId
+                let mappedPid = this.rfidCardPropMap[cardNumber];
+                if (mappedPid != null && mappedPid.toString().trim() !== "" && mappedPid.toString().trim() !== "00") {
+                  PID = mappedPid;
+                }
+                else if (this.rfidMarkerMap[cardNumber] != null) {
+                  PID = this.rfidMarkerMap[cardNumber];
+                }
+                let ward = cardDetail["ward"] != null ? cardDetail["ward"] : zoneNo;
+                let hufRfidNumber = cardDetail["hufRfidNumber"] != null ? cardDetail["hufRfidNumber"] : "";
+                // Photo Link: HUF card laga ho (hufRfidNumber present) -> HUFCardData ka houseImg.jpg;
+                // warna survey house image (SurveyHouseImage/<houseImage>)
+                let photoLink = "";
+                if (hufRfidNumber != "") {
+                  photoLink = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Hisar%2FHUFCardData%2F" + ward + "%2F" + lineNo + "%2F" + cardNumber + "%2FhouseImg.jpg?alt=media&token";
+                } else {
+                  let houseImage = cardDetail["houseImage"] != null ? cardDetail["houseImage"] : "";
+                  if (houseImage != "") {
+                    photoLink = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/Hisar%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+                  }
+                }
+                let locationLink = "";
+                if (lat != "" && lng != "") {
+                  locationLink = "https://www.google.com/maps?q=" + lat + "," + lng;
+                }
+                let owner = cardDetail["name"] != null ? cardDetail["name"] : "";
+                let address = cardDetail["address"] != null ? cardDetail["address"] : "";
+                let colony = cardDetail["streetColony"] != null ? cardDetail["streetColony"] : "";
+                let propertyType = cardDetail["cardType"] != null ? cardDetail["cardType"] : "";
+                if (propertyType == "आवासीय") {
+                  propertyType = "Residential";
+                } else if (propertyType == "व्यावसायिक") {
+                  propertyType = "Commercial";
+                }
+                let property = "";
+                let houseTypeDetail = this.houseTypeList.find((item: any) => item.id == cardDetail["houseType"]);
+                if (houseTypeDetail != null) {
+                  property = houseTypeDetail.houseType;
+                }
+                rows.push({ cardNumber: cardNumber, PID: PID, rfidTagNo: hufRfidNumber, owner: owner, address: address, colony: colony, wardNo: ward, property: property, propertyType: propertyType, mcCode: mcCode, RFIDTYPE: RFIDTYPE, date: date, cardImageURL: cardImageURL, lat: lat, lng: lng, agencyGstNumber: agencyGstNumber, photoLink: photoLink, locationLink: locationLink });
+              }
+            }
+          }
+          resolve(rows);
+        },
+        () => resolve([])
+      );
+    });
+  }
+
+  updateCounts_Bharat(index: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateCounts_Bharat");
+    if (index == this.wardList.length) {
+      let date = this.commonService.setTodayDate();
+      let time = new Date().toTimeString().split(" ")[0].split(":")[0] + ":" + new Date().toTimeString().split(" ")[0].split(":")[1];
+      let lastUpdate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time;
+      let dbPath = "EntitySurveyData/";
+      this.db.object(dbPath).update({ surveySummarylastUpdate: lastUpdate });
+      if (this.dateSummaryList.length > 0) {
+        let dbPath = "EntitySurveyData/DailyHouseCount/";
+        this.db.object(dbPath).remove();
+
+      }
+
+      setTimeout(() => {
+        for (let i = 0; i < this.dateSummaryList.length; i++) {
+          let surveyorId = this.dateSummaryList[i]["surveyorId"];
+          let surveyDate = this.dateSummaryList[i]["surveyDate"];
+          let zone = this.dateSummaryList[i]["zoneNo"];
+          let cardCount = this.dateSummaryList[i]["cardCount"];
+          let dbPath = "EntitySurveyData/DailyHouseCount/" + zone + "/" + surveyorId + "/" + surveyDate;
+          this.db.object(dbPath).set(cardCount);
+        }
+        this.commonService.setAlertMessage("success", "Data updated successfully !!!");
+        $(this.divLoaderCounts).hide();
+        this.surveyData.lastUpdate = lastUpdate;
+        //this.checkWithCardWardMapping();
+
+        //console.log(this.cardNumberList);
+        this.clearAll();
+        this.getWardProgressList();
+      }, 2000);
+
+    }
+    else {
+      let zoneNo = this.wardList[index]["zoneNo"];
+      // Ye loop LineSummary/{ward} likhta hai, isliye us ward ka summary
+      // bhula dete hain - warna table apne hi likhe naye counts nahi dikhata.
+      // Poori cache (records + mapping) nahi udate: wo waisi ki waisi sahi
+      // hai, aur udane par har ward par poora data dobara padhna padta.
+      this.markerMapping.clearWardSummary(zoneNo);
+      // OLD PATH (reference ke liye rakha hai):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
+      //   markerInstance.unsubscribe();
+      // NEW PATH: MarkersData + LineWise
+      this.getNewPathWardData(zoneNo).then((markerData: any) => {
+
+        if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateCounts_Bharat", markerData);
+
+          // Neeche wala loop sirf un lines par ghumta hai jinpar abhi marker
+          // hai. Jis line ka aakhri marker nikal gaya uski mapping hi khatam ho
+          // jaati hai, isliye wo line loop me aati hi nahi aur uske purane
+          // counts LineSummary par pade rah jaate hain - table me Markers 0
+          // dikhta hai par Houses purana number. Unhe yahan zero karte hain.
+          //
+          // Field list wahi jo ye page neeche khud likhta hai. Service ki
+          // default list CHAARON caller ka jod hai - us par chalte to ye page
+          // marksHouse / marksComplex / alreadyInstalledCount jaise field bhi
+          // zero kar deta, jo Ward Marking Summary ke hain aur dobara ban bhi
+          // nahi sakte. Old path par bhi ye page sirf yahi 4 zero karta tha.
+          this.markerMapping.resetEmptyLineSummaries(this.db, zoneNo, markerData,
+            ["marksCount", "surveyedCount", "lineRevisitCount", "actualMarksCount"]);
+
+          let keyArray = Object.keys(markerData);
+
+          if (keyArray.length > 0) {
+
+            let totalMarkerCount = 0;
+            let totalCardCount = 0;
+            let totalRevisit = 0;
+            let actualTotalMarkerCount = 0;//count variable to actual data
+            let actualTotalCardCount = 0;//count variable to actual data
+            let actualTotalRevisit = 0; //count variable to actual data
+
+
+
+            for (let i = 0; i < keyArray.length; i++) {
+              let markerCount = 0;
+              let cardCount = 0;
+              let revisitCount = 0;
+              let actualMarkerCount = 0;//count variable to actual data
+              // let actualCardCount = 0;//count variable to actual data
+              // let actualRevisitCount = 0;//count variable to actual data
+
+
+              let lineNo = keyArray[i];
+              let lineData = markerData[lineNo];
+              // PEHLE yahan `let lastMarkerKey = 0;` tha - dekho neeche wale comment.
+              let markerKeyArray = Object.keys(lineData);
+              let isMarker = false;
+
+              for (let j = 0; j < markerKeyArray.length; j++) {
+                let markerNo = markerKeyArray[j];
+                // PURANA GUARD: if (parseInt(markerNo))
+                //
+                // Union me jis marker ka markerNo pata na chale uski key uid
+                // ban jaati hai ({M12: rec}). parseInt("M12") = NaN = falsy, to
+                // wo marker counts se poori tarah gayab ho jaata tha. Marker
+                // hone ka asli check houseType hai, wo neeche pehle se hai.
+                if (lineData[markerNo] != null && typeof lineData[markerNo] == "object") {
+                  if (lineData[markerNo]["houseType"] != null) {
+                    isMarker = true;
+
+                    let userId = lineData[markerNo]["userId"] ? parseInt(lineData[markerNo]["userId"]) : null;
+                    let internalUser = userId != -4 ? true : false;
+
+                    markerCount = markerCount + 1;
+                    actualMarkerCount += internalUser ? 1 : 0; // to upate actual count data
+                    // PEHLE: lastMarkerKey = Number(markerNo)
+                    // Object.keys number wali keys pehle deta hai aur uid wali
+                    // ({M12}) baad me, isliye aakhri chakkar par NaN pad jaata
+                    // tha aur neeche wala `lastMarkerKey > 0` chal hi nahi
+                    // paata - us line ka lastMarkerKey kabhi refresh nahi hota.
+                    // Max lene se NaN apne aap chhant jaata hai.
+                    // PEHLE YE THA (hataya nahi, comment kiya hai):
+                    // if (Number(markerNo) > lastMarkerKey) {
+                    //   lastMarkerKey = Number(markerNo);
+                    // }
+                    // Key ab hamesha uid hai aur per-line counter retire ho chuka hai.
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      if (lineData[markerNo]["houseType"] == null) {
+                      }
+                      if (!lineData[markerNo]["cardNumber"].includes(this.cardPrefix)) {
+                        cardCount = cardCount + 1;
+                      }
+                      //actualCardCount += internalUser ? 1 : 0; // to upate actual count data
+
+                    } else if (lineData[markerNo]["revisitKey"] != null) {
+                      revisitCount = revisitCount + 1;
+                      // actualRevisitCount += internalUser ? 1 : 0; // to upate actual count data
+                    }
+                  }
+                }
+              }
+
+              console.log(isMarker);
+              if (isMarker == false) {
+                // OLD PATH (reference ke liye rakha hai):
+                // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                // NEW PATH: LineSummary
+                let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
+                //this.db.object(dbPath).remove();
+                this.db.object(dbPath).update({
+                  marksCount: markerCount,
+                  surveyedCount: cardCount,
+                  lineRevisitCount: revisitCount,
+                  actualMarksCount: actualMarkerCount,       // to update actual count in marking data
+                  //actualSurveyedCount: actualCardCount,      // to update actual count in marking data
+                  // actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
+                });
+              }
+              else {
+                // OLD PATH (reference ke liye rakha hai):
+                // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo;
+                // NEW PATH: LineSummary
+                let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
+                this.db.object(dbPath).update({
+                  marksCount: markerCount,
+                  surveyedCount: cardCount,
+                  lineRevisitCount: revisitCount,
+                  actualMarksCount: actualMarkerCount,       // to update actual count in marking data
+                  //actualSurveyedCount: actualCardCount,      // to update actual count in marking data
+                  // actualLineRevisitCount: actualRevisitCount,// to update actual count in marking data
+                });
+              }
+
+              totalMarkerCount = totalMarkerCount + markerCount;
+              totalCardCount = totalCardCount + cardCount;
+              totalRevisit = totalRevisit + revisitCount;
+
+              actualTotalMarkerCount += actualMarkerCount;// to upate actual count data
+              //  actualTotalCardCount += actualCardCount;    // to upate actual count data
+              //  actualTotalRevisit += actualRevisitCount;  // to upate actual count data
+
+              // PEHLE YE THA (hataya nahi, comment kiya hai) - line ka counter
+              // yahan se dobara likha jaata tha:
+              //
+              // if (lastMarkerKey > 0) {
+              //   // OLD PATH: "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo
+              //   let dbPath = this.getLineSummaryPath(zoneNo, lineNo);
+              //   this.db.object(dbPath).update({ lastMarkerKey: lastMarkerKey });
+              // }
+              //
+              // Ye plain update tha, max nahi - marker delete hone par counter
+              // PEECHE chala jaata tha. Ab counter hai hi nahi.
+
+            }
+
+            let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + zoneNo;
+            this.db.object(dbPath).update({
+              marked: totalMarkerCount,
+              actualMarked: actualTotalMarkerCount  // to update actual count in WardSurveyData
+            });
+
+            dbPath = "EntitySurveyData/TotalHouseCount/" + zoneNo;
+            this.db.object(dbPath).set(totalCardCount.toString());
+
+            dbPath = "EntitySurveyData/TotalRevisitRequest/" + zoneNo;
+            this.db.object(dbPath).set(totalRevisit.toString());
+
+
+            this.db.object(`EntitySurveyData/ActualTotalHouseCount/${zoneNo}`).set(actualTotalCardCount.toString());// to update actual count in EntitySurveyData
+            this.db.object(`EntitySurveyData/ActualTotalRevisitRequest/${zoneNo}`).set(actualTotalRevisit.toString());// to update actual count in EntitySurveyData
+
+            index++;
+            this.updateCounts_Bharat(index);
+
+            this.updateSurveyComplexCount_Bharat(zoneNo);
+          }
+          else {
+            index++;
+            this.updateCounts_Bharat(index);
+          }
+        }
+        else {
+          index++;
+          this.updateCounts_Bharat(index);
+        }
+      });
+    }
+  }
+
+  updateVirtualCards(zoneNo: any, lineNo: any, markerNo: any, cardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateVirtualCards");
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    // NEW PATH: MarkersData/{uid}
+    this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
+      if (newMarkerPath == null) {
+        return; // marker abhi migrate nahi hua -> skip
+      }
+      let markerInstance = this.db.object(newMarkerPath).valueChanges().subscribe(
+      markerData => {
+        markerInstance.unsubscribe();
+        if (markerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateVirtualCards", markerData);
+          let newCardNo = "MPZ" + (Number(cardNo.replace("MPZ", "")) + 100000);
+          markerData["cardNumber"] = newCardNo;
+          //console.log(markerData);
+          // OLD PATH (reference ke liye rakha hai):
+          // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+          // this.db.object(dbPath).update(markerData);
+          // Cache clear nahi: ye record ka cardNumber badalta hai, markerNo ->
+          // uid wali mapping waisi ki waisi rehti hai.
+          this.db.object(newMarkerPath).update(markerData);
+        }
+      }
+      // OLD PATH (reference ke liye rakha hai):
+      // );
+      );
+    });
+  }
+
+  updateSurveyComplexCount_Bharat(zoneNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateSurveyComplexCount_Bharat");
+
+    let dbPath = "Houses/" + zoneNo;
+    let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData: any) => {
+      houseInstance.unsubscribe();
+      let totalHouseHoldCount = 0;
+      let totalComplexCount = 0;
+      let totalHouseCount = 0;
+      let totalResidencialCount = 0;
+      let totalCommercialCount = 0;
+
+      // let actualTotalHouseHoldCount = 0;   //variable to hold actual data counts
+      //  let actualTotalComplexCount = 0;     //variable to hold actual data counts
+      //  let actualTotalHouseCount = 0;       //variable to hold actual data counts
+      //  let actualTotalResidencialCount = 0; //variable to hold actual data counts
+      //  let actualTotalCommercialCount = 0;  //variable to hold actual data counts
+
+
+
+
+
+      if (houseData != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateSurveyComplexCount_Bharat", houseData);
+        let keyArray = Object.keys(houseData);
+        if (keyArray.length > 0) {
+          let cardsCount = 0;
+
+          let wardLastLineNo = keyArray[keyArray.length - 1];
+          for (let i = 1; i <= parseInt(wardLastLineNo); i++) {
+            let line = i;
+            let houseCount = 0;
+            let houseHoldCount = 0;
+            let complexCount = 0;
+            let residencialCount = 0;
+            let commercialCount = 0;
+
+            //  let actualHouseCount = 0;       //variable to hold actual data counts
+            //  let actualHouseHoldCount = 0;   //variable to hold actual data counts
+            //  let actualComplexCount = 0;     //variable to hold actual data counts
+            //  let actualResidencialCount = 0; //variable to hold actual data counts
+            //  let actualCommercialCount = 0;  //variable to hold actual data counts
+
+            let cardObj = houseData[line];
+            if (cardObj != undefined) {
+              let cardKeyArray = Object.keys(cardObj);
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNo = cardKeyArray[j];
+
+                if (!cardNo.includes(this.cardPrefix)) {
+
+                  //if (cardObj[cardNo]["houseType"] == null || cardObj[cardNo]["houseType"] == "") {
+                  //  console.log(zoneNo + " >> " + line + " >> " + cardNo);
+                  //this.updateHousesDataHouseType(zoneNo, line, cardNo, cardObj[cardNo]["cardType"]);
+                  // }
+                  let surveyorId = cardObj[cardNo]["surveyorId"] ? parseInt(cardObj[cardNo]["surveyorId"]) : null;
+                  let internalUser = surveyorId != -4 ? true : false;
+
+                  if (cardObj[cardNo]["latLng"] != null) {
+                    let duplicateDetail = this.duplicateHouseCardList.find(item => item.cardNo == cardNo);
+                    if (duplicateDetail != undefined) {
+                      //console.log(cardNo, line);
+                    }
+                    else {
+                      this.duplicateHouseCardList.push({ cardNo: cardNo });
+                    }
+                    cardsCount++;
+
+                    let entityTypeForCheck = "";
+                    let houseTypeDetail = this.houseTypeList.find(item => item.id == cardObj[cardNo]["houseType"]);
+                    if (houseTypeDetail != undefined) {
+                      entityTypeForCheck = houseTypeDetail.entityType;
+                    }
+
+                    if (cardObj[cardNo]["houseType"] == "19" || cardObj[cardNo]["houseType"] == "20") {
+                      complexCount = complexCount + 1;
+                      // actualComplexCount += internalUser ? 1 : 0; //to update actual count data
+
+                      let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
+                      if (isNaN(servingCount)) {
+                        servingCount = 1;
+                      }
+                      houseHoldCount = houseHoldCount + servingCount;
+                      houseCount = houseCount + servingCount;
+
+                      // actualHouseHoldCount += internalUser ? servingCount : 0; //to update actual count data
+                      //  actualHouseCount += internalUser ? servingCount : 0;     //to update actual count data
+
+
+                      if (cardObj[cardNo]["houseType"] == "19") {
+                        residencialCount = residencialCount + servingCount;
+                        // actualResidencialCount += internalUser ? servingCount : 0;//to update actual count data
+                      }
+                      else {
+                        commercialCount = commercialCount + servingCount;
+                        // actualCommercialCount += internalUser ? servingCount : 0;//to update actual count data
+                      }
+                    } else {
+                      houseCount = houseCount + 1;
+                      //  actualHouseCount += internalUser ? 1 : 0;  //to update actual count data
+                      if (entityTypeForCheck == "residential") {
+                        residencialCount = residencialCount + 1;
+                        //   actualResidencialCount += internalUser ? 1 : 0; //to update actual count data
+                      }
+                      else {
+                        commercialCount = commercialCount + 1;
+                        //    actualCommercialCount += internalUser ? 1 : 0; //to update actual count data
+                      }
+                    }
+                    /*
+                    let cardData=cardObj[cardNo];
+                    //console.log(cardData);
+                    cardData["line"]=line;
+                    cardData["ward"]=zoneNo;
+                    dbPath="Houses/"+zoneNo+"/"+line+"/"+cardNo;
+                    this.db.object(dbPath).update(cardData);
+                    */
+
+                    // CardTypeMapping
+                    if (this.showScanCardWidget == true) {
+                      let cardTypeForMapping = cardObj[cardNo]["cardType"];
+                      if (cardTypeForMapping == "आवासीय") {
+                        cardTypeForMapping = "Residential";
+                      }
+                      else {
+                        cardTypeForMapping = "Commercial";
+                      }
+                      this.db.object("CardTypeMapping/" + cardNo).update({ cardType: cardTypeForMapping });
+                    }
+                    // end card type mapping
+
+
+                    let cardCount = 1;
+                    let surveyorId = cardObj[cardNo]["surveyorId"];
+                    if (cardObj[cardNo]["createdDate"] != null) {
+                      let surveyDate = cardObj[cardNo]["createdDate"].split(" ")[0];
+                      if (this.dateSummaryList.length == 0) {
+                        this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                      }
+                      else {
+                        let summaryDetail = this.dateSummaryList.find(item => item.zoneNo == zoneNo && item.surveyorId == surveyorId && item.surveyDate == surveyDate);
+                        if (summaryDetail != undefined) {
+                          summaryDetail.cardCount = Number(summaryDetail.cardCount) + Number(cardCount);
+                        }
+                        else {
+                          this.dateSummaryList.push({ zoneNo: zoneNo, surveyorId: surveyorId, surveyDate: surveyDate, cardCount: cardCount });
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+
+            totalComplexCount = totalComplexCount + complexCount;
+            totalHouseHoldCount = totalHouseHoldCount + houseHoldCount;
+            totalHouseCount = totalHouseCount + houseCount;
+            totalCommercialCount = totalCommercialCount + commercialCount;
+            totalResidencialCount = totalResidencialCount + residencialCount;
+
+            // actualTotalComplexCount += actualComplexCount;       //to update actual count data
+            //  actualTotalHouseHoldCount += actualHouseHoldCount;   //to update actual count data
+            //  actualTotalHouseCount += actualHouseCount;            //to update actual count data
+            //  actualTotalCommercialCount += actualCommercialCount;  //to update actual count data
+            //  actualTotalResidencialCount += actualResidencialCount;//to update actual count data
+
+            // OLD PATH (reference ke liye rakha hai):
+            // let dbHouseHoldPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + line;
+            // NEW PATH: LineSummary
+            let dbHouseHoldPath = this.getLineSummaryPath(zoneNo, line);
+
+            this.db.object(dbHouseHoldPath).update({
+              houseHoldCount: houseHoldCount,
+              complexCount: complexCount,
+              houseCount: houseCount,
+              //  actualHouseHoldCount: actualHouseHoldCount,//save actual counts to marked houses data
+              //  actualComplexCount: actualComplexCount,    //save actual counts to marked houses data
+              //  actualHouseCount: actualHouseCount         //save actual counts to marked houses data
+            });
+          }
+
+          // console.log(cardsCount);
+        }
+      }
+      dbPath = "EntitySurveyData/TotalHouseHoldCount/" + zoneNo;
+      this.db.object(dbPath).set(totalHouseHoldCount.toString());
+
+      dbPath = "EntitySurveyData/TotalComplexCount/" + zoneNo;
+      this.db.object(dbPath).set(totalComplexCount.toString());
+
+      dbPath = "EntitySurveyData/totalHouseWithComplexCount/" + zoneNo;
+      this.db.object(dbPath).set(totalHouseCount.toString());
+
+      dbPath = "EntitySurveyData/TotalResidentialCount/" + zoneNo;
+      this.db.object(dbPath).set(totalResidencialCount.toString());
+
+      dbPath = "EntitySurveyData/TotalCommercialCount/" + zoneNo;
+      this.db.object(dbPath).set(totalCommercialCount.toString());
+
+      ////
+      // this.db.object(`EntitySurveyData/ActualTotalHouseHoldCount/${zoneNo}`).set(actualTotalHouseHoldCount.toString());
+      //  this.db.object(`EntitySurveyData/ActualTotalComplexCount/${zoneNo}`).set(actualTotalComplexCount.toString());
+      //  this.db.object(`EntitySurveyData/ActualTotalHouseWithComplexCount/${zoneNo}`).set(actualTotalHouseCount.toString());
+      //  this.db.object(`EntitySurveyData/ActualTotalResidentialCount/${zoneNo}`).set(actualTotalResidencialCount.toString());
+      //  this.db.object(`EntitySurveyData/ActualTotalCommercialCount/${zoneNo}`).set(actualTotalCommercialCount.toString());
+    }
+    );
+
+  }
+
+  updateHousesDataHouseType(zoneNo: any, lineNo: any, cardNo: any, cardType: any) {
+    let houseType = "1";
+    if (cardType == "व्यावसायिक") {
+      houseType = "2";
+    }
+    let dbPath = "Houses/" + zoneNo + "/" + lineNo + "/" + cardNo;
+    this.db.object(dbPath).update({ houseType: houseType });
+
+  }
+
+
+  getWardProgressList() {
+    this.wardList = JSON.parse(localStorage.getItem("allZoneList"));
+    this.wardProgressList = [];
+    if (this.wardList.length > 0) {
+      for (let i = 0; i < this.wardList.length; i++) {
+        let wardNo = this.wardList[i]["zoneNo"];
+        this.wardProgressList.push({ wardNo: wardNo, markers: 0, surveyed: 0, houses: 0, revisit: 0, oldCard: 0, status: "", already: 0, nameNotCorrect: 0, houseHold: '', complex: '' });
+        if (i == 1) {
+          setTimeout(() => {
+            this.getSurveyDetail(wardNo, 1);
+            $("#tr1").addClass("active");
+          }, 4000);
+        }
+        this.getWardSummary(i, wardNo);
+      }
+    }
+    this.wardList[0]["zoneNo"] = "--All--";
+  }
+
+  exportCards() {
+    this.cardHousesList = [];
+    $(this.divLoaderMain).show();
+    let zoneNo = $(this.ddlZone).val();
+    if (zoneNo == "--All--") {
+      this.getExportCardData(1, 'All');
+    }
+    else {
+      for (let i = 0; i < this.wardList.length; i++) {
+        if (this.wardList[i]["zoneNo"] == zoneNo) {
+          this.getExportCardData(i, zoneNo);
+          i = this.wardList.length;
+        }
+      }
+    }
+  }
+
+  getExportCardData(index: any, type: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getExportCardData");
+    if (index == this.wardList.length) {
+      if (this.cardHousesList.length > 0) {
+        let totalHouses = 0;
+        let htmlString = "";
+        htmlString = "<table>";
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += "Zone No";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Line No";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Card No";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Surveyor Id";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Surveyor Name";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "No of Houses";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Name";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Geo Address";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Address";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "Card Type";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "LatLng";
+        htmlString += "</td>";
+        if (this.cityName != 'hisar') {
+          htmlString += "<td t='s'>";
+          htmlString += "Mobile";
+          htmlString += "</td>";
+        }
+        if (localStorage.getItem("userType") == "Internal User") {
+          htmlString += "<td t='s'>";
+          htmlString += "Date";
+          htmlString += "</td>";
+        }
+        htmlString += "</tr>";
+        for (let i = 0; i < this.cardHousesList.length; i++) {
+          htmlString += "<tr>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["zoneNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["lineNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["cardNo"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["surveyorId"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["surveyorName"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["houseCount"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["name"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["imageCaptureLocation"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["address"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["cardType"];
+          htmlString += "</td>";
+          htmlString += "<td t='s'>";
+          htmlString += this.cardHousesList[i]["latLng"];
+          htmlString += "</td>";
+          if (this.cityName != 'hisar') {
+            htmlString += "<td t='s'>";
+            htmlString += this.cardHousesList[i]["mobile"];
+            htmlString += "</td>";
+          }
+          if (localStorage.getItem("userType") == "Internal User") {
+            htmlString += "<td t='s'>";
+            htmlString += this.cardHousesList[i]["date"];
+            htmlString += "</td>";
+          }
+          htmlString += "</tr>";
+          totalHouses += Number(this.cardHousesList[i]["houseCount"]);
+        }
+
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += "Total";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += totalHouses;
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "<td t='s'>";
+        htmlString += "</td>";
+        htmlString += "</tr>";
+        htmlString += "<table>";
+        let fileName = this.commonService.getFireStoreCity() + "-" + type + "-HouseData.xlsx";
+        this.commonService.exportExcel(htmlString, fileName);
+      }
+      $(this.divLoaderMain).hide();
+    }
+    else {
+      let zoneNo = this.wardList[index]["zoneNo"];
+      let dbPath = "Houses/" + zoneNo;
+      let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData: any) => {
+        houseInstance.unsubscribe();
+        if (houseData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getExportCardData", houseData);
+          let keyArray = Object.keys(houseData);
+          if (keyArray.length > 0) {
+            let pendingCalls = 0;
+            let totalCardsToProcess = 0;
+            let isLoopCompleted = false;
+            let hasMovedNext = false;
+            const processNextZone = () => {
+              if (hasMovedNext) {
+                return;
+              }
+              hasMovedNext = true;
+              index++;
+              if (type != "All") {
+                index = this.wardList.length;
+              }
+              this.getExportCardData(index, type);
+            };
+            const tryProcessNextZone = () => {
+              if (isLoopCompleted && pendingCalls === 0) {
+                processNextZone();
+              }
+            };
+            for (let i = 0; i < keyArray.length; i++) {
+              let line = keyArray[i];
+              let cardObj = houseData[line];
+              let cardKeyArray = Object.keys(cardObj);
+              for (let j = 0; j < cardKeyArray.length; j++) {
+                let cardNo = cardKeyArray[j];
+                // const isUserAllowed = this.userIsExternal ? parseInt(cardObj[cardNo]["surveyorId"]) !== -4 : true;//condition for excluding data if external user
+                if (!cardNo.includes(this.cardPrefix)) {
+                  let name = cardObj[cardNo]["name"];
+                  let address = cardObj[cardNo]["address"];
+                  let cardType = "";
+                  let latLng = cardObj[cardNo]["latLng"];
+                  let mobile = cardObj[cardNo]["mobile"];
+                  let date = "";
+                  let houseCount = 0;
+                  if (cardObj[cardNo]["createdDate"] != null) {
+                    date = cardObj[cardNo]["createdDate"].split(' ')[0];
+                  }
+                  let houseType = cardObj[cardNo]["houseType"];
+                  if (houseType == "19" || houseType == "20") {
+                    if (cardObj[cardNo]["servingCount"] != null) {
+                      let servingCount = parseInt(cardObj[cardNo]["servingCount"]);
+                      if (isNaN(servingCount)) {
+                        servingCount = 1;
+                      }
+                      houseCount = servingCount;
+                    }
+                    else {
+                      houseCount = 1;
+                    }
+                  }
+                  else {
+                    houseCount = 1;
+                  }
+                  let detail = this.houseTypeList.find(item => item.id == houseType);
+                  if (detail != undefined) {
+                    cardType = detail.houseType;
+                  }
+                  let surveyorId = cardObj[cardNo]["surveyorId"] != null ? cardObj[cardNo]["surveyorId"] : "";
+                  let surveyorName = "";
+                  if (surveyorId != "" && this.surveyorList != null) {
+                    let surveyorDetail = this.surveyorList.find(item => item.surveyorId == surveyorId);
+                    if (surveyorDetail != undefined) {
+                      surveyorName = surveyorDetail.name;
+                    }
+                  }
+                  // id maujood ho to hi SUR prefix lagao, warna cell blank hi rahe
+                  if (surveyorId != "") {
+                    surveyorId = "SUR" + surveyorId;
+                  }
+                  totalCardsToProcess++;
+                  pendingCalls++;
+                  this.getOrCreateImageCaptureLocation(
+                    cardObj[cardNo]["imageCaptureLocation"],
+                    cardObj[cardNo]["latLng"],
+                    zoneNo,
+                    line,
+                    cardNo,
+                    (imageCaptureLocation: string) => {
+                      this.cardHousesList.push({
+                        zoneNo: zoneNo,
+                        lineNo: line,
+                        cardNo: cardNo,
+                        name: name,
+                        address: address,
+                        cardType: cardType,
+                        latLng: latLng,
+                        imageCaptureLocation: imageCaptureLocation,
+                        mobile: mobile,
+                        date: date,
+                        houseCount: houseCount,
+                        surveyorId: surveyorId,
+                        surveyorName: surveyorName
+                      });
+                      pendingCalls--;
+                      tryProcessNextZone();
+                    }
+                  );
+
+                }
+              }
+            }
+            isLoopCompleted = true;
+            if (totalCardsToProcess === 0) {
+              processNextZone();
+            } else {
+              tryProcessNextZone();
+            }
+          }
+          else {
+            index++;
+            if (type != "All") {
+              index = this.wardList.length;
+            }
+            this.getExportCardData(index, type);
+          }
+        }
+        else {
+          index++;
+          if (type != "All") {
+            index = this.wardList.length;
+          }
+          this.getExportCardData(index, type);
+        }
+      }
+      );
+    }
+  }
+
+  getWardSummary(index: any, wardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWardSummary");
+    let dataKey = this.userIsExternal ? 'actualMarked' : 'marked'; //conditional path for actual count
+    //dataKey = 'marked';
+    let dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/" + dataKey;
+    let markerInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      markerInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+        let markers = Number(data);
+        dataKey = this.userIsExternal ? 'actualHouseCount' : 'houseCount';
+        dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/" + dataKey;
+        let houseInstance = this.db.object(dbPath).valueChanges().subscribe((houseData: any) => {
+          houseInstance.unsubscribe();
+          if (this.userIsExternal == true && this.cityName == "ajmer") {
+            let houses = 0;
+            if (houseData != null) {
+              houses = Number(houseData);
+            }
+            if ((houses - markers) > 0) {
+              this.wardProgressList[index]["markers"] = houses;
+              this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(houses);
+            }
+            else {
+              this.wardProgressList[index]["markers"] = markers;
+              this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(markers);
+            }
+          }
+          else{
+            this.wardProgressList[index]["markers"] = markers;
+              this.surveyData.totalMarkers = this.surveyData.totalMarkers + Number(markers);
+          }
+        });
+
+
+        dataKey = this.userIsExternal ? 'ActualTotalHouseCount' : 'TotalHouseCount';//conditional path for actual count
+        dataKey = 'TotalHouseCount';
+        dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+        let surveyedInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+          surveyedInstance.unsubscribe();
+          if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+            this.wardProgressList[index]["surveyed"] = Number(data);
+            this.wardProgressList[index]["surveyed"] = Number(data);
+            this.surveyData.totalSurveyed = this.surveyData.totalSurveyed + Number(data);
+            this.surveyData.totalHouses = this.surveyData.totalHouses + Number(data);
+            this.wardProgressList[index]["status"] = "In Progress";
+            if (Number(this.wardProgressList[index]["markers"]) == Number(data)) {
+              this.wardProgressList[index]["status"] = "Survey Done";
+            }
+          }
+        });
+        //  dataKey = this.userIsExternal ? 'ActualTotalHouseWithComplexCount' : 'totalHouseWithComplexCount';//conditional path for actual count
+
+        // dataKey = 'totalHouseWithComplexCount';
+        // dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+        dataKey = this.userIsExternal ? 'actualHouseCount' : 'houseCount';
+        dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/" + dataKey;
+        let housesInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+          housesInstance.unsubscribe();
+          if (data != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+            this.wardProgressList[index]["houses"] = Number(data);
+            //this.surveyData.totalHouses = this.surveyData.totalHouses + Number(data);
+          }
+        });
+      }
+    });
+
+    dbPath = "EntityMarkingData/MarkingSurveyData/WardSurveyData/WardWise/" + wardNo + "/alreadyInstalled";
+    let alreadyInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      alreadyInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+        this.wardProgressList[index]["already"] = Number(data);
+      }
+    });
+
+    dataKey = this.userIsExternal ? 'ActualTotalRevisitRequest' : 'TotalRevisitRequest';
+    dataKey = 'TotalRevisitRequest';
+    dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+    let revisitInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      revisitInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+        this.wardProgressList[index]["revisit"] = Number(data);
+        this.surveyData.totalRevisit = this.surveyData.totalRevisit + Number(data);
+      }
+    });
+
+    dbPath = "EntitySurveyData/TotalRfidNotFoundCount/" + wardNo;
+    let oldCardInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      oldCardInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+        this.wardProgressList[index]["oldCard"] = Number(data);
+        this.surveyData.totalOldCards = this.surveyData.totalOldCards + Number(data);
+      }
+    });
+
+    dataKey = this.userIsExternal ? 'ActualTotalHouseHoldCount' : 'TotalHouseHoldCount';
+    dataKey = 'TotalHouseHoldCount';
+    dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+    let houseHoldInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      houseHoldInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+        this.wardProgressList[index]["houseHold"] = Number(data);
+      }
+    });
+
+    dataKey = this.userIsExternal ? 'ActualTotalComplexCount' : 'TotalComplexCount';
+    dataKey = 'TotalComplexCount';
+    dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+    let complexInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      complexInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+        this.wardProgressList[index]["complex"] = Number(data);
+      }
+    });
+
+    dataKey = this.userIsExternal ? 'ActualTotalResidentialCount' : 'TotalResidentialCount';
+    dataKey = 'TotalResidentialCount';
+    dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+    let residentailInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      residentailInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+        this.wardProgressList[index]["residential"] = Number(data);
+        this.surveyData.totalResidential = this.surveyData.totalResidential + Number(data);
+      }
+    });
+
+    dataKey = this.userIsExternal ? 'ActualTotalCommercialCount' : 'TotalCommercialCount';
+    dataKey = 'TotalCommercialCount';
+    dbPath = `EntitySurveyData/${dataKey}/${wardNo}`;
+    let commercialInstance = this.db.object(dbPath).valueChanges().subscribe((data: any) => {
+      commercialInstance.unsubscribe();
+      if (data != null) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWardSummary", data);
+        this.wardProgressList[index]["commercial"] = Number(data);
+        this.surveyData.totalCommercial = this.surveyData.totalCommercial + Number(data);
+      }
+    });
+
+    let wardNameNotCorrectList = JSON.parse(localStorage.getItem("wardNameNotCorrectList"));
+    if (wardNameNotCorrectList != null) {
+      let wardNameDetail = wardNameNotCorrectList.find(item => item.wardNo == wardNo);
+      if (wardNameDetail != undefined) {
+        this.wardProgressList[index]["nameNotCorrect"] = wardNameDetail.count;
+      }
+    }
+  }
+
+  setActiveClass(index: any) {
+    for (let i = 0; i < this.wardProgressList.length; i++) {
+      let id = "tr" + i;
+      let element = <HTMLElement>document.getElementById(id);
+      let className = element.className;
+      if (className != null) {
+        $("#tr" + i).removeClass(className);
+      }
+      if (i == index) {
+        $("#tr" + i).addClass("active");
+      }
+    }
+  }
+
+  clearWardDetailData() {
+    this.wardLineCount = 0;
+    this.surveyData.totalLines = 0;
+    this.surveyData.wardMarkers = 0;
+    this.surveyData.wardRevisit = 0;
+    this.surveyData.wardSurveyed = 0;
+    this.surveyData.wardAlreadyCard = 0;
+    this.surveyData.wardOldCards = 0;
+    this.surveyData.wardNameNotCorrect = 0;
+    this.lineSurveyList = [];
+    this.wardLineMarkerImageList = [];
+    // Cache clear nahi: yahan DB me kuch likha hi nahi jaata, sirf screen ke
+    // list reset hote hain. Cache ward-wise alag key par hai, to jo ward pehle
+    // padh liya wo memory se hi khulega.
+  }
+
+  getSurveyDetail(wardNo: any, listIndex: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getSurveyDetail");
+    this.clearWardDetailData();
+    this.selectedWard = wardNo;
+    $('#divLoaderMain').show();
+    if (this.isFirst == false) {
+      this.setActiveClass(listIndex);
+    } else {
+      this.isFirst = false;
+    }
+
+    this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
+      let wardLines = JSON.parse(data);
+      let lineCount = Number(wardLines["totalLines"]);
+      if (lineCount != undefined) {
+        this.wardLineCount = Number(lineCount);
+        this.surveyData.totalLines = this.wardLineCount;
+        let wardSummary = this.wardProgressList.find(item => item.wardNo == wardNo);
+        if (wardSummary != undefined) {
+          this.surveyData.wardMarkers = wardSummary.markers;
+          this.surveyData.wardRevisit = wardSummary.revisit;
+          this.surveyData.wardSurveyed = wardSummary.surveyed;
+          this.surveyData.wardAlreadyCard = wardSummary.already;
+          this.surveyData.wardOldCards = wardSummary.oldCard;
+          this.surveyData.wardNameNotCorrect = wardSummary.nameNotCorrect;
+        }
+
+        // OLD PATH (reference ke liye rakha hai):
+        // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo;
+        // let markedHouseInstance = this.db.object(dbPath).valueChanges().subscribe(
+        //   (markedHouseData: any) => {
+        //     markedHouseInstance.unsubscribe();
+        // NEW PATH: is block ko do cheezein chahiye —
+        Promise.all([
+          this.getNewPathWardLineSummary(wardNo),
+          this.getNewPathWardData(wardNo)
+        ]).then(
+          (results: any[]) => {
+            let lineSummary = results[0];
+            let wardMarkers = results[1];
+            let markedHouseData: any = null;
+            if (lineSummary != null || wardMarkers != null) {
+              markedHouseData = {};
+              // pehle line summary ke scalars, phir us line ke markers merge
+              if (lineSummary != null) {
+                let sKeys = Object.keys(lineSummary);
+                for (let s = 0; s < sKeys.length; s++) {
+                  if (lineSummary[sKeys[s]] != null && typeof lineSummary[sKeys[s]] == "object") {
+                    markedHouseData[sKeys[s]] = Object.assign({}, lineSummary[sKeys[s]]);
+                  }
+                }
+              }
+              if (wardMarkers != null) {
+                let mKeys = Object.keys(wardMarkers);
+                for (let m = 0; m < mKeys.length; m++) {
+                  if (markedHouseData[mKeys[m]] == null) {
+                    markedHouseData[mKeys[m]] = {};
+                  }
+                  Object.assign(markedHouseData[mKeys[m]], wardMarkers[mKeys[m]]);
+                }
+              }
+            }
+            if (markedHouseData != null) {
+              this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getSurveyDetail", markedHouseData);
+              for (let i = 1; i <= this.wardLineCount; i++) {
+
+                this.lineSurveyList.push({ lineNo: i, markers: 0, diff: 0, alreadyCard: 0, survyed: 0, houses: 0, oldCard: 0, revisit: 0, wardNo: wardNo, houseHoldCount: '', complexCount: '0', class: '' });
+                if (markedHouseData[i] != null) {
+                  // let markedCount = 0;
+                  // let surveyedCount = 0;
+                  // let houseCount = 0;
+                  // let lineRevisitCount = 0;
+                  // let lineRfidNotFoundCount = 0;
+                  // let alreadyInstalledCount = 0;
+                  // let houseHoldCount = 0;
+                  // let complexCount = 0;  
+
+                  const { marksCount = 0, actualMarksCount = 0, surveyedCount = 0, actualSurveyedCount = 0, houseCount = 0, actualHouseCount = 0, lineRevisitCount = 0, actualLineRevisitCount = 0, houseHoldCount = 0, actualHouseHoldCount = 0, complexCount = 0, actualComplexCount = 0, lineRfidNotFoundCount = 0, alreadyInstalledCount = 0 } = markedHouseData[i] || {};
+
+                  // if (parseInt(markedHouseData[i]["marksCount"])) {
+                  //   markedCount = markedHouseData[i]["marksCount"];
+                  // }
+                  // if (parseInt(markedHouseData[i]["surveyedCount"])) {
+                  //   surveyedCount = markedHouseData[i]["surveyedCount"];
+                  // }
+                  // if (parseInt(markedHouseData[i]["houseCount"])) {
+                  //   houseCount = markedHouseData[i]["houseCount"];
+                  // }
+                  // if (parseInt(markedHouseData[i]["lineRevisitCount"])) {
+                  //   lineRevisitCount = markedHouseData[i]["lineRevisitCount"];
+                  // }
+                  // if (parseInt(markedHouseData[i]["lineRfidNotFoundCount"])) {
+                  //   lineRfidNotFoundCount = markedHouseData[i]["lineRfidNotFoundCount"];
+                  // }
+                  // if (parseInt(markedHouseData[i]["alreadyInstalledCount"])) {
+                  //   alreadyInstalledCount = markedHouseData[i]["alreadyInstalledCount"];
+                  // }
+                  // if (parseInt(markedHouseData[i]["houseHoldCount"])) {
+                  //   houseHoldCount = markedHouseData[i]["houseHoldCount"];
+                  // }
+                  // if (parseInt(markedHouseData[i]["complexCount"])) {
+                  //   complexCount = markedHouseData[i]["complexCount"];
+                  // }
+
+                  let lineDetail = this.lineSurveyList.find(item => item.lineNo == i);
+                  if (lineDetail != undefined) {
+
+                    let markers = this.userIsExternal ? parseInt(actualMarksCount) : parseInt(marksCount); //conditioal variable for actual count
+                    let houses = this.userIsExternal ? parseInt(actualHouseCount) : parseInt(houseCount);//conditioal variable for actual count
+                    let diff = 0;
+                    if (this.hideComplex == 1) {
+                      diff = houses - markers;
+                      if (diff > 0) {
+                        markers = houses;
+                      }
+                    }
+                    lineDetail.diff = diff;
+                    lineDetail.markers = markers;
+                    lineDetail.survyed = this.userIsExternal ? parseInt(actualSurveyedCount) : parseInt(surveyedCount);//conditioal variable for actual count
+                    lineDetail.houses = this.userIsExternal ? parseInt(actualHouseCount) : parseInt(houseCount);//conditioal variable for actual count
+                    lineDetail.revisit = this.userIsExternal ? parseInt(actualLineRevisitCount) : parseInt(lineRevisitCount);//conditioal variable for actual count
+                    lineDetail.houseHoldCount = this.userIsExternal ? parseInt(actualHouseHoldCount) : parseInt(houseHoldCount);//conditioal variable for actual count
+                    lineDetail.complexCount = this.userIsExternal ? parseInt(actualComplexCount) : parseInt(complexCount);//conditioal variable for actual count
+                    lineDetail.oldCard = parseInt(lineRfidNotFoundCount);
+                    lineDetail.alreadyCard = parseInt(alreadyInstalledCount);
+                    if (Number(lineDetail.markers != Number(lineDetail.survyed))) {
+                      lineDetail.class = "not-matched";
+                    }
+                  }
+                  let markerData = markedHouseData[i];
+                  let keyArray = Object.keys(markerData);
+                  if (keyArray.length > 0) {
+                    for (let j = 0; j < keyArray.length; j++) {
+                      // PURANA GUARD: parseInt(key) + !isNaN(...)
+                      //
+                      // Union me uid wali key (M12) parseInt par NaN deti thi,
+                      // isliye wo marker image list se gayab ho jaata tha.
+                      // Key waise ki waisi; dikhne wala number record ke apne
+                      // markerNo se, wo bhi na ho to key se.
+                      let markerKey = keyArray[j];
+                      let marker = markerData[markerKey];
+                      if (marker == null || typeof marker != "object") {
+                        continue;
+                      }
+                      if (marker["cardNumber"] == null) {
+                        continue;
+                      }
+                      let markerNo = marker["markerNo"] != null ? marker["markerNo"] : markerKey;
+                      let image = marker["image"];
+                      // OLD PATH (reference ke liye rakha hai):
+                      // this.wardLineMarkerImageList.push({ wardNo: wardNo, lineNo: i, markerNo: markerNo, cardNo: markerData[markerNo]["cardNumber"], image: image });
+                      // NEW PATH: image ab flat AllMarkerImages folder me hai (imgRef se).
+                      let imageUrl = this.getNewPathImageUrl(marker, wardNo, i);
+                      this.wardLineMarkerImageList.push({ wardNo: wardNo, lineNo: i, markerNo: markerNo, cardNo: marker["cardNumber"], image: image, imageUrl: imageUrl });
+                    }
+                  }
+                }
+              }
+            }
+            $('#divLoaderMain').hide();
+          }
+        );
+      }
+    });
+  }
+
+  getNameNotCorrect() {
+    let nameNotCorrectCount = 0;
+    for (let i = 1; i <= this.wardLineCount; i++) {
+      let dbPath = "Houses/" + this.selectedWard + "/" + i;
+      let wardNameInstance = this.db.list(dbPath).valueChanges().subscribe(
+        data => {
+          wardNameInstance.unsubscribe();
+          if (data.length > 0) {
+            for (let j = 0; j < data.length; j++) {
+              if (data[j]["isNameCorrect"] == null) {
+                nameNotCorrectCount = nameNotCorrectCount + 1;
+              }
+              else if (data[j]["isNameCorrect"] != "yes") {
+                nameNotCorrectCount = nameNotCorrectCount + 1;
+              }
+            }
+            this.surveyData.wardNameNotCorrect = nameNotCorrectCount;
+          }
+        }
+      );
+    }
+    setTimeout(() => {
+      let wardSummary = this.wardProgressList.find(item => item.wardNo == this.selectedWard);
+      if (wardSummary != undefined) {
+        wardSummary.nameNotCorrect = nameNotCorrectCount;
+        this.setWardNameNotCorrectList(this.selectedWard, nameNotCorrectCount);
+      }
+    }, 1000);
+  }
+
+  setWardNameNotCorrectList(ward: any, count: any) {
+    let wardNameNotCorrectList = JSON.parse(localStorage.getItem("wardNameNotCorrectList"));
+    if (wardNameNotCorrectList == null) {
+      wardNameNotCorrectList = [];
+      wardNameNotCorrectList.push({ wardNo: ward, count: count });
+      localStorage.setItem("wardNameNotCorrectList", JSON.stringify(wardNameNotCorrectList));
+    }
+    else {
+      let wardSummary = this.wardProgressList.find(item => item.wardNo == this.selectedWard);
+      if (wardSummary != undefined) {
+        let wardNameDetail = wardNameNotCorrectList.find(item => item.wardNo == this.selectedWard);
+        if (wardNameDetail != undefined) {
+          wardNameDetail.count = count;
+        }
+        else {
+          wardNameNotCorrectList.push({ wardNo: ward, count: count });
+        }
+        localStorage.setItem("wardNameNotCorrectList", JSON.stringify(wardNameNotCorrectList));
+      }
+    }
+  }
+
+  // showLineDetail(content: any, wardNo: any, lineNo: any) {
+  //   this.surveyedDetailList = [];
+  //   this.getLineDetail(wardNo, lineNo);
+  //   this.modalService.open(content, { size: "lg" });
+  //   let windowHeight = $(window).height();
+  //   let windowWidth = $(window).width();
+  //   let height = 870;
+  //   let width = windowWidth - 300;
+
+  //   height = (windowHeight * 90) / 100;
+  //   width = (windowWidth * 90) / 100;
+  //   let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  //   let divHeight = height - 50 + "px";
+  //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+  //   $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+  //   $("div .modal-dialog-centered").css("margin-top", marginTop);
+  //   $("#divStatus").css("height", divHeight);
+  // }
+
+  //New showLineDetail function without this modal service
+  showLineDetail(wardNo: any, lineNo: any) {
+    this.surveyedDetailList = [];
+    this.getLineDetail(wardNo, lineNo);
+
+    // Remove this line - ye NgBootstrap modal open kar raha hai
+    // this.modalService.open(content, { size: "lg" });
+
+    // Custom styling ko CSS mein move kar dein ya comment out kar dein
+    // let windowHeight = $(window).height();
+    // let windowWidth = $(window).width();
+    // let height = 870;
+    // let width = windowWidth - 300;
+    // height = (windowHeight * 90) / 100;
+    // width = (windowWidth * 90) / 100;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height - 50 + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divStatus").css("height", divHeight);
+  }
+
+  closeModel() {
+    this.modalService.dismissAll();
+  }
+
+  getLineDetail(wardNo: any, lineNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getLineDetail");
+    let dbPath = "Houses/" + wardNo + "/" + lineNo;
+    let lineDetailInstance = this.db.list(dbPath).valueChanges().subscribe((data: any) => {
+      lineDetailInstance.unsubscribe();
+      if (data.length > 0) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getLineDetail", data);
+        for (let i = 0; i < data.length; i++) {
+          const isUserAllowed = this.userIsExternal ? parseInt(data[i]["surveyorId"]) !== -4 : true;//condition for excluding data if external user
+          if (!data[i]["cardNo"].includes(this.cardPrefix)) {
+            if (data[i]["latLng"] != null) {
+              let city = this.commonService.getFireStoreCity();
+              if (this.cityName == "sikar") {
+                city = "Sikar-Survey";
+              }
+              let entityList = [];
+              let houseHoldCount = 0;
+              let surveyorName = "";
+              let surveyDate = "";
+              let isCommercial = false;
+              if (data[i]["surveyorId"] != null) {
+                let detail = this.surveyorList.find(item => item.surveyorId == data[i]["surveyorId"]);
+                if (detail != undefined) {
+                  surveyorName = detail.name;
+                }
+              }
+              if (data[i]["createdDate"] != null) {
+                let date = data[i]["createdDate"].split(' ')[0];
+                let time = data[i]["createdDate"].split(' ')[1];
+                surveyDate = date.split('-')[2] + " " + this.commonService.getCurrentMonthShortName(Number(date.split('-')[1])) + " " + date.split('-')[0] + " " + time.split(':')[0] + ":" + time.split(':')[1];
+              }
+              let servingCount = 0;
+              if (data[i]["servingCount"] != null) {
+                if (data[i]["servingCount"] != "") {
+                  servingCount = Number(data[i]["servingCount"]);
+                }
+              }
+              let className = "house-list";
+              let imageURL = "../../../assets/img/system-generated-image.jpg";
+              if (data[i]["cardImage"] != null) {
+                let cardImageFolder = data[i]["surveyorId"] == "-1" ? "SurveyRfidNotFoundCardImage" : "SurveyCardImage";
+                if (city == "Sikar-Survey") {
+                  this.getSikarCardImages(data[i]["cardNo"], data[i]["cardImage"], cardImageFolder);
+                }
+                else {
+                  imageURL = this.commonService.fireStoragePath + city + "%2F" + cardImageFolder + "%2F" + data[i]["cardImage"] + "?alt=media";
+                }
+              }
+              let houseImageURL = "../../../assets/img/system-generated-image.jpg";
+              if (data[i]["houseImage"] != null) {
+                if (data[i]["surveyorId"] == "-1") {
+                  houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyRfidNotFoundCardImage%2F" + data[i]["cardImage"] + "?alt=media";
+                }
+                else {
+                  if (city == "Sikar-Survey") {
+                    this.getSikarHouseImages(data[i]["cardNo"], data[i]["houseImage"]);
+                  }
+                  else {
+                    houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+                  }
+                  // houseImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["houseImage"] + "?alt=media";
+                }
+              }
+              if (data[i]["houseType"] == "19" || data[i]["houseType"] == "20") {
+                className = "commercial-list";
+                isCommercial = true;
+                if (data[i]["Entities"] != null) {
+                  let entityData = data[i]["Entities"];
+                  houseHoldCount = entityData.length - 1;
+                  for (let j = 1; j < entityData.length; j++) {
+                    let keyIndex = j;
+                    let entityImageURL = "../../../assets/img/system-generated-image.jpg";
+                    let houseImage = "";
+                    if (entityData[keyIndex]["house image"] != null) {
+                      houseImage = entityData[keyIndex]["house image"];
+                    }
+                    else if (entityData[keyIndex]["houseImage"] != null) {
+                      houseImage = entityData[keyIndex]["houseImage"];
+                    }
+                    if (city == "Sikar-Survey") {
+                      this.getSikarHouseEntityImages(data[i]["cardNo"], houseImage, j - 1);
+                    }
+                    else {
+                      entityImageURL = this.commonService.fireStoragePath + city + "%2FSurveyHouseImage%2F" + data[i]["cardNo"] + "%2FEntities%2F" + houseImage + "?alt=media";
+                    }
+                    entityList.push({ name: entityData[keyIndex]["name"], mobile: entityData[keyIndex]["mobile"], entityImageURL: entityImageURL });
+                  }
+                }
+              }
+              let cardType = data[i]["cardType"];
+              let entityType = "";
+              let detail = this.houseTypeList.find(item => item.id == data[i]["houseType"]);
+              if (detail != undefined) {
+                entityType = detail.houseType;
+              }
+              let markerImageURL = "../../../assets/img/system-generated-image.jpg";
+              detail = this.wardLineMarkerImageList.find(item => item.cardNo == data[i]["cardNo"]);
+              if (detail != undefined) {
+                if (detail.image != "") {
+                  // OLD PATH (reference ke liye rakha hai):
+                  // markerImageURL = this.commonService.fireStoragePath + city + "%2FMarkingSurveyImages%2F" + wardNo + "%2F" + lineNo + "%2F" + detail.image + "?alt=media";
+                  // NEW PATH: getSurveyDetail me imgRef se bana hua URL
+                  markerImageURL = detail.imageUrl;
+                }
+              }
+              this.surveyedDetailList.push({ wardNo: wardNo, lineNo: lineNo, cardType: cardType, entityType: entityType, cardNo: data[i]["cardNo"], imageUrl: imageURL, name: data[i]["name"], houseImageUrl: houseImageURL, markerImageURL: markerImageURL, entityList: entityList, houseHoldCount: houseHoldCount, surveyorName: surveyorName, surveyDate: surveyDate, houseType: data[i]["houseType"], servingCount: servingCount, isCommercial: isCommercial, class: className });
+            }
+          }
+        }
+      }
+    }
+    );
+  }
+
+  getSikarHouseEntityImages(cardNo: any, houseImage: any, index: any) {
+    let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage;
+    let urlSikar = "Sikar/SurveyHouseImage/" + cardNo + "/Entities/" + houseImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          // detail.cardNo="AAAAA";
+          detail.entityList[index]["entityImageURL"] = this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.entityList[index]["entityImageURL"] = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + cardNo + "%2FEntities%2F" + houseImage + "?alt=media";
+        }
+      });
+  }
+
+
+  getSikarCardImages(cardNo: any, cardImage: any, folder: any) {
+    let urlSikarSurvey = "Sikar-Survey/" + folder + "/" + cardImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.imageUrl = this.commonService.fireStoragePath + "Sikar-Survey%2F" + folder + "%2F" + cardImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.imageUrl = this.commonService.fireStoragePath + "Sikar%2F" + folder + "%2F" + cardImage + "?alt=media";
+        }
+      });
+  }
+
+  getSikarHouseImages(cardNo: any, houseImage: any) {
+    let urlSikarSurvey = "Sikar-Survey/SurveyHouseImage/" + houseImage;
+    let urlSikar = "Sikar/SurveyHouseImage/" + houseImage;
+    const ref = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(urlSikarSurvey);
+    ref.getDownloadURL()
+      .then((url) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          // detail.cardNo="AAAAA";
+          detail.houseImageUrl = this.commonService.fireStoragePath + "Sikar-Survey%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+        }
+      })
+      .catch((error) => {
+        let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+        if (detail != undefined) {
+          detail.houseImageUrl = this.commonService.fireStoragePath + "Sikar%2FSurveyHouseImage%2F" + houseImage + "?alt=media";
+        }
+      });
+  }
+
+
+  getMarkerImage() {
+
+  }
+
+  openHouseTypePopup(wardNo: any, lineNo: any, index: any) {
+    $(this.divHouseType).show();
+    $(this.houseWardNo).val(wardNo);
+    $(this.houseLineNo).val(lineNo);
+    $(this.houseIndex).val(index);
+    if (this.surveyedDetailList.length > 0) {
+      $(this.ddlHouseType).val(this.surveyedDetailList[index]["houseType"]);
+      if (this.surveyedDetailList[index]["houseType"] == "19" || this.surveyedDetailList[index]["houseType"] == "20") {
+        $(this.txtServingCount).val(this.surveyedDetailList[index]["servingCount"]);
+        $(this.divServingCount).show();
+      }
+      else {
+        $(this.txtServingCount).val("0");
+        $(this.divServingCount).hide();
+      }
+    }
+  }
+
+  setServingCount() {
+    let houseType = $(this.ddlHouseType).val();
+    $(this.txtServingCount).val('0');
+    if (houseType == "19" || houseType == "20") {
+      $(this.divServingCount).show();
+    }
+    else {
+      $(this.divServingCount).hide();
+    }
+  }
+
+  updateHouseType() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateHouseType");
+    let wardNo = $(this.houseWardNo).val();
+    let lineNo = $(this.houseLineNo).val();
+    let index = $(this.houseIndex).val();
+    let houseTypeId = $(this.ddlHouseType).val();
+    let servingCount = $(this.txtServingCount).val();
+    let cardType = "व्यावसायिक";
+    let isCommercial = false;
+    if (houseTypeId == "19" || houseTypeId == "20") {
+      isCommercial = true;
+    }
+    else {
+      servingCount = "0";
+    }
+    this.surveyedDetailList[Number(index)]["isCommercial"] = isCommercial;
+    this.surveyedDetailList[Number(index)]["houseType"] = houseTypeId;
+    this.surveyedDetailList[Number(index)]["servingCount"] = servingCount;
+    let cardNumber = this.surveyedDetailList[Number(index)]["cardNo"];
+
+    let houseTypeDetail = this.houseTypeList.find(item => item.id == houseTypeId);
+    if (houseTypeDetail != undefined) {
+      if (houseTypeDetail.entityType == "residential") {
+        cardType = "आवासीय";
+      }
+      this.surveyedDetailList[Number(index)]["entityType"] = houseTypeDetail.houseType;
+    }
+    let dbPath = "Houses/" + wardNo + "/" + lineNo + "/" + cardNumber;
+    this.db.object(dbPath).update({ houseType: houseTypeId, cardType: cardType, servingCount: servingCount });
+    // OLD PATH (reference ke liye rakha hai):
+    // dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe(
+    //   data => {
+    //     markerInstance.unsubscribe();
+    // NEW PATH: MarkersData + LineWise
+    this.getNewPathLineData(wardNo, lineNo).then(
+      (data: any) => {
+        if (data != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHouseType", data);
+          let keyArray = Object.keys(data);
+          if (keyArray.length > 0) {
+            for (let i = 0; i < keyArray.length; i++) {
+              let markerNo = keyArray[i];
+              if (data[markerNo]["cardNumber"] != null) {
+                if (cardNumber == data[markerNo]["cardNumber"]) {
+                  // OLD PATH (reference ke liye rakha hai):
+                  // let dbPath = "EntityMarkingData/MarkedHouses/" + wardNo + "/" + lineNo + "/" + markerNo;
+                  // this.db.object(dbPath).update({ houseType: houseTypeId });
+                  // NEW PATH: MarkersData/{uid}
+                  // Cache clear nahi: sirf record ka houseType badalta hai.
+                  this.getMarkerNewPath(wardNo, lineNo, markerNo).then((newMarkerPath: any) => {
+                    if (newMarkerPath != null) {
+                      this.db.object(newMarkerPath).update({ houseType: houseTypeId });
+                    }
+                  });
+                  i = keyArray.length;
+                }
+              }
+            }
+          }
+          this.cancelHouseType();
+          this.commonService.setAlertMessage("success", "Saved successfully !!!");
+        }
+        else {
+          this.cancelHouseType();
+          this.commonService.setAlertMessage("success", "Saved successfully !!!");
+        }
+      }
+    );
+  }
+
+  cancelHouseType() {
+    $(this.houseWardNo).val("0");
+    $(this.houseLineNo).val("0");
+    $(this.houseIndex).val("0");
+    $(this.txtServingCount).val("0");
+    $(this.divHouseType).hide();
+  }
+
+
+  showEntity(cardNo: any) {
+    let detail = this.surveyedDetailList.find(item => item.cardNo == cardNo);
+    if (detail != undefined) {
+      this.entityList = detail.entityList;
+      $(this.divEntityList).show();
+    }
+  }
+
+  hideEntity() {
+    this.entityList = [];
+    $(this.divEntityList).hide();
+  }
+
+  // showDateWiseDetail(content: any, type: any) {
+  //   this.surveyDateList = [];
+  //   this.modalService.open(content, { size: "lg" });
+  //   let windowHeight = $(window).height();
+  //   let windowWidth = $(window).width();
+  //   let height = 870;
+  //   let width = 400;
+  //   height = (windowHeight * 90) / 100;
+  //   let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+  //   let divHeight = height - 50 + "px";
+  //   $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+  //   $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+  //   $("div .modal-dialog-centered").css("margin-top", marginTop);
+  //   $("#tblSurvey").css("height", divHeight);
+  //   $('#surveyType').html(type);
+  //   if (type == "RFID Not Matched") {
+  //     this.getRFIDNotFound();
+  //   }
+  //   else if (type == "Revisit Requests") {
+  //     this.getRevisitRequests();
+  //   }
+  //   else {
+  //     this.getHouses();
+  //   }
+  // }
+
+  // New function for the showDateWiseDetail Modal starts here //
+  showDateWiseDetail(type: any) {
+    this.surveyDateList = [];
+
+    $('#surveyType').html(type);
+
+    if (type == "RFID Not Matched") {
+      this.getRFIDNotFound();
+    }
+    else if (type == "Revisit Requests") {
+      this.getRevisitRequests();
+    }
+    else {
+      this.getHouses();
+    }
+  }
+
+  getHouses() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getHouses");
+    let dateList = [];
+    let dbPath = "EntitySurveyData/DailyHouseCount";
+    let surveyedInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        surveyedInstance.unsubscribe();
+        if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getHouses", data);
+          for (let i = 0; i < data.length; i++) {
+            let obj = data[i];
+            let keyArray = Object.keys(obj);
+            for (let j = 0; j < keyArray.length; j++) {
+              let index = keyArray[j];
+              let objDate = obj[index];
+              let keyDateArray = Object.keys(objDate);
+              for (let k = 0; k < keyDateArray.length; k++) {
+                let dateDetail = dateList.find(item => item.date == keyDateArray[k]);
+                if (dateDetail != undefined) {
+                  dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
+                }
+                else {
+                  if (objDate[keyDateArray[k]] > 0) {
+                    let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                    dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  }
+                }
+              }
+            }
+          }
+          this.surveyDateList = dateList.sort((a, b) =>
+            b.dateOrder > a.dateOrder ? 1 : -1
+          );
+        }
+      }
+    );
+  }
+
+  getRevisitRequests() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRevisitRequests");
+    let dateList = [];
+    let dbPath = "EntitySurveyData/DailyRevisitRequestCount";
+    let revisitInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        revisitInstance.unsubscribe();
+        if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRevisitRequests", data);
+          for (let i = 0; i < data.length; i++) {
+            let obj = data[i];
+            let keyArray = Object.keys(obj);
+            for (let j = 0; j < keyArray.length; j++) {
+              let index = keyArray[j];
+              let objDate = obj[index];
+              let keyDateArray = Object.keys(objDate);
+              for (let k = 0; k < keyDateArray.length; k++) {
+                let dateDetail = dateList.find(item => item.date == keyDateArray[k]);
+                if (dateDetail != undefined) {
+                  dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
+                }
+                else {
+                  if (objDate[keyDateArray[k]] > 0) {
+                    let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                    dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  }
+                }
+              }
+            }
+          }
+          this.surveyDateList = dateList.sort((a, b) =>
+            b.dateOrder > a.dateOrder ? 1 : -1
+          );
+        }
+      }
+    );
+  }
+
+  getRFIDNotFound() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getRFIDNotFound");
+    let dateList = [];
+    let dbPath = "EntitySurveyData/DailyRfidNotFoundCount";
+    let rfidInstance = this.db.list(dbPath).valueChanges().subscribe(
+      data => {
+        rfidInstance.unsubscribe();
+        if (data.length > 0) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getRFIDNotFound", data);
+          for (let i = 0; i < data.length; i++) {
+            let obj = data[i];
+            let keyArray = Object.keys(obj);
+            for (let j = 0; j < keyArray.length; j++) {
+              let index = keyArray[j];
+              let objDate = obj[index];
+              let keyDateArray = Object.keys(objDate);
+              for (let k = 0; k < keyDateArray.length; k++) {
+                let dateDetail = dateList.find(item => item.date == keyDateArray[k]);
+                if (dateDetail != undefined) {
+                  dateDetail.count = Number(dateDetail.count) + Number(objDate[keyDateArray[k]]);
+                }
+                else {
+                  if (objDate[keyDateArray[k]] > 0) {
+                    let date = new Date(keyDateArray[k].split('-')[2] + "-" + keyDateArray[k].split('-')[1] + "-" + keyDateArray[k].split('-')[0]);
+                    dateList.push({ date: keyDateArray[k], count: objDate[keyDateArray[k]], dateOrder: date });
+                  }
+                }
+              }
+            }
+          }
+          this.surveyDateList = dateList.sort((a, b) =>
+            b.dateOrder > a.dateOrder ? 1 : -1
+          );
+        }
+      }
+    );
+  }
+
+
+  getZoneHouseTypeList() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
+    this.zoneHouseTypeList = [];
+
+    // Remove this line - ye NgBootstrap modal open kar raha hai
+    // this.modalService.open(content, { size: "lg" });
+
+    // Custom styling ko CSS mein move kar dein ya remove kar dein
+    // let windowHeight = $(window).height();
+    // let height = 870;
+    // let width = 400;
+    // height = (windowHeight * 70) / 100;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height - 75 + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divHouseStatus").css("height", divHeight);
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
+    //   markerInstance.unsubscribe();
+    // NEW PATH: MarkersData + LineWise
+    this.getNewPathWardData(this.selectedWard).then((markerData: any) => {
+      if (markerData == null) {
+        this.closeModel();
+      }
+      else {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseTypeList", markerData);
+        let keyArray = Object.keys(markerData);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          let lineData = markerData[lineNo];
+          let markerKeyArray = Object.keys(lineData);
+          for (let j = 0; j < markerKeyArray.length; j++) {
+            let markerNo = markerKeyArray[j];
+            const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
+            if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
+              let houseTypeId = lineData[markerNo]["houseType"];
+              let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+              if (detail != undefined) {
+                let houseType = detail.houseType;
+                if (this.zoneHouseTypeList.length == 0) {
+                  let count = 0;
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    count = 1;
+                  }
+                  this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                }
+                else {
+                  let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                  if (listDetail != undefined) {
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      listDetail.counts = listDetail.counts + 1;
+                    }
+                  }
+                  else {
+                    let count = 0;
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      count = 1;
+                    }
+                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  getZoneHouseTypes() {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseTypeList");
+
+
+    // Remove this line - ye NgBootstrap modal open kar raha hai
+    // this.modalService.open(content, { size: "lg" });
+
+    // Custom styling ko CSS mein move kar dein ya remove kar dein
+    // let windowHeight = $(window).height();
+    // let height = 870;
+    // let width = 400;
+    // height = (windowHeight * 70) / 100;
+    // let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
+    // let divHeight = height - 75 + "px";
+    // $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
+    // $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
+    // $("div .modal-dialog-centered").css("margin-top", marginTop);
+    // $("#divHouseStatus").css("height", divHeight);
+
+    // OLD PATH (reference ke liye rakha hai):
+    // let dbPath = "EntityMarkingData/MarkedHouses/" + this.selectedWard;
+    // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
+    //   markerInstance.unsubscribe();
+    // NEW PATH: MarkersData + LineWise
+    this.getNewPathWardData(this.selectedWard).then((markerData: any) => {
+      this.zoneHouseTypeList = [];
+      if (markerData == null) {
+        this.closeModel();
+      }
+      else {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseTypeList", markerData);
+        let keyArray = Object.keys(markerData);
+        for (let i = 0; i < keyArray.length; i++) {
+          let lineNo = keyArray[i];
+          let lineData = markerData[lineNo];
+          let markerKeyArray = Object.keys(lineData);
+          for (let j = 0; j < markerKeyArray.length; j++) {
+            let markerNo = markerKeyArray[j];
+            const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true;
+            if (lineData[markerNo]["houseType"] != null && isUserAllowed) {
+              let houseTypeId = lineData[markerNo]["houseType"];
+              let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+              if (detail != undefined) {
+                let houseType = detail.houseType;
+                if (this.zoneHouseTypeList.length == 0) {
+                  let count = 0;
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    count = 1;
+                  }
+                  this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                }
+                else {
+                  let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                  if (listDetail != undefined) {
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      listDetail.counts = listDetail.counts + 1;
+                    }
+                  }
+                  else {
+                    let count = 0;
+                    if (lineData[markerNo]["cardNumber"] != null) {
+                      count = 1;
+                    }
+                    this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+  }
+
+  exportDateWiseCards() {
+    if (this.surveyDateList.length > 0) {
+      $('#divLoaderMain').show();
+
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Date";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Cards";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.surveyDateList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.surveyDateList[i]["date"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.surveyDateList[i]["count"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName = "Date-Wise-Cards.xlsx";
+      this.commonService.exportExcel(htmlString, fileName);
+      $('#divLoaderMain').hide();
+    }
+
+  }
+
+
+  exportHouseTypeList(type: any) {
+    if (this.zoneHouseTypeList.length > 0) {
+      let htmlString = "";
+      htmlString = "<table>";
+      htmlString += "<tr>";
+      htmlString += "<td>";
+      htmlString += "Entity Type";
+      htmlString += "</td>";
+      htmlString += "<td>";
+      htmlString += "Counts";
+      htmlString += "</td>";
+      htmlString += "</tr>";
+      for (let i = 0; i < this.zoneHouseTypeList.length; i++) {
+        htmlString += "<tr>";
+        htmlString += "<td t='s'>";
+        htmlString += this.zoneHouseTypeList[i]["houseType"];
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.zoneHouseTypeList[i]["counts"];
+        htmlString += "</td>";
+        htmlString += "</tr>";
+      }
+      htmlString += "</table>";
+      let fileName = "Ward-" + this.selectedWard + "-EntityTypes.xlsx";
+      if (type == "1") {
+        fileName = "All-Ward-EntityTypes.xlsx";
+      }
+      this.commonService.exportExcel(htmlString, fileName);
+      $('#divLoaderMain').hide();
+    }
+    else {
+      this.commonService.setAlertMessage("error", "No Survey data found !!!");
+      $('#divLoaderMain').hide();
+    }
+  }
+
+  getAllZoneHouseTypeList() {
+    this.zoneHouseTypeList = [];
+    if (this.wardProgressList.length > 0) {
+      $('#divLoaderMain').show();
+      const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FSurveyManagement%2FSurveyManagement%2FhouseType.json?alt=media";
+      let Instance = this.httpService.get(path).subscribe(data => {
+        Instance.unsubscribe();
+        let list = JSON.parse(JSON.stringify(data));
+        this.zoneHouseTypeList = list.sort((a, b) => b.houseType < a.houseType ? 1 : -1);
+        this.exportHouseTypeList("1");
+      });
+      $('#divLoaderMain').hide();
+    }
+  }
+
+  getZoneHouseType(zoneNo: any, index: any) {
+    index = index + 1;
+    if (index == this.wardProgressList.length + 1) {
+      this.commonService.saveJsonFile(this.zoneHouseTypeList, "houseType.json", "/SurveyManagement/SurveyManagement/");
+      // this.exportHouseTypeList("1");
+    }
+    else {
+      this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getZoneHouseType");
+
+      let totalCounts = 0;
+      // OLD PATH (reference ke liye rakha hai):
+      // let dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo;
+      // let markerInstance = this.db.object(dbPath).valueChanges().subscribe((markerData: any) => {
+      //   markerInstance.unsubscribe();
+      // NEW PATH: MarkersData + LineWise
+      this.getNewPathWardData(zoneNo).then((markerData: any) => {
+        if (markerData == null) {
+          if (this.wardProgressList[index] != null) {
+            let zoneNoNew = this.wardProgressList[index]["wardNo"];
+            this.getZoneHouseType(zoneNoNew, index);
+          }
+          else {
+            this.commonService.saveJsonFile(this.zoneHouseTypeList, "houseType.json", "/SurveyManagement/SurveyManagement/");
+            // this.exportHouseTypeList("1");
+          }
+        }
+        else {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getZoneHouseType", markerData);
+          let keyArray = Object.keys(markerData);
+          for (let i = 0; i < keyArray.length; i++) {
+            let lineNo = keyArray[i];
+            let lineData = markerData[lineNo];
+            let markerKeyArray = Object.keys(lineData);
+            for (let j = 0; j < markerKeyArray.length; j++) {
+              let markerNo = markerKeyArray[j];
+              // PURANA GUARD: if (parseInt(markerNo) && isUserAllowed)
+              //
+              // Union me uid wali key (M12) parseInt par NaN deti thi, isliye wo
+              // marker export se gayab ho jaata tha. Ab object check par chalte
+              // hain. isUserAllowed bhi ab guard ke BAAD nikaalte hain - pehle
+              // wo scalar par bhi chal jaata tha.
+              if (lineData[markerNo] == null || typeof lineData[markerNo] != "object") {
+                continue;
+              }
+              const isUserAllowed = this.userIsExternal ? parseInt(lineData[markerNo]["userId"]) !== -4 : true; //condition for excluding data if external user
+              if (isUserAllowed) {
+                if (lineData[markerNo]["houseType"] != null) {
+                  if (lineData[markerNo]["cardNumber"] != null && !lineData[markerNo]["cardNumber"].includes(this.cardPrefix)) {
+                    let houseTypeId = lineData[markerNo]["houseType"];
+                    let detail = this.houseTypeList.find(item => item.id == houseTypeId);
+                    if (detail != undefined) {
+                      let houseType = detail.houseType;
+                      if (this.zoneHouseTypeList.length == 0) {
+                        let count = 0;
+                        if (lineData[markerNo]["cardNumber"] != null) {
+                          count = 1;
+                          totalCounts = totalCounts + 1;
+                        }
+                        this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                      }
+                      else {
+                        let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseTypeId);
+                        if (listDetail != undefined) {
+                          if (lineData[markerNo]["cardNumber"] != null) {
+                            listDetail.counts = listDetail.counts + 1;
+                            totalCounts = totalCounts + 1;
+                          }
+                        }
+                        else {
+                          let count = 0;
+                          if (lineData[markerNo]["cardNumber"] != null) {
+                            count = 1;
+                            totalCounts = totalCounts + 1;
+                          }
+                          this.zoneHouseTypeList.push({ houseTypeId: houseTypeId, houseType: houseType, counts: count });
+                        }
+                      }
+                    }
+                  }
+                }
+                else {
+                  if (lineData[markerNo]["cardNumber"] != null) {
+                    this.updateHousesType(zoneNo, lineNo, markerNo, lineData[markerNo]["cardNumber"]);
+                  }
+                }
+              }
+            }
+          }
+          if (this.wardProgressList[index] != null) {
+            let zoneNoNew = this.wardProgressList[index]["wardNo"];
+            this.getZoneHouseType(zoneNoNew, index);
+          }
+          else {
+            this.getZoneHouseType(zoneNo, index);
+          }
+
+        }
+      }
+      );
+    }
+  }
+
+  updateHousesType(zoneNo: any, lineNo: any, markerNo: any, cardNo: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateHousesType");
+    let dbPath = "CardWardMapping/" + cardNo;
+    let cardWardInstance = this.db.object(dbPath).valueChanges().subscribe((mappingData: any) => {
+      cardWardInstance.unsubscribe();
+      if (mappingData != undefined) {
+        this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHousesType", mappingData);
+        let line = mappingData["line"];
+        let ward = mappingData["ward"];
+        dbPath = "Houses/" + ward + "/" + line + "/" + cardNo + "/houseType";
+        let houseTypeInstance = this.db.object(dbPath).valueChanges().subscribe((houseTypeData: any) => {
+          let houseType = "1";
+          houseTypeInstance.unsubscribe();
+          if (houseTypeData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "updateHousesType", houseTypeData);
+            if (houseTypeData != "") {
+              houseType = houseTypeData;
+            }
+          }
+          // OLD PATH (reference ke liye rakha hai):
+          // dbPath = "EntityMarkingData/MarkedHouses/" + zoneNo + "/" + lineNo + "/" + markerNo;
+          // this.db.object(dbPath).update({ houseType: houseType });
+          // NEW PATH: MarkersData/{uid}
+          // Cache clear nahi: sirf record ka houseType badalta hai, mapping nahi.
+          // Ye block har marker par chalta hai - clear karte to har marker par
+          // ward ka link index dobara padhna padta.
+          this.getMarkerNewPath(zoneNo, lineNo, markerNo).then((newMarkerPath: any) => {
+            if (newMarkerPath != null) {
+              this.db.object(newMarkerPath).update({ houseType: houseType });
+            }
+          });
+          let listDetail = this.zoneHouseTypeList.find(item => item.houseTypeId == houseType);
+          if (listDetail != undefined) {
+            listDetail.counts = listDetail.counts + 1;
+          }
+          else {
+            let count = 0;
+            count = 1;
+            this.zoneHouseTypeList.push({ houseTypeId: houseType, houseType: houseType, counts: count });
+          }
+        }
+        );
+      }
+    }
+    );
+  }
+  private getOrCreateImageCaptureLocation(
+    imageCaptureLocation: any,
+    latLng: any,
+    zoneNo: any,
+    line: any,
+    cardNo: any,
+    callback: (address: string) => void
+  ) {
+    const existing = (imageCaptureLocation || "").toString().trim();
+    if (existing) {
+      callback(existing);
+      return;
+    }
+
+    const parts = (latLng || "").toString().replace("(", "").replace(")", "").split(",");
+    if (parts.length !== 2) {
+      callback("");
+      return;
+    }
+
+    const lat = Number(parts[0].trim());
+    const lng = Number(parts[1].trim());
+    if (isNaN(lat) || isNaN(lng)) {
+      callback("");
+      return;
+    }
+
+    const API_KEY = "AIzaSyAEQ6Y1RVEcJrUNzdf2UzNyCARoyPwRzw8";
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`;
+
+    this.httpService.get(url).subscribe(
+      (res: any) => {
+        const address = (res.status === "OK" && res.results.length > 0) ? (res.results[0].formatted_address || "") : "";
+        if (address) {
+          this.db.object("Houses/" + zoneNo + "/" + line + "/" + cardNo).update({ imageCaptureLocation: address });
+        }
+        callback(address);
+      },
+      () => callback("")
+    );
+  }
+
+
+}
+
+export class surveyDatail {
+  totalLines: number;
+  totalMarkers: number;
+  totalSurveyed: number;
+  totalRevisit: number;
+  totalOldCards: number;
+  totalHouses: number;
+  totalResidential: number;
+  totalCommercial: number;
+  wardMarkers: number;
+  wardSurveyed: number;
+  wardRevisit: number;
+  wardAlreadyCard: number;
+  wardOldCards: number;
+  wardNameNotCorrect: number;
+  lastUpdate: string;
+}

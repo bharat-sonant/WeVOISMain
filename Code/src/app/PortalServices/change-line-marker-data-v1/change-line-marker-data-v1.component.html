@@ -1,0 +1,201 @@
+<div id="divLoader" class="loaderClass">
+    <img src="../../../assets/img/loading.gif" width="50" class="imgLoader">
+</div>
+<section class="header">
+    <div class="row no-gutters">
+        <div class="col-md-2 header1">
+        </div>
+        <div class="col-md-8 header2">
+
+        </div>
+        <div class="col-md-2 header3">
+            <button type="button" class="history-btn" *ngIf="moveHelper.canViewActionHistory()" (click)="openHistoryModal()">Action History</button>
+        </div>
+    </div>
+</section>
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-6 left">
+
+            <div class="card card2">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Update Marker Line </b></h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body card-body2">
+
+                    <form>
+                        <div class="form">
+                            <div class="row">
+                                <div class="col-md-12  pr-1">
+                                    <b>From</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6  pr-1 padding-remove">
+                                    <label>Zone No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select" id="ddlZoneFrom">
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Line No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <input id="txtLineNoFrom" class="caret-select" type="number" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12  pr-1">
+                                    <b>To</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6  pr-1 padding-remove">
+                                    <label>Zone No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select" id="ddlZoneTo">
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <label>Line No</label>
+                                    <div class="wrap-input-effects" required>
+                                        <input id="txtLineNoTo" class="caret-select" type="number" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row form-group2">
+                                <div class="col-md-12 pr-1">
+                                    <div class="form-group">
+                                        <button id="btnSave" type="button" class="btn btn-success btn-xs" [disabled]="moveRunning" (click)="saveData();">
+                                            {{ moveRunning ? 'MOVING...' : 'SAVE' }}
+                                        </button>
+                                    </div>
+                                    <!-- "MOVE MARKER DATA TO NEW PATH" button hata diya gaya -
+                                         migration ab sirf React portal ke Marker Migration page se
+                                         hoti hai. Wajah TS file me likhi hai. -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 Update2">
+            <div class="card card3">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Update Marker Counts </b></h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body card-body3">
+                    <div class="outer">
+
+                        <div class="row">
+                            <div class="col-md-12  pr-1">
+                                <label>Zone No</label>
+                                <div class="d-flex wrap-class">
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select caret-select2" id="ddlZone">
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group button">
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="updateMarkerCounts();">UPDATE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card card3">
+                <div class="card-header custom-header">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h5> <b>Update Ward Marker Mapping </b></h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body card-body3">
+                    <div class="outer">
+
+                        <div class="row">
+                            <div class="col-md-12  pr-1">
+                                <label>Zone No</label>
+                                <div class="d-flex wrap-class">
+                                    <div class="wrap-input-effects" required>
+                                        <select class="caret-select caret-select2" id="ddlZoneMarker">
+                                            <option value="{{d.zoneNo}}" *ngFor="let d of zoneList">{{d.zoneName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group button">
+                                        <button id="btnSave" class="btn btn-success btn-xs" (click)="updateWardMarker();">UPDATE</button>
+                                    </div>
+                                </div>
+                                <div class="form-group button">
+                                    <button id="btnSave" class="btn btn-success btn-xs" (click)="saveOnStorage();">Upload in Storage</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- marker move progress popup -->
+<ng-template #moveProgressModal>
+    <div class="modal-header move-modal-header">
+        <h5 class="modal-title">
+            Marker Move &mdash; Zone {{ moveSummary.fromZone }} / Line {{ moveSummary.fromLine }}
+            <i class="fa fa-long-arrow-right move-modal-arrow"></i>
+            Zone {{ moveSummary.toZone }} / Line {{ moveSummary.toLine }}
+        </h5>
+        <button type="button" class="close" [disabled]="moveRunning" (click)="closeMoveModal()" title="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body move-modal-body">
+        <app-marker-move-progress-v1 [rows]="moveRows" [summary]="moveSummary" [showHeader]="false" (retryFailed)="onRetryFailed()" (cancelMove)="onCancelMove()">
+        </app-marker-move-progress-v1>
+    </div>
+    <div class="modal-footer move-modal-footer">
+        <span class="running-note" *ngIf="moveRunning">Move चल रहा है &mdash; यह window बंद नहीं होगी।</span>
+        <button type="button" class="btn btn-default btn-xs" [disabled]="moveRunning" (click)="closeMoveModal()">Close</button>
+    </div>
+</ng-template>
+<!-- action history popup - sirf userId 4 -->
+<ng-template #historyModal>
+    <div class="modal-header ah-modal-header">
+        <h5 class="modal-title">Action History &mdash; Change Line Marker Data</h5>
+        <button type="button" class="close" (click)="closeHistoryModal()" title="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body ah-modal-body">
+        <app-action-history-v1 [db]="db" [section]="historySection" [pageName]="historyPageKey"></app-action-history-v1>
+    </div>
+</ng-template>

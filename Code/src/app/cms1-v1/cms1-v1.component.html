@@ -1,0 +1,344 @@
+<button (click)="setData();" style="margin-left: 20px; margin-top: 10px; display:none;">set data</button>
+
+
+
+<button (click)="setWardTotalLength();" style="margin-left: 20px; margin-top: 10px;">Update Ward Total Length</button>
+
+<button (click)="setSurveyorId();" style="margin-left: 20px; margin-top: 10px; display:none;">Update SurveyID</button>
+
+<button (click)="getWastebinData();" style="margin-left: 20px; margin-top: 10px; ">Get WasteBin Data</button>
+<br />
+<br />
+<div style="padding-left: 20px;">
+    <table>
+        <tr>
+            <td>Year</td>
+            <td><input id="txtYear" type="text" value="2021"></td>
+        </tr>
+        <tr>
+            <td>ward No</td>
+            <td><input id="txtWardNo" type="text"></td>
+        </tr>
+        <tr>
+            <td>ward Total Length</td>
+            <td><input id="txtWardTotalLength" type="text"></td>
+        </tr>
+        <tr>
+            <td>month</td>
+            <td><input id="txtMonth" type="text"></td>
+        </tr>
+        <tr>
+            <td>date</td>
+            <td><input id="txtDate" type="text" placeholder="yyyy-mm-dd"></td>
+        </tr>
+    </table>
+</div>
+
+<button (click)="updateChennaiScanCardData();" style="margin-left: 20px; margin-top: 10px;">Update Chennai Scan Card
+    Data</button>
+
+<br />
+<br />
+<button (click)="setWasteCollectionInfoData();" style="margin-left: 20px; margin-top: 10px;">Update WasteCollectionInfo
+    Sumary</button>
+
+<button (click)="setSummary();" style="margin-left: 20px; margin-top: 10px;">Update Sumary</button>
+<button (click)="getJulyData();" style="margin-left: 20px; margin-top: 10px;">Get July data</button>
+
+
+<button (click)="updateWardDustbin();" style="margin-left: 20px; margin-top: 10px;">Update ward dustbin</button>
+
+<button (click)="updateCardWardMapping();" style="margin-left: 20px; margin-top: 10px;">Update card ward
+    mapping</button>
+
+
+
+<button (click)="downloadSikarDustbin();" style="margin-left: 20px; margin-top: 10px;">Download Sikar Dustbin</button>
+
+
+
+
+<button (click)="updateGarbageData();" style="margin-left: 20px; margin-top: 10px;">Update Garbage Data</button>
+
+<br />
+<br />
+<br />
+<input id="fileUpload" type="file" name="file" class="file-upload-field" value="">
+
+
+
+<button (click)="updateChennaiScanCardData();" style="margin-left: 20px; margin-top: 10px;">Update Chennai Scan Card
+    Data</button>
+
+<br />
+<br />
+<button (click)="hisarMarkerUpload();" style="margin-left: 20px; margin-top: 10px;">Hisar Marker Upload</button>
+<br />
+<br />
+<button (click)="deleteHisarMarker();" style="margin-left: 20px; margin-top: 10px;">Delete Hisar Marker</button>
+<br />
+<br />
+<button (click)="CompairPayment();" style="margin-left: 20px; margin-top: 10px;">Compair Payment</button> &nbsp;
+&nbsp;<button (click)="getAllPaymentOrderId();" style="margin-left: 20px; margin-top: 10px;">Get All Payment Ordder
+    Id</button>
+<br />
+<br />
+<button (click)="uploadDustbinData();" style="margin-left: 20px; margin-top: 10px;">Update Dustbin Detail</button>
+&nbsp; &nbsp;
+<button (click)="uploadImage();" style="margin-left: 20px; margin-top: 10px;">Upload Image</button>&nbsp; &nbsp;
+<button (click)="addMarkerAgainstCardNo();" style="margin-left: 20px; margin-top: 10px;">Add Marker Against Card
+    Number</button>
+
+
+<br />
+<br />
+<button (click)="checkMarkerCount();" style="margin-left: 20px; margin-top: 10px;">Check Marker Count</button>
+
+
+
+<br />
+<br />
+<input id="txtwardLineMarker" type="text">
+<button (click)="removeLineApprove();" style="margin-left: 20px; margin-top: 10px;">Remove Marker Lines
+    Approved</button><br />
+
+<button (click)="updateRevisitMarker();" style="margin-left: 20px; margin-top: 10px;">Revisit Marker Update</button>
+
+
+<br />
+<br />
+<button (click)="markerSurveyUpdate();" style="margin-left: 20px; margin-top: 10px;">Marker Survey Update</button>
+
+
+
+<br />
+<br />
+<button (click)="exportCardNo();" style="margin-left: 20px; margin-top: 10px;">Export Card No</button>
+
+
+
+<br />
+<br />
+<button (click)="exportWardCardNo();" style="margin-left: 20px; margin-top: 10px;">Export Ward Card No</button>
+
+<br />
+<br />
+<button (click)="exportNewCardNo();" style="margin-left: 20px; margin-top: 10px;">Export New Cards</button>
+
+<br />
+<br />
+<br />
+<input id="flpUpload" type="file" name="file" class="file-upload-field" value="">&nbsp;&nbsp;&nbsp;&nbsp;<button
+    (click)="checkCardMove();" style="margin-left: 20px; margin-top: 10px;">Check Card Move</button>
+<br />
+<br />
+<button (click)="addHouseEcogram();" style="margin-left: 20px; margin-top: 10px;">Upload House Data for ECOGRAM</button>
+&nbsp; &nbsp;
+<br />
+<br />
+<button (click)="getOldDataMalviyanagar();" style="margin-left: 20px; margin-top: 10px;">Get Old Data
+    Malviyanagar</button> &nbsp; &nbsp;<button (click)="deleteOldDataMalviyanagar();"
+    style="margin-left: 20px; margin-top: 10px;">Delete Old Data Malviyanagar</button> &nbsp; &nbsp;<button
+    (click)="addNewDataMalviyanagar();" style="margin-left: 20px; margin-top: 10px;">Add New Data Malviyanagar</button>
+&nbsp; &nbsp;
+<br />
+<br />
+<button (click)="exportHouseData();" style="margin-left: 20px; margin-top: 10px;">Export House Data</button>
+
+<br />
+<br />
+<button (click)="updateMarkingData();" style="margin-left: 20px; margin-top: 10px;">Update Marking Data</button>
+
+<br />
+<br />
+<div style="padding-left: 20px;">
+    <table>
+        <tr>
+            <td>ward No</td>
+            <td><input id="txtZoneNo" type="text"></td>
+        </tr>
+        <tr>
+            <td>Line No</td>
+            <td><input id="txtLineNo" type="text"></td>
+        </tr>
+        <tr>
+            <td>New Line No</td>
+            <td><input id="txtNewLineNo" type="text"></td>
+        </tr>
+    </table>
+</div>
+<br />
+<button (click)="moveMarker();" style="margin-left: 20px; margin-top: 10px;">Move marker to new line</button>
+<br />
+<br />
+<br />
+
+
+<button (click)="addHouse();" style="margin-left: 20px; margin-top: 10px;">Add Surveyed Data</button>
+
+
+
+<br />
+<br />
+
+
+<button (click)="addHouseToMarker();" style="margin-left: 20px; margin-top: 10px;">Add House to marker Data</button>
+
+<br />
+<br />
+
+
+<button (click)="checkFileUpdateDate();" style="margin-left: 20px; margin-top: 10px;">Check file update date</button>
+
+
+<br />
+<br />
+
+
+<button (click)="exportMarkers();" style="margin-left: 20px; margin-top: 10px;">Export Marker</button>
+
+
+<br />
+<br />
+
+
+
+
+<button (click)="removeMarkerRejectStatus();" style="margin-left: 20px; margin-top: 10px;">Remove MarkersMarkers Reject
+    Status </button>
+
+
+<br />
+<br />
+
+
+<button (click)="getD2DMatkers();" style="margin-left: 20px; margin-top: 10px;">Get JaipurD2D Marker</button>
+&nbsp;&nbsp; <button (click)="updateMalviyaNagarData();" style="margin-left: 20px; margin-top: 10px;">Update
+    MAlviyanagar marker</button>&nbsp;&nbsp;
+<button (click)="moveMalviyanagarImages();" style="margin-left: 20px; margin-top: 10px;">Move Images Malviyanagar
+    marker</button>&nbsp;&nbsp;
+<br />
+<br />
+<button (click)="createHelperDevice();" style="margin-left: 20px; margin-top: 10px;">Create dummy helper
+    device</button>&nbsp;&nbsp;
+<br />
+<br />
+<button (click)="createUserJson();" style="margin-left: 20px; margin-top: 10px;">Create user json</button>&nbsp;&nbsp;
+<br />
+<br />
+<button (click)="getSurveyorHouseCounts();" style="margin-left: 20px; margin-top: 10px;">Get Surveyor House
+    Counts</button>&nbsp;&nbsp;
+<br />
+<br />
+<br />
+<br />
+<button (click)="cardNotInCardWardMapping();" style="margin-left: 20px; margin-top: 10px;">Card Not in CardWard
+    Mapping</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="updateMalviyaNagarHouseData();" style="margin-left: 20px; margin-top: 10px;">Update Malviya Nagar House
+    Data</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="updateMurlipuraHouseData();" style="margin-left: 20px; margin-top: 10px;">Update Murlipura House
+    Data</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="getHouseData();" style="margin-left: 20px; margin-top: 10px;">Get Ward House Data</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="getVirtualCardData();" style="margin-left: 20px; margin-top: 10px;">Get Virtual Cards</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="compairMarkerHouseData();" style="margin-left: 20px; margin-top: 10px;">Compaire Marker & House
+    Data</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="getHouseCounts();" style="margin-left: 20px; margin-top: 10px;">Get Ward House Counts</button>
+
+<br />
+<br />
+<br />
+<br />
+
+<table>
+    <tr>
+        <td>ward No</td>
+        <td><input id="txtDates" type="text"></td>
+        <td><label id="lblNextData"></label></td>
+    </tr>
+</table>
+<button (click)="getNextDates();" style="margin-left: 20px; margin-top: 10px;">Get next Date</button>
+
+<br />
+<br />
+<button (click)="removeVerifiedCards();" style="margin-left: 20px; margin-top: 10px;">Remove Verified Card </button>
+
+<br />
+<br />
+<button (click)="getCardWardMAppingAndHouseCount();" style="margin-left: 20px; margin-top: 10px;">get CardWardMApping
+    And HouseCount </button>
+
+<br />
+<br />
+<button (click)="updateMonthYear();" style="margin-left: 20px; margin-top: 10px;">Update Month Year in transactions
+</button>
+
+<br />
+<br />
+<button (click)="exportEmployeeData();" style="margin-left: 20px; margin-top: 10px;">Export Employee Data </button>
+
+<br />
+<br />
+<button (click)="updateCardsFromTestDataToMalviyanagarDatabase();" style="margin-left: 20px; margin-top: 10px;">Update
+    Cards From Test Database To Malviyanagar Database </button>
+
+<br />
+<br />
+<button (click)="setMarkerID();" style="margin-left: 20px; margin-top: 10px;">Set Marker ID </button>
+
+<br />
+<br />
+<button (click)="setDehradunWardLineData();" style="margin-left: 20px; margin-top: 10px;">Set Dehradun Ward Line Data
+</button>
+
+<br />
+<br />
+<br />
+<br />
+<button (click)="removeWardTripDriver();" style="margin-left: 20px; margin-top: 10px;">Remove Ward Trip Driver
+    Detail</button>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<button (click)="getPaymentCardAndCardWardMapping();" style="margin-left: 20px; margin-top: 10px;">Get Difference
+    Payment Card and Card ward mapping</button>
+
+<br />
+<br />
+<br />
+<br />
