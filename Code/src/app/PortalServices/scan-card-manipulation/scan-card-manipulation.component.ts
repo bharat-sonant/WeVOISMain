@@ -130,7 +130,12 @@ export class ScanCardManipulationComponent implements OnInit {
             }
           }
           if (wardHouses.length > 0) {
-            this.saveScanCardManipulation(dateFrom, dateTo, wardHouses, wardTotalLines);
+            if (this.cityName == "ajmer") {
+              this.saveScanCardAjmer(dateFrom, dateTo, wardHouses);
+            }
+            else {
+              this.saveScanCardManipulation(dateFrom, dateTo, wardHouses, wardTotalLines);
+            }
           }
           else {
             $(this.divLoader).hide();
@@ -250,6 +255,149 @@ export class ScanCardManipulationComponent implements OnInit {
           }
         });
     }
+  }
+
+  /* ================= AJMER : WARD LEVEL TARGET ================= */
+  // Card Scanning Report (Ajmer external user) shows: all scan records / EntitySurveyData TotalHouseCount.
+  // So here target = round(percentage x same total), and only the missing records are added on worked lines.
+
+  getDataOnce(dbPath: any): Promise<any> {
+    return new Promise((resolve) => {
+      let instance = this.db.object(dbPath).valueChanges().subscribe(data => {
+        instance.unsubscribe();
+        resolve(data);
+      });
+    });
+  }
+
+  async getWardTotalCards(date: any) {
+    let houseCount = await this.getDataOnce("EntitySurveyData/TotalHouseCount/" + this.selectedZone);
+    if (houseCount != null) {
+      return Number(houseCount);
+    }
+    let linesData: any = await this.commonService.getWardLine(this.selectedZone, date);
+    return Number(JSON.parse(linesData)["totalHouseCount"]);
+  }
+
+  async saveScanCardAjmer(dateFrom: any, dateTo: any, wardHouses: any) {
+    let date = dateFrom;
+    let skippedDates = [];
+    while (new Date(date) <= new Date(dateTo) && new Date(date) <= new Date(this.commonService.setTodayDate())) {
+      this.processDate = date;
+      this.processLine = "---";
+      let added = await this.updateDateScanAjmer(date, wardHouses);
+      if (added < 0) {
+        skippedDates.push(date);
+      }
+      date = this.commonService.getNextDate(date, 1);
+    }
+    setTimeout(() => {
+      this.updateTotalScaned($("#txtDateFrom").val(), $("#txtDateTo").val(), wardHouses);
+      if (skippedDates.length > 0) {
+        this.commonService.setAlertMessage("error", "Required percentage could not be reached on worked lines for " + skippedDates.join(", "));
+      }
+    }, 2000);
+  }
+
+  // returns number of records added, -1 if target can not be reached with available cards
+  async updateDateScanAjmer(date: any, wardHouses: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "updateDateScanAjmer");
+    let year = date.split('-')[0];
+    let monthName = this.commonService.getCurrentMonthName(Number(date.split("-")[1]) - 1);
+    let wastePath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date;
+    let scanPath = "HousesCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + date;
+
+    let lineStatusData = await this.getDataOnce(wastePath + "/LineStatus");
+    if (lineStatusData == null) {
+      return 0;
+    }
+    let summaryData = await this.getDataOnce(wastePath + "/Summary");
+    let scanData = await this.getDataOnce(scanPath);
+    let totalCards = await this.getWardTotalCards(date);
+
+    // same keys as excluded in Card Scanning Report
+    let existingCards = {};
+    if (scanData != null) {
+      Object.keys(scanData).forEach(key => {
+        if (!["ImagesData", "recentScanned", "totalScanned", "totalActualScanned"].includes(key)) {
+          existingCards[key] = true;
+        }
+      });
+    }
+    let targetCount = Math.round((totalCards * Number(this.percentage)) / 100);
+    let requiredCount = targetCount - Object.keys(existingCards).length;
+    if (requiredCount <= 0) {
+      return 0;
+    }
+
+    // worked lines with their scan window
+    let wardStartTime = "";
+    let wardEndTime = "";
+    let lineList = [];
+    Object.keys(lineStatusData).forEach(lineNo => {
+      let status = lineStatusData[lineNo];
+      if (status == null) {
+        return;
+      }
+      if (status["start-time"] != null && (wardStartTime == "" || status["start-time"] < wardStartTime)) {
+        wardStartTime = status["start-time"];
+      }
+      if (status["end-time"] != null && status["end-time"] > wardEndTime) {
+        wardEndTime = status["end-time"];
+      }
+      let cardList = wardHouses.filter(item => item.lineNo == lineNo);
+      if (cardList.length > 0) {
+        lineList.push({
+          lineNo: lineNo,
+          totalCards: cardList.length,
+          scannedCards: cardList.filter(item => existingCards[item.cardNumber] != null).length,
+          freeCards: cardList.filter(item => existingCards[item.cardNumber] == null),
+          startTime: status["start-time"],
+          endTime: status["end-time"]
+        });
+      }
+    });
+    // lines added from work percentage page have no time, use ward / duty time for them
+    if (wardStartTime == "" && summaryData != null && summaryData["dutyInTime"] != null) {
+      wardStartTime = summaryData["dutyInTime"];
+    }
+    if (wardEndTime == "" && summaryData != null && summaryData["dutyOutTime"] != null) {
+      wardEndTime = summaryData["dutyOutTime"];
+    }
+    if (wardEndTime == "") {
+      wardEndTime = wardStartTime;
+    }
+
+    // spread required cards over worked lines, each time picking the line with lowest coverage
+    let newScanData = {};
+    let addedCount = 0;
+    while (addedCount < requiredCount) {
+      let selectedLine = null;
+      for (let i = 0; i < lineList.length; i++) {
+        let line = lineList[i];
+        if (line.freeCards.length > 0 && (selectedLine == null || (line.scannedCards / line.totalCards) < (selectedLine.scannedCards / selectedLine.totalCards))) {
+          selectedLine = line;
+        }
+      }
+      if (selectedLine == null) {
+        break;
+      }
+      let card = selectedLine.freeCards.shift();
+      selectedLine.scannedCards++;
+      let startTime = selectedLine.startTime != null ? selectedLine.startTime : wardStartTime;
+      let endTime = selectedLine.endTime != null ? selectedLine.endTime : (selectedLine.startTime != null ? selectedLine.startTime : wardEndTime);
+      newScanData[card.cardNumber] = {
+        latLng: card.latlng,
+        scanBy: "-1",
+        scanTime: this.getRandomScanTime(new Date(this.toDayDate + " " + startTime).getTime(), new Date(this.toDayDate + " " + endTime).getTime())
+      };
+      addedCount++;
+    }
+
+    if (addedCount > 0) {
+      await this.db.object(scanPath).update(newScanData);
+    }
+    return addedCount < requiredCount ? -1 : addedCount;
   }
 
   getRandomScanTime(scanStartTime: any, scanEndTime: any) {
