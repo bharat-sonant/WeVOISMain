@@ -124,7 +124,7 @@
                 <tbody>
                   <tr *ngFor="let dt of monthDetail" (click)="getMonthSelectedDetail(dt.day);" style="cursor:pointer;">
                     <td style="vertical-align: top; width: 50px;">{{dt.day}}</td>
-                    <td class="text-left"><span [hidden]="dt.driver==''"> {{dt.driver}}<br><b>{{dt.km}}</b> Km in <b>{{dt.hour}} ({{dt.percentage}}%)</b></span></td>                       
+                    <td class="text-left"><span [hidden]="dt.driver==''"> Driver: {{dt.driver}}<br><span *ngIf="dt.helper!=''">Helper: {{dt.helper}}<br></span><b>{{dt.km}}</b> Km in <b>{{dt.hour}} ({{dt.percentage}}%)</b></span></td>                       
                   </tr>
                 </tbody>
               </table>

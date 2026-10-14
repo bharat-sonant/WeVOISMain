@@ -1301,7 +1301,7 @@ export class RouteTrackingComponent {
       let monthDate = year + '-' + month + '-' + (i < 10 ? '0' : '') + i;
       let monthShortName = this.commonService.getCurrentMonthShortName(Number(monthDate.split('-')[1]));
       let day = monthDate.split("-")[2] + " " + monthShortName;
-      this.monthDetail.push({ wardNo: this.selectedZone, day: day, driver: '', km: '0', hour: '', percentage: '0', monthDate: monthDate });
+      this.monthDetail.push({ wardNo: this.selectedZone, day: day, driver: '', helper: '', km: '0', hour: '', percentage: '0', monthDate: monthDate });
       if (monthDate == this.toDayDate) {
         this.getMonthDetailData(i, year, month, monthName);
       }
@@ -1316,6 +1316,7 @@ export class RouteTrackingComponent {
               monthDetails.driver = routeData["driver"];
               monthDetails.hour = routeData["hour"];
               monthDetails.percentage = routeData["percentage"];
+              this.getWorkerDetail(year, monthName, monthDate);
             }
           }
         }, error => {
@@ -1456,13 +1457,13 @@ export class RouteTrackingComponent {
     let totalKM: number = 0;
     let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
     if (monthDetails != undefined) {
-      let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails/driverName";
+      let driverdbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails";
       let driverTracking = this.db.object(driverdbPath).valueChanges().subscribe(
-        driverData => {
+        workerData => {
           driverTracking.unsubscribe();
-          if (driverData != null) {
-            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthDetailList", driverData);
-            monthDetails.driver = driverData;
+          if (workerData != null) {
+            this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getMonthDetailList", workerData);
+            this.setWorkerDetail(monthDetails, workerData);
           }
           let dbPath = "WasteCollectionInfo/" + this.selectedZone + "/" + year + "/" + monthName + "/" + monthDate + "/Summary";
           let workPersentageInstance = this.db.object(dbPath).valueChanges().subscribe(
@@ -1507,6 +1508,7 @@ export class RouteTrackingComponent {
                   km: monthDetails.km,
                   hour: monthDetails.hour,
                   driver: monthDetails.driver,
+                  helper: monthDetails.helper,
                   percentage: monthDetails.percentage
 
                 }
@@ -1551,6 +1553,50 @@ export class RouteTrackingComponent {
           }
         }
       });
+  }
+
+  getWorkerDetail(year: any, monthName: any, monthDate: any) {
+    this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "getWorkerDetail");
+    let dbPath = "WasteCollectionInfo/" + this.selectedZoneNo + "/" + year + "/" + monthName + "/" + monthDate + "/WorkerDetails";
+    let workerInstance = this.db.object(dbPath).valueChanges().subscribe(
+      workerData => {
+        workerInstance.unsubscribe();
+        if (workerData != null) {
+          this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getWorkerDetail", workerData);
+          let monthDetails = this.monthDetail.find(item => item.wardNo == this.selectedZone && item.monthDate == monthDate);
+          if (monthDetails != undefined) {
+            this.setWorkerDetail(monthDetails, workerData);
+          }
+        }
+      });
+  }
+
+  setWorkerDetail(monthDetails: any, workerData: any) {
+    let driver = this.getWorkerNameWithId(workerData["driver"], workerData["driverName"]);
+    let helper = this.getWorkerNameWithId(workerData["helper"], workerData["helperName"]);
+    if (driver != "") {
+      monthDetails.driver = driver;
+    }
+    if (helper != "") {
+      monthDetails.helper = helper;
+    }
+  }
+
+  getWorkerNameWithId(ids: any, names: any) {
+    let idList = ids != null ? ids.toString().split(",") : [];
+    let nameList = names != null ? names.toString().split(",") : [];
+    let list = [];
+    for (let i = 0; i < Math.max(idList.length, nameList.length); i++) {
+      let id = idList[i] != undefined ? idList[i].trim() : "";
+      let name = nameList[i] != undefined ? nameList[i].trim() : "";
+      if (name != "" && id != "") {
+        list.push(name + " (" + id + ")");
+      }
+      else if (name != "" || id != "") {
+        list.push(name + id);
+      }
+    }
+    return list.join(", ");
   }
 
   getMonthSelectedDetail(day: any) {
