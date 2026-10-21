@@ -2002,10 +2002,20 @@ input {
     padding-right:0px!important;
 }
 .select-div{
-    padding-left: 20px!important;
+    padding-left: 15px!important;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
 }
 .year-select{
     width: 130px;
+}
+.date-select{
+    flex: 1 1 120px;
+    min-width: 120px;
+    max-width: 180px;
+    margin-left: 0px!important;
 }
 .month-select{
     width: 130px;
@@ -2059,6 +2069,25 @@ input {
     padding-left: 7px;
     padding-right:0px;
 }
+
+// Power BI column only takes the iframe's width and sits on the right edge; table column takes the rest.
+@media (min-width:768px){
+    .report-row{
+        flex-wrap: nowrap;
+    }
+    .report-table-col{
+        flex: 1 1 0;
+        max-width: none;
+        min-width: 0;
+    }
+    .report-chart-col{
+        flex: 0 0 auto;
+        max-width: none;
+        width: auto;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+}
 .card-body-outer{
     margin-top:-6px; 
     height: 88vh!important;
@@ -2086,20 +2115,11 @@ input {
 
 
 @media (min-width:768px) and (max-width:1200px){
-    
-    .align-iner{
-     
-        min-width: 100% !important;
-    }
     .year-select{
         width: 43% !important;
     }
     .month-select{
         width: 43% !important;
-    }
-    .detail-box{
-        min-width: 95% !important;
-        margin-top: 15px !important;
     }
     .export-span{
         float: unset !important;
@@ -2165,3 +2185,104 @@ input {
   }
 
 
+
+
+// Filters and the Fuel Qty / Amount / Km Running / Export boxes stay in one line with a gap between them.
+@media (min-width:768px){
+    .align{
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 24px;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    .align-iner{
+        flex: 1 1 auto;
+        max-width: none;
+        width: auto;
+        min-width: 0;
+        padding-left: 0px;
+    }
+    .select-div{
+        flex-wrap: nowrap;
+    }
+    .date-select{
+        min-width: 105px;
+    }
+    .detail-box{
+        flex: 0 0 auto;
+        max-width: none;
+        width: auto;
+        padding-right: 0px;
+    }
+    .detail-box > .row{
+        flex-wrap: nowrap;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    .detail-box > .row > div{
+        flex: 0 0 auto;
+        max-width: none;
+        width: auto;
+        min-width: 95px;
+        padding: 4px 10px;
+    }
+    .total-km-outer, .total-ammount-outer{
+        padding-left: 0px!important;
+    }
+    .export-span{
+        float: none;
+        display: block;
+        padding-right: 0px;
+    }
+}
+
+// Bigger text for table, filters and summary boxes.
+table td {
+    font-size: 14px;
+}
+table th {
+    font-size: 15px;
+}
+.date-select {
+    font-size: 13px!important;
+}
+.detail-box b {
+    font-size: 16px;
+}
+.fuel-span, .total-ammount-span, .tatal-km-span, .export-span {
+    font-size: 12px!important;
+}
+
+// Summary boxes size to their own content so values and "Export to Excel" are never cut.
+@media (min-width:768px){
+    .align{
+        gap: 16px;
+    }
+    .date-select{
+        min-width: 95px;
+    }
+    .detail-box{
+        flex-shrink: 0;
+    }
+    .detail-box > .row > div{
+        min-width: 0;
+        padding: 4px 12px;
+    }
+    .detail-box > .row > div > .row{
+        margin-left: 0px;
+        margin-right: 0px;
+        flex-wrap: nowrap;
+    }
+    .detail-box > .row > div > .row > div{
+        flex: 0 0 auto;
+        max-width: none;
+        width: auto;
+        padding: 0px;
+        white-space: nowrap;
+    }
+    .export-main, .export-span{
+        white-space: nowrap;
+        padding-right: 12px!important;
+    }
+}
