@@ -716,7 +716,11 @@ export class EmployeePenaltyComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
     /* save to file */
-    let fileName = "Penalty/Reward-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) +  ".xlsx";
+    let city = this.cityName ? this.cityName.toString() : "";
+    if (city == city.toLowerCase()) {
+      city = city.charAt(0).toUpperCase() + city.slice(1);
+    }
+    let fileName = "Penalty_Reward_" + city + "-" + this.selectedYear + "-" + this.commonService.getCurrentMonthShortName(Number(this.selectedMonth)) + ".xlsx";
     XLSX.writeFile(wb, fileName);
   }
   processPenaltiesData = async(data:any,empId:any,date:any,penaltyList:any[],formattedDate:any) => {
