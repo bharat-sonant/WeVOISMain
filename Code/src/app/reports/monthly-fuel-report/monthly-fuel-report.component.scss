@@ -2286,3 +2286,51 @@ table th {
         padding-right: 12px!important;
     }
 }
+
+// Small screens: when filters and summary boxes do not fit in one line, the boxes move to the next line
+// and filters wrap instead of shrinking and overlapping each other.
+@media (min-width:768px){
+    .align{
+        flex-wrap: wrap;
+        row-gap: 10px;
+    }
+    .select-div{
+        flex-wrap: wrap;
+    }
+    .date-select{
+        flex: 1 1 130px;
+        min-width: 130px;
+        max-width: 180px;
+        margin-top: 0px!important;
+    }
+    input.date-select{
+        flex-basis: 145px;
+        min-width: 145px;
+    }
+}
+
+// Header height changes when filters wrap, so the table takes the remaining height of the card.
+.custom-header-outer{
+    display: flex!important;
+    flex-direction: column;
+}
+.custom-header-outer > .custom-header{
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+.custom-header > .align{
+    flex: 0 0 auto;
+}
+.custom-header > .card-body{
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+}
+.custom-header > .card-body > form,
+.custom-header > .card-body > form > .row,
+.custom-header > .card-body > form > .row > div,
+.custom-header .table-one{
+    height: 100%;
+}

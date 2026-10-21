@@ -263,6 +263,16 @@ export class MonthlyFuelReportComponent implements OnInit {
     let list = this.rangeFuelList.filter(item =>
       (this.selectedPetrolPump == "0" || (item.petrolPump != undefined && item.petrolPump.toString().trim() == this.selectedPetrolPump)) &&
       (this.selectedFuelType == "0" || item.fuelType == this.selectedFuelType));
+    let pumpEntryList = this.rangeFuelList.filter(item => this.selectedPetrolPump == "0" || (item.petrolPump != undefined && item.petrolPump.toString().trim() == this.selectedPetrolPump));
+    let pumpFuelTypeCount: any = {};
+    pumpEntryList.forEach(item => { pumpFuelTypeCount[item.fuelType] = (pumpFuelTypeCount[item.fuelType] || 0) + 1; });
+    console.log("[FuelFilter] Range:", this.fromDate, "to", this.toDate, "| Total entries in range:", this.rangeFuelList.length);
+    console.log("[FuelFilter] Pump:", this.selectedPetrolPump == "0" ? "All" : this.selectedPetrolPump, "| Entries of this pump:", pumpEntryList.length, "| Fuel type wise:", pumpFuelTypeCount);
+    console.log("[FuelFilter] Fuel Type:", this.selectedFuelType == "0" ? "All" : this.selectedFuelType, "| Matching entries (pump + fuel type):", list.length);
+    let vehicleNotInList = list.filter(item => this.vehicleList.find(v => v.vehicle == item.vehicle) == undefined).map(item => item.vehicle);
+    if (vehicleNotInList.length > 0) {
+      console.log("[FuelFilter] Matching entries whose vehicle is not in vehicle list (not shown in table):", vehicleNotInList.filter((v, index) => vehicleNotInList.indexOf(v) == index));
+    }
     for (let i = 0; i < this.vehicleList.length; i++) {
       this.vehicleList[i]["qty"] = "0.00";
       this.vehicleList[i]["amount"] = "0.00";
@@ -472,7 +482,7 @@ export class MonthlyFuelReportComponent implements OnInit {
         htmlString += this.displayVehicleList[i]["vehicle"];
         htmlString += "</td>";
         htmlString += "<td>";
-        htmlString += this.displayVehicleList[i]["pumpList"].map(item => item.petrolPump + "-" + item.qty).join(", ");
+        htmlString += this.displayVehicleList[i]["pumpList"].map(item => item.petrolPump).join(", ");
         htmlString += "</td>";
         let list = this.displayVehicleList[i]["fuelList"];
         if (list.length > 0) {
