@@ -1540,6 +1540,44 @@ export class CommonService {
     });
   }
 
+  // same as getWardLine, but resolves null when ward line json is not available (never stays pending)
+  getWardLineWithError(zoneNo: any, date: any) {
+    return new Promise((resolve) => {
+      let dat1 = new Date(date);
+      const path = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2FmapUpdateHistoryJson.json?alt=media";
+      let jsonInstance = this.httpService.get(path).subscribe(dataDate => {
+        jsonInstance.unsubscribe();
+        let list = dataDate != null ? JSON.parse(JSON.stringify(dataDate)) : [];
+        let jsonDate = "";
+        if (list.length == 1) {
+          jsonDate = list[0].toString().trim();
+        }
+        else {
+          for (let i = list.length - 1; i >= 0; i--) {
+            let dat2 = new Date(list[i]);
+            if (dat1 >= dat2) {
+              jsonDate = list[i].toString().trim();
+              i = -1;
+            }
+          }
+        }
+        if (jsonDate == "") {
+          resolve(null);
+          return;
+        }
+        const pathDate = this.fireStoragePath + this.getFireStoreCity() + "%2FWardLinesHouseJson%2F" + zoneNo + "%2F" + jsonDate + ".json?alt=media";
+        let wardLineInstance = this.httpService.get(pathDate).subscribe(data => {
+          wardLineInstance.unsubscribe();
+          resolve(data != null ? JSON.stringify(data) : null);
+        }, error => {
+          resolve(null);
+        });
+      }, error => {
+        resolve(null);
+      });
+    });
+  }
+
 
   getWardLineRoadDetail(zoneNo: any, date: any) {
     return new Promise((resolve) => {

@@ -28,8 +28,11 @@ export class CardScanningReportComponent implements OnInit {
   userType: any;
 
   txtDate = "#txtDate";
+  divLoader = "#divLoader";
+  isLoading = false;
   serviceName = "card-scanning-report";
   scanCardsJsonData: any = null;
+  submittedScanCardsList: any = {};
 
   /* ================= INIT ================= */
 
@@ -123,6 +126,10 @@ export class CardScanningReportComponent implements OnInit {
   /* ================= DATE ================= */
 
   setDate(filterVal: any, type: string) {
+    if (this.isLoading) {
+      $(this.txtDate).val(this.selectedDate);
+      return;
+    }
     this.commonService.setDate(this.selectedDate, filterVal, type)
       .then((newDate: any) => {
 
@@ -159,19 +166,66 @@ export class CardScanningReportComponent implements OnInit {
 
   async processAllWardsParallel() {
 
+    // block date change until current date is fully loaded
+    this.isLoading = true;
+    $(this.divLoader).show();
+
     let promises: Promise<any>[] = [];
 
-    for (let item of this.scannedList) {
-      promises.push(this.getCardsData(item.ward));
-    }
-
     try {
+      // Ajmer external user: dates already submitted show the submitted counts
+      let submittedData = null;
+      if (this.cityName === 'ajmer' && this.userType === 'External User') {
+        let monthData = await this.getSubmittedScanCards(this.selectedDate);
+        if (monthData != null && monthData[this.selectedDate] != null) {
+          submittedData = monthData[this.selectedDate];
+        }
+      }
+
+      for (let item of this.scannedList) {
+        if (submittedData != null && submittedData[item.ward] != null) {
+          let detail = submittedData[item.ward];
+          item.cards = detail.cards;
+          item.houseCount = detail.cards;
+          item.scanned = detail.scanned;
+          item.percentage = detail.percentage;
+          item.residentialCount = 0;
+          item.commercialCount = 0;
+        }
+        else {
+          promises.push(this.getCardsData(item.ward));
+        }
+      }
+
       await Promise.all(promises);
       console.log("✅ All wards processed in parallel");
     }
     catch (e) {
       console.error("❌ Error in ward processing", e);
     }
+    finally {
+      this.isLoading = false;
+      $(this.divLoader).hide();
+    }
+  }
+
+  /* ================= SUBMITTED SCAN CARDS (AJMER EXTERNAL) ================= */
+
+  getSubmittedScanCards(date: any): Promise<any> {
+    return new Promise((resolve) => {
+      let year = date.split('-')[0];
+      let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
+      let key = year + "-" + monthName;
+      if (this.submittedScanCardsList[key] !== undefined) {
+        resolve(this.submittedScanCardsList[key]);
+        return;
+      }
+      const path = this.commonService.fireStoragePath + "Ajmer%2FScanCardsSubmitted%2F" + key + ".json?alt=media";
+      let sub = this.httpService.get(path).subscribe(
+        (data: any) => { sub.unsubscribe(); this.submittedScanCardsList[key] = data; resolve(data); },
+        () => { this.submittedScanCardsList[key] = null; resolve(null); }
+      );
+    });
   }
 
   /* ================= CARD COUNT ================= */
@@ -220,14 +274,29 @@ export class CardScanningReportComponent implements OnInit {
           }
           else {
 
-            this.commonService.getWardLine(ward, this.selectedDate)
+            this.commonService.getWardLineWithError(ward, this.selectedDate)
               .then((linesData: any) => {
 
-                let wardLinesDataObj = JSON.parse(linesData);
-                detail.cards = wardLinesDataObj["totalHouseCount"];
+                // ward line json not available (e.g. Support / Service wards)
+                if (linesData == null) {
+                  detail.cards = 0;
+                  resolve(null);
+                  return;
+                }
+                try {
+                  let wardLinesDataObj = JSON.parse(linesData);
+                  detail.cards = wardLinesDataObj["totalHouseCount"];
+                }
+                catch (e) {
+                  detail.cards = 0;
+                  resolve(null);
+                  return;
+                }
                 this.getScannedCardsNew(ward).then(() => resolve(true));
               });
           }
+        }, error => {
+          resolve(null);
         });
     });
   }
@@ -367,6 +436,8 @@ export class CardScanningReportComponent implements OnInit {
             resolve(true);
           }
 
+        }, error => {
+          resolve(null);
         });
     });
   }
