@@ -31,6 +31,8 @@ export class EmployeesComponent implements OnInit {
   confirmTitle = "#confirmTitle";
   divLoader = "#divLoader";
   txtName = "#txtName";
+  txtDesignationReason = "#txtDesignationReason";
+  txtStatusReason = "#txtStatusReason";
   accountList: any[] = [];
   serviceName = "employees";
 
@@ -238,6 +240,11 @@ export class EmployeesComponent implements OnInit {
   }
 
   updateEmployeeStatus() {
+    let reason = String($(this.txtStatusReason).val() || "").trim();
+    if (reason == "") {
+      this.commonService.setAlertMessage("error", "Please enter reason !!!");
+      return;
+    }
     $(this.divLoader).show();
     setTimeout(() => {
       $(this.divLoader).hide();
@@ -247,6 +254,9 @@ export class EmployeesComponent implements OnInit {
 
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
+      if (empDetail.status != status) {
+        this.saveEmployeeDetailUpdateHistory(empId, [{ field: "status", preValue: empDetail.status, currentValue: status }], reason);
+      }
       empDetail.status = status;
     }
     this.filterData();
@@ -274,9 +284,26 @@ export class EmployeesComponent implements OnInit {
       $(this.divLoader).hide();
       return;
     }
+    let reason = String($(this.txtDesignationReason).val() || "").trim();
+    if (reason == "") {
+      this.commonService.setAlertMessage("error", "Please enter reason !!!");
+      $(this.divLoader).hide();
+      return;
+    }
     let salaryType = $(this.ddlSalaryTypeUpdate).val();
     let empDetail = this.allEmployeeList.find(item => item.empId == empId);
     if (empDetail != undefined) {
+      const changes = [];
+      if (String(empDetail.departmentId) != String(this.ddlDepartmentUpdate)) {
+        changes.push({ field: "departmentId", preValue: empDetail.departmentId, currentValue: this.ddlDepartmentUpdate });
+      }
+      if (String(empDetail.designationId) != String(designationId)) {
+        changes.push({ field: "designationId", preValue: empDetail.designationId, currentValue: designationId.toString() });
+      }
+      if (empDetail.salaryType != salaryType) {
+        changes.push({ field: "salaryType", preValue: empDetail.salaryType, currentValue: salaryType });
+      }
+      this.saveEmployeeDetailUpdateHistory(empId, changes, reason);
       empDetail.designationId = designationId;
       empDetail.salaryType = salaryType;
       let empType = 1;
@@ -311,6 +338,33 @@ export class EmployeesComponent implements OnInit {
     this.commonService.setAlertMessage("success", "Employee designation updated successfully !!!");
   }
 
+  saveEmployeeDetailUpdateHistory(empId: any, changes: any[], reason: any) {
+    if (changes.length == 0) {
+      return;
+    }
+    let historyPath = "EmployeeDetailUpdateHistory/" + empId;
+    let lastKeyInstance = this.db.object(historyPath + "/lastKey").valueChanges().subscribe((lastKeyData: any) => {
+      lastKeyInstance.unsubscribe();
+      let lastKey = lastKeyData != null ? Number(lastKeyData) : 0;
+      const userId = localStorage.getItem("userID");
+      const time = this.commonService.getTodayDateTime();
+      const data: any = {};
+      for (let i = 0; i < changes.length; i++) {
+        lastKey++;
+        data[lastKey] = {
+          field: changes[i].field,
+          preValue: changes[i].preValue != null ? changes[i].preValue : "",
+          currentValue: changes[i].currentValue != null ? changes[i].currentValue : "",
+          reason: reason,
+          _by: userId,
+          _at: time
+        };
+      }
+      data["lastKey"] = lastKey;
+      this.db.object(historyPath).update(data);
+    });
+  }
+
   updateDesignationInDatabase(empId: any, designationId: any, salaryType: any) {
     let dbPath = "Employees/" + empId + "/GeneralDetails/";
     this.db.object(dbPath).update({ designationId: designationId.toString(), salaryType: salaryType, departmentId: this.ddlDepartmentUpdate });
@@ -324,10 +378,10 @@ export class EmployeesComponent implements OnInit {
     let height = 190;
     let width = 420;
     if (type == "designation") {
-      height = 300;
+      height = 390;
     }
     else {
-      height = 160;
+      height = 250;
     }
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);

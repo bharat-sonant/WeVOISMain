@@ -193,6 +193,9 @@
 
                     </span>
                 </div>
+                <div class="wrap-input-effects">
+                    <textarea id="txtDesignationReason" class="input-green reason-input" rows="2" placeholder="Reason for change"></textarea>
+                </div>
                 <input type="button" class="btn btn-success submit-btn" value="SUBMIT" (click)="updateDesignation();" />
                 <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
             </div>
@@ -212,6 +215,9 @@
             <div class="modal-body empIDActive-outer">
                 <input id="empIDActive" type="hidden" value="0" />
                 <input id="empStatus" type="hidden" value="0" />
+                <div class="wrap-input-effects">
+                    <textarea id="txtStatusReason" class="input-green reason-input" rows="2" placeholder="Reason for change"></textarea>
+                </div>
                 <input type="button" class="btn btn-success submit-btn" value="CONFIRM" (click)="updateEmployeeStatus();" />
                 <input type="button" class="btn btn-cancel cancel-btn" value="CANCEL" (click)="closeModel();" />
             </div>

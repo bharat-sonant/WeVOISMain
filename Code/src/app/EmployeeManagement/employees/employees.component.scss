@@ -441,6 +441,16 @@ tbody {
     outline: none;
 }
 
+.reason-input {
+    height: 60px;
+    padding: 6px 12px;
+    resize: none;
+}
+
+.reason-input:focus {
+    border: 1px solid #0ba118;
+}
+
 .input-green:focus+.focus-input+.symbol-input {
     color: #0ba118;
     padding-left: 12px;
