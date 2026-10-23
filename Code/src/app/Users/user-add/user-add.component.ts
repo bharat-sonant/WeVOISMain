@@ -161,6 +161,21 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canUpdateEmployeeDetail"))).checked = true;
         }
       }
+      if (data["canEditAadharMobile"] != undefined) {
+        if (data["canEditAadharMobile"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canEditAadharMobile"))).checked = true;
+        }
+      }
+      if (data["canChangeDocuments"] != undefined) {
+        if (data["canChangeDocuments"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canChangeDocuments"))).checked = true;
+        }
+      }
+      if (data["canApproveIdType"] != undefined) {
+        if (data["canApproveIdType"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canApproveIdType"))).checked = true;
+        }
+      }
       if (data["canUpdateOpendepotPickDetail"] != undefined) {
         if (data["canUpdateOpendepotPickDetail"] == 1) {
           (<HTMLInputElement>(document.getElementById("canUpdateOpendepotPickDetail"))).checked = true;
@@ -331,6 +346,9 @@ export class UserAddComponent implements OnInit {
     let isManager: any = 0;
     let isAttendanceApprover: any = 0;
     let canUpdateEmployeeDetail: any = 0;
+    let canEditAadharMobile: any = 0;
+    let canChangeDocuments: any = 0;
+    let canApproveIdType: any = 0;
     let canUpdateOpendepotPickDetail: any = 0;
     let canUpdateLeaveBalance: any = 0;
     let canViewAttendance: any = 0;
@@ -393,6 +411,12 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isManager = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateEmployeeDetail");
     if (element.checked == true) canUpdateEmployeeDetail = 1;
+    element = <HTMLInputElement>document.getElementById("canEditAadharMobile");
+    if (element.checked == true) canEditAadharMobile = 1;
+    element = <HTMLInputElement>document.getElementById("canChangeDocuments");
+    if (element.checked == true) canChangeDocuments = 1;
+    element = <HTMLInputElement>document.getElementById("canApproveIdType");
+    if (element.checked == true) canApproveIdType = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateOpendepotPickDetail");
     if (element.checked == true) canUpdateOpendepotPickDetail = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateLeaveBalance");
@@ -449,6 +473,9 @@ export class UserAddComponent implements OnInit {
       accessCities: accessCities,
       isAttendanceApprover: isAttendanceApprover,
       canUpdateEmployeeDetail: canUpdateEmployeeDetail,
+      canEditAadharMobile: canEditAadharMobile,
+      canChangeDocuments: canChangeDocuments,
+      canApproveIdType: canApproveIdType,
       canUpdateOpendepotPickDetail: canUpdateOpendepotPickDetail,
       canUpdateLeaveBalance: canUpdateLeaveBalance,
       canViewAttendance: canViewAttendance,
