@@ -1527,7 +1527,14 @@ export class WardSurveySummaryComponent implements OnInit {
       this.isFirst = false;
     }
 
-    this.commonService.getWardLine(wardNo, this.commonService.setTodayDate()).then((data: any) => {
+    // getWardLine() ward ki line JSON na milne par kabhi resolve nahi hota tha aur
+    // loader hamesha ghoomta rehta tha - WithError wala null deta hai.
+    this.commonService.getWardLineWithError(wardNo, this.commonService.setTodayDate()).then((data: any) => {
+      if (data == null) {
+        $('#divLoaderMain').hide();
+        this.commonService.setAlertMessage("error", "Ward " + wardNo + " line data not found");
+        return;
+      }
       let wardLines = JSON.parse(data);
       let lineCount = Number(wardLines["totalLines"]);
       if (lineCount != undefined) {
