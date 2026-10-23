@@ -36,6 +36,9 @@ export class MonthlyFuelReportComponent implements OnInit {
   allPetrolPumpList: any[] = [];
   selectedPetrolPump = "0";
   selectedFuelType = "0";
+  payMethodList: any[] = [];
+  allPayMethodList: any[] = [];
+  selectedPayMethod = "0";
   rangeFuelList: any[] = [];
   displayVehicleList: any[] = [];
   isNoFilteredData = false;
@@ -65,6 +68,7 @@ export class MonthlyFuelReportComponent implements OnInit {
     this.fromDate = this.toDayDate.split('-')[0] + "-" + this.toDayDate.split('-')[1] + "-01";
     this.toDate = this.toDayDate;
     this.getPetrolPumpList();
+    this.getPayMethodList();
     this.getRegistrationNumbers();
     this.getFuelReport();
   }
@@ -101,6 +105,44 @@ export class MonthlyFuelReportComponent implements OnInit {
       this.selectedPetrolPump = "0";
       setTimeout(() => { $("#ddlPetrolPump").val("0"); });
     }
+  }
+
+  getPayMethodList() {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FFuelSettingData%2FpayMethod.json?alt=media";
+    let payMethodInstance = this.httpService.get(path).subscribe(data => {
+      payMethodInstance.unsubscribe();
+      if (data != null) {
+        let list = JSON.parse(JSON.stringify(data));
+        for (let i = 0; i < list.length; i++) {
+          this.allPayMethodList.push(list[i].toString().trim());
+        }
+        this.setPayMethodList();
+      }
+    }, error => { });
+  }
+
+  // Dropdown shows only pay methods present in the loaded date range data, in payMethod.json order;
+  // pay methods found in data but missing from payMethod.json are added at the end.
+  setPayMethodList() {
+    let dataPayMethodList = [];
+    for (let i = 0; i < this.rangeFuelList.length; i++) {
+      let payMethod = this.rangeFuelList[i]["payMethod"] != undefined ? this.rangeFuelList[i]["payMethod"].toString().trim() : "";
+      if (payMethod != "" && !dataPayMethodList.includes(payMethod)) {
+        dataPayMethodList.push(payMethod);
+      }
+    }
+    let payMethodList = this.allPayMethodList.filter(name => dataPayMethodList.includes(name));
+    payMethodList = payMethodList.concat(dataPayMethodList.filter(name => !payMethodList.includes(name)));
+    this.payMethodList = payMethodList.filter((name, index) => payMethodList.indexOf(name) == index).map(name => ({ name: name }));
+    if (this.selectedPayMethod != "0" && this.payMethodList.find(item => item.name == this.selectedPayMethod) == undefined) {
+      this.selectedPayMethod = "0";
+      setTimeout(() => { $("#ddlPayMethod").val("0"); });
+    }
+  }
+
+  changePayMethod(filterVal: any) {
+    this.selectedPayMethod = filterVal;
+    this.setVehicleFuelDetail();
   }
 
   changePetrolPump(filterVal: any) {
@@ -196,7 +238,7 @@ export class MonthlyFuelReportComponent implements OnInit {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
     for (let i = 3; i < vehicles.length; i++) {
       let vehicle = vehicles[i]["vehicle"];
-      this.vehicleList.push({ vehicle: vehicle, qty: "0.00", km: "0.000", amount: "0.00", avg: "", fuelList: [], pumpList: [], regNo: this.regNoList[vehicle] != undefined ? this.regNoList[vehicle] : "" });
+      this.vehicleList.push({ vehicle: vehicle, qty: "0.00", km: "0.000", amount: "0.00", avg: "", fuelList: [], pumpList: [], payMethodList: [], regNo: this.regNoList[vehicle] != undefined ? this.regNoList[vehicle] : "" });
     }
     this.getFuelData();
   }
@@ -252,6 +294,7 @@ export class MonthlyFuelReportComponent implements OnInit {
       }
       this.rangeFuelList = list.filter(item => this.isDateInRange(item.date));
       this.setPetrolPumpList();
+      this.setPayMethodList();
       this.setVehicleFuelDetail();
       $(this.divLoader).hide();
       this.getVehicleKMData(requestId, monthList);
@@ -262,19 +305,32 @@ export class MonthlyFuelReportComponent implements OnInit {
   setVehicleFuelDetail() {
     let list = this.rangeFuelList.filter(item =>
       (this.selectedPetrolPump == "0" || (item.petrolPump != undefined && item.petrolPump.toString().trim() == this.selectedPetrolPump)) &&
-      (this.selectedFuelType == "0" || item.fuelType == this.selectedFuelType));
+      (this.selectedFuelType == "0" || item.fuelType == this.selectedFuelType) &&
+      (this.selectedPayMethod == "0" || (item.payMethod != undefined && item.payMethod.toString().trim() == this.selectedPayMethod)));
     for (let i = 0; i < this.vehicleList.length; i++) {
       this.vehicleList[i]["qty"] = "0.00";
       this.vehicleList[i]["amount"] = "0.00";
       this.vehicleList[i]["fuelList"] = [];
       this.vehicleList[i]["pumpList"] = [];
+      this.vehicleList[i]["payMethodList"] = [];
       let vehicle = this.vehicleList[i]["vehicle"];
       let vehicleFuelList = list.filter(item => item.vehicle == vehicle);
       this.vehicleList[i]["entryCount"] = vehicleFuelList.length;
       if (vehicleFuelList.length > 0) {
         let fuelList = [];
         let pumpList = [];
+        let payMethodList = [];
         for (let i = 0; i < vehicleFuelList.length; i++) {
+          let payMethod = vehicleFuelList[i]["payMethod"] != undefined ? vehicleFuelList[i]["payMethod"].toString().trim() : "";
+          if (payMethod != "") {
+            let payMethodDetail = payMethodList.find(item => item.payMethod == payMethod);
+            if (payMethodDetail == undefined) {
+              payMethodList.push({ payMethod: payMethod, amount: Number(vehicleFuelList[i]["amount"]) });
+            }
+            else {
+              payMethodDetail.amount = Number(payMethodDetail.amount) + Number(vehicleFuelList[i]["amount"]);
+            }
+          }
           let petrolPump = vehicleFuelList[i]["petrolPump"] != undefined ? vehicleFuelList[i]["petrolPump"].toString().trim() : "";
           if (petrolPump != "") {
             let pumpDetail = pumpList.find(item => item.petrolPump == petrolPump);
@@ -307,8 +363,9 @@ export class MonthlyFuelReportComponent implements OnInit {
         this.vehicleList[i]["qty"] = sumQty.toFixed(2);
         let sumAmount: number = vehicleFuelList.map(a => Number(a.amount)).reduce((a, b) => a + b, 0);
         this.vehicleList[i]["amount"] = sumAmount.toFixed(2);
-        this.vehicleList[i]["fuelList"] = fuelList;
+        this.vehicleList[i]["fuelList"] = fuelList.map(item => ({ fuelType: item.fuelType, qty: Number(item.qty).toFixed(3), fuelBarCount: item.fuelBarCount }));
         this.vehicleList[i]["pumpList"] = pumpList.map(item => ({ petrolPump: item.petrolPump, qty: item.qty.toFixed(2) }));
+        this.vehicleList[i]["payMethodList"] = payMethodList.map(item => ({ payMethod: item.payMethod, amount: item.amount.toFixed(2) }));
       }
       this.setVehicleAverage(this.vehicleList[i]);
     }
@@ -321,7 +378,7 @@ export class MonthlyFuelReportComponent implements OnInit {
 
   // When pump or fuel type filter is applied, only vehicles having at least one matching entry are shown and exported.
   setDisplayVehicleList() {
-    if (this.selectedPetrolPump == "0" && this.selectedFuelType == "0") {
+    if (this.selectedPetrolPump == "0" && this.selectedFuelType == "0" && this.selectedPayMethod == "0") {
       this.displayVehicleList = this.vehicleList;
       this.isNoFilteredData = false;
     }
@@ -442,6 +499,9 @@ export class MonthlyFuelReportComponent implements OnInit {
       htmlString += "Petrol Pump";
       htmlString += "</td>";
       htmlString += "<td>";
+      htmlString += "Pay Method";
+      htmlString += "</td>";
+      htmlString += "<td>";
       htmlString += "Fuel Type";
       htmlString += "</td>";
       htmlString += "<td>";
@@ -473,6 +533,9 @@ export class MonthlyFuelReportComponent implements OnInit {
         htmlString += "</td>";
         htmlString += "<td>";
         htmlString += this.displayVehicleList[i]["pumpList"].map(item => item.petrolPump).join(", ");
+        htmlString += "</td>";
+        htmlString += "<td>";
+        htmlString += this.displayVehicleList[i]["payMethodList"].map(item => item.payMethod).join(", ");
         htmlString += "</td>";
         let list = this.displayVehicleList[i]["fuelList"];
         if (list.length > 0) {

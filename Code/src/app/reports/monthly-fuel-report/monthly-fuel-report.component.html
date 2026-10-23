@@ -40,6 +40,12 @@
                                         <option *ngFor="let data of petrolPumpList" value="{{data.name}}">
                                             {{data.name}}</option>
                                     </select>
+                                    <select class="caret-select date-select" id="ddlPayMethod" title="Pay Method"
+                                        (change)="changePayMethod($event.target.value)">
+                                        <option value="0">All Pay Method</option>
+                                        <option *ngFor="let data of payMethodList" value="{{data.name}}">
+                                            {{data.name}}</option>
+                                    </select>
                                     <select class="caret-select date-select" id="ddlFuelType" title="Fuel Type"
                                         (change)="changeFuelType($event.target.value)">
                                         <option value="0">All Fuel Type</option>
@@ -107,6 +113,9 @@
                                                     Petrol Pump
                                                 </th>
                                                 <th class="text-left br-1 border-none">
+                                                    Pay Method
+                                                </th>
+                                                <th class="text-left br-1 border-none">
                                                     Fuel Type - Qty
                                                 </th>
                                                 <th class="text-right br-1 border-none">
@@ -142,6 +151,11 @@
                                                     <td class="text-left br-1">
                                                         <div style="width:100%" *ngFor="let pump of data.pumpList">
                                                             {{pump.petrolPump}}
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-left br-1">
+                                                        <div style="width:100%" *ngFor="let pay of data.payMethodList">
+                                                            {{pay.payMethod}}
                                                         </div>
                                                     </td>
                                                     <td class="text-left br-1">
@@ -220,4 +234,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>

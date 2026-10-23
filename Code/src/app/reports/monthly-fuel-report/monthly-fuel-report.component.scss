@@ -2334,3 +2334,31 @@ table th {
 .custom-header .table-one{
     height: 100%;
 }
+
+// Power BI iframe keeps its 600px size; only the empty padding around it is removed so the table gets that width.
+.report-chart-col .card-body{
+    padding: 0px;
+    overflow-x: hidden!important;
+    overflow-y: auto!important;
+}
+.report-chart-col iframe{
+    display: block;
+}
+
+// Table: every column keeps its content on one line; when columns need more width than available,
+// the table scrolls sideways (container already has overflow-x) instead of squeezing the text.
+.table-one .table{
+    width: auto;
+    min-width: 100%;
+}
+.table-one .table th{
+    white-space: nowrap;
+    font-size: 14px;
+    padding: 10px 8px;
+}
+.table-one .table td{
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 6px 8px;
+    vertical-align: top;
+}
