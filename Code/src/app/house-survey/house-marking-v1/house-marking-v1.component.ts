@@ -3220,7 +3220,19 @@ export class HouseMarkingV1Component {
         // Migration se pehle delete hue record me imgRef hota hi nahi, to ab un
         // entries ki image nahi dikhegi. Sikar ka override service ke
         // storageCity() me pehle se hai.
-        let imageUrl = this.getNewPathImageUrl(dataKey);
+        //
+        // AB: do track. RemovedMarkers migrate nahi hue the, isliye purane record
+        // me imgRef hota hi nahi - unki file abhi bhi purane per-line folder me
+        // hai. Ye list sirf dikhati hai (kuch likhti nahi), isliye yahan purana
+        // path chalana safe hai:
+        //   imgRef hai  -> naya track  (AllMarkerImages/{imgRef})
+        //   sirf image  -> purana track ({ward}/{line}/{image})
+        let imageUrl = "";
+        if (dataKey["imgRef"] != null && dataKey["imgRef"] !== "") {
+          imageUrl = this.getNewPathImageUrl(dataKey);
+        } else {
+          imageUrl = this.markerMapping.oldImageUrl(dataKey["image"], this.selectedZone, lineKey);
+        }
 
         let removedById = dataKey["removeBy"];
         let removedByDetail = this.userList.find(item => item.userId == removedById);
