@@ -27,6 +27,9 @@
                                                 User Type
                                             </th>
                                             <th class="text-left br-1" style="border:none!important;">
+                                                Portal User
+                                            </th>
+                                            <th class="text-left br-1" style="border:none!important;">
                                                 Action
                                             </th>
                                         </thead>
@@ -40,6 +43,9 @@
                                                 </td>
                                                 <td class="text-left br-1">
                                                     {{data.type}}
+                                                </td>
+                                                <td class="text-left br-1">
+                                                    {{getPortalUserName(data.portalUserId) || '-'}}
                                                 </td>
                                                 <td class="text-center br-1">
                                                     <!-- <i class="fas fa-user-edit" style="cursor: pointer; font-size: 15px;" (click)="openModel(contentUser,data.id,'update');"></i> &nbsp;&nbsp;
@@ -148,6 +154,17 @@
                         <!-- <i class="fas fa-key" aria-hidden="true"></i> -->
                         <img src="../../../assets/icons/key-solid.svg" alt="key" aria-hidden="true"/>
 
+                    </span>
+                </div>
+                <!-- Employee edit permissions in the BackOffice app come from this portal user -->
+                <div class="wrap-input-effects">
+                    <select id="ddlPortalUser" class="input-green">
+                        <option value="0">Select Portal User (for edit permissions)</option>
+                        <option *ngFor="let user of portalUserList" [value]="user.userId">{{user.name}}</option>
+                    </select>
+                    <span class="focus-input"></span>
+                    <span class="symbol-input">
+                        <img src="../../../assets/icons/user-solid.svg" alt="user" aria-hidden="true"/>
                     </span>
                 </div>
                 <input type="button" class="btn w-100 btn-success submit-btn" style="width: 100%;" value="SUBMIT" (click)="saveUsers();" style="height: 45px;" />

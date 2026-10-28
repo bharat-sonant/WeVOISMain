@@ -4,6 +4,7 @@ import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { UsersService } from "../../services/users/users.service";
 
 @Component({
   selector: 'app-special-users',
@@ -12,13 +13,16 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class SpecialUsersComponent implements OnInit {
 
-  constructor(public dbFireStore: AngularFirestore, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public dbFireStore: AngularFirestore, public fs: FirebaseService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal, private usersService: UsersService) { }
   db: any;
   cityName: any;
   userList: any[] = [];
+  // Portal users a BackOffice user can be linked to; the app takes employee edit permissions from the linked portal user
+  portalUserList: any[] = [];
   userJsonObject: any = null;
   divLoader = "#divLoader";
   ddlType = "#ddlType";
+  ddlPortalUser = "#ddlPortalUser";
   txtUserName = "#txtUserName";
   txtPassword = "#txtPassword";
   userId = "#key";
@@ -27,7 +31,28 @@ export class SpecialUsersComponent implements OnInit {
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
     this.commonService.chkUserPageAccess(window.location.href, this.cityName);
+    this.getPortalUserList();
     this.getUserList();
+  }
+
+  getPortalUserList() {
+    this.usersService.getPortalUsers().then((data: any) => {
+      let list = [];
+      if (data != null) {
+        Object.keys(data).forEach(key => {
+          let user = data[key];
+          if (key != "lastKey" && user != null && user["name"] != null && user["isDelete"] != 1) {
+            list.push({ userId: String(user["userId"]), name: user["name"] });
+          }
+        });
+      }
+      this.portalUserList = list.sort((a, b) => a.name.localeCompare(b.name));
+    });
+  }
+
+  getPortalUserName(portalUserId: any) {
+    let user = this.portalUserList.find(item => item.userId == portalUserId);
+    return user != undefined ? user.name : "";
   }
 
   getUserList() {
@@ -43,7 +68,7 @@ export class SpecialUsersComponent implements OnInit {
           for (let i = 0; i < keyArray.length; i++) {
             let id = keyArray[i];
             if (id != "lastKey") {
-              this.userList.push({ id: id, password: userData[id]["password"], type: userData[id]["type"], username: userData[id]["username"] });
+              this.userList.push({ id: id, password: userData[id]["password"], type: userData[id]["type"], username: userData[id]["username"], portalUserId: userData[id]["portalUserId"] || "" });
               this.userList = this.commonService.transformNumeric(this.userList, "username");
             }
           }
@@ -60,7 +85,7 @@ export class SpecialUsersComponent implements OnInit {
     this.clearPopUp();
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 335;
+    let height = 395;
     let width = 400;
     if (type == "delete") {
       height = 160;
@@ -80,6 +105,7 @@ export class SpecialUsersComponent implements OnInit {
           $(this.txtUserName).val(userDetail.username);
           $(this.txtPassword).val(userDetail.password);
           $(this.ddlType).val(userDetail.type);
+          $(this.ddlPortalUser).val(userDetail.portalUserId || "0");
         }
       }
     }
@@ -89,6 +115,7 @@ export class SpecialUsersComponent implements OnInit {
     $(this.txtUserName).val("");
     $(this.txtPassword).val("");
     $(this.ddlType).val("0");
+    $(this.ddlPortalUser).val("0");
   }
 
   closeModel() {
@@ -148,10 +175,12 @@ export class SpecialUsersComponent implements OnInit {
       this.commonService.setAlertMessage("error", "User name already exist !!!");
       return;
     }
+    let portalUserId = $(this.ddlPortalUser).val() != "0" ? $(this.ddlPortalUser).val() : "";
     const data = {
       password: $(this.txtPassword).val(),
       type: $(this.ddlType).val(),
-      username: $(this.txtUserName).val()
+      username: $(this.txtUserName).val(),
+      portalUserId: portalUserId
     }
     this.userJsonObject[lastKey] = data;
     let filePath = "/Settings/";
@@ -166,19 +195,21 @@ export class SpecialUsersComponent implements OnInit {
       this.commonService.setAlertMessage("success", "User deleted successfully !!!");
     }
     else {
+      let portalUserId = $(this.ddlPortalUser).val() != "0" ? $(this.ddlPortalUser).val() : "";
       if (this.userList.length == 0) {
-        this.userList.push({ id: lastKey, password: $(this.txtPassword).val(), type: $(this.ddlType).val(), username: $(this.txtUserName).val() });
+        this.userList.push({ id: lastKey, password: $(this.txtPassword).val(), type: $(this.ddlType).val(), username: $(this.txtUserName).val(), portalUserId: portalUserId });
       }
       else {
         let userDetail = this.userList.find((item) => item.id == lastKey);
         if (userDetail == undefined) {
-          this.userList.push({ id: lastKey, password: $(this.txtPassword).val(), type: $(this.ddlType).val(), username: $(this.txtUserName).val() });
+          this.userList.push({ id: lastKey, password: $(this.txtPassword).val(), type: $(this.ddlType).val(), username: $(this.txtUserName).val(), portalUserId: portalUserId });
           this.userList = this.commonService.transformNumeric(this.userList, "username");
         }
         else {
           userDetail.password = $(this.txtPassword).val();
           userDetail.username = $(this.txtUserName).val();
           userDetail.type = $(this.ddlType).val();
+          userDetail.portalUserId = portalUserId;
         }
       }
       this.commonService.setAlertMessage("success", "Data saved successfully !!!");

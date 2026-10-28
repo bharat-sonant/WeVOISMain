@@ -139,194 +139,138 @@
                                 <div class="col-md-4 pr-1">
 
                                 </div>
-                                <div class="col-12 border-bottom" style="margin-top: 20px;">City for access</div>
+                                <!-- Tabs: City Access / Rights & Permissions. Both stay in the DOM (only hidden) so load / save find every checkbox. -->
+                                <div class="col-12 access-tabs">
+                                    <button type="button" class="access-tab" [class.active]="accessTab == 'cities'" (click)="accessTab = 'cities'">City Access</button>
+                                    <button type="button" class="access-tab" [class.active]="accessTab == 'permissions'" (click)="accessTab = 'permissions'">Rights &amp; Permissions</button>
+                                </div>
+                                <div class="col-12" [style.display]="accessTab == 'cities' ? 'block' : 'none'">
+                                <div class="row">
+                                <div class="col-12 perm-section">Active Cities</div>
                                 <div class="col-md-2" style="margin-top: 10px;" *ngFor="let dt of activeCityList">
                                     <div class="form-group">
                                         <input type="checkbox" id="chkCity{{dt.city}}">&nbsp;&nbsp; <label>{{dt.cityName}}</label>
                                     </div>
                                 </div>
-                                <div class="col-12 border-bottom" style="margin-top: 20px;" *ngIf="archivedCityList.length > 0">Archived Cities</div>
+                                <div class="col-12 perm-section" *ngIf="archivedCityList.length > 0">Archived Cities</div>
                                 <div class="col-md-2" style="margin-top: 10px;" *ngFor="let dt of archivedCityList">
                                     <div class="form-group">
                                         <input type="checkbox" id="chkCity{{dt.city}}">&nbsp;&nbsp; <label>{{dt.cityName}}</label>
                                     </div>
                                 </div>
-                                <div class="col-12 border-bottom" style="margin-top: 20px;"></div>
-                                <div class="col-md-4" style="margin-top: 25px;">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="isAdmin">&nbsp;&nbsp; <label>Is Admin</label>
-                                    </div>
                                 </div>
-                                <div class="col-md-4" style="margin-top: 25px;">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="isManager">&nbsp;&nbsp; <label>Is Manager</label>
-                                    </div>
                                 </div>
-                                <div class="col-md-4" style="margin-top: 25px;">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="notificationHalt">&nbsp;&nbsp;<label>Notification :
-                                            Halt</label>
-                                    </div>
+                                <div class="col-12" [style.display]="accessTab == 'permissions' ? 'block' : 'none'">
+                                <div class="row">
+                                <!-- Permissions, section wise. Hover a permission to see what it does. -->
+                                <div class="col-12 perm-section">Employee Management</div>
+                                <div class="col-md-4 perm-item" data-tip="BackOffice app: can edit an existing employee's details. Without it, the employee screens open read-only.">
+                                    <input type="checkbox" id="canEditEmployeeInApp">&nbsp;&nbsp;<label for="canEditEmployeeInApp">Can edit employee details (BackOffice App)</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="notificationMobileDataOff">&nbsp;&nbsp;
-                                        <label>Notification : Mobile Data
-                                            Off</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="BackOffice app: can change an existing employee's Aadhaar number and mobile number.">
+                                    <input type="checkbox" id="canEditAadharMobile">&nbsp;&nbsp;<label for="canEditAadharMobile">Can change Aadhaar / Mobile</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group" style="margin-right: 15px;">
-                                        <input type="checkbox" id="notificationSkippedLines">&nbsp;&nbsp;
-                                        <label>Notification : Skipped
-                                            Lines</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="BackOffice app: can upload or replace an existing employee's documents.">
+                                    <input type="checkbox" id="canChangeDocuments">&nbsp;&nbsp;<label for="canChangeDocuments">Can change employee documents</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="notificationPickDustbins">&nbsp;&nbsp;
-                                        <label>Notification : Picked
-                                            Dustbins</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="ID Type Approval page (HO): can approve or reject an employee's ID Type change request.">
+                                    <input type="checkbox" id="canApproveIdType">&nbsp;&nbsp;<label for="canApproveIdType">Can approve ID Type change (HO)</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="notificationGeoSurfing">&nbsp;&nbsp;
-                                        <label>Notification : Geo
-                                            Surfing</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Bank Account Request page: can raise a new or changed bank account request for an employee. It goes for approval before salary uses it.">
+                                    <input type="checkbox" id="canRaiseBankRequest">&nbsp;&nbsp;<label for="canRaiseBankRequest">Can raise bank account request</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="isTaskManager">&nbsp;&nbsp; <label>Is Task
-                                            Manager</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Bank Account Request page: can approve, reject or hold requests (own requests too) and remove rejected / on-hold ones. Approval makes it the employee's salary account.">
+                                    <input type="checkbox" id="canApproveBankRequest">&nbsp;&nbsp;<label for="canApproveBankRequest">Can approve bank account request</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="haltDisableAccess">&nbsp;&nbsp; <label>Halt Disable
-                                            Access</label>
-                                    </div>
+
+                                <div class="col-12 perm-section">Roles &amp; Access</div>
+                                <div class="col-md-4 perm-item" data-tip="Admin: sees all support queries and admin-only options.">
+                                    <input type="checkbox" id="isAdmin">&nbsp;&nbsp;<label for="isAdmin">Is Admin</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="isActual">&nbsp;&nbsp; <label>Is Actual Data</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Manager: support queries for managers are shown to this user.">
+                                    <input type="checkbox" id="isManager">&nbsp;&nbsp;<label for="isManager">Is Manager</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="isLock">&nbsp;&nbsp; <label>Account
-                                            lock-unlock</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Tracking and monitoring pages show the actual data.">
+                                    <input type="checkbox" id="isActual">&nbsp;&nbsp;<label for="isActual">Is Actual Data</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canUpdateAccountDetail"  (change)="checkAccessUser();">&nbsp;&nbsp; <label>
-                                            Can update account detail</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Daily Work Detail report shows the actual work percentage.">
+                                    <input type="checkbox" id="isActualWorkPercentage">&nbsp;&nbsp;<label for="isActualWorkPercentage">Is show actual work percentage</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="isActualWorkPercentage">&nbsp;&nbsp; <label>
-                                            Is show actual work percentage</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Can open the BI Dashboard on the FE Dashboard page.">
+                                    <input type="checkbox" id="canAccessBIDashboard">&nbsp;&nbsp;<label for="canAccessBIDashboard">Can access BI Dashboard</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="isAttendanceApprover">&nbsp;&nbsp; <label>
-                                            Is Attendance Approver</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Can open the Vendor Agreement section.">
+                                    <input type="checkbox" id="canAcessVendorAgreement">&nbsp;&nbsp;<label for="canAcessVendorAgreement">Can access vendor agreement</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canViewAttendance">&nbsp;&nbsp; <label>
-                                            Can View Attendance</label>
-                                    </div>
+
+                                <div class="col-12 perm-section">Notifications</div>
+                                <div class="col-md-4 perm-item" data-tip="Gets a notification when a vehicle halts.">
+                                    <input type="checkbox" id="notificationHalt">&nbsp;&nbsp;<label for="notificationHalt">Notification : Halt</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canUpdateEmployeeDetail">&nbsp;&nbsp; <label>
-                                            Can update employee detail</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Gets a notification when a driver's mobile data is off.">
+                                    <input type="checkbox" id="notificationMobileDataOff">&nbsp;&nbsp;<label for="notificationMobileDataOff">Notification : Mobile Data Off</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canEditAadharMobile">&nbsp;&nbsp; <label>
-                                            Can change Aadhaar / Mobile</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Gets a notification when lines are skipped in a ward.">
+                                    <input type="checkbox" id="notificationSkippedLines">&nbsp;&nbsp;<label for="notificationSkippedLines">Notification : Skipped Lines</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canChangeDocuments">&nbsp;&nbsp; <label>
-                                            Can change employee documents</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Gets a notification when dustbins are picked.">
+                                    <input type="checkbox" id="notificationPickDustbins">&nbsp;&nbsp;<label for="notificationPickDustbins">Notification : Picked Dustbins</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canApproveIdType">&nbsp;&nbsp; <label>
-                                            Can approve ID Type change (HO)</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Gets geo surfing notifications.">
+                                    <input type="checkbox" id="notificationGeoSurfing">&nbsp;&nbsp;<label for="notificationGeoSurfing">Notification : Geo Surfing</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canUpdateOpendepotPickDetail">&nbsp;&nbsp; <label>
-                                            Can update open depot pick detail</label>
-                                    </div>
+
+                                <div class="col-12 perm-section">Attendance, Salary &amp; Accounts</div>
+                                <div class="col-md-4 perm-item" data-tip="Employee Attendance page: can approve attendance.">
+                                    <input type="checkbox" id="isAttendanceApprover">&nbsp;&nbsp;<label for="isAttendanceApprover">Is Attendance Approver</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canUpdateLeaveBalance">&nbsp;&nbsp; <label>
-                                            Can update leave balance</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Employee Attendance page: can view attendance.">
+                                    <input type="checkbox" id="canViewAttendance">&nbsp;&nbsp;<label for="canViewAttendance">Can View Attendance</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canUpdateDustbinPickDetail">&nbsp;&nbsp; <label>
-                                            Can update dustbin pick detail</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Attendance Summary page: can update an employee's leave balance.">
+                                    <input type="checkbox" id="canUpdateLeaveBalance">&nbsp;&nbsp;<label for="canUpdateLeaveBalance">Can update leave balance</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canRemoveNotPickedDustbin">&nbsp;&nbsp; <label>
-                                            Can remove not picked dustbin</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Date Wise Salary page: can upload the daily salary.">
+                                    <input type="checkbox" id="canUploadDailySalary">&nbsp;&nbsp;<label for="canUploadDailySalary">Can upload daily salary</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canAccessBIDashboard">&nbsp;&nbsp; <label>
-                                            Can access BI Dashboard</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Date Wise Salary page: can approve an employee's daily work.">
+                                    <input type="checkbox" id="canApproveDailyWork">&nbsp;&nbsp;<label for="canApproveDailyWork">Can approve daily work</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canAddWardDutyOn">&nbsp;&nbsp; <label>
-                                            Can add ward duty on time</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Employee Detail Report page: can update employee details.">
+                                    <input type="checkbox" id="canUpdateEmployeeDetail">&nbsp;&nbsp;<label for="canUpdateEmployeeDetail">Can update employee detail</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canReimburseFuel">&nbsp;&nbsp; <label>
-                                            Can reimburse fuel</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Account Detail / Employee Salary: can lock or unlock an employee's bank account.">
+                                    <input type="checkbox" id="isLock">&nbsp;&nbsp;<label for="isLock">Account lock-unlock</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canUploadDailySalary">&nbsp;&nbsp; <label>
-                                            Can upload daily salary</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Account Detail / Staff Account Detail: can edit bank account details. Only an admin can change this tick.">
+                                    <input type="checkbox" id="canUpdateAccountDetail" (change)="checkAccessUser();">&nbsp;&nbsp;<label for="canUpdateAccountDetail">Can update account detail</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canApproveDailyWork">&nbsp;&nbsp; <label>
-                                            Can approve daily work</label>
-                                    </div>
+
+                                <div class="col-12 perm-section">Operations</div>
+                                <div class="col-md-4 perm-item" data-tip="Halts report: can disable a halt.">
+                                    <input type="checkbox" id="haltDisableAccess">&nbsp;&nbsp;<label for="haltDisableAccess">Halt Disable Access</label>
                                 </div>
-                                
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <input type="checkbox" id="canAcessVendorAgreement">&nbsp;&nbsp; <label>
-                                            Can access vendor agreement</label>
-                                    </div>
+                                <div class="col-md-4 perm-item" data-tip="Secondary Collection Analysis: can update open depot pick details.">
+                                    <input type="checkbox" id="canUpdateOpendepotPickDetail">&nbsp;&nbsp;<label for="canUpdateOpendepotPickDetail">Can update open depot pick detail</label>
+                                </div>
+                                <div class="col-md-4 perm-item" data-tip="Dustbin Analysis: can update dustbin pick details.">
+                                    <input type="checkbox" id="canUpdateDustbinPickDetail">&nbsp;&nbsp;<label for="canUpdateDustbinPickDetail">Can update dustbin pick detail</label>
+                                </div>
+                                <div class="col-md-4 perm-item" data-tip="Dustbin / Secondary Collection Analysis: can remove a not-picked dustbin entry.">
+                                    <input type="checkbox" id="canRemoveNotPickedDustbin">&nbsp;&nbsp;<label for="canRemoveNotPickedDustbin">Can remove not picked dustbin</label>
+                                </div>
+                                <div class="col-md-4 perm-item" data-tip="Portal Services: can add the ward duty-on time.">
+                                    <input type="checkbox" id="canAddWardDutyOn">&nbsp;&nbsp;<label for="canAddWardDutyOn">Can add ward duty on time</label>
+                                </div>
+                                <div class="col-md-4 perm-item" data-tip="Daily Fuel Report: can reimburse fuel.">
+                                    <input type="checkbox" id="canReimburseFuel">&nbsp;&nbsp;<label for="canReimburseFuel">Can reimburse fuel</label>
+                                </div>
+
+                                <div class="col-12 perm-section">Other</div>
+                                <div class="col-md-4 perm-item">
+                                    <input type="checkbox" id="isTaskManager">&nbsp;&nbsp;<label for="isTaskManager">Is Task Manager</label>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="col-12 border-bottom" style="margin-top: 15px;"></div>
 

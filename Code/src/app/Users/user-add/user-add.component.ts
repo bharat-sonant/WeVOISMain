@@ -32,6 +32,7 @@ export class UserAddComponent implements OnInit {
   userJsonData: any;
   divLoader = "#divLoader";
   canUpdateAccountDetail: any = 0;
+  accessTab = "cities"; // "cities" | "permissions"
 
   ngOnInit() {
     this.setDefaults();
@@ -159,6 +160,21 @@ export class UserAddComponent implements OnInit {
       if (data["canUpdateEmployeeDetail"] != undefined) {
         if (data["canUpdateEmployeeDetail"] == 1) {
           (<HTMLInputElement>(document.getElementById("canUpdateEmployeeDetail"))).checked = true;
+        }
+      }
+      if (data["canEditEmployeeInApp"] != undefined) {
+        if (data["canEditEmployeeInApp"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canEditEmployeeInApp"))).checked = true;
+        }
+      }
+      if (data["canRaiseBankRequest"] != undefined) {
+        if (data["canRaiseBankRequest"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canRaiseBankRequest"))).checked = true;
+        }
+      }
+      if (data["canApproveBankRequest"] != undefined) {
+        if (data["canApproveBankRequest"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canApproveBankRequest"))).checked = true;
         }
       }
       if (data["canEditAadharMobile"] != undefined) {
@@ -346,6 +362,9 @@ export class UserAddComponent implements OnInit {
     let isManager: any = 0;
     let isAttendanceApprover: any = 0;
     let canUpdateEmployeeDetail: any = 0;
+    let canEditEmployeeInApp: any = 0;
+    let canRaiseBankRequest: any = 0;
+    let canApproveBankRequest: any = 0;
     let canEditAadharMobile: any = 0;
     let canChangeDocuments: any = 0;
     let canApproveIdType: any = 0;
@@ -411,6 +430,12 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) isManager = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateEmployeeDetail");
     if (element.checked == true) canUpdateEmployeeDetail = 1;
+    element = <HTMLInputElement>document.getElementById("canEditEmployeeInApp");
+    if (element.checked == true) canEditEmployeeInApp = 1;
+    element = <HTMLInputElement>document.getElementById("canRaiseBankRequest");
+    if (element.checked == true) canRaiseBankRequest = 1;
+    element = <HTMLInputElement>document.getElementById("canApproveBankRequest");
+    if (element.checked == true) canApproveBankRequest = 1;
     element = <HTMLInputElement>document.getElementById("canEditAadharMobile");
     if (element.checked == true) canEditAadharMobile = 1;
     element = <HTMLInputElement>document.getElementById("canChangeDocuments");
@@ -473,6 +498,9 @@ export class UserAddComponent implements OnInit {
       accessCities: accessCities,
       isAttendanceApprover: isAttendanceApprover,
       canUpdateEmployeeDetail: canUpdateEmployeeDetail,
+      canEditEmployeeInApp: canEditEmployeeInApp,
+      canRaiseBankRequest: canRaiseBankRequest,
+      canApproveBankRequest: canApproveBankRequest,
       canEditAadharMobile: canEditAadharMobile,
       canChangeDocuments: canChangeDocuments,
       canApproveIdType: canApproveIdType,
