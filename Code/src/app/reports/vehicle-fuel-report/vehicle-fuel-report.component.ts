@@ -111,6 +111,7 @@ export class VehicleFuelReportComponent implements OnInit {
           if (detail != undefined) {
             detail.isEntry = 1;
             detail.cssClass = "ward-header";
+            detail.isWorkOnly = false;
           }
         }
         this.vehicleList = this.vehicleList.sort((a, b) =>
@@ -137,6 +138,29 @@ export class VehicleFuelReportComponent implements OnInit {
     });
   }
 
+  getWorkVehicles() {
+    const path = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FVehicleFuelJSONData%2F" + this.selectedYear + "%2F" + this.selectedMonthName + "%2FWorkVehicles.json?alt=media";
+    let workVehicleInstance = this.httpService.get(path).subscribe(data => {
+      workVehicleInstance.unsubscribe();
+      if (data != null) {
+        let list = JSON.parse(JSON.stringify(data));
+        for (let i = 0; i < list.length; i++) {
+          let detail = this.vehicleList.find(item => item.vehicle == list[i]);
+          if (detail != undefined && detail.cssClass == "") {
+            detail.isEntry = 1;
+            detail.cssClass = "ward-header";
+            detail.isWorkOnly = true;
+          }
+        }
+        this.vehicleList = this.vehicleList.sort((a, b) =>
+          a.isEntry > b.isEntry ? -1 : 1
+        );
+      }
+    }, error => {
+      // file is created on sync, not found for months not synced yet
+    });
+  }
+
   getYear() {
     this.yearList = [];
     let year = parseInt(this.toDayDate.split('-')[0]);
@@ -149,7 +173,7 @@ export class VehicleFuelReportComponent implements OnInit {
     let vehicles = JSON.parse(localStorage.getItem("vehicle"));
     let cssClass = "";
     for (let i = 3; i < vehicles.length; i++) {
-      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass, isEntry: 0, regNo: "" });
+      this.vehicleList.push({ vehicle: vehicles[i]["vehicle"], cssClass: cssClass, isEntry: 0, regNo: "", isWorkOnly: false });
       this.commonService.getVehicleRegistrationNumber(vehicles[i]["vehicle"]).then((regNo: any) => {
         let item = this.vehicleList.find(v => v.vehicle == vehicles[i]["vehicle"]);
         if (item && regNo) {
@@ -159,6 +183,7 @@ export class VehicleFuelReportComponent implements OnInit {
     }
     this.getFuelMonthData();
     this.getMonthSummary();
+    this.getWorkVehicles();
   }
 
   changeYearSelection(filterVal: any) {
@@ -187,6 +212,7 @@ export class VehicleFuelReportComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedMonth) - 1);
     this.getFuelMonthData();
     this.getMonthSummary();
+    this.getWorkVehicles();
   }
 
   resetAll() {
@@ -210,6 +236,7 @@ export class VehicleFuelReportComponent implements OnInit {
       if (index == -1) {
         this.vehicleList[i]["cssClass"] = "";
         this.vehicleList[i]["isEntry"] = 0;
+        this.vehicleList[i]["isWorkOnly"] = false;
       }
       else if (i == index) {
         this.vehicleList[i]["cssClass"] = "ward-header-active";
@@ -341,9 +368,6 @@ export class VehicleFuelReportComponent implements OnInit {
         sum = 0;
         fuelList.forEach(a => sum += Number(a.quantity));
         this.fuelDetail.totalQuantity = sum.toFixed(2);
-      }
-      else {
-        this.commonService.setAlertMessage("error", "Sorry! no data found !!!");
       }
     }
   }
@@ -730,8 +754,10 @@ export class VehicleFuelReportComponent implements OnInit {
           this.fuelDetail.lastUpdateDate = lastUpdateDate;
           const obj = { "totalKM": totalKM.toFixed(3), "qty": this.totalQtyJSON.toFixed(2), "amount": this.totalAmountJSON.toFixed(2), "lastUpdateDate": lastUpdateDate };
           this.commonService.saveJsonFile(obj, "MonthSummary.json", filePath);
+          this.commonService.saveJsonFile(vehicleLengthList.map(item => item.vehicle), "WorkVehicles.json", filePath);
           this.commonService.setAlertMessage("success", "Data updated successfully !!!");
           this.getFuelMonthData();
+          this.getWorkVehicles();
         }, 6000);
 
       }
