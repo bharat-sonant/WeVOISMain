@@ -397,7 +397,7 @@
 
                                         <span [innerHTML]="data.duration" style="font-size: 10px;"></span>
 
-                                        <input type="checkbox" *ngIf="data.duration"
+                                        <input type="checkbox" *ngIf="data.duration || data.canVerify"
                                             [hidden]="userType=='External User'"
                                             [(ngModel)]="data.isVerifiedDustbinChecked"
                                             (change)="updateVerifiedDustbins(data.dustbinId, data.planId, data.isVerifiedDustbinChecked)"
