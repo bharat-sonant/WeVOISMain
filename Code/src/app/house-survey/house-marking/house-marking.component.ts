@@ -1661,6 +1661,13 @@ export class HouseMarkingComponent {
           markerUpdateId = updateId + "," + lastKey;
         }
         this.db.object(dbPath).update({ markerUpdateId });
+        let type = $("#type").val();
+        let detail = type == "includedMarker"
+          ? this.markerListIncluded.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo)
+          : this.markerList.find(item => item.index == index && item.lineNo == lineNo && item.zoneNo == zoneNo);
+        if (detail != undefined) {
+          detail.markerUpdateId = markerUpdateId;
+        }
       });
 
     });
