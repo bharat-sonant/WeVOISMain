@@ -4,6 +4,7 @@ import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { ExternalEmployeeService } from '../../services/common/external-employee.service';
 
 @Component({
   selector: 'app-employees',
@@ -12,8 +13,10 @@ import { BackEndServiceUsesHistoryService } from '../../services/common/back-end
 })
 export class EmployeesComponent implements OnInit {
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient, private externalEmployeeService: ExternalEmployeeService) { }
   db: any;
+  canSync = false;
+  lastSyncAt: any = "";
   cityName: any;
   designationList: any[] = [];
   designationUpdateList: any[];
@@ -58,7 +61,58 @@ export class EmployeesComponent implements OnInit {
     $(this.ddlUser).val("active");
     this.designationUpdateList = JSON.parse(localStorage.getItem("designation"));
     this.departmentUpdateList = JSON.parse(localStorage.getItem("department"));
+    this.canSync = this.externalEmployeeService.canSync();
+    if (this.canSync) {
+      this.externalEmployeeService.getLastSyncAt().then(value => { this.lastSyncAt = value || ""; });
+    }
     this.getEmployeesNew();
+  }
+
+  /* Database and empId to use for an employee (Jaipur Office ones live in the Jaipur Office database) */
+  getEmployeeDb(empId: any) {
+    return this.externalEmployeeService.isExternalKey(empId) ? this.externalEmployeeService.getSourceDb() : this.db;
+  }
+
+  getDbEmpId(empId: any) {
+    return this.externalEmployeeService.toSourceEmpId(empId);
+  }
+
+  /* Jaipur Office employees whose branch is this city */
+  async getExternalEmployees() {
+    let mappedList = await this.externalEmployeeService.getMappedEmployees(this.cityName);
+    if (mappedList.length == 0) {
+      return [];
+    }
+    let sourceDb = this.externalEmployeeService.getSourceDb();
+    let results: any[] = await Promise.all(mappedList.map(item => this.getEmployeeDetail(item.empId, sourceDb)));
+    return results.filter(item => item["status"] == "success").map(item => {
+      let data = item["data"];
+      data.sourceEmpId = data.empId;
+      data.empId = this.externalEmployeeService.toKey(data.empId);
+      data.isExternal = true;
+      return data;
+    });
+  }
+
+  syncExternalEmployees() {
+    if (!this.canSync) {
+      return;
+    }
+    $(this.divLoader).show();
+    this.externalEmployeeService.syncMapping(this.commonService.getTodayDateTime()).then((response: any) => {
+      if (response.status == "success") {
+        this.lastSyncAt = response.lastSyncAt;
+        this.commonService.setAlertMessage("success", response.message);
+        this.getEmployeesNew();
+      }
+      else {
+        this.commonService.setAlertMessage("error", response.message);
+        $(this.divLoader).hide();
+      }
+    }).catch(() => {
+      this.commonService.setAlertMessage("error", "Sync failed !!!");
+      $(this.divLoader).hide();
+    });
   }
 
   getEmployeesNew() {
@@ -77,14 +131,15 @@ export class EmployeesComponent implements OnInit {
           promises.push(Promise.resolve(this.getEmployeeDetail(i)));
         }
 
-        Promise.all(promises).then((results) => {
+        Promise.all(promises).then(async (results) => {
           let merged = [];
           for (let i = 0; i < results.length; i++) {
             if (results[i]["status"] == "success") {
               merged = merged.concat(results[i]["data"]);
             }
           }
-          this.allEmployeeList = merged;
+          let externalList = await this.getExternalEmployees();
+          this.allEmployeeList = merged.concat(externalList);
           this.getDepartments();
           this.filterData();
           this.saveJSONData();
@@ -98,13 +153,18 @@ export class EmployeesComponent implements OnInit {
     });
   }
 
-  getEmployeeDetail(empId: any) {
+  getEmployeeDetail(empId: any, db: any = this.db) {
     return new Promise((resolve) => {
       let employeeData = {};
       let dbPath = "Employees/" + empId + "/GeneralDetails";
-      let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+      let employeeDetailInstance = db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
           employeeDetailInstance.unsubscribe();
+          // Jaipur Office: an employee working in another city is shown in that city only
+          if (employeeDetail && db === this.db && this.externalEmployeeService.isSourceCity(this.cityName) && this.externalEmployeeService.isWorkingElsewhere(employeeDetail["branch"])) {
+            resolve({ status: "fail", data: employeeData });
+            return;
+          }
           if (employeeDetail) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getEmployeeDetail", employeeDetail);
             let designation = "";
@@ -157,6 +217,10 @@ export class EmployeesComponent implements OnInit {
     let path = "/";
     const obj = {};
     for (let i = 0; i < this.allEmployeeList.length; i++) {
+      // The file is this city's own employees, Jaipur Office ones are not saved in it
+      if (this.allEmployeeList[i]["isExternal"]) {
+        continue;
+      }
       const data = {
         designationId: this.allEmployeeList[i]["designationId"],
         empCode: this.allEmployeeList[i]["empCode"],
@@ -267,8 +331,8 @@ export class EmployeesComponent implements OnInit {
   }
 
   updateStatusInDatabase(empId: any, status: any) {
-    let dbPath = "Employees/" + empId + "/GeneralDetails/";
-    this.db.object(dbPath).update({ status: status });
+    let dbPath = "Employees/" + this.getDbEmpId(empId) + "/GeneralDetails/";
+    this.getEmployeeDb(empId).object(dbPath).update({ status: status });
     this.closeModel();
   }
 
@@ -342,8 +406,9 @@ export class EmployeesComponent implements OnInit {
     if (changes.length == 0) {
       return;
     }
-    let historyPath = "EmployeeDetailUpdateHistory/" + empId;
-    let lastKeyInstance = this.db.object(historyPath + "/lastKey").valueChanges().subscribe((lastKeyData: any) => {
+    let db = this.getEmployeeDb(empId);
+    let historyPath = "EmployeeDetailUpdateHistory/" + this.getDbEmpId(empId);
+    let lastKeyInstance = db.object(historyPath + "/lastKey").valueChanges().subscribe((lastKeyData: any) => {
       lastKeyInstance.unsubscribe();
       let lastKey = lastKeyData != null ? Number(lastKeyData) : 0;
       const userId = localStorage.getItem("userID");
@@ -361,13 +426,15 @@ export class EmployeesComponent implements OnInit {
         };
       }
       data["lastKey"] = lastKey;
-      this.db.object(historyPath).update(data);
+      db.object(historyPath).update(data);
     });
   }
 
   updateDesignationInDatabase(empId: any, designationId: any, salaryType: any) {
-    let dbPath = "Employees/" + empId + "/GeneralDetails/";
-    this.db.object(dbPath).update({ designationId: designationId.toString(), salaryType: salaryType, departmentId: this.ddlDepartmentUpdate });
+    let db = this.getEmployeeDb(empId);
+    let dbEmpId = this.getDbEmpId(empId);
+    let dbPath = "Employees/" + dbEmpId + "/GeneralDetails/";
+    db.object(dbPath).update({ designationId: designationId.toString(), salaryType: salaryType, departmentId: this.ddlDepartmentUpdate });
     this.closeModel();
   }
 

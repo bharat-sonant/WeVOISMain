@@ -62,6 +62,10 @@
                             <img src="../../../assets/icons/file-export-solid.svg" alt="export" class="cursor-pointer icon-green" (click)="exportEmployee();" title="export excel">
                             <br/> Export
                         </div>
+                        <div class="col-md-1 text-center" style="font-size: 12px;padding-top:14px;" *ngIf="canSync">
+                            <img src="../../../assets/icons/sync-alt-solid.svg" alt="sync" class="cursor-pointer icon-green" style="height: 20px;" (click)="syncExternalEmployees();" title="Sync employees working in other cities{{lastSyncAt ? ' (last sync: ' + lastSyncAt + ')' : ''}}">
+                            <br/> Sync
+                        </div>
 
                     </div>
                 </div>

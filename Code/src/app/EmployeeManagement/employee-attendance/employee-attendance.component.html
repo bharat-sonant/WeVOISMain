@@ -35,6 +35,14 @@
                                 </div>
                                 <span class="export-span-iner">Export</span>
                             </span>
+                            <span class="export-span" style="right: 75px;" *ngIf="canSync">
+                                <div class="text-center">
+                                    <img src="../../../assets/icons/sync-alt-solid.svg" class="cursor-pointer icon-green"
+                                        style="height: 20px;" alt="sync" (click)="syncExternalEmployees();"
+                                        title="Sync employees working in other cities{{lastSyncAt ? ' (last sync: ' + lastSyncAt + ')' : ''}}">
+                                </div>
+                                <span class="export-span-iner">Sync</span>
+                            </span>
                         </div>
                         <hr />
                     </div>

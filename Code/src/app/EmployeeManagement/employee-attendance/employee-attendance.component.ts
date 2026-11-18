@@ -4,6 +4,7 @@ import { CommonService } from '../../services/common/common.service';
 import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ExternalEmployeeService } from '../../services/common/external-employee.service';
 //  <reference types="@types/googlemaps" />
 
 
@@ -18,8 +19,11 @@ export class EmployeeAttendanceComponent implements OnInit {
   @ViewChild("gmap", null) gmap: any;
   public map: google.maps.Map;
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private modalService: NgbModal, private commonService: CommonService, public httpService: HttpClient, private externalEmployeeService: ExternalEmployeeService) { }
   db: any;
+  canSync = false;
+  lastSyncAt: any = "";
+  externalModificationRequestList: any[] = [];
   cityName: any;
   divLoader = "#divLoader";
   allEmployeeList: any[] = [];
@@ -100,8 +104,80 @@ export class EmployeeAttendanceComponent implements OnInit {
     $(this.txtDateTo).val(this.selectedDate);
     this.getSelectedYearMonthName();
     this.fireStorePath = this.commonService.fireStoragePath;
+    this.canSync = this.externalEmployeeService.canSync();
+    if (this.canSync) {
+      this.externalEmployeeService.getLastSyncAt().then(value => { this.lastSyncAt = value || ""; });
+    }
     this.getEmployees();
     this.updateModificationRequestList();
+  }
+
+  /* Database and empId to use for an employee (Jaipur Office ones live in the Jaipur Office database) */
+  getEmployeeDb(empId: any) {
+    return this.externalEmployeeService.isExternalKey(empId) ? this.externalEmployeeService.getSourceDb() : this.db;
+  }
+
+  getDbEmpId(empId: any) {
+    return this.externalEmployeeService.toSourceEmpId(empId);
+  }
+
+  /* Jaipur Office employees whose branch is this city */
+  async getExternalEmployees() {
+    let mappedList = await this.externalEmployeeService.getMappedEmployees(this.cityName);
+    if (mappedList.length == 0) {
+      return [];
+    }
+    let sourceDb = this.externalEmployeeService.getSourceDb();
+    let results: any[] = await Promise.all(mappedList.map(item => this.getEmployeeDetail(item.empId, sourceDb)));
+    return results.filter(item => item["status"] == "success").map(item => {
+      let data = item["data"];
+      data.sourceEmpId = data.empId;
+      data.empId = this.externalEmployeeService.toKey(data.empId);
+      data.isExternal = true;
+      return data;
+    });
+  }
+
+  /* Pending modification requests of the Jaipur Office employees shown here (they are in the Jaipur Office database) */
+  getExternalModificationRequests() {
+    let externalList = this.allEmployeeList.filter(item => item.isExternal);
+    if (externalList.length == 0) {
+      return;
+    }
+    let empIds = externalList.map(item => String(item.sourceEmpId));
+    this.externalEmployeeService.getModificationRequests(empIds, this.toDayDate).then(list => {
+      this.externalModificationRequestList = list.map(item => ({ ...item, empId: this.externalEmployeeService.toKey(item.empId), isExternal: true }));
+      this.modificationRequestList = this.modificationRequestList.filter(item => !item.isExternal).concat(this.externalModificationRequestList);
+      if (this.attendanceList && this.attendanceList.length > 0 && this.filterType == "byDate") {
+        this.filterData();
+      }
+    });
+  }
+
+  /* This city's own requests, keeping the Jaipur Office ones already loaded */
+  setOwnModificationRequests(list: any[]) {
+    this.modificationRequestList = list.concat(this.externalModificationRequestList);
+  }
+
+  syncExternalEmployees() {
+    if (!this.canSync) {
+      return;
+    }
+    $(this.divLoader).show();
+    this.externalEmployeeService.syncMapping(this.commonService.getTodayDateTime()).then((response: any) => {
+      if (response.status == "success") {
+        this.lastSyncAt = response.lastSyncAt;
+        this.commonService.setAlertMessage("success", response.message);
+        this.getEmployees();
+      }
+      else {
+        this.commonService.setAlertMessage("error", response.message);
+        $(this.divLoader).hide();
+      }
+    }).catch(() => {
+      this.commonService.setAlertMessage("error", "Sync failed !!!");
+      $(this.divLoader).hide();
+    });
   }
 
   setFilterType(filterVal: any, empId: any) {
@@ -136,14 +212,19 @@ export class EmployeeAttendanceComponent implements OnInit {
     this.selectedMonthName = this.commonService.getCurrentMonthName(Number(this.selectedDate.split('-')[1]) - 1);
   }
 
-  getEmployeeDetail(empId: any) {
+  getEmployeeDetail(empId: any, db: any = this.db) {
     return new Promise((resolve) => {
       let employeeData = {};
       let dbPath = "Employees/" + empId + "/GeneralDetails";
-      let employeeDetailInstance = this.db.object(dbPath).valueChanges().subscribe(
+      let employeeDetailInstance = db.object(dbPath).valueChanges().subscribe(
         employeeDetail => {
 
           employeeDetailInstance.unsubscribe();
+          // Jaipur Office: an employee working in another city is shown in that city only
+          if (employeeDetail && db === this.db && this.externalEmployeeService.isSourceCity(this.cityName) && this.externalEmployeeService.isWorkingElsewhere(employeeDetail.branch)) {
+            resolve({ status: "fail", data: employeeData });
+            return;
+          }
           if (employeeDetail) {
             let attendanceManager = "";
             if (employeeDetail.attendanceApprover) {
@@ -222,16 +303,18 @@ export class EmployeeAttendanceComponent implements OnInit {
         for (let i = 1; i <= lastEmpId; i++) {
           promises.push(Promise.resolve(this.getEmployeeDetail(i)));
         }
-        Promise.all(promises).then((results) => {
+        Promise.all(promises).then(async (results) => {
           let merged = [];
           for (let i = 0; i < results.length; i++) {
             if (results[i]["status"] == "success") {
               merged = merged.concat(results[i]["data"]);
             }
           }
+          merged = merged.concat(await this.getExternalEmployees());
           if (merged.length > 0) {
             this.allEmployeeList = merged;
             this.allEmployeeList = this.commonService.transformNumeric(this.allEmployeeList, "name");
+            this.getExternalModificationRequests();
             this.getFilterEmployee();
             this.getAttendance();
           }
@@ -268,13 +351,13 @@ export class EmployeeAttendanceComponent implements OnInit {
       let attendanceManager = this.allEmployeeList[i]["attendanceManager"];
       let designationId = this.allEmployeeList[i]["designationId"];
 
-      let dbPath = "Attendance/" + empId + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
-      let employeeAttendanceInstance = this.db.object(dbPath).valueChanges().subscribe(
+      let dbPath = "Attendance/" + this.getDbEmpId(empId) + "/" + this.selectedYear + "/" + this.selectedMonthName + "/" + this.selectedDate;
+      let employeeAttendanceInstance = this.getEmployeeDb(empId).object(dbPath).valueChanges().subscribe(
         attendanceData => {
           employeeAttendanceInstance.unsubscribe();
           if (attendanceData != null) {
             this.besuh.saveBackEndFunctionDataUsesHistory(this.serviceName, "getAttendance", attendanceData);
-            let detail = this.allEmployeeList.find(item => Number(item.empId) == Number(empId));
+            let detail = this.allEmployeeList.find(item => String(item.empId) == String(empId));
             if (detail != undefined) {
               let inTime = "";
               let outTime = "";
@@ -419,9 +502,9 @@ export class EmployeeAttendanceComponent implements OnInit {
 
   }
   getModificationRequestByEmployeeId(empId: any, date: any) {
-    let detail = this.modificationRequestList.find(emp => Number(emp.empId) === Number(empId) && new Date(date).toDateString() === new Date(emp.date).toDateString())
+    let detail = this.modificationRequestList.find(emp => String(emp.empId) === String(empId) && new Date(date).toDateString() === new Date(emp.date).toDateString())
     if (detail) {
-      let empDetail = this.allEmployeeList.find(emp => Number(emp.empId) === Number(empId));
+      let empDetail = this.allEmployeeList.find(emp => String(emp.empId) === String(empId));
       let isAttendanceApprover = empDetail["isAttendanceApprover"];
       let attendanceApprover = empDetail["attendanceApprover"];
       let attendanceManager = empDetail["attendanceManager"];
@@ -487,8 +570,8 @@ export class EmployeeAttendanceComponent implements OnInit {
         attendanceManager = detail.attendanceManager;
       }
       let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
-      let dbPath = "Attendance/" + empId + "/" + year + "/" + monthName + "/" + date;
-      let employeeAttendanceInstance = this.db.object(dbPath).valueChanges().subscribe(
+      let dbPath = "Attendance/" + this.getDbEmpId(empId) + "/" + year + "/" + monthName + "/" + date;
+      let employeeAttendanceInstance = this.getEmployeeDb(empId).object(dbPath).valueChanges().subscribe(
         attendanceData => {
           employeeAttendanceInstance.unsubscribe();
           if (attendanceData != null) {
@@ -623,7 +706,7 @@ export class EmployeeAttendanceComponent implements OnInit {
                 }
                 workingHour = (this.commonService.getDiffrernceHrMin(currentTime, inTimes)).toString();
               }
-              let modificationDetail = this.modificationRequestList.find(item => Number(item.empId) == Number(empId) && new Date(date).toDateString() === new Date(item.date).toDateString())
+              let modificationDetail = this.modificationRequestList.find(item => String(item.empId) == String(empId) && new Date(date).toDateString() === new Date(item.date).toDateString())
 
 
               this.employeeList.push({ empId: empId, name: date, inServerTime: inServerTime, outServerTime: outServerTime, isModificationRequired: modificationDetail ? true : false, empCode: detail.empCode, inTime: inTime, outTime: outTime, workingHour: workingHour, inTimestemp: inTimestemp, cssClass: cssClass, cssWorkingClass: cssWorkingClass, status: status, inLocation: inLocation, outLocation: outLocation, inLatLng: { inLat: inLat, inLng: inLng }, outLatLng: { outLat: outLat, outLng: outLng }, approverStatus: approverStatus, approveBy: approveBy, inLocationFull: inLocationFull, outLocationFull: outLocationFull, isAttendanceApprover: isAttendanceApprover, attendanceManager: attendanceManager, inImageUrl, outImageUrl, approveAt, displayName: this.commonService.convertDateWithMonthName(date), reason: reason });
@@ -715,7 +798,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     if (this.modificationRequestList.length > 0 && this.attendanceList.length > 0) {
       let date = $(this.txtDate).val().toString()
       updatedList = this.attendanceList.map(emp => {
-        const detail = this.modificationRequestList.find(item => Number(item.empId) === Number(emp.empId) && new Date(date).toDateString() === new Date(item.date).toDateString());
+        const detail = this.modificationRequestList.find(item => String(item.empId) === String(emp.empId) && new Date(date).toDateString() === new Date(item.date).toDateString());
         if (detail) {
           return { ...emp, isModificationRequired: true };
         } else {
@@ -917,7 +1000,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     let outTime = this.attendanceList[index]["outTime"];
     let name = this.attendanceList[index]["name"];
     let date = this.filterType === 'byDate' ? $(this.txtDate).val().toString() : name;
-    let detail = this.modificationRequestList.find((emp) => Number(emp.empId) === Number(empId) && new Date(date).toDateString() === new Date(emp.date).toDateString());
+    let detail = this.modificationRequestList.find((emp) => String(emp.empId) === String(empId) && new Date(date).toDateString() === new Date(emp.date).toDateString());
     let requestedInTime = detail && detail.inTime ? detail.inTime.split('~') : ''
     let requestedOutTime = detail && detail.outTime ? detail.outTime.split('~') : ""
     let remark = detail && detail.remark ? detail.remark : '';
@@ -956,12 +1039,14 @@ export class EmployeeAttendanceComponent implements OnInit {
       let year = date.split('-')[0];
       let month = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
       let approveDate = this.commonService.getTodayDateTime()
-      let inDetailsPath = `/Attendance/${empId}/${year}/${month}/${date}/inDetails`
-      let outDetailsPath = `/Attendance/${empId}/${year}/${month}/${date}/outDetails`
+      let db = this.getEmployeeDb(empId);
+      let dbEmpId = this.getDbEmpId(empId);
+      let inDetailsPath = `/Attendance/${dbEmpId}/${year}/${month}/${date}/inDetails`
+      let outDetailsPath = `/Attendance/${dbEmpId}/${year}/${month}/${date}/outDetails`
       let modificationPath = `/ModificationRequests/${modificationId}/`
-      this.db.object(inDetailsPath).update({ status: attendanceStatusValue, approveAt: approveDate, approveBy: localStorage.getItem('userID'), time: requestedInTime })
-      this.db.object(outDetailsPath).update({ time: requestedOutTime });
-      this.db.object(modificationPath).update({ isApproved: 'true' });
+      db.object(inDetailsPath).update({ status: attendanceStatusValue, approveAt: approveDate, approveBy: localStorage.getItem('userID'), time: requestedInTime })
+      db.object(outDetailsPath).update({ time: requestedOutTime });
+      db.object(modificationPath).update({ isApproved: 'true' });
 
       this.attendanceList[index]["approverStatus"] = attendanceStatusValue;
 
@@ -1011,15 +1096,19 @@ export class EmployeeAttendanceComponent implements OnInit {
       this.attendanceList[index]["approveBy"] = userDetail ? userDetail.name : "";
       this.attendanceList[index]["approveAt"] = approveAt; //to show approve at time in new line
       this.modificationRequestList = this.modificationRequestList.map(item => {
-        if (Number(item.empId) === Number(empId) && new Date(date).toDateString() === new Date(item.date).toDateString()) {
+        if (String(item.empId) === String(empId) && new Date(date).toDateString() === new Date(item.date).toDateString()) {
           return { ...item, isApproved: 'true' }
         }
         return item
       });
       let updatedModificationRequestList = this.modificationRequestList.filter(emp => emp.isApproved.toString() === 'false')
       this.modificationRequestList = updatedModificationRequestList
-      this.commonService.saveJsonFile(updatedModificationRequestList, 'modifcationRequest.json', '/AttendanceModificationRequestJSON/');
-      this.commonService.saveJsonFile({ lastUpdatedAt: this.commonService.getTodayDateTime() }, 'lastUpdateDate.json', '/AttendanceModificationRequestJSON/');
+      this.externalModificationRequestList = updatedModificationRequestList.filter(emp => emp.isExternal);
+      // This city's file keeps only its own requests (Jaipur Office ones are in the Jaipur Office database)
+      if (!this.externalEmployeeService.isExternalKey(empId)) {
+        this.commonService.saveJsonFile(updatedModificationRequestList.filter(emp => !emp.isExternal), 'modifcationRequest.json', '/AttendanceModificationRequestJSON/');
+        this.commonService.saveJsonFile({ lastUpdatedAt: this.commonService.getTodayDateTime() }, 'lastUpdateDate.json', '/AttendanceModificationRequestJSON/');
+      }
 
       this.commonService.setAlertMessage("success", "Attendance update successfully.");
       this.cancelModificationPopup();
@@ -1054,8 +1143,8 @@ Written date : 26 Dec 2024
     let year = date.split('-')[0];
     let approveDate = this.commonService.getTodayDateTime();
     let monthName = this.commonService.getCurrentMonthName(Number(date.split('-')[1]) - 1);
-    let dbPath = "Attendance/" + empId + "/" + year + "/" + monthName + "/" + date + "/inDetails";
-    this.db.object(dbPath).update({ status: approveStatus, approveBy: localStorage.getItem("userID"), approveAt: approveDate, reason: reason });
+    let dbPath = "Attendance/" + this.getDbEmpId(empId) + "/" + year + "/" + monthName + "/" + date + "/inDetails";
+    this.getEmployeeDb(empId).object(dbPath).update({ status: approveStatus, approveBy: localStorage.getItem("userID"), approveAt: approveDate, reason: reason });
     this.attendanceList[index]["approverStatus"] = approveStatus;
     this.attendanceList[index]["reason"] = reason;
     if (approveStatus == "0") {
@@ -1082,7 +1171,7 @@ Written date : 26 Dec 2024
     }
     this.getNotApprovedAttendanceCount();
     if (this.filterType == "byDate") {
-      let detail = this.employeeList.find(item => Number(item.empId) === Number(empId));
+      let detail = this.employeeList.find(item => String(item.empId) === String(empId));
       if (detail != undefined) {
         detail.status = this.attendanceList[index]["status"];
       }
@@ -1318,9 +1407,9 @@ Written date : 26 Dec 2024
       let storageInstance = this.httpService.get(path).subscribe(response => {
         storageInstance.unsubscribe();
         if (response) {
-          this.modificationRequestList = JSON.parse(JSON.stringify(response));
+          this.setOwnModificationRequests(JSON.parse(JSON.stringify(response)));
         } else {
-          this.modificationRequestList = [];
+          this.setOwnModificationRequests([]);
         }
       });
     } else {
@@ -1336,14 +1425,14 @@ Written date : 26 Dec 2024
               return acc;
             }, []);
             if (list && list.length > 0) {
-              this.modificationRequestList = list;
+              this.setOwnModificationRequests(list);
               this.commonService.saveJsonFile(list, 'modifcationRequest.json', '/AttendanceModificationRequestJSON/');
               this.commonService.saveJsonFile({ lastUpdatedAt: this.commonService.getTodayDateTime() }, 'lastUpdateDate.json', '/AttendanceModificationRequestJSON/');
             } else {
-              this.modificationRequestList = [];
+              this.setOwnModificationRequests([]);
             }
           } else {
-            this.modificationRequestList = [];
+            this.setOwnModificationRequests([]);
           }
           // Call after modificationRequestList is updated
 
