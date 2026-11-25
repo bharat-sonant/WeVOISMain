@@ -214,17 +214,29 @@
                 <input id="hddCardNo" type="hidden" value="" />
                 <input id="hddDate" type="hidden" value="" />
                 <input id="hddKey" type="hidden" value="" />
-                <div style="text-align:left;">
-                    <label>Transaction ID</label>
-                    <input id="txtTransactionId" type="text" class="filter-input"
-                        style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                <div class="txn-field">
+                    <label>Transaction ID <span class="req">*</span></label>
+                    <input id="txtTransactionId" type="text" class="filter-input" placeholder="Enter transaction id" />
                 </div>
-                <div style="text-align:left;">
-                    <label>Transaction Date</label>
-                    <input id="txtTransactionDate" type="date" class="filter-input"
-                        style="width:100%; margin-top: 0px; margin-left: 0px;" />
+                <div class="txn-field">
+                    <label>Transaction Date <span class="req">*</span></label>
+                    <input id="txtTransactionDate" type="date" class="filter-input" />
                 </div>
-                <div style="text-align:left; color:green;padding-top: 20px;">
+                <div class="txn-field">
+                    <label>Payment Screenshot <span class="req">*</span></label>
+                    <label for="fileBankStatement" class="bs-upload" [class.selected]="bankStatementPreview">
+                        <img *ngIf="bankStatementPreview" [src]="bankStatementPreview" class="bs-thumb" alt="preview">
+                        <img *ngIf="!bankStatementPreview" src="../../../assets/icons/image-regular.svg" height="24"
+                            width="24" alt="upload" class="icon-green">
+                        <span class="bs-text">
+                            {{bankStatementFileName ? bankStatementFileName : 'Click to upload screenshot'}}
+                            <span class="bs-hint">{{bankStatementFileName ? 'Click to change' : 'JPG / PNG image'}}</span>
+                        </span>
+                    </label>
+                    <input id="fileBankStatement" type="file" accept="image/*" style="display:none;"
+                        (change)="onBankStatementChange($event)" />
+                </div>
+                <div class="txn-confirm">
                     <input id="chkConfirm" type="checkbox" /> I have checked and above information is correct.
                 </div>
                 <div style="padding-top: 20px;">

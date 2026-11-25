@@ -102,6 +102,9 @@
                                             <th class="text-center br-1" style="border:none!important;">
                                                 Cheque Image
                                             </th>
+                                            <th class="text-center br-1" style="border:none!important;">
+                                                Payment Screenshot
+                                            </th>
                                         </thead>
                                         <tbody>
                                             <tr id="tr{{i}}" *ngFor="let data of chequeFilterList; let i=index">
@@ -153,6 +156,12 @@
                                                         <!-- <i class="fa-regular fa-image" style="font-size: 18px; cursor: pointer;"></i> -->
                                                         <img src="../../../assets/icons/image-regular.svg" height="18" width="18" alt="export" class="cursor-pointer icon-red">
                                                     </a>
+                                                </td>
+                                                <td class="text-center br-1">
+                                                    <a *ngIf="data.bankStatementImageUrl" href="{{data.bankStatementImageUrl}}" target="_blank">
+                                                        <img src="../../../assets/icons/image-regular.svg" height="18" width="18" alt="payment screenshot" class="cursor-pointer icon-red">
+                                                    </a>
+                                                    <span *ngIf="!data.bankStatementImageUrl">-</span>
                                                 </td>
                                             </tr>
                                         </tbody>

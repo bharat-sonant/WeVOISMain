@@ -1883,3 +1883,103 @@ input {
 .icon-red{
     filter: brightness(0) saturate(100%) invert(27%) sepia(90%) saturate(7483%) hue-rotate(2deg) brightness(94%) contrast(108%);
 }
+
+// Add Transaction Detail popup
+.txn-field {
+    text-align: left;
+    margin-bottom: 12px;
+}
+
+.txn-field label {
+    display: block;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+.txn-field .filter-input {
+    width: 100%;
+    margin: 0px;
+    padding: 0 10px;
+}
+
+.req {
+    color: red;
+}
+
+.bs-upload {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 58px;
+    padding: 8px 10px;
+    border: 1px dashed #b5b5b5;
+    border-radius: 4px;
+    background: #fafafa;
+    cursor: pointer;
+    margin-bottom: 0px !important;
+    transition: 0.3s;
+}
+
+.bs-upload:hover {
+    border-color: #0ba118;
+    background: #f3fbf3;
+}
+
+.bs-upload.selected {
+    border-style: solid;
+    border-color: #0ba118;
+    background: #f3fbf3;
+}
+
+.bs-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 3px;
+    border: 1px solid lightgray;
+    flex-shrink: 0;
+}
+
+.bs-text {
+    font-size: 12px;
+    color: #707070;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bs-upload.selected .bs-text {
+    color: #333;
+}
+
+.bs-hint {
+    display: block;
+    font-size: 10px;
+    color: #999;
+}
+
+.txn-confirm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+    color: green;
+    font-size: 12px;
+    padding-top: 4px;
+    line-height: 1;
+}
+
+.txn-confirm input[type="checkbox"] {
+    margin: 0px;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.submit-btn,
+.cancel-btn {
+    min-width: 110px;
+    color: #fff !important;
+}

@@ -4,6 +4,7 @@ import { FirebaseService } from "../../firebase.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient } from "@angular/common/http";
 import { BackEndServiceUsesHistoryService } from '../../services/common/back-end-service-uses-history.service';
+import { AngularFireStorage } from "@angular/fire/storage";
 
 @Component({
   selector: 'app-payment-via-cheque',
@@ -37,10 +38,12 @@ export class PaymentViaChequeComponent implements OnInit {
   entityType: any = "";
   entityId: any = "";
   serviceName = "collection-management-payment-via-cheque";
+  bankStatementFileName: any = "";
+  bankStatementPreview: any = "";
 
 
 
-  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal) { }
+  constructor(public fs: FirebaseService, private besuh: BackEndServiceUsesHistoryService, private commonService: CommonService, public httpService: HttpClient, private modalService: NgbModal, private storage: AngularFireStorage) { }
 
   ngOnInit() {
     this.cityName = localStorage.getItem("cityName");
@@ -192,13 +195,15 @@ export class PaymentViaChequeComponent implements OnInit {
   openModel(content: any, cardNo: any, date: any, key: any, type: any, entityType: any, entityId: any) {
     this.modalService.open(content, { size: "lg" });
     let windowHeight = $(window).height();
-    let height = 330;
+    let height = type == "clear" ? 490 : 330;
     let width = 400;
     let marginTop = Math.max(0, (windowHeight - height) / 2) + "px";
     $("div .modal-content").parent().css("max-width", "" + width + "px").css("margin-top", marginTop);
     $("div .modal-content").css("height", height + "px").css("width", "" + width + "px");
     $("div .modal-dialog-centered").css("margin-top", "26px");
     if (type == "clear") {
+      this.bankStatementFileName = "";
+      this.bankStatementPreview = "";
       $(this.hddCardNo).val(cardNo);
       $(this.hddDate).val(date);
       $(this.hddKey).val(key);
@@ -230,13 +235,59 @@ export class PaymentViaChequeComponent implements OnInit {
       this.commonService.setAlertMessage("error", "Please enter transaction date !!!");
       return;
     }
+    let fileElement = <HTMLInputElement>document.getElementById('fileBankStatement');
+    if (fileElement == null || fileElement.files == null || fileElement.files.length == 0) {
+      this.commonService.setAlertMessage("error", "Please upload payment screenshot !!!");
+      return;
+    }
+    let file = fileElement.files[0];
+    if (!file.type.startsWith("image/")) {
+      this.commonService.setAlertMessage("error", "Payment screenshot must be an image !!!");
+      return;
+    }
     if ((<HTMLInputElement>document.getElementById('chkConfirm')).checked == false) {
       this.commonService.setAlertMessage("error", "Confirmation required !!!");
       return;
     }
 
-    this.entityType == 'mainEntity' ? this.acceptMainEntitytransaction() : this.acceptSubEntitytransaction();
+    $(this.divLoader).show();
+    this.uploadBankStatement(file).then((bankStatementImage: any) => {
+      this.entityType == 'mainEntity' ? this.acceptMainEntitytransaction(bankStatementImage) : this.acceptSubEntitytransaction(bankStatementImage);
+    }).catch(() => {
+      $(this.divLoader).hide();
+      this.commonService.setAlertMessage("error", "Payment screenshot upload failed, please try again !!!");
+    });
+  }
 
+  // Shows the selected screenshot's name and a small preview in the popup.
+  onBankStatementChange(event: any) {
+    let file = event.target.files && event.target.files.length > 0 ? event.target.files[0] : null;
+    this.bankStatementFileName = "";
+    this.bankStatementPreview = "";
+    if (file == null) {
+      return;
+    }
+    this.bankStatementFileName = file.name;
+    if (file.type.startsWith("image/")) {
+      let reader = new FileReader();
+      reader.onload = () => { this.bankStatementPreview = reader.result; };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Bank statement screenshot is stored next to the cheque record:
+  // main entity -> PaymentViaChequeBankStatement/{cardNo}/{date}/{key}.{ext}
+  // sub entity  -> PaymentViaChequeBankStatement/{cardNo}/Entities/{entityId}/{date}/{key}.{ext}
+  uploadBankStatement(file: any) {
+    let cardNo = $(this.hddCardNo).val();
+    let date = $(this.hddDate).val();
+    let key = $(this.hddKey).val();
+    let extension = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "jpg";
+    let fileName = key + "." + extension;
+    let entityPath = this.entityType == 'mainEntity' ? "" : "/Entities/" + this.entityId;
+    const path = this.commonService.getFireStoreCity() + "/PaymentCollectionHistory/PaymentViaChequeBankStatement/" + cardNo + entityPath + "/" + date + "/" + fileName;
+    const storageRef = this.storage.storage.app.storage(this.commonService.fireStoragePath).ref(path);
+    return storageRef.put(file).then(() => fileName);
   }
 
   updateDecliened() {
@@ -347,7 +398,7 @@ export class PaymentViaChequeComponent implements OnInit {
     }
   }
 
-  acceptMainEntitytransaction() {
+  acceptMainEntitytransaction(bankStatementImage: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "acceptMainEntitytransaction");
     let transactionId = $(this.txtTransactionId).val();
     let transactionDate = $(this.txtTransactionDate).val();
@@ -356,7 +407,7 @@ export class PaymentViaChequeComponent implements OnInit {
     let date = $(this.hddDate).val();
     let key = $(this.hddKey).val();
     let dbPath = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/" + date + "/" + key;
-    this.db.object(dbPath).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid" });
+    this.db.object(dbPath).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid", bankStatementImage: bankStatementImage });
 
     let detail = this.chequeList.find(item => item.cardNo == cardNo && item.key == key && item.collectedDate == date);
     if (detail != undefined) {
@@ -380,6 +431,7 @@ export class PaymentViaChequeComponent implements OnInit {
         updatedBy: localStorage.getItem("userID"),
         updatedDate: this.commonService.getCurrentTimeWithSecond(),
         houseImage: detail.houseImage || '',
+        bankStatementImage: bankStatementImage,
         chequeNo: detail.chequeNo ? detail.chequeNo : '',
         bankName: detail.bankName ? detail.bankName : '',
         payDate: date,
@@ -464,7 +516,7 @@ export class PaymentViaChequeComponent implements OnInit {
   }
 
 
-  acceptSubEntitytransaction() {
+  acceptSubEntitytransaction(bankStatementImage: any) {
     this.besuh.saveBackEndFunctionCallingHistory(this.serviceName, "acceptSubEntitytransaction");
     let transactionId = $(this.txtTransactionId).val();
     let transactionDate = $(this.txtTransactionDate).val();
@@ -476,7 +528,7 @@ export class PaymentViaChequeComponent implements OnInit {
     if (detail != undefined) {
 
       let path = "PaymentCollectionInfo/PaymentViaCheque/" + cardNo + "/Entities/" + detail.entityId + "/" + date + "/" + key;
-      this.db.object(path).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid" });
+      this.db.object(path).update({ transactionId: transactionId, transactionDate: transactionDate, status: "Paid", bankStatementImage: bankStatementImage });
 
       let monthYearList = detail.monthYear.split(",");
       for (let i = 0; i < monthYearList.length; i++) {
@@ -498,6 +550,7 @@ export class PaymentViaChequeComponent implements OnInit {
         updatedBy: localStorage.getItem("userID"),
         updatedDate: this.commonService.getCurrentTimeWithSecond(),
         houseImage: detail.houseImage || '',
+        bankStatementImage: bankStatementImage,
         chequeNo: detail.chequeNo ? detail.chequeNo : '',
         bankName: detail.bankName ? detail.bankName : '',
         payDate: date,

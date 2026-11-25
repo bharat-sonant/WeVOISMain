@@ -138,11 +138,12 @@ export class PaymentViaChequeReportComponent implements OnInit {
                       monthName = this.commonService.getCurrentMonthShortName(Number(month));
                       checkDateFormat = day + " " + monthName + " " + year;
                       let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2FEntities%2F" + entityKey + "%2F" + entityCollectedDate + "%2F" + dateData[key]["image"] + "?alt=media";
+                      let bankStatementImageUrl = dateData[key]["bankStatementImage"] ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeBankStatement%2F" + cardNo + "%2FEntities%2F" + entityKey + "%2F" + entityCollectedDate + "%2F" + dateData[key]["bankStatementImage"] + "?alt=media" : "";
                       let transactionId = "NA";
                       if (dateData[key]["transactionId"] != null) {
                         transactionId = dateData[key]["transactionId"];
                       }
-                      chequeListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: entityCollectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: transactionId, transactionDate: dateData[key]["transactionDate"], transactionDateFormat: transactionDateFormat, timeStemp: timeStemp, imageUrl: imageUrl, status: dateData[key]["status"], declinedReason: dateData[key]["declinedReason"] });
+                      chequeListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: entityCollectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: transactionId, transactionDate: dateData[key]["transactionDate"], transactionDateFormat: transactionDateFormat, timeStemp: timeStemp, imageUrl: imageUrl, bankStatementImageUrl: bankStatementImageUrl, status: dateData[key]["status"], declinedReason: dateData[key]["declinedReason"] });
                     }
                   }
                 }
@@ -174,11 +175,12 @@ export class PaymentViaChequeReportComponent implements OnInit {
                   monthName = this.commonService.getCurrentMonthShortName(Number(month));
                   checkDateFormat = day + " " + monthName + " " + year;
                   let imageUrl = this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeImage%2F" + cardNo + "%2F" + collectionDateImage + "%2F" + dateData[key]["image"] + "?alt=media";
+                  let bankStatementImageUrl = dateData[key]["bankStatementImage"] ? this.commonService.fireStoragePath + this.commonService.getFireStoreCity() + "%2FPaymentCollectionHistory%2FPaymentViaChequeBankStatement%2F" + cardNo + "%2F" + collectedDate + "%2F" + dateData[key]["bankStatementImage"] + "?alt=media" : "";
                   let transactionId = "NA";
                   if (dateData[key]["transactionId"] != null) {
                     transactionId = dateData[key]["transactionId"];
                   }
-                  chequeListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: transactionId, transactionDate: dateData[key]["transactionDate"], transactionDateFormat: transactionDateFormat, timeStemp: timeStemp, imageUrl: imageUrl, status: dateData[key]["status"], declinedReason: dateData[key]["declinedReason"] });
+                  chequeListJSON.push({ key: key, cardNo: cardNo, zone: dateData[key]["ward"], chequeNo: dateData[key]["chequeNo"], chequeDate: checkDateFormat, name: dateData[key]["name"], bankName: dateData[key]["bankName"], collectedBy: dateData[key]["collectedById"], collectedByName: dateData[key]["collectedByName"], collectedDate: collectedDate, collectionDate: collectionDate, amount: dateData[key]["amount"], monthYear: dateData[key]["monthYear"], transactionId: transactionId, transactionDate: dateData[key]["transactionDate"], transactionDateFormat: transactionDateFormat, timeStemp: timeStemp, imageUrl: imageUrl, bankStatementImageUrl: bankStatementImageUrl, status: dateData[key]["status"], declinedReason: dateData[key]["declinedReason"] });
                 }
               }
             }
@@ -205,7 +207,8 @@ export class PaymentViaChequeReportComponent implements OnInit {
     $(this.divLoader).show();
     let zone = $(this.ddlZone).val();
     let collectorId = $(this.ddlCollector).val();
-    let list = this.chequeList;
+    // List stays undefined when the report JSON has never been synced for this city.
+    let list = this.chequeList || [];
     if (zone != "0") {
       list = list.filter(item => item.zone == zone);
     }
