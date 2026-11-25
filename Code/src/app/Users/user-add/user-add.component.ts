@@ -187,6 +187,16 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canChangeDocuments"))).checked = true;
         }
       }
+      if (data["canVerifyEmployeeDocuments"] != undefined) {
+        if (data["canVerifyEmployeeDocuments"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canVerifyEmployeeDocuments"))).checked = true;
+        }
+      }
+      if (data["canUpdateEmployeeDocuments"] != undefined) {
+        if (data["canUpdateEmployeeDocuments"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canUpdateEmployeeDocuments"))).checked = true;
+        }
+      }
       if (data["canApproveIdType"] != undefined) {
         if (data["canApproveIdType"] == 1) {
           (<HTMLInputElement>(document.getElementById("canApproveIdType"))).checked = true;
@@ -367,6 +377,8 @@ export class UserAddComponent implements OnInit {
     let canApproveBankRequest: any = 0;
     let canEditAadharMobile: any = 0;
     let canChangeDocuments: any = 0;
+    let canVerifyEmployeeDocuments: any = 0;
+    let canUpdateEmployeeDocuments: any = 0;
     let canApproveIdType: any = 0;
     let canUpdateOpendepotPickDetail: any = 0;
     let canUpdateLeaveBalance: any = 0;
@@ -440,6 +452,10 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canEditAadharMobile = 1;
     element = <HTMLInputElement>document.getElementById("canChangeDocuments");
     if (element.checked == true) canChangeDocuments = 1;
+    element = <HTMLInputElement>document.getElementById("canVerifyEmployeeDocuments");
+    if (element.checked == true) canVerifyEmployeeDocuments = 1;
+    element = <HTMLInputElement>document.getElementById("canUpdateEmployeeDocuments");
+    if (element.checked == true) canUpdateEmployeeDocuments = 1;
     element = <HTMLInputElement>document.getElementById("canApproveIdType");
     if (element.checked == true) canApproveIdType = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateOpendepotPickDetail");
@@ -503,6 +519,8 @@ export class UserAddComponent implements OnInit {
       canApproveBankRequest: canApproveBankRequest,
       canEditAadharMobile: canEditAadharMobile,
       canChangeDocuments: canChangeDocuments,
+      canVerifyEmployeeDocuments: canVerifyEmployeeDocuments,
+      canUpdateEmployeeDocuments: canUpdateEmployeeDocuments,
       canApproveIdType: canApproveIdType,
       canUpdateOpendepotPickDetail: canUpdateOpendepotPickDetail,
       canUpdateLeaveBalance: canUpdateLeaveBalance,
