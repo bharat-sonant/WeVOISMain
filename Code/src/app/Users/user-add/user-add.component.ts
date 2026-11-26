@@ -192,6 +192,11 @@ export class UserAddComponent implements OnInit {
           (<HTMLInputElement>(document.getElementById("canVerifyEmployeeDocuments"))).checked = true;
         }
       }
+      if (data["canUnlockEmployeeDocuments"] != undefined) {
+        if (data["canUnlockEmployeeDocuments"] == 1) {
+          (<HTMLInputElement>(document.getElementById("canUnlockEmployeeDocuments"))).checked = true;
+        }
+      }
       if (data["canUpdateEmployeeDocuments"] != undefined) {
         if (data["canUpdateEmployeeDocuments"] == 1) {
           (<HTMLInputElement>(document.getElementById("canUpdateEmployeeDocuments"))).checked = true;
@@ -378,6 +383,7 @@ export class UserAddComponent implements OnInit {
     let canEditAadharMobile: any = 0;
     let canChangeDocuments: any = 0;
     let canVerifyEmployeeDocuments: any = 0;
+    let canUnlockEmployeeDocuments: any = 0;
     let canUpdateEmployeeDocuments: any = 0;
     let canApproveIdType: any = 0;
     let canUpdateOpendepotPickDetail: any = 0;
@@ -454,6 +460,8 @@ export class UserAddComponent implements OnInit {
     if (element.checked == true) canChangeDocuments = 1;
     element = <HTMLInputElement>document.getElementById("canVerifyEmployeeDocuments");
     if (element.checked == true) canVerifyEmployeeDocuments = 1;
+    element = <HTMLInputElement>document.getElementById("canUnlockEmployeeDocuments");
+    if (element.checked == true) canUnlockEmployeeDocuments = 1;
     element = <HTMLInputElement>document.getElementById("canUpdateEmployeeDocuments");
     if (element.checked == true) canUpdateEmployeeDocuments = 1;
     element = <HTMLInputElement>document.getElementById("canApproveIdType");
@@ -520,6 +528,7 @@ export class UserAddComponent implements OnInit {
       canEditAadharMobile: canEditAadharMobile,
       canChangeDocuments: canChangeDocuments,
       canVerifyEmployeeDocuments: canVerifyEmployeeDocuments,
+      canUnlockEmployeeDocuments: canUnlockEmployeeDocuments,
       canUpdateEmployeeDocuments: canUpdateEmployeeDocuments,
       canApproveIdType: canApproveIdType,
       canUpdateOpendepotPickDetail: canUpdateOpendepotPickDetail,

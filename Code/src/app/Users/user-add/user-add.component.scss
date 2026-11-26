@@ -180,10 +180,20 @@ label {
     position: relative;
     margin-top: 10px;
     margin-bottom: 4px;
+    // Checkbox and its text on one centred line
+    display: flex;
+    align-items: center;
+
+    input[type="checkbox"] {
+        flex-shrink: 0;
+        margin: 0; // the &nbsp;&nbsp; after it gives the gap
+        cursor: pointer;
+    }
 
     label {
         cursor: pointer;
         margin-bottom: 0;
+        line-height: 1.3;
     }
 }
 

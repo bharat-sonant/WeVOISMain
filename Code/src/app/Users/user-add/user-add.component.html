@@ -173,8 +173,11 @@
                                 <div class="col-md-4 perm-item" data-tip="BackOffice app: can upload or replace an existing employee's documents.">
                                     <input type="checkbox" id="canChangeDocuments">&nbsp;&nbsp;<label for="canChangeDocuments">Can change employee documents</label>
                                 </div>
-                                <div class="col-md-4 perm-item" data-tip="Employee Detail page: can verify an employee's documents (locks them in the BackOffice app) and unlock them with a reason when a change is needed.">
-                                    <input type="checkbox" id="canVerifyEmployeeDocuments">&nbsp;&nbsp;<label for="canVerifyEmployeeDocuments">Can verify / unlock employee documents</label>
+                                <div class="col-md-4 perm-item" data-tip="Employee Detail page: can mark an employee's documents Verified (locks them in the BackOffice app) or Not verified with a reason.">
+                                    <input type="checkbox" id="canVerifyEmployeeDocuments">&nbsp;&nbsp;<label for="canVerifyEmployeeDocuments">Can verify employee documents</label>
+                                </div>
+                                <div class="col-md-4 perm-item" data-tip="Employee Detail page: can unlock a verified document with a reason so it can be changed in the BackOffice app.">
+                                    <input type="checkbox" id="canUnlockEmployeeDocuments">&nbsp;&nbsp;<label for="canUnlockEmployeeDocuments">Can unlock employee documents</label>
                                 </div>
                                 <div class="col-md-4 perm-item" data-tip="Employee Detail page: can upload new Aadhaar / PAN / Licence photos and change the PAN number from the portal. The document then has to be verified again.">
                                     <input type="checkbox" id="canUpdateEmployeeDocuments">&nbsp;&nbsp;<label for="canUpdateEmployeeDocuments">Can update employee documents</label>
