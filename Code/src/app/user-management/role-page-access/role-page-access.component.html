@@ -35,6 +35,9 @@
                                                         <tbody>
                                                             <tr *ngFor="let usrSecond of usr.secondLevel">
                                                                 <td class="border-left" style="width:25%; vertical-align: top;"><input type="checkbox" id="chk{{usrSecond.pageID}}" [checked]="usrSecond.ischeck" (change)="setAccess(usr.pageID,usrSecond.pageID)"> {{usrSecond.name}}
+                                                                    <div *ngIf="usrSecond.pageID == verifyDocumentsPageId" class="perm-sub" data-tip="All active users of this role get Can verify employee documents (Employee Detail page) when you save. Unchecking removes it from them.">
+                                                                        <input type="checkbox" id="chkCanVerifyEmployeeDocuments" [checked]="canVerifyEmployeeDocuments">&nbsp;&nbsp;<label for="chkCanVerifyEmployeeDocuments">Can verify employee documents</label>
+                                                                    </div>
                                                                 </td>
                                                                 <td style="width:75%;">
                                                                     <table class="table border-bottom" style="margin-top: -13px;margin-bottom: -13px;margin-left: 15px;">

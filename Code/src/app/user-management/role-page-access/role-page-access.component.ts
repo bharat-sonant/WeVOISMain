@@ -19,6 +19,10 @@ export class RolePageAccessComponent implements OnInit {
   accessList: any;
   roleAccessPages: any[] = [];
   divLoader = "#divLoader";
+  // Employees Detail page: "Can verify employee documents" for all active users of this role
+  verifyDocumentsPageId = "16F";
+  canVerifyEmployeeDocuments = false;
+  savedCanVerifyEmployeeDocuments = false;
 
   ngOnInit() {
     this.setDefaults();
@@ -44,7 +48,44 @@ export class RolePageAccessComponent implements OnInit {
           }
         }
         this.getPortalPages();
+        this.getRoleVerifyDocuments();
       }
+    });
+  }
+
+  // Checked when every active user of this role can verify employee documents
+  getRoleVerifyDocuments() {
+    this.userService.getPortalUsers().then((data: any) => {
+      let roleUsers = this.getActiveRoleUserKeys(data);
+      this.canVerifyEmployeeDocuments = roleUsers.length > 0 && roleUsers.every((key) => Number(data[key]["canVerifyEmployeeDocuments"]) === 1);
+      this.savedCanVerifyEmployeeDocuments = this.canVerifyEmployeeDocuments;
+    });
+  }
+
+  getActiveRoleUserKeys(data: any) {
+    if (data == null) return [];
+    return Object.keys(data).filter((key) => data[key] != null && typeof data[key] === "object" && data[key]["name"] != null
+      && Number(data[key]["roleId"]) === Number(this.roleId) && Number(data[key]["isDelete"]) !== 1);
+  }
+
+  // Sets "Can verify employee documents" for all active users of this role, only when it was changed
+  saveRoleVerifyDocuments() {
+    return new Promise((resolve) => {
+      let element = <HTMLInputElement>document.getElementById("chkCanVerifyEmployeeDocuments");
+      let isChecked = element != null && element.checked == true;
+      if (isChecked === this.savedCanVerifyEmployeeDocuments) {
+        resolve(null);
+        return;
+      }
+      this.userService.getPortalUsers().then((data: any) => {
+        let roleUsers = this.getActiveRoleUserKeys(data);
+        if (roleUsers.length > 0) {
+          roleUsers.forEach((key) => { data[key]["canVerifyEmployeeDocuments"] = isChecked ? 1 : 0; });
+          this.userService.savePortalUsers(data);
+          this.userService.setWebPortalUsers();
+        }
+        resolve(null);
+      });
     });
   }
 
@@ -154,8 +195,12 @@ export class RolePageAccessComponent implements OnInit {
       this.roleJSONData[this.roleId.toString()]["pages"] = accessPages;
     }
     this.userService.saveRoles(this.roleJSONData);
-    this.commonService.setAlertMessage("success", "Portal access updated successfully");
-    this.router.navigate(['/' + this.cityName + '/18A/roles']);
+    $(this.divLoader).show();
+    this.saveRoleVerifyDocuments().then(() => {
+      $(this.divLoader).hide();
+      this.commonService.setAlertMessage("success", "Portal access updated successfully");
+      this.router.navigate(['/' + this.cityName + '/18A/roles']);
+    });
   }
 
   cancelEntry() {
